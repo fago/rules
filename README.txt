@@ -1,3 +1,3 @@
 $Id$
 
-There is no HEAD branch. Have a look at the other branches to get the code...
+6.x compatible development branch.
