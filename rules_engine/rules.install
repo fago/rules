@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_install().
+ */
+/**
+ * Implementation of hook_install().
+ */
+function rules_install() {
+
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function rules_uninstall() {
+  variable_del('rules_configurations');
+  variable_del('rules_show_fixed');
+}
+
+/**
+ * Implementation of hook_schema.
+ */
+function rules_schema() {
+
+  $schema['rule_configurations'] = array(
+    'fields' => array(
+      'name' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('The name of the rule.'),
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'size' => 'big',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+        'description' => t('The whole, serialized rule configuration.'),
+      ),
+      'altered' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'disp-width' => '4',
+        'description' => t('Whether this is an altered default rule.'),
+      ),
+    ),
+    'primary key' => array('name'),
+  );
+  
+  $schema['cache_rules'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_rules']['description'] = t('Cache table for the rules engine to store configured rules ready for evaluation.');
+ 
+  return $schema;
+}
+
+/**
+ * Helper function
+ * Applies the function $function to all elements
+ */
+function rules_helper_do_recursive($function, &$elements) {
+  $function($elements);
+  //recurse
+  foreach (element_children($elements) as $key) {
+    rules_helper_do_recursive($function, $elements[$key]);
+  }
+}
