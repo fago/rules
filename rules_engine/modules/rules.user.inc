@@ -5,9 +5,9 @@
  */
 
 /** 
- * Implementation of hook_event_info()
+ * Implementation of hook_rules_event_info()
  */
-function user_event_info() {
+function user_rules_event_info() {
   return array(
     'user_insert' => array(
       'label' => t('user has registered'),
@@ -96,10 +96,10 @@ function rules_events_argument_global_user() {
 }
 
 
-/*
- * Implementation of hook_condition_info()
+/**
+ * Implementation of hook_rules_condition_info()
  */
-function user_condition_info() {
+function user_rules_condition_info() {
   return array(
     'rules_condition_user_comparison' => array(
       'label' => t('Compare two users'),
@@ -156,10 +156,10 @@ function rules_condition_user_hasrole($user, $settings) {
 
 
 /**
- * Implementation of drupal_alter for hook_action_info 
+ * Implementation of hook_rules_action_info 
  */
-function user_action_info_alter(&$data) {
-   array(
+function user_rules_action_info() {
+  return array(
     'rules_action_user_addrole' => array(
       'label' => t('Add user role'),
       'arguments' => array(

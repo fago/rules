@@ -4,11 +4,10 @@
  * @file rules integration for the node module 
  */
 
-
 /** 
  * Implementation of hook_event_info()
  */
-function node_event_info() {
+function node_rules_event_info() {
   return array(
     'node_insert' => array(
       'label' => t('A post has been created'),
@@ -104,7 +103,7 @@ function rules_events_argument_unchanged_node_author($node) {
 /**
  * Implementation of hook_condition_info()
  */
-function node_condition_info() {
+function node_rules_condition_info() {
   return array(
     'rules_condition_content_is_type' => array(
       'label' => t('Content has type'),
@@ -125,10 +124,10 @@ function rules_condition_content_is_type($node, $settings) {
 }
 
 /**
- * Implementation of drupal_alter for hook_action_info 
+ * Implementation of hook_rules_action_info
  */
-function node_action_info_alter(&$data) {
-  $data += array(
+function node_rules_action_info() {
+  return array(
     'rules_action_node_set_author' => array(
       'label' => t('Set the post author'),
       'arguments' => array(
