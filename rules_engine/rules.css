@@ -1,0 +1,61 @@
+@CHARSET "UTF-8";
+
+a.action, a.condition {
+  display: block;
+  float: left;
+  padding: 0.2em 0.5em;
+  margin: 0.3em;
+  border: 1px solid #CCCCCC;
+}
+img.workflow-ng-icon {
+  position: relative;
+  top: 0.5em;
+}
+a.action img.workflow-ng-icon {
+  position: relative;
+  top: 3px;
+  left: 2px;
+}
+a.condition img.workflow-ng-icon {
+  position: relative;
+  top: 2px;
+}
+div.configuration-fixed a.modify {
+  display:none;
+}
+div.logical-op-not {
+  float: left;
+  margin-top: 0.7em;
+}
+p.logical-op-add, h3.actions {
+  margin-top: 2em;
+}
+h3.conditions {
+  margin-top: 1em;
+}
+p.logical-op-add {
+  margin-bottom: 0em;
+}
+p.logical-op-edit img.workflow-ng-icon {
+  top: -0.2em;
+  vertical-align: bottom;
+}
+img.workflow-ng-icon {
+  margin: 0px 3px;
+}
+div.workflow-ng-filter {
+  padding-bottom: 2em;
+}
+div.workflow-ng-filter div, div.workflow-ng-filter input {
+  padding-right: 1em;
+  margin: 0em;
+}
+div.workflow-ng-filter div, div.workflow-ng-filter label {
+  display: inline;
+}
+table.workflow-ng-configurations tr.odd, table.workflow-ng-configurations tr.even {
+  vertical-align: top;
+}
+table.workflow-ng-configurations {
+  margin-bottom: 2em;
+}

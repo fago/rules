@@ -22,43 +22,43 @@ function rules_init() {
 	}
 }
 
-
-
-
 /**
- * Returns all defined events
- * @param $op Set it to 'labels' to get a list of event labels,
- *            otherwise you'll get the full definitions
- * @param $key If set, only return the value for this key. E.g. $op 'labels', with key 'example'
- *   will return the label of the event example
+ * Returns info about all defined events
  */
-function rules_get_events($op = 'all', $key = NULL) {
-  return rules_gather_data('event_info', '', TRUE, $op, $key);
+function rules_get_events($key = 'all') {
+  return rules_gather_data('rules_event_info', $key);
 }
 
 /**
- * Returns all defined actions
- * @param $op, $key: As for rules_get_events()
+ * Returns info about all defined actions
  */
-function rules_get_actions($op = 'all', $key = NULL) {
-  return rules_gather_data('action_info', '', TRUE, $op, $key);
+function rules_get_actions($key = 'all') {
+  //TODO: integrate d6 actions
+  return rules_gather_data('rules_action_info', $key);
 }
 
 /**
- * Returns all defined conditions
- * @param $op, $key: As for rules_get_events()
+ * Returns info about all defined conditions
  */
-function rules_get_conditions($op = 'all', $key = NULL) {
-  return rules_gather_data('condition_info', '', TRUE, $op, $key);
+function rules_get_conditions($key = 'all') {
+  return rules_gather_data('rules_condition_info', $key);
 }
 
 /**
- * Returns all defined configurations
- * @param $op, $key: As for rules_get_events()
+ * Returns info about all defined items
  */
-function rules_get_rules($op = 'all', $key = NULL) {
-  _rules_include_default_rules();
-  return rules_gather_data('rules', '#', TRUE, $op, $key);
+function rules_get_items($key = 'all') {
+  return rules_gather_data('rules_item_info', $key);
+}
+
+
+/**
+ * Returns all defined item defaults
+ * $items Which defaults to return, e.g. 'rules', 'rule_sets' or 'states'
+ */
+function rules_get_item_defaults($items = 'rules') {
+  _rules_include_rules_defaults();
+  return rules_gather_data('rules_defaults', 'all', FALSE);
 }
 
 /**
@@ -66,16 +66,12 @@ function rules_get_rules($op = 'all', $key = NULL) {
  * Used for collecting events, rules, actions and condtions from other modules
  *
  * @param $name The type of the data item to collect. This is also the name of the invoked hook.
- * @param $key_prefix A key prefix that should be used, e.g. '#'
- * @param $alter If rules_alter() should be used to let modules alter the data of other modules
- * @param $op Set it to 'labels' to get a list of data item labels,
- *            otherwise you'll get the full definitions
- * @param $key If set, only return the value for this key. E.g. $op 'labels', with key 'example'
- *             will return the label of the data item example
+ * @param $key Whether to retrieve all definitions or only the one with the given key
+ * @param $alter Whether drupal_alter() should be invoked for this data
  * @param $reset If the static cache should be reseted. Note that if set to true, nothing will be
  *               returned.
  */
-function rules_gather_data($name, $key_prefix = '', $alter = FALSE, $op = 'all', $key = NULL, $reset = FALSE) {
+function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
   static $data = array();
 
   if ($reset) {
@@ -83,45 +79,32 @@ function rules_gather_data($name, $key_prefix = '', $alter = FALSE, $op = 'all',
     return;
   }
   if (!isset($data[$name])) {
-    $data[$name] = array('labels' => array(), 'all' => array());
-    $returned = module_invoke_all($name);
+    $data[$name] = module_invoke_all($name);
     if ($alter) {
-      drupal_alter($name, $returned);
+      drupal_alter($name, $data['name']);
     }
-
-    //filter out ignored elements
-    $returned = array_filter($returned, '_rules_element_ignore');
-
-    //get default values per item
-    $defaults = function_exists($function = 'rules_element_defaults_'. $name) ? $function() : array();
-
-    foreach ($returned as $item_name => $info) {
-      $info += $defaults;
-      //normalizes the elements, if necessary
-      if (function_exists($function = 'rules_element_normalize_'. $name)) {
-        $function($info);
-      }
-      $info[$key_prefix. 'type'] = $name;
-      $info[$key_prefix. 'name'] = $item_name;
-      $data[$name]['labels'][$item_name] = $info[$key_prefix. 'label'];
-      $data[$name]['all'][$item_name] = $info;
-    }
-    asort($data[$name]['labels']);
   }
-
-  if ($op != 'labels') {
-    $op = 'all';
-  }
-  return (!isset($key)) ? $data[$name][$op] : $data[$name][$op][$key];
+  return $key != 'all' && isset($data[$name][$key]) ? $data[$name][$key] : $data[$name];
 }
-
-function _rules_element_ignore($element) {
-  return !isset($element['#rules_ignore']) || !$element['#rules_ignore'];
-}
-
 
 /**
- * Some element defaults applied by rules_gather_data()
+ * Extracts the property with the given name while keeping the keys
+ * 
+ * @param $key The name of the property to extract
+ * @param $elements An array of elements
+ * @return An array of extracted properties.
+ */
+function rules_extract_property($key, $elements) {
+  $data = array();
+
+  foreach ($elements as $name => $info) {
+    $data[$name] = $info[$key];
+  }
+  return $data;
+}
+
+/**
+ * Some element defaults not being applied automatically
  */
 function rules_element_defaults_event_info() {
   return array('module' => '', 'arguments' => array(), 'new arguments' => array(), 'redirect' => FALSE);
@@ -133,24 +116,7 @@ function rules_element_defaults_condition_info() {
   return array('arguments' => array(), 'fixed' => FALSE);
 }
 
-/**
- * Normalizes the action info elements, so that elements written
- * for drupal actions work too
- */
-function rules_element_normalize_action_info(&$element) {
-  if (rules_is_drupal_action($element)) {
-    $element['label'] = $element['description'];
-    //TODO 'arguments' generation
-  }
-}
 
-/**
- * Determines whether the given action info element has been
- * written for drupal's action system
- */
-function rules_is_drupal_action($element) {
-  return (isset($element['hooks']) && $element['hooks']);
-}
 
 /**
  * Returns all active configurations for the event $event_name
@@ -771,36 +737,58 @@ function rules_evaluated_configurations($add_name = FALSE, $reset = FALSE) {
   return $memory;
 }
 
-/**
- * Implementation of hook_configuration_alter()
- * Alters all per UI altered configurations.
- */
-function rules_configuration_alter(&$configurations) {
-  //Load all altered configurations and overwrite the default one
-  $result = db_query("SELECT * FROM {rules_cfgs} WHERE altered = 1");
-
-  while ($row = db_fetch_object($result)) {
-    $cfg = unserialize($row->data);
-    $configurations[$row->name] = $cfg;
-  }
-}
 
 /**
- * Implementation of hook_configuration()
- * Adds all per UI created configurations.
+ * Gets all configured items, regardless if defined by the admin
+ * or by a module
+ * 
+ * @param $items Which items to get, e.g. 'rules' or 'rule_sets'
+ * @return An array of configured items, where structure of the item configuration
+ *   depends on the item
  */
-function rules_configuration() {
+function rules_get_configuration($items = 'rules') {
   $configurations = array();
-  //Return all custom created configurations
-  $result = db_query("SELECT * FROM {rules_cfgs} WHERE altered = 0");
+  $info = rules_get_items($items);
+  $result = db_query("SELECT * FROM {". $info['db_table']. "}");
 
   while ($row = db_fetch_object($result)) {
-    $cfg = unserialize($row->data);
-    $configurations[$row->name] = $cfg;
+    $configurations[$row->name] = unserialize($row->data);
   }
-  $configurations += rules_default_configuration();
+  $configurations += rules_get_item_defaults($items);
   return $configurations;
 }
+
+
+/**
+ * Used to inform the rules engine about added items,
+ * so it can create the db table if necessary
+ */
+function rules_enable_items($items) {
+  $info = rules_get_items($items);
+
+  if (!db_table_exists($info['db_table'])) {
+    $schema = drupal_get_schema($info['db_table'], TRUE);
+    $ret = array();
+    db_create_table($ret, $info['db_table'], $schema);
+  }
+}
+
+/**
+ * Implementation of hook_rules_item_info
+ */
+function rules_rules_item_info() {
+  return array(
+    'rules' => array(
+      'label' => t('Rules'),
+      'db_table' => 'rules_rules',
+    ),
+    'rule_sets' => array(
+      'label' => t('Rule Sets'),
+      'db_table' => 'rule_sets',
+    ),
+  );
+}
+
 
 /**
  * Shows an error message, that a module is missing.
@@ -942,26 +930,16 @@ function rules_form_alter($form_id, $form) {
 }
 
 /**
- * Includes the given include file, if it exists
- */
-function rules_include_file($filename) {
-  $data = rules_gather_data('module_info', FALSE, 'all', $filename);
-  if ($data) {
-    include_once($data['file path'] . $data['file']);
-  }
-}
-
-/**
  * Include default configuration files
  */
-function _rules_include_default_rules() {
+function _rules_include_rules_defaults() {
   static $included;
 
   if (!isset($included)) {
     foreach (module_list() as $module) {
 	    $module_path = drupal_get_path('module', $module);
-	    if (file_exists("$module_path/$module.rules_default.inc")) {
-	      require_once "./$module_path/$module.rule_default.inc";
+	    if (file_exists("$module_path/$module.rules_defaults.inc")) {
+	      require_once "./$module_path/$module.rule_defaults.inc";
 	    }
 	  }
     $included = TRUE;
