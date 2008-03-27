@@ -19,7 +19,7 @@ function rules_install() {
  */
 function rules_uninstall() {
   drupal_uninstall_schema('rules');
-  variable_del('rules_configurations');
+  variable_del('rules_inactive_sets');
   variable_del('rules_show_fixed');
 }
 
