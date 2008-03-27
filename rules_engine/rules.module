@@ -51,14 +51,27 @@ function rules_get_items($key = 'all') {
   return rules_gather_data('rules_item_info', $key);
 }
 
-
 /**
  * Returns all defined item defaults
  * $items Which defaults to return, e.g. 'rules', 'rule_sets' or 'states'
  */
 function rules_get_item_defaults($items = 'rules') {
   _rules_include_rules_defaults();
-  return rules_gather_data('rules_defaults', 'all', FALSE);
+  $defaults = rules_gather_data('rules_defaults', 'all', FALSE);
+  return isset($defaults[$items]) ? $defaults[$items] : array();
+}
+
+/**
+ * Returns info about all rule sets, which includes events
+ * 
+ * @param $key If given, only the info about this rule set will be returned
+ */
+function rules_get_rule_sets($key = NULL) {
+  $sets = rules_get_configuration('rule_sets');
+  foreach (rules_get_events() as $name => $info) {
+    $sets['event_'. $name] = $info;
+  }
+  return isset($key) ? $sets[$key] : $sets;
 }
 
 /**
@@ -94,7 +107,7 @@ function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
  * @param $elements An array of elements
  * @return An array of extracted properties.
  */
-function rules_extract_property($key, $elements) {
+function rules_extract_property($elements, $key) {
   $data = array();
 
   foreach ($elements as $name => $info) {
@@ -116,97 +129,84 @@ function rules_element_defaults_condition_info() {
   return array('arguments' => array(), 'fixed' => FALSE);
 }
 
-
-
 /**
- * Returns all active configurations for the event $event_name
+ * Returns the rule set $set_name, which includes the set info and the rules.
+ * To improve performance rule sets are cached.
  *
- * @param $event_name The event name, for which the configurations should be returned.
- * @param $reset May be set to true to clear the cache.
- * @return Returns the configured configurations for this event
+ * @param $set_name The name of the set which should be returned.
+ * @param $reset May be set to true to clear the static $sets cache.
+ * @return Returns the set only containing active rules, ready for evaluation
  */
-function rules_event_get_configurations($event_name = NULL, $reset = FALSE) {
-  //We prevent a lot of queries by storing all event names with activated configurations with variable_set
-  static $configs;
+function rules_get_rule_set($set_name, $reset = FALSE) {
+  //We prevent a lot of queries by storing all sets with active rules with variable_set
+  static $sets;
 
-  if (!isset($configs) || $reset) {
-    //initialize
-    $configs = variable_get('rules_configurations', array());
+  if (!isset($sets) || $reset) {
+    $sets = array();
+    _rules_get_rule_set_initialize($sets);
   }
 
-  if (isset($event_name) && !isset($configs[$event_name])) {
-    if (!$reset && $cache = cache_get('cfg_'. $event_name, 'cache_rules')) {
-      $configs[$event_name] = unserialize($cache->data);
+  if (isset($set_name) && !isset($sets[$set_name])) {
+    if (!$reset && $cache = cache_get('set_'. $set_name, 'cache_rules')) {
+      $sets[$set_name] = $cache->data;
     }
     else {
-      //cache miss, so refresh the cache for all events
-      $configs = rules_get_configurations_by_event();
-      $variable_cache = array();
-      foreach (rules_get_events('labels') as $name => $label) {
-        $configs += array($name => array());
-        //remove deactivated configurations
-        $configs[$name] = array_filter($configs[$name], '_rules_configuration_is_active');
-        //and write the cache
-        if (count($configs[$name])) {
-          cache_set('cfg_'. $name, 'cache_rules', serialize($configs[$name]));
-        }
-        else {
-          //write in the variable cache, that there are no configs for this event
-          $variable_cache[$name] = array();
-        }
+      //cache miss, so refresh the cache for all sets
+      $sets = _rules_get_rule_sets();
+      //and write the cache
+      foreach ($sets as $name => $set) {
+        cache_set('set_'. $name, $set, 'cache_rules');
       }
-      variable_set('rules_configurations', $variable_cache);
+      //get all inactive sets and store them to speed up later calls
+      variable_set('rules_inactive_sets', array_diff(array_keys(rules_get_rule_sets()), array_keys($sets)));
+      _rules_get_rule_set_initialize($sets);
     }
   }
-  return isset($event_name) ? $configs[$event_name] : NULL;
+  return isset($set_name) && isset($sets[$set_name]) ? $sets[$set_name] : array();
+}
+
+/**
+ * Initializes inactive sets
+ */
+function _rules_get_rule_set_initialize(&$sets) {
+  foreach (variable_get('rules_inactive_sets', array()) as $name) {
+    $sets[$name] = array();
+  }
+}
+
+/**
+ * Actually retrieves all active rulesets bypassing the cache
+ */
+function _rules_get_rule_sets() {
+  $sets = array();
+  $rules = array_filter(rules_get_configuration('rules'), '_rules_rule_is_active');
+  foreach ($rules as $name => $rule) {
+    $sets += array($rule['#set'] => array());
+    $sets[ $rule['#set'] ]['info'] = rules_get_rule_sets($rule['#set']);
+    $sets[ $rule['#set'] ]['rules'][$name] = $rule;
+  }
+  return $sets;
 }
 
 /**
  * Helper for array_filter()
  */
-function _rules_configuration_is_active($configuration) {
-  _rules_element_defaults($configuration);
-  return $configuration['#active'];
+function _rules_rule_is_active($rule) {
+  _rules_element_defaults($rule);
+  return $rule['#active'];
 }
 
 /**
- * Gathers the configurations and returns the configurations for the given event
- * This bypasses any database cache!
- *
- * @param $event_name The event name, for which the configurations should be returned.
- *        Leave it empty, to get all configurations sorted by event.
- * @param $reset May be set to true to clear the static cache.
- */
-function rules_get_configurations_by_event($event_name = NULL, $reset = FALSE) {
-  static $configurations;
-
-  if ($reset) {
-    $configurations = NULL;
-    return;
-  }
-
-  if (!isset($configurations)) {
-    $configurations = array();
-    foreach (rules_get_configurations() as $key => $configuration) {
-      $configurations += array($configuration['#event'] => array());
-      $configurations[$configuration['#event']][$key] = $configuration;
-    }
-  }
-  return isset($event_name) && isset($configurations[$event_name]) ? $configurations[$event_name] : $configurations;
-}
-
-/**
- * Clears the workflow-ng cache
+ * Clears the rule set cache
  * @param $immediate If FALSE, the static cache will be kept until the next page load.
  *    Might be dangerous, so only use if you know what you are doing.
  */
 function rules_clear_cache($immediate = TRUE) {
-  cache_clear_all('cfg_', 'cache_rules', TRUE);
-  variable_del('rules_configurations');
+  cache_clear_all('set_', 'cache_rules', TRUE);
+  variable_del('rules_inactive_sets');
   if ($immediate) {
-    rules_event_get_configurations(NULL, TRUE);
-    rules_get_configurations_by_event(NULL, TRUE);
-    rules_gather_data('', FALSE, 'all', NULL, TRUE);
+    rules_get_rule_set(NULL, TRUE);
+    rules_gather_data('', 'all', FALSE, TRUE);
   }
 }
 
@@ -216,6 +216,7 @@ function rules_clear_cache($immediate = TRUE) {
  * @params $args Pass further arguments as defined in hook_event_info() for this event.
  */
 function rules_invoke_event() {
+  return;
   $args = func_get_args();
   $event_name = array_shift($args);
   if ($event = rules_get_events('all', $event_name)) {
@@ -535,7 +536,7 @@ function rules_get_execution_arguments(&$element, &$arguments, &$log) {
  */
 function rules_elements() {
   $types = array();
-  $types['configuration'] = array('#name' => '', '#module' => '', '#event' => '', '#recursion' => FALSE, '#fixed' => FALSE, '#active' => TRUE, '#altered' => FALSE, '#execute' => 'rules_execute_configuration', '#process' => array('rules_ui_prepare_configuration' => array()));
+  $types['rule'] = array('#name' => '', '#set' => '', '#recursion' => FALSE, '#fixed' => FALSE, '#active' => TRUE, '#altered' => FALSE, '#execute' => 'rules_execute_rule', '#process' => array('rules_ui_prepare_configuration' => array()));
   $types['condition'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
   $types['action'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
   $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
