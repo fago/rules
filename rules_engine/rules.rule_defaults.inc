@@ -7,6 +7,7 @@ function rules_rules_defaults() {
   $rules = array();
   $rules['config1'] = array(
     '#type' => 'rule',
+    '#name' => 'config1'
     '#label' => t('Print the content title of pages and stories'),
     '#set' => 'event_node_view',
     '#module' => 'Workflow-ng-ui',
