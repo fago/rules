@@ -211,61 +211,51 @@ function rules_clear_cache($immediate = TRUE) {
 }
 
 /**
- * Invokes configured actions/conditions for the given event
- * @param $event_name As first param pass the event name
+ * Invokes configured rules for the given event
+ * @param $event_name The events name
  * @params $args Pass further arguments as defined in hook_event_info() for this event.
  */
 function rules_invoke_event() {
-  return;
   $args = func_get_args();
-  $event_name = array_shift($args);
-  if ($event = rules_get_events('all', $event_name)) {
-    //apply the event element defaults
-    _rules_element_defaults($event);
-
-    //log, if debugging is activated
-    $log = rules_ENABLE_DEBUG ? array() : FALSE;
-    rules_write_log($log, t('Event @label has been invoked.', array('@label' => $event['#label'])));
-
-    //get the active configurations
-    if ($configurations = rules_event_get_configurations($event_name)) {
-      //get the processed arguments
-      $arguments = _rules_process_arguments($event, $args);
-      //evaluate the configurations
-      rules_evaluate_configurations($configurations, $arguments, $log);
-    }
-
-    rules_show_log($log);
-  }
+  $args[0] = 'event_'. $args[0];
+  call_user_func_array('rules_invoke_rule_set', $args);
 }
 
 /**
- * Evaluates the configurations by using rules_evaluate_elements()
- * Afterwards it cares for saving the modified arguments.
- *
- * @param $configurations The configurations to process
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging, otherwise initialize it with array()
+ * Invokes configured rules for the given rule set
+ * @param $set_name The name of the rule set to invoke
+ * @params $args Further arguments as defined for the rule set
  */
-function rules_evaluate_configurations($configurations, &$arguments, &$log) {
-  //First apply the configurations defaults
-  _rules_element_defaults($elements);
+function rules_invoke_rule_set() {
+  $args = func_get_args();
+  $set_name = array_shift($args);
 
-  //then start processing
-  rules_evaluate_elements($configurations, $arguments, $log);
+  if ($set = rules_get_rule_set($set_name)) {
+    $state = array('set_info' => $set['info'], 'arguments' => array(), 'log' => array());
 
-  //save all the changed arguments..
-  foreach ($arguments['save'] as $argument_name) {
-    rules_save_argument($arguments['info'][$argument_name], $argument_name, $arguments['data'][$argument_name], $log);
+    _rules_log_set_invocation($state, t('@label has been invoked.', array('@label' => $state['set_info']['label'])), TRUE);
+
+    _rules_process_arguments($state, $args);
+    //TODO: fix!
+    rules_evaluate_elements($set['rules'], $state);
+
+    //save all the changed arguments..
+    foreach ($state['arguments']['save'] as $argument_name) {
+      rules_save_argument($state, $argument_name);
+    }
+
+    _rules_log_set_invocation($state, t('Evaluation of @label has been finished.', array('@label' => $state['set_info']['label'])), FALSE);
+
+    //only show the log, if this is no nested evaluation
+    if (rules_log_evaluation_finished()) {
+      rules_show_log($state);
+    }
   }
-  //we have finished processing, so reset the recursion prevention log..
-  rules_evaluated_configurations(FALSE, TRUE);
 }
-
 
 /**
  * Evaluates the elements in a recursive way
- * The elements are a tree of configurations, conditions, actions and logical operations (AND, OR,..)
+ * The elements are a tree of rules, conditions, actions and logical operations (AND, OR,..)
  *
  * Each element is executed by using rules_execute_element().
  *
@@ -274,23 +264,22 @@ function rules_evaluate_configurations($configurations, &$arguments, &$log) {
  * evaluates to TRUE if at least one of its children evaluate to TRUE.
  *
  * @param $elements An array of elements to evaluate
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging, otherwise initialize it with array()
+ * @param $state The current evaluation state
  */
-function rules_evaluate_elements(&$elements, &$arguments, &$log) {
+function rules_evaluate_elements($elements, &$state) {
   $result = FALSE;
 
   //Execute the current element if not yet executed
   if (!isset($elements['#_executed'])) {
     $elements['#_executed'] = TRUE;
-    $result = rules_execute_element($elements, $arguments, $log);
+    $result = rules_execute_element($elements, $state);
   }
 
   // we default to evaluate like an AND, which means we stop as soon as one element evaluates to FALSE
   // so if the element hasn't evaluated the children, start now
   if ((!isset($elements['#_evaluated']) || $elements['#_evaluated'] == FALSE)) {
     $elements['#_evaluated'] = TRUE;
-    $result = rules_execute_and($elements, $arguments, $log);
+    $result = rules_execute_and($elements, $state);
   }
   return $result;
 }
@@ -309,14 +298,17 @@ function _rules_sort_children(&$element) {
  * Callback function for uasort()
  */
 function _rules_element_sort($a, $b) {
-  if (!is_array($a) || ($b['#type'] == 'action' && $a['#type'] != 'action')) {
-    return -1; //actions sink always down, element properties up
+  if (!is_array($a) || !is_array($b)) {
+    return !is_array($a) ? -1 : 1; //element properties go up
   }
-  if (!is_array($b) || ($a['#type'] == 'action' && $b['#type'] != 'action')) {
-    return 1; //actions sink always down, element properties up
+  $a += array('#type' => '', '#weight' => 0, '#id' => 1000);
+  $b += array('#type' => '', '#weight' => 0, '#id' => 1000);
+  if (($b['#type'] == 'action' && $a['#type'] != 'action')) {
+    return -1; //actions sink always down
   }
-  $a += array('#weight' => 0, '#id' => 1000);
-  $b += array('#weight' => 0, '#id' => 1000);
+  if (($a['#type'] == 'action' && $b['#type'] != 'action')) {
+    return 1; //actions sink always down
+  }
   if ($a['#weight'] == $b['#weight']) {
     return ($a['#id'] < $b['#id']) ? -1 : 1;
   }
@@ -340,36 +332,32 @@ function _rules_element_defaults(&$element) {
  * Executes the element by invoking the element type's execution handler
  *
  * @param $elements An array of elements to process
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging
+ * @param $state The current evaluation state
  * @return The execution result, or FALSE if there is no valid execution handler.
  */
-function rules_execute_element(&$element, &$arguments, &$log) {
+function rules_execute_element(&$element, &$state) {
   if (isset($element['#type']) && isset($element['#execute']) && function_exists($element['#execute'])) {
-    //default to not process the children, if there is an execution handler
     $element['#_evaluated'] = TRUE;
-    $result = $element['#execute']($element, $arguments, $log);
+    $result = $element['#execute']($element, $state);
     return isset($element['#negate']) && $element['#negate'] == TRUE ? !$result : $result;
   }
   return FALSE;
 }
 
 /**
- * Execution handler for configurations
- * We want each configuration to be evaluated, so let the following configurations
- * be processed by returning always TRUE.
- *
+ * Execution handler for rules
  */
-function rules_execute_configuration(&$element, &$arguments, &$log) {
-  if ($element['#active'] && ($element['#recursion'] == TRUE || !in_array($element['#name'], rules_evaluated_configurations()))) {
+function rules_execute_rule(&$element, &$state) {
+  if ($element['#active'] && ($element['#recursion'] == TRUE || !rules_log_rule_is_evaluated($element['#name']))) {
+    //remember that we are processing this rule to prevent recursion
+    rules_log_evaluated_rule($element['#name'], TRUE);
+    //rules_log($state, t('Executing the rule @name on rule set @set', array('@name' => $element['#label'], '@set' => rules_get_events('labels', $element['#event']))));
 
-    rules_write_log($log, t('Executing the configuration @name on event @event', array('@name' => $element['#label'], '@event' => rules_get_events('labels', $element['#event']))));
-    //remember that we are processing this configuration to prevent recursion
-    rules_evaluated_configurations($element['#name']);
-    //let the the default evaluation (AND) apply to the configuration
-    rules_execute_and($element, $arguments, $log);
+    //let the the default evaluation (AND) apply to the rule
+    rules_execute_and($element, $state);
+    rules_log_evaluated_rule($element['#name'], FALSE);
   }
-  //return true, so that the next configurations are evaluated too
+  //return true, so that the next rules are evaluated too
   return TRUE;
 }
 
@@ -377,16 +365,15 @@ function rules_execute_configuration(&$element, &$arguments, &$log) {
  * Execution handler for the OR element
  * Evaluates to TRUE if at least one children evaluate to TRUE..
  */
-function rules_execute_or(&$elements, &$arguments, &$log) {
+function rules_execute_or(&$elements, &$state) {
   //first sort the children then process them
   _rules_sort_children($elements);
 
   foreach (element_children($elements) as $key) {
     _rules_element_defaults($elements[$key]);
-    //propagate the event name down the tree, then recurse
-    $elements[$key] += array('#event' => $elements['#event']);
-    $result = rules_evaluate_elements($elements[$key], $arguments, $log);
-    if ($result == TRUE) {
+
+    $result = rules_evaluate_elements($elements[$key], $state);
+    if ($result) {
       return TRUE;
     }
   }
@@ -397,17 +384,15 @@ function rules_execute_or(&$elements, &$arguments, &$log) {
  * Execution handler for the AND element
  * Evaluates to TRUE if all children evaluate to TRUE..
  */
-function rules_execute_and(&$elements, &$arguments, &$log) {
+function rules_execute_and(&$elements, &$state) {
   //first sort the children then process them
   _rules_sort_children($elements);
-  //process them
+
   foreach (element_children($elements) as $key) {
     _rules_element_defaults($elements[$key]);
-     //propagate the event name down the tree, then recurse
-    $elements[$key] += array('#event' => $elements['#event']);
-    $result = rules_evaluate_elements($elements[$key], $arguments, $log);
+
+    $result = rules_evaluate_elements($elements[$key], $state);
     if ($result === FALSE) {
-      //stop processing the children
       return FALSE;
     }
   }
@@ -418,41 +403,34 @@ function rules_execute_and(&$elements, &$arguments, &$log) {
  * Execution handler for actions
  *
  * @param $element The action's configuration element
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging
+ * @param $state The current evaluation state
  * @return TRUE to let rules proceed wit executing actions, only FALSE if $result['#halt'] is set.
  */
-function rules_execute_action($element, &$arguments, &$log) {
+function rules_execute_action($element, &$state) {
   if (isset($element['#name']) && function_exists($element['#name'])) {
 
-    $exec_args = rules_get_execution_arguments($element, $arguments, $log);
+    $exec_args = rules_get_execution_arguments($element, $state);
     if ($exec_args !== FALSE) {
       $result = call_user_func_array($element['#name'], $exec_args);
 
       //Add newly added arguments by the action
       if (isset($result['#new arguments']) && $result['#new arguments']) {
-        rules_add_new_arguments($element, $result['#new arguments'], $arguments, $log);
+        rules_add_new_arguments($element, $result['#new arguments'], $state);
       }
       //An action may return altered arguments, which will be saved automatically
       if (isset($result) && is_array($result)) {
         $reverse_map = array_flip($element['#argument map']);
 
         foreach (element_children($result) as $argument_name) {
-          $event_arg_name = isset($reverse_map[$argument_name]) ? $reverse_map[$argument_name] : $argument_name;
-          rules_set_argument_to_save($event_arg_name, $result[$argument_name], $arguments);
+          $set_arg_name = isset($reverse_map[$argument_name]) ? $reverse_map[$argument_name] : $argument_name;
+          rules_set_argument_to_be_saved($set_arg_name, $result[$argument_name], $state);
         }
       }
-      rules_write_log($log, t('Action execution: @name', array('@name' => rules_get_element_label($element))));
-
-      //this allows actions to act as conditions too
-      if (isset($result['#halt']) && $result['#halt']) {
-        rules_write_log($log, t('Action @name evaluated to @bool.', array('@name' => rules_get_element_label($element), '@bool' => 'FALSE')));
-        return FALSE;
-      }
+      rules_log($state, t('Action execution: @name', array('@name' => rules_get_element_label($element, $state))));
     }
     return TRUE;
   }
-  rules_missing_module($element);
+  rules_error_missing_implementation($element, $state);
 }
 
 /**
@@ -460,35 +438,39 @@ function rules_execute_action($element, &$arguments, &$log) {
  * Note: An condition may not alter arguments
  *
  * @param $element The condition's configuration element
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging
+ * @param $state The current evaluation state
  * @return The execution result of the condition, or if it is no valid condition FALSE.
  */
-function rules_execute_condition($element, &$arguments, &$log) {
+function rules_execute_condition($element, &$state) {
   if (isset($element['#name']) && function_exists($element['#name'])) {
 
-    $exec_args = rules_get_execution_arguments($element, $arguments, $log);
+    $exec_args = rules_get_execution_arguments($element, $state);
     if ($exec_args !== FALSE) {
       $result = call_user_func_array($element['#name'], $exec_args);
 
-      $element += rules_get_element_info($element);
-      rules_write_log($log, t('Condition @name evaluated to @bool.', array('@name' => rules_get_element_label($element), '@bool' => $result ? 'TRUE' : 'FALSE')));
+      rules_log($state, t('Condition @name evaluated to @bool.', array('@name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
       return $result;
     }
     return FALSE;
   }
-  rules_missing_module($element);
+  rules_error_missing_implementation($element, $state);
   return FALSE;
 }
 
 /**
  * Writes the message into the log
  */
-function rules_write_log(&$log, $message) {
-  if ($log !== FALSE && is_array($log)) {
-    list($usec, $sec) = explode(" ", microtime());
-    $log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message);
-  }
+function rules_log(&$state, $message, $error = FALSE) {
+  list($usec, $sec) = explode(" ", microtime());
+  $state['log'][] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => $error);
+}
+
+/**
+ * Writes to the log and marks the entry to be the first one of a just started set
+ */
+function _rules_log_set_invocation(&$state, $message, $start = TRUE) {
+  list($usec, $sec) = explode(" ", microtime());
+  $state['log'][] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);  
 }
 
 /**
@@ -496,15 +478,12 @@ function rules_write_log(&$log, $message) {
  * It applies the #argument map and gets all needed arguments.
  * 
  * @param $element The configured element, which is to be executed
- * @param $arguments An array of arguments in format as returned from _rules_process_arguments()
- * @param $log An array of log entries. Set it to FALSE to disable logging
+ * @param $state The current evaluation state
  * @return If not all execution arguments are available, it returns FALSE
  */
-function rules_get_execution_arguments(&$element, &$arguments, &$log) {
+function rules_get_execution_arguments(&$element, &$state) {
   $exec_args = array();
-  $args_error = FALSE;
-
-  $element_info = rules_get_element_info($element);
+  $element_info = rules_get_element_info($element, $state);
   //initialize unset arguments in the argument map with pairs: name => name
   //this allows ommitting such obvious mappings
   $reverse_map = array_flip($element['#argument map']) + drupal_map_assoc(array_keys($element_info['#arguments']));
@@ -512,27 +491,27 @@ function rules_get_execution_arguments(&$element, &$arguments, &$log) {
 
   //get the right execution arguments by applying the argument map of this element
   foreach ($element_info['#arguments'] as $argument_name => $info) {
-    $event_arg_name = $reverse_map[$argument_name];
-    $exec_args[$argument_name] = rules_element_get_argument($arguments, $event_arg_name, $log);
-    $args_error = !isset($exec_args[$argument_name]) || $args_error;
+    $set_arg_name = $reverse_map[$argument_name];
+    $exec_args[$argument_name] = rules_element_get_argument($set_arg_name, $state);
+    //abort if getting the argument failed
+    if (!isset($exec_args[$argument_name])) {
+      return FALSE;
+    }
   }
 
   //we always append some other useful variables
   $settings = isset($element['#settings']) ? $element['#settings'] : array();
   $settings += array('#argument map' => $element['#argument map']);
   $exec_args[] = $settings;
-  $exec_args[] = &$arguments;
-  $exec_args[] = &$log;
-  return $args_error ? FALSE : $exec_args;
+  $exec_args[] = &$state;
+  return $exec_args;
 }
-
-
 
 /**
  * Implementation of hook_elements()
  * Defines default values for all available properties of rules's element types
  *
- * Note that the #process handlers are only used by the form API, but not by workflow-ng itself.
+ * Note that the #process handlers are only used by the form API, but not by the rules engine.
  */
 function rules_elements() {
   $types = array();
@@ -545,72 +524,63 @@ function rules_elements() {
 }
 
 /**
- * Processes the arguments of an event to an array in the style as it is required
- * for rules_evaluate_elements().
- *
- * The returned array format is like:
- * array(
- *   'info' => array('arg1_name' => array(..),.. )  //the argument definitions of all available arguments, as it's specified with the #argument property of an event
- *   'save' => array('arg1_name', ..), //an array of arguments that have to be saved
- *   'data' => array('arg1_name' => $arg1, 'arg2_name' => $arg2, ..), //an array of loaded arguments
- * );
+ * Processes the given arguments and writes them into the state
  *
  * Note that the order of the arguments will be kept, as it might be important for passing
  * the arguments to further argument loading handlers.
  *
- * @param $event The event info from the currently processed event
+ * @param $state The current evaluation state
  * @param $args The argument data passed with the event invocation
  */
-function _rules_process_arguments($event, $args) {
-  $argument_names = array_keys($event['#arguments']);
-  $arguments = array('save' => array(), 'data' => array(), 'info' => $event['#arguments']);
+function _rules_process_arguments(&$state, $args) {
+  $argument_names = array_keys($state['set_info']['arguments']);
+  $state['arguments'] = array('save' => array(), 'data' => array());
 
   if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && count($args[0]) > 0 && array_diff(array_keys($args[0]), $argument_names) === array()) {
     //the caller passed an array of arguments, so let's use that
-    $arguments['data'] = $args[0];
+    $state['arguments']['data'] = $args[0];
   }
   else {
     foreach ($args as $index => $argument) {
       if (isset($argument_names[$index])) {
-        $arguments['data'][$argument_names[$index]] = $argument;
+        $state['arguments']['data'][ $argument_names[$index] ] = $argument;
       }
     }
   }
-  return $arguments;
 }
 
 /**
  * Returns the needed argument, which is given by the argument name. This function will take care of loading
  * further needed arguments, as necessary.
  *
- * @param $arguments The existing arguments in the format as returned from _rules_process_arguments()
  * @param $argument_name The arguments's machine readable name
- * @param $log An array of log entries. Set it to FALSE to disable logging
+ * @param $state The current evaluation state
+ * @return The argument, or if not available NULL.
  */
-function rules_element_get_argument(&$arguments, $argument_name, &$log) {
+function rules_element_get_argument($argument_name, &$state) {
 
-  if (!isset($arguments['data'][$argument_name])) {
-    if ($arguments['info'][$argument_name]['#handler'] && function_exists($arguments['info'][$argument_name]['#handler'])) {
+  if (!isset($state['arguments']['data'][$argument_name])) {
+    if (($hanlder = $state['set_info']['arguments'][$argument_name]['#handler']) && function_exists($handler)) {
       //call the handler to get the runtime data
-      $arguments['data'][$argument_name] = call_user_func_array($arguments['info'][$argument_name]['#handler'], $arguments['data']);
-      rules_write_log($log, t('Successfully loaded argument @arg', array('@arg' => $arguments['info'][$argument_name]['#label'])));
+      $state['arguments']['data'][$argument_name] = call_user_func_array($hanlder, $state['arguments']['data']);
+      rules_log($state, t('Successfully loaded argument @arg', array('@arg' => $state['set_info']['arguments'][$argument_name]['#label'])));
     }
   }
-  return $arguments['data'][$argument_name];
+  return $state['arguments']['data'][$argument_name];
 }
 
 /**
- * Adds the new arguments to $arguments
+ * Adds the new arguments to the evaluation state
  */
-function rules_add_new_arguments($element, $new_arguments, &$arguments, &$log) {
-  foreach ($element['#new arguments'] as $event_name => $argument_info) {
-    $map[$argument_info['#default_name']] = $event_name;
+function rules_add_new_arguments($element, $new_arguments, &$state) {
+  foreach ($element['#new arguments'] as $set_name => $argument_info) {
+    $map[$argument_info['#default_name']] = $set_name;
   }
   foreach ($new_arguments as $name => $data) {
-    $event_name = $map[$name];
-    $arguments['data'][$event_name] = &$new_arguments[$name];
-    $arguments['info'][$event_name] = $element['#new arguments'][$event_name];
-    rules_write_log($log, t('Successfully added the new argument @arg', array('@arg' => $arguments['info'][$event_name]['#label'])));
+    $set_name = $map[$name];
+    $state['arguments']['data'][$set_name] = &$new_arguments[$name];
+    $state['set_info']['arguments'][$set_name] = $element['#new arguments'][$set_name];
+    rules_log($log, t('Successfully added the new argument @arg', array('@arg' => $state['set_info']['arguments'][$set_name]['#label'])));
   }
 }
 
@@ -618,22 +588,13 @@ function rules_add_new_arguments($element, $new_arguments, &$arguments, &$log) {
  * Gets the element info of an element (actions, conditions,..)
  * Note that the element defaults will be applied before, if not yet done.
  */
-function rules_get_element_info(&$element) {
+function rules_get_element_info(&$element, &$state) {
   _rules_element_defaults($element);
   if ($element['#info'] && $element['#name']) {
-    $info = rules_gather_data($element['#type']. '_info', FALSE, 'all', $element['#name']);
-    if (isset($info)) {
-      //apply the element info defaults
-      $info['#type'] = $element['#type']. '_info';
-      _rules_element_defaults($info);
-
-      if (array_key_exists('#description', $element) && isset($info['#description'])) {
-        unset($element['#description']); //Make sure the description is applied
-      }
+    if ($info = rules_gather_data($element['#type']. '_info', $element['#name'])) {
       return $info;
     }
-    rules_missing_module($element);
-    return array();
+    rules_error_missing_implementation($element, $state);
   }
   return array();
 }
@@ -641,10 +602,10 @@ function rules_get_element_info(&$element) {
 /**
  * Gets the element's label
  */
-function rules_get_element_label($element) {
+function rules_get_element_label($element, &$state) {
   if (!isset($element['#label'])) {
     //apply the default from hook_element_type_info
-    $element += rules_get_element_info($element);
+    $element += rules_get_element_info($element, $state);
   }
   return $element['#label'];
 }
@@ -706,36 +667,88 @@ function rules_use_element($type, $params = array()) {
 /**
  * Shows the log if it's active
  */
-function rules_show_log($log) {
-  if (is_array($log) && count($log)) {
-    $start = $log[0]['time'];
-    $output = array();
-    foreach ($log as $data) {
-      $diff = ($data['time']['sec'] - $start['sec'])*1000000 + $data['time']['usec'] - $start['usec'];
-      $formatted_diff = round($diff * 1000, 3). ' ms';
-      $output[] = $formatted_diff . ' '. $data['msg'];
+function rules_show_log($state) {
+  if (is_array($state['log']) && count($state['log'])) {
+    $i = 0;
+    $error = FALSE;
+    $msg = _rules_show_log($i, $state['log'], $error);
+
+    if ($error) {
+      rules_handle_error_msg(t('An error occured during rule evaluation. This is the evaluation log:') .' '. $msg, NULL);
     }
-    drupal_set_message(implode('<br />', $output));
+    else {
+      drupal_set_message($msg);
+    }
+  }
+}
+
+function _rules_show_log(&$i, $data, &$error) {
+  $start = &$data[0]['time'];
+  $output = array();
+  while ($i < count($data)) {
+    
+    $diff = ($data[$i]['time']['sec'] - $start['sec'])*1000000 + $data[$i]['time']['usec'] - $start['usec'];
+    $formatted_diff = round($diff * 1000, 3). ' ms';
+    $msg = $formatted_diff . ' '. $data[$i]['msg'];
+
+    if ($data[$i]['error']) {
+      $error = TRUE;
+      $msg = '<strong>'. $msg .'</strong>';
+    }
+
+    $output[] = $msg;
+
+    if (isset($data[$i]['start']) && !$data[$i]['start']) {
+      //this was the last log entry of this set
+      return theme('item_list', $output);
+    }
+    $i++;
+    if (isset($data[$i]['start']) && $data[$i]['start']) {
+      //the next entry stems from another evaluated set, add in its log messages here
+      $output[] = _rules_show_log($i, $data, $error);
+    }
+  }
+  return theme('item_list', $output);
+}
+
+/**
+ * Remembers the currently evaluated rules. With this information, recursion is prevented
+ *
+ * @param $name The name of the rule, which execution should be logged
+ * @param $start Whether evaluation just started or finished
+ */
+function rules_log_evaluated_rule($name, $start) {
+  global $rules_exec_log;
+
+  if (!isset($rules_exec_log)) {
+    $rules_exec_log = array();
+  }
+  if ($start) {
+    $rules_exec_log[$name] = $name;
+  }
+  else {
+    unset($rules_exec_log[$name]);
   }
 }
 
 /**
- * Remembers the currently evaluated configurations. With this information, recursion is prevented
+ * Checks whether the given rule is currently evaluated.
  *
- * @param $add_name If set to FALSE, all already processed configurations will be returned
- *   Otherwise, the passed configuration name will be stored for further lookups.
- * @param $reset Clears the saved configurations if set.
+ * @param $name The name of the rule, which execution should be logged
  */
-function rules_evaluated_configurations($add_name = FALSE, $reset = FALSE) {
-  static $memory = array();
+function rules_log_rule_is_evaluated($name) {
+  global $rules_exec_log;
 
-  if ($reset) {
-    $memory = array();
-  }
-  if ($add_name !== FALSE) {
-    $memory[$add_name] = $add_name;
-  }
-  return $memory;
+  return is_array($rules_exec_log) && in_array($name, $rules_exec_log);
+}
+
+/**
+ * Checks whether every rule evaluation is finished
+ */
+function rules_log_evaluation_finished() {
+  global $rules_exec_log;
+
+  return !is_array($rules_exec_log) || count($rules_exec_log) == 0;
 }
 
 
@@ -790,41 +803,31 @@ function rules_rules_item_info() {
   );
 }
 
-
 /**
  * Shows an error message, that a module is missing.
  *
- * @param $element The element, for which the module is missing
- * @param $configuration_name The name of the configuration of the element
+ * @param $element The element, for which the implementation is missing
  */
-function rules_missing_module($element, $configuration_name = NULL) {
-  static $history = array();
-
-  if (isset($history[$element['#name']])) {
-    //error already generated
-    return;
-  }
-  $history[$element['#name']] = TRUE;
-
+function rules_error_missing_implementation($element, &$state) {
   if (isset($element['#label']) && $element['#label']) {
-    $msg = t('Unable to find %type of name %name with the label %label. Perhaps the according modules has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name'], '%label' => $element['#label']));
+    $msg = t('Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name'], '%label' => $element['#label']));
   }
   else {
-    $msg = t('Unable to find %type of name %name. Perhaps the according modules has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name']));
+    $msg = t('Unable to find %type of name %name. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name']));
   }
-  rules_handle_error_msg($msg, $configuration_name);
+  rules_log($state, $msg, TRUE);
 }
 
 /**
- * Handles a error message. If the user has permission to administer workflow,
+ * Handles a error message. If the user has permission to administer the rules engine,
  * show him the error. Otherwise just log it.
  */
-function rules_handle_error_msg($message, $configuration_name = NULL) {
-  if (user_access('administer workflow-ng')) {
-    drupal_set_message($message, 'error');
+function rules_handle_error_msg($message, $variables, $rule_name = NULL) {
+  if (user_access('administer rules')) {
+    drupal_set_message(t($message, $variables), 'error');
   }
-  $link = (module_exists('rules_ui') && isset($configuration_name)) ? l(t('Show configuration'), PATH .'/'. $configuration_name) : NULL;
-  watchdog('workflow-ng', $message, WATCHDOG_ERROR, $link);
+  $link = (isset($rule_name)) ? l(t('Show rule configuration'), PATH .'/'. $rule_name) : NULL;
+  watchdog('rules', $message, $variables, WATCHDOG_ERROR, $link);
 }
 
 /**
@@ -844,34 +847,39 @@ function rules_is_valid_entity($entity_type, $info) {
 }
 
 /**
- * Marks the given argument to be saved after configuration evaluation
+ * Marks the given argument to be saved after evaluation and updates the data which is
+ * to be saved with $value
  */
-function rules_set_argument_to_save($argument_name, $value, &$arguments) {
-  //update the arguments for all following elements mark them for being saved later
-  if (isset($argument_name) && isset($arguments['data'][$argument_name])) {
-    $arguments['data'][$argument_name] = $value;
-    $arguments['save'][$argument_name] = $argument_name;
+function rules_set_argument_to_be_saved($argument_name, $value, &$state) {
+  if (isset($argument_name) && isset($state['arguments']['data'][$argument_name])) {
+    $state['arguments']['data'][$argument_name] = $value;
+    $state['arguments']['save'][$argument_name] = $argument_name;
   }
 }
 
 /**
  * Saves a modified argument
- * @param $info The argument info as specified through hook_event_info()
+ * 
+ * @param $state The current evaluation state
  * @param $argument_name The name of the argument to save
- * @param $value The new value of the argument
  */
-function rules_save_argument($info, $argument_name, $value, &$log) {
+function rules_save_argument($state, $argument_name) {
+  $info = $state['set_info']['arguments'][$argument_name];
+  $value = $state['arguments']['data'][$argument_name];
+  
   if (isset($info['#saved']) && $info['#saved']) {
     //the argument is saved automatically, so we need to do nothing
     return;
   }
+
+  //TODO: overhaul
   $entity_info = rules_gather_data('entity_info', FALSE);
   if (isset($entity_info[$info['#entity']]['#save']) && function_exists($entity_info[$info['#entity']]['#save'])) {
     $entity_info[$info['#entity']]['#save']($value);
-    rules_write_log($log, t('Updated entity @name of type @type.', array('@name' => $info['#label'], '@type' => $info['#entity'])));
+    rules_log($state, t('Updated entity @name of type @type.', array('@name' => $info['#label'], '@type' => $info['#entity'])));
   }
   else {
-    rules_write_log($log, t('Entity @value has not been saved.', array('@value' => $info['#entity'])));
+    rules_log($state, t('Entity @value has not been saved.', array('@value' => $info['#entity'])));
   }
 }
 
