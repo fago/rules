@@ -113,7 +113,7 @@ function rules_add_new_arguments($element, $new_arguments, &$state) {
     $argument = new rules_argument;
     if ($argument->construct($state, $map[$name], &$new_arguments[$name], $info)) {
       $state['arguments'][ $map[$name] ] = $argument;
-      rules_log($log, t('Successfully added the new argument @arg', array('@arg' => $info['label'])));
+      rules_log(t('Successfully added the new argument @arg', array('@arg' => $info['label'])));
     }
   }
 }
@@ -171,7 +171,7 @@ class rules_argument {
       $this->_set_entity( call_user_func_array($this->info['handler'], $args) );
 
       $this->info['handler'] = ''; //do not invoke it twice, if it fails
-      rules_log($state, t('Loaded argument @arg', array('@arg' => $this->info['label'])));
+      rules_log(t('Loaded argument @arg', array('@arg' => $this->info['label'])));
     }
     if (isset($this->entity)) {
       $data = &$this->entity->get();
@@ -185,7 +185,7 @@ class rules_argument {
       $class = class_exists($class) ? $class : 'rules_entity';
 
       $this->entity = new $class;
-      $this->entity->construct($this->_state, $data);
+      $this->entity->construct($data);
     }
   }
 
@@ -212,10 +212,10 @@ class rules_argument {
       $return = $this->entity->save();
 
       if ($return) {
-        rules_log($this->_state, t('Saved entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
+        rules_log(t('Saved entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
       }
       else if ($return === FALSE) {
-        rules_log($this->_state, t('Failed saving entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
+        rules_log(t('Failed saving entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
       }
       //else saving is not supported
     }
@@ -230,16 +230,13 @@ class rules_argument {
  */
 class rules_entity {
 
-  var $_state;
   var $_data;
 
   /**
    * Constructor
-   * @param $state The current evaluation state
    * @param $data If available, the actual argument.
    */
-  function construct(&$state, &$data) {
-    $this->_state = &$state;
+  function construct(&$data) {
     $this->_data = &$data;
   }
   

@@ -227,7 +227,7 @@ function rules_invoke_rule_set() {
   if ($set = rules_get_rule_set($set_name)) {
     $state = array('set_info' => $set['info'], 'arguments' => array(), 'log' => array());
 
-    _rules_log_set_invocation($state, t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
+    _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
 
     _rules_initialize_arguments($state, $args);
     rules_evaluate_elements($set['rules'], $state);
@@ -237,11 +237,11 @@ function rules_invoke_rule_set() {
       $argument->save_changes();
     }
 
-    _rules_log_set_invocation($state, t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
+    _rules_log_set_invocation(t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
 
     //only show the log, if this is no nested evaluation
     if (rules_log_evaluation_finished()) {
-      rules_show_log($state);
+      rules_show_log();
     }
   }
 }
@@ -341,10 +341,13 @@ function rules_execute_element(&$element, &$state) {
  * Execution handler for rules
  */
 function rules_execute_rule(&$element, &$state) {
-  if ($element['#active'] && ($element['#recursion'] == TRUE || !rules_log_rule_is_evaluated($element['#name']))) {
+  if ($element['#active'] && !$element['#recursion'] && rules_log_rule_is_evaluated($element['#name'])) {
+    rules_log(t('Not executing the rule %name on rule set %set to prevent recursion.', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
+  }
+  else if ($element['#active']) {
     //remember that we are processing this rule to prevent recursion
     rules_log_evaluated_rule($element['#name'], TRUE);
-    rules_log($state, t('Executing the rule %name on rule set %set', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
+    rules_log(t('Executing the rule %name on rule set %set', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
 
     //let the the default evaluation (AND) apply to the rule
     rules_execute_and($element, $state);
@@ -422,7 +425,7 @@ function rules_execute_action($element, &$state) {
           }
         }
       }
-      rules_log($state, t('Action execution: @name', array('@name' => rules_get_element_label($element, $state))));
+      rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element, $state))));
     }
     return TRUE;
   }
@@ -444,7 +447,7 @@ function rules_execute_condition($element, &$state) {
     if ($exec_args !== FALSE) {
       $result = call_user_func_array($element['#name'], $exec_args);
 
-      rules_log($state, t('Condition @name evaluated to @bool.', array('@name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
+      rules_log(t('Condition @name evaluated to @bool.', array('@name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
       return $result;
     }
     return FALSE;
@@ -456,17 +459,25 @@ function rules_execute_condition($element, &$state) {
 /**
  * Writes the message into the log
  */
-function rules_log(&$state, $message, $error = FALSE) {
+function rules_log($message, $error = FALSE) {
+  global $_rules_log;
+
   list($usec, $sec) = explode(" ", microtime());
-  $state['log'][] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => $error);
+  $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => $error);
 }
 
 /**
  * Writes to the log and marks the entry to be the first one of a just started set
  */
-function _rules_log_set_invocation(&$state, $message, $start = TRUE) {
+function _rules_log_set_invocation($message, $start = TRUE) {
+  global $_rules_log;
+  
+  if (!isset($_rules_log)) {
+    $_rules_log = array();
+  }
+
   list($usec, $sec) = explode(" ", microtime());
-  $state['log'][] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);  
+  $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);  
 }
 
 
@@ -567,13 +578,16 @@ function rules_use_element($type, $params = array()) {
 }
 
 /**
- * Shows the log if it's active
+ * Shows the log and clears it afterwards
  */
-function rules_show_log($state) {
-  if (is_array($state['log']) && count($state['log'])) {
+function rules_show_log() {
+  global $_rules_log;
+
+  if (is_array($_rules_log) && count($_rules_log)) {
     $i = 0;
     $error = FALSE;
-    $msg = _rules_show_log($i, $state['log'], $error);
+    $msg = _rules_show_log($i, $_rules_log, $error);
+    $_rules_log = NULL;
 
     if ($error) {
       rules_handle_error_msg(t('An error occured during rule evaluation. This is the evaluation log:') .' '. $msg, NULL);
@@ -602,6 +616,7 @@ function _rules_show_log(&$i, $data, &$error) {
 
     if (isset($data[$i]['start']) && !$data[$i]['start']) {
       //this was the last log entry of this set
+      $i++;
       return theme('item_list', $output);
     }
     $i++;
@@ -620,16 +635,16 @@ function _rules_show_log(&$i, $data, &$error) {
  * @param $start Whether evaluation just started or finished
  */
 function rules_log_evaluated_rule($name, $start) {
-  global $rules_exec_log;
+  global $_rules_exec_log;
 
-  if (!isset($rules_exec_log)) {
-    $rules_exec_log = array();
+  if (!isset($_rules_exec_log)) {
+    $_rules_exec_log = array();
   }
   if ($start) {
-    $rules_exec_log[$name] = $name;
+    $_rules_exec_log[$name] = $name;
   }
   else {
-    unset($rules_exec_log[$name]);
+    unset($_rules_exec_log[$name]);
   }
 }
 
@@ -639,18 +654,18 @@ function rules_log_evaluated_rule($name, $start) {
  * @param $name The name of the rule, which execution should be logged
  */
 function rules_log_rule_is_evaluated($name) {
-  global $rules_exec_log;
+  global $_rules_exec_log;
 
-  return is_array($rules_exec_log) && in_array($name, $rules_exec_log);
+  return is_array($_rules_exec_log) && in_array($name, $_rules_exec_log);
 }
 
 /**
  * Checks whether every rule evaluation is finished
  */
 function rules_log_evaluation_finished() {
-  global $rules_exec_log;
+  global $_rules_exec_log;
 
-  return !is_array($rules_exec_log) || count($rules_exec_log) == 0;
+  return !is_array($_rules_exec_log) || count($_rules_exec_log) == 0;
 }
 
 
@@ -716,7 +731,7 @@ function rules_error_missing_implementation($element, &$state) {
   else {
     $msg = t('Unable to find %type of name %name. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name']));
   }
-  rules_log($state, $msg, TRUE);
+  rules_log($msg, TRUE);
 }
 
 /**
@@ -812,7 +827,7 @@ function _rules_include_rules_defaults() {
     foreach (module_list() as $module) {
 	    $module_path = drupal_get_path('module', $module);
 	    if (file_exists("$module_path/$module.rules_defaults.inc")) {
-	      require_once "./$module_path/$module.rule_defaults.inc";
+	      require_once "./$module_path/$module.rules_defaults.inc";
 	    }
 	  }
     $included = TRUE;
