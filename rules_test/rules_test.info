@@ -1,0 +1,6 @@
+; $Id$
+name = Rules engine Tests
+description = Tests the functionality of the rule engine
+package = Rules
+dependencies[] = simpletest
+core = 6.x

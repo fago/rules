@@ -1,0 +1,57 @@
+<?php
+// $Id$
+
+class RulesTestCase extends DrupalTestCase {
+  function get_info() {
+    return array(
+      'name' => t('Rules engine API tests'),
+      'desc' => t('Tests the rules engine API to work correctly.'),
+      'group' => t('Rules engine tests'),
+    );
+  }
+  
+  function setUp() {
+    parent::setUp();
+    rules_test_keep_rules_log();
+  }
+  function tearDown() {
+    parent::tearDown();
+    rules_test_done();
+  }
+  
+  //Test changing an argument when taken by reference and verify that the changes are kept
+  function test_1() {
+    $argument = array('property_xy' => TRUE);
+    rules_invoke_rule_set('rules_test_1', $argument);
+    $error = FALSE;
+    $log = rules_test_show_log($error);
+
+    $this->assertFalse($error);
+    $this->assertWantedPattern('/Rules Test 1 - Success/', $log);
+  }
+
+  //Test changing an argument by action and verify that the changes are kept for later rules
+  function test_2() {
+    $argument = array('property_xy' => TRUE);
+    rules_invoke_rule_set('rules_test_2', $argument);
+    $error = FALSE;
+    $log = rules_test_show_log($error);
+
+    $this->assertFalse($error);
+    $this->assertWantedPattern('/Rules Test 2 - Success/', $log);
+  }
+  
+  //Test passing arguments by reference to a set
+  //TODO: fix!
+  function test_3() {
+    $argument = array('property_xy' => TRUE);
+    rules_invoke_rule_set('rules_test_2', array('rules_test' => &$argument));
+    $error = FALSE;
+    $log = rules_test_show_log($error);
+
+    $this->assertFalse($error);
+    $this->assertTrue(isset($argument['altered']) && $argument['altered']);
+    $this->assertWantedPattern('/Rules Test 2 - Success/', $log);
+  }
+
+}
