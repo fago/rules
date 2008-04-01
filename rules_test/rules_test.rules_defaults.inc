@@ -60,6 +60,25 @@ function rules_test_rules_defaults() {
     )
   ));
   $rules['rules_test_2_2'] = rules_configure($rules['rules_test_2_2'], $condition, $action);
+  
+  
+  $rules['rules_test_4_1'] = array(
+    '#type' => 'rule',
+    '#name' => 'rules_test_4_1',
+    '#label' => t('Test changing arguments per action'),
+    '#set' => 'rules_test_4',
+    '#active' => TRUE,
+  );
+  $condition = rules_use_condition('rules_condition_check_for_altered_arg', array(
+    '#argument map' => array('rules_test_2' => 'rules_test'),
+  ));
+  $action = rules_use_action('rules_log_msg', array(
+    '#settings' => array(
+      'msg' => 'Rules Test 4 - Success!',
+    )
+  ));
+  $rules['rules_test_4_1'] = rules_configure($rules['rules_test_4_1'], $condition, $action);
+  
 
   return array(
     'rules' => $rules,
@@ -71,6 +90,13 @@ function rules_test_rules_defaults() {
       'rules_test_2' => array(
         'label' => 'Rule Testing 2',
         'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'node')),
+       ),
+      'rules_test_4' => array(
+        'label' => 'Rule Testing 4',
+        'arguments' => array(
+          'rules_test_1' => array('entity' => 'rules_test', 'label' => 'node'),
+          'rules_test_2' => array('entity' => 'rules_test', 'label' => 'node', 'handler' => 'rules_test_4_load_entity'),
+         ),
        ),
     ),
   );
