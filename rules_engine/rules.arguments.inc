@@ -23,13 +23,14 @@ function _rules_initialize_arguments(&$state, $args) {
   }
   else {
     foreach ($args as $index => $arg) {
-      $data[ $argument_names[$index] ] = $arg;
+      $data[ $argument_names[$index] ] = &$args[$index];
     }
   }
   $state['arguments'] = array();
   foreach ($state['set_info']['arguments'] as $name => $info) {
     $argument = new rules_argument;
-    if ($argument->construct($state, $name, isset($data[$name]) ? $data[$name] : NULL)) {
+    $data += array($name => NULL);
+    if ($argument->construct($state, $name, $data[$name])) {
       $state['arguments'][$name] = $argument;
     }
   }
@@ -89,8 +90,9 @@ function rules_get_mapped_argument_names($element, &$state) {
 function rules_get_execution_arguments($element, &$state) {
   //first off map the names to the argument names of the evaluated set
   $names = rules_get_mapped_argument_names($element, $state);
+  $exec_args = rules_get_arguments($names, $state);
 
-  if ($exec_args = rules_get_arguments($names, $state)) {
+  if ($exec_args !== FALSE) {
     //we always append some other useful variables
     $settings = isset($element['#settings']) ? $element['#settings'] : array();
     $settings += array('#argument map' => $element['#argument map']);
@@ -98,6 +100,7 @@ function rules_get_execution_arguments($element, &$state) {
     $exec_args[] = &$state;
     return $exec_args;
   }
+  rules_log(t('Element %name has not been executed. There are not all execution arguments available.', array('%name' => rules_get_element_label($element, $state))));
   return FALSE;
 }
 
@@ -111,7 +114,7 @@ function rules_add_new_arguments($element, $new_arguments, &$state) {
   foreach ($new_arguments as $name => $data) {
     $info = $element['#new arguments'][$set_name];
     $argument = new rules_argument;
-    if ($argument->construct($state, $map[$name], &$new_arguments[$name], $info)) {
+    if ($argument->construct($state, $map[$name], $new_arguments[$name], $info)) {
       $state['arguments'][ $map[$name] ] = $argument;
       rules_log(t('Successfully added the new argument @arg', array('@arg' => $info['label'])));
     }
@@ -138,17 +141,17 @@ class rules_argument {
    * Constructor
    * @param $state The current evaluation state
    * @param $name The name of the given argument
-   * @param $data If available, the actual argument.
+   * @param $data If available, the actual argument, else NULL.
    * @param $info If given, the info for the argument. If not given it will be retrieved
    *   from the current's set info.
    * @return If the argument name isn't valid, FALSE.
    */
-  function construct(&$state, $name, $data = NULL, $info = NULL) {
-    $_state = &$state;
+  function construct(&$state, $name, &$data, $info = NULL) {
+    $this->_state = &$state;
     $info = isset($info)? $info : $state['set_info']['arguments'][$name];
 
     if (isset($info)) {
-      $this->info = array('saved' => FALSE, 'handler' => '') + $info;
+      $this->info = $info + array('saved' => FALSE, 'handler' => '');
       $this->name = $name;
       $this->_set_entity($data);
       return TRUE;
@@ -167,19 +170,20 @@ class rules_argument {
 
     if ($load && !isset($this->entity) && function_exists($this->info['handler'])) {
       //call the handler to get the runtime data
-      $args = rules_get_arguments(array_keys($state['arguments']), $this->_state, FALSE);
-      $this->_set_entity( call_user_func_array($this->info['handler'], $args) );
+      $args = rules_get_arguments(array_keys($this->_state['arguments']), $this->_state, FALSE);
+      $data = call_user_func_array($this->info['handler'], $args);
+      $this->_set_entity($data);
 
       $this->info['handler'] = ''; //do not invoke it twice, if it fails
       rules_log(t('Loaded argument @arg', array('@arg' => $this->info['label'])));
     }
-    if (isset($this->entity)) {
+    else if (isset($this->entity)) {
       $data = &$this->entity->get();
     }
     return $data;
   }
 
-  function _set_entity($data = NULL) {
+  function _set_entity(&$data) {
     if (isset($data)) {
       $class = 'rules_entity_'. $this->info['entity'];
       $class = class_exists($class) ? $class : 'rules_entity';

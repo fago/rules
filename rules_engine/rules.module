@@ -225,7 +225,7 @@ function rules_invoke_rule_set() {
   $set_name = array_shift($args);
 
   if ($set = rules_get_rule_set($set_name)) {
-    $state = array('set_info' => $set['info'], 'arguments' => array(), 'log' => array());
+    $state = array('set_info' => $set['info']);
 
     _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
 
@@ -429,7 +429,7 @@ function rules_execute_action($element, &$state) {
     }
     return TRUE;
   }
-  rules_error_missing_implementation($element, $state);
+  rules_error_missing_implementation($element);
 }
 
 /**
@@ -447,12 +447,12 @@ function rules_execute_condition($element, &$state) {
     if ($exec_args !== FALSE) {
       $result = call_user_func_array($element['#name'], $exec_args);
 
-      rules_log(t('Condition @name evaluated to @bool.', array('@name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
+      rules_log(t('Condition %name evaluated to @bool.', array('%name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
       return $result;
     }
     return FALSE;
   }
-  rules_error_missing_implementation($element, $state);
+  rules_error_missing_implementation($element);
   return FALSE;
 }
 
@@ -501,13 +501,13 @@ function rules_elements() {
  * Gets the element info of an element (actions, conditions,..)
  * Note that the element defaults will be applied before, if not yet done.
  */
-function rules_get_element_info(&$element, &$state) {
+function rules_get_element_info(&$element) {
   _rules_element_defaults($element);
   if ($element['#info'] && $element['#name']) {
     if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
       return $info + array('arguments' => array(), 'fixed' => FALSE);
     }
-    rules_error_missing_implementation($element, $state);
+    rules_error_missing_implementation($element);
   }
   return array();
 }
@@ -517,7 +517,7 @@ function rules_get_element_info(&$element, &$state) {
  */
 function rules_get_element_label($element, &$state) {
   if (!isset($element['#label'])) {
-    $info = rules_get_element_info($element, $state);
+    $info = rules_get_element_info($element);
     return $info['label'];
   }
   return $element['#label'];
@@ -724,7 +724,7 @@ function rules_rules_item_info() {
  *
  * @param $element The element, for which the implementation is missing
  */
-function rules_error_missing_implementation($element, &$state) {
+function rules_error_missing_implementation($element) {
   if (isset($element['#label']) && $element['#label']) {
     $msg = t('Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name'], '%label' => $element['#label']));
   }
@@ -809,7 +809,7 @@ if (!function_exists('array_intersect_key')) {
 
 /**
  * Implementation of hook_form_alter()
- * Clear workflow-ng's cache when a module is deactivated
+ * Clear the cache when a module is deactivated
  */
 function rules_form_alter($form_id, $form) {
   if ($form_id == 'system_modules') {
