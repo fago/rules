@@ -6,6 +6,8 @@
 
 /** 
  * Implementation of hook_event_info()
+ * 
+ * @ingroup rules
  */
 function node_rules_event_info() {
   return array(
@@ -55,6 +57,7 @@ function node_rules_event_info() {
 
 /**
  * Returns some arguments suitable for using it with a node
+ * @ingroup rules
  */
 function rules_events_node_arguments($node_label, $author_label) {
   return array(
@@ -65,6 +68,7 @@ function rules_events_node_arguments($node_label, $author_label) {
 
 /**
  * Implementation of hook_nodeapi
+ * @ingroup rules
  */
 function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
@@ -77,6 +81,7 @@ function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
 /**
  * Gets the author's account of a node
+ * @ingroup rules
  */
 function rules_events_argument_node_author($node) {
   return user_load(array('uid' => $node->uid));
@@ -84,6 +89,7 @@ function rules_events_argument_node_author($node) {
 
 /**
  * Gets the node object, that doesn't contain the modified changes
+ * @ingroup rules
  */
 function rules_events_argument_node_unchanged($node) {
   return $node->nid ? node_load($node->nid) : $node;
@@ -91,6 +97,7 @@ function rules_events_argument_node_unchanged($node) {
 
 /**
  * Gets the author of the unchanged node object
+ * @ingroup rules
  */
 function rules_events_argument_unchanged_node_author($node) {
   return rules_events_argument_node_author(rules_events_argument_node_unchanged($node));
@@ -101,7 +108,8 @@ function rules_events_argument_unchanged_node_author($node) {
 
 
 /**
- * Implementation of hook_condition_info()
+ * Implementation of hook_rules_condition_info()
+ * @ingroup rules
  */
 function node_rules_condition_info() {
   return array(
@@ -118,6 +126,7 @@ function node_rules_condition_info() {
 
 /**
  * Condition: Check for selected content types
+ * @ingroup rules
  */
 function rules_condition_content_is_type($node, $settings) {
   return in_array($node->type, $settings['type']);
@@ -125,6 +134,7 @@ function rules_condition_content_is_type($node, $settings) {
 
 /**
  * Implementation of hook_rules_action_info
+ * @ingroup rules
  */
 function node_rules_action_info() {
   return array(
@@ -173,6 +183,7 @@ function node_rules_action_info() {
 
 /**
  * Modifies a node as configured
+ * @ingroup rules
  */
 function rules_action_node_set_author($node, $author) {
   $node->uid = $author->uid;
@@ -182,8 +193,9 @@ function rules_action_node_set_author($node, $author) {
 
 /**
  * Sets a node's Published flag
+ * @ingroup rules
  */
-function rules_action_node_publish($node, $settings, &$arguments, &$log) {
+function rules_action_node_publish($node, $settings) {
   if ($node->status != $settings['published']) {
     $node->status = $settings['published'];
     return array('node' => $node);
@@ -192,8 +204,9 @@ function rules_action_node_publish($node, $settings, &$arguments, &$log) {
 
 /**
  * Sets a node's Promoted flag
+ * @ingroup rules
  */
-function rules_action_node_promote($node, $settings, &$arguments, &$log) {
+function rules_action_node_promote($node, $settings) {
   if ($node->promote != $settings['promote']) {
     $node->promote = $settings['promote'];
     
@@ -202,8 +215,9 @@ function rules_action_node_promote($node, $settings, &$arguments, &$log) {
 
 /**
  * Action "Add a node"
+ * @ingroup rules
  */
-function rules_action_add_node($author, $settings, &$arguments, &$log) {
+function rules_action_add_node($author, $settings) {
   //check if WF-ng should check for access rights of the acting user on node creation.
   //TODO: In Drupal6, node_access($op, $node, $account = NULL), thus will allow checking also content author
   if (!$settings['node_access'] || node_access('create', $settings['type'])) {
@@ -218,6 +232,7 @@ function rules_action_add_node($author, $settings, &$arguments, &$log) {
   	$node->name = $author->name;
   	$node->uid = $author->uid;
   	$node->type = $settings['type'];
+  	//TODO: fix token
   	$node->title = rules_token_replace($settings['title'], $settings['title_args'], $arguments, $log);
     return array('new arguments' => array('node_added' => $node), 'node_added' => $node);
   }
@@ -225,9 +240,57 @@ function rules_action_add_node($author, $settings, &$arguments, &$log) {
 
 /**
  * Loads a node
+ * @ingroup rules
  */
-function rules_action_load_node($settings, &$arguments, &$log) {
+function rules_action_load_node($settings) {
   extract( rules_token_replace_all(array('nid', 'vid'), $settings, $arguments, $log) );
-
+//TODO: fix token
   return array('new arguments' => array('node_loaded' => node_load($nid, $vid ? $vid : NULL)));
 }
+
+
+/**
+ * Defines the node entity
+ * @ingroup rules
+ */
+class rules_entity_node extends rules_entity {
+  
+  /**
+   * Defines the capabilites of the entity.
+   * If php4 would support interfaces, this would be interfaces.
+   */
+  function get_info() {
+    return array(
+      'saveable' => TRUE,
+      'identifiable' => TRUE,
+    );
+  }
+
+  /**
+   * Makes changes to the entity permanent.
+   * Implement it, if your entity is saveable.
+   */
+  function save() {
+    $node = &$this->get();
+    node_save($node);
+    return TRUE;
+  }
+
+  /**
+   * Loads the entity identified with an identifier as returned by get_identifier()
+   * Implement it, if your entity is identifiable.
+   */
+  function load($nid) {
+    return node_load($nid);
+  }
+
+  /**
+   * Gets the identifier of this entity, can be of every data type - even an array.
+   * Implement it, if your entity is identifiable.
+   */
+  function get_identifier() {
+    $node = &$this->get();
+    return $node->nid;
+  }
+}
+

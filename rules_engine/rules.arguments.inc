@@ -212,53 +212,16 @@ class rules_argument {
    */
   function save_changes() {
     //if the argument is not saved automatically, save it
-    if ($this->_changed && !$this->info['saved']) {
+    if ($this->_changed && !$this->info['saved'] && $this->entity->is_saveable()) {
       $return = $this->entity->save();
 
       if ($return) {
         rules_log(t('Saved entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
       }
-      else if ($return === FALSE) {
+      else {
         rules_log(t('Failed saving entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
       }
-      //else saving is not supported
     }
   }
 
 }
-
-
-
-/**
- * Base entity class, from which special entites can be derived.
- */
-class rules_entity {
-
-  var $_data;
-
-  /**
-   * Constructor
-   * @param $data If available, the actual argument.
-   */
-  function construct(&$data) {
-    $this->_data = &$data;
-  }
-  
-  function update(&$data) {
-    $this->_data = &$data;
-  }
-  
-  function &get() {
-    return $this->_data;
-  }
-
-  function load() {
-  
-  }
-  
-  function save() {
-  
-  }
-
-}
-

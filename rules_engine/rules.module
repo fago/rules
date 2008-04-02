@@ -1,5 +1,13 @@
 <?php
 // $Id$
+
+/**
+ * @defgroup rules Rules engine: A rules engine for drupal.
+ * 
+ * Lets you define conditionally executed actions based on occurring events.
+ */
+
+
 /**
  * @file Rules engine module
  */
@@ -12,6 +20,8 @@ function rules_init() {
 	$path = drupal_get_path('module', 'rules') . '/modules';
 	$files = drupal_system_listing('rules\..*\.inc$', $path, 'name', 0);
 
+	require_once drupal_get_path('module', 'rules') . '/rules.entity.inc';
+
 	foreach ($files as $file) {
 	  // The filename format is very specific. It must be rules.MODULENAME.inc
 	  $module = substr_replace($file->name, '', 0, 6);
@@ -19,7 +29,6 @@ function rules_init() {
 	    require_once("./$file->filename");
 	  }
 	}
-	require_once drupal_get_path('module', 'rules') . '/rules.arguments.inc';
 }
 
 /**
@@ -228,6 +237,7 @@ function rules_invoke_rule_set() {
     $state = array('set_info' => $set['info']);
 
     _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
+    require_once drupal_get_path('module', 'rules') . '/rules.arguments.inc';
 
     _rules_initialize_arguments($state, $args);
     rules_evaluate_elements($set['rules'], $state);
