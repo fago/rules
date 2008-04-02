@@ -8,6 +8,7 @@
 function rules_test_rules_defaults() {
   $rules = array();
 
+  
   $rules['rules_test_1'] = array(
     '#type' => 'rule',
     '#name' => 'rules_test_1',
@@ -78,8 +79,32 @@ function rules_test_rules_defaults() {
     )
   ));
   $rules['rules_test_4_1'] = rules_configure($rules['rules_test_4_1'], $condition, $action);
-  
+ 
+  $rules['rules_test_5'] = array(
+    '#type' => 'rule',
+    '#name' => 'rules_test_5',
+    '#label' => t('Print the content title of pages and stories'),
+    '#set' => 'event_node_view',
+    '#active' => TRUE,
+  );
+  //configure a conditoin which evalutates if the node type is a page
+  $condition1 = rules_use_condition('rules_condition_content_is_type', array(
+    '#label' => t('Is page'),
+    '#settings' => array(
+       'type' => array('page'),
+    ),
+    '#argument map' => array('node' => 'node'),
+  ));
+  $action = rules_use_action('rules_action_node_publish', array(
+    '#settings' => array(
+      'published' => FALSE,
+    ),
+    '#argument map' => array('node' => 'node'),
+  ));
+  $rules['rules_test_5'] = rules_configure($rules['rules_test_5'], $condition1, $action);
 
+  
+  
   return array(
     'rules' => $rules,
     'rule_sets' => array(
