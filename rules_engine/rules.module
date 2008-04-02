@@ -6,8 +6,6 @@
  * 
  * Lets you define conditionally executed actions based on occurring events.
  */
-
-
 /**
  * @file Rules engine module
  */
@@ -16,21 +14,9 @@
  * Implementation of hook_init()
  */
 function rules_init() {
-	// Also load available integration for all activated modules
-	$path = drupal_get_path('module', 'rules') . '/modules';
-	$files = drupal_system_listing('rules\..*\.inc$', $path, 'name', 0);
-
-	require_once drupal_get_path('module', 'rules') . '/rules.entity.inc';
-
-	foreach ($files as $file) {
-	  // The filename format is very specific. It must be rules.MODULENAME.inc
-	  $module = substr_replace($file->name, '', 0, 6);
-	  if (module_exists($module)) {
-	    require_once("./$file->filename");
-	  }
-	}
+	require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
 }
-
+  
 /**
  * Returns info about all defined events
  */
@@ -65,7 +51,7 @@ function rules_get_items($key = 'all') {
  * $items Which defaults to return, e.g. 'rules', 'rule_sets' or 'states'
  */
 function rules_get_item_defaults($items = 'rules') {
-  _rules_include_rules_defaults();
+  rules_include('rules_defaults');
   $defaults = rules_gather_data('rules_defaults', 'all', FALSE);
   return isset($defaults[$items]) ? $defaults[$items] : array();
 }
@@ -101,6 +87,8 @@ function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
     return;
   }
   if (!isset($data[$name])) {
+    rules_include('rules');
+
     $data[$name] = module_invoke_all($name);
     if ($alter) {
       drupal_alter($name, $data['name']);
@@ -233,11 +221,14 @@ function rules_invoke_rule_set() {
   $args = func_get_args();
   $set_name = array_shift($args);
 
+  
+  
   if ($set = rules_get_rule_set($set_name)) {
     $state = array('set_info' => $set['info']);
 
     _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
-    require_once drupal_get_path('module', 'rules') . '/rules.arguments.inc';
+
+    rules_include('rules');
 
     _rules_initialize_arguments($state, $args);
     rules_evaluate_elements($set['rules'], $state);
@@ -777,19 +768,10 @@ function rules_is_valid_entity($entity_type, $info) {
  */
 function rules_entity_info() {
   return array(
-    'node' => array('#save' => 'rules_node_save'),
     'comment' => array('#save' => 'rules_comment_save')
   );
 }
 
-/**
- * Wrappers around drupal's saving functions
- */
-function rules_node_save($node) {
-  //make sure to not create a new revision when workflow-ng saves a node
-  $node->revision = FALSE;
-  node_save($node);
-}
 
 /**
  * Wrappers around drupal's saving functions
@@ -828,18 +810,34 @@ function rules_form_alter($form_id, $form) {
 }
 
 /**
- * Include default configuration files
+ * Includes rules specific include files
+ * @param $type One of 'rules', 'rules_forms' or 'rules_defaults'
  */
-function _rules_include_rules_defaults() {
+function rules_include($type = 'rules') {
   static $included;
 
   if (!isset($included)) {
+    $included = array();
+  }
+  if (!isset($included[$type])) {
+    $included[$type] = TRUE;
+    $rules_path = drupal_get_path('module', 'rules');
+
+    if ($type == 'rules') {
+      //make sure this is included before, as it contains the entity base class
+      require_once drupal_get_path('module', 'rules') . '/rules.entity.inc';
+      require_once drupal_get_path('module', 'rules') . '/rules.arguments.inc';
+    }
+
     foreach (module_list() as $module) {
 	    $module_path = drupal_get_path('module', $module);
-	    if (file_exists("$module_path/$module.rules_defaults.inc")) {
-	      require_once "./$module_path/$module.rules_defaults.inc";
+	    if (file_exists("$module_path/$module.$type.inc")) {
+	      require_once "./$module_path/$module.$type.inc";
+	    }
+    	else if (file_exists("$rules_path/modules/$module.$type.inc")) {
+	      require_once "./$rules_path/modules/$module.$type.inc";
 	    }
 	  }
-    $included = TRUE;
+	  rules_log(t('Included MODULE.'. $type. '.inc files.'));
   }
 }

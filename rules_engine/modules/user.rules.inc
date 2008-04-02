@@ -55,28 +55,6 @@ function rules_events_global_user_argument() {
   return array('user' => array('entity' => 'user', 'label' => t('acting user'), 'handler' => 'rules_events_argument_global_user'));
 }
 
-/**
- * Implementation of hook_user
- * As user_user exists already, we implement rules_user()
- */
-function rules_user($op, $edit, &$account, $category = NULL) {
-  static $account_unchanged;
-
-  //we don't support updates for other categories than 'account'
-  if ($op == 'update' && $category != 'account') {
-    return;
-  }
-  else if ($op == 'update') {
-    //save the unchanged account for the use with op after_update
-    $account_unchanged = $account;
-  }
-  else if ($op == 'after_update') {
-    rules_invoke_event('user_update', array('account' => &$account, 'account_unchanged' => $account_unchanged));
-  }
-  else if (in_array($op, array('insert', 'login', 'logout', 'view', 'delete'))) {
-    rules_invoke_event('user_'. $op, array('account' => &$account));
-  }
-}
 
 /**
  * Returns some arguments suitable for hook_user

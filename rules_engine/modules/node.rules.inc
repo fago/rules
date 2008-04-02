@@ -67,19 +67,6 @@ function rules_events_node_arguments($node_label, $author_label) {
 }
 
 /**
- * Implementation of hook_nodeapi
- * @ingroup rules
- */
-function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
-
-  if (in_array($op, array('view', 'insert', 'update', 'submit', 'delete'))) {
-    //we pass the node by reference so that changes are saved automatically on op submit
-    $arguments = ($op == 'view') ? array('node' => &$node, 'teaser' => $teaser, 'page' => $page) : array('node' => &$node);
-    rules_invoke_event('node_'. $op, $arguments);
-  }
-}
-
-/**
  * Gets the author's account of a node
  * @ingroup rules
  */
