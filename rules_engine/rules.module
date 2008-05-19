@@ -62,7 +62,7 @@ function rules_get_item_defaults($items = 'rules') {
  * @param $key If given, only the info about this rule set will be returned
  */
 function rules_get_rule_sets($key = NULL) {
-  $sets = rules_get_configuration('rule_sets');
+  $sets = rules_get_configured_items('rule_sets');
   foreach (rules_get_events() as $name => $info) {
     $sets['event_'. $name] = $info;
   }
@@ -162,7 +162,7 @@ function _rules_get_rule_set_initialize(&$sets) {
  */
 function _rules_get_rule_sets() {
   $sets = array();
-  $rules = array_filter(rules_get_configuration('rules'), '_rules_rule_is_active');
+  $rules = array_filter(rules_get_configured_items('rules'), '_rules_rule_is_active');
   foreach ($rules as $name => $rule) {
     $sets += array($rule['#set'] => array());
     $sets[ $rule['#set'] ]['info'] = rules_get_rule_sets($rule['#set']);
@@ -185,7 +185,7 @@ function _rules_rule_is_active($rule) {
  *    Might be dangerous, so only use if you know what you are doing.
  */
 function rules_clear_cache($immediate = TRUE) {
-  cache_clear_all('set_', 'cache_rules', TRUE);
+  cache_clear_all('*', 'cache_rules', TRUE);
   variable_del('rules_inactive_sets');
   if ($immediate) {
     rules_get_rule_set(NULL, TRUE);
@@ -225,14 +225,13 @@ function rules_invoke_rule_set() {
   
   if ($set = rules_get_rule_set($set_name)) {
     $state = array('set_info' => $set['info']);
-
     _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
 
     rules_include('rules');
 
     _rules_initialize_arguments($state, $args);
     rules_evaluate_elements($set['rules'], $state);
-
+    
     //save all changed arguments..
     foreach ($state['arguments'] as &$argument) {
       $argument->save_changes();
@@ -463,8 +462,10 @@ function rules_execute_condition($element, &$state) {
 function rules_log($message, $error = FALSE) {
   global $_rules_log;
 
-  list($usec, $sec) = explode(" ", microtime());
-  $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => $error);
+  if (isset($_rules_log)) {
+    list($usec, $sec) = explode(" ", microtime());
+    $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => $error);
+  }
 }
 
 /**
@@ -678,7 +679,7 @@ function rules_log_evaluation_finished() {
  * @return An array of configured items, where structure of the item configuration
  *   depends on the item
  */
-function rules_get_configuration($items = 'rules') {
+function rules_get_configured_items($items = 'rules') {
   $configurations = array();
   $info = rules_get_items($items);
   $result = db_query("SELECT * FROM {". $info['db_table']. "}");
@@ -821,23 +822,38 @@ function rules_include($type = 'rules') {
   }
   if (!isset($included[$type])) {
     $included[$type] = TRUE;
-    $rules_path = drupal_get_path('module', 'rules');
-
-    if ($type == 'rules') {
-      //make sure this is included before, as it contains the entity base class
-      require_once drupal_get_path('module', 'rules') . '/rules.entity.inc';
-      require_once drupal_get_path('module', 'rules') . '/rules.arguments.inc';
+    if ($cache = cache_get('include_'. $type, 'cache_rules')) {
+      $files = $cache->data;
+    }
+    else {
+      $files = _rules_include_get_files($type);
+      cache_set('include_'. $type, $files, 'cache_rules');
     }
 
-    foreach (module_list() as $module) {
-	    $module_path = drupal_get_path('module', $module);
-	    if (file_exists("$module_path/$module.$type.inc")) {
-	      require_once "./$module_path/$module.$type.inc";
-	    }
-    	else if (file_exists("$rules_path/modules/$module.$type.inc")) {
-	      require_once "./$rules_path/modules/$module.$type.inc";
-	    }
-	  }
+    foreach ($files as $file) {
+      require_once $file;
+    }
 	  rules_log(t('Included MODULE.'. $type. '.inc files.'));
   }
+}
+
+function _rules_include_get_files($type) {
+  $files = array();
+  $rules_path = drupal_get_path('module', 'rules');
+
+  if ($type == 'rules') {
+    //make sure this is included before, as it contains the entity base class
+    $files[] = $rules_path . '/rules.entity.inc';
+    $files[] = $rules_path . '/rules.arguments.inc';
+  }
+  foreach (module_list() as $module) {
+    $module_path = drupal_get_path('module', $module);
+    if (file_exists("$module_path/$module.$type.inc")) {
+      $files[] = "./$module_path/$module.$type.inc";
+    }
+    else if (file_exists("$rules_path/modules/$module.$type.inc")) {
+      $files[] = "./$rules_path/modules/$module.$type.inc";
+    }
+  }
+  return $files;
 }
