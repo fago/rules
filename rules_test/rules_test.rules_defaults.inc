@@ -29,8 +29,10 @@ function rules_test_rules_defaults() {
       'msg' => 'Rules Test 1 - Success!',
     )
   ));
-  $rules['rules_test_1'] = rules_configure($rules['rules_test_1'], $conditions, $action);
-
+  $rules['rules_test_1'] += array(
+    '#conditions' => $conditions,
+    '#actions' => $action,
+  );
   
   $rules['rules_test_2_1'] = array(
     '#type' => 'rule',
@@ -43,7 +45,9 @@ function rules_test_rules_defaults() {
   $action = rules_use_action('rules_change_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
-  $rules['rules_test_2_1'] = rules_configure($rules['rules_test_2_1'], $action);
+  $rules['rules_test_2_1'] += array(
+    '#actions' => $action,
+  );
 
   $rules['rules_test_2_2'] = array(
     '#type' => 'rule',
@@ -60,7 +64,10 @@ function rules_test_rules_defaults() {
       'msg' => 'Rules Test 2 - Success!',
     )
   ));
-  $rules['rules_test_2_2'] = rules_configure($rules['rules_test_2_2'], $condition, $action);
+  $rules['rules_test_2_2'] += array(
+    '#conditions' => $condition,
+    '#actions' => $action,
+  );
   
   
   $rules['rules_test_4_1'] = array(
@@ -78,8 +85,11 @@ function rules_test_rules_defaults() {
       'msg' => 'Rules Test 4 - Success!',
     )
   ));
-  $rules['rules_test_4_1'] = rules_configure($rules['rules_test_4_1'], $condition, $action);
- 
+  $rules['rules_test_4_1'] += array(
+    '#conditions' => $condition,
+    '#actions' => $action,
+  );
+
   $rules['rules_test_5'] = array(
     '#type' => 'rule',
     '#name' => 'rules_test_5',
@@ -101,9 +111,10 @@ function rules_test_rules_defaults() {
     ),
     '#argument map' => array('node' => 'node'),
   ));
-  $rules['rules_test_5'] = rules_configure($rules['rules_test_5'], $condition1, $action);
-
-  
+  $rules['rules_test_5'] += array(
+    '#conditions' => $condition1,
+    '#actions' => $action,
+  );
   
   return array(
     'rules' => $rules,
