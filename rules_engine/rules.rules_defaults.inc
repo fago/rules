@@ -12,7 +12,7 @@ function rules_rules_defaults() {
     '#name' => 'rules1',
     '#label' => t('Print the content title of pages and stories'),
     '#set' => 'event_node_view',
-    '#module' => 'Workflow-ng-ui',
+    '#module' => 'rules',
     '#active' => FALSE,
   );
   //configure a conditoin which evalutates if the node type is a page
@@ -47,8 +47,10 @@ function rules_rules_defaults() {
       'error' => 0,
     )
   ));
-  //add the elements to the configuration
-  $rules['rules1'] = rules_configure($rules['rules1'], $conditions, $action);
-  
+  //add the elements to the rule
+  $rules['rules1'] += array(
+    '#conditions' => $conditions,
+    '#actions' => $action,
+  );
   return array('rules' => $rules);
 }

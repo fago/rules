@@ -422,6 +422,8 @@ function rules_evaluate_elements($elements, &$state) {
   //Execute the current element if not yet executed
   if (!isset($elements['#_executed'])) {
     $elements['#_executed'] = TRUE;
+    _rules_element_defaults($elements);
+
     $result = rules_execute_element($elements, $state);
   }
 
@@ -440,29 +442,8 @@ function rules_evaluate_elements($elements, &$state) {
 function _rules_sort_children(&$element) {
   if (!isset($element['#_sorted'])) {
     $element['#_sorted'] = TRUE;
-    uasort($element, "_rules_element_sort");
+    uasort($element, "element_sort");
   }
-}
-
-/**
- * Callback function for uasort()
- */
-function _rules_element_sort($a, $b) {
-  if (!is_array($a) || !is_array($b)) {
-    return !is_array($a) ? -1 : 1; //element properties go up
-  }
-  $a += array('#type' => '', '#weight' => 0, '#id' => 1000);
-  $b += array('#type' => '', '#weight' => 0, '#id' => 1000);
-  if (($b['#type'] == 'action' && $a['#type'] != 'action')) {
-    return -1; //actions sink always down
-  }
-  if (($a['#type'] == 'action' && $b['#type'] != 'action')) {
-    return 1; //actions sink always down
-  }
-  if ($a['#weight'] == $b['#weight']) {
-    return ($a['#id'] < $b['#id']) ? -1 : 1;
-  }
-  return ($a['#weight'] < $b['#weight']) ? -1 : 1;
 }
 
 /**
@@ -506,8 +487,13 @@ function rules_execute_rule(&$element, &$state) {
     rules_log_evaluated_rule($element['#name'], TRUE);
     rules_log(t('Executing the rule %name on rule set %set', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
 
-    //let the the default evaluation (AND) apply to the rule
-    rules_execute_and($element, $state);
+    if (isset($element['#conditions'])) {
+      $result = rules_evaluate_elements($element['#conditions'], $state);
+    }
+    if (!isset($element['#conditions']) || $result == TRUE) {
+      rules_evaluate_elements($element['#actions'], $state);
+    }
+
     rules_log_evaluated_rule($element['#name'], FALSE);
   }
   //return true, so that the next rules are evaluated too
@@ -523,8 +509,6 @@ function rules_execute_or(&$elements, &$state) {
   _rules_sort_children($elements);
 
   foreach (element_children($elements) as $key) {
-    _rules_element_defaults($elements[$key]);
-
     $result = rules_evaluate_elements($elements[$key], $state);
     if ($result) {
       return TRUE;
@@ -542,8 +526,6 @@ function rules_execute_and(&$elements, &$state) {
   _rules_sort_children($elements);
 
   foreach (element_children($elements) as $key) {
-    _rules_element_defaults($elements[$key]);
-
     $result = rules_evaluate_elements($elements[$key], $state);
     if ($result === FALSE) {
       return FALSE;
@@ -847,6 +829,7 @@ function rules_get_configured_items($items = 'rules', $reset = FALSE) {
     $info = rules_get_items($items);
     $result = db_query("SELECT * FROM {". $info['db_table']. "}");
 
+    $configurations[$items] = array();
     while ($row = db_fetch_object($result)) {
       $configurations[$items][$row->name] = unserialize($row->data);
     }
