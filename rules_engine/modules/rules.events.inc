@@ -25,14 +25,11 @@ function rules_user($op, $edit, &$account, $category = NULL) {
   static $account_unchanged;
 
   //we don't support updates for other categories than 'account'
-  if ($op == 'update' && $category != 'account') {
-    return;
-  }
-  else if ($op == 'update') {
+  if ($op == 'update' && $category == 'account') {
     //save the unchanged account for the use with op after_update
     $account_unchanged = $account;
   }
-  else if ($op == 'after_update') {
+  else if ($op == 'after_update' && $category == 'account') {
     rules_invoke_event('user_update', array('account' => &$account, 'account_unchanged' => $account_unchanged));
   }
   else if (in_array($op, array('insert', 'login', 'logout', 'view', 'delete'))) {
