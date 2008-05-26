@@ -48,12 +48,9 @@ class rules_entity {
    */
   function is_identifiable() {
     $info = $this->get_info();
-    return $info['saveable'];
+    return $info['identifiable'];
   }
 
-
-  
-  
   /**
    * Defines the capabilites of the entity.
    * If php4 would support interfaces, this would be interfaces.

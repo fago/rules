@@ -7,9 +7,9 @@
 
 function rules_rules_defaults() {
   $rules = array();
-  $rules['config1'] = array(
+  $rules['rules1'] = array(
     '#type' => 'rule',
-    '#name' => 'config1',
+    '#name' => 'rules1',
     '#label' => t('Print the content title of pages and stories'),
     '#set' => 'event_node_view',
     '#module' => 'Workflow-ng-ui',
@@ -48,7 +48,7 @@ function rules_rules_defaults() {
     )
   ));
   //add the elements to the configuration
-  $rules['config1'] = rules_configure($rules['config1'], $conditions, $action);
+  $rules['rules1'] = rules_configure($rules['rules1'], $conditions, $action);
   
   return array('rules' => $rules);
 }

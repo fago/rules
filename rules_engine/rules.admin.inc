@@ -1,0 +1,1109 @@
+<?php
+
+require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
+
+
+/*
+ * Returns the form, which builds the admin screen of rules-ng
+ *
+ * @param $module Allows to restrict the form to configuration and events of this group
+ * @param $configuration The name of the configuration to handle
+ * @param $op The operation which has is currently performed, e.g. adding, editing of an element with the id given
+ * @param $id Optionally specifies an element on which the operation is performed
+ */
+function rules_admin_form($module = NULL, $configuration = NULL, $op = NULL, $id = NULL) {
+  $form = array();
+  //add css
+  $path = drupal_get_path('module', 'rules_admin') .'/rules_admin.css';
+  drupal_add_css($path, 'module', 'all', FALSE);
+
+  if (!isset($configuration)) {
+    return rules_admin_configuration_overview($module);
+  }
+  else if ($cfg = rules_get_configurations('all', $configuration)) {
+    //just let it be rendered by the formAPI and drupal_render()
+    include_once(drupal_get_path('module', 'rules_admin') .'/rules_admin_render.inc');
+    $form['config'] = $cfg;
+    return $form;
+  }
+  else {
+    drupal_not_found();
+  }
+}
+
+/*
+ * Lists the available configurations..
+ *
+ * @param $module Allows to restrict the form to configuration and events of this group
+ */
+function rules_admin_configuration_overview($module = NULL) {
+  if (!isset($module)) {
+    $form['filter'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Filter'),
+      '#collapsible' => TRUE,
+      '#collapsed' => !$_POST,
+    );
+    $events = array(0 => '<All>') + rules_get_grouped_labels(rules_get_events());
+    $form['filter']['event_filter'] = array(
+      '#type' => 'select',
+      '#title' => t('Filter by event'),
+      '#options' => $events,
+    );
+    $modules = array(0 => '<All>') + drupal_map_assoc(rules_admin_get_modules(rules_get_configurations()));
+    $form['filter']['module_filter'] = array(
+      '#type' => 'select',
+      '#title' => t('Filter by module'),
+      '#options' => $modules,
+    );
+    $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
+    $module = (isset($_POST['module_filter']) && in_array($_POST['module_filter'], $modules))? $_POST['module_filter'] : NULL;
+    $event = (isset($_POST['event_filter']) && rules_get_events('all', $_POST['event_filter']))? $_POST['event_filter'] : NULL;
+  }
+
+  $form['active_header'] = array('#value' => '<h3>'. t('Active rules'). '</h3>');
+  $form['active'] = rules_admin_configuration_table($module, $event, TRUE);
+  $form['inactive_header'] = array('#value' => '<h3>'. t('Inactive rules'). '</h3>');
+  $form['inactive'] = rules_admin_configuration_table($module, $event, FALSE);
+
+  if (variable_get('rules_show_fixed', FALSE)) {
+    $form['fixed_header'] = array('#value' => '<h3>'. t('Fixed rules'). '</h3>');
+    $form['fixed'] = rules_admin_configuration_table($module, $event, TRUE, TRUE);
+  }
+  $form['#redirect'] = FALSE;
+  return $form;
+}
+
+/*
+ * Returns a table of configurations filtered by the given parameters
+ */
+function rules_admin_configuration_table($module = NULL, $event = NULL, $active = TRUE, $fixed = FALSE) {
+  $configurations = rules_get_configurations();
+  _rules_sort_children($configurations);
+
+  $header = array(t('Label'), t('Event'), t('Module'), t('Status'), t('Operations'));
+  $rows = array();
+
+  foreach (element_children($configurations) as $name) {
+    $cfg = &$configurations[$name];
+
+    if ((!isset($module) || $cfg['#module'] == $module) && (!isset($event) || $cfg['#event'] == $event) && $cfg['#active'] == $active && $cfg['#fixed'] == $fixed) {
+      $status = rules_admin_configuration_status($cfg, FALSE);
+      $path = rules_UI_PATH .'/'. $name;
+      $ops = array();
+
+      if ($status != 'fixed') {
+        $ops[] = l(t('edit'), $path .'/edit', array(), drupal_get_destination());
+      }
+
+      switch ($status) {
+        case 'custom':
+          $ops[] = l(t('delete'), $path .'/delete', array(), drupal_get_destination());
+          break;
+        case 'modified':
+          $ops[] = l(t('reset'), $path .'/revert', array(), drupal_get_destination());
+          break;
+      }
+      $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
+
+      $rows[] = array(
+        l($cfg['#label'], $path),
+        check_plain(rules_get_events('labels', $cfg['#event'])),
+        check_plain($cfg['#module']),
+        rules_admin_configuration_status($cfg),
+        implode(' ', $ops),
+      );
+    }
+  }
+
+  if (count($rows)) {
+    return array('#value' => theme('table', $header, $rows, array('class' => 'rules-ng-configurations')));
+  }
+
+  return array('#value' => t('None.'));
+}
+
+/*
+ * Returns the status of the configuration, as html or as simple keyword.
+ */
+function rules_admin_configuration_status($config, $html = TRUE) {
+  if ($config['#altered']) {
+    $help = t('The rule has been provided by a module, but has been modified.');
+    return $html ? '<span title="'. $help .'">'. t('Modified'). '</span>' : 'modified';
+  }
+  else if ($config['#fixed'] == TRUE) {
+    $help = t('The rule has been provided by a module and can\'t be customized.');
+    return $html ? '<span title="'. $help .'">'. t('Fixed') .'</span>' : 'fixed';
+  }
+  else if ($config['#module'] == 'rules-ng') {
+    $help = t('The rule has not been provided by a module.');
+    return $html ? '<span title="'. $help .'">'. t('Custom'). '</span>' : 'custom';
+  }
+  $help = t('The rule has been provided by a module.');
+  return $html ? '<span title="'. $help .'">'. t('Default') .'</span>' : 'default';
+}
+
+/*
+ * Returns the add configuration form
+ */
+function rules_admin_form_configuration_add() {
+  $form = array();
+  $form['event'] = array(
+    '#type' => 'select',
+    '#title' => t('Event'),
+    '#options' => rules_get_grouped_labels(rules_get_events()),
+    '#description' => t('Select the event on which you want to evaluate conditions and actions.'),
+    '#required' => TRUE,
+  );
+  rules_admin_configuration_form($form, $cfg);
+  return $form;
+}
+
+function rules_admin_form_configuration_add_submit($form_id, $form_values) {
+  $cfg = isset($form_values['cfg']) ? $form_values['cfg'] : array('#type' => 'configuration', '#altered' => FALSE);
+  foreach (array('event', 'label', 'active', 'weight') as $key) {
+    $cfg['#'. $key] = $form_values[$key];
+  }
+  $cfg['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
+  $cfg['#module'] = 'rules-ng';
+  rules_admin_save_configuration($cfg);
+  rules_clear_cache();
+  drupal_set_message(t("The configuration %label has been added.", array('%label' => $cfg['#label'])));
+  return rules_UI_PATH .'/'. $cfg['#name'];
+}
+
+/*
+ * Returns the form for editing a configuration
+ */
+function rules_admin_form_edit_configuration($configuration_name = NULL) {
+
+  if ($cfg = rules_get_configurations('all', $configuration_name)) {
+    _rules_element_defaults($cfg);
+    $form = array();
+    rules_admin_configuration_form($form, $cfg);
+    $form['cfg_name'] = array('#type' => 'value', '#value' => $configuration_name);
+    return $form;
+  }
+  else {
+    drupal_not_found();
+  }
+}
+
+function rules_admin_form_edit_configuration_submit($form_id, $form_values) {
+  $cfg = rules_get_configurations('all', $form_values['cfg_name']);
+  foreach (array('label', 'active', 'weight') as $key) {
+    $cfg['#'. $key] = $form_values[$key];
+  }
+  rules_admin_save_configuration($cfg);
+  rules_clear_cache();
+  drupal_set_message(t("The configuration %label has been updated.", array('%label' => $cfg['#label'])));
+}
+
+function rules_admin_configuration_form(&$form, $cfg = array()) {
+  $form['label'] = array(
+    '#title' => t('Label'),
+    '#type' => 'textfield',
+    '#description' => t('Choose an appropriate label for this rule.'),
+    '#default_value' => $cfg['#label'],
+    '#required' => TRUE,
+  );
+  $form['active'] = array(
+    '#title' => t('This rule is active and should be evaluated when the associated event occurs.'),
+    '#type' => 'checkbox',
+    '#default_value' => isset($cfg['#active']) ? $cfg['#active'] : 1,
+  );
+  $form['weight'] = array(
+    '#title' => t('Weight'),
+    '#type' => 'weight',
+    '#description' => t('Adjust the weight to customize the ordering of rules.'),
+    '#default_value' => isset($cfg['#weight']) ? $cfg['#weight'] : 0,
+  );
+  $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Submit'));
+}
+
+/*
+ * Shows the revert configuration form
+ */
+function rules_admin_form_revert($configuration_name) {
+  $form = array();
+  if ($cfg = rules_get_configurations('all', $configuration_name)) {
+    $path = array();
+    $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : rules_UI_PATH;
+    $form['cfg'] = array('#type' => 'value', '#value' => $cfg);
+
+    return confirm_form($form,
+      t('Are you sure you want to revert the configuration %label to its defaults?', array('%label' => $cfg['#label'])),
+      $path,
+      t('This action cannot be undone.'), t('Revert'), t('Cancel')
+    );
+  }
+  drupal_not_found();
+}
+
+function rules_admin_form_revert_submit($form_id, $form_values) {
+  if ($form_values['confirm']) {
+    rules_admin_delete_configuration($form_values['cfg']);
+    rules_clear_cache();
+    drupal_set_message(t("The configuration %label has been reverted to its defaults.", array('%label' => $form_values['cfg']['#label'])));
+  }
+  return rules_UI_PATH;
+}
+
+/*
+ * Returns the form for the add operation
+ * This handles adding conditions and actions
+ *
+ * @param $configuration The name of the configuration, which is to be edited
+ * @param $id Optionally specifies an element where the condition / action is to be added
+ * @param $type Either 'action' or 'condition' or 'op'
+ */
+function rules_admin_form_add($configuration_name, $id, $type, $form_values = NULL) {
+  if (($cfg = rules_get_configurations('all', $configuration_name)) && in_array($type, array('action', 'condition', 'op'))) {
+    $element = isset($form_values) ? array('#type' => $type, '#name' => $form_values['name']) : array('#type' => $type);
+    $element += rules_get_element_info($element);
+
+    //regenerate the ids
+    rules_element_id($configuration_name, $cfg);
+    //get the item assocaited with $id
+    if ($parent = rules_element_id($configuration_name, $cfg, intval($id))) {
+      $add = isset($form_values['added']) ? '' : '_add';
+      if (function_exists($function = 'rules_admin_form_edit_'. $element['#type'] . $add)) {
+        $form = array();
+        $form['#multistep'] = TRUE;
+        $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
+        $form['added'] = array('#type' => 'hidden', '#value' => isset($form_values) ? 2 : 1);
+        $form['element'] = array('#type' => 'value', '#value' => $element);
+        $form['id'] = array('#type' => 'value', '#value' => $id);
+        $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => $add ? t('Add') : t('Submit'));
+        return $function($form, $element, $parent);
+      }
+    }
+  }
+  drupal_not_found();
+}
+
+/*
+ * Returns the form for the first action add page
+ */
+function rules_admin_form_edit_action_add($form, $element) {
+  $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value']);
+  $actions = rules_admin_filter_elements($argument_info, rules_get_actions());
+  $form['name'] = array(
+    '#type' => 'select',
+    '#title' => t('Select an action to add'),
+    '#options' => rules_get_grouped_labels($actions),
+    '#required' => TRUE,
+  );
+  $form['#redirect'] = FALSE;
+  return $form;
+}
+
+/*
+ * Returns the form for the first condition add page
+ */
+function rules_admin_form_edit_condition_add(&$form, $element, &$parent) {
+  $parent += rules_get_element_info($parent);
+  if ($parent['#type'] == 'configuration' || isset($parent['#logical_op'])) {
+    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value']);
+    $conditions = rules_admin_filter_elements($argument_info, rules_get_conditions());
+    $form['name'] = array(
+      '#type' => 'select',
+      '#title' => t('Select the condition to add'),
+      '#options' => rules_get_grouped_labels($conditions),
+      '#required' => TRUE,
+    );
+    $form['#redirect'] = FALSE;
+    return $form;
+  }
+}
+
+
+/*
+ * Indenting a condition
+ * Adds a logical operation and place the given condition element inside. We automatically
+ * determine which operation is to be added.
+ */
+function rules_admin_form_edit_op_add(&$form, $element, &$parent) {
+  $rule_name = $form['cfg']['#value']['#name'];
+  $cfg = &rules_element_id($rule_name, $form['cfg']['#value'], 1);
+  //get the condition
+  $element = &rules_element_id($rule_name, $cfg, intval($form['id']['#value']));
+
+  //determine the appropriate operation and apply it
+  $op = rules_determine_operation($rule_name, $cfg, intval($form['id']['#value']));
+  if (isset($element['#weight'])) {
+    $weight = $element['#weight'];
+    unset($element['#weight']);
+  }
+  $element = rules_configure($op, $element);
+
+  if (isset($weight)) {
+    //apply the weight of the element to the op
+    $element['#weight'] = $weight;
+  }
+
+  //and save
+  rules_admin_save_configuration($cfg);
+  rules_clear_cache();
+  drupal_goto(rules_UI_PATH);
+}
+
+/*
+ * Submit handler for the add element form
+ */
+function rules_admin_form_add_submit($form_id, $form_values) {
+  if ($form_values['added'] == 2) {
+    //get the reference on the currently edited configuration!
+    $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
+    //get the reference on the associated element with $id
+    $parent = &rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
+    $element = $form_values['element'];
+
+    //apply the changes to the element
+    if (function_exists($function = 'rules_admin_form_edit_'. $element['#type'] . '_submit')) {
+      $function($form_values, $element);
+    }
+    //don't save default values
+    foreach ($form_values['element'] as $key => $value) {
+      if (!in_array($key, array('#name', '#type')) && $value == $element[$key]) {
+        unset($element[$key]);
+      }
+    }
+    //remove empty values
+    $element = array_filter($element);
+    //just add the element to the parent
+    $parent = rules_configure($parent, $element);
+
+    rules_admin_save_configuration($cfg);
+    rules_clear_cache();
+  }
+}
+
+/*
+ * Returns the form for the edit operation
+ * This handles editing conditions and actions
+ *
+ * @param $configuration The name of the configuration on which we operate
+ * @param $id Specifies an element, which is to be edited.
+ */
+function rules_admin_form_edit($configuration_name, $id) {
+  if ($cfg = rules_get_configurations('all', $configuration_name)) {
+    if ($_POST['op'] == t('Delete')) {
+      if ($_REQUEST['destination']) {
+        $destination = drupal_get_destination();
+        unset($_REQUEST['destination']);
+      }
+      drupal_goto(rules_UI_PATH .'/'. $cfg['#name'] .'/delete/'. $id, $destination);
+    }
+    //regenerate the ids
+    rules_element_id($configuration_name, $cfg);
+    //get the item assocaited with $id
+    $element = rules_element_id($configuration_name, $cfg, intval($id));
+    $element += rules_get_element_info($element);
+    $type = isset($element['#logical_op']) && $element['#logical_op'] ? 'op' : $element['#type'];
+
+    //call the appropriate function for each element type
+    if (isset($element) && function_exists($function = 'rules_admin_form_edit_'. $type)) {
+      $form = array();
+      $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
+      $form['element'] = array('#type' => 'value', '#value' => $element);
+      $form['element_type'] = array('#type' => 'value', '#value' => $type);
+      $form['id'] = array('#type' => 'value', '#value' => $id);
+      $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Submit'));
+      $form['delete'] = array('#type' => 'submit', '#weight' => 11, '#value' => t('Delete'));
+      return $function($form, $element);
+    }
+  }
+  drupal_not_found();
+}
+
+function rules_admin_form_edit_submit($form_id, $form_values) {
+  //get the reference on the currently edited configuration!
+  $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
+  //get the reference on the associated element with $id
+  $element = &rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
+  $orig_element = rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
+
+  //apply the changes to the element
+  if (function_exists($function = 'rules_admin_form_edit_'. $form_values['element_type'] . '_submit')) {
+    $function($form_values, $element);
+  }
+  //remove empty values
+  $element = array_filter($element);
+
+  //we only save if there were really changes to the element.
+  //so a default configuration may keep its default status
+  if ($element != $orig_element) {
+    rules_admin_save_configuration($cfg);
+    rules_clear_cache();
+  }
+}
+
+/*
+ * Returns the edit form for an action
+ */
+function rules_admin_form_edit_action($form, $element) {
+  $form['label'] = array(
+    '#title' => t('Label'),
+    '#type' => 'textfield',
+    '#description' => t('Choose an appropriate label for this action.'),
+    '#default_value' => $element['#label'],
+    '#required' => TRUE,
+  );
+  if ($element['#label']) {
+    drupal_set_title(t('Editing action %label', array('%label' => $element['#label'])));
+  }
+  rules_admin_element_help($form, $element);
+  rules_admin_argument_map_form($form, $element);
+  rules_admin_new_arguments_form($form, $element);
+  rules_admin_element_configuration_form($form, $element);
+  $form['weight'] = array(
+    '#title' => t('Weight'),
+    '#type' => 'weight',
+    '#description' => t('Adjust the weight to customize the ordering of actions.'),
+    '#default_value' => $element['#weight'] > 499 ? $element['#weight'] - 500 : $element['#weight'],
+  );
+  return $form;
+}
+
+/*
+ * Apply the changes to the element
+ */
+function rules_admin_form_edit_action_submit($form_values, &$element) {
+  foreach (array('label', 'weight') as $key) {
+    $element['#'. $key] = $form_values[$key];
+  }
+  //save the argument map
+  if (isset($form_values['map'])) {
+    $element['#argument map'] = array_flip($form_values['map']);
+  }
+  rules_admin_new_arguments_form_submit($form_values, $element);
+  rules_admin_element_configuration_form_submit($form_values, $element);
+  drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
+}
+
+/*
+ * Returns the edit form for a condition
+ */
+function rules_admin_form_edit_condition($form, $element) {
+  $form['label'] = array(
+    '#title' => t('Label'),
+    '#type' => 'textfield',
+    '#description' => t('Choose an appropriate label for this condition.'),
+    '#default_value' => $element['#label'],
+    '#required' => TRUE,
+  );
+  if ($element['#label']) {
+    drupal_set_title(t('Editing condition %label', array('%label' => $element['#label'])));
+  }
+  $form['negate'] = array(
+    '#title' => t('Negate'),
+    '#type' => 'checkbox',
+    '#description' => t('If checked, the condition returns TRUE, if it evaluates to FALSE.'),
+    '#default_value' => $element['#negate'],
+  );
+  rules_admin_element_help($form, $element);
+  rules_admin_argument_map_form($form, $element);
+  rules_admin_element_configuration_form($form, $element);
+  $form['weight'] = array(
+    '#title' => t('Weight'),
+    '#type' => 'weight',
+    '#description' => t('Adjust the weight to customize the ordering of conditions.'),
+    '#default_value' => isset($element['#weight']) ? $element['#weight'] : 0,
+  );
+  return $form;
+}
+
+/*
+ * Apply the changes to the element
+ */
+function rules_admin_form_edit_condition_submit($form_values, &$element) {
+  foreach (array('label', 'negate', 'weight') as $key) {
+    $element['#'. $key] = $form_values[$key];
+  }
+  //save the argument map
+  if (isset($form_values['map'])) {
+    $element['#argument map'] = array_flip($form_values['map']);
+  }
+  rules_admin_element_configuration_form_submit($form_values, $element);
+  drupal_set_message(t('The condition %label has been saved.', array('%label' => $element['#label'])));
+}
+
+/*
+ * Returns the edit form of a logical operation
+ */
+function rules_admin_form_edit_op($form, $element) {
+  drupal_set_title(t('Editing condition group %label', array('%label' => $element['#label'])));
+  $form['negate'] = array(
+    '#title' => t('Negate'),
+    '#type' => 'checkbox',
+    '#description' => t('If checked, the operation will be negated. E.g. AND would be handled as NOT AND.'),
+    '#default_value' => $element['#negate'],
+  );
+  $form['operation'] = array(
+    '#title' => t('Operation'),
+    '#type' => 'select',
+    '#description' => t('The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE.'),
+    '#default_value' => $element['#type'],
+    '#options' => rules_elements_get_logical_ops(),
+    '#required' => TRUE,
+  );
+  $form['weight'] = array(
+    '#title' => t('Weight'),
+    '#type' => 'weight',
+    '#description' => t('Adjust the weight to customize the ordering.'),
+    '#default_value' => isset($element['#weight']) ? $element['#weight'] : 0,
+  );
+  return $form;
+}
+
+/*
+ * Apply the changes to the element
+ */
+function rules_admin_form_edit_op_submit($form_values, &$element) {
+  foreach (array('negate', 'weight') as $key) {
+    $element['#'. $key] = $form_values[$key];
+  }
+  //remove empty values
+  $element = array_filter($element);
+  $element['#type'] = $form_values['operation'];
+  drupal_set_message(t('The condition group %label has been saved.', array('%label' => $element['#type'])));
+}
+
+/*
+ * Returns the configuration form of an element
+ */
+function rules_admin_element_configuration_form(&$form, $element) {
+  rules_include_file(strtolower($element['#module']) .'_rules_forms');
+  $function = $element['#name']. '_form';
+
+  if (function_exists($function)) {
+    $event = rules_get_events('all', $form['cfg']['#value']['#event']);
+    _rules_element_defaults($event);
+    //TODO: for d6 remove argument_info
+    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value'], $element); 
+    $info = array('element' => &$element, 'event' => &$event);
+
+    $form['configure'] = $function($element['#settings'], $argument_info, $info);
+    $form['#validate'][$element['#name']. '_validate'] = array();
+  }
+}
+
+function rules_admin_element_configuration_form_submit($form_values, &$element) {
+  $function = $element['#name']. '_submit';
+  if (function_exists($function)) {
+    $element['#settings'] =  $function($form_values['form_id'], $form_values);
+  }
+}
+
+/*
+ * Returns form elements for new arguments
+ */
+function rules_admin_new_arguments_form(&$form, $element) {
+  if (isset($element['#new arguments']) && count($element['#new arguments'])) {
+    $form['new_arguments'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('New argument settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#tree' => TRUE,
+    );
+    foreach ($element['#new arguments'] as $name => $argument) {
+      $form['new_arguments'][$name] = array(
+        '#type' => 'fieldset',
+        '#title' => check_plain($argument['#label']),
+      );
+      $form['new_arguments'][$name]['label'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Label'),
+        '#default_value' => $argument['#label'],
+        '#required' => TRUE,
+      );
+      $form['new_arguments'][$name]['entity'] = array(
+        '#type' => 'value',
+        '#value' => $argument['#entity']
+      );
+      $form['new_arguments'][$name]['default_name'] = array(
+        '#type' => 'value',
+        '#value' => isset($argument['#default_name']) ? $argument['#default_name'] : $name,
+      );
+      $form['new_arguments'][$name]['name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Machine readable argument name'),
+        '#description' => t('Specify a unique name containing only digits, numbers and underscores.'),
+        '#default_value' => $name,
+        '#required' => TRUE,
+      );
+    }
+    $form['#validate']['rules_admin_new_arguments_form_validate'] = array();
+  }
+}
+
+function rules_admin_new_arguments_form_validate($form_id, $form_values, $form) {
+  $argument_info = rules_admin_event_get_argument_info($form_values['cfg'], $form_values['element']);
+  foreach ($form_values['new_arguments'] as $name => $argument) {
+    if (isset($argument_info[$argument['name']])) {
+      form_set_error(implode('][', array('new_arguments', $name, 'name')), t('This name already exists.'));
+    }
+    if (!eregi('^[0-9a-z_]*$', $argument['name'])) {
+      form_set_error(implode('][', array('new_arguments', $name, 'name')), t('The name contains not allowed characters.'));
+    }
+  }
+}
+
+function rules_admin_new_arguments_form_submit($form_values, &$element) {
+  if (isset($form_values['new_arguments'])) {
+    unset($element['#new arguments']);
+    foreach ($form_values['new_arguments'] as $name => $argument) {
+      $element['#new arguments'][$argument['name']] = array(
+        '#entity' => $argument['entity'],
+        '#label' => $argument['label'],
+        '#default_name' => $argument['default_name'],
+      );
+    }
+  }
+}
+
+/*
+ * Returns the argument mapping form
+ */
+function rules_admin_argument_map_form(&$form, $element) {
+  $function = $element['#name']. '_form';
+  if (is_array($element['#arguments']) && count($element['#arguments'])) {
+    $form['map'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Arguments configuration'),
+      '#tree' => TRUE,
+    );
+    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value'], $element);
+
+    foreach ($element['#arguments'] as $name => $info) {
+      
+      $args = rules_admin_get_possible_arguments($info, $argument_info);
+      $form['map'][$name] = array(
+        '#type' => 'select',
+        '#title' => $info['#label'],
+        '#options' => $args,
+        '#default_value' => rules_admin_map_get_configured_argument($name, $element),
+      );
+    }
+  }
+}
+
+/*
+ * Gets the possible arguments (= of the same entity) for an argument
+ */
+function rules_admin_get_possible_arguments($info, $argument_info, $print_error = TRUE) {
+  $matches = array();
+  foreach ($argument_info as $name => $this_info) {
+    if (rules_is_valid_entity($this_info['#entity'], $info)) {
+      $matches[$name] = $this_info['#label'];
+    }
+  }
+  if ($print_error && count($matches) == 0) {
+    drupal_set_message(t('There are not all necessary arguments available.'), 'error');
+    drupal_goto(rules_UI_PATH);
+  }
+  return $matches;
+}
+
+/*
+ * Gets the in the argument map configured argument for the given argument - or the default value
+ */
+function rules_admin_map_get_configured_argument($name, $element) {
+  if (!isset($element['#argument map'])) {
+    //per default try the the same name
+    return $name;
+  }
+  $reverse_map = array_flip($element['#argument map']);
+  return $reverse_map[$name];
+}
+
+/*
+ * Shows the element description
+ */
+function rules_admin_element_help(&$form, $element) {
+  if (isset($element['#description'])) {
+    $form['help'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Description'),
+      '#description' => $element['#description'],
+    );
+  }
+}
+
+/*
+ * Shows the delete form for configurations, conditions and actions
+ */
+function rules_admin_form_delete($configuration_name, $id = NULL) {
+  $form = array();
+  if ($cfg = rules_get_configurations('all', $configuration_name)) {
+    $path = array();
+    $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : rules_UI_PATH;
+    $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
+    $form['id'] = array('#type' => 'value', '#value' => $id);
+
+    if (!isset($id)) {
+      return confirm_form($form,
+        t('Are you sure you want to delete the rule %label?', array('%label' => $cfg['#label'])),
+        $path,
+        t('This action cannot be undone.'), t('Delete'), t('Cancel')
+      );
+    }
+    else {
+      //regenerate the ids
+      rules_element_id($configuration_name, $cfg);
+      //get the item assocaited with $id
+      if ($element = rules_element_id($configuration_name, $cfg, intval($id))) {
+        $element += rules_get_element_info($element);
+        if (isset($element['#logical_op']) && $element['#logical_op']) {
+          $form['is_op'] = array('#type' => 'value', '#value' => TRUE);
+          $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => $element['#label']));
+        }
+        else {
+          $text = t('Are you sure you want to delete %label?', array('%label' => $element['#label']));
+        }
+        return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+      }
+    }
+  }
+  drupal_not_found();
+}
+
+function rules_admin_form_delete_submit($form_id, $form_values) {
+  if ($form_values['confirm'] && !isset($form_values['id'])) {
+    rules_admin_delete_configuration($form_values['cfg']);
+    rules_clear_cache();
+    drupal_set_message(t("The configuration %label has been deleted.", array('%label' => $form_values['cfg']['#label'])));
+  }
+  else if ($form_values['confirm']) {
+    //get the reference on the currently edited configuration!
+    $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
+    //get a reference for the element in the configuration
+    $element = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], intval($form_values['id']));
+    $element += rules_get_element_info($element);
+
+    if ($form_values['is_op']) {
+      drupal_set_message(t("The logical operation %label has been deleted.", array('%label' => $element['#label'])));
+      //just unset the type, so that containing conditions are not deleted
+      unset($element['#type']);
+    }
+    else {
+      drupal_set_message(t("%label has been deleted.", array('%label' => $element['#label'])));
+      $element = NULL;
+      //remove the elements key by cleaning the config
+    }
+    rules_admin_clean_configuration($cfg);
+    rules_admin_save_configuration($cfg);
+    rules_clear_cache();
+  }
+  return rules_UI_PATH;
+}
+
+/*
+ * Clones a configuration
+ */
+function rules_admin_form_clone($configuration_name) {
+  if ($cfg = rules_get_configurations('all', $configuration_name)) {
+    drupal_set_message(t('Alter the settings for the cloned rule.'));
+    $form = array();
+    $cfg['#module'] = 'rules-ng';
+    $form['cfg'] = array('#type' => 'value', '#value' => $cfg);
+    $form['event'] = array(
+      '#type' => 'select',
+      '#title' => t('Event'),
+      '#options' => rules_get_grouped_labels(rules_admin_get_compatible_events($cfg['#event'])),
+      '#description' => t('Select the event on which you want to evaluate the cloned configuration.'),
+      '#required' => TRUE,
+    );
+    rules_admin_configuration_form($form, $cfg);
+    $form['#submit'] = array('rules_admin_form_configuration_add_submit' => array());
+    return $form;
+  }
+  drupal_not_found();
+}
+
+/*
+ * Gets all compatible events, which means that all arguments are available in the other event too
+ */
+function rules_admin_get_compatible_events($event_name) {
+  $event = rules_get_events('all', $event_name);
+  $events = rules_get_events();
+  foreach ($events as $key => $this_event) {
+    if (array_diff(array_keys($event['#arguments']), array_keys($this_event['#arguments']))) {
+      unset($events[$key]);
+    }
+  }
+  return $events;
+}
+
+/*
+ * Saves a configuration in the database
+ */
+function rules_admin_save_configuration($configuration) {
+  rules_admin_delete_configuration($configuration);
+
+  if ($configuration['#module'] != 'rules-ng') {
+    $configuration['#altered'] = TRUE;
+  }
+  $name = $configuration['#name'];
+  unset($configuration['#name']);
+  db_query("INSERT INTO {rules_cfgs} (name, data, altered) VALUES ('%s', '%s', %d)",
+    $name, serialize($configuration), $configuration['#altered']);
+}
+
+/*
+ * Deletes the configuration from the database
+ */
+function rules_admin_delete_configuration($configuration) {
+  db_query("DELETE FROM {rules_cfgs} WHERE name = '%s'", $configuration['#name']);
+}
+
+/*
+ * Cleans the given configuration. This means, array keys that are neither elements
+ * nor properties are removed.
+ */
+function rules_admin_clean_configuration(&$element) {
+  $children = array();
+  foreach (element_children($element) as $key) {
+    if (!isset($element[$key]['#type'])) {
+      //this element can be removed, but care for it's children
+      foreach (element_children($element[$key]) as $child_key) {
+        $children[$child_key] = $element[$key][$child_key];
+      }
+      unset($element[$key]);
+    }
+    else {
+      rules_admin_clean_configuration($element[$key]);
+    }
+  }
+  if (count($children)) {
+    $element = array_merge($element, $children);
+  }
+}
+
+/*
+ * Gets the element labels grouped by modules
+ *
+ * @param $elements An array of elements, e.g. as returned from rules_get_events()
+ */
+function rules_get_grouped_labels($elements) {
+  $grouped = array();
+  $ungrouped = array();
+
+  foreach ($elements as $name => $element) {
+    if (!isset($element['#fixed']) || !$element['#fixed']) {
+      if (isset($element['#module'])) {
+        $grouped[$element['#module']][$name] = $element['#label'];
+      }
+      else {
+        $ungrouped[$name] = $element['#label'];
+      }
+    }
+  }
+  array_map('asort', $grouped);
+  ksort($grouped);
+  asort($ungrouped);
+  return $ungrouped + $grouped;
+}
+
+
+/*
+ * Determines which operation should be added
+ * If the parent operation is an AND, we add an OR, and vice versa.
+ */
+function rules_determine_operation($rule_name, $cfg, $id) {
+
+  $parent_id = rules_get_element_parent_id($rule_name, $cfg, $id);
+  $parent = rules_element_id($rule_name, $elements, $parent_id);
+
+  switch ($parent['#type']) {
+    default:
+    case 'configuration':
+    case 'AND':
+      return 'OR';
+    case 'OR':
+      return 'AND';
+  }
+}
+
+/*
+ * Returns a list of available logical operations suitable for use with #options
+ */
+function rules_elements_get_logical_ops() {
+  $elements = rules_gather_data('elements');
+  $labels = array_map('rules_get_element_label', array_filter($elements, '_rules_element_is_logical_op'));
+  asort($labels);
+  return $labels;
+}
+
+function _rules_element_is_logical_op($element) {
+  return isset($element['#logical_op']) && $element['#logical_op'];
+}
+
+/*
+ * Imports a configuration
+ */
+function rules_admin_form_import() {
+  $form = array();
+  $form['import'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Rule configurations to import'),
+    '#description' => t('Paste exported rules here to import them.'),
+    '#rows' => 15,
+    '#required' => TRUE,
+  );
+  $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Import'));
+  return $form;
+}
+
+function rules_admin_form_import_submit($form_id, $form_values) {
+  @eval('$cfgs = '. $form_values['import'] .';');
+  if (isset($cfgs) && is_array($cfgs) && count($cfgs)) {
+    foreach ($cfgs as $name => $data) {
+      if (strtolower($data['#module']) == 'rules-ng') {
+        //generate a new unique name for this configuration
+        $data['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
+      }
+      rules_admin_save_configuration($data);
+      drupal_set_message(t('Imported rule configuration %label.', array('%label' => rules_get_element_label($data))));
+    }
+    rules_clear_cache();
+  }
+  else {
+    drupal_set_message(t('Import failed.'), 'error');
+  }
+}
+
+
+/*
+ * Exports one ore more configurations
+ */
+function rules_admin_form_export($form_values = NULL) {
+  $form = array();
+  if (!isset($form_values)) {
+    $form['cfg'] = array(
+      '#type' => 'select',
+      '#title' => t('Select the rule configurations to export'),
+      '#options' => rules_get_grouped_labels(rules_get_configurations()),
+      '#multiple' => TRUE,
+    );
+    $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Export'));
+    $form['#multistep'] = TRUE;
+    $form['#redirect'] = FALSE;
+  }
+  else {
+    //show a textarea containg the exported configs
+    $cfgs = array();
+    foreach ($form_values['cfg'] as $key => $name) {
+      $cfgs[$name] = rules_get_configurations('all', $name);
+    }
+    $form['result'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Exported rule configurations'),
+      '#description' => t('Copy these data and paste them into the import page, to import.'),
+      '#rows' => 15,
+      '#attributes' => array('readonly' => 'readonly'),
+      '#default_value' => var_export($cfgs, TRUE),
+    );
+  }
+  return $form;
+}
+
+/*
+ * Filters the elements (actions, conditions), so that only elements
+ * compatible with the event are kept, which means entities for all arguments
+ * are available, so that the action/condition can be configured
+ */
+function rules_admin_filter_elements($argument_info, $elements) {
+  $filtered = array();
+  foreach ($elements as $key => $element) {
+    if (is_array($element['#arguments']) && count($element['#arguments'])) {
+      foreach ($element['#arguments'] as $name => $info) {
+        if (count(rules_admin_get_possible_arguments($info, $argument_info, FALSE)) == 0) {
+          continue 2; //don't add this element to the filtered one
+        }
+      }
+    }
+    $filtered[$key] = $element;
+  }
+  return $filtered;
+}
+
+/*
+ * Returns an array of all existing values for the #module property of the given elements
+ */
+function rules_admin_get_modules($elements) {
+  $modules = array();
+  foreach($elements as $element) {
+    if (!in_array($element['#module'], $modules) && !$element['#fixed']) {
+      $modules[] = $element['#module'];
+    }
+  }
+  return $modules;
+}
+
+/*
+ * Gets $argument_info, which contains all available arguments
+ * For this we need to get the arguments of the event as well as further arguments that
+ * might be provided by actions of this or preceding configurations
+ * 
+ * @param $cfg The configuration for which to get the argument info
+ * @param $element An optional element, which is currently edited
+ */
+function rules_admin_event_get_argument_info($cfg, $element = NULL) {
+  static $cache = array();
+
+  if (isset($cache[$cfg['#name']])) {
+    if (!isset($element) || !isset($element['#new arguments'])) {
+      return $cache[$cfg['#name']];
+    }
+    //remove elements that are provided by the currently edited element
+    $custom_arguments = $cache[$cfg['#name']];
+    foreach (array_intersect(array_keys($custom_arguments), array_keys($element['#new arguments'])) as $name) {
+      unset($custom_arguments[$name]);
+    }
+    return $custom_arguments;
+  }
+
+  $event = rules_get_events('all', $cfg['#event']);
+  _rules_element_defaults($event);
+  $argument_info = $event['#arguments'];
+
+  //get the arguments provided by an action before
+  $configurations = rules_event_get_configurations($cfg['#event']);
+  $argument_info += rules_get_new_arguments($configurations, $cfg['#name']);
+
+  $cache[$cfg['#name']] = $argument_info;
+  return rules_admin_event_get_argument_info($cfg, $element);
+}
+
+/*
+ * Gets all new arguments defined by actions, which are executed until the given
+ * configuration 
+ */
+function rules_get_new_arguments(&$elements, &$rule_name) {
+  if (!isset($rule_name)) {
+    //if the name is NULL, we are behind the specified configuration
+    return array();
+  }
+
+  //sort the elements
+  $elements += rules_get_element_info($elements);
+  uasort($elements, "_rules_element_sort");
+
+  //add the new arguments, if any
+  $arguments = isset($elements['#new arguments']) ? $elements['#new arguments'] : array();
+
+  //recurse
+  foreach (element_children($elements) as $key) {
+    $arguments += rules_get_new_arguments($elements[$key], $rule_name);
+  }
+
+  if ($elements['#type'] == 'configuration' && $elements['#name'] == $rule_name) {
+    //element found, stop adding new arguments
+    $rule_name = NULL;
+    return $arguments;
+  }
+  return $arguments;
+}

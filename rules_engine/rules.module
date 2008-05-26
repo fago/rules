@@ -16,7 +16,163 @@
 function rules_init() {
 	require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
 }
-  
+
+//admin interface path
+define('RULES_ADMIN_PATH', 'admin/rules/configurations');
+
+/**
+ * Implementation of hook_menu().
+ */
+function rules_menu() {
+  $items = array();
+  $items['admin/rules'] = array(
+    'title' => 'Rules',
+    'description' => 'Rules administration links.',
+    'page callback' => 'drupal_goto',
+    'page callback arguments' => array(RULES_ADMIN_PATH),
+    'access arguments' => array('administer rules'),
+    'position' => 'right',
+    'weight' => 5,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH] = array(
+    'title' => 'Rule configurations',
+    'description' => 'Customize your site by configuring rules, that are evaluated on events.',
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form', NULL),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => -2,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/0/list'] = array(
+    'title' => 'Overview',
+    'weight' => -5,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items[RULES_ADMIN_PATH .'/0/add'] = array(
+    'title' => 'Add a new rule configuration',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_configuration_add'),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/0/import'] = array(
+    'title' => 'Import',
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_import'),
+    'access arguments' => array('administer rules'),
+    'weight' => 7,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/0/export'] = array(
+    'title' => 'Export',
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_export'),
+    'access arguments' => array('administer rules'),
+    'weight' => 8,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule'] = array(
+    //this item lets the menu system create a nicer breadcrumb
+    'title callback' => 'rules_rule_title',
+    'title arguments' => array('@label', 3),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_CALLBACK,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/add'] = array(
+    'title' => 'Add',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_add', 3),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/edit/%rule_element'] = array(
+    'title' => 'Edit',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_edit', 3, 5),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(3),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/edit'] = array(
+    'title callback' => 'rules_rule_title',
+    'title arguments' => array('Edit rule configuration @label', 3),
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_edit_configuration', 3),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/delete'] = array(
+    'title' => 'Delete',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_delete', 3),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/revert'] = array(
+    'title' => 'Revert rule configuration',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_revert', 3),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_PATH .'/%rule/clone'] = array(
+    'title' => 'Clone rule',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page callback arguments' => array('workflow_ng_ui_form_clone', 3),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Loads the admin proxy of the rule with the given name
+ */
+function rule_load($name) {
+  static $proxies = array();
+  $rules = rules_get_configured_items('rules');
+
+  if (!isset($rules[$name])) {
+    return FALSE;
+  }
+  else if (!isset($proxies[$name])) {
+    rules_include('rules_admin');
+    $proxies[$name] = rules_admin_rule_proxy($rules[$name]);
+  }
+  return $proxies[$name];
+}
+
+function rule_element_load($id, $rule_name) {
+  $proxy = rule_load($rule_name);
+  return $proxy->get_element($id);
+}
+
+function rules_rule_title($text, $proxy) {
+  $rule = $proxy->get_rule();
+  return t($text, array('@label' => $rule['#label']));
+}
+
+
+
+/**
+ * Implementation of hook_perm().
+ */
+function rules_perm() {
+  return array('administer rules');
+}
+
 /**
  * Returns info about all defined events
  */
@@ -190,6 +346,7 @@ function rules_clear_cache($immediate = TRUE) {
   if ($immediate) {
     rules_get_rule_set(NULL, TRUE);
     rules_gather_data('', 'all', FALSE, TRUE);
+    rules_get_configured_items(NULL, TRUE);
   }
 }
 
@@ -675,20 +832,27 @@ function rules_log_evaluation_finished() {
  * Gets all configured items, regardless if defined by the admin
  * or by a module
  * 
- * @param $items Which items to get, e.g. 'rules' or 'rule_sets'
+ * @param $items Which items to get, e.g. 'rules' or 'rule_sets'. Use NULL when clearing the cache.
+ * @param Whether the cache should be cleared
  * @return An array of configured items, where structure of the item configuration
  *   depends on the item
  */
-function rules_get_configured_items($items = 'rules') {
-  $configurations = array();
-  $info = rules_get_items($items);
-  $result = db_query("SELECT * FROM {". $info['db_table']. "}");
+function rules_get_configured_items($items = 'rules', $reset = FALSE) {
+  static $configurations = array();
 
-  while ($row = db_fetch_object($result)) {
-    $configurations[$row->name] = unserialize($row->data);
+  if ($reset) {
+    $configurations = array();
   }
-  $configurations += rules_get_item_defaults($items);
-  return $configurations;
+  if (isset($items) && !isset($configurations[$items])) {
+    $info = rules_get_items($items);
+    $result = db_query("SELECT * FROM {". $info['db_table']. "}");
+
+    while ($row = db_fetch_object($result)) {
+      $configurations[$items][$row->name] = unserialize($row->data);
+    }
+    $configurations[$items] += rules_get_item_defaults($items);
+  }
+  return $configurations[$items];
 }
 
 /**
@@ -812,7 +976,7 @@ function rules_form_alter($form_id, $form) {
 
 /**
  * Includes rules specific include files
- * @param $type One of 'rules', 'rules_forms' or 'rules_defaults'
+ * @param $type One of 'rules', 'rules_forms', 'rules_defaults' or 'rules_admin'
  */
 function rules_include($type = 'rules') {
   static $included;
@@ -822,7 +986,11 @@ function rules_include($type = 'rules') {
   }
   if (!isset($included[$type])) {
     $included[$type] = TRUE;
-    if ($cache = cache_get('include_'. $type, 'cache_rules')) {
+
+    if ($type == 'rules_admin') {
+      $files = array(drupal_get_path('module', 'rules') .'/rules.admin.inc');
+    }
+    else if ($cache = cache_get('include_'. $type, 'cache_rules')) {
       $files = $cache->data;
     }
     else {
