@@ -166,60 +166,58 @@ function rules_admin_form_configuration_add_submit($form_id, $form_values) {
   }
   $cfg['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
   $cfg['#module'] = 'rules-ng';
-  rules_admin_save_configuration($cfg);
+  rules_admin_save_rule($cfg);
   rules_clear_cache();
   drupal_set_message(t("The configuration %label has been added.", array('%label' => $cfg['#label'])));
   return rules_UI_PATH .'/'. $cfg['#name'];
 }
 
-/*
- * Returns the form for editing a configuration
+/**
+ * Returns the form for editing a rule
  */
-function rules_admin_form_edit_configuration($configuration_name = NULL) {
+function rules_admin_form_edit_rule(&$form_state, $proxy) {
 
-  if ($cfg = rules_get_configurations('all', $configuration_name)) {
-    _rules_element_defaults($cfg);
-    $form = array();
-    rules_admin_configuration_form($form, $cfg);
-    $form['cfg_name'] = array('#type' => 'value', '#value' => $configuration_name);
-    return $form;
-  }
-  else {
-    drupal_not_found();
-  }
-}
+  $form_state['proxy'] = &$proxy;
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
 
-function rules_admin_form_edit_configuration_submit($form_id, $form_values) {
-  $cfg = rules_get_configurations('all', $form_values['cfg_name']);
-  foreach (array('label', 'active', 'weight') as $key) {
-    $cfg['#'. $key] = $form_values[$key];
-  }
-  rules_admin_save_configuration($cfg);
-  rules_clear_cache();
-  drupal_set_message(t("The configuration %label has been updated.", array('%label' => $cfg['#label'])));
-}
-
-function rules_admin_configuration_form(&$form, $cfg = array()) {
-  $form['label'] = array(
+  $form['settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Rule settings'),
+    '#collapsible' => TRUE,
+  );
+  $form['settings']['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Choose an appropriate label for this rule.'),
-    '#default_value' => $cfg['#label'],
+    '#default_value' => $rule['#label'],
     '#required' => TRUE,
   );
-  $form['active'] = array(
+  $form['settings']['active'] = array(
     '#title' => t('This rule is active and should be evaluated when the associated event occurs.'),
     '#type' => 'checkbox',
-    '#default_value' => isset($cfg['#active']) ? $cfg['#active'] : 1,
+    '#default_value' => isset($rule['#active']) ? $rule['#active'] : 1,
   );
-  $form['weight'] = array(
+  $form['settings']['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
     '#description' => t('Adjust the weight to customize the ordering of rules.'),
-    '#default_value' => isset($cfg['#weight']) ? $cfg['#weight'] : 0,
+    '#default_value' => isset($rule['#weight']) ? $rule['#weight'] : 0,
   );
-  $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Submit'));
+  $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
+  return $form;
 }
+
+function rules_admin_form_edit_rule_submit($form, &$form_state) {
+  $rule_ref = &$form_state['proxy']->get_rule();
+  foreach (array('label', 'active', 'weight') as $key) {
+    $rule_ref['#'. $key] = $form_state['values'][$key];
+  }
+
+  $form_state['proxy']->save_changes();
+  rules_clear_cache();
+}
+
 
 /*
  * Shows the revert configuration form
@@ -343,7 +341,7 @@ function rules_admin_form_edit_op_add(&$form, $element, &$parent) {
   }
 
   //and save
-  rules_admin_save_configuration($cfg);
+  rules_admin_save_rule($cfg);
   rules_clear_cache();
   drupal_goto(rules_UI_PATH);
 }
@@ -374,7 +372,7 @@ function rules_admin_form_add_submit($form_id, $form_values) {
     //just add the element to the parent
     $parent = rules_configure($parent, $element);
 
-    rules_admin_save_configuration($cfg);
+    rules_admin_save_rule($cfg);
     rules_clear_cache();
   }
 }
@@ -434,7 +432,7 @@ function rules_admin_form_edit_submit($form_id, $form_values) {
   //we only save if there were really changes to the element.
   //so a default configuration may keep its default status
   if ($element != $orig_element) {
-    rules_admin_save_configuration($cfg);
+    rules_admin_save_rule($cfg);
     rules_clear_cache();
   }
 }
@@ -794,7 +792,7 @@ function rules_admin_form_delete_submit($form_id, $form_values) {
       //remove the elements key by cleaning the config
     }
     rules_admin_clean_configuration($cfg);
-    rules_admin_save_configuration($cfg);
+    rules_admin_save_rule($cfg);
     rules_clear_cache();
   }
   return rules_UI_PATH;
@@ -837,27 +835,7 @@ function rules_admin_get_compatible_events($event_name) {
   return $events;
 }
 
-/*
- * Saves a configuration in the database
- */
-function rules_admin_save_configuration($configuration) {
-  rules_admin_delete_configuration($configuration);
 
-  if ($configuration['#module'] != 'rules-ng') {
-    $configuration['#altered'] = TRUE;
-  }
-  $name = $configuration['#name'];
-  unset($configuration['#name']);
-  db_query("INSERT INTO {rules_cfgs} (name, data, altered) VALUES ('%s', '%s', %d)",
-    $name, serialize($configuration), $configuration['#altered']);
-}
-
-/*
- * Deletes the configuration from the database
- */
-function rules_admin_delete_configuration($configuration) {
-  db_query("DELETE FROM {rules_cfgs} WHERE name = '%s'", $configuration['#name']);
-}
 
 /*
  * Cleans the given configuration. This means, array keys that are neither elements
@@ -965,7 +943,7 @@ function rules_admin_form_import_submit($form_id, $form_values) {
         //generate a new unique name for this configuration
         $data['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
       }
-      rules_admin_save_configuration($data);
+      rules_admin_save_rule($data);
       drupal_set_message(t('Imported rule configuration %label.', array('%label' => rules_get_element_label($data))));
     }
     rules_clear_cache();
