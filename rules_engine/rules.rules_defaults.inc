@@ -37,7 +37,7 @@ function rules_rules_defaults() {
     )
   );
   //OR them
-  $conditions = rules_configure('OR', $condition1, $condition2);
+  $OR = rules_configure('OR', $condition1, $condition2);
   //configure an action
   $action = rules_use_action('rules_action_drupal_message', array(
     '#label' => t('Show the title of this content'),
@@ -49,8 +49,8 @@ function rules_rules_defaults() {
   ));
   //add the elements to the rule
   $rules['rules1'] += array(
-    '#conditions' => $conditions,
-    '#actions' => $action,
+    '#conditions' => array($OR),
+    '#actions' => array($action),
   );
   return array('rules' => $rules);
 }

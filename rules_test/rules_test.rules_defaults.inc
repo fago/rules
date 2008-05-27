@@ -23,15 +23,14 @@ function rules_test_rules_defaults() {
   $condition2 = rules_use_condition('rules_condition_check_for_altered_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
-  $conditions = rules_configure('AND', $condition1, $condition2);
   $action = rules_use_action('rules_log_msg', array(
     '#settings' => array(
       'msg' => 'Rules Test 1 - Success!',
     )
   ));
   $rules['rules_test_1'] += array(
-    '#conditions' => $conditions,
-    '#actions' => $action,
+    '#conditions' => array($condition1, $condition2),
+    '#actions' => array($action),
   );
   
   $rules['rules_test_2_1'] = array(
@@ -46,7 +45,8 @@ function rules_test_rules_defaults() {
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
   $rules['rules_test_2_1'] += array(
-    '#actions' => $action,
+    '#conditions' => array(),
+    '#actions' => array($action),
   );
 
   $rules['rules_test_2_2'] = array(
@@ -65,8 +65,8 @@ function rules_test_rules_defaults() {
     )
   ));
   $rules['rules_test_2_2'] += array(
-    '#conditions' => $condition,
-    '#actions' => $action,
+    '#conditions' => array($condition),
+    '#actions' => array($action),
   );
   
   
@@ -86,8 +86,8 @@ function rules_test_rules_defaults() {
     )
   ));
   $rules['rules_test_4_1'] += array(
-    '#conditions' => $condition,
-    '#actions' => $action,
+    '#conditions' => array($condition),
+    '#actions' => array($action),
   );
 
   $rules['rules_test_5'] = array(
@@ -112,10 +112,10 @@ function rules_test_rules_defaults() {
     '#argument map' => array('node' => 'node'),
   ));
   $rules['rules_test_5'] += array(
-    '#conditions' => $condition1,
-    '#actions' => $action,
+    '#conditions' => array($condition1),
+    '#actions' => array($action),
   );
-  
+
   return array(
     'rules' => $rules,
     'rule_sets' => array(

@@ -7,16 +7,16 @@ a.action, a.condition {
   margin: 0.3em;
   border: 1px solid #CCCCCC;
 }
-img.workflow-ng-icon {
+img.rules-icon {
   position: relative;
   top: 0.5em;
 }
-a.action img.workflow-ng-icon {
+a.action img.rules-icon {
   position: relative;
   top: 3px;
   left: 2px;
 }
-a.condition img.workflow-ng-icon {
+a.condition img.rules-icon {
   position: relative;
   top: 2px;
 }
@@ -36,26 +36,26 @@ h3.conditions {
 p.logical-op-add {
   margin-bottom: 0em;
 }
-p.logical-op-edit img.workflow-ng-icon {
+p.logical-op-edit img.rules-icon {
   top: -0.2em;
   vertical-align: bottom;
 }
-img.workflow-ng-icon {
+img.rules-icon {
   margin: 0px 3px;
 }
-div.workflow-ng-filter {
+div.rules-filter {
   padding-bottom: 2em;
 }
-div.workflow-ng-filter div, div.workflow-ng-filter input {
+div.rules-filter div, div.rules-filter input {
   padding-right: 1em;
   margin: 0em;
 }
-div.workflow-ng-filter div, div.workflow-ng-filter label {
+div.rules-filter div, div.rules-filter label {
   display: inline;
 }
-table.workflow-ng-configurations tr.odd, table.workflow-ng-configurations tr.even {
+table.rules-configurations tr.odd, table.rules-configurations tr.even {
   vertical-align: top;
 }
-table.workflow-ng-configurations {
+table.rules-configurations {
   margin-bottom: 2em;
 }

@@ -14,7 +14,7 @@ require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
 function rules_admin_form($module = NULL, $configuration = NULL, $op = NULL, $id = NULL) {
   $form = array();
   //add css
-  $path = drupal_get_path('module', 'rules_admin') .'/rules_admin.css';
+  $path = drupal_get_path('module', 'rules') .'/rules_admin.css';
   drupal_add_css($path, 'module', 'all', FALSE);
 
   if (!isset($configuration)) {
@@ -205,6 +205,20 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
     '#default_value' => isset($rule['#weight']) ? $rule['#weight'] : 0,
   );
   $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
+  
+  //help
+  //  rules_admin_element_help($render['event'], rules_get_events('all', $element['#event']));
+  $form['elements'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Rule elements'),
+    '#collapsible' => TRUE,
+  );
+
+  //this will render the whole rule with the help of drupal_render(),
+  //see rules.admin_render.inc
+  $form['elements']['rule'] = $proxy->get_indexed_rule();
+  $form['elements']['rule']['#theme'] = array('rules_admin_rule_render');
+
   return $form;
 }
 
