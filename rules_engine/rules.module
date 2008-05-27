@@ -173,6 +173,21 @@ function rules_perm() {
   return array('administer rules');
 }
 
+
+/**
+ * Implementation of hook_theme()
+ */
+function rules_theme() {
+  foreach (array('rules_admin_rule_render', 'rule', 'condition', 'action', 'rules_icon', 'rules_operation', 'OR', 'AND', 'rules_logical_operation_label') as $name) {
+    $items[$name] = array(
+      'arguments' => array('elements' => NULL),
+      'file' => 'rules.admin_render.inc'
+    );
+  }
+  return $items;
+}
+
+
 /**
  * Returns info about all defined events
  */
@@ -487,10 +502,8 @@ function rules_execute_rule(&$element, &$state) {
     rules_log_evaluated_rule($element['#name'], TRUE);
     rules_log(t('Executing the rule %name on rule set %set', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
 
-    if (isset($element['#conditions'])) {
-      $result = rules_evaluate_elements($element['#conditions'], $state);
-    }
-    if (!isset($element['#conditions']) || $result == TRUE) {
+    $result = rules_evaluate_elements($element['#conditions'], $state);
+    if ($result) {
       rules_evaluate_elements($element['#actions'], $state);
     }
 
@@ -564,7 +577,7 @@ function rules_execute_action($element, &$state) {
           }
         }
       }
-      rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element, $state))));
+      rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element))));
     }
     return TRUE;
   }
@@ -630,7 +643,7 @@ function _rules_log_set_invocation($message, $start = TRUE) {
  */
 function rules_elements() {
   $types = array();
-  $types['rule'] = array('#name' => '', '#set' => '', '#recursion' => FALSE, '#fixed' => FALSE, '#active' => TRUE, '#altered' => FALSE, '#execute' => 'rules_execute_rule', '#process' => array('rules_ui_prepare_configuration' => array()));
+  $types['rule'] = array('#name' => '', '#set' => '', '#recursion' => FALSE, '#fixed' => FALSE, '#active' => TRUE, '#altered' => FALSE, '#execute' => 'rules_execute_rule');
   $types['condition'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
   $types['action'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
   $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
@@ -656,7 +669,7 @@ function rules_get_element_info(&$element) {
 /**
  * Gets the element's label
  */
-function rules_get_element_label($element, &$state) {
+function rules_get_element_label($element) {
   if (!isset($element['#label'])) {
     $info = rules_get_element_info($element);
     return $info['label'];
