@@ -3,114 +3,91 @@
 require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
 
 
-/*
- * Returns the form, which builds the admin screen of rules-ng
- *
- * @param $module Allows to restrict the form to configuration and events of this group
- * @param $configuration The name of the configuration to handle
- * @param $op The operation which has is currently performed, e.g. adding, editing of an element with the id given
- * @param $id Optionally specifies an element on which the operation is performed
+/**
+ * Lists the available rules.
  */
-function rules_admin_form($module = NULL, $configuration = NULL, $op = NULL, $id = NULL) {
-  $form = array();
-  //add css
-  $path = drupal_get_path('module', 'rules') .'/rules_admin.css';
-  drupal_add_css($path, 'module', 'all', FALSE);
+function rules_admin_form_overview(&$form_state) {
+  $form['filter'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Filter'),
+    '#collapsible' => TRUE,
+    '#collapsed' => isset($form_state['values']),
+  );
+  $form['filter']['set'] = array(
+    '#type' => 'select',
+    '#title' => t('Filter by event'),
+    '#options' => array(0 => '<All>') + rules_get_grouped_labels(rules_get_events()),
+    '#default_value' => isset($form_state['values']['set']) ? $form_state['values']['set'] : 0,
+  );
+  $form['filter']['category'] = array(
+    '#type' => 'select',
+    '#title' => t('Filter by category'),
+    '#options' => array(0 => '<All>') + rules_admin_get_categories(),
+    '#default_value' => isset($form_state['values']['category']) ? $form_state['values']['category'] : 0,
+  );
+  $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
 
-  if (!isset($configuration)) {
-    return rules_admin_configuration_overview($module);
-  }
-  else if ($cfg = rules_get_configurations('all', $configuration)) {
-    //just let it be rendered by the formAPI and drupal_render()
-    include_once(drupal_get_path('module', 'rules_admin') .'/rules_admin_render.inc');
-    $form['config'] = $cfg;
-    return $form;
-  }
-  else {
-    drupal_not_found();
-  }
-}
-
-/*
- * Lists the available configurations..
- *
- * @param $module Allows to restrict the form to configuration and events of this group
- */
-function rules_admin_configuration_overview($module = NULL) {
-  if (!isset($module)) {
-    $form['filter'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Filter'),
-      '#collapsible' => TRUE,
-      '#collapsed' => !$_POST,
-    );
-    $events = array(0 => '<All>') + rules_get_grouped_labels(rules_get_events());
-    $form['filter']['event_filter'] = array(
-      '#type' => 'select',
-      '#title' => t('Filter by event'),
-      '#options' => $events,
-    );
-    $modules = array(0 => '<All>') + drupal_map_assoc(rules_admin_get_modules(rules_get_configurations()));
-    $form['filter']['module_filter'] = array(
-      '#type' => 'select',
-      '#title' => t('Filter by module'),
-      '#options' => $modules,
-    );
-    $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
-    $module = (isset($_POST['module_filter']) && in_array($_POST['module_filter'], $modules))? $_POST['module_filter'] : NULL;
-    $event = (isset($_POST['event_filter']) && rules_get_events('all', $_POST['event_filter']))? $_POST['event_filter'] : NULL;
-  }
+  $category = isset($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
+  $set = isset($form_state['values']['set']) ? 'event_'. $form_state['values']['set'] : FALSE;
 
   $form['active_header'] = array('#value' => '<h3>'. t('Active rules'). '</h3>');
-  $form['active'] = rules_admin_configuration_table($module, $event, TRUE);
+  $form['active'] = rules_admin_overview_table(array('category' => $category, 'set' => $set, 'active' => TRUE));
+  $form['active']['#suffix'] = '<br />';
   $form['inactive_header'] = array('#value' => '<h3>'. t('Inactive rules'). '</h3>');
-  $form['inactive'] = rules_admin_configuration_table($module, $event, FALSE);
+  $form['inactive'] = rules_admin_overview_table(array('category' => $category, 'set' => $set, 'active' => FALSE));
 
   if (variable_get('rules_show_fixed', FALSE)) {
     $form['fixed_header'] = array('#value' => '<h3>'. t('Fixed rules'). '</h3>');
-    $form['fixed'] = rules_admin_configuration_table($module, $event, TRUE, TRUE);
+    $form['fixed'] = rules_admin_overview_table(array('category' => $category, 'set' => $set, 'active' => TRUE, 'fixed' => TRUE));
   }
-  $form['#redirect'] = FALSE;
   return $form;
 }
 
-/*
- * Returns a table of configurations filtered by the given parameters
- */
-function rules_admin_configuration_table($module = NULL, $event = NULL, $active = TRUE, $fixed = FALSE) {
-  $configurations = rules_get_configurations();
-  _rules_sort_children($configurations);
+function rules_admin_form_overview_submit($form_id, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+}
 
-  $header = array(t('Label'), t('Event'), t('Module'), t('Status'), t('Operations'));
+/**
+ * Returns a table of rules filtered by the given parameters
+ * 
+ * Supported parameters: fixed, category, set, active.
+ * Category and set may be set to NULL to hide their columns.
+ */
+function rules_admin_overview_table($params) {
+  $rules = rules_get_configured_items('rules');
+  _rules_sort_children($rules);
+  
+  //set parameter defaults
+  $params += array('category' => NULL, 'set' => NULL, 'active' => TRUE, 'fixed' => FALSE);
+  extract($params);
+
+  $header = array(t('Label'), t('Event'), t('Category'), t('Status'), t('Operations'));
   $rows = array();
 
-  foreach (element_children($configurations) as $name) {
-    $cfg = &$configurations[$name];
+  foreach (element_children($rules) as $name) {
+    $rule = $rules[$name];
+    _rules_element_defaults($rule);
 
-    if ((!isset($module) || $cfg['#module'] == $module) && (!isset($event) || $cfg['#event'] == $event) && $cfg['#active'] == $active && $cfg['#fixed'] == $fixed) {
-      $status = rules_admin_configuration_status($cfg, FALSE);
-      $path = rules_UI_PATH .'/'. $name;
+    if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {      
+      $path = RULES_ADMIN_PATH .'/'. $name;
       $ops = array();
-
-      if ($status != 'fixed') {
+      if ($rule['#status'] != 'fixed') {
         $ops[] = l(t('edit'), $path .'/edit', array(), drupal_get_destination());
       }
-
-      switch ($status) {
-        case 'custom':
-          $ops[] = l(t('delete'), $path .'/delete', array(), drupal_get_destination());
-          break;
-        case 'modified':
-          $ops[] = l(t('reset'), $path .'/revert', array(), drupal_get_destination());
-          break;
+      if ($rule['#status'] == 'custom') {
+        $ops[] = l(t('delete'), $path .'/delete', array(), drupal_get_destination());
+      }
+      else if ($rule['#status'] == 'modified') {
+        $ops[] = l(t('reset'), $path .'/revert', array(), drupal_get_destination());
       }
       $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
+      $categories = array_map('check_plain', $rule['#categories']);
 
       $rows[] = array(
-        l($cfg['#label'], $path),
-        check_plain(rules_get_events('labels', $cfg['#event'])),
-        check_plain($cfg['#module']),
-        rules_admin_configuration_status($cfg),
+        l($rule['#label'], $path .'/edit'),
+        check_plain(rules_get_element_label(rules_get_rule_sets($rule['#set']))),
+        implode(', ', $categories),
+        rules_admin_configuration_status($rule),
         implode(' ', $ops),
       );
     }
@@ -123,24 +100,24 @@ function rules_admin_configuration_table($module = NULL, $event = NULL, $active 
   return array('#value' => t('None.'));
 }
 
-/*
- * Returns the status of the configuration, as html or as simple keyword.
+/**
+ * Returns the status of the configuration as html.
  */
-function rules_admin_configuration_status($config, $html = TRUE) {
-  if ($config['#altered']) {
-    $help = t('The rule has been provided by a module, but has been modified.');
-    return $html ? '<span title="'. $help .'">'. t('Modified'). '</span>' : 'modified';
+function rules_admin_configuration_status($rule) {
+  if ($rule['#status'] == 'altered') {
+    $help = t('This rule has been provided by a module, but has been modified.');
+    return '<span title="'. $help .'">'. t('Modified'). '</span>';
   }
-  else if ($config['#fixed'] == TRUE) {
-    $help = t('The rule has been provided by a module and can\'t be customized.');
-    return $html ? '<span title="'. $help .'">'. t('Fixed') .'</span>' : 'fixed';
+  else if ($rule['#status'] == 'fixed') {
+    $help = t('This rule has been provided by a module and can\'t be customized.');
+    return '<span title="'. $help .'">'. t('Fixed') .'</span>';
   }
-  else if ($config['#module'] == 'rules-ng') {
-    $help = t('The rule has not been provided by a module.');
-    return $html ? '<span title="'. $help .'">'. t('Custom'). '</span>' : 'custom';
+  else if ($rule['#status'] == 'custom') {
+    $help = t('A custom defined rule.');
+    return '<span title="'. $help .'">'. t('Custom'). '</span>';
   }
-  $help = t('The rule has been provided by a module.');
-  return $html ? '<span title="'. $help .'">'. t('Default') .'</span>' : 'default';
+  $help = t('This rule has been provided by a module.');
+  return '<span title="'. $help .'">'. t('Default') .'</span>';
 }
 
 /*
@@ -874,22 +851,22 @@ function rules_admin_clean_configuration(&$element) {
   }
 }
 
-/*
- * Gets the element labels grouped by modules
+/**
+ * Gets an array of element labels grouped by modules
  *
- * @param $elements An array of elements, e.g. as returned from rules_get_events()
+ * @param $elements An array of info elements, e.g. as returned from rules_get_events()
  */
 function rules_get_grouped_labels($elements) {
   $grouped = array();
   $ungrouped = array();
 
   foreach ($elements as $name => $element) {
-    if (!isset($element['#fixed']) || !$element['#fixed']) {
-      if (isset($element['#module'])) {
-        $grouped[$element['#module']][$name] = $element['#label'];
+    if (!isset($element['fixed']) || !$element['fixed']) {
+      if (isset($element['module'])) {
+        $grouped[$element['module']][$name] = $element['label'];
       }
       else {
-        $ungrouped[$name] = $element['#label'];
+        $ungrouped[$name] = $element['label'];
       }
     }
   }
@@ -1022,17 +999,21 @@ function rules_admin_filter_elements($argument_info, $elements) {
   return $filtered;
 }
 
-/*
- * Returns an array of all existing values for the #module property of the given elements
+/**
+ * Returns an array of all existing categories
  */
-function rules_admin_get_modules($elements) {
-  $modules = array();
-  foreach($elements as $element) {
-    if (!in_array($element['#module'], $modules) && !$element['#fixed']) {
-      $modules[] = $element['#module'];
+function rules_admin_get_categories() {
+  $categories = array();
+  foreach (rules_get_configured_items('rules') as $rule) {
+    if (isset($rule['#categories']) && is_array($rule['#categories']) && (!isset($rule['#fixed']) || !$rule['#fixed'])) {
+      foreach ($rule['#categories'] as $category) {
+        if (!in_array($category, $categories)) {
+          $categories[$element['#categories']] = $element['#categories'];
+        }
+      }
     }
   }
-  return $modules;
+  return $categories;
 }
 
 /*

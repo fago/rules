@@ -39,7 +39,7 @@ function rules_menu() {
     'title' => 'Rule configurations',
     'description' => 'Customize your site by configuring rules, that are evaluated on events.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form', NULL),
+    'page arguments' => array('rules_admin_form_overview'),
     'access arguments' => array('administer rules'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => -2,
@@ -643,7 +643,7 @@ function _rules_log_set_invocation($message, $start = TRUE) {
  */
 function rules_elements() {
   $types = array();
-  $types['rule'] = array('#name' => '', '#set' => '', '#recursion' => FALSE, '#fixed' => FALSE, '#active' => TRUE, '#altered' => FALSE, '#execute' => 'rules_execute_rule');
+  $types['rule'] = array('#name' => '', '#set' => '', '#status' => 'default', '#categories' => array(), '#recursion' => FALSE, '#active' => TRUE, '#execute' => 'rules_execute_rule');
   $types['condition'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
   $types['action'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
   $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
@@ -671,6 +671,9 @@ function rules_get_element_info(&$element) {
  */
 function rules_get_element_label($element) {
   if (!isset($element['#label'])) {
+    if (isset($element['label'])) {
+      return $element['label'];
+    }
     $info = rules_get_element_info($element);
     return $info['label'];
   }
@@ -829,7 +832,7 @@ function rules_log_evaluation_finished() {
  * 
  * @param $items Which items to get, e.g. 'rules' or 'rule_sets'. Use NULL when clearing the cache.
  * @param Whether the cache should be cleared
- * @return An array of configured items, where structure of the item configuration
+ * @return An array of configured items, where the structure of the item configuration
  *   depends on the item
  */
 function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
