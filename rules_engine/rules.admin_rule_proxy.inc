@@ -68,8 +68,7 @@ class rules_admin_rule_proxy {
     $rule = $this->get_rule();
     $orig_rule = $this->_rule;
     if ($orig_rule != $rule) {
-      $this->save();
-      drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule['#label'])));
+      $this->save_rule();
     }
   }
 
@@ -117,7 +116,7 @@ class rules_admin_rule_proxy {
   /**
    * Saves a the rule in the database
    */
-  function save() {
+  function save_rule() {
     $rule = $this->get_rule();
 
     if (strpos($rule['#name'], 'rules') === TRUE) {
@@ -133,4 +132,38 @@ class rules_admin_rule_proxy {
     $rule = $this->get_rule();
     rules_item_delete('rules', $rule['#name'], $rule);
   }
+
+
+
+
+  /**
+   * Cleans the given rule. This means, array keys that are neither elements
+   * nor properties are removed.
+   */
+  function clean_rule() {
+    $rule =& $this->get_rule();
+    $this->_clean_rule($rule['#conditions']);
+    $this->_clean_rule($rule['#actions']);
+    dprint_r($rule);
+  }
+
+  function _clean_rule(&$element) {
+    $children = array();
+    foreach (element_children($element) as $key) {
+      if (!isset($element[$key]['#type'])) {
+        //this element can be removed, but care for it's children
+        foreach (element_children($element[$key]) as $child_key) {
+          $children[$child_key] = $element[$key][$child_key];
+        }
+        unset($element[$key]);
+      }
+      else {
+        $this->_clean_rule($element[$key]);
+      }
+    }
+    if (count($children)) {
+      $element = array_merge($element, $children);
+    }
+  }
+
 }
