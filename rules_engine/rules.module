@@ -17,8 +17,13 @@ function rules_init() {
 	require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
 }
 
-//admin interface path
-define('RULES_ADMIN_PATH', 'admin/rules/configurations');
+//admin interface paths
+define('RULES_ADMIN_PATH', 'admin/rules');
+define('RULES_ADMIN_TRIGGER_PATH', RULES_ADMIN_PATH. '/trigger');
+define('RULES_ADMIN_SET_PATH', RULES_ADMIN_PATH. '/sets');
+define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rule');
+
+
 
 /**
  * Implementation of hook_menu().
@@ -28,16 +33,16 @@ function rules_menu() {
   $items['admin/rules'] = array(
     'title' => 'Rules',
     'description' => 'Rules administration links.',
-    'page callback' => 'drupal_goto',
-    'page arguments' => array(RULES_ADMIN_PATH),
-    'access arguments' => array('administer rules'),
     'position' => 'right',
     'weight' => 5,
-    'file' => 'rules.admin.inc',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer rules'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
   );
-  $items[RULES_ADMIN_PATH] = array(
-    'title' => 'Rule configurations',
-    'description' => 'Customize your site by configuring rules, that are evaluated on events.',
+  $items[RULES_ADMIN_TRIGGER_PATH] = array(
+    'title' => 'Triggered rules',
+    'description' => 'Customize your site by configuring rules that are evaluated on events.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_overview'),
     'access arguments' => array('administer rules'),
@@ -45,12 +50,12 @@ function rules_menu() {
     'weight' => -2,
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/0/list'] = array(
+  $items[RULES_ADMIN_TRIGGER_PATH .'/list'] = array(
     'title' => 'Overview',
     'weight' => -5,
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
-  $items[RULES_ADMIN_PATH .'/0/add'] = array(
+  $items[RULES_ADMIN_TRIGGER_PATH .'/add'] = array(
     'title' => 'Add a new rule configuration',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
@@ -58,7 +63,36 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/0/import'] = array(
+  $items[RULES_ADMIN_SET_PATH] = array(
+    'title' => 'Rule sets',
+    'description' => 'Create and manage rule sets.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_overview'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 0,
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_SET_PATH .'/list'] = array(
+    'title' => 'Overview',
+    'weight' => -5,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items[RULES_ADMIN_PATH .'/ie'] = array(
+    'title' => 'Import / Export',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_export'),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+    'weight' => 5,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items[RULES_ADMIN_PATH .'/ie/export'] = array(
+    'title' => 'Export',
+    'weight' => 0,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items[RULES_ADMIN_PATH .'/ie/import'] = array(
     'title' => 'Import',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_import'),
@@ -67,16 +101,8 @@ function rules_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/0/export'] = array(
-    'title' => 'Export',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_export'),
-    'access arguments' => array('administer rules'),
-    'weight' => 8,
-    'type' => MENU_LOCAL_TASK,
-    'file' => 'rules.admin.inc',
-  );
-  $items[RULES_ADMIN_PATH .'/%rule'] = array(
+  //paths for modifing rules
+  $items[RULES_ADMIN_PATH .'/rule/%rule'] = array(
     //this item lets the menu system create a nicer breadcrumb
     'title callback' => 'rules_rule_title',
     'title arguments' => array('@label', 3),
@@ -84,7 +110,7 @@ function rules_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/add'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/add'] = array(
     'title' => 'Add',
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
@@ -92,7 +118,7 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/edit/%rule_element'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/edit/%rule_element'] = array(
     'title' => 'Edit',
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
@@ -101,7 +127,7 @@ function rules_menu() {
     'load arguments' => array(3),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/edit'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/edit'] = array(
     'title callback' => 'rules_rule_title',
     'title arguments' => array('Editing rule @label', 3),
     'type' => MENU_CALLBACK,
@@ -110,7 +136,7 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/delete'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/delete'] = array(
     'title' => 'Delete',
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
@@ -118,7 +144,16 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/revert'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/delete/%rule_element'] = array(
+    'title' => 'Delete',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_delete', 3, 5),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(3),
+    'file' => 'rules.admin.inc',
+  );
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/revert'] = array(
     'title' => 'Revert rule configuration',
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
@@ -126,7 +161,7 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_PATH .'/%rule/clone'] = array(
+  $items[RULES_ADMIN_RULE_PATH .'/%rule/clone'] = array(
     'title' => 'Clone rule',
     'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
@@ -136,6 +171,7 @@ function rules_menu() {
   );
   return $items;
 }
+
 
 /**
  * Loads the admin proxy of the rule with the given name
@@ -156,7 +192,8 @@ function rule_load($name) {
 
 function rule_element_load($id, $rule_name) {
   $proxy = rule_load($rule_name);
-  return $proxy->get_element($id);
+  $element = $proxy->get_element($id);
+  return $element ? $element + array('#id' => intval($id)) : FALSE;
 }
 
 function rules_rule_title($text, $proxy) {
@@ -657,7 +694,7 @@ function rules_elements() {
  */
 function rules_get_element_info(&$element) {
   _rules_element_defaults($element);
-  if ($element['#info'] && $element['#name']) {
+  if (isset($element['#info']) && $element['#info'] && isset($element['#name'])) {
     if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
       return $info + array('arguments' => array(), 'fixed' => FALSE);
     }
@@ -675,7 +712,7 @@ function rules_get_element_label($element) {
       return $element['label'];
     }
     $info = rules_get_element_info($element);
-    return $info['label'];
+    return isset($info['label']) ? $info['label'] : '';
   }
   return $element['#label'];
 }

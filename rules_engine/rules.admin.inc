@@ -69,7 +69,7 @@ function rules_admin_overview_table($params) {
     _rules_element_defaults($rule);
 
     if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {      
-      $path = RULES_ADMIN_PATH .'/'. $name;
+      $path = RULES_ADMIN_RULE_PATH .'/'. $name;
       $ops = array();
       if ($rule['#status'] != 'fixed') {
         $ops[] = l(t('edit'), $path .'/edit', array(), drupal_get_destination());
@@ -146,7 +146,7 @@ function rules_admin_form_configuration_add_submit($form_id, $form_values) {
   rules_admin_save_rule($cfg);
   rules_clear_cache();
   drupal_set_message(t("The configuration %label has been added.", array('%label' => $cfg['#label'])));
-  return rules_UI_PATH .'/'. $cfg['#name'];
+  return RULES_ADMIN_PATH .'/'. $cfg['#name'];
 }
 
 /**
@@ -207,35 +207,34 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
 
   $form_state['proxy']->save_changes();
   rules_clear_cache();
+  drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
 }
 
 
-/*
+/**
  * Shows the revert configuration form
  */
-function rules_admin_form_revert($configuration_name) {
-  $form = array();
-  if ($cfg = rules_get_configurations('all', $configuration_name)) {
-    $path = array();
-    $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : rules_UI_PATH;
-    $form['cfg'] = array('#type' => 'value', '#value' => $cfg);
+function rules_admin_form_revert(&$form_state, $proxy) {
+  $form_state['proxy'] = &$proxy;
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
 
-    return confirm_form($form,
-      t('Are you sure you want to revert the configuration %label to its defaults?', array('%label' => $cfg['#label'])),
-      $path,
-      t('This action cannot be undone.'), t('Revert'), t('Cancel')
-    );
-  }
-  drupal_not_found();
+  $form = array();
+  $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : RULES_ADMIN_PATH;
+  
+  return confirm_form($form,
+    t('Are you sure you want to revert the rule %label to its defaults?', array('%label' => $rule['#label'])),
+    $path,
+    t('This action cannot be undone.'), t('Revert'), t('Cancel')
+  );
 }
 
-function rules_admin_form_revert_submit($form_id, $form_values) {
-  if ($form_values['confirm']) {
-    rules_admin_delete_configuration($form_values['cfg']);
-    rules_clear_cache();
-    drupal_set_message(t("The configuration %label has been reverted to its defaults.", array('%label' => $form_values['cfg']['#label'])));
-  }
-  return rules_UI_PATH;
+function rules_admin_form_revert_submit($form_id, $form_state) {
+  $rule = $form_state['proxy']->get_rule();
+  $form_state['proxy']->delete_rule();
+  rules_clear_cache();
+  drupal_set_message(t("The rule %label has been reverted to its defaults.", array('%label' => $rule['#label'])));
+  $form_state['redirect'] = RULES_ADMIN_PATH;
 }
 
 /*
@@ -246,7 +245,10 @@ function rules_admin_form_revert_submit($form_id, $form_values) {
  * @param $id Optionally specifies an element where the condition / action is to be added
  * @param $type Either 'action' or 'condition' or 'op'
  */
-function rules_admin_form_add($configuration_name, $id, $type, $form_values = NULL) {
+function rules_admin_form_add($proxy, $id, $type, $form_values = NULL) {
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
+  
   if (($cfg = rules_get_configurations('all', $configuration_name)) && in_array($type, array('action', 'condition', 'op'))) {
     $element = isset($form_values) ? array('#type' => $type, '#name' => $form_values['name']) : array('#type' => $type);
     $element += rules_get_element_info($element);
@@ -334,7 +336,7 @@ function rules_admin_form_edit_op_add(&$form, $element, &$parent) {
   //and save
   rules_admin_save_rule($cfg);
   rules_clear_cache();
-  drupal_goto(rules_UI_PATH);
+  drupal_goto(RULES_ADMIN_PATH);
 }
 
 /*
@@ -382,7 +384,7 @@ function rules_admin_form_edit($configuration_name, $id) {
         $destination = drupal_get_destination();
         unset($_REQUEST['destination']);
       }
-      drupal_goto(rules_UI_PATH .'/'. $cfg['#name'] .'/delete/'. $id, $destination);
+      drupal_goto(RULES_ADMIN_PATH .'/'. $cfg['#name'] .'/delete/'. $id, $destination);
     }
     //regenerate the ids
     rules_element_id($configuration_name, $cfg);
@@ -691,7 +693,7 @@ function rules_admin_get_possible_arguments($info, $argument_info, $print_error 
   }
   if ($print_error && count($matches) == 0) {
     drupal_set_message(t('There are not all necessary arguments available.'), 'error');
-    drupal_goto(rules_UI_PATH);
+    drupal_goto(RULES_ADMIN_PATH);
   }
   return $matches;
 }
@@ -721,72 +723,70 @@ function rules_admin_element_help(&$form, $element) {
   }
 }
 
-/*
- * Shows the delete form for configurations, conditions and actions
+/**
+ * Shows the delete form for rules, conditions and actions
  */
-function rules_admin_form_delete($configuration_name, $id = NULL) {
-  $form = array();
-  if ($cfg = rules_get_configurations('all', $configuration_name)) {
-    $path = array();
-    $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : rules_UI_PATH;
-    $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
-    $form['id'] = array('#type' => 'value', '#value' => $id);
+function rules_admin_form_delete(&$form_state, $proxy, $element = NULL) {
 
-    if (!isset($id)) {
-      return confirm_form($form,
-        t('Are you sure you want to delete the rule %label?', array('%label' => $cfg['#label'])),
-        $path,
-        t('This action cannot be undone.'), t('Delete'), t('Cancel')
-      );
-    }
-    else {
-      //regenerate the ids
-      rules_element_id($configuration_name, $cfg);
-      //get the item assocaited with $id
-      if ($element = rules_element_id($configuration_name, $cfg, intval($id))) {
-        $element += rules_get_element_info($element);
-        if (isset($element['#logical_op']) && $element['#logical_op']) {
-          $form['is_op'] = array('#type' => 'value', '#value' => TRUE);
-          $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => $element['#label']));
-        }
-        else {
-          $text = t('Are you sure you want to delete %label?', array('%label' => $element['#label']));
-        }
-        return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
-      }
-    }
+  $form_state['proxy'] = &$proxy;
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
+
+  $form = array();
+  $path = array();
+  $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : RULES_ADMIN_PATH;
+
+  if (!isset($element)) {
+    return confirm_form($form,
+      t('Are you sure you want to delete the rule %label?', array('%label' => $rule['#label'])),
+      $path,
+      t('This action cannot be undone.'), t('Delete'), t('Cancel')
+    );
   }
-  drupal_not_found();
+  else {
+    //get the item assocaited with $id
+    $form_state['id'] = $element['#id'];
+    if ($info = rules_get_element_info($element)) {
+      if (isset($info['#logical_op']) && $info['#logical_op']) {
+        $form_state['is_op'] = TRUE;
+        $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => rules_get_element_label($element)));
+      }
+      else {
+        $text = t('Are you sure you want to delete %label?', array('%label' => rules_get_element_label($element)));
+      }
+      return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+    }
+    drupal_not_found();
+    exit;
+  }
 }
 
-function rules_admin_form_delete_submit($form_id, $form_values) {
-  if ($form_values['confirm'] && !isset($form_values['id'])) {
-    rules_admin_delete_configuration($form_values['cfg']);
+function rules_admin_form_delete_submit($form_id, $form_state) {
+  $rule = $form_state['proxy']->get_rule();
+  if (!isset($form_state['id'])) {
+    $form_state['proxy']->delete_rule();
     rules_clear_cache();
-    drupal_set_message(t("The configuration %label has been deleted.", array('%label' => $form_values['cfg']['#label'])));
+    drupal_set_message(t("The rule %label has been deleted.", array('%label' => $rule['#label'])));
   }
-  else if ($form_values['confirm']) {
-    //get the reference on the currently edited configuration!
-    $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
-    //get a reference for the element in the configuration
-    $element = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], intval($form_values['id']));
-    $element += rules_get_element_info($element);
+  else {
+    //get a reference on the element
+    $element = &$form_state['proxy']->get_element(intval($form_state['id']));
 
-    if ($form_values['is_op']) {
-      drupal_set_message(t("The logical operation %label has been deleted.", array('%label' => $element['#label'])));
+    if (isset($form_state['is_op']) && $form_state['is_op']) {
+      drupal_set_message(t("The logical operation %label has been deleted.", array('%label' => rules_get_element_label($element))));
       //just unset the type, so that containing conditions are not deleted
       unset($element['#type']);
     }
     else {
-      drupal_set_message(t("%label has been deleted.", array('%label' => $element['#label'])));
+      drupal_set_message(t("%label has been deleted.", array('%label' => rules_get_element_label($element))));
       $element = NULL;
-      //remove the elements key by cleaning the config
+      //remove the elements key by cleaning the rule
     }
-    rules_admin_clean_configuration($cfg);
-    rules_admin_save_rule($cfg);
+    $form_state['proxy']->clean_rule();
+    $form_state['proxy']->save_changes();
     rules_clear_cache();
   }
-  return rules_UI_PATH;
+  $form_state['redirect'] = RULES_ADMIN_PATH;
 }
 
 /*
@@ -828,28 +828,7 @@ function rules_admin_get_compatible_events($event_name) {
 
 
 
-/*
- * Cleans the given configuration. This means, array keys that are neither elements
- * nor properties are removed.
- */
-function rules_admin_clean_configuration(&$element) {
-  $children = array();
-  foreach (element_children($element) as $key) {
-    if (!isset($element[$key]['#type'])) {
-      //this element can be removed, but care for it's children
-      foreach (element_children($element[$key]) as $child_key) {
-        $children[$child_key] = $element[$key][$child_key];
-      }
-      unset($element[$key]);
-    }
-    else {
-      rules_admin_clean_configuration($element[$key]);
-    }
-  }
-  if (count($children)) {
-    $element = array_merge($element, $children);
-  }
-}
+
 
 /**
  * Gets an array of element labels grouped by modules
