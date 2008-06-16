@@ -18,7 +18,7 @@ function user_rules_event_info() {
     'user_update' => array(
       'label' => t('user has updated his account details'),
       'module' => 'user',
-      'arguments' => rules_events_hook_user_arguments(t('updated user')) + array('account_unchanged' => array('entity' => 'user', 'label' => t('unchanged user'))),
+      'arguments' => rules_events_hook_user_arguments(t('updated user')) + array('account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'))),
       'redirect' => TRUE,
     ),
     'user_view' => array(
@@ -36,13 +36,13 @@ function user_rules_event_info() {
     'user_login' => array(
       'label' => t('user has logged in'),
       'module' => 'user',
-      'arguments' => array('account' => array('entity' => 'user', 'label' => t('logged in user'))),
+      'arguments' => array('account' => array('type' => 'user', 'label' => t('logged in user'))),
       'redirect' => TRUE,
     ),
     'user_logout' => array(
       'label' => t('user has logged out'),
       'module' => 'user',
-      'arguments' => array('account' => array('entity' => 'user', 'label' => t('logged out user'))),
+      'arguments' => array('account' => array('type' => 'user', 'label' => t('logged out user'))),
       'redirect' => TRUE,
     ),
   );
@@ -52,7 +52,7 @@ function user_rules_event_info() {
  * Returns the argument definition for the acting user (global $user)
  */
 function rules_events_global_user_argument() {
-  return array('user' => array('entity' => 'user', 'label' => t('acting user'), 'handler' => 'rules_events_argument_global_user'));
+  return array('user' => array('type' => 'user', 'label' => t('acting user'), 'handler' => 'rules_events_argument_global_user'));
 }
 
 
@@ -61,7 +61,7 @@ function rules_events_global_user_argument() {
  */
 function rules_events_hook_user_arguments($account_label) {
   return array(
-    'account' => array('entity' => 'user', 'label' => $account_label),
+    'account' => array('type' => 'user', 'label' => $account_label),
   ) + rules_events_global_user_argument();
 }
 
@@ -82,8 +82,8 @@ function user_rules_condition_info() {
     'rules_condition_user_comparison' => array(
       'label' => t('Compare two users'),
       'arguments' => array(
-        'user1' => array('entity' => 'user', 'label' => t('First user to compare')),
-        'user2' => array('entity' => 'user', 'label' => t('Second user to compare')),
+        'user1' => array('type' => 'user', 'label' => t('First user to compare')),
+        'user2' => array('type' => 'user', 'label' => t('Second user to compare')),
       ),
       'help' => t('Evaluates to TRUE, if both compared users are the same user account.'),
       'module' => 'user',
@@ -91,7 +91,7 @@ function user_rules_condition_info() {
     'rules_condition_user_hasrole' => array(
       'label' => t('user has role(s)'),
       'arguments' => array(
-        'user' => array('entity' => 'user', 'label' => t('user to test')),
+        'user' => array('type' => 'user', 'label' => t('user to test')),
       ),
       'help' => t('Whether the user has the selected role(s).'),
       'module' => 'user',
@@ -141,21 +141,21 @@ function user_rules_action_info() {
     'rules_action_user_addrole' => array(
       'label' => t('Add user role'),
       'arguments' => array(
-        'user' => array('entity' => 'user', 'label' => t('user whos roles should be changed')),
+        'user' => array('type' => 'user', 'label' => t('user whos roles should be changed')),
       ),
       'module' => 'user',
     ),
     'rules_action_user_removerole' => array(
       'label' => t('Remove user role'),
       'arguments' => array(
-        'user' => array('entity' => 'user', 'label' => t('user whos roles should be changed')),
+        'user' => array('type' => 'user', 'label' => t('user whos roles should be changed')),
       ),
       'module' => 'user',
     ),
     'rules_action_load_user' => array(
       'label' => t('Load user by name'),
       'new variables' => array(
-        'user_loaded' => array('entity' => 'user', 'label' => t('Loaded user')),
+        'user_loaded' => array('type' => 'user', 'label' => t('Loaded user')),
       ),
       'help' => t('Enter an id or a name of the user to load.'),
       'module' => 'user',

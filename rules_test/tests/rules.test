@@ -77,7 +77,7 @@ class RulesTestCase extends DrupalTestCase {
 /**
  * Argument handler for argument 2 of rule set 4
  */
-function rules_test_4_load_entity($arg1) {
+function rules_test_4_load_data($arg1) {
   if (isset($arg1) && $arg1['property_xy']) {
     return  array('property_xy' => TRUE, 'altered' => TRUE);
   }

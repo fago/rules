@@ -12,28 +12,28 @@
 function node_rules_event_info() {
   return array(
     'node_insert' => array(
-      'label' => t('A post has been created'),
+      'label' => t('Content has been created'),
       'module' => 'node',
       'arguments' => rules_events_node_arguments(t('created content'), t('content\'s author')),
       'redirect' => TRUE,
     ),
     'node_update' => array(
-      'label' => t('A post has been updated'),
+      'label' => t('Content has been updated'),
       'module' => 'node',
       'arguments' => rules_events_node_arguments(t('updated content'), t('content author')) + array(
-        'node_unchanged' => array('entity' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
-        'author_unchanged' => array('entity' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
+        'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
+        'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
       ),
       'redirect' => TRUE,
     ),
     'node_submit' => array(
-      'label' => t('A post is going to be saved'),
+      'label' => t('Content is going to be saved'),
       'module' => 'Node',
       'arguments' => array(
-        'node' => array('entity' => 'node', 'label' => t('content'), 'saved' => TRUE),
-        'author' => array('entity' => 'user', 'label' => t('content author'), 'handler' => 'rules_events_argument_node_author'),
-        'node_unchanged' => array('entity' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
-        'author_unchanged' => array('entity' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
+        'node' => array('type' => 'node', 'label' => t('content'), 'saved' => TRUE),
+        'author' => array('type' => 'user', 'label' => t('content author'), 'handler' => 'rules_events_argument_node_author'),
+        'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
+        'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
       ) + rules_events_global_user_argument(),
       'redirect' => TRUE,
     ),
@@ -42,8 +42,8 @@ function node_rules_event_info() {
       'module' => 'Node',
       'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
       'arguments' => array(
-        'teaser' => array('entity' => 'boolean', 'label' => t('Content is displayed as teaser')),
-        'page' => array('entity' => 'boolean', 'label' => t('Content is displayed as page')),
+        'teaser' => array('type' => 'boolean', 'label' => t('Content is displayed as teaser')),
+        'page' => array('type' => 'boolean', 'label' => t('Content is displayed as page')),
       ) + rules_events_node_arguments(t('viewed content'), t('content author')),
     ),
     'node_delete' => array(
@@ -61,8 +61,8 @@ function node_rules_event_info() {
  */
 function rules_events_node_arguments($node_label, $author_label) {
   return array(
-    'node' => array('entity' => 'node', 'label' => $node_label),
-    'author' => array('entity' => 'user', 'label' => $author_label, 'handler' => 'rules_events_argument_node_author'),
+    'node' => array('type' => 'node', 'label' => $node_label),
+    'author' => array('type' => 'user', 'label' => $author_label, 'handler' => 'rules_events_argument_node_author'),
   ) + rules_events_global_user_argument();
 }
 
@@ -103,7 +103,7 @@ function node_rules_condition_info() {
     'rules_condition_content_is_type' => array(
       'label' => t('Content has type'),
       'arguments' => array(
-        'node' => array('entity' => 'node', 'label' => t('Content')),
+        'node' => array('type' => 'node', 'label' => t('Content')),
       ),
       'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
       'module' => 'Node',
@@ -128,39 +128,39 @@ function node_rules_action_info() {
     'rules_action_node_set_author' => array(
       'label' => t('Set the post author'),
       'arguments' => array(
-        'node' => array('entity' => 'node', 'label' => t('Content')),
-        'author' => array('entity' => 'user', 'label' => t('User, which is set as author')),
+        'node' => array('type' => 'node', 'label' => t('Content')),
+        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
       ),
       'module' => 'Node',
     ),
     'rules_action_node_publish' => array(
       'label' => t('Publish/unpublish content'),
       'arguments' => array(
-        'node' => array('entity' => 'node', 'label' => t('Content')),
+        'node' => array('type' => 'node', 'label' => t('Content')),
       ),
       'module' => 'Node',
     ),
     'rules_action_node_promote' => array(
       'label' => t('Promote/demote content to/from the front page'),
       'arguments' => array(
-        'node' => array('entity' => 'node', 'label' => t('Content')),
+        'node' => array('type' => 'node', 'label' => t('Content')),
       ),
       'module' => 'Node',
     ),
     'rules_action_add_node' => array(
      'label' => t('Add new content'),
      'arguments' => array(
-       'author' => array('entity' => 'user', 'label' => t('User, which is set as author of the content')),
+       'author' => array('type' => 'user', 'label' => t('User, which is set as author of the content')),
       ),
      'new variables' => array(
-       'node_added' => array('entity' => 'node', 'label' => t('Added content')),
+       'node_added' => array('type' => 'node', 'label' => t('Added content')),
       ),
       'module' => 'Node',
     ),
     'rules_action_load_node' => array(
      'label' => t('Load content by id'),
      'new arguments' => array(
-       'node_loaded' => array('entity' => 'node', 'label' => t('Loaded content')),
+       'node_loaded' => array('type' => 'node', 'label' => t('Loaded content')),
       ),
       'module' => 'Node',
     ),     
@@ -237,15 +237,11 @@ function rules_action_load_node($settings) {
 
 
 /**
- * Defines the node entity
+ * Defines the node type
  * @ingroup rules
  */
-class rules_entity_node extends rules_entity {
-  
-  /**
-   * Defines the capabilites of the entity.
-   * If php4 would support interfaces, this would be interfaces.
-   */
+class rules_data_type_node extends rules_data_type {
+
   function get_info() {
     return array(
       'saveable' => TRUE,
@@ -253,28 +249,16 @@ class rules_entity_node extends rules_entity {
     );
   }
 
-  /**
-   * Makes changes to the entity permanent.
-   * Implement it, if your entity is saveable.
-   */
   function save() {
     $node = &$this->get();
     node_save($node);
     return TRUE;
   }
 
-  /**
-   * Loads the entity identified with an identifier as returned by get_identifier()
-   * Implement it, if your entity is identifiable.
-   */
   function load($nid) {
     return node_load($nid);
   }
 
-  /**
-   * Gets the identifier of this entity, can be of every data type - even an array.
-   * Implement it, if your entity is identifiable.
-   */
   function get_identifier() {
     $node = &$this->get();
     return $node->nid;
