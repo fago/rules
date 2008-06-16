@@ -25,7 +25,6 @@ class RulesTestCase extends DrupalTestCase {
     rules_invoke_rule_set('rules_test_1', $argument);
     $error = FALSE;
     $log = rules_test_show_log($error);
-
     $this->assertFalse($error);
     $this->assertWantedPattern('/Rules Test 1 - Success/', $log);
   }
@@ -61,8 +60,17 @@ class RulesTestCase extends DrupalTestCase {
     $log = rules_test_show_log($error);
 
     $this->assertFalse($error);
-    $this->assertWantedPattern('/Loaded argument/', $log);
+    $this->assertWantedPattern('/Loaded variable/', $log);
     $this->assertWantedPattern('/Rules Test 4 - Success/', $log);
+  }
+  
+  //Tests adding a new variable
+  function test_5() {
+    rules_invoke_rule_set('rules_test_5', $argument);
+    $error = FALSE;
+    $log = rules_test_show_log($error);
+    $this->assertFalse($error);
+    $this->assertWantedPattern('/Successfully added the new variable/', $log);
   }
 }
 

@@ -9,11 +9,11 @@
  */
 function rules_test_rules_condition_info() {
   return array(
-    'rules_condition_alter_arg' => array(
+    'rules_test_condition_alter_arg' => array(
       'label' => 'Alter entity',
       'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
      ),
-    'rules_condition_check_for_altered_arg' => array(
+    'rules_test_condition_check_for_altered_arg' => array(
       'label' => 'Check for altered entity',
       'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
      ),
@@ -25,31 +25,40 @@ function rules_test_rules_condition_info() {
  */
 function rules_test_rules_action_info() {
   return array(
-    'rules_log_msg' => array(
+    'rules_test_action_log_msg' => array(
       'label' => 'Logs a message to the rules log',
       'arguments' => array(),
      ),
-    'rules_change_arg' => array(
+    'rules_test_change_arg' => array(
       'label' => 'Changes the argument',
       'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
+     ),
+    'rules_test_add_var' => array(
+      'label' => 'Adds a new variable',
+      'new variables' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
      ),
   );
 }
 
-function rules_condition_alter_arg(&$array) {
+function rules_test_condition_alter_arg(&$array) {
   $array['altered'] = TRUE;
   return TRUE;
 }
 
-function rules_condition_check_for_altered_arg($array) {
+function rules_test_condition_check_for_altered_arg($array) {
   return isset($array['altered']) && $array['altered'];
 }
 
-function rules_log_msg($settings) {
+function rules_test_action_log_msg($settings) {
   rules_log($settings['msg']);
 }
 
-function rules_change_arg($array) {
+function rules_test_change_arg($array) {
   $array['altered'] = TRUE;
+  return array('rules_test' => $array);
+}
+
+function rules_test_add_var() {
+  $array['altered'] = FALSE;
   return array('rules_test' => $array);
 }
