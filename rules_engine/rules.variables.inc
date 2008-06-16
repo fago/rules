@@ -136,16 +136,13 @@ function rules_save_variables($element, $result, &$state) {
 
 
 /**
- * Base entity class, from which special entites are derived.
- *
- * This class would be abstract in PHP5, but PHP4 doesn't understand that.
- *
+ * Handles a variable
  */
 class rules_variable {
 
   var $name;
   var $info;
-  var $entity;
+  var $data;
   var $_state;
   var $_changed = FALSE;
 
@@ -165,7 +162,7 @@ class rules_variable {
     if (isset($info)) {
       $this->info = $info + array('saved' => FALSE, 'handler' => '');
       $this->name = $name;
-      $this->_set_entity($data);
+      $this->_set_data($data);
       $state['variables'][$name] = &$this;
       return TRUE;
     }
@@ -173,36 +170,36 @@ class rules_variable {
   }
 
   /**
-   * Gets the actual entity. Be sure to keep the reference intact.
+   * Gets the actual data. Be sure to keep the reference intact.
    * 
-   * @param $load Use the variable handler to load the entity, if necessary.
-   * @return The entity or NULL.
+   * @param $load Use the variable handler to load the variable, if necessary.
+   * @return The data or NULL.
    */
   function &get($load = TRUE) {
     $data = NULL;
 
-    if ($load && !isset($this->entity) && function_exists($this->info['handler'])) {
+    if ($load && !isset($this->data) && function_exists($this->info['handler'])) {
       //call the handler to get the runtime data
       $args = rules_get_variables(array_keys($this->_state['variables']), $this->_state, FALSE);
       $data = call_user_func_array($this->info['handler'], $args);
-      $this->_set_entity($data);
+      $this->_set_data($data);
 
       $this->info['handler'] = ''; //do not invoke it twice, if it fails
       rules_log(t('Loaded variable @arg', array('@arg' => $this->info['label'])));
     }
-    else if (isset($this->entity)) {
-      $data = &$this->entity->get();
+    else if (isset($this->data)) {
+      $data = &$this->data->get();
     }
     return $data;
   }
 
-  function _set_entity(&$data) {
+  function _set_data(&$data) {
     if (isset($data)) {
-      $class = 'rules_entity_'. $this->info['entity'];
-      $class = class_exists($class) ? $class : 'rules_entity';
+      $class = 'rules_data_type_'. $this->info['data'];
+      $class = class_exists($class) ? $class : 'rules_data_type';
 
-      $this->entity = new $class;
-      $this->entity->construct($data);
+      $this->data = new $class;
+      $this->data->construct($data);
     }
   }
 
@@ -217,7 +214,7 @@ class rules_variable {
    * Updates the actual variable
    */
   function update(&$data) {
-    $this->entity->update($data);
+    $this->data->update($data);
   }
 
   /**
@@ -225,14 +222,14 @@ class rules_variable {
    */
   function save_changes() {
     //if the variable is not saved automatically, save it
-    if ($this->_changed && !$this->info['saved'] && $this->entity->is_saveable()) {
-      $return = $this->entity->save();
+    if ($this->_changed && !$this->info['saved'] && $this->data->is_saveable()) {
+      $return = $this->data->save();
 
       if ($return) {
-        rules_log(t('Saved entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
+        rules_log(t('Saved variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
       }
       else {
-        rules_log(t('Failed saving entity @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['entity'])));
+        rules_log(t('Failed saving variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
       }
     }
   }

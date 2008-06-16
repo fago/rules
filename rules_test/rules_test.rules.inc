@@ -10,12 +10,12 @@
 function rules_test_rules_condition_info() {
   return array(
     'rules_test_condition_alter_arg' => array(
-      'label' => 'Alter entity',
-      'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
+      'label' => 'Alter data',
+      'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
      ),
     'rules_test_condition_check_for_altered_arg' => array(
-      'label' => 'Check for altered entity',
-      'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
+      'label' => 'Check for altered data',
+      'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
      ),
   );
 }
@@ -31,11 +31,11 @@ function rules_test_rules_action_info() {
      ),
     'rules_test_change_arg' => array(
       'label' => 'Changes the argument',
-      'arguments' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
+      'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
      ),
     'rules_test_add_var' => array(
       'label' => 'Adds a new variable',
-      'new variables' => array('rules_test' => array('entity' => 'rules_test', 'label' => 'test')),
+      'new variables' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
      ),
   );
 }

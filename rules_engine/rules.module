@@ -956,36 +956,19 @@ function rules_handle_error_msg($message, $variables, $rule_name = NULL) {
 }
 
 /**
- * Determines if the given entity type is supported by the given info
+ * Determines if the given data type is supported by the given info
  * 
- * @param $entity_type The entity type to check
- * @param $info The information data containing the #entity property
+ * @param $data_type The data type to check
+ * @param $info The information data containing the #type property
  */
-function rules_is_valid_entity($entity_type, $info) {
-  if (is_array($info['entity'])) {
-    return in_array($entity_type, $info['entity']);
+function rules_is_valid_data_type($data_type, $info) {
+  if (is_array($info['type'])) {
+    return in_array($data_type, $info['type']);
   }
-  if ($info['entity'] == '*') {
+  if ($info['type'] == '*') {
     return TRUE;
   }
-  return $info['entity'] == $entity_type;
-}
-
-/**
- * Implementation of hook_entity_info
- */
-function rules_entity_info() {
-  return array(
-    'comment' => array('#save' => 'rules_comment_save')
-  );
-}
-
-
-/**
- * Wrappers around drupal's saving functions
- */
-function rules_comment_save($comment) {
-  comment_save((array)$comment);
+  return $info['type'] == $data_type;
 }
 
 /**
@@ -1053,8 +1036,8 @@ function _rules_include_get_files($type) {
   $rules_path = drupal_get_path('module', 'rules');
 
   if ($type == 'rules') {
-    //make sure this is included before, as it contains the entity base class
-    $files[] = $rules_path . '/rules.entity.inc';
+    //make sure this is included before, as it contains the data base class
+    $files[] = $rules_path . '/rules.data_types.inc';
     $files[] = $rules_path . '/rules.variables.inc';
   }
   foreach (module_list() as $module) {
