@@ -42,7 +42,7 @@ class rules_entity {
     $info = $this->get_info();
     return $info['saveable'];
   }
-  
+
   /**
    * Returns whether this entity is identifiable 
    */

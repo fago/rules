@@ -438,12 +438,12 @@ function rules_invoke_rule_set() {
 
     rules_include('rules');
 
-    _rules_initialize_arguments($state, $args);
+    _rules_initialize_variables($state, $args);
     rules_evaluate_elements($set['rules'], $state);
     
-    //save all changed arguments..
-    foreach ($state['arguments'] as &$argument) {
-      $argument->save_changes();
+    //save all changed variables..
+    foreach ($state['variables'] as &$variable) {
+      $variable->save_changes();
     }
 
     _rules_log_set_invocation(t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
@@ -598,21 +598,9 @@ function rules_execute_action($element, &$state) {
     if ($exec_args !== FALSE) {
       $result = call_user_func_array($element['#name'], $exec_args);
 
-      //Add newly added arguments by the action
-      if (isset($result['#new arguments']) && $result['#new arguments']) {
-        rules_add_new_arguments($element, $result['#new arguments'], $state);
-      }
-      //An action may return altered arguments, which are saved automatically
+      //An action may return altered variables, which are saved automatically
       if (isset($result) && is_array($result)) {
-        $reverse_map = array_flip($element['#argument map']);
-
-        foreach (element_children($result) as $argument_name) {
-          if (isset($reverse_map[$argument_name])) {
-            $argument = &$state['arguments'][ $reverse_map[$argument_name] ];
-            $argument->update( $result[$argument_name] );
-            $argument->save();            
-          }
-        }
+        rules_save_variables($element, $result, $state);
       }
       rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element))));
     }
@@ -1067,7 +1055,7 @@ function _rules_include_get_files($type) {
   if ($type == 'rules') {
     //make sure this is included before, as it contains the entity base class
     $files[] = $rules_path . '/rules.entity.inc';
-    $files[] = $rules_path . '/rules.arguments.inc';
+    $files[] = $rules_path . '/rules.variables.inc';
   }
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);

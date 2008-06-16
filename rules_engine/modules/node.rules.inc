@@ -105,7 +105,7 @@ function node_rules_condition_info() {
       'arguments' => array(
         'node' => array('entity' => 'node', 'label' => t('Content')),
       ),
-      'description' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+      'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
       'module' => 'Node',
     ),
   );
@@ -152,7 +152,7 @@ function node_rules_action_info() {
      'arguments' => array(
        'author' => array('entity' => 'user', 'label' => t('User, which is set as author of the content')),
       ),
-     'new arguments' => array(
+     'new variables' => array(
        'node_added' => array('entity' => 'node', 'label' => t('Added content')),
       ),
       'module' => 'Node',
@@ -221,7 +221,7 @@ function rules_action_add_node($author, $settings) {
   	$node->type = $settings['type'];
   	//TODO: fix token
   	$node->title = rules_token_replace($settings['title'], $settings['title_args'], $arguments, $log);
-    return array('new arguments' => array('node_added' => $node), 'node_added' => $node);
+    return array('node_added' => $node);
   }
 }
 
