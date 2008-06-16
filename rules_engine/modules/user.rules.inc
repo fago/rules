@@ -85,7 +85,7 @@ function user_rules_condition_info() {
         'user1' => array('entity' => 'user', 'label' => t('First user to compare')),
         'user2' => array('entity' => 'user', 'label' => t('Second user to compare')),
       ),
-      'description' => t('Evaluates to TRUE, if both compared users are the same user account.'),
+      'help' => t('Evaluates to TRUE, if both compared users are the same user account.'),
       'module' => 'user',
     ),
     'rules_condition_user_hasrole' => array(
@@ -93,7 +93,7 @@ function user_rules_condition_info() {
       'arguments' => array(
         'user' => array('entity' => 'user', 'label' => t('user to test')),
       ),
-      'description' => t('Whether the user has the selected role(s).'),
+      'help' => t('Whether the user has the selected role(s).'),
       'module' => 'user',
     ),
   );
@@ -154,9 +154,10 @@ function user_rules_action_info() {
     ),
     'rules_action_load_user' => array(
       'label' => t('Load user by name'),
-      'new arguments' => array(
+      'new variables' => array(
         'user_loaded' => array('entity' => 'user', 'label' => t('Loaded user')),
       ),
+      'help' => t('Enter an id or a name of the user to load.'),
       'module' => 'user',
      ),
   );
@@ -201,6 +202,6 @@ function rules_action_user_removerole($user, $settings) {
 function rules_action_load_user($settings, &$arguments, &$log) {
   extract(rules_token_replace_all(array('username'), $settings, $arguments, $log));
 
-  $userarray = array('name' => $username);
-  return array('new arguments' => array('user_loaded' => user_load($userarray)));
+  $userarray = array('name' => $username, 'uid' => $userid);
+  return array('user_loaded' => user_load(array_filter($userarray)));
 }

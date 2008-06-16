@@ -1,20 +1,20 @@
 <?php
 
 /**
- * @file Provides functions and classes for handling arguments
+ * @file Provides functions and classes for handling variables
  */
 
 
 /**
- * Processes the given arguments and initializes the arguments data of the state
+ * Processes the given variables and initializes the variables data of the state
  *
  * Note that the order of the arguments will be kept, as it might be important for passing
- * the arguments to further argument loading handlers.
+ * the variables to further variable loading handlers.
  *
  * @param $state The current evaluation state
- * @param $args The argument data passed with the event invocation
+ * @param $args The arguments passed with the event invocation
  */
-function _rules_initialize_arguments(&$state, $args) {
+function _rules_initialize_variables(&$state, $args) {
   $argument_names = array_keys($state['set_info']['arguments']);
 
   if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && count($args[0]) > 0 && array_diff(array_keys($args[0]), $argument_names) === array()) {
@@ -26,28 +26,26 @@ function _rules_initialize_arguments(&$state, $args) {
       $data[ $argument_names[$index] ] = &$args[$index];
     }
   }
-  $state['arguments'] = array();
+  $state['variables'] = array();
   foreach ($state['set_info']['arguments'] as $name => $info) {
-    $argument = new rules_argument;
+    $variable = new rules_variable;
     $data += array($name => NULL);
-    if ($argument->construct($state, $name, $data[$name])) {
-      $state['arguments'][$name] = $argument;
-    }
+    $variable->construct($state, $name, $data[$name]);
   }
 }
 
 /**
  * Gets an array of entities.
- * @param $names An array of argument names to get
+ * @param $names An array of variable names to get
  * @param $state The current evalutation state
- * @param $load Use argument handler to load arguments, if necessary.
+ * @param $load Use variable handler to load variables, if necessary.
  * @return The array of entities or FALSE. 
  */
-function rules_get_arguments($names, &$state, $load = TRUE) {
+function rules_get_variables($names, &$state, $load = TRUE) {
   $args = array();
   foreach ($names as $name) {
-    if (isset($state['arguments'][$name])) {
-      $args[$name] = &$state['arguments'][$name]->get($load);
+    if (isset($state['variables'][$name])) {
+      $args[$name] = &$state['variables'][$name]->get($load);
     }
     else {
       return FALSE;
@@ -60,7 +58,7 @@ function rules_get_arguments($names, &$state, $load = TRUE) {
  * Maps the specified arguments of an element to the argument names of the currently
  * evaluated set.
  * 
- * @param $element The configured element, which arguments to map
+ * @param $element The configured element, which variables to map
  * @param $state The current evaluation state
  * @return The mapped argument names.
  */
@@ -69,7 +67,7 @@ function rules_get_mapped_argument_names($element, &$state) {
   $reverse_map = array_flip($element['#argument map']);
 
   if ($element_info) {
-    //get the right execution arguments by applying the argument map of this element
+    //get the right execution variables by applying the argument map of this element
     $mapped_args = array();
     foreach ($element_info['arguments'] as $argument_name => $info) {
       $mapped_args[] = $reverse_map[$argument_name];
@@ -90,7 +88,7 @@ function rules_get_mapped_argument_names($element, &$state) {
 function rules_get_execution_arguments($element, &$state) {
   //first off map the names to the argument names of the evaluated set
   $names = rules_get_mapped_argument_names($element, $state);
-  $exec_args = rules_get_arguments($names, $state);
+  $exec_args = rules_get_variables($names, $state);
 
   if ($exec_args !== FALSE) {
     //we always append some other useful variables
@@ -105,18 +103,32 @@ function rules_get_execution_arguments($element, &$state) {
 }
 
 /**
- * Adds the new arguments to the evaluation state
+ * Saves variables, which are returned by an action 
  */
-function rules_add_new_arguments($element, $new_arguments, &$state) {
-  foreach ($element['#new arguments'] as $set_name => $info) {
-    $map[$info['#default_name']] = $set_name;
-  }
-  foreach ($new_arguments as $name => $data) {
-    $info = $element['#new arguments'][$set_name];
-    $argument = new rules_argument;
-    if ($argument->construct($state, $map[$name], $new_arguments[$name], $info)) {
-      $state['arguments'][ $map[$name] ] = $argument;
-      rules_log(t('Successfully added the new argument @arg', array('@arg' => $info['label'])));
+function rules_save_variables($element, $result, &$state) {
+  $element_info = rules_get_element_info($element);
+  $reverse_map = array_flip($element['#argument map']);
+
+  foreach (element_children($result) as $argument_name) {
+    if (isset($reverse_map[$argument_name])) {
+      if (isset($state['variables'][ $reverse_map[$argument_name] ])) {
+        //variable exists, so update it
+        $variable = &$state['variables'][ $reverse_map[$argument_name] ];
+        $variable->update( $result[$argument_name] );
+        $variable->save();
+      }
+      else if (isset($element_info['new variables'][$argument_name])) {
+        //it is a new variable, so add it
+        $info = $element_info['new variables'][$argument_name];
+
+        $variable = new rules_variable;
+        $variable->construct($state, $reverse_map[$argument_name], $result[$argument_name], $info);
+
+        rules_log(t('Successfully added the new variable @arg', array('@arg' => $info['label'])));
+      }
+      else {
+        rules_log(t('Unknown variable name %var return by action %name.', array('%var' => $argument_name, '%name' => $element['#name'])), TRUE);
+      }
     }
   }
 }
@@ -129,7 +141,7 @@ function rules_add_new_arguments($element, $new_arguments, &$state) {
  * This class would be abstract in PHP5, but PHP4 doesn't understand that.
  *
  */
-class rules_argument {
+class rules_variable {
 
   var $name;
   var $info;
@@ -140,11 +152,11 @@ class rules_argument {
   /**
    * Constructor
    * @param $state The current evaluation state
-   * @param $name The name of the given argument
-   * @param $data If available, the actual argument, else NULL.
-   * @param $info If given, the info for the argument. If not given it will be retrieved
+   * @param $name The name of the given variable
+   * @param $data If available, the actual data, else NULL.
+   * @param $info If given, the info for the variable. If not given it will be retrieved
    *   from the current's set info.
-   * @return If the argument name isn't valid, FALSE.
+   * @return If the variable name isn't valid, FALSE.
    */
   function construct(&$state, $name, &$data, $info = NULL) {
     $this->_state = &$state;
@@ -154,6 +166,7 @@ class rules_argument {
       $this->info = $info + array('saved' => FALSE, 'handler' => '');
       $this->name = $name;
       $this->_set_entity($data);
+      $state['variables'][$name] = &$this;
       return TRUE;
     }
     return FALSE;
@@ -162,7 +175,7 @@ class rules_argument {
   /**
    * Gets the actual entity. Be sure to keep the reference intact.
    * 
-   * @param $load Use the argument handler to load the entity, if necessary.
+   * @param $load Use the variable handler to load the entity, if necessary.
    * @return The entity or NULL.
    */
   function &get($load = TRUE) {
@@ -170,12 +183,12 @@ class rules_argument {
 
     if ($load && !isset($this->entity) && function_exists($this->info['handler'])) {
       //call the handler to get the runtime data
-      $args = rules_get_arguments(array_keys($this->_state['arguments']), $this->_state, FALSE);
+      $args = rules_get_variables(array_keys($this->_state['variables']), $this->_state, FALSE);
       $data = call_user_func_array($this->info['handler'], $args);
       $this->_set_entity($data);
 
       $this->info['handler'] = ''; //do not invoke it twice, if it fails
-      rules_log(t('Loaded argument @arg', array('@arg' => $this->info['label'])));
+      rules_log(t('Loaded variable @arg', array('@arg' => $this->info['label'])));
     }
     else if (isset($this->entity)) {
       $data = &$this->entity->get();
@@ -194,24 +207,24 @@ class rules_argument {
   }
 
   /**
-   * Marks the argument to be saved.
+   * Marks the variable to be saved.
    */
   function save() {
     $this->_changed = TRUE;
   }
 
   /**
-   * Updates the actual argument
+   * Updates the actual variable
    */
   function update(&$data) {
     $this->entity->update($data);
   }
 
   /**
-   * Saves the argument to db, if necessary
+   * Saves the variable to db, if necessary
    */
   function save_changes() {
-    //if the argument is not saved automatically, save it
+    //if the variable is not saved automatically, save it
     if ($this->_changed && !$this->info['saved'] && $this->entity->is_saveable()) {
       $return = $this->entity->save();
 
