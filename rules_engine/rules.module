@@ -56,7 +56,7 @@ function rules_menu() {
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items[RULES_ADMIN_TRIGGER_PATH .'/add'] = array(
-    'title' => 'Add a new rule configuration',
+    'title' => 'Add a new rule',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_configuration_add'),
@@ -102,12 +102,13 @@ function rules_menu() {
     'file' => 'rules.admin.inc',
   );
   //paths for modifing rules
-  $items[RULES_ADMIN_PATH .'/rule/%rule'] = array(
-    //this item lets the menu system create a nicer breadcrumb
+  $items[RULES_ADMIN_RULE_PATH .'/%rule'] = array(
     'title callback' => 'rules_rule_title',
-    'title arguments' => array('@label', 3),
-    'access arguments' => array('administer rules'),
+    'title arguments' => array('Editing rule @label', 3),
     'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_edit_rule', 3),
+    'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/add'] = array(
@@ -125,15 +126,6 @@ function rules_menu() {
     'page arguments' => array('rules_admin_form_edit', 3, 5),
     'access arguments' => array('administer rules'),
     'load arguments' => array(3),
-    'file' => 'rules.admin.inc',
-  );
-  $items[RULES_ADMIN_RULE_PATH .'/%rule/edit'] = array(
-    'title callback' => 'rules_rule_title',
-    'title arguments' => array('Editing rule @label', 3),
-    'type' => MENU_CALLBACK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_edit_rule', 3),
-    'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/delete'] = array(
@@ -224,14 +216,6 @@ function rules_theme() {
   return $items;
 }
 
-
-/**
- * Returns info about all defined events
- */
-function rules_get_events($key = 'all') {
-  return rules_gather_data('rules_event_info', $key);
-}
-
 /**
  * Returns info about all defined actions
  */
@@ -265,17 +249,33 @@ function rules_get_item_defaults($item_type = 'rules') {
 }
 
 /**
- * Returns info about all rule sets, which includes events
+ * Returns info about all defined events
+ */
+function rules_get_events($key = 'all') {
+  return rules_gather_data('rules_event_info', $key);
+}
+
+/**
+ * Returns info about all rule sets, which includes events prefixed with 'event_'.
  * 
- * @param $key If given, only the info about this rule set will be returned
+ * @param $key If given, only the info about this rule set will be returned.
  */
 function rules_get_rule_sets($key = NULL) {
-  $sets = rules_get_configured_items('rule_sets');
+  $sets = rules_get_event_sets() + rules_get_configured_items('rule_sets');
+  return isset($key) ? $sets[$key] : $sets;
+}
+
+/**
+ * Returns info about all events prefixed with 'event_' to be a set.
+ */
+function rules_get_event_sets() {
+  $sets = array();
   foreach (rules_get_events() as $name => $info) {
     $sets['event_'. $name] = $info;
   }
-  return isset($key) ? $sets[$key] : $sets;
+  return $sets;
 }
+
 
 /**
  * Gathers module definitions for the given name
