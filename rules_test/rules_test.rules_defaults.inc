@@ -16,14 +16,14 @@ function rules_test_rules_defaults() {
     '#set' => 'rules_test_1',
     '#active' => TRUE,
   );
-  $condition1 = rules_use_condition('rules_condition_alter_arg', array(
+  $condition1 = rules_use_condition('rules_test_condition_alter_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
     '#weight' => -1,
   ));
-  $condition2 = rules_use_condition('rules_condition_check_for_altered_arg', array(
+  $condition2 = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
-  $action = rules_use_action('rules_log_msg', array(
+  $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
       'msg' => 'Rules Test 1 - Success!',
     )
@@ -41,7 +41,7 @@ function rules_test_rules_defaults() {
     '#active' => TRUE,
     '#weight' => -1,
   );
-  $action = rules_use_action('rules_change_arg', array(
+  $action = rules_use_action('rules_test_change_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
   $rules['rules_test_2_1'] += array(
@@ -56,10 +56,10 @@ function rules_test_rules_defaults() {
     '#set' => 'rules_test_2',
     '#active' => TRUE,
   );
-  $condition = rules_use_condition('rules_condition_check_for_altered_arg', array(
+  $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
     '#argument map' => array('rules_test' => 'rules_test'),
   ));
-  $action = rules_use_action('rules_log_msg', array(
+  $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
       'msg' => 'Rules Test 2 - Success!',
     )
@@ -77,10 +77,10 @@ function rules_test_rules_defaults() {
     '#set' => 'rules_test_4',
     '#active' => TRUE,
   );
-  $condition = rules_use_condition('rules_condition_check_for_altered_arg', array(
+  $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
     '#argument map' => array('rules_test_2' => 'rules_test'),
   ));
-  $action = rules_use_action('rules_log_msg', array(
+  $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
       'msg' => 'Rules Test 4 - Success!',
     )
@@ -90,9 +90,29 @@ function rules_test_rules_defaults() {
     '#actions' => array($action),
   );
 
-  $rules['rules_test_5'] = array(
+
+  $rules['rules_test_5_1'] = array(
     '#type' => 'rule',
-    '#name' => 'rules_test_5',
+    '#name' => 'rules_test_5_1',
+    '#label' => t('Test adding a new variable'),
+    '#set' => 'rules_test_5',
+    '#active' => TRUE,
+  );
+  $action = rules_use_action('rules_test_add_var', array(
+    '#argument map' => array(
+      'rules_test_var' => 'rules_test',
+    )
+  ));
+  $rules['rules_test_5_1'] += array(
+    '#conditions' => array(),
+    '#actions' => array($action),
+  );
+  
+
+  //TEMPORAL
+  $rules['rules_test_5_temp'] = array(
+    '#type' => 'rule',
+    '#name' => 'rules_test_5_temp',
     '#label' => t('Print the content title of pages and stories'),
     '#set' => 'event_node_view',
     '#active' => TRUE,
@@ -111,10 +131,11 @@ function rules_test_rules_defaults() {
     ),
     '#argument map' => array('node' => 'node'),
   ));
-  $rules['rules_test_5'] += array(
+  $rules['rules_test_5_temp'] += array(
     '#conditions' => array($condition1),
     '#actions' => array($action),
   );
+
 
   return array(
     'rules' => $rules,
@@ -133,6 +154,10 @@ function rules_test_rules_defaults() {
           'rules_test_1' => array('entity' => 'rules_test', 'label' => 'node'),
           'rules_test_2' => array('entity' => 'rules_test', 'label' => 'node', 'handler' => 'rules_test_4_load_entity'),
          ),
+       ),
+      'rules_test_5' => array(
+        'label' => 'Rule Testing 5',
+        'arguments' => array(),
        ),
     ),
   );
