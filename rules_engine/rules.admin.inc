@@ -72,13 +72,13 @@ function rules_admin_overview_table($params) {
       $path = RULES_ADMIN_RULE_PATH .'/'. $name;
       $ops = array();
       if ($rule['#status'] != 'fixed') {
-        $ops[] = l(t('edit'), $path .'/edit', array(), drupal_get_destination());
+        $ops[] = l(t('edit'), $path .'/edit');
       }
       if ($rule['#status'] == 'custom') {
-        $ops[] = l(t('delete'), $path .'/delete', array(), drupal_get_destination());
+        $ops[] = l(t('delete'), $path .'/delete', array('query' => drupal_get_destination()));
       }
-      else if ($rule['#status'] == 'modified') {
-        $ops[] = l(t('reset'), $path .'/revert', array(), drupal_get_destination());
+      else if ($rule['#status'] == 'altered') {
+        $ops[] = l(t('reset'), $path .'/revert', array('query' => drupal_get_destination()));
       }
       $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
       $categories = array_map('check_plain', $rule['#categories']);
@@ -120,44 +120,35 @@ function rules_admin_configuration_status($rule) {
   return '<span title="'. $help .'">'. t('Default') .'</span>';
 }
 
-/*
- * Returns the add configuration form
+/**
+ * Returns the add rule form
  */
-function rules_admin_form_configuration_add() {
-  $form = array();
-  $form['event'] = array(
-    '#type' => 'select',
-    '#title' => t('Event'),
-    '#options' => rules_get_grouped_labels(rules_get_events()),
-    '#description' => t('Select the event on which you want to evaluate conditions and actions.'),
-    '#required' => TRUE,
-  );
-  rules_admin_configuration_form($form, $cfg);
-  return $form;
+function rules_admin_form_configuration_add(&$form_state) {
+  $form_state['set'] = arg(2) != 'trigger';
+  return rules_admin_form_rule_settings(array(), $form_state['set']);
 }
 
-function rules_admin_form_configuration_add_submit($form_id, $form_values) {
-  $cfg = isset($form_values['cfg']) ? $form_values['cfg'] : array('#type' => 'configuration', '#altered' => FALSE);
-  foreach (array('event', 'label', 'active', 'weight') as $key) {
-    $cfg['#'. $key] = $form_values[$key];
+function rules_admin_form_configuration_add_submit($form_id, &$form_state) {
+  $rule = array('#type' => 'rule');
+  foreach (array('set', 'label', 'active', 'weight') as $key) {
+    $rule['#'. $key] = $form_state['values'][$key];
   }
-  $cfg['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
-  $cfg['#module'] = 'rules-ng';
-  rules_admin_save_rule($cfg);
+  $rule['#status'] = 'custom';
+
+  //get an unique name
+  $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
+  $rule['#name'] = 'rules_'. (db_result($result) + 1);
+
+  rules_item_save('rules', $rule['#name'], $rule);
   rules_clear_cache();
-  drupal_set_message(t("The configuration %label has been added.", array('%label' => $cfg['#label'])));
-  return RULES_ADMIN_PATH .'/'. $cfg['#name'];
+  drupal_set_message(t("The rule %label has been added.", array('%label' => $rule['#label'])));
+  $form_state['redirect'] =  RULES_ADMIN_RULE_PATH .'/'. $rule['#name'];
 }
 
 /**
- * Returns the form for editing a rule
+ * Returns the form for the settings of a rule
  */
-function rules_admin_form_edit_rule(&$form_state, $proxy) {
-
-  $form_state['proxy'] = &$proxy;
-  $rule = $proxy->get_rule();
-  _rules_element_defaults($rule);
-
+function rules_admin_form_rule_settings($rule, $set = FALSE) {
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule settings'),
@@ -167,9 +158,28 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Choose an appropriate label for this rule.'),
-    '#default_value' => $rule['#label'],
+    '#default_value' => isset($rule['#label']) ? $rule['#label'] : '',
     '#required' => TRUE,
   );
+  $form['settings']['set'] = array(
+    '#type' => 'select',
+    '#default_value' => isset($rule['#set']) ? $rule['#set'] : '',
+    '#required' => TRUE,
+  );
+  if ($set) {
+    $form['settings']['set'] += array(
+      '#title' =>t('Rule set'),
+    	'#options' => rules_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),
+    	'#description' => t('Select to which rule set this rule should belong.'),
+    );
+  }
+  else {
+    $form['settings']['set'] += array(
+      '#title' => t('Event'),
+    	'#options' => rules_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_event_sets())),
+    	'#description' => t('Select the event on which you want to evaluate this rule.'),
+    );
+  };
   $form['settings']['active'] = array(
     '#title' => t('This rule is active and should be evaluated when the associated event occurs.'),
     '#type' => 'checkbox',
@@ -182,9 +192,22 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
     '#default_value' => isset($rule['#weight']) ? $rule['#weight'] : 0,
   );
   $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
-  
+  return $form;
+}
+
+/**
+ * Returns the form for editing a rule
+ */
+function rules_admin_form_edit_rule(&$form_state, $proxy) {
+
+  $form_state['proxy'] = &$proxy;
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
+
+  $form = rules_admin_form_rule_settings($rule);
+
   //help
-  //  rules_admin_element_help($render['event'], rules_get_events('all', $element['#event']));
+  //rules_admin_element_help($render['event'], rules_get_events('all', $element['#event']));
   $form['elements'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule elements'),
@@ -201,7 +224,7 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
 
 function rules_admin_form_edit_rule_submit($form, &$form_state) {
   $rule_ref = &$form_state['proxy']->get_rule();
-  foreach (array('label', 'active', 'weight') as $key) {
+  foreach (array('label', 'active', 'weight', 'set') as $key) {
     $rule_ref['#'. $key] = $form_state['values'][$key];
   }
 
@@ -812,18 +835,19 @@ function rules_admin_form_clone($configuration_name) {
   drupal_not_found();
 }
 
-/*
- * Gets all compatible events, which means that all arguments are available in the other event too
+/**
+ * Gets all compatible sets, which means that all arguments are available in the other set too
  */
-function rules_admin_get_compatible_events($event_name) {
-  $event = rules_get_events('all', $event_name);
-  $events = rules_get_events();
-  foreach ($events as $key => $this_event) {
-    if (array_diff(array_keys($event['#arguments']), array_keys($this_event['#arguments']))) {
-      unset($events[$key]);
+function rules_admin_get_compatible_sets($rule, $sets) {
+  if (isset($rule['#set']) && $rule['#set']) {
+    $set = rules_get_rule_sets($rule['#set']);
+    foreach ($sets as $key => $this_set) {
+      if (array_diff(array_keys($set['arguments']), array_keys($this_set['arguments']))) {
+        unset($sets[$key]);
+      }
     }
   }
-  return $events;
+  return $sets;
 }
 
 

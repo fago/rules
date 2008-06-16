@@ -119,8 +119,8 @@ class rules_admin_rule_proxy {
   function save_rule() {
     $rule = $this->get_rule();
 
-    if (strpos($rule['#name'], 'rules') === TRUE) {
-      $rule['#altered'] = TRUE;
+    if (!isset($rule['#status']) || $rule['#status'] == 'default') {
+      $rule['#status'] = 'altered';
     }
     rules_item_save('rules', $rule['#name'], $rule);
   }
