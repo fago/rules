@@ -129,7 +129,8 @@ function rules_admin_form_configuration_add(&$form_state) {
 }
 
 function rules_admin_form_configuration_add_submit($form_id, &$form_state) {
-  $rule = array('#type' => 'rule');
+  $rule = isset($form_state['proxy']) ? $form_state['proxy']->get_rule() : array('#type' => 'rule');
+
   foreach (array('set', 'label', 'active', 'weight') as $key) {
     $rule['#'. $key] = $form_state['values'][$key];
   }
@@ -812,27 +813,21 @@ function rules_admin_form_delete_submit($form_id, $form_state) {
   $form_state['redirect'] = RULES_ADMIN_PATH;
 }
 
-/*
- * Clones a configuration
+/**
+ * Clones a rule
  */
-function rules_admin_form_clone($configuration_name) {
-  if ($cfg = rules_get_configurations('all', $configuration_name)) {
-    drupal_set_message(t('Alter the settings for the cloned rule.'));
-    $form = array();
-    $cfg['#module'] = 'rules-ng';
-    $form['cfg'] = array('#type' => 'value', '#value' => $cfg);
-    $form['event'] = array(
-      '#type' => 'select',
-      '#title' => t('Event'),
-      '#options' => rules_get_grouped_labels(rules_admin_get_compatible_events($cfg['#event'])),
-      '#description' => t('Select the event on which you want to evaluate the cloned configuration.'),
-      '#required' => TRUE,
-    );
-    rules_admin_configuration_form($form, $cfg);
-    $form['#submit'] = array('rules_admin_form_configuration_add_submit' => array());
-    return $form;
-  }
-  drupal_not_found();
+function rules_admin_form_clone(&$form_state, $proxy) {
+
+  $form_state['proxy'] = &$proxy;
+  $rule = $proxy->get_rule();
+  _rules_element_defaults($rule);
+  
+  drupal_set_message(t('Alter the settings for the cloned rule.'));
+
+  $form_state['set'] = strpos($rule['#set'], 'event_') !== 0;
+  $form = rules_admin_form_rule_settings($rule, $form_state['set']);
+  $form['#submit'] = array('rules_admin_form_configuration_add_submit');
+  return $form;
 }
 
 /**
