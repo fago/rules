@@ -195,7 +195,7 @@ class rules_variable {
 
   function _set_data(&$data) {
     if (isset($data)) {
-      $class = 'rules_data_type_'. $this->info['data'];
+      $class = 'rules_data_type_'. $this->info['type'];
       $class = class_exists($class) ? $class : 'rules_data_type';
 
       $this->data = new $class;

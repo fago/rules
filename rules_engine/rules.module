@@ -59,7 +59,7 @@ function rules_menu() {
     'title' => 'Add a new rule',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_configuration_add'),
+    'page arguments' => array('rules_admin_form_add_rule'),
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
@@ -680,7 +680,7 @@ function rules_elements() {
  * Gets the element info of an element (actions, conditions,..)
  * Note that the element defaults will be applied before, if not yet done.
  */
-function rules_get_element_info(&$element) {
+function rules_get_element_info($element) {
   _rules_element_defaults($element);
   if (isset($element['#info']) && $element['#info'] && isset($element['#name'])) {
     if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {

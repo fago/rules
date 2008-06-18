@@ -123,12 +123,12 @@ function rules_admin_configuration_status($rule) {
 /**
  * Returns the add rule form
  */
-function rules_admin_form_configuration_add(&$form_state) {
+function rules_admin_form_add_rule(&$form_state) {
   $form_state['set'] = arg(2) != 'trigger';
   return rules_admin_form_rule_settings(array(), $form_state['set']);
 }
 
-function rules_admin_form_configuration_add_submit($form_id, &$form_state) {
+function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   $rule = isset($form_state['proxy']) ? $form_state['proxy']->get_rule() : array('#type' => 'rule');
 
   foreach (array('set', 'label', 'active', 'weight') as $key) {
@@ -265,61 +265,59 @@ function rules_admin_form_revert_submit($form_id, $form_state) {
  * Returns the form for the add operation
  * This handles adding conditions and actions
  *
- * @param $configuration The name of the configuration, which is to be edited
- * @param $id Optionally specifies an element where the condition / action is to be added
+ * @param $id The id of the the element where the condition / action is to be added
  * @param $type Either 'action' or 'condition' or 'op'
  */
-function rules_admin_form_add($proxy, $id, $type, $form_values = NULL) {
+function rules_admin_form_add(&$form_state, $proxy, $type, $id) {
+  $form_state['proxy'] = &$proxy;
+  $form_state['id'] = intval($id);
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
   
-  if (($cfg = rules_get_configurations('all', $configuration_name)) && in_array($type, array('action', 'condition', 'op'))) {
-    $element = isset($form_values) ? array('#type' => $type, '#name' => $form_values['name']) : array('#type' => $type);
-    $element += rules_get_element_info($element);
+  if (in_array($type, array('action', 'condition', 'op'))) {
+    if (!isset($form_state['storage'])) {
+      $form_state['storage'] = array('element' => array('#type' => $type), 'step' => 0);
+    }
+    $element =& $form_state['storage']['element'];
+    $info = rules_get_element_info($element);
 
-    //regenerate the ids
-    rules_element_id($configuration_name, $cfg);
     //get the item assocaited with $id
-    if ($parent = rules_element_id($configuration_name, $cfg, intval($id))) {
-      $add = isset($form_values['added']) ? '' : '_add';
-      if (function_exists($function = 'rules_admin_form_edit_'. $element['#type'] . $add)) {
+    if ($parent = $proxy->get_element(intval($id))) {
+      $function = $form_state['storage']['step'] ? 'rules_admin_form_edit_'. $element['#type'] : 'rules_admin_form_add_'. $element['#type'];
+      if (function_exists($function)) {
         $form = array();
-        $form['#multistep'] = TRUE;
-        $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
-        $form['added'] = array('#type' => 'hidden', '#value' => isset($form_values) ? 2 : 1);
-        $form['element'] = array('#type' => 'value', '#value' => $element);
-        $form['id'] = array('#type' => 'value', '#value' => $id);
-        $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => $add ? t('Add') : t('Submit'));
-        return $function($form, $element, $parent);
+        //$form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => $add ? t('Add') : t('Submit'));
+        return $function($form_state, $element, $parent);
       }
     }
   }
   drupal_not_found();
+  exit;
 }
 
-/*
+/**
  * Returns the form for the first action add page
  */
-function rules_admin_form_edit_action_add($form, $element) {
-  $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value']);
-  $actions = rules_admin_filter_elements($argument_info, rules_get_actions());
+function rules_admin_form_add_action(&$form_state, &$element) {
+  $vars = $form_state['proxy']->get_available_variables();
+
+  $actions = rules_admin_filter_elements($vars, rules_get_actions());
   $form['name'] = array(
     '#type' => 'select',
     '#title' => t('Select an action to add'),
     '#options' => rules_get_grouped_labels($actions),
     '#required' => TRUE,
   );
-  $form['#redirect'] = FALSE;
   return $form;
 }
 
-/*
+/**
  * Returns the form for the first condition add page
  */
-function rules_admin_form_edit_condition_add(&$form, $element, &$parent) {
+function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
   $parent += rules_get_element_info($parent);
   if ($parent['#type'] == 'configuration' || isset($parent['#logical_op'])) {
-    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value']);
+    $argument_info = rules_admin_get_available_variables($form['cfg']['#value']);
     $conditions = rules_admin_filter_elements($argument_info, rules_get_conditions());
     $form['name'] = array(
       '#type' => 'select',
@@ -332,13 +330,12 @@ function rules_admin_form_edit_condition_add(&$form, $element, &$parent) {
   }
 }
 
-
-/*
+/**
  * Indenting a condition
  * Adds a logical operation and place the given condition element inside. We automatically
  * determine which operation is to be added.
  */
-function rules_admin_form_edit_op_add(&$form, $element, &$parent) {
+function rules_admin_form_add_op(&$form_state, &$element, &$parent) {
   $rule_name = $form['cfg']['#value']['#name'];
   $cfg = &rules_element_id($rule_name, $form['cfg']['#value'], 1);
   //get the condition
@@ -596,7 +593,7 @@ function rules_admin_element_configuration_form(&$form, $element) {
     $event = rules_get_events('all', $form['cfg']['#value']['#event']);
     _rules_element_defaults($event);
     //TODO: for d6 remove argument_info
-    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value'], $element); 
+    $argument_info = rules_admin_get_available_variables($form['cfg']['#value'], $element); 
     $info = array('element' => &$element, 'event' => &$event);
 
     $form['configure'] = $function($element['#settings'], $argument_info, $info);
@@ -655,7 +652,7 @@ function rules_admin_new_arguments_form(&$form, $element) {
 }
 
 function rules_admin_new_arguments_form_validate($form_id, $form_values, $form) {
-  $argument_info = rules_admin_event_get_argument_info($form_values['cfg'], $form_values['element']);
+  $argument_info = rules_admin_get_available_variables($form_values['cfg'], $form_values['element']);
   foreach ($form_values['new_arguments'] as $name => $argument) {
     if (isset($argument_info[$argument['name']])) {
       form_set_error(implode('][', array('new_arguments', $name, 'name')), t('This name already exists.'));
@@ -690,7 +687,7 @@ function rules_admin_argument_map_form(&$form, $element) {
       '#title' => t('Arguments configuration'),
       '#tree' => TRUE,
     );
-    $argument_info = rules_admin_event_get_argument_info($form['cfg']['#value'], $element);
+    $argument_info = rules_admin_get_available_variables($form['cfg']['#value'], $element);
 
     foreach ($element['#arguments'] as $name => $info) {
       
@@ -983,6 +980,7 @@ function rules_admin_form_export($form_values = NULL) {
  * are available, so that the action/condition can be configured
  */
 function rules_admin_filter_elements($argument_info, $elements) {
+  return $elements;
   $filtered = array();
   foreach ($elements as $key => $element) {
     if (is_array($element['#arguments']) && count($element['#arguments'])) {
@@ -1014,67 +1012,3 @@ function rules_admin_get_categories() {
   return $categories;
 }
 
-/*
- * Gets $argument_info, which contains all available arguments
- * For this we need to get the arguments of the event as well as further arguments that
- * might be provided by actions of this or preceding configurations
- * 
- * @param $cfg The configuration for which to get the argument info
- * @param $element An optional element, which is currently edited
- */
-function rules_admin_event_get_argument_info($cfg, $element = NULL) {
-  static $cache = array();
-
-  if (isset($cache[$cfg['#name']])) {
-    if (!isset($element) || !isset($element['#new arguments'])) {
-      return $cache[$cfg['#name']];
-    }
-    //remove elements that are provided by the currently edited element
-    $custom_arguments = $cache[$cfg['#name']];
-    foreach (array_intersect(array_keys($custom_arguments), array_keys($element['#new arguments'])) as $name) {
-      unset($custom_arguments[$name]);
-    }
-    return $custom_arguments;
-  }
-
-  $event = rules_get_events('all', $cfg['#event']);
-  _rules_element_defaults($event);
-  $argument_info = $event['#arguments'];
-
-  //get the arguments provided by an action before
-  $configurations = rules_event_get_configurations($cfg['#event']);
-  $argument_info += rules_get_new_arguments($configurations, $cfg['#name']);
-
-  $cache[$cfg['#name']] = $argument_info;
-  return rules_admin_event_get_argument_info($cfg, $element);
-}
-
-/*
- * Gets all new arguments defined by actions, which are executed until the given
- * configuration 
- */
-function rules_get_new_arguments(&$elements, &$rule_name) {
-  if (!isset($rule_name)) {
-    //if the name is NULL, we are behind the specified configuration
-    return array();
-  }
-
-  //sort the elements
-  $elements += rules_get_element_info($elements);
-  uasort($elements, "_rules_element_sort");
-
-  //add the new arguments, if any
-  $arguments = isset($elements['#new arguments']) ? $elements['#new arguments'] : array();
-
-  //recurse
-  foreach (element_children($elements) as $key) {
-    $arguments += rules_get_new_arguments($elements[$key], $rule_name);
-  }
-
-  if ($elements['#type'] == 'configuration' && $elements['#name'] == $rule_name) {
-    //element found, stop adding new arguments
-    $rule_name = NULL;
-    return $arguments;
-  }
-  return $arguments;
-}

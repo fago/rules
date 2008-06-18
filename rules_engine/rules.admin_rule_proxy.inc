@@ -7,8 +7,9 @@
 class rules_admin_rule_proxy {
 
   var $_rule;
-  var $_counter;
-  var $map = array();
+  var $_counter;      //used when generating ids
+  var $_variables;    //variables defined by previous rules
+  var $map = array(); //stores the id => element map
 
   /**
    * Constructor
@@ -144,7 +145,6 @@ class rules_admin_rule_proxy {
     $rule =& $this->get_rule();
     $this->_clean_rule($rule['#conditions']);
     $this->_clean_rule($rule['#actions']);
-    dprint_r($rule);
   }
 
   function _clean_rule(&$element) {
@@ -166,4 +166,78 @@ class rules_admin_rule_proxy {
     }
   }
 
+  /**
+   * Gets the set of this rule
+   */
+  function get_set() {
+    $rule = $this->get_rule();
+    return rules_get_rule_set($rule['#set']);    
+  }
+
+  /**
+   * Gets the info about the set of this rule
+   */
+  function get_set_info() {
+    $set = $this->get_set();
+    return $set['info'] + array('arguments' => array());
+  }
+    
+  /**
+   * Gets the info about all new defined variables in this rule,
+   * before the element with the given id
+   */
+  function get_new_variables($id = NULL) {
+    $vars = array();
+    $i = 0;
+    $element = TRUE;
+    while (isset($id) && $i < $id || !isset($id) && $element) {
+      $element = $this->get_element($i);
+      if (isset($element['#type']) && $element['#type'] == 'action') {
+        $info = rules_get_element_info($element) + array('new variables' => array());
+        $vars = $info['new variables'] + $vars;
+      }
+      $i++;
+    }
+    return $vars;
+  }
+
+  /**
+   * Gets info about all available variables
+   * This are the arguments of the rule's set as well as further arguments that
+   * might be provided by actions of this or preceding rules
+   * 
+   * @param $id The id of the element of the current rule until which we should get new variables.
+   *   If not given all new variables of this rule will be considered.
+   */
+  function get_available_variables($id = NULL) {
+    $set_info = $this->get_set_info();
+    return $this->get_new_variables($id) + $this->_get_available_variables() + $set_info['arguments'];
+  }
+
+  /**
+   * Gets all new variables defined by actions in rules, which are evaluated until this rule
+   */
+  function _get_available_variables() {
+    if (!isset($this->_variables)) {
+      $this->_variables = array();
+      $set = $this->get_set();
+      $this_rule = $this->get_rule();
+
+      //sort the rules
+      _rules_sort_children($set['rules']);
+      
+      foreach (element_children($set['rules']) as $name) {
+        if ($name == $this_rule['#name']) {
+          return $this->_variables;
+        }
+        foreach ($set['rules'][$name]['#actions'] as $action) {
+          $info = rules_get_element_info($action);
+          if (isset($info['arguments'])) {
+            $this->_variables += $info['arguments']; 
+          }
+        }
+      }
+    }
+    return $this->_variables;
+  }
 }
