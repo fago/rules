@@ -26,8 +26,8 @@ function theme_rules_admin_rule_render($element) {
 
   $add_img = theme('rules_icon', 'add'). '';
   $link_options = array('attributes' => array('class' => 'modify'), 'query' => drupal_get_destination());
-  $render['condition_add'] = array('#weight' => 5, '#value' => $add_img . l(t('Add a condition'), RULES_ADMIN_PATH .'/'. $element['#name']. '/add/0/condition', $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
-  $render['action_add'] = array('#weight' => 100, '#value' => $add_img . l(t('Add an action'), RULES_ADMIN_PATH .'/'. $element['#name']. '/add/0/action',$link_options), '#prefix' => '<p>', '#suffix' => '</p>');
+  $render['condition_add'] = array('#weight' => 5, '#value' => $add_img . l(t('Add a condition'), RULES_ADMIN_RULE_PATH .'/'. $element['#name']. '/add/condition/1', $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
+  $render['action_add'] = array('#weight' => 100, '#value' => $add_img . l(t('Add an action'), RULES_ADMIN_RULE_PATH .'/'. $element['#name']. '/add/action/'. $element['#actions']['#id'], $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
 
   //propagate the rule name down the tree, as the name is needed for rendering the elements
   $render['#rule'] = $element['#name'];
