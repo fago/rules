@@ -262,7 +262,7 @@ function rules_get_events($key = 'all') {
  */
 function rules_get_rule_sets($key = NULL) {
   $sets = rules_get_event_sets() + rules_get_configured_items('rule_sets');
-  return isset($key) ? $sets[$key] : $sets;
+  return isset($key) ? (isset($sets[$key]) ? $sets[$key] : NULL) : $sets;
 }
 
 /**
