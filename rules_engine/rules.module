@@ -706,8 +706,8 @@ function rules_get_element_label($element) {
 }
 
 /**
- * A simple helping function, which eases the creation of configurations
- * Example use case:  $configuration['or'] = rules_configure('OR', $condition1, conditions2);
+ * A simple helping function, which eases the creation of rules
+ * Example use case:  $conditions = rules_configure('OR', $condition1, conditions2);
  *
  * @param $op One supported operation like 'AND', 'OR'. If ommitted the passed elements
  *   will just be added to the first one.

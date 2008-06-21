@@ -60,11 +60,11 @@ function theme_rule($element) {
 function theme_condition($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
   $title = theme('rules_icon', 'condition'). ' '. check_plain(rules_get_element_label($element));
-  $path = RULES_ADMIN_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
+  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
   $options = array('attributes' => _rules_attributes_add_class($attributes, 'condition'), 'query' => drupal_get_destination(), 'html' => TRUE);
   $link = l($title, $path, $options);
 
-  $path = RULES_ADMIN_PATH .'/'. $element['#rule']. '/add/'. $element['#id'] .'/op';
+  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/add/op/'. $element['#id'];
   $options['attributes'] = _rules_attributes_add_class($attributes, 'condition_add');
   $indent_link = l(theme_rules_icon('indent', t('Indent this condition by adding a logical operation.')), $path, $options);
 
@@ -78,7 +78,7 @@ function theme_condition($element) {
 function theme_action($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
   $title = theme('rules_icon', 'action'). ' '. check_plain(rules_get_element_label($element));
-  $path = RULES_ADMIN_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
+  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
   $options = array('attributes' => _rules_attributes_add_class($attributes, 'action'), 'query' => drupal_get_destination(), 'html' => TRUE);
   return l($title, $path, $options);
 }
