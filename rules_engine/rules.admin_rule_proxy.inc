@@ -54,7 +54,7 @@ class rules_admin_rule_proxy {
     while ($id > 0) {
       $id--;
       //get the element and look if it's the parent
-      $parent = $this->get_element($rule_name, $elements, $id);
+      $parent = $this->get_element($id);
       foreach (element_children($parent) as $key) {
         if ($parent[$key] == $element) {
           //parent found!

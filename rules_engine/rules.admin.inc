@@ -78,7 +78,7 @@ function rules_admin_overview_table($params) {
         $ops[] = l(t('delete'), $path .'/delete', array('query' => drupal_get_destination()));
       }
       else if ($rule['#status'] == 'altered') {
-        $ops[] = l(t('reset'), $path .'/revert', array('query' => drupal_get_destination()));
+        $ops[] = l(t('revert'), $path .'/revert', array('query' => drupal_get_destination()));
       }
       $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
       $categories = array_map('check_plain', $rule['#categories']);
@@ -279,14 +279,11 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $id) {
       $form_state['storage'] = array('element' => array('#type' => $type), 'step' => 0);
     }
     $element =& $form_state['storage']['element'];
-    $info = rules_get_element_info($element);
-
+    
     //get the item assocaited with $id
     if ($parent = $proxy->get_element(intval($id))) {
       $function = $form_state['storage']['step'] ? 'rules_admin_form_edit_'. $element['#type'] : 'rules_admin_form_add_'. $element['#type'];
       if (function_exists($function)) {
-        $form = array();
-        //$form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => $add ? t('Add') : t('Submit'));
         return $function($form_state, $element, $parent);
       }
     }
@@ -308,6 +305,7 @@ function rules_admin_form_add_action(&$form_state, &$element) {
     '#options' => rules_get_grouped_labels($actions),
     '#required' => TRUE,
   );
+  $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Add'));
   return $form;
 }
 
@@ -315,17 +313,18 @@ function rules_admin_form_add_action(&$form_state, &$element) {
  * Returns the form for the first condition add page
  */
 function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
-  $parent += rules_get_element_info($parent);
-  if ($parent['#type'] == 'configuration' || isset($parent['#logical_op'])) {
-    $argument_info = rules_admin_get_available_variables($form['cfg']['#value']);
-    $conditions = rules_admin_filter_elements($argument_info, rules_get_conditions());
+  $info = rules_get_element_info($parent);
+
+  if (!isset($parent['#type']) || isset($info['#logical_op']) && $info['#logical_op']) {
+    $vars = $form_state['proxy']->get_available_variables(0);
+    $conditions = rules_admin_filter_elements($vars, rules_get_conditions());
     $form['name'] = array(
       '#type' => 'select',
       '#title' => t('Select the condition to add'),
       '#options' => rules_get_grouped_labels($conditions),
       '#required' => TRUE,
     );
-    $form['#redirect'] = FALSE;
+    $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Add'));
     return $form;
   }
 }
@@ -335,27 +334,24 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
  * Adds a logical operation and place the given condition element inside. We automatically
  * determine which operation is to be added.
  */
-function rules_admin_form_add_op(&$form_state, &$element, &$parent) {
-  $rule_name = $form['cfg']['#value']['#name'];
-  $cfg = &rules_element_id($rule_name, $form['cfg']['#value'], 1);
-  //get the condition
-  $element = &rules_element_id($rule_name, $cfg, intval($form['id']['#value']));
-
+function rules_admin_form_add_op(&$form_state, $element, $parent) {
+  $parent_ref =& $form_state['proxy']->get_element($form_state['id']);
+  
   //determine the appropriate operation and apply it
-  $op = rules_determine_operation($rule_name, $cfg, intval($form['id']['#value']));
-  if (isset($element['#weight'])) {
-    $weight = $element['#weight'];
-    unset($element['#weight']);
+  $op = rules_determine_operation($form_state['proxy'], $form_state['id']);
+  if (isset($parent_ref['#weight'])) {
+    $weight = $parent_ref['#weight'];
+    unset($parent_ref['#weight']);
   }
-  $element = rules_configure($op, $element);
+  $parent_ref = rules_configure($op, $parent_ref);
 
   if (isset($weight)) {
     //apply the weight of the element to the op
-    $element['#weight'] = $weight;
+    $parent_ref['#weight'] = $weight;
   }
 
   //and save
-  rules_admin_save_rule($cfg);
+  $form_state['proxy']->save_changes();
   rules_clear_cache();
   drupal_goto(RULES_ADMIN_PATH);
 }
@@ -876,14 +872,11 @@ function rules_get_grouped_labels($elements) {
  * Determines which operation should be added
  * If the parent operation is an AND, we add an OR, and vice versa.
  */
-function rules_determine_operation($rule_name, $cfg, $id) {
-
-  $parent_id = rules_get_element_parent_id($rule_name, $cfg, $id);
-  $parent = rules_element_id($rule_name, $elements, $parent_id);
-
+function rules_determine_operation(&$proxy, $id) {
+  $parent = $proxy->get_element($proxy->get_element_parent_id($id)) + array('#type' => '');
   switch ($parent['#type']) {
     default:
-    case 'configuration':
+    case 'rule':
     case 'AND':
       return 'OR';
     case 'OR':
