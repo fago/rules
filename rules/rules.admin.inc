@@ -318,7 +318,7 @@ function rules_admin_form_add_action(&$form_state, &$element) {
     '#type' => 'submit',
     '#weight' => 10,
     '#value' => t('Forward'),
-    '#submit' => array('rules_admin_form_add_submit_save_state'),
+    '#submit' => array('rules_admin_form_add_submit', 'rules_admin_form_pack_storage'),
   );
   return $form;
 }
@@ -342,7 +342,7 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
       '#type' => 'submit',
       '#weight' => 10,
       '#value' => t('Forward'),
-      '#submit' => array('rules_admin_form_add_submit_save_state'),
+      '#submit' => array('rules_admin_form_add_submit', 'rules_admin_form_pack_storage'),
     );
     return $form;
   }
@@ -375,10 +375,36 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
   drupal_goto(RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name());
 }
 
-function rules_admin_form_add_submit_save_state($form, &$form_state) {
-  $form_state['storage']['step'] = $form_state['step'];
-  $form_state['storage']['element'] = $form_state['element'];
+function rules_admin_form_add_submit($form, &$form_state) {
+  $form_state['element']['#name'] = $form_state['values']['name'];
 }
+
+/**
+ * Use this function when there should be a further step.
+ * It puts all variables needed into the form storage
+ */
+function rules_admin_form_pack_storage($form, &$form_state) {
+  foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
+    if (isset($form_state[$key])) {
+      $form_state['storage'][$key] =& $form_state[$key];
+    }
+  }
+}
+
+/**
+ * Use this when the current form is or might be not the first step of the form.
+ * It puts the variables out of storage on their usual place.
+ * Note: We can't use the storage place everywhere, as it would result in unnecessary form rebuilts
+ *   when building the form initially.
+ */
+function rules_admin_form_unpack_storage($form, &$form_state) {
+  foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
+    if (isset($form_state['storage'][$key])) {
+      $form_state[$key] =& $form_state['storage'][$key];
+    }
+  }
+}
+
 
 /**
  * Returns the form for the edit operation
@@ -396,100 +422,89 @@ function rules_admin_form_edit(&$form_state, &$proxy, $element) {
   return rules_admin_form_add($form_state, $proxy, $type);
 }
 
-function rules_admin_form_edit_submit($form_id, $form_values) {
-  //get the reference on the currently edited configuration!
-  $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
-  //get the reference on the associated element with $id
-  $element = &rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
-  $orig_element = rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
-
-  //apply the changes to the element
-  if (function_exists($function = 'rules_admin_form_edit_'. $form_values['element_type'] . '_submit')) {
-    $function($form_values, $element);
-  }
-  //remove empty values
-  $element = array_filter($element);
-
-  //we only save if there were really changes to the element.
-  //so a default configuration may keep its default status
-  if ($element != $orig_element) {
-    rules_admin_save_rule($cfg);
-    rules_clear_cache();
-  }
-}
-
 /**
  * Returns the edit form for an action
  */
-function rules_admin_form_edit_action($form, $element) {
+function rules_admin_form_edit_action(&$form_state, $element) {
+  $label = rules_get_element_label($element);
   $form['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Choose an appropriate label for this action.'),
-    '#default_value' => $element['#label'],
+    '#default_value' => $label,
     '#required' => TRUE,
   );
-  if ($element['#label']) {
-    drupal_set_title(t('Editing action %label', array('%label' => $element['#label'])));
+  if ($label) {
+    drupal_set_title(t('Editing action %label', array('%label' => $label)));
   }
   rules_admin_element_help($form, $element);
-  rules_admin_argument_map_form($form, $element);
-  rules_admin_new_arguments_form($form, $element);
-  rules_admin_element_configuration_form($form, $element);
+  //rules_admin_argument_map_form($form, $element);
+  //rules_admin_new_arguments_form($form, $element);
+  //rules_admin_element_configuration_form($form, $element);
   $form['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
     '#description' => t('Adjust the weight to customize the ordering of actions.'),
-    '#default_value' => $element['#weight'] > 499 ? $element['#weight'] - 500 : $element['#weight'],
+    '#default_value' => isset($element['#weight']) ? $element['#weight'] : 0,
   );
   $form['submit'] = array(
     '#type' => 'submit',
     '#weight' => 10,
-    '#value' => t('Forward'),
-    '#submit' => array('rules_admin_form_add_submit_save_state'),
+    '#value' => t('Save'),
+    '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_edit_action_submit', 'rules_admin_form_edit_save'),
   );
+  if (isset($element['#id'])) {
+    $form['delete'] = array(
+      '#type' => 'submit',
+      '#weight' => 10,
+      '#value' => t('Delete'),
+      '#submit' => array('rules_admin_form_edit_delete_submit'),
+    );
+  }
   return $form;
 }
 
 /*
  * Apply the changes to the element
  */
-function rules_admin_form_edit_action_submit($form_values, &$element) {
+function rules_admin_form_edit_action_submit($form, &$form_state) {
+  $element =& $form_state['element'];
   foreach (array('label', 'weight') as $key) {
-    $element['#'. $key] = $form_values[$key];
+    $element['#'. $key] = $form_state['values'][$key];
   }
   //save the argument map
-  if (isset($form_values['map'])) {
-    $element['#argument map'] = array_flip($form_values['map']);
+  if (isset($form_state['values']['map'])) {
+    $element['#argument map'] = array_flip($form_state['values']['map']);
   }
-  rules_admin_new_arguments_form_submit($form_values, $element);
-  rules_admin_element_configuration_form_submit($form_values, $element);
+  //rules_admin_new_arguments_form_submit($form_values, $element);
+  //rules_admin_element_configuration_form_submit($form_values, $element);
   drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
 }
 
 /**
  * Returns the edit form for a condition
  */
-function rules_admin_form_edit_condition($form, $element) {
+function rules_admin_form_edit_condition(&$form_state, $element) {
+  $label = rules_get_element_label($element);
   $form['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Choose an appropriate label for this condition.'),
-    '#default_value' => $element['#label'],
+    '#default_value' => $label,
     '#required' => TRUE,
   );
-  if ($element['#label']) {
-    drupal_set_title(t('Editing condition %label', array('%label' => $element['#label'])));
+  if ($label) {
+    drupal_set_title(t('Editing condition %label', array('%label' => $label)));
   }
   $form['negate'] = array(
     '#title' => t('Negate'),
     '#type' => 'checkbox',
     '#description' => t('If checked, the condition returns TRUE, if it evaluates to FALSE.'),
-    '#default_value' => $element['#negate'],
+    '#default_value' => isset($element['#negate']) ? $element['#negate'] : 0,
   );
   rules_admin_element_help($form, $element);
-  rules_admin_argument_map_form($form, $element);
-  rules_admin_element_configuration_form($form, $element);
+  //rules_admin_argument_map_form($form, $element);
+  //rules_admin_element_configuration_form($form, $element);
   $form['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
@@ -499,24 +514,33 @@ function rules_admin_form_edit_condition($form, $element) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#weight' => 10,
-    '#value' => t('Forward'),
-    '#submit' => array('rules_admin_form_add_submit_save_state'),
-  );
+    '#value' => t('Save'),
+    '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_edit_condition_submit', 'rules_admin_form_edit_save'),
+    );
+  if (isset($element['#id'])) {
+    $form['delete'] = array(
+      '#type' => 'submit',
+      '#weight' => 10,
+      '#value' => t('Delete'),
+      '#submit' => array('rules_admin_form_edit_delete_submit'),
+    );
+  }
   return $form;
 }
 
-/*
+/**
  * Apply the changes to the element
  */
-function rules_admin_form_edit_condition_submit($form_values, &$element) {
+function rules_admin_form_edit_condition_submit($form, &$form_state) {
+  $element =& $form_state['element'];
   foreach (array('label', 'negate', 'weight') as $key) {
-    $element['#'. $key] = $form_values[$key];
+    $element['#'. $key] = $form_state['values'][$key];
   }
   //save the argument map
-  if (isset($form_values['map'])) {
-    $element['#argument map'] = array_flip($form_values['map']);
+  if (isset($form_state['values']['map'])) {
+    $element['#argument map'] = array_flip($form_state['values']['map']);
   }
-  rules_admin_element_configuration_form_submit($form_values, $element);
+  //rules_admin_element_configuration_form_submit($form_values, $element);
   drupal_set_message(t('The condition %label has been saved.', array('%label' => $element['#label'])));
 }
 
@@ -570,8 +594,6 @@ function rules_admin_form_edit_op_submit($form, &$form_state) {
   foreach (array('negate', 'weight') as $key) {
     $element['#'. $key] = $form_state['values'][$key];
   }
-  //remove empty values
-  $element = array_filter($element);
   $element['#type'] = $form_state['values']['operation'];
   drupal_set_message(t('The condition group %label has been saved.', array('%label' => $element['#type'])));
 }
@@ -581,6 +603,9 @@ function rules_admin_form_edit_op_submit($form, &$form_state) {
  */
 function rules_admin_form_edit_save($form, &$form_state) {
   $element =& $form_state['element'];
+  //remove empty values
+  $element = array_filter($element);
+
   if (isset($element['#id'])) {
     //save edited element
     $element_ref =& $form_state['proxy']->get_element($element['#id']);
@@ -594,6 +619,7 @@ function rules_admin_form_edit_save($form, &$form_state) {
   }
   $form_state['proxy']->save_changes();
   $form_state['redirect'] = RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name();
+  unset($form_state['storage']);
 }
 
 /**
@@ -602,6 +628,7 @@ function rules_admin_form_edit_save($form, &$form_state) {
 function rules_admin_form_edit_delete_submit($form, &$form_state) {
   $element =& $form_state['element'];
   $base_path = RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name();
+  unset($_REQUEST['destination']);
   $form_state['redirect'] = array(
     'path' => $base_path . '/delete/'. $element['#id'],
     'query' => 'destination='. $base_path,

@@ -85,7 +85,7 @@ class rules_admin_rule_proxy {
    * Creates an id for each element and stores a reference on it
    */
   function _generate_index(&$elements) {
-    //sort the elements, so that the elements with higher ids are executed later
+    //sort the elements
     uasort($elements, "element_sort");
 
     //generate ids
@@ -111,6 +111,9 @@ class rules_admin_rule_proxy {
   }
 
   function _generate_index_rule(&$elements) {
+    //sort the elements
+    uasort($elements, "element_sort");
+
     //generate ids
     $this->_counter++;
     $elements['#id'] = $this->_counter;
