@@ -35,6 +35,14 @@ class rules_admin_rule_proxy {
   function &get_rule() {
     return $this->get_element(0);
   }
+  
+  /**
+   * Gets the rule's name
+   */
+  function get_rule_name() {
+    $rule = $this->get_rule();
+    return $rule['#name'];
+  }
 
   /**
    * Gets an element of the referenced rule by id

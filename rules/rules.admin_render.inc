@@ -130,8 +130,8 @@ function theme_OR($element) {
 
   $print_op = $element['#negate'] ? t('NOT') .' ' : '';
   $element['#title'] = t("!not%label group", array('!not' =>  $print_op , '%label' => $element['#label']));
-  $element['#children'] .= '<p class="logical-op-add">'. theme('rules_icon', 'add'). l(t('Add another condition to this group'), RULES_ADMIN_PATH .'/'. $element['#rule']. '/add/'. $element['#id'] .'/condition', array('class' => 'modify'), drupal_get_destination()). '</p>';
-  $element['#children'] .= '<p class="logical-op-edit">'. theme('rules_icon', 'edit'). l(t('Edit this condition group'), RULES_ADMIN_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'], array('class' => 'modify'), drupal_get_destination()). '</p>';
+  $element['#children'] .= '<p class="logical-op-add">'. theme('rules_icon', 'add'). l(t('Add another condition to this group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/add/condition/'. $element['#id']). '</p>';
+  $element['#children'] .= '<p class="logical-op-edit">'. theme('rules_icon', 'edit'). l(t('Edit this condition group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id']). '</p>';
   return theme('fieldset', $element);
 }
 
