@@ -73,11 +73,15 @@ class rules_admin_rule_proxy {
     return FALSE;
   }
 
+  /**
+   * Saves the changes in the rule and clears the cache if necessary.
+   */
   function save_changes() {
     $rule = $this->get_rule();
     $orig_rule = $this->_rule;
     if ($orig_rule != $rule) {
       $this->save_rule();
+      rules_clear_cache();
     }
   }
 

@@ -230,7 +230,6 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
   }
 
   $form_state['proxy']->save_changes();
-  rules_clear_cache();
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
 }
 
@@ -371,7 +370,6 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
 
   //and save
   $form_state['proxy']->save_changes();
-  rules_clear_cache();
   drupal_goto(RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name());
 }
 
@@ -854,7 +852,6 @@ function rules_admin_form_delete_submit($form_id, $form_state) {
     }
     $form_state['proxy']->clean_rule();
     $form_state['proxy']->save_changes();
-    rules_clear_cache();
   }
   $form_state['redirect'] = RULES_ADMIN_PATH;
 }
