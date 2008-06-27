@@ -265,26 +265,35 @@ function rules_admin_form_revert_submit($form_id, $form_state) {
  * Returns the form for the add operation
  * This handles adding conditions and actions
  *
- * @param $id The id of the the element where the condition / action is to be added
  * @param $type Either 'action' or 'condition' or 'op'
+ * @param $parent_id The id of the the element where the condition / action is to be added
  */
-function rules_admin_form_add(&$form_state, $proxy, $type, $id) {
+function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
   $form_state['proxy'] = &$proxy;
-  $form_state['id'] = intval($id);
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
-  
+
   if (in_array($type, array('action', 'condition', 'op'))) {
-    if (!isset($form_state['storage'])) {
-      $form_state['storage'] = array('element' => array('#type' => $type), 'step' => 0);
+    if (!isset($form_state['element'])) {
+      //initial step!
+      $form_state += array('element' => array('#type' => $type), 'step' => 0);
     }
-    $element =& $form_state['storage']['element'];
-    
+    $element =& $form_state['element'];
+
     //get the item assocaited with $id
-    if ($parent = $proxy->get_element(intval($id))) {
-      $function = $form_state['storage']['step'] ? 'rules_admin_form_edit_'. $element['#type'] : 'rules_admin_form_add_'. $element['#type'];
-      if (function_exists($function)) {
-        return $function($form_state, $element, $parent);
+    if ($form_state['step'] == 0) {
+      if (isset($parent_id) && ($parent = $proxy->get_element(intval($parent_id)))) {
+        if (function_exists($function = 'rules_admin_form_add_'. $element['#type'])) {
+          $form_state['step']++;
+          $form_state['parent_id'] = intval($parent_id);
+          return $function($form_state, $element, $parent);
+        }
+      }
+    }
+    else {
+      if (function_exists($function = 'rules_admin_form_edit_'. $type)) {
+        $form_state['step']++;
+        return $function($form_state, $element);
       }
     }
   }
@@ -305,7 +314,12 @@ function rules_admin_form_add_action(&$form_state, &$element) {
     '#options' => rules_get_grouped_labels($actions),
     '#required' => TRUE,
   );
-  $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Add'));
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#weight' => 10,
+    '#value' => t('Forward'),
+    '#submit' => array('rules_admin_form_add_submit_save_state'),
+  );
   return $form;
 }
 
@@ -324,7 +338,12 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
       '#options' => rules_get_grouped_labels($conditions),
       '#required' => TRUE,
     );
-    $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Add'));
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#weight' => 10,
+      '#value' => t('Forward'),
+      '#submit' => array('rules_admin_form_add_submit_save_state'),
+    );
     return $form;
   }
 }
@@ -335,10 +354,10 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
  * determine which operation is to be added.
  */
 function rules_admin_form_add_op(&$form_state, $element, $parent) {
-  $parent_ref =& $form_state['proxy']->get_element($form_state['id']);
+  $parent_ref =& $form_state['proxy']->get_element($form_state['parent_id']);
   
   //determine the appropriate operation and apply it
-  $op = rules_determine_operation($form_state['proxy'], $form_state['id']);
+  $op = rules_determine_operation($form_state['proxy'], $form_state['parent_id']);
   if (isset($parent_ref['#weight'])) {
     $weight = $parent_ref['#weight'];
     unset($parent_ref['#weight']);
@@ -353,76 +372,28 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
   //and save
   $form_state['proxy']->save_changes();
   rules_clear_cache();
-  drupal_goto(RULES_ADMIN_PATH);
+  drupal_goto(RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name());
 }
 
-/*
- * Submit handler for the add element form
- */
-function rules_admin_form_add_submit($form_id, $form_values) {
-  if ($form_values['added'] == 2) {
-    //get the reference on the currently edited configuration!
-    $cfg = &rules_element_id($form_values['cfg']['#name'], $form_values['cfg'], 1);
-    //get the reference on the associated element with $id
-    $parent = &rules_element_id($cfg['#name'], $cfg, intval($form_values['id']));
-    $element = $form_values['element'];
-
-    //apply the changes to the element
-    if (function_exists($function = 'rules_admin_form_edit_'. $element['#type'] . '_submit')) {
-      $function($form_values, $element);
-    }
-    //don't save default values
-    foreach ($form_values['element'] as $key => $value) {
-      if (!in_array($key, array('#name', '#type')) && $value == $element[$key]) {
-        unset($element[$key]);
-      }
-    }
-    //remove empty values
-    $element = array_filter($element);
-    //just add the element to the parent
-    $parent = rules_configure($parent, $element);
-
-    rules_admin_save_rule($cfg);
-    rules_clear_cache();
-  }
+function rules_admin_form_add_submit_save_state($form, &$form_state) {
+  $form_state['storage']['step'] = $form_state['step'];
+  $form_state['storage']['element'] = $form_state['element'];
 }
 
-/*
+/**
  * Returns the form for the edit operation
  * This handles editing conditions and actions
  *
- * @param $configuration The name of the configuration on which we operate
- * @param $id Specifies an element, which is to be edited.
+ * @param $id The id of the the element where the condition / action is to be added
  */
-function rules_admin_form_edit($configuration_name, $id) {
-  if ($cfg = rules_get_configurations('all', $configuration_name)) {
-    if ($_POST['op'] == t('Delete')) {
-      if ($_REQUEST['destination']) {
-        $destination = drupal_get_destination();
-        unset($_REQUEST['destination']);
-      }
-      drupal_goto(RULES_ADMIN_PATH .'/'. $cfg['#name'] .'/delete/'. $id, $destination);
-    }
-    //regenerate the ids
-    rules_element_id($configuration_name, $cfg);
-    //get the item assocaited with $id
-    $element = rules_element_id($configuration_name, $cfg, intval($id));
-    $element += rules_get_element_info($element);
-    $type = isset($element['#logical_op']) && $element['#logical_op'] ? 'op' : $element['#type'];
-
-    //call the appropriate function for each element type
-    if (isset($element) && function_exists($function = 'rules_admin_form_edit_'. $type)) {
-      $form = array();
-      $form['cfg'] = array('#type' => 'value', '#value' => &$cfg);
-      $form['element'] = array('#type' => 'value', '#value' => $element);
-      $form['element_type'] = array('#type' => 'value', '#value' => $type);
-      $form['id'] = array('#type' => 'value', '#value' => $id);
-      $form['submit'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Submit'));
-      $form['delete'] = array('#type' => 'submit', '#weight' => 11, '#value' => t('Delete'));
-      return $function($form, $element);
-    }
+function rules_admin_form_edit(&$form_state, &$proxy, $element) {
+  if (!isset($form_state['element'])) {
+    //initial step!
+    $form_state += array('element' => $element, 'step' => 1);
   }
-  drupal_not_found();
+  //just call the add form with the appropriate step. 
+  $type = in_array($element['#type'], array('action', 'condition')) ? $element['#type'] : 'op';
+  return rules_admin_form_add($form_state, $proxy, $type);
 }
 
 function rules_admin_form_edit_submit($form_id, $form_values) {
@@ -447,7 +418,7 @@ function rules_admin_form_edit_submit($form_id, $form_values) {
   }
 }
 
-/*
+/**
  * Returns the edit form for an action
  */
 function rules_admin_form_edit_action($form, $element) {
@@ -471,6 +442,12 @@ function rules_admin_form_edit_action($form, $element) {
     '#description' => t('Adjust the weight to customize the ordering of actions.'),
     '#default_value' => $element['#weight'] > 499 ? $element['#weight'] - 500 : $element['#weight'],
   );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#weight' => 10,
+    '#value' => t('Forward'),
+    '#submit' => array('rules_admin_form_add_submit_save_state'),
+  );
   return $form;
 }
 
@@ -490,7 +467,7 @@ function rules_admin_form_edit_action_submit($form_values, &$element) {
   drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
 }
 
-/*
+/**
  * Returns the edit form for a condition
  */
 function rules_admin_form_edit_condition($form, $element) {
@@ -519,6 +496,12 @@ function rules_admin_form_edit_condition($form, $element) {
     '#description' => t('Adjust the weight to customize the ordering of conditions.'),
     '#default_value' => isset($element['#weight']) ? $element['#weight'] : 0,
   );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#weight' => 10,
+    '#value' => t('Forward'),
+    '#submit' => array('rules_admin_form_add_submit_save_state'),
+  );
   return $form;
 }
 
@@ -537,16 +520,16 @@ function rules_admin_form_edit_condition_submit($form_values, &$element) {
   drupal_set_message(t('The condition %label has been saved.', array('%label' => $element['#label'])));
 }
 
-/*
+/**
  * Returns the edit form of a logical operation
  */
-function rules_admin_form_edit_op($form, $element) {
-  drupal_set_title(t('Editing condition group %label', array('%label' => $element['#label'])));
+function rules_admin_form_edit_op(&$form_state, $element) {
+  drupal_set_title(t('Editing condition group %label', array('%label' => rules_get_element_label($element))));
   $form['negate'] = array(
     '#title' => t('Negate'),
     '#type' => 'checkbox',
     '#description' => t('If checked, the operation will be negated. E.g. AND would be handled as NOT AND.'),
-    '#default_value' => $element['#negate'],
+    '#default_value' => isset($element['#negate']) ? $element['#negate'] : 0,
   );
   $form['operation'] = array(
     '#title' => t('Operation'),
@@ -562,20 +545,67 @@ function rules_admin_form_edit_op($form, $element) {
     '#description' => t('Adjust the weight to customize the ordering.'),
     '#default_value' => isset($element['#weight']) ? $element['#weight'] : 0,
   );
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#weight' => 10,
+    '#value' => t('Save'),
+    '#submit' => array('rules_admin_form_edit_op_submit', 'rules_admin_form_edit_save'),
+  );
+  if (isset($element['#id'])) {
+    $form['delete'] = array(
+      '#type' => 'submit',
+      '#weight' => 10,
+      '#value' => t('Delete'),
+      '#submit' => array('rules_admin_form_edit_delete_submit'),
+    );
+  }
   return $form;
 }
 
-/*
+/**
  * Apply the changes to the element
  */
-function rules_admin_form_edit_op_submit($form_values, &$element) {
+function rules_admin_form_edit_op_submit($form, &$form_state) {
+  $element =& $form_state['element'];
   foreach (array('negate', 'weight') as $key) {
-    $element['#'. $key] = $form_values[$key];
+    $element['#'. $key] = $form_state['values'][$key];
   }
   //remove empty values
   $element = array_filter($element);
-  $element['#type'] = $form_values['operation'];
+  $element['#type'] = $form_state['values']['operation'];
   drupal_set_message(t('The condition group %label has been saved.', array('%label' => $element['#type'])));
+}
+
+/**
+ * Actually saves the element. Note that this handles also saving newly added elements.
+ */
+function rules_admin_form_edit_save($form, &$form_state) {
+  $element =& $form_state['element'];
+  if (isset($element['#id'])) {
+    //save edited element
+    $element_ref =& $form_state['proxy']->get_element($element['#id']);
+    $element_ref = $element;
+    unset($element_ref['#id']);
+  }
+  else {
+    $parent_ref =& $form_state['proxy']->get_element($form_state['parent_id']);
+    //just add the element to the parent
+    $parent_ref = rules_configure($parent_ref, $element);
+  }
+  $form_state['proxy']->save_changes();
+  $form_state['redirect'] = RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name();
+}
+
+/**
+ * Just redirect to the delete form
+ */
+function rules_admin_form_edit_delete_submit($form, &$form_state) {
+  $element =& $form_state['element'];
+  $base_path = RULES_ADMIN_RULE_PATH .'/'. $form_state['proxy']->get_rule_name();
+  $form_state['redirect'] = array(
+    'path' => $base_path . '/delete/'. $element['#id'],
+    'query' => 'destination='. $base_path,
+  );
 }
 
 /*
@@ -744,7 +774,6 @@ function rules_admin_element_help(&$form, $element) {
  * Shows the delete form for rules, conditions and actions
  */
 function rules_admin_form_delete(&$form_state, $proxy, $element = NULL) {
-
   $form_state['proxy'] = &$proxy;
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
@@ -763,18 +792,15 @@ function rules_admin_form_delete(&$form_state, $proxy, $element = NULL) {
   else {
     //get the item assocaited with $id
     $form_state['id'] = $element['#id'];
-    if ($info = rules_get_element_info($element)) {
-      if (isset($info['#logical_op']) && $info['#logical_op']) {
-        $form_state['is_op'] = TRUE;
-        $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => rules_get_element_label($element)));
-      }
-      else {
-        $text = t('Are you sure you want to delete %label?', array('%label' => rules_get_element_label($element)));
-      }
-      return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+    _rules_element_defaults($element);
+    if (isset($element['#logical_op']) && $element['#logical_op']) {
+      $form_state['is_op'] = TRUE;
+      $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => rules_get_element_label($element)));
     }
-    drupal_not_found();
-    exit;
+    else {
+      $text = t('Are you sure you want to delete %label?', array('%label' => rules_get_element_label($element)));
+    }
+    return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
   }
 }
 
