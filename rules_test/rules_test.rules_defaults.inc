@@ -8,7 +8,7 @@
 function rules_test_rules_defaults() {
   $rules = array();
 
-  
+
   $rules['rules_test_1'] = array(
     '#type' => 'rule',
     '#name' => 'rules_test_1',
@@ -29,10 +29,11 @@ function rules_test_rules_defaults() {
     )
   ));
   $rules['rules_test_1'] += array(
-    '#conditions' => array($condition1, $condition2),
+    '#conditions' => array($condition1, $condition2, $condition2),
     '#actions' => array($action),
   );
-  
+  echo serialize($rules);
+
   $rules['rules_test_2_1'] = array(
     '#type' => 'rule',
     '#name' => 'rules_test_2_1',
@@ -68,8 +69,8 @@ function rules_test_rules_defaults() {
     '#conditions' => array($condition),
     '#actions' => array($action),
   );
-  
-  
+
+
   $rules['rules_test_4_1'] = array(
     '#type' => 'rule',
     '#name' => 'rules_test_4_1',
@@ -107,7 +108,7 @@ function rules_test_rules_defaults() {
     '#conditions' => array(),
     '#actions' => array($action),
   );
-  
+
 
   //TEMPORAL
   $rules['rules_test_5_temp'] = array(
@@ -135,7 +136,6 @@ function rules_test_rules_defaults() {
     '#conditions' => array($condition1),
     '#actions' => array($action),
   );
-
 
   return array(
     'rules' => $rules,
