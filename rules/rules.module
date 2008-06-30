@@ -3,7 +3,7 @@
 
 /**
  * @defgroup rules Rules engine: A rules engine for drupal.
- * 
+ *
  * Lets you define conditionally executed actions based on occurring events.
  */
 /**
@@ -257,7 +257,7 @@ function rules_get_events($key = 'all') {
 
 /**
  * Returns info about all rule sets, which includes events prefixed with 'event_'.
- * 
+ *
  * @param $key If given, only the info about this rule set will be returned.
  */
 function rules_get_rule_sets($key = NULL) {
@@ -287,27 +287,30 @@ function rules_get_event_sets() {
  * @param $reset If the static cache should be reseted. Note that if set to true, nothing will be
  *               returned.
  */
-function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
+function &rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
   static $data = array();
 
   if ($reset) {
     $data = array();
-    return;
+    return $data;
   }
   if (!isset($data[$name])) {
     rules_include('rules');
-
     $data[$name] = module_invoke_all($name);
     if ($alter) {
       drupal_alter($name, $data['name']);
     }
   }
-  return $key != 'all' ? (isset($data[$name][$key]) ? $data[$name][$key] : NULL) : $data[$name];
+  if ($key != 'all') {
+    $data[$name] += array($key => NULL);
+    return $data[$name][$key];
+  }
+  return $data[$name];
 }
 
 /**
  * Extracts the property with the given name while keeping the keys
- * 
+ *
  * @param $key The name of the property to extract
  * @param $elements An array of elements
  * @return An array of extracted properties.
@@ -430,8 +433,8 @@ function rules_invoke_rule_set() {
   $args = func_get_args();
   $set_name = array_shift($args);
 
-  
-  
+
+
   if ($set = rules_get_rule_set($set_name)) {
     $state = array('set_info' => $set['info']);
     _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
@@ -440,7 +443,7 @@ function rules_invoke_rule_set() {
 
     _rules_initialize_variables($state, $args);
     rules_evaluate_elements($set['rules'], $state);
-    
+
     //save all changed variables..
     foreach ($state['variables'] as &$variable) {
       $variable->save_changes();
@@ -650,13 +653,13 @@ function rules_log($message, $error = FALSE) {
  */
 function _rules_log_set_invocation($message, $start = TRUE) {
   global $_rules_log;
-  
+
   if (!isset($_rules_log)) {
     $_rules_log = array();
   }
 
   list($usec, $sec) = explode(" ", microtime());
-  $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);  
+  $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);
 }
 
 
@@ -669,8 +672,8 @@ function _rules_log_set_invocation($message, $start = TRUE) {
 function rules_elements() {
   $types = array();
   $types['rule'] = array('#name' => '', '#set' => '', '#status' => 'default', '#categories' => array(), '#recursion' => FALSE, '#active' => TRUE, '#execute' => 'rules_execute_rule');
-  $types['condition'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
-  $types['action'] = array('#name' => '', '#info' => TRUE, '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
+  $types['condition'] = array('#name' => '', '#info' => array(), '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
+  $types['action'] = array('#name' => '', '#info' => array(), '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
   $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
   $types['AND'] = array('#execute' => 'rules_execute_and', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('AND'));
   return $types;
@@ -679,14 +682,21 @@ function rules_elements() {
 /**
  * Gets the element info of an element (actions, conditions,..)
  * Note that the element defaults will be applied before, if not yet done.
+ *
+ * The info will be written into the elements #info attribute to speed up further calls.
  */
-function rules_get_element_info($element) {
+function rules_get_element_info(&$element) {
   _rules_element_defaults($element);
-  if (isset($element['#info']) && $element['#info'] && isset($element['#name'])) {
-    if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
-      return $info + array('arguments' => array(), 'fixed' => FALSE);
+  if (isset($element['#info']) && !$element['#info'] && isset($element['#name'])) {
+    if ($info =& rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
+      //be sure to use references, so that multiple infos in a rule get serialized only once
+      $element['#info'] = &$info;
+      return $element['#info'] + array('arguments' => array(), 'fixed' => FALSE);
     }
     rules_error_missing_implementation($element);
+  }
+  else if (isset($element['#info'])) {
+    return $element['#info'] + array('arguments' => array(), 'fixed' => FALSE);
   }
   return array();
 }
@@ -729,10 +739,10 @@ function rules_configure() {
 }
 
 /**
- * Configures a condition for using in a configuration
+ * Configures a condition for using in a rule
  *
  * @param $name The name of condition to create, as specified at hook_condition_info()
- * @param $params An optional array of properties to add, e.g. #argument_map
+ * @param $params An optional array of properties to add, e.g. #settings
  */
 function rules_use_condition($name, $params = array()) {
   $params += array('#name' => $name);
@@ -740,10 +750,10 @@ function rules_use_condition($name, $params = array()) {
 }
 
 /**
- * Configures an action for using in a configuration
+ * Configures an action for using in a rule
  *
  * @param $name The name of action to create, as specified at hook_action_info()
- * @param $params An optional array of properties to add, e.g. #argument_map
+ * @param $params An optional array of properties to add, e.g. #settings
  */
 function rules_use_action($name, $params = array()) {
   $params += array('#name' => $name);
@@ -755,7 +765,9 @@ function rules_use_action($name, $params = array()) {
  */
 function rules_use_element($type, $params = array()) {
   $element = array('#type' => $type);
+  //add in the element info to speed up execution
   $element += $params;
+  rules_get_element_info($element);
   return $element;
 }
 
@@ -784,7 +796,7 @@ function _rules_show_log(&$i, $data, &$error) {
   $start = &$data[0]['time'];
   $output = array();
   while ($i < count($data)) {
-    
+
     $diff = ($data[$i]['time']['sec'] - $start['sec'])*1000000 + $data[$i]['time']['usec'] - $start['usec'];
     $formatted_diff = round($diff * 1000, 3). ' ms';
     $msg = $formatted_diff . ' '. $data[$i]['msg'];
@@ -854,7 +866,7 @@ function rules_log_evaluation_finished() {
 /**
  * Gets all configured items, regardless if defined by the admin
  * or by a module
- * 
+ *
  * @param $items Which items to get, e.g. 'rules' or 'rule_sets'. Use NULL when clearing the cache.
  * @param Whether the cache should be cleared
  * @return An array of configured items, where the structure of the item configuration
@@ -868,12 +880,15 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
   }
   if (isset($item_type) && !isset($configurations[$item_type])) {
     $info = rules_get_items($item_type);
+
+    //get and add altered default items
     $result = db_query("SELECT * FROM {". $info['db_table']. "}");
 
     $configurations[$item_type] = array();
     while ($row = db_fetch_object($result)) {
       $configurations[$item_type][$row->name] = unserialize($row->data);
     }
+    //add not altered default items
     $configurations[$item_type] += rules_get_item_defaults($item_type);
   }
   return isset($item_type) ? $configurations[$item_type] : array();
@@ -957,7 +972,7 @@ function rules_handle_error_msg($message, $variables, $rule_name = NULL) {
 
 /**
  * Determines if the given data type is supported by the given info
- * 
+ *
  * @param $data_type The data type to check
  * @param $info The information data containing the #type property
  */
