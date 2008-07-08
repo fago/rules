@@ -39,7 +39,7 @@ function _rules_initialize_variables(&$state, $args) {
  * @param $names An array of variable names to get
  * @param $state The current evalutation state
  * @param $load Use variable handler to load variables, if necessary.
- * @return The array of entities or FALSE. 
+ * @return The array of entities or FALSE.
  */
 function rules_get_variables($names, &$state, $load = TRUE) {
   $args = array();
@@ -57,20 +57,20 @@ function rules_get_variables($names, &$state, $load = TRUE) {
 /**
  * Maps the specified arguments of an element to the argument names of the currently
  * evaluated set.
- * 
+ *
  * @param $element The configured element, which variables to map
  * @param $state The current evaluation state
  * @return The mapped argument names.
  */
 function rules_get_mapped_argument_names($element, &$state) {
   $element_info = rules_get_element_info($element, $state);
-  $reverse_map = array_flip($element['#argument map']);
+  $reverse_map = array_flip($element['#settings']['#argument map']);
 
   if ($element_info) {
     //get the right execution variables by applying the argument map of this element
     $mapped_args = array();
     foreach ($element_info['arguments'] as $argument_name => $info) {
-      $mapped_args[] = $reverse_map[$argument_name];
+      $mapped_args[] = isset($reverse_map[$argument_name]) ? $reverse_map[$argument_name] : $argument_name;
     }
     return $mapped_args;
   }
@@ -80,12 +80,13 @@ function rules_get_mapped_argument_names($element, &$state) {
 /**
  * Returns the execution arguments needed by the given element
  * It applies the #argument map and gets all needed arguments.
- * 
+ *
  * @param $element The configured element, which is to be executed
  * @param $state The current evaluation state
  * @return If not all execution arguments are available, it returns FALSE
  */
 function rules_get_execution_arguments($element, &$state) {
+  $element['#settings'] += array('#argument map' => array());
   //first off map the names to the argument names of the evaluated set
   $names = rules_get_mapped_argument_names($element, $state);
   $exec_args = rules_get_variables($names, $state);
@@ -93,7 +94,6 @@ function rules_get_execution_arguments($element, &$state) {
   if ($exec_args !== FALSE) {
     //we always append some other useful variables
     $settings = isset($element['#settings']) ? $element['#settings'] : array();
-    $settings += array('#argument map' => $element['#argument map']);
     $exec_args[] = $settings;
     $exec_args[] = &$state;
     return $exec_args;
@@ -103,11 +103,11 @@ function rules_get_execution_arguments($element, &$state) {
 }
 
 /**
- * Saves variables, which are returned by an action 
+ * Saves variables, which are returned by an action
  */
 function rules_save_variables($element, $result, &$state) {
   $element_info = rules_get_element_info($element);
-  $reverse_map = array_flip($element['#argument map']);
+  $reverse_map = array_flip($element['#settings']['#argument map']);
 
   foreach (element_children($result) as $argument_name) {
     if (isset($reverse_map[$argument_name])) {
@@ -171,7 +171,7 @@ class rules_variable {
 
   /**
    * Gets the actual data. Be sure to keep the reference intact.
-   * 
+   *
    * @param $load Use the variable handler to load the variable, if necessary.
    * @return The data or NULL.
    */
@@ -195,11 +195,8 @@ class rules_variable {
 
   function _set_data(&$data) {
     if (isset($data)) {
-      $class = 'rules_data_type_'. $this->info['type'];
-      $class = class_exists($class) ? $class : 'rules_data_type';
-
-      $this->data = new $class;
-      $this->data->construct($data);
+      $this->data = rules_get_data_object($this->info);
+      $this->data->init($data);
     }
   }
 
