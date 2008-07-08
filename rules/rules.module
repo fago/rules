@@ -672,8 +672,8 @@ function _rules_log_set_invocation($message, $start = TRUE) {
 function rules_elements() {
   $types = array();
   $types['rule'] = array('#name' => '', '#set' => '', '#status' => 'default', '#categories' => array(), '#recursion' => FALSE, '#active' => TRUE, '#execute' => 'rules_execute_rule');
-  $types['condition'] = array('#name' => '', '#info' => array(), '#argument map' => array(), '#negate' => FALSE, '#settings' => array(), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
-  $types['action'] = array('#name' => '', '#info' => array(), '#argument map' => array(), '#settings' => array(), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
+  $types['condition'] = array('#name' => '', '#info' => array(), '#negate' => FALSE, '#settings' => array('#argument map' => array()), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
+  $types['action'] = array('#name' => '', '#info' => array(), '#settings' => array('#argument map' => array()), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
   $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
   $types['AND'] = array('#execute' => 'rules_execute_and', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('AND'));
   return $types;

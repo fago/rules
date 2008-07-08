@@ -17,11 +17,11 @@ function rules_test_rules_defaults() {
     '#active' => TRUE,
   );
   $condition1 = rules_use_condition('rules_test_condition_alter_arg', array(
-    '#argument map' => array('rules_test' => 'rules_test'),
+    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
     '#weight' => -1,
   ));
   $condition2 = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#argument map' => array('rules_test' => 'rules_test'),
+    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
   ));
   $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
@@ -32,7 +32,6 @@ function rules_test_rules_defaults() {
     '#conditions' => array($condition1, $condition2, $condition2),
     '#actions' => array($action),
   );
-  echo serialize($rules);
 
   $rules['rules_test_2_1'] = array(
     '#type' => 'rule',
@@ -43,7 +42,8 @@ function rules_test_rules_defaults() {
     '#weight' => -1,
   );
   $action = rules_use_action('rules_test_change_arg', array(
-    '#argument map' => array('rules_test' => 'rules_test'),
+  //  leave out this argument map, as it should take this as default value!
+  //  '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
   ));
   $rules['rules_test_2_1'] += array(
     '#conditions' => array(),
@@ -58,7 +58,7 @@ function rules_test_rules_defaults() {
     '#active' => TRUE,
   );
   $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#argument map' => array('rules_test' => 'rules_test'),
+    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
   ));
   $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
@@ -79,7 +79,7 @@ function rules_test_rules_defaults() {
     '#active' => TRUE,
   );
   $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#argument map' => array('rules_test_2' => 'rules_test'),
+    '#settings' => array('#argument map' => array('rules_test_2' => 'rules_test')),
   ));
   $action = rules_use_action('rules_test_action_log_msg', array(
     '#settings' => array(
@@ -100,40 +100,10 @@ function rules_test_rules_defaults() {
     '#active' => TRUE,
   );
   $action = rules_use_action('rules_test_add_var', array(
-    '#argument map' => array(
-      'rules_test_var' => 'rules_test',
-    )
+    '#settings' => array('#argument map' => array('rules_test_var' => 'rules_test')),
   ));
   $rules['rules_test_5_1'] += array(
     '#conditions' => array(),
-    '#actions' => array($action),
-  );
-
-
-  //TEMPORAL
-  $rules['rules_test_5_temp'] = array(
-    '#type' => 'rule',
-    '#name' => 'rules_test_5_temp',
-    '#label' => t('Print the content title of pages and stories'),
-    '#set' => 'event_node_view',
-    '#active' => TRUE,
-  );
-  //configure a conditoin which evalutates if the node type is a page
-  $condition1 = rules_use_condition('rules_condition_content_is_type', array(
-    '#label' => t('Is page'),
-    '#settings' => array(
-       'type' => array('page'),
-    ),
-    '#argument map' => array('node' => 'node'),
-  ));
-  $action = rules_use_action('rules_action_node_publish', array(
-    '#settings' => array(
-      'published' => FALSE,
-    ),
-    '#argument map' => array('node' => 'node'),
-  ));
-  $rules['rules_test_5_temp'] += array(
-    '#conditions' => array($condition1),
     '#actions' => array($action),
   );
 

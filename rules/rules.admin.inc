@@ -49,14 +49,14 @@ function rules_admin_form_overview_submit($form_id, &$form_state) {
 
 /**
  * Returns a table of rules filtered by the given parameters
- * 
+ *
  * Supported parameters: fixed, category, set, active.
  * Category and set may be set to NULL to hide their columns.
  */
 function rules_admin_overview_table($params) {
   $rules = rules_get_configured_items('rules');
   _rules_sort_children($rules);
-  
+
   //set parameter defaults
   $params += array('category' => NULL, 'set' => NULL, 'active' => TRUE, 'fixed' => FALSE);
   extract($params);
@@ -68,7 +68,7 @@ function rules_admin_overview_table($params) {
     $rule = $rules[$name];
     _rules_element_defaults($rule);
 
-    if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {      
+    if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {
       $path = RULES_ADMIN_RULE_PATH .'/'. $name;
       $ops = array();
       if ($rule['#status'] != 'fixed') {
@@ -208,7 +208,8 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $form = rules_admin_form_rule_settings($rule);
 
   //help
-  //rules_admin_element_help($render['event'], rules_get_events('all', $element['#event']));
+  rules_admin_element_help($form, $proxy->get_set_info());
+
   $form['elements'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule elements'),
@@ -244,7 +245,7 @@ function rules_admin_form_revert(&$form_state, $proxy) {
 
   $form = array();
   $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : RULES_ADMIN_PATH;
-  
+
   return confirm_form($form,
     t('Are you sure you want to revert the rule %label to its defaults?', array('%label' => $rule['#label'])),
     $path,
@@ -278,6 +279,7 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
       $form_state += array('element' => array('#type' => $type), 'step' => 0);
     }
     $element =& $form_state['element'];
+    $element += array('#id' => NULL);
 
     //get the item assocaited with $id
     if ($form_state['step'] == 0) {
@@ -354,7 +356,7 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
  */
 function rules_admin_form_add_op(&$form_state, $element, $parent) {
   $parent_ref =& $form_state['proxy']->get_element($form_state['parent_id']);
-  
+
   //determine the appropriate operation and apply it
   $op = rules_determine_operation($form_state['proxy'], $form_state['parent_id']);
   if (isset($parent_ref['#weight'])) {
@@ -392,7 +394,7 @@ function rules_admin_form_pack_storage($form, &$form_state) {
 /**
  * Use this when the current form is or might be not the first step of the form.
  * It puts the variables out of storage on their usual place.
- * Note: We can't use the storage place everywhere, as it would result in unnecessary form rebuilts
+ * Note: We can't use the storage place everywhere, as it would result in unnecessary form rebuilds
  *   when building the form initially.
  */
 function rules_admin_form_unpack_storage($form, &$form_state) {
@@ -415,7 +417,7 @@ function rules_admin_form_edit(&$form_state, &$proxy, $element) {
     //initial step!
     $form_state += array('element' => $element, 'step' => 1);
   }
-  //just call the add form with the appropriate step. 
+  //just call the add form with the appropriate step.
   $type = in_array($element['#type'], array('action', 'condition')) ? $element['#type'] : 'op';
   return rules_admin_form_add($form_state, $proxy, $type);
 }
@@ -436,9 +438,9 @@ function rules_admin_form_edit_action(&$form_state, $element) {
     drupal_set_title(t('Editing action %label', array('%label' => $label)));
   }
   rules_admin_element_help($form, $element);
-  //rules_admin_argument_map_form($form, $element);
+  rules_admin_default_argument_form($form_state, $form, $element);
   //rules_admin_new_arguments_form($form, $element);
-  //rules_admin_element_configuration_form($form, $element);
+  rules_admin_element_alter_form($form_state, $form, $element);
   $form['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
@@ -470,14 +472,13 @@ function rules_admin_form_edit_action_submit($form, &$form_state) {
   foreach (array('label', 'weight') as $key) {
     $element['#'. $key] = $form_state['values'][$key];
   }
-  //save the argument map
-  if (isset($form_state['values']['map'])) {
-    $element['#argument map'] = array_flip($form_state['values']['map']);
-  }
+  rules_admin_default_argument_form_submit($form, $form_state, $element);
+
   //rules_admin_new_arguments_form_submit($form_values, $element);
   //rules_admin_element_configuration_form_submit($form_values, $element);
   drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
 }
+
 
 /**
  * Returns the edit form for a condition
@@ -501,8 +502,9 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
     '#default_value' => isset($element['#negate']) ? $element['#negate'] : 0,
   );
   rules_admin_element_help($form, $element);
-  //rules_admin_argument_map_form($form, $element);
-  //rules_admin_element_configuration_form($form, $element);
+  rules_admin_default_argument_form($form_state, $form, $element);
+  rules_admin_element_alter_form($form_state, $form, $element);
+
   $form['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
@@ -534,10 +536,7 @@ function rules_admin_form_edit_condition_submit($form, &$form_state) {
   foreach (array('label', 'negate', 'weight') as $key) {
     $element['#'. $key] = $form_state['values'][$key];
   }
-  //save the argument map
-  if (isset($form_state['values']['map'])) {
-    $element['#argument map'] = array_flip($form_state['values']['map']);
-  }
+  rules_admin_default_argument_form_submit($form, $form_state, $element);
   //rules_admin_element_configuration_form_submit($form_values, $element);
   drupal_set_message(t('The condition %label has been saved.', array('%label' => $element['#label'])));
 }
@@ -633,26 +632,20 @@ function rules_admin_form_edit_delete_submit($form, &$form_state) {
   );
 }
 
-/*
- * Returns the configuration form of an element
+/**
+ * Allows the element to alter the default configuration form
  */
-function rules_admin_element_configuration_form(&$form, $element) {
-  rules_include_file(strtolower($element['#module']) .'_rules_forms');
+function rules_admin_element_alter_form(&$form_state, &$form, $element) {
+  rules_include('rules_forms');
   $function = $element['#name']. '_form';
 
   if (function_exists($function)) {
-    $event = rules_get_events('all', $form['cfg']['#value']['#event']);
-    _rules_element_defaults($event);
-    //TODO: for d6 remove argument_info
-    $argument_info = rules_admin_get_available_variables($form['cfg']['#value'], $element); 
-    $info = array('element' => &$element, 'event' => &$event);
-
-    $form['configure'] = $function($element['#settings'], $argument_info, $info);
-    $form['#validate'][$element['#name']. '_validate'] = array();
+    $function($element['#settings'], &$form, &$form_state);
+    $form['#validate'][] = $element['#name']. '_validate';
   }
 }
 
-function rules_admin_element_configuration_form_submit($form_values, &$element) {
+function rules_admin_element_configuration_form_submit(&$form_state, &$form, $element) {
   $function = $element['#name']. '_submit';
   if (function_exists($function)) {
     $element['#settings'] =  $function($form_values['form_id'], $form_values);
@@ -727,45 +720,71 @@ function rules_admin_new_arguments_form_submit($form_values, &$element) {
   }
 }
 
-/*
- * Returns the argument mapping form
+/**
+ * Returns the argument form for the given element
  */
-function rules_admin_argument_map_form(&$form, $element) {
+function rules_admin_default_argument_form(&$form_state, &$form, $element) {
   $function = $element['#name']. '_form';
-  if (is_array($element['#arguments']) && count($element['#arguments'])) {
+  $info = rules_get_element_info($element);
+
+  if (isset($info['arguments']) && count($info['arguments'])) {
     $form['map'] = array(
       '#type' => 'fieldset',
       '#title' => t('Arguments configuration'),
       '#tree' => TRUE,
     );
-    $argument_info = rules_admin_get_available_variables($form['cfg']['#value'], $element);
+    $form['settings'] = array('#tree' => TRUE);
+    $variables = $form_state['proxy']->get_available_variables($element['#id']);
 
-    foreach ($element['#arguments'] as $name => $info) {
-      
-      $args = rules_admin_get_possible_arguments($info, $argument_info);
-      $form['map'][$name] = array(
-        '#type' => 'select',
-        '#title' => $info['#label'],
-        '#options' => $args,
-        '#default_value' => rules_admin_map_get_configured_argument($name, $element),
-      );
+    foreach ($info['arguments'] as $name => $arg_info) {
+      $arg = rules_get_data_object($arg_info);
+      if (!$arg->is_identifiable()) {
+        $value = isset($element['#settings'][$name]) ? $element['#settings'][$name] : NULL;
+        $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value);
+      }
+      //fall back to an argument map
+      if (empty($form['settings'][$name])) {
+        $args = rules_admin_map_get_possible_arguments($arg_info, $variables);
+        $form['map'][$name] = array(
+          '#type' => 'select',
+          '#title' => $arg_info['label'],
+          '#options' => $args,
+          '#default_value' => rules_admin_map_get_configured_argument($name, $element),
+          '#description' => isset($arg_info['description']) ? $arg_info['description'] : '',
+        );
+      }
     }
   }
 }
 
-/*
+function rules_admin_default_argument_form_submit($form, &$form_state, &$element) {
+  //save the argument map
+  $element['#settings'] = array();
+  if (isset($form_state['values']['map'])) {
+    $element['#settings']['#argument map'] = array_flip($form_state['values']['map']);
+  }
+  //add in values of not identifiable variables
+  if (isset($form_state['values']['settings'])) {
+    $element['#settings'] += $form_state['values']['settings'];
+  }
+  //TODO: apply input filter preparation
+
+}
+
+
+/**
  * Gets the possible arguments (= of the same entity) for an argument
  */
-function rules_admin_get_possible_arguments($info, $argument_info, $print_error = TRUE) {
+function rules_admin_map_get_possible_arguments($arg_info, $variables, $print_error = TRUE) {
   $matches = array();
-  foreach ($argument_info as $name => $this_info) {
-    if (rules_is_valid_entity($this_info['#entity'], $info)) {
-      $matches[$name] = $this_info['#label'];
+  foreach ($variables as $name => $info) {
+    if (rules_is_valid_data_type($info['type'], $arg_info)) {
+      $matches[$name] = $info['label'];
     }
   }
   if ($print_error && count($matches) == 0) {
-    drupal_set_message(t('There are not all necessary arguments available.'), 'error');
-    drupal_goto(RULES_ADMIN_PATH);
+    drupal_set_message(t('There is no suitable variable for the argument %name available.', array('%name', $info['label'])), 'error');
+    drupal_goto(RULES_ADMIN_RULES_PATH);
   }
   return $matches;
 }
@@ -774,23 +793,24 @@ function rules_admin_get_possible_arguments($info, $argument_info, $print_error 
  * Gets the in the argument map configured argument for the given argument - or the default value
  */
 function rules_admin_map_get_configured_argument($name, $element) {
-  if (!isset($element['#argument map'])) {
+  if (!isset($element['#settings']['#argument map'])) {
     //per default try the the same name
     return $name;
   }
-  $reverse_map = array_flip($element['#argument map']);
-  return $reverse_map[$name];
+  $reverse_map = array_flip($element['#settings']['#argument map']);
+  return isset($reverse_map[$name]) ? $reverse_map[$name] : $name;
 }
 
 /*
  * Shows the element description
  */
 function rules_admin_element_help(&$form, $element) {
-  if (isset($element['#description'])) {
+  $info = rules_get_element_info($element);
+  if (isset($element['#help']) || isset($info['#help'])) {
     $form['help'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Description'),
-      '#description' => $element['#description'],
+      '#title' => t('Configuration help'),
+      '#description' => isset($element['#help']) ? $element['#help'] : $info['#help'],
     );
   }
 }
@@ -864,7 +884,7 @@ function rules_admin_form_clone(&$form_state, $proxy) {
   $form_state['proxy'] = &$proxy;
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
-  
+
   drupal_set_message(t('Alter the settings for the cloned rule.'));
 
   $form_state['set'] = strpos($rule['#set'], 'event_') !== 0;
@@ -1019,21 +1039,21 @@ function rules_admin_form_export($form_values = NULL) {
 
 /*
  * Filters the elements (actions, conditions), so that only elements
- * compatible with the event are kept, which means entities for all arguments
+ * compatible with the event are kept, which means suiting variables for all arguments
  * are available, so that the action/condition can be configured
  */
-function rules_admin_filter_elements($argument_info, $elements) {
-  return $elements;
+function rules_admin_filter_elements($variables, $elements) {
   $filtered = array();
   foreach ($elements as $key => $element) {
-    if (is_array($element['#arguments']) && count($element['#arguments'])) {
-      foreach ($element['#arguments'] as $name => $info) {
-        if (count(rules_admin_get_possible_arguments($info, $argument_info, FALSE)) == 0) {
+    $info = rules_get_element_info($element) + array('arguments' => array());
+    if (isset($info['arguments']) && is_array($info['arguments'])) {
+      foreach ($info['arguments'] as $name => $info) {
+        if (count(rules_admin_map_get_possible_arguments($info, $variables, FALSE)) == 0) {
           continue 2; //don't add this element to the filtered one
         }
       }
+      $filtered[$key] = $element;
     }
-    $filtered[$key] = $element;
   }
   return $filtered;
 }

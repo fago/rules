@@ -1,12 +1,12 @@
 <?php
 // $Id$
 /**
- * @file rules integration for the node module 
+ * @file rules integration for the node module
  */
 
-/** 
+/**
  * Implementation of hook_event_info()
- * 
+ *
  * @ingroup rules
  */
 function node_rules_event_info() {
@@ -92,8 +92,6 @@ function rules_events_argument_unchanged_node_author($node) {
 
 
 
-
-
 /**
  * Implementation of hook_rules_condition_info()
  * @ingroup rules
@@ -163,7 +161,7 @@ function node_rules_action_info() {
        'node_loaded' => array('type' => 'node', 'label' => t('Loaded content')),
       ),
       'module' => 'Node',
-    ),     
+    ),
   );
 }
 
@@ -196,7 +194,7 @@ function rules_action_node_publish($node, $settings) {
 function rules_action_node_promote($node, $settings) {
   if ($node->promote != $settings['promote']) {
     $node->promote = $settings['promote'];
-    
+    return array('node' => $node);
   }
 }
 
