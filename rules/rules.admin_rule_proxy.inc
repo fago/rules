@@ -20,7 +20,7 @@ class rules_admin_rule_proxy {
 
     //save a copy of the original rule for later
     $this->_rule = $rule;
-    
+
     //and the reference
     $this->map[0] = &$rule;
 
@@ -35,7 +35,7 @@ class rules_admin_rule_proxy {
   function &get_rule() {
     return $this->get_element(0);
   }
-  
+
   /**
    * Gets the rule's name
    */
@@ -127,8 +127,8 @@ class rules_admin_rule_proxy {
       $this->_generate_index_rule($elements[$key]);
     }
   }
-  
-  
+
+
   /**
    * Saves a the rule in the database
    */
@@ -186,7 +186,7 @@ class rules_admin_rule_proxy {
    */
   function get_set() {
     $rule = $this->get_rule();
-    return rules_get_rule_set($rule['#set']);    
+    return rules_get_rule_set($rule['#set']);
   }
 
   /**
@@ -196,7 +196,7 @@ class rules_admin_rule_proxy {
     $set = $this->get_set();
     return $set['info'] + array('arguments' => array());
   }
-    
+
   /**
    * Gets the info about all new defined variables in this rule,
    * before the element with the given id
@@ -220,7 +220,7 @@ class rules_admin_rule_proxy {
    * Gets info about all available variables
    * This are the arguments of the rule's set as well as further arguments that
    * might be provided by actions of this or preceding rules
-   * 
+   *
    * @param $id The id of the element of the current rule until which we should get new variables.
    *   If not given all new variables of this rule will be considered.
    */
@@ -240,7 +240,7 @@ class rules_admin_rule_proxy {
 
       //sort the rules
       _rules_sort_children($set['rules']);
-      
+
       foreach (element_children($set['rules']) as $name) {
         if ($name == $this_rule['#name']) {
           return $this->_variables;
@@ -248,7 +248,7 @@ class rules_admin_rule_proxy {
         foreach ($set['rules'][$name]['#actions'] as $action) {
           $info = rules_get_element_info($action);
           if (isset($info['arguments'])) {
-            $this->_variables += $info['arguments']; 
+            $this->_variables += $info['arguments'];
           }
         }
       }

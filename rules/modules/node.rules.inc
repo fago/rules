@@ -13,13 +13,13 @@ function node_rules_event_info() {
   return array(
     'node_insert' => array(
       'label' => t('Content has been created'),
-      'module' => 'node',
+      'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('created content'), t('content\'s author')),
       'redirect' => TRUE,
     ),
     'node_update' => array(
       'label' => t('Content has been updated'),
-      'module' => 'node',
+      'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('updated content'), t('content author')) + array(
         'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
         'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),

@@ -283,7 +283,7 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
 
     //get the item assocaited with $id
     if ($form_state['step'] == 0) {
-      if (isset($parent_id) && ($parent = $proxy->get_element(intval($parent_id)))) {
+      if (isset($parent_id) && is_array($parent = $proxy->get_element(intval($parent_id)))) {
         if (function_exists($function = 'rules_admin_form_add_'. $element['#type'])) {
           $form_state['step']++;
           $form_state['parent_id'] = intval($parent_id);
@@ -475,7 +475,9 @@ function rules_admin_form_edit_action_submit($form, &$form_state) {
   rules_admin_default_argument_form_submit($form, $form_state, $element);
 
   //rules_admin_new_arguments_form_submit($form_values, $element);
-  //rules_admin_element_configuration_form_submit($form_values, $element);
+
+  rules_admin_element_alter_form_submit($form_state, $form, $element);
+
   drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
 }
 
@@ -640,15 +642,17 @@ function rules_admin_element_alter_form(&$form_state, &$form, $element) {
   $function = $element['#name']. '_form';
 
   if (function_exists($function)) {
-    $function($element['#settings'], &$form, &$form_state);
+    $function($element['#settings'], $form, $form_state);
     $form['#validate'][] = $element['#name']. '_validate';
   }
 }
 
-function rules_admin_element_configuration_form_submit(&$form_state, &$form, $element) {
+function rules_admin_element_alter_form_submit(&$form_state, &$form, $element) {
+  rules_include('rules_forms');
   $function = $element['#name']. '_submit';
+
   if (function_exists($function)) {
-    $element['#settings'] =  $function($form_values['form_id'], $form_values);
+    $function($element['#settings'], $form, $form_state);
   }
 }
 
