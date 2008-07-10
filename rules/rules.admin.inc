@@ -377,7 +377,7 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
 
 function rules_admin_form_add_submit($form, &$form_state) {
   $form_state['element']['#name'] = $form_state['values']['name'];
-  rules_get_element_info($form_state['element']);
+  rules_init_element_info($form_state['element']);
 }
 
 /**
@@ -665,8 +665,7 @@ function rules_admin_element_alter_form_submit(&$form, &$form_state, $element) {
  * Returns form elements for new variables
  */
 function rules_admin_new_variables_form(&$form, &$form_state, $element) {
-  rules_get_element_info($element);
-  $info = $element['#info'];
+  $info = rules_get_element_info($element);
 
   if (isset($info['new variables']) && count($info['new variables'])) {
     $form['new'] = array('#tree' => TRUE);
@@ -1053,7 +1052,7 @@ function rules_admin_form_export($form_values = NULL) {
 function rules_admin_filter_elements($variables, $elements) {
   $filtered = array();
   foreach ($elements as $key => $element) {
-    $info = rules_get_element_info($element) + array('arguments' => array());
+    $info = rules_get_element_info($element);
     if (isset($info['arguments']) && is_array($info['arguments'])) {
       foreach ($info['arguments'] as $name => $info) {
         if (count(rules_admin_map_get_possible_arguments($info, $variables, FALSE)) == 0) {

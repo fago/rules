@@ -680,25 +680,26 @@ function rules_elements() {
 }
 
 /**
- * Gets the element info of an element (actions, conditions,..)
+ * Initiates the element info property (#info) of an element (actions, conditions,..).
  * Note that the element defaults will be applied before, if not yet done.
- *
- * The info will be written into the elements #info attribute to speed up further calls.
  */
-function rules_get_element_info(&$element) {
+function rules_init_element_info(&$element) {
   _rules_element_defaults($element);
   if (isset($element['#info']) && !$element['#info'] && isset($element['#name'])) {
     if ($info =& rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
       //be sure to use references, so that multiple infos in a rule get serialized only once
       $element['#info'] = &$info;
-      return $element['#info'] + array('arguments' => array(), 'fixed' => FALSE);
     }
     rules_error_missing_implementation($element);
   }
-  else if (isset($element['#info'])) {
-    return $element['#info'] + array('arguments' => array(), 'fixed' => FALSE);
-  }
-  return array();
+}
+
+/**
+ * Returns the element info of the element
+ */
+function rules_get_element_info(&$element) {
+  rules_init_element_info($element);
+  return $element['#info'] + array('arguments' => array(), 'new variables' => array(), 'fixed' => FALSE);
 }
 
 /**
@@ -767,7 +768,7 @@ function rules_use_element($type, $params = array()) {
   $element = array('#type' => $type);
   //add in the element info to speed up execution
   $element += $params;
-  rules_get_element_info($element);
+  rules_init_element_info($element);
   return $element;
 }
 
