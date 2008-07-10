@@ -218,7 +218,7 @@ class rules_admin_rule_proxy {
    */
   function element_get_new_variables($element) {
     if (isset($element['#type']) && $element['#type'] == 'action') {
-      $info = rules_get_element_info($element) + array('new variables' => array());
+      $info = rules_get_element_info($element);
       return $info['new variables'];
     }
     return array();
@@ -274,7 +274,7 @@ class rules_admin_rule_proxy {
           }
         }
         foreach ($set['rules'][$name]['#actions'] as $action) {
-          $info = rules_get_element_info($action) + array('new variables' => array());
+          $info = rules_get_element_info($action);
           $this->_variables += $info['new variables'];
         }
       }
