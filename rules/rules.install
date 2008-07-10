@@ -3,10 +3,6 @@
 
 include_once('./'. drupal_get_path('module', 'rules') .'/rules.module');
 
-
-/**
- * Implementation of hook_install().
- */
 /**
  * Implementation of hook_install().
  */

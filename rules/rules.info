@@ -1,5 +1,5 @@
 ; $Id$
-name = Rules engine
+name = Rules
 description = Lets you define conditionally executed actions based on occurring events.
 package = Rules
 core = 6.x
