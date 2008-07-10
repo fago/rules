@@ -1,5 +1,5 @@
 ; $Id$
-name = Rules engine Tests
+name = Rules Simpletest
 description = Tests the functionality of the rule engine
 package = Rules
 dependencies[] = simpletest
