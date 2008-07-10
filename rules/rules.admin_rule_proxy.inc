@@ -223,16 +223,22 @@ class rules_admin_rule_proxy {
    *
    * @param $id The id of the element of the current rule until which we should get new variables.
    *   If not given all new variables of this rule will be considered.
+   * @param $all If set to TRUE, all variables except the variables defined by the element with the
+   *   the given id will be returned.
+   *
    */
-  function get_available_variables($id = NULL) {
+  function get_available_variables($id = NULL, $all = FALSE) {
     $set_info = $this->get_set_info();
-    return $this->get_new_variables($id) + $this->_get_available_variables() + $set_info['arguments'];
+    return $this->get_new_variables($id, $all) + $this->_get_available_variables($all) + $set_info['arguments'];
   }
 
   /**
-   * Gets all new variables defined by actions in rules, which are evaluated until this rule
+   * Gets all new variables defined by actions in rules, which are evaluated until this rule.
+   *
+   * @param $all If set to TRUE, also variables defined in this set after this rule will returned.
+   *   So all variables, except variables defined in this rule will be returned.
    */
-  function _get_available_variables() {
+  function _get_available_variables($all = FALSE) {
     if (!isset($this->_variables)) {
       $this->_variables = array();
       $set = $this->get_set();
@@ -243,7 +249,12 @@ class rules_admin_rule_proxy {
 
       foreach (element_children($set['rules']) as $name) {
         if ($name == $this_rule['#name']) {
-          return $this->_variables;
+          if (!$all) {
+            return $this->_variables;
+          }
+          else {
+            continue;
+          }
         }
         foreach ($set['rules'][$name]['#actions'] as $action) {
           $info = rules_get_element_info($action);

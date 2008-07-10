@@ -101,6 +101,10 @@ function rules_test_rules_defaults() {
   );
   $action = rules_use_action('rules_test_add_var', array(
     '#settings' => array('#argument map' => array('rules_test_var' => 'rules_test')),
+    '#info' => array(
+      'label' => 'Adds a new variable',
+      'new variables' => array('rules_test_var' => array('type' => 'rules_test', 'label' => 'test')),
+     ),
   ));
   $rules['rules_test_5_1'] += array(
     '#conditions' => array(),
