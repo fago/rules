@@ -699,21 +699,35 @@ function rules_init_element_info(&$element) {
  */
 function rules_get_element_info(&$element) {
   rules_init_element_info($element);
-  return $element['#info'] + array('arguments' => array(), 'new variables' => array(), 'fixed' => FALSE);
+  if (isset($element['#info'])) {
+    return $element['#info'] + array('arguments' => array(), 'new variables' => array(), 'fixed' => FALSE);
+  }
 }
 
 /**
  * Gets the element's label
  */
 function rules_get_element_label($element) {
-  if (!isset($element['#label'])) {
-    if (isset($element['label'])) {
-      return $element['label'];
+  foreach (array('#label', 'label') as $key) {
+    if (isset($element[$key])) {
+      return $element[$key];
     }
-    $info = rules_get_element_info($element);
-    return isset($info['label']) ? $info['label'] : '';
   }
-  return $element['#label'];
+  if ($info = rules_get_element_info($element)) {
+    return rules_get_label($info);
+  }
+}
+
+/**
+ * Gets the label for a information array
+ */
+function rules_get_label($info) {
+  if (isset($info['label callback']) && function_exists($info['label callback'])) {
+    return $info['label callback']($element);
+  }
+  else {
+    return isset($info['label']) ? $info['label'] : t('unlabelled');
+  }
 }
 
 /**
@@ -950,8 +964,8 @@ function rules_rules_item_info() {
  * @param $element The element, for which the implementation is missing
  */
 function rules_error_missing_implementation($element) {
-  if (isset($element['#label']) && $element['#label']) {
-    $msg = t('Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name'], '%label' => $element['#label']));
+  if (isset($element['#info']) && $element['#info']) {
+    $msg = t('Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name'], '%label' => rules_get_element_label($element)));
   }
   else {
     $msg = t('Unable to find %type of name %name. Perhaps the according module has been deactivated.', array('%type' => $element['#type'], '%name' => $element['#name']));

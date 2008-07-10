@@ -480,7 +480,7 @@ function rules_admin_form_edit_action_submit($form, &$form_state) {
   rules_admin_new_variables_form_submit($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
 
-  drupal_set_message(t('The action %label has been saved.', array('%label' => $element['#label'])));
+  drupal_set_message(t('The action %label has been saved.', array('%label' => rules_get_element_label($element))));
 }
 
 
@@ -544,7 +544,7 @@ function rules_admin_form_edit_condition_submit($form, &$form_state) {
   }
   rules_admin_default_argument_form_submit($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
-  drupal_set_message(t('The condition %label has been saved.', array('%label' => $element['#label'])));
+  drupal_set_message(t('The condition %label has been saved.', array('%label' => rules_get_element_label($element))));
 }
 
 /**

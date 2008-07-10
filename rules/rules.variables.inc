@@ -98,7 +98,7 @@ function rules_get_execution_arguments($element, &$state) {
     $exec_args[] = &$state;
     return $exec_args;
   }
-  rules_log(t('Element %name has not been executed. There are not all execution arguments available.', array('%name' => rules_get_element_label($element, $state))));
+  rules_log(t('Element %name has not been executed. There are not all execution arguments available.', array('%name' => rules_get_element_label($element))));
   return FALSE;
 }
 
