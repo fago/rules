@@ -26,7 +26,7 @@ function rules_action_node_publish_form($settings, &$form) {
   $form['settings']['published'] = array(
     '#type' => 'checkbox',
     '#title' => t('Published'),
-    '#default_value' => $settings['published'],
+    '#default_value' => isset($settings['published']) ? $settings['published'] : 0,
   );
 }
 
@@ -37,7 +37,7 @@ function rules_action_node_promote_form($settings, &$form) {
   $form['settings']['promote'] = array(
     '#type' => 'checkbox',
     '#title' => t('Promoted to front page'),
-    '#default_value' => $settings['promote'],
+    '#default_value' => isset($settings['promote']) ? $settings['promote'] : 0,
   );
 }
 
@@ -48,7 +48,7 @@ function rules_action_node_sticky_form($settings, &$form) {
   $form['settings']['sticky'] = array(
     '#type' => 'checkbox',
     '#title' => t('Sticky at top of lists'),
-    '#default_value' => $settings['sticky'],
+    '#default_value' => isset($settings['sticky']) ? $settings['sticky'] : 0,
   );
 }
 
@@ -94,18 +94,13 @@ function rules_action_load_node_form($settings, &$form) {
   $form['settings']['nid'] = array(
     '#type' => 'textfield',
     '#title' => t('Content ID'),
-    '#default_value' => $settings['nid'],
+    '#default_value' => isset($settings['nid']) ? $settings['nid'] : '',
     '#required' => TRUE,
   );
   $form['settings']['vid'] = array(
     '#type' => 'textfield',
     '#title' => t('Content Revision ID'),
-    '#default_value' => $settings['vid'],
-    '#description' => t('If you want to load a specific revision. Leave it empty to load the current revision.'),
+    '#default_value' => isset($settings['vid']) ? $settings['vid'] : '',
+    '#description' => t('If you want to load a specific revision, enter it\'s revision id. Else leave it empty to load the current revision.'),
   );
-}
-
-function rules_action_load_node_submit($form_id, $form_values) {
-  //returns the needed settings
-  return rules_token_get_settings(array('nid', 'vid'), $form_values);
 }

@@ -110,30 +110,28 @@ function rules_save_variables($element, $result, &$state) {
   $reverse_map = array_flip($element['#settings']['#argument map']);
 
   foreach (element_children($result) as $argument_name) {
-    if (isset($reverse_map[$argument_name])) {
-      if (isset($state['variables'][ $reverse_map[$argument_name] ])) {
-        //variable exists, so update it
-        $variable = &$state['variables'][ $reverse_map[$argument_name] ];
-        $variable->update( $result[$argument_name] );
-        $variable->save();
-      }
-      else if (isset($element_info['new variables'][$argument_name])) {
-        //it is a new variable, so add it
-        $info = $element_info['new variables'][$argument_name];
+    $reverse_map += array($argument_name => $argument_name);
 
-        $variable = new rules_variable;
-        $variable->construct($state, $reverse_map[$argument_name], $result[$argument_name], $info);
+    if (isset($state['variables'][ $reverse_map[$argument_name] ])) {
+      //variable exists, so update it
+      $variable = &$state['variables'][ $reverse_map[$argument_name] ];
+      $variable->update( $result[$argument_name] );
+      $variable->save();
+    }
+    else if (isset($element_info['new variables'][ $reverse_map[$argument_name] ])) {
+      //it is a new variable, so add it
+      $info = $element_info['new variables'][ $reverse_map[$argument_name] ];
 
-        rules_log(t('Successfully added the new variable @arg', array('@arg' => $info['label'])));
-      }
-      else {
-        rules_log(t('Unknown variable name %var return by action %name.', array('%var' => $argument_name, '%name' => $element['#name'])), TRUE);
-      }
+      $variable = new rules_variable;
+      $variable->construct($state, $reverse_map[$argument_name], $result[$argument_name], $info);
+
+      rules_log(t('Successfully added the new variable @arg', array('@arg' => $info['label'])));
+    }
+    else {
+      rules_log(t('Unknown variable name %var return by action %name.', array('%var' => $argument_name, '%name' => $element['#name'])), TRUE);
     }
   }
 }
-
-
 
 /**
  * Handles a variable

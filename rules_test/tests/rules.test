@@ -9,7 +9,7 @@ class RulesTestCase extends DrupalTestCase {
       'group' => t('Rules engine tests'),
     );
   }
-  
+
   function setUp() {
     parent::setUp();
     rules_test_keep_rules_log();
@@ -18,7 +18,7 @@ class RulesTestCase extends DrupalTestCase {
     parent::tearDown();
     rules_test_done();
   }
-  
+
   //Test changing an argument when taken by reference and verify that the changes are kept
   function test_1() {
     $argument = array('property_xy' => TRUE);
@@ -39,7 +39,7 @@ class RulesTestCase extends DrupalTestCase {
     $this->assertFalse($error);
     $this->assertWantedPattern('/Rules Test 2 - Success/', $log);
   }
-  
+
   //Test passing arguments by reference to a set
   function test_3() {
     $argument = array('property_xy' => TRUE);
@@ -63,7 +63,7 @@ class RulesTestCase extends DrupalTestCase {
     $this->assertWantedPattern('/Loaded variable/', $log);
     $this->assertWantedPattern('/Rules Test 4 - Success/', $log);
   }
-  
+
   //Tests adding a new variable
   function test_5() {
     rules_invoke_rule_set('rules_test_5', $argument);

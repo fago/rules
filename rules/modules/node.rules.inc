@@ -157,7 +157,7 @@ function node_rules_action_info() {
     ),
     'rules_action_load_node' => array(
      'label' => t('Load content by id'),
-     'new arguments' => array(
+     'new variables' => array(
        'node_loaded' => array('type' => 'node', 'label' => t('Loaded content')),
       ),
       'module' => 'Node',
@@ -228,9 +228,8 @@ function rules_action_add_node($author, $settings) {
  * @ingroup rules
  */
 function rules_action_load_node($settings) {
-  extract( rules_token_replace_all(array('nid', 'vid'), $settings, $arguments, $log) );
 //TODO: fix token
-  return array('new arguments' => array('node_loaded' => node_load($nid, $vid ? $vid : NULL)));
+  return array('node_loaded' => node_load($settings['nid'], $settings['vid'] ? $settings['vid'] : NULL));
 }
 
 
