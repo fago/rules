@@ -682,8 +682,10 @@ function rules_elements() {
  * Note that the element defaults will be applied before, if not yet done.
  */
 function rules_init_element_info(&$element) {
-  _rules_element_defaults($element);
-  if (isset($element['#info']) && !$element['#info'] && isset($element['#name'])) {
+  $element_copy = $element;
+  _rules_element_defaults($element_copy);
+
+  if (isset($element_copy['#info']) && !$element_copy['#info'] && isset($element['#name'])) {
     if ($info =& rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
       //be sure to use references, so that multiple infos in a rule get serialized only once
       $element['#info'] = &$info;
