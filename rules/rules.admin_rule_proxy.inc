@@ -182,19 +182,21 @@ class rules_admin_rule_proxy {
   }
 
   /**
-   * Gets the set of this rule
+   * Gets the set of this rule, which contains only active rules.
+   * If there ar
    */
   function get_set() {
     $rule = $this->get_rule();
-    return rules_get_rule_set($rule['#set']);
+    $set = rules_get_rule_set($rule['#set']);
+    return $set ? $set : array('info' => array(), 'rules' => array());
   }
 
   /**
    * Gets the info about the set of this rule
    */
   function get_set_info() {
-    $set = $this->get_set();
-    return $set['info'] + array('arguments' => array());
+    $rule = $this->get_rule();
+    return rules_get_rule_sets($rule['#set']) + array('arguments' => array());
   }
 
   /**
@@ -206,8 +208,8 @@ class rules_admin_rule_proxy {
     $i = 0;
     $element = TRUE;
     while (isset($id) && $i < $id || !isset($id) && $element) {
-      $vars = $this->element_get_new_variables($i) + $vars;
-      $element = $this->get_element($id);
+      $element = $this->get_element($i);
+      $vars = $this->element_get_new_variables($element) + $vars;
       $i++;
     }
     return $vars;
