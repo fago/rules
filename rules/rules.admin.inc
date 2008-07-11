@@ -529,7 +529,7 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
   }
   rules_admin_element_help($form, $element);
   rules_admin_default_argument_form($form, $form_state, $element);
-  rules_admin_element_alter_form($form, $form_state, $element);
+  rules_admin_element_alter_form($form, $form_state, $element);  
   return $form;
 }
 
