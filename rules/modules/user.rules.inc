@@ -1,10 +1,10 @@
 <?php
 // $Id$
 /**
- * @file rules integration for the user module 
+ * @file rules integration for the user module
  */
 
-/** 
+/**
  * Implementation of hook_rules_event_info()
  */
 function user_rules_event_info() {
@@ -112,7 +112,7 @@ function rules_condition_user_comparison($user1, $user2) {
 function rules_condition_user_hasrole($user, $settings) {
   $roles = $settings['roles'];
   $operation = $settings['operation'];
-  
+
   switch ($operation) {
     case 'OR':
       foreach ($roles as $rid) {
@@ -134,7 +134,7 @@ function rules_condition_user_hasrole($user, $settings) {
 
 
 /**
- * Implementation of hook_rules_action_info 
+ * Implementation of hook_rules_action_info
  */
 function user_rules_action_info() {
   return array(

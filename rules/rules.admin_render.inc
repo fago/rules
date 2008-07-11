@@ -32,7 +32,7 @@ function theme_rules_admin_rule_render($element) {
   //propagate the rule name down the tree, as the name is needed for rendering the elements
   $render['#rule'] = $element['#name'];
   rules_propagate_rule_name($render);
-  
+
   //add a surrounding div to prevent bugs with the fieldset
   $render['#prefix'] = '<div>';
   $render['#suffix'] = '</div>';

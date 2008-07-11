@@ -207,18 +207,18 @@ function rules_action_add_node($author, $settings) {
   //TODO: In Drupal6, node_access($op, $node, $account = NULL), thus will allow checking also content author
   if (!$settings['node_access'] || node_access('create', $settings['type'])) {
     $node = (object)array();
-  	node_object_prepare($node);
-  	//load node options
-  	$node_options = variable_get('node_options_'. $settings['type'], array('status', 'promote'));
-  	foreach (array('status', 'moderate', 'promote', 'sticky', 'revision') as $key) {
-  	  $node->$key = in_array($key, $node_options);
-  	}
+    node_object_prepare($node);
+    //load node options
+    $node_options = variable_get('node_options_'. $settings['type'], array('status', 'promote'));
+    foreach (array('status', 'moderate', 'promote', 'sticky', 'revision') as $key) {
+      $node->$key = in_array($key, $node_options);
+    }
 
-  	$node->name = $author->name;
-  	$node->uid = $author->uid;
-  	$node->type = $settings['type'];
-  	//TODO: fix token
-  	$node->title = rules_token_replace($settings['title'], $settings['title_args'], $arguments, $log);
+    $node->name = $author->name;
+    $node->uid = $author->uid;
+    $node->type = $settings['type'];
+    //TODO: fix token
+    $node->title = rules_token_replace($settings['title'], $settings['title_args'], $arguments, $log);
     return array('node_added' => $node);
   }
 }

@@ -14,7 +14,7 @@
  * Implementation of hook_init()
  */
 function rules_init() {
-	require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
+  require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
 }
 
 //admin interface paths
@@ -986,19 +986,18 @@ function rules_handle_error_msg($message, $variables, $rule_name = NULL) {
  * Own version of array_intersect_key for php < 5.1
  */
 if (!function_exists('array_intersect_key')) {
-    function array_intersect_key()
-    {
-        $arrs = func_get_args();
-        $result = array_shift($arrs);
-        foreach ($arrs as $array) {
-            foreach ($result as $key => $v) {
-                if (!array_key_exists($key, $array)) {
-                    unset($result[$key]);
-                }
-            }
+  function array_intersect_key() {
+    $arrs = func_get_args();
+    $result = array_shift($arrs);
+    foreach ($arrs as $array) {
+      foreach ($result as $key => $v) {
+        if (!array_key_exists($key, $array)) {
+          unset($result[$key]);
         }
-        return $result;
-   }
+      }
+    }
+    return $result;
+  }
 }
 
 /**
@@ -1044,7 +1043,7 @@ function rules_include($type = 'rules') {
     foreach ($files as $file) {
       require_once $file;
     }
-	  rules_log(t('Included MODULE.'. $type. '.inc files.'));
+    rules_log(t('Included MODULE.'. $type. '.inc files.'));
   }
 }
 
