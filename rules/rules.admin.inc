@@ -891,11 +891,13 @@ function rules_admin_form_clone(&$form_state, $proxy) {
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
 
-  drupal_set_message(t('Alter the settings for the cloned rule.'));
+  if (!$form_state['post']) {
+    drupal_set_message(t('Alter the settings for the cloned rule.'));
+  }
 
   $form_state['set'] = strpos($rule['#set'], 'event_') !== 0;
   $form = rules_admin_form_rule_settings($rule, $form_state['set']);
-  $form['#submit'] = array('rules_admin_form_configuration_add_submit');
+  $form['#submit'] = array('rules_admin_form_add_rule_submit');
   return $form;
 }
 
