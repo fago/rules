@@ -83,7 +83,7 @@ function rules_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_export'),
     'access arguments' => array('administer rules'),
-    'file' => 'rules.admin.inc',
+    'file' => 'rules.admin_export.inc',
     'weight' => 5,
     'type' => MENU_NORMAL_ITEM,
   );
@@ -99,7 +99,7 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'weight' => 7,
     'type' => MENU_LOCAL_TASK,
-    'file' => 'rules.admin.inc',
+    'file' => 'rules.admin_export.inc',
   );
   //paths for modifing rules
   $items[RULES_ADMIN_RULE_PATH .'/%rule'] = array(
@@ -432,8 +432,6 @@ function rules_invoke_event() {
 function rules_invoke_rule_set() {
   $args = func_get_args();
   $set_name = array_shift($args);
-
-
 
   if ($set = rules_get_rule_set($set_name)) {
     $state = array('set_info' => $set['info']);
@@ -932,12 +930,11 @@ function rules_item_delete($item_type, $name) {
  * Used to inform the rules engine about an added item type,
  * so it can create the db table if necessary
  */
-function rules_enable_items($item_type) {
+function rules_enable_items($item_type, $ret = array()) {
   $info = rules_get_items($item_type);
 
   if (!db_table_exists($info['db_table'])) {
     $schema = drupal_get_schema($info['db_table'], TRUE);
-    $ret = array();
     db_create_table($ret, $info['db_table'], $schema);
   }
 }
@@ -983,22 +980,6 @@ function rules_handle_error_msg($message, $variables, $rule_name = NULL) {
   }
   $link = (isset($rule_name)) ? l(t('Show rule configuration'), PATH .'/'. $rule_name) : NULL;
   watchdog('rules', $message, $variables, WATCHDOG_ERROR, $link);
-}
-
-/**
- * Determines if the given data type is supported by the given info
- *
- * @param $data_type The data type to check
- * @param $info The information data containing the #type property
- */
-function rules_is_valid_data_type($data_type, $info) {
-  if (is_array($info['type'])) {
-    return in_array($data_type, $info['type']);
-  }
-  if ($info['type'] == '*') {
-    return TRUE;
-  }
-  return $info['type'] == $data_type;
 }
 
 /**

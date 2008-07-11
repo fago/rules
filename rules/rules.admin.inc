@@ -16,7 +16,7 @@ function rules_admin_form_overview(&$form_state) {
   $form['filter']['set'] = array(
     '#type' => 'select',
     '#title' => t('Filter by event'),
-    '#options' => array(0 => '<All>') + rules_get_grouped_labels(rules_get_events()),
+    '#options' => array(0 => '<All>') + rules_admin_get_grouped_labels(rules_get_events()),
     '#default_value' => isset($form_state['values']['set']) ? $form_state['values']['set'] : 0,
   );
   $form['filter']['category'] = array(
@@ -170,14 +170,14 @@ function rules_admin_form_rule_settings($rule, $set = FALSE) {
   if ($set) {
     $form['settings']['set'] += array(
       '#title' =>t('Rule set'),
-    	'#options' => rules_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),
+    	'#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),
     	'#description' => t('Select to which rule set this rule should belong.'),
     );
   }
   else {
     $form['settings']['set'] += array(
       '#title' => t('Event'),
-    	'#options' => rules_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_event_sets())),
+    	'#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_event_sets())),
     	'#description' => t('Select the event on which you want to evaluate this rule.'),
     );
   };
@@ -307,12 +307,12 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
  */
 function rules_admin_form_add_action(&$form_state, &$element) {
   $vars = $form_state['proxy']->get_available_variables();
+  $actions = rules_admin_filter_info($vars, rules_get_actions());
 
-  $actions = rules_admin_filter_elements($vars, rules_get_actions());
   $form['name'] = array(
     '#type' => 'select',
     '#title' => t('Select an action to add'),
-    '#options' => rules_get_grouped_labels($actions),
+    '#options' => rules_admin_get_grouped_labels($actions),
     '#required' => TRUE,
   );
   $form['submit'] = array(
@@ -332,11 +332,11 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
 
   if (!isset($parent['#type']) || isset($info['#logical_op']) && $info['#logical_op']) {
     $vars = $form_state['proxy']->get_available_variables(0);
-    $conditions = rules_admin_filter_elements($vars, rules_get_conditions());
+    $conditions = rules_admin_filter_info($vars, rules_get_conditions());
     $form['name'] = array(
       '#type' => 'select',
       '#title' => t('Select the condition to add'),
-      '#options' => rules_get_grouped_labels($conditions),
+      '#options' => rules_admin_get_grouped_labels($conditions),
       '#required' => TRUE,
     );
     $form['submit'] = array(
@@ -358,7 +358,7 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
   $parent_ref =& $form_state['proxy']->get_element($form_state['parent_id']);
 
   //determine the appropriate operation and apply it
-  $op = rules_determine_operation($form_state['proxy'], $form_state['parent_id']);
+  $op = rules_admin_determine_operation($form_state['proxy'], $form_state['parent_id']);
   if (isset($parent_ref['#weight'])) {
     $weight = $parent_ref['#weight'];
     unset($parent_ref['#weight']);
@@ -563,7 +563,7 @@ function rules_admin_form_edit_op(&$form_state, $element) {
     '#type' => 'select',
     '#description' => t('The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE.'),
     '#default_value' => $element['#type'],
-    '#options' => rules_elements_get_logical_ops(),
+    '#options' => rules_admin_elements_get_logical_ops(),
     '#required' => TRUE,
   );
   $form['weight'] = array(
@@ -785,7 +785,7 @@ function rules_admin_default_argument_form_submit($form, &$form_state, &$element
 function rules_admin_map_get_possible_arguments($arg_info, $variables, $print_error = TRUE) {
   $matches = array();
   foreach ($variables as $name => $info) {
-    if (rules_is_valid_data_type($info['type'], $arg_info)) {
+    if (rules_admin_is_valid_data_type($info['type'], $arg_info)) {
       $matches[$name] = $info['label'];
     }
   }
@@ -915,27 +915,21 @@ function rules_admin_get_compatible_sets($rule, $sets) {
   return $sets;
 }
 
-
-
-
-
 /**
  * Gets an array of element labels grouped by modules
  *
  * @param $elements An array of info elements, e.g. as returned from rules_get_events()
  */
-function rules_get_grouped_labels($elements) {
+function rules_admin_get_grouped_labels($elements) {
   $grouped = array();
   $ungrouped = array();
 
-  foreach ($elements as $name => $element) {
-    if (!isset($element['fixed']) || !$element['fixed']) {
-      if (isset($element['module'])) {
-        $grouped[$element['module']][$name] = $element['label'];
-      }
-      else {
-        $ungrouped[$name] = $element['label'];
-      }
+  foreach (array_filter($elements, 'rules_admin_element_not_fixed') as $name => $element) {
+    if (isset($element['module'])) {
+      $grouped[$element['module']][$name] = rules_get_element_label($element);
+    }
+    else {
+      $ungrouped[$name] = rules_get_element_label($element);
     }
   }
   array_map('asort', $grouped);
@@ -944,12 +938,45 @@ function rules_get_grouped_labels($elements) {
   return $ungrouped + $grouped;
 }
 
+/**
+ * Returns whether the given element is not fixed.
+ * If the variable 'rules_show_fixed' is set to on, it will always return TRUE.
+ * 
+ * @return TRUE, when the element is not fixed and should be kept. Else FALSE.
+ */
+function rules_admin_element_not_fixed($element) {
+  if (!variable_get('rules_show_fixed', FALSE)) {
+    if (isset($element['fixed']) && $element['fixed']) {
+      return FALSE;
+    }
+    if (isset($element['#status']) && $element['#status'] == 'fixed') {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
 
-/*
+/**
+ * Determines if the given data type is supported by the given info
+ *
+ * @param $data_type The data type to check
+ * @param $info The information data containing the #type property
+ */
+function rules_admin_is_valid_data_type($data_type, $info) {
+  if (is_array($info['type'])) {
+    return in_array($data_type, $info['type']);
+  }
+  if ($info['type'] == '*') {
+    return TRUE;
+  }
+  return $info['type'] == $data_type;
+}
+
+/**
  * Determines which operation should be added
  * If the parent operation is an AND, we add an OR, and vice versa.
  */
-function rules_determine_operation(&$proxy, $id) {
+function rules_admin_determine_operation(&$proxy, $id) {
   $parent = $proxy->get_element($proxy->get_element_parent_id($id)) + array('#type' => '');
   switch ($parent['#type']) {
     default:
@@ -961,105 +988,35 @@ function rules_determine_operation(&$proxy, $id) {
   }
 }
 
-/*
+/**
  * Returns a list of available logical operations suitable for use with #options
  */
-function rules_elements_get_logical_ops() {
+function rules_admin_elements_get_logical_ops() {
   $elements = rules_gather_data('elements');
-  $labels = array_map('rules_get_element_label', array_filter($elements, '_rules_element_is_logical_op'));
+  $labels = array_map('rules_get_element_label', array_filter($elements, '_rules_admin_element_is_logical_op'));
   asort($labels);
   return $labels;
 }
 
-function _rules_element_is_logical_op($element) {
+function _rules_admin_element_is_logical_op($element) {
   return isset($element['#logical_op']) && $element['#logical_op'];
 }
 
-/*
- * Imports a configuration
- */
-function rules_admin_form_import() {
-  $form = array();
-  $form['import'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Rule configurations to import'),
-    '#description' => t('Paste exported rules here to import them.'),
-    '#rows' => 15,
-    '#required' => TRUE,
-  );
-  $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Import'));
-  return $form;
-}
-
-function rules_admin_form_import_submit($form_id, $form_values) {
-  @eval('$cfgs = '. $form_values['import'] .';');
-  if (isset($cfgs) && is_array($cfgs) && count($cfgs)) {
-    foreach ($cfgs as $name => $data) {
-      if (strtolower($data['#module']) == 'rules-ng') {
-        //generate a new unique name for this configuration
-        $data['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
-      }
-      rules_admin_save_rule($data);
-      drupal_set_message(t('Imported rule configuration %label.', array('%label' => rules_get_element_label($data))));
-    }
-    rules_clear_cache();
-  }
-  else {
-    drupal_set_message(t('Import failed.'), 'error');
-  }
-}
-
-
-/*
- * Exports one ore more configurations
- */
-function rules_admin_form_export($form_values = NULL) {
-  $form = array();
-  if (!isset($form_values)) {
-    $form['cfg'] = array(
-      '#type' => 'select',
-      '#title' => t('Select the rule configurations to export'),
-      '#options' => rules_get_grouped_labels(rules_get_configurations()),
-      '#multiple' => TRUE,
-    );
-    $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Export'));
-    $form['#multistep'] = TRUE;
-    $form['#redirect'] = FALSE;
-  }
-  else {
-    //show a textarea containg the exported configs
-    $cfgs = array();
-    foreach ($form_values['cfg'] as $key => $name) {
-      $cfgs[$name] = rules_get_configurations('all', $name);
-    }
-    $form['result'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Exported rule configurations'),
-      '#description' => t('Copy these data and paste them into the import page, to import.'),
-      '#rows' => 15,
-      '#attributes' => array('readonly' => 'readonly'),
-      '#default_value' => var_export($cfgs, TRUE),
-    );
-  }
-  return $form;
-}
-
-/*
- * Filters the elements (actions, conditions), so that only elements
- * compatible with the event are kept, which means suiting variables for all arguments
+/**
+ * Filters the info about elements (actions, conditions), so that only elements
+ * compatible with the given variables are kept, which means suiting variables for all arguments
  * are available, so that the action/condition can be configured
  */
-function rules_admin_filter_elements($variables, $elements) {
+function rules_admin_filter_info($variables, $infos) {
   $filtered = array();
-  foreach ($elements as $key => $element) {
-    $info = rules_get_element_info($element);
+  foreach ($infos as $key => $info) {
     if (isset($info['arguments']) && is_array($info['arguments'])) {
-      foreach ($info['arguments'] as $name => $info) {
-        if (count(rules_admin_map_get_possible_arguments($info, $variables, FALSE)) == 0) {
+      foreach ($info['arguments'] as $name => $argument_info) {
+        if (count(rules_admin_map_get_possible_arguments($argument_info, $variables, FALSE)) == 0) {
           continue 2; //don't add this element to the filtered one
         }
       }
-      $filtered[$key] = $element;
+      $filtered[$key] = $info;
     }
   }
   return $filtered;
@@ -1071,7 +1028,7 @@ function rules_admin_filter_elements($variables, $elements) {
 function rules_admin_get_categories() {
   $categories = array();
   foreach (rules_get_configured_items('rules') as $rule) {
-    if (isset($rule['#categories']) && is_array($rule['#categories']) && (!isset($rule['#fixed']) || !$rule['#fixed'])) {
+    if (isset($rule['#categories']) && is_array($rule['#categories']) && rules_admin_element_not_fixed($rule)) {
       foreach ($rule['#categories'] as $category) {
         if (!in_array($category, $categories)) {
           $categories[$element['#categories']] = $element['#categories'];
