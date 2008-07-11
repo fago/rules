@@ -1017,8 +1017,8 @@ function rules_admin_filter_info($variables, $infos) {
           continue 2; //don't add this element to the filtered one
         }
       }
-      $filtered[$key] = $info;
     }
+    $filtered[$key] = $info;
   }
   return $filtered;
 }
