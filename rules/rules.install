@@ -17,6 +17,11 @@ function rules_uninstall() {
   drupal_uninstall_schema('rules');
   variable_del('rules_inactive_sets');
   variable_del('rules_show_fixed');
+  //item tables have to be dropped manually, as the rules schema doesn't include it
+  //when the item's module is disabled
+  $ret = array();
+  db_drop_table($ret, 'rules_rules');
+  db_drop_table($ret, 'rule_sets');
 }
 
 /**
