@@ -137,8 +137,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   $rule['#status'] = 'custom';
 
   //get an unique name
-  $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
-  $rule['#name'] = 'rules_'. (db_result($result) + 1);
+  $rule['#name'] = _rules_admin_rule_get_new_unique_name();
 
   rules_item_save('rules', $rule['#name'], $rule);
   rules_clear_cache();
@@ -1039,3 +1038,7 @@ function rules_admin_get_categories() {
   return $categories;
 }
 
+function _rules_admin_rule_get_new_unique_name() {
+  $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
+  return 'rules_'. (db_result($result) + 1);
+}
