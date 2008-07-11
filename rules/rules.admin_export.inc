@@ -14,7 +14,7 @@ function rules_admin_form_import() {
   $form = array();
   $form['import'] = array(
     '#type' => 'textarea',
-    '#title' => t('Configurations to import'),
+    '#title' => t('Configuration to import'),
     '#description' => t('Just paste your exported configuration here.'),
     '#rows' => 15,
     '#required' => TRUE,
@@ -26,18 +26,30 @@ function rules_admin_form_import() {
 function rules_admin_form_import_submit($form, $form_state) {
   @eval('$import = '. $form_state['values']['import'] .';');
   if (isset($import) && is_array($import) && count($import)) {
-    foreach ($import as $name => $elements) {
-      if (strtolower($data['#module']) == 'rules-ng') {
-        //generate a new unique name for this configuration
-        $data['#name'] = 'cfg_'. db_next_id('{rules_cfg}_name');
+    foreach ($import as $item_type => $elements) {
+      foreach ($elements as $name => $element) {
+        //let the item type alter the data before it's saved
+        rules_item_type_invoke($item_type, 'import', array(&$name, &$element));
+        rules_item_save($item_type, $name, $element);
+        drupal_set_message(t('Imported %label.', array('%label' => rules_get_element_label($element))));
       }
-      rules_admin_save_rule($data);
-      drupal_set_message(t('Imported rule configuration %label.', array('%label' => rules_get_element_label($data))));
     }
     rules_clear_cache();
   }
   else {
     drupal_set_message(t('Import failed.'), 'error');
+  }
+}
+
+/**
+ * Item type callback: Customize to be imported rules
+ */
+function rules_item_rule_import(&$name, &$rule) {
+  _rules_element_defaults($rule);
+  if ($rule['#status'] == 'custom') {
+    //generate a new unique name for this rule
+    $name = _rules_admin_rule_get_new_unique_name();
+    $rule['#name'] = $name;
   }
 }
 
