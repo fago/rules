@@ -1,7 +1,7 @@
 <?php
 // $Id$
 /**
- * @file rules Invokes events for supported modules 
+ * @file rules Invokes events for supported modules
  */
 
 /**

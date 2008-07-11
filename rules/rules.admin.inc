@@ -170,15 +170,15 @@ function rules_admin_form_rule_settings($rule, $set = FALSE) {
   if ($set) {
     $form['settings']['set'] += array(
       '#title' =>t('Rule set'),
-    	'#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),
-    	'#description' => t('Select to which rule set this rule should belong.'),
+      '#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),
+      '#description' => t('Select to which rule set this rule should belong.'),
     );
   }
   else {
     $form['settings']['set'] += array(
       '#title' => t('Event'),
-    	'#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_event_sets())),
-    	'#description' => t('Select the event on which you want to evaluate this rule.'),
+      '#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_event_sets())),
+      '#description' => t('Select the event on which you want to evaluate this rule.'),
     );
   };
   $form['settings']['active'] = array(
@@ -941,7 +941,7 @@ function rules_admin_get_grouped_labels($elements) {
 /**
  * Returns whether the given element is not fixed.
  * If the variable 'rules_show_fixed' is set to on, it will always return TRUE.
- * 
+ *
  * @return TRUE, when the element is not fixed and should be kept. Else FALSE.
  */
 function rules_admin_element_not_fixed($element) {
