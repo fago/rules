@@ -715,14 +715,17 @@ function rules_admin_new_variables_form_validate($form, &$form_state) {
 function rules_admin_new_variables_form_submit(&$form, &$form_state, &$element) {
   if (isset($form_state['values']['new'])) {
     foreach ($form_state['values']['new'] as $old_name => $values) {
-      $element['#info']['new variables'][$old_name]['label'] = $values['label'];
+
+      //handle the label
+      $info = &$element['#info']['new variables'][$old_name];
+      $info = _rules_admin_get_label($form_state, $info, $element, $values['label']) + $info;
 
       if ($old_name != $values['name']) {
         //add it to the argument map
         $default_name = $element['#settings']['#argument map'][$old_name];
         $element['#settings']['#argument map'][ $values['name'] ] = $default_name;
         unset($element['#settings']['#argument map'][$old_name]);
-        //and alter the info about the variable
+        //and alter the info about the variable to reflect the name change
         $element['#info']['new variables'][ $values['name'] ] = $element['#info']['new variables'][$old_name];
         unset($element['#info']['new variables'][$old_name]);
       }
@@ -1056,23 +1059,34 @@ function _rules_admin_rule_get_new_unique_name() {
 }
 
 /**
- * Saves the element label, if it has been customized. Otherwise it applies the element
- * callback.
+ * Saves the element label.
  */
 function rules_admin_save_element_label($form, &$form_state, &$element) {
-  if ($form_state['values']['label'] != $form['label']['#default_value']) {
-    //label has been customized
-    $element['#info']['label callback'] = FALSE;
-    $element['#info']['label'] = $form_state['values']['label'];
-  }
-  else {
-    $info = rules_get_element_info($element);
-    if (isset($info['label callback']) && function_exists($info['label callback']) && isset($element['#settings']) && $element['#settings']) {
-      $argument_labels = rules_admin_get_argument_labels($form_state['proxy'], $element);
-      $element['#info']['label'] = $info['label callback']($element['#settings'], $argument_labels, $element);
-    }
-  }
+  $info = _rules_admin_get_label($form_state, rules_get_element_info($element), $element, $form_state['values']['label']);
+  //this makes sure we don't save the applied defaults
+  $element['#info'] = $info + $element['#info'];
 }
+
+/**
+ * Gets the label for the info of the given element by apply label callbacks.
+ * Note that this is also used for argument infos.
+ *
+ * @return An array of changed properties of the given info
+ */
+function _rules_admin_get_label(&$form_state, $info, $element, $value) {
+  $info_changes = array();
+  if ($info['label'] != $value) {
+    //label has been customized
+    $info_changes['label'] = $value;
+    $info_changes['label callback'] = FALSE;
+  }
+  else if (isset($info['label callback']) && $info['label callback'] && function_exists($info['label callback'])) {
+    $argument_labels = rules_admin_get_argument_labels($form_state['proxy'], $element);
+    $info_changes['label'] = $info['label callback']($element['#settings'], $argument_labels, $element);
+  }
+  return $info_changes;
+}
+
 
 /**
  * Gets the labels of the variables, which are configured to be passed as arguments
