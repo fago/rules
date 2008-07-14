@@ -118,6 +118,15 @@ function rules_condition_content_is_type($node, $settings) {
 }
 
 /**
+ * Condition: Check for selected content types - Label callback
+ * @ingroup rules
+ */
+function rules_condition_content_is_type_label($settings) {
+  $names = array_intersect_key(node_get_types('names'), $settings['type']);
+  return t('Content is @type', array('@type' => implode(' or ', $names)));
+}
+
+/**
  * Implementation of hook_rules_action_info
  * @ingroup rules
  */
