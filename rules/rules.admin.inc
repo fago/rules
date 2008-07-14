@@ -434,7 +434,7 @@ function rules_admin_form_edit_action(&$form_state, $element) {
   $form['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
-    '#description' => t('Choose an appropriate label for this action.'),
+    '#description' => t('Customize the label for this action.'),
     '#default_value' => $label,
     '#required' => TRUE,
     '#weight' => -5,
@@ -476,9 +476,10 @@ function rules_admin_form_edit_action(&$form_state, $element) {
  */
 function rules_admin_form_edit_action_submit($form, &$form_state) {
   $element =& $form_state['element'];
-  foreach (array('label', 'weight') as $key) {
-    $element['#'. $key] = $form_state['values'][$key];
-  }
+
+  _rules_save_element_label($element, $form_state['values']['label']);
+  $element['#weight'] = $form_state['values']['weight'];
+
   rules_admin_default_argument_form_submit($form, $form_state, $element);
   rules_admin_new_variables_form_submit($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
@@ -495,7 +496,7 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
   $form['label'] = array(
     '#title' => t('Label'),
     '#type' => 'textfield',
-    '#description' => t('Choose an appropriate label for this condition.'),
+    '#description' => t('Customize the label for this condition.'),
     '#default_value' => $label,
     '#required' => TRUE,
     '#weight' => -5,
@@ -542,7 +543,9 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
  */
 function rules_admin_form_edit_condition_submit($form, &$form_state) {
   $element =& $form_state['element'];
-  foreach (array('label', 'negate', 'weight') as $key) {
+  _rules_save_element_label($element, $form_state['values']['label']);
+
+  foreach (array('negate', 'weight') as $key) {
     $element['#'. $key] = $form_state['values'][$key];
   }
   rules_admin_default_argument_form_submit($form, $form_state, $element);
@@ -1052,6 +1055,16 @@ function rules_admin_get_categories() {
 function _rules_admin_rule_get_new_unique_name() {
   $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
   return 'rules_'. (db_result($result) + 1);
+}
+
+/**
+ * Only saves the element label, if it has been customized.
+ */
+function _rules_save_element_label(&$element, $value) {
+  if ($value != rules_get_element_label($element)) {
+    $element['#info']['label callback'] = FALSE;
+    $element['#info']['label'] = $value;
+  }
 }
 
 /**
