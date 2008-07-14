@@ -167,7 +167,7 @@ function node_rules_action_info() {
     'rules_action_load_node' => array(
      'label' => t('Load content by id'),
      'new variables' => array(
-       'node_loaded' => array('type' => 'node', 'label' => t('Loaded content')),
+       'node_loaded' => array('type' => 'node', 'label' => t('Loaded content'), 'label callback' => 'rules_action_load_node_variable_label'),
       ),
       'module' => 'Node',
     ),
@@ -244,6 +244,11 @@ function rules_action_load_node($settings) {
 //TODO: fix token
   return array('node_loaded' => node_load($settings['nid'], $settings['vid'] ? $settings['vid'] : NULL));
 }
+
+function rules_action_load_node_variable_label($settings) {
+  return t('Content with id @id', array('@id' => $settings['nid']));
+}
+
 
 
 /**
