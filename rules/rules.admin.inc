@@ -1,5 +1,9 @@
 <?php
+// $Id$
 
+/**
+ * @file Rules Admin UI
+ */
 require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
 
 
@@ -97,7 +101,7 @@ function rules_admin_overview_table($params) {
     return array('#value' => theme('table', $header, $rows, array('class' => 'rules-ng-configurations')));
   }
 
-  return array('#value' => t('None.'));
+  return array('#value' => '<p>'. t('None') .'</p>');
 }
 
 /**
@@ -529,7 +533,7 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
   }
   rules_admin_element_help($form, $element);
   rules_admin_default_argument_form($form, $form_state, $element);
-  rules_admin_element_alter_form($form, $form_state, $element);  
+  rules_admin_element_alter_form($form, $form_state, $element);
   return $form;
 }
 
@@ -925,7 +929,7 @@ function rules_admin_get_grouped_labels($elements) {
   $grouped = array();
   $ungrouped = array();
 
-  foreach (array_filter($elements, 'rules_admin_element_not_fixed') as $name => $element) {
+  foreach (array_filter($elements, 'rules_admin_element_filter') as $name => $element) {
     if (isset($element['module'])) {
       $grouped[$element['module']][$name] = rules_get_element_label($element);
     }
@@ -940,19 +944,24 @@ function rules_admin_get_grouped_labels($elements) {
 }
 
 /**
- * Returns whether the given element is not fixed.
- * If the variable 'rules_show_fixed' is set to on, it will always return TRUE.
+ * This is used for filtering the rules, action and conditions that should be shown.
+ * Rules and sets are filtered when they are fixed and the variable 'rules_show_fixed'
+ * is  not set to on. Actions and conditions are filtered out if they are marked as
+ * being hidden.
  *
- * @return TRUE, when the element is not fixed and should be kept. Else FALSE.
+ * @return TRUE, when the element should be kept. Else FALSE.
  */
-function rules_admin_element_not_fixed($element) {
+function rules_admin_element_filter($element) {
   if (!variable_get('rules_show_fixed', FALSE)) {
-    if (isset($element['fixed']) && $element['fixed']) {
-      return FALSE;
-    }
     if (isset($element['#status']) && $element['#status'] == 'fixed') {
       return FALSE;
     }
+    if (isset($element['status']) && $element['status'] == 'fixed') {
+      return FALSE;
+    }
+  }
+  if (isset($element['hidden']) && $element['hidden']) {
+    return FALSE;
   }
   return TRUE;
 }
@@ -1029,7 +1038,7 @@ function rules_admin_filter_info($variables, $infos) {
 function rules_admin_get_categories() {
   $categories = array();
   foreach (rules_get_configured_items('rules') as $rule) {
-    if (isset($rule['#categories']) && is_array($rule['#categories']) && rules_admin_element_not_fixed($rule)) {
+    if (isset($rule['#categories']) && is_array($rule['#categories']) && rules_admin_element_filter($rule)) {
       foreach ($rule['#categories'] as $category) {
         if (!in_array($category, $categories)) {
           $categories[$element['#categories']] = $element['#categories'];
@@ -1043,4 +1052,23 @@ function rules_admin_get_categories() {
 function _rules_admin_rule_get_new_unique_name() {
   $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
   return 'rules_'. (db_result($result) + 1);
+}
+
+/**
+ * Defines the rules settings form
+ */
+function rules_admin_settings(&$form_state) {
+  $form['rules_debug'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Debug rule evaluation'),
+    '#default_value' => variable_get('rules_debug', FALSE),
+    '#description' => t('When activated, debugging information is shown when rules are evaluated.'),
+  );
+  $form['rules_show_fixed'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show fixed rules and rule sets'),
+    '#default_value' => variable_get('rules_show_fixed', FALSE),
+    '#description' => t('When activated, fixed items provided by modules are shown in the admin center too.'),
+  );
+  return system_settings_form($form);
 }

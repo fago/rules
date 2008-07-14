@@ -1,4 +1,9 @@
 <?php
+// $Id$
+
+/**
+ * @file Contains the rules proxy class
+ */
 
 /**
  * This is a smally proxy for the real rule. It provides some useful operations for the admin UI.
