@@ -63,15 +63,15 @@ function rules_get_variables($names, &$state, $load = TRUE) {
  * @param $state The current evaluation state
  * @return The mapped argument names.
  */
-function rules_get_mapped_argument_names($element, &$state) {
-  $element_info = rules_get_element_info($element, $state);
+function rules_get_mapped_argument_names($element) {
+  $element_info = rules_get_element_info($element);
   $reverse_map = array_flip($element['#settings']['#argument map']);
 
   if ($element_info) {
     //get the right execution variables by applying the argument map of this element
     $mapped_args = array();
     foreach ($element_info['arguments'] as $argument_name => $info) {
-      $mapped_args[] = isset($reverse_map[$argument_name]) ? $reverse_map[$argument_name] : $argument_name;
+      $mapped_args[$argument_name] = isset($reverse_map[$argument_name]) ? $reverse_map[$argument_name] : $argument_name;
     }
     return $mapped_args;
   }
@@ -89,7 +89,7 @@ function rules_get_mapped_argument_names($element, &$state) {
 function rules_get_execution_arguments($element, &$state) {
   $element['#settings'] += array('#argument map' => array());
   //first off map the names to the argument names of the evaluated set
-  $names = rules_get_mapped_argument_names($element, $state);
+  $names = rules_get_mapped_argument_names($element);
   $exec_args = rules_get_variables($names, $state);
 
   if ($exec_args !== FALSE) {

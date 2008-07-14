@@ -41,10 +41,10 @@ function node_rules_event_info() {
       'label' => t('Content is going to be viewed'),
       'module' => 'Node',
       'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
-      'arguments' => array(
+      'arguments' => rules_events_node_arguments(t('viewed content'), t('content author')) + array(
         'teaser' => array('type' => 'boolean', 'label' => t('Content is displayed as teaser')),
         'page' => array('type' => 'boolean', 'label' => t('Content is displayed as page')),
-      ) + rules_events_node_arguments(t('viewed content'), t('content author')),
+      ),
     ),
     'node_delete' => array(
       'label' => t('Content has been deleted'),
@@ -133,7 +133,7 @@ function rules_condition_content_is_type_label($settings) {
 function node_rules_action_info() {
   return array(
     'rules_action_node_set_author' => array(
-      'label' => t('Set the post author'),
+      'label' => t('Set the content author'),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
         'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
@@ -183,6 +183,10 @@ function rules_action_node_set_author($node, $author) {
   $node->uid = $author->uid;
   $node->name = $author->name;
   return array('node' => $node);
+}
+
+function rules_action_node_set_author_label($settings, $argument_labels) {
+  return t('Set the author of @node to @author', $argument_labels);
 }
 
 /**
