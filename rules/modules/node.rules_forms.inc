@@ -1,5 +1,5 @@
 <?php
-
+// $Id$
 /**
  * @file Rules configuration forms for the node module
  */

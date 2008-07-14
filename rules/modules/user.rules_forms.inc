@@ -1,5 +1,5 @@
 <?php
-//$Id$
+// $Id$
 /**
  * @file Rules configuration forms for the user module
  */
