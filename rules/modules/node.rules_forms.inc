@@ -59,31 +59,22 @@ function rules_action_add_node_form($settings, &$form) {
     '#type' => 'select',
     '#title' => t('Content type to be used'),
     '#options' => node_get_types('names'),
-    '#default_value' => $settings['type'],
-    '#description' => t('Select a single content type that will be created when this action is invoked.'),
+    '#default_value' => isset($settings['type']) ? $settings['type'] : '',
+    '#description' => t('Select a content type that will be created when this action is invoked.'),
     '#required' => TRUE,
   );
   $form['settings']['node_access'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Create content only if the acting user (i.e. logged in user) has access rights to do so'),
-    '#default_value' => $settings['node_access'],
-    '#description' => t('Enable this in order for the system to check if the user has access rights for creating the
-      required content. Note that even if the user arguments are set to \'content author \' the system will still check the \'acting user\'' ),
+    '#title' => t('Create content only if the given author has access permission to do so'),
+    '#default_value' => isset($settings['node_access']) ? $settings['node_access'] : 0,
   );
   $form['settings']['title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
-    '#default_value' => $settings['title'],
-    '#description' => t('Enter the title of the new created content.'),
+    '#default_value' => isset($settings['title']) ? $settings['title'] : '',
+    '#description' => t('Enter the title of the newly created content.'),
     '#required' => TRUE,
   );
-}
-
-function rules_action_add_node_submit($form_id, $form_values) {
-  //returns the needed settings
-  $settings = rules_token_get_settings(array('title'), $form_values);
-  $settings += array('type' => $form_values['type'], 'node_access' => $form_values['node_access']);
-  return $settings;
 }
 
 /**

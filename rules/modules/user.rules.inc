@@ -10,38 +10,38 @@
 function user_rules_event_info() {
   return array(
     'user_insert' => array(
-      'label' => t('user has registered'),
-      'module' => 'user',
+      'label' => t('User has registered'),
+      'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('registered user')),
       'redirect' => TRUE,
     ),
     'user_update' => array(
-      'label' => t('user has updated his account details'),
-      'module' => 'user',
+      'label' => t('User has updated his account details'),
+      'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('updated user')) + array('account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'))),
       'redirect' => TRUE,
     ),
     'user_view' => array(
-      'label' => t('user page has been viewed'),
-      'module' => 'user',
+      'label' => t('User page has been viewed'),
+      'module' => 'User',
       'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
       'arguments' => rules_events_hook_user_arguments(t('viewed user')),
     ),
     'user_delete' => array(
-      'label' => t('user has been deleted'),
-      'module' => 'user',
+      'label' => t('User has been deleted'),
+      'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('deleted user')),
       'redirect' => TRUE,
     ),
     'user_login' => array(
-      'label' => t('user has logged in'),
-      'module' => 'user',
+      'label' => t('User has logged in'),
+      'module' => 'User',
       'arguments' => array('account' => array('type' => 'user', 'label' => t('logged in user'))),
       'redirect' => TRUE,
     ),
     'user_logout' => array(
-      'label' => t('user has logged out'),
-      'module' => 'user',
+      'label' => t('User has logged out'),
+      'module' => 'User',
       'arguments' => array('account' => array('type' => 'user', 'label' => t('logged out user'))),
       'redirect' => TRUE,
     ),
@@ -86,27 +86,27 @@ function user_rules_condition_info() {
         'user2' => array('type' => 'user', 'label' => t('Second user to compare')),
       ),
       'help' => t('Evaluates to TRUE, if both compared users are the same user account.'),
-      'module' => 'user',
+      'module' => 'User',
     ),
     'rules_condition_user_hasrole' => array(
-      'label' => t('user has role(s)'),
+      'label' => t('User has role(s)'),
       'arguments' => array(
-        'user' => array('type' => 'user', 'label' => t('user to test')),
+        'user' => array('type' => 'user', 'label' => t('User')),
       ),
       'help' => t('Whether the user has the selected role(s).'),
-      'module' => 'user',
+      'module' => 'User',
     ),
   );
 }
 
-/*
+/**
  * A simple user comparison
  */
 function rules_condition_user_comparison($user1, $user2) {
   return $user1->uid == $user2->uid;
 }
 
-/*
+/**
  * Condition user: condition to check whether user has particular roles
  */
 function rules_condition_user_hasrole($user, $settings) {
@@ -131,8 +131,6 @@ function rules_condition_user_hasrole($user, $settings) {
   }
 }
 
-
-
 /**
  * Implementation of hook_rules_action_info
  */
@@ -141,16 +139,16 @@ function user_rules_action_info() {
     'rules_action_user_addrole' => array(
       'label' => t('Add user role'),
       'arguments' => array(
-        'user' => array('type' => 'user', 'label' => t('user whos roles should be changed')),
+        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
       ),
-      'module' => 'user',
+      'module' => 'User',
     ),
     'rules_action_user_removerole' => array(
       'label' => t('Remove user role'),
       'arguments' => array(
-        'user' => array('type' => 'user', 'label' => t('user whos roles should be changed')),
+        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
       ),
-      'module' => 'user',
+      'module' => 'User',
     ),
     'rules_action_load_user' => array(
       'label' => t('Load user by name'),
@@ -158,29 +156,27 @@ function user_rules_action_info() {
         'user_loaded' => array('type' => 'user', 'label' => t('Loaded user')),
       ),
       'help' => t('Enter an id or a name of the user to load.'),
-      'module' => 'user',
+      'module' => 'User',
      ),
   );
 }
 
-/*
+/**
  * Action user: adds roles to a particular user
  */
 function rules_action_user_addrole($user, $settings) {
   // Get role list (minus the anonymous)
-  $role_list = user_roles(1);
-  $roles = $settings['roles'];
-  foreach ($roles as $rid) {
+  $role_list = user_roles(TRUE);
+
+  foreach ($settings['roles'] as $rid) {
     $user->roles[$rid] = $role_list[$rid];
   }
   user_save($user, array('roles' => $user->roles));
-  // Delete that user's menu cache:
-  cache_clear_all($user->uid .':', 'cache_menu', TRUE);
   return array('user' => $user);
 }
 
-/*
- * user Action: deletes roles from a given user
+/**
+ * User Action: deletes roles from a given user
  */
 function rules_action_user_removerole($user, $settings) {
   $roles = $settings['roles'];
@@ -191,17 +187,36 @@ function rules_action_user_removerole($user, $settings) {
     }
   }
   user_save($user, array('roles' => $user->roles));
-  // Delete that user's menu cache:
-  cache_clear_all($user->uid .':', 'cache_menu', TRUE);
   return array('user' => $user);
 }
 
 /**
  * Loads a user
  */
-function rules_action_load_user($settings, &$arguments, &$log) {
-  extract(rules_token_replace_all(array('username'), $settings, $arguments, $log));
-
-  $userarray = array('name' => $username, 'uid' => $userid);
+function rules_action_load_user($settings) {
+  $userarray = array('name' => $settings['username'], 'uid' => $settings['userid']);
   return array('user_loaded' => user_load(array_filter($userarray)));
+}
+
+/**
+ * Defines the user data type
+ * @ingroup rules
+ */
+class rules_data_type_user extends rules_data_type {
+
+  function get_info() {
+    return array(
+      'saveable' => FALSE,
+      'identifiable' => TRUE,
+    );
+  }
+
+  function load($uid) {
+    return user_load($uid);
+  }
+
+  function get_identifier() {
+    $user = $this->get();
+    return $user->uid;
+  }
 }

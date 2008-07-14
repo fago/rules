@@ -652,7 +652,7 @@ function rules_admin_element_alter_form(&$form, &$form_state, $element) {
   if (function_exists($function)) {
     $element += array('#settings' => array());
     $function($element['#settings'], $form, $form_state);
-    $form['#validate'][] = $element['#name']. '_validate';
+    $form['submit']['#validate'][] = $element['#name']. '_validate';
   }
 }
 
