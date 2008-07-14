@@ -1,4 +1,5 @@
 <?php
+// $Id$
 
 /**
  * @file Provides functions and classes for handling variables

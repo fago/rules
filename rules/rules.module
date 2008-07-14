@@ -101,6 +101,15 @@ function rules_menu() {
     'type' => MENU_LOCAL_TASK,
     'file' => 'rules.admin_export.inc',
   );
+  $items[RULES_ADMIN_PATH .'/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_settings'),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin.inc',
+    'weight' => 7,
+    'type' => MENU_NORMAL_ITEM,
+  );
   //paths for modifing rules
   $items[RULES_ADMIN_RULE_PATH .'/%rule'] = array(
     'title callback' => 'rules_rule_title',
@@ -801,7 +810,7 @@ function rules_show_log() {
     if ($error) {
       rules_handle_error_msg(t('An error occured during rule evaluation. This is the evaluation log:') .' '. $msg, NULL);
     }
-    else {
+    else if (variable_get('rules_debug', FALSE)) {
       drupal_set_message($msg);
     }
   }
@@ -943,7 +952,7 @@ function rules_enable_items($item_type, $ret = array()) {
 
 /**
  * Invoke an item type specific function, which will be item types
- * base appended with _$op. The parameters given in $params will be 
+ * base appended with _$op. The parameters given in $params will be
  * passed to this function.
  */
 function rules_item_type_invoke($item_type, $op, $params) {

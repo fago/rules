@@ -1,4 +1,6 @@
 <?php
+// $Id$
+
 /**
  * @file
  * Contains functions, that are used for rendering rules with drupal_render()

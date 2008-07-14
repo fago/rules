@@ -122,12 +122,12 @@ function rules_test_rules_defaults() {
       'rules_test_1' => array(
         'label' => 'Rule Testing 1',
         'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'node')),
-        'fixed' => TRUE,
+        'status' => 'fixed',
        ),
       'rules_test_2' => array(
         'label' => 'Rule Testing 2',
         'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'node')),
-        'fixed' => TRUE,
+        'status' => 'fixed',
        ),
       'rules_test_4' => array(
         'label' => 'Rule Testing 4',
@@ -135,12 +135,12 @@ function rules_test_rules_defaults() {
           'rules_test_1' => array('type' => 'rules_test', 'label' => 'node'),
           'rules_test_2' => array('type' => 'rules_test', 'label' => 'node', 'handler' => 'rules_test_4_load_data'),
          ),
-        'fixed' => TRUE,
+        'status' => 'fixed',
        ),
       'rules_test_5' => array(
         'label' => 'Rule Testing 5',
         'arguments' => array(),
-        'fixed' => TRUE,
+        'status' => 'fixed',
        ),
     ),
   );
