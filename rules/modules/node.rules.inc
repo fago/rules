@@ -155,19 +155,20 @@ function node_rules_action_info() {
       'module' => 'Node',
     ),
     'rules_action_add_node' => array(
-     'label' => t('Add new content'),
-     'arguments' => array(
-       'author' => array('type' => 'user', 'label' => t('User, which is set as author of the content')),
+      'label' => t('Add new content'),
+      'arguments' => array(
+        'author' => array('type' => 'user', 'label' => t('User, which is set as author of the content')),
+     // 'title' => array('type' => 'string', 'label' => t('Title'), 'description' => t('Enter the title of the newly created content.')),
       ),
-     'new variables' => array(
-       'node_added' => array('type' => 'node', 'label' => t('Added content')),
+      'new variables' => array(
+        'node_added' => array('type' => 'node', 'label' => t('Added content'), 'save' => TRUE),
       ),
       'module' => 'Node',
     ),
     'rules_action_load_node' => array(
-     'label' => t('Load content by id'),
-     'new variables' => array(
-       'node_loaded' => array('type' => 'node', 'label' => t('Loaded content'), 'label callback' => 'rules_action_load_node_variable_label'),
+      'label' => t('Load content by id'),
+      'new variables' => array(
+        'node_loaded' => array('type' => 'node', 'label' => t('Loaded content'), 'label callback' => 'rules_action_load_node_variable_label'),
       ),
       'module' => 'Node',
     ),
@@ -216,22 +217,18 @@ function rules_action_node_promote($node, $settings) {
  * @ingroup rules
  */
 function rules_action_add_node($author, $settings) {
-  //check if WF-ng should check for access rights of the acting user on node creation.
-  //TODO: In Drupal6, node_access($op, $node, $account = NULL), thus will allow checking also content author
-  if (!$settings['node_access'] || node_access('create', $settings['type'])) {
-    $node = (object)array();
+  if (!$settings['node_access'] || node_access('create', $settings['type'], $author)) {
+
+    include_once drupal_get_path('module', 'node'). '/node.pages.inc';
+
+    $node = (object)array('type' => $settings['type']);
     node_object_prepare($node);
-    //load node options
-    $node_options = variable_get('node_options_'. $settings['type'], array('status', 'promote'));
-    foreach (array('status', 'moderate', 'promote', 'sticky', 'revision') as $key) {
-      $node->$key = in_array($key, $node_options);
-    }
 
     $node->name = $author->name;
     $node->uid = $author->uid;
     $node->type = $settings['type'];
     //TODO: fix token
-    $node->title = rules_token_replace($settings['title'], $settings['title_args'], $arguments, $log);
+    $node->title = $settings['title'];
     return array('node_added' => $node);
   }
 }

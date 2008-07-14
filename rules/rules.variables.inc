@@ -125,7 +125,9 @@ function rules_save_variables($element, $result, &$state) {
 
       $variable = new rules_variable;
       $variable->construct($state, $reverse_map[$argument_name], $result[$argument_name], $info);
-
+      if (isset($info['save']) && $info['save']) {
+        $variable->save();
+      }
       rules_log(t('Successfully added the new variable @arg', array('@arg' => $info['label'])));
     }
     else {
