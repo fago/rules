@@ -476,12 +476,11 @@ function rules_admin_form_edit_action(&$form_state, $element) {
  */
 function rules_admin_form_edit_action_submit($form, &$form_state) {
   $element =& $form_state['element'];
-
-  _rules_save_element_label($element, $form_state['values']['label']);
   $element['#weight'] = $form_state['values']['weight'];
 
   rules_admin_default_argument_form_submit($form, $form_state, $element);
   rules_admin_new_variables_form_submit($form, $form_state, $element);
+  rules_admin_save_element_label($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
 
   drupal_set_message(t('The action %label has been saved.', array('%label' => rules_get_element_label($element))));
@@ -543,12 +542,11 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
  */
 function rules_admin_form_edit_condition_submit($form, &$form_state) {
   $element =& $form_state['element'];
-  _rules_save_element_label($element, $form_state['values']['label']);
-
   foreach (array('negate', 'weight') as $key) {
     $element['#'. $key] = $form_state['values'][$key];
   }
   rules_admin_default_argument_form_submit($form, $form_state, $element);
+  rules_admin_save_element_label($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
   drupal_set_message(t('The condition %label has been saved.', array('%label' => rules_get_element_label($element))));
 }
@@ -1058,13 +1056,40 @@ function _rules_admin_rule_get_new_unique_name() {
 }
 
 /**
- * Only saves the element label, if it has been customized.
+ * Saves the element label, if it has been customized. Otherwise it applies the element
+ * callback.
  */
-function _rules_save_element_label(&$element, $value) {
-  if ($value != rules_get_element_label($element)) {
+function rules_admin_save_element_label($form, &$form_state, &$element) {
+  if ($form_state['values']['label'] != $form['label']['#default_value']) {
+    //label has been customized
     $element['#info']['label callback'] = FALSE;
-    $element['#info']['label'] = $value;
+    $element['#info']['label'] = $form_state['values']['label'];
   }
+  else {
+    $info = rules_get_element_info($element);
+    if (isset($info['label callback']) && function_exists($info['label callback']) && isset($element['#settings']) && $element['#settings']) {
+      $argument_labels = rules_admin_get_argument_labels($form_state['proxy'], $element);
+      $element['#info']['label'] = $info['label callback']($element['#settings'], $argument_labels, $element);
+    }
+  }
+}
+
+/**
+ * Gets the labels of the variables, which are configured to be passed as arguments
+ * to the given element.
+ *
+ * Note that this works only during rule configuration as it makes use of the rule proxy.
+ * If the proxy is not available, FALSE will be returned.
+ */
+function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
+  $labels = array();
+  $names = rules_get_mapped_argument_names($element);
+  $vars = $proxy->get_available_variables();
+  $labels = array();
+  foreach ($names as $argument_name => $variable_name) {
+    $labels[$prefix . $argument_name] = $vars[$variable_name]['label'];
+  }
+  return $labels;
 }
 
 /**

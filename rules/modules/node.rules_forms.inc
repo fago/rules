@@ -18,7 +18,6 @@ function rules_condition_content_is_type_form($settings, &$form) {
   );
 }
 
-
 /**
  * Action node publish configuration form
  */

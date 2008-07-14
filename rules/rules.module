@@ -721,25 +721,13 @@ function rules_get_element_info(&$element) {
 /**
  * Gets the element's label
  */
-function rules_get_element_label($element) {
+function rules_get_element_label(&$element) {
   foreach (array('#label', 'label') as $key) {
     if (isset($element[$key])) {
       return $element[$key];
     }
   }
   if ($info = rules_get_element_info($element)) {
-    return rules_get_label($info, $element);
-  }
-}
-
-/**
- * Gets the label for a information array of the given element
- */
-function rules_get_label($info, $element) {
-  if (isset($info['label callback']) && function_exists($info['label callback']) && isset($element['#settings']) && $element['#settings']) {
-    return $info['label callback']($element['#settings'], $element);
-  }
-  else {
     return isset($info['label']) ? $info['label'] : t('unlabelled');
   }
 }
