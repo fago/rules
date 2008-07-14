@@ -45,13 +45,14 @@ function rules_admin_form_import_submit($form, $form_state) {
  * Item type callback: Customize to be imported rules
  */
 function rules_item_rule_import(&$name, &$rule) {
-  _rules_element_defaults($rule);
-  if ($rule['#status'] == 'custom') {
+  if (!isset($rule['#status']) || $rule['#status'] == 'custom') {
     //generate a new unique name for this rule
     $name = _rules_admin_rule_get_new_unique_name();
     $rule['#name'] = $name;
+    $rule['#status'] = 'custom';
   }
 }
+
 
 /**
  * Exports one ore more configurations
@@ -90,6 +91,10 @@ function rules_admin_form_export_submit($form, &$form_state) {
   foreach (array_filter($form_state['values']['cfg']) as $item_type => $item_names) {
     $items = rules_get_configured_items($item_type);
     $cfgs[$item_type] = array_intersect_key($items, array_filter($item_names));
+    //allow item specific adaption
+    foreach ($cfgs[$item_type] as $item_name => $item) {
+      rules_item_type_invoke($item_type, 'export', array(&$cfgs[$item_type][$item_name]));
+    }
   }
   if ($cfgs) {
     $form_state['cfgs'] = $cfgs;
@@ -98,4 +103,14 @@ function rules_admin_form_export_submit($form, &$form_state) {
     drupal_set_message(t('Please select the items to export.'), 'error');
   }
   $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Item type callback: Customize to be exported rules
+ */
+function rules_item_rule_export(&$rule) {
+  unset($rule['#status']);
+}
+function rules_item_rule_set_export(&$rule_set) {
+  unset($rule_set['status']);
 }
