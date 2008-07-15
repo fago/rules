@@ -10,7 +10,7 @@ function rules_rules_defaults() {
 array (
   'rules' =>
   array (
-    'rules_1' =>
+    'rules_default_rule_1' =>
     array (
       '#type' => 'rule',
       '#set' => 'event_node_view',

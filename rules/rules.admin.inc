@@ -127,9 +127,13 @@ function rules_admin_configuration_status($status) {
 /**
  * Returns the add rule form
  */
-function rules_admin_form_add_rule(&$form_state) {
-  $form_state['set'] = arg(2) != 'trigger';
-  return rules_admin_form_rule_settings(array(), $form_state['set']);
+function rules_admin_form_add_rule(&$form_state, $set_info = FALSE) {
+  $form_state['is_set'] = (boolean)$set_info;
+  $form = rules_admin_form_rule_settings(array(), $form_state['is_set']);
+  if ($set_info) {
+    $form['settings']['set']['#default_value'] = $set_info['name'];
+  }
+  return $form;
 }
 
 function rules_admin_form_add_rule_submit($form_id, &$form_state) {
@@ -152,7 +156,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
 /**
  * Returns the form for the settings of a rule
  */
-function rules_admin_form_rule_settings($rule, $set = FALSE) {
+function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule settings'),
@@ -170,7 +174,7 @@ function rules_admin_form_rule_settings($rule, $set = FALSE) {
     '#default_value' => isset($rule['#set']) ? $rule['#set'] : '',
     '#required' => TRUE,
   );
-  if ($set) {
+  if ($is_set) {
     $form['settings']['set'] += array(
       '#title' =>t('Rule set'),
       '#options' => rules_admin_get_grouped_labels(rules_admin_get_compatible_sets($rule, rules_get_configured_items('rule_sets'))),

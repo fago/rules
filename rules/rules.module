@@ -59,19 +59,11 @@ function rules_menu() {
     'title' => 'Add a new rule',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_add_rule'),
+    'page arguments' => array('rules_admin_form_add_rule', FALSE),
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_SET_PATH] = array(
-    'title' => 'Rule sets',
-    'description' => 'Create and manage rule sets.',
-    'page callback' => 'rules_admin_sets_overview',
-    'access arguments' => array('administer rules'),
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 0,
-    'file' => 'rules.admin_sets.inc',
-  );
+
   foreach (rules_get_items() as $item_type => $info) {
     $items[RULES_ADMIN_PATH .'/'. $item_type .'/%rules_item/delete'] = array(
       'title' => 'Delete',
@@ -93,11 +85,6 @@ function rules_menu() {
     );
   }
 
-  $items[RULES_ADMIN_SET_PATH .'/list'] = array(
-    'title' => 'Overview',
-    'weight' => -5,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
   $items[RULES_ADMIN_PATH .'/ie'] = array(
     'title' => 'Import / Export',
     'page callback' => 'drupal_get_form',
@@ -174,6 +161,41 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
+
+  $items[RULES_ADMIN_SET_PATH] = array(
+    'title' => 'Rule sets',
+    'description' => 'Create and manage rule sets.',
+    'page callback' => 'rules_admin_sets_overview',
+    'access arguments' => array('administer rules'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 0,
+    'file' => 'rules.admin_sets.inc',
+  );
+  $items[RULES_ADMIN_SET_PATH .'/%rules_item'] = array(
+    'type' => MENU_CALLBACK,
+    'title callback' => 'rules_item_title',
+    'title arguments' => array(3),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_edit_rule_set', 3),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(2),
+    'file' => 'rules.admin_sets.inc',
+  );
+  $items[RULES_ADMIN_SET_PATH .'/%rules_item/list'] = array(
+    'title' => 'Overview',
+    'weight' => -5,
+    'load arguments' => array(2),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items[RULES_ADMIN_SET_PATH .'/%rules_item/add'] = array(
+    'title' => 'Add a new rule',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_add_rule', 2),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(2),
+    'file' => 'rules.admin.inc',
+  );
   return $items;
 }
 
@@ -204,6 +226,10 @@ function rule_element_load($id, $rule_name) {
 function rules_rule_title($text, $proxy) {
   $rule = $proxy->get_rule();
   return t($text, array('@label' => $rule['#label']));
+}
+
+function rules_item_title($item) {
+  return check_plain(rules_get_element_label($item));
 }
 
 function rules_item_load($name, $item_type) {
