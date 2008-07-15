@@ -20,8 +20,8 @@ function rules_init() {
 //admin interface paths
 define('RULES_ADMIN_PATH', 'admin/rules');
 define('RULES_ADMIN_TRIGGER_PATH', RULES_ADMIN_PATH. '/trigger');
-define('RULES_ADMIN_SET_PATH', RULES_ADMIN_PATH. '/sets');
-define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rule');
+define('RULES_ADMIN_SET_PATH', RULES_ADMIN_PATH. '/rule_sets');
+define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rules');
 
 
 
@@ -72,6 +72,27 @@ function rules_menu() {
     'weight' => 0,
     'file' => 'rules.admin_sets.inc',
   );
+  foreach (rules_get_items() as $item_type => $info) {
+    $items[RULES_ADMIN_PATH .'/'. $item_type .'/%rules_item/delete'] = array(
+      'title' => 'Delete',
+      'type' => MENU_CALLBACK,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('rules_admin_item_form_delete', 2, 3),
+      'access arguments' => array('administer rules'),
+      'load arguments' => array(2),
+      'file' => 'rules.admin_sets.inc',
+    );
+    $items[RULES_ADMIN_PATH .'/'. $item_type .'/%rules_item/revert'] = array(
+      'title' => 'Revert',
+      'type' => MENU_CALLBACK,
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('rules_admin_item_form_revert', 2, 3),
+      'access arguments' => array('administer rules'),
+      'load arguments' => array(2),
+      'file' => 'rules.admin_sets.inc',
+    );
+  }
+
   $items[RULES_ADMIN_SET_PATH .'/list'] = array(
     'title' => 'Overview',
     'weight' => -5,
@@ -136,14 +157,6 @@ function rules_menu() {
     'load arguments' => array(3),
     'file' => 'rules.admin.inc',
   );
-  $items[RULES_ADMIN_RULE_PATH .'/%rule/delete'] = array(
-    'title' => 'Delete',
-    'type' => MENU_CALLBACK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_delete', 3),
-    'access arguments' => array('administer rules'),
-    'file' => 'rules.admin.inc',
-  );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/delete/%rule_element'] = array(
     'title' => 'Delete',
     'type' => MENU_CALLBACK,
@@ -151,14 +164,6 @@ function rules_menu() {
     'page arguments' => array('rules_admin_form_delete', 3, 5),
     'access arguments' => array('administer rules'),
     'load arguments' => array(3),
-    'file' => 'rules.admin.inc',
-  );
-  $items[RULES_ADMIN_RULE_PATH .'/%rule/revert'] = array(
-    'title' => 'Revert rule configuration',
-    'type' => MENU_CALLBACK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_revert', 3),
-    'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/clone'] = array(
@@ -199,6 +204,14 @@ function rule_element_load($id, $rule_name) {
 function rules_rule_title($text, $proxy) {
   $rule = $proxy->get_rule();
   return t($text, array('@label' => $rule['#label']));
+}
+
+function rules_item_load($name, $item_type) {
+  $items = rules_get_configured_items($item_type);
+  if (!isset($items[$name])) {
+    return FALSE;
+  }
+  return $items[$name] + array('name' => $name);
 }
 
 
@@ -925,6 +938,7 @@ function rules_item_save($item_type, $name, $item) {
  */
 function rules_item_delete($item_type, $name) {
   if ($info = rules_get_items($item_type)) {
+    rules_item_type_invoke($item_type, 'delete', $name);
     db_query("DELETE FROM {". $info['db_table']. "} WHERE name = '%s'", $name);
   }
 }

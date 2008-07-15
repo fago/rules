@@ -237,33 +237,6 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
 }
 
-
-/**
- * Shows the revert configuration form
- */
-function rules_admin_form_revert(&$form_state, $proxy) {
-  $form_state['proxy'] = &$proxy;
-  $rule = $proxy->get_rule();
-  _rules_element_defaults($rule);
-
-  $form = array();
-  $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : RULES_ADMIN_PATH;
-
-  return confirm_form($form,
-    t('Are you sure you want to revert the rule %label to its defaults?', array('%label' => $rule['#label'])),
-    $path,
-    t('This action cannot be undone.'), t('Revert'), t('Cancel')
-  );
-}
-
-function rules_admin_form_revert_submit($form_id, $form_state) {
-  $rule = $form_state['proxy']->get_rule();
-  $form_state['proxy']->delete_rule();
-  rules_clear_cache();
-  drupal_set_message(t("The rule %label has been reverted to its defaults.", array('%label' => $rule['#label'])));
-  $form_state['redirect'] = RULES_ADMIN_PATH;
-}
-
 /*
  * Returns the form for the add operation
  * This handles adding conditions and actions
@@ -830,63 +803,46 @@ function rules_admin_element_help(&$form, $element) {
 }
 
 /**
- * Shows the delete form for rules, conditions and actions
+ * Shows the delete form for elements (conditions, actions, ..)
  */
-function rules_admin_form_delete(&$form_state, $proxy, $element = NULL) {
+function rules_admin_form_delete(&$form_state, $proxy, $element) {
   $form_state['proxy'] = &$proxy;
-  $rule = $proxy->get_rule();
-  _rules_element_defaults($rule);
+
+  //get the item assocaited with $id
+  $form_state['id'] = $element['#id'];
+  _rules_element_defaults($element);
 
   $form = array();
   $path = array();
   $path['path'] = isset($_GET['destination']) ? $_GET['destination'] : RULES_ADMIN_PATH;
 
-  if (!isset($element)) {
-    return confirm_form($form,
-      t('Are you sure you want to delete the rule %label?', array('%label' => $rule['#label'])),
-      $path,
-      t('This action cannot be undone.'), t('Delete'), t('Cancel')
-    );
+  if (isset($element['#logical_op']) && $element['#logical_op']) {
+    $form_state['is_op'] = TRUE;
+    $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => rules_get_element_label($element)));
   }
   else {
-    //get the item assocaited with $id
-    $form_state['id'] = $element['#id'];
-    _rules_element_defaults($element);
-    if (isset($element['#logical_op']) && $element['#logical_op']) {
-      $form_state['is_op'] = TRUE;
-      $text = t('Are you sure you want to delete the logical operation %label?', array('%label' => rules_get_element_label($element)));
-    }
-    else {
-      $text = t('Are you sure you want to delete %label?', array('%label' => rules_get_element_label($element)));
-    }
-    return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+    $text = t('Are you sure you want to delete %label?', array('%label' => rules_get_element_label($element)));
   }
+  return confirm_form($form, $text, $path, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
 }
 
 function rules_admin_form_delete_submit($form_id, $form_state) {
   $rule = $form_state['proxy']->get_rule();
-  if (!isset($form_state['id'])) {
-    $form_state['proxy']->delete_rule();
-    rules_clear_cache();
-    drupal_set_message(t("The rule %label has been deleted.", array('%label' => $rule['#label'])));
+  //get a reference on the element
+  $element = &$form_state['proxy']->get_element(intval($form_state['id']));
+
+  if (isset($form_state['is_op']) && $form_state['is_op']) {
+    drupal_set_message(t("The logical operation %label has been deleted.", array('%label' => rules_get_element_label($element))));
+    //just unset the type, so that containing conditions are not deleted
+    unset($element['#type']);
   }
   else {
-    //get a reference on the element
-    $element = &$form_state['proxy']->get_element(intval($form_state['id']));
-
-    if (isset($form_state['is_op']) && $form_state['is_op']) {
-      drupal_set_message(t("The logical operation %label has been deleted.", array('%label' => rules_get_element_label($element))));
-      //just unset the type, so that containing conditions are not deleted
-      unset($element['#type']);
-    }
-    else {
-      drupal_set_message(t("%label has been deleted.", array('%label' => rules_get_element_label($element))));
-      $element = NULL;
-      //remove the elements key by cleaning the rule
-    }
-    $form_state['proxy']->clean_rule();
-    $form_state['proxy']->save_changes();
+    drupal_set_message(t("%label has been deleted.", array('%label' => rules_get_element_label($element))));
+    $element = NULL;
+    //remove the elements key by cleaning the rule
   }
+  $form_state['proxy']->clean_rule();
+  $form_state['proxy']->save_changes();
   $form_state['redirect'] = RULES_ADMIN_PATH;
 }
 

@@ -188,7 +188,6 @@ class rules_admin_rule_proxy {
 
   /**
    * Gets the set of this rule, which contains only active rules.
-   * If there ar
    */
   function get_set() {
     $rule = $this->get_rule();
