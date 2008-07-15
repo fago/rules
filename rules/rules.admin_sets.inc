@@ -18,7 +18,7 @@ function rules_admin_sets_overview() {
   $rows = array();
 
   foreach ($sets as $name => $set_info) {
-    $set_info += array('status' => 'altered');
+    $set_info += array('status' => 'default');
 
     $path = RULES_ADMIN_SET_PATH .'/'. $name;
     $ops = array();
@@ -109,4 +109,57 @@ function rules_item_rule_set_delete($set_name) {
       rules_item_delete('rules', $name);
     }
   }
+}
+
+
+/**
+ * Shows the rule set edit page form
+ */
+function rules_admin_form_edit_rule_set(&$form_state, $set_info) {
+  $form_state['set'] = $set_info;
+  $form = rules_admin_form_rule_set_settings($set_info);
+
+  $form['active_header'] = array('#value' => '<br /><h3>'. t('Active rules'). '</h3>');
+  $form['active'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => TRUE));
+  $form['active']['#suffix'] = '<br />';
+  $form['inactive_header'] = array('#value' => '<h3>'. t('Inactive rules'). '</h3>');
+  $form['inactive'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => FALSE));
+
+  if (variable_get('rules_show_fixed', FALSE)) {
+    $form['fixed_header'] = array('#value' => '<h3>'. t('Fixed rules'). '</h3>');
+    $form['fixed'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => TRUE, 'fixed' => TRUE));
+  }
+  return $form;
+}
+
+
+/**
+ * Returns the form for the settings of a rule
+ */
+function rules_admin_form_rule_set_settings($set_info) {
+  $form['settings'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Rule set settings'),
+    '#collapsible' => TRUE,
+  );
+  $form['settings']['label'] = array(
+    '#title' => t('Label'),
+    '#type' => 'textfield',
+    '#description' => t('Choose an appropriate label for this rule set.'),
+    '#default_value' => isset($set_info['label']) ? $set_info['label'] : '',
+    '#required' => TRUE,
+  );
+  $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
+  return $form;
+}
+
+function rules_admin_form_edit_rule_set_submit($form, &$form_state) {
+  $set_info = $form_state['set'];
+  $set_info['label'] = $form_state['values']['label'];
+  if (!isset($set_info['status']) || $set_info['status'] == 'default') {
+    $set_info['status'] = 'altered';
+  }
+  unset($set_info['name']);
+  rules_item_save('rule_sets', $form_state['set']['name'], $set_info);
+  drupal_set_message(t("The rule set %label has been updated.", array('%label' => $set_info['label'])));
 }
