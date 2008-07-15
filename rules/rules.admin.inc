@@ -91,14 +91,14 @@ function rules_admin_overview_table($params) {
         l($rule['#label'], $path .'/edit'),
         check_plain(rules_get_element_label(rules_get_rule_sets($rule['#set']))),
         implode(', ', $categories),
-        rules_admin_configuration_status($rule),
+        rules_admin_configuration_status($rule['#status']),
         implode(' ', $ops),
       );
     }
   }
 
   if (count($rows)) {
-    return array('#value' => theme('table', $header, $rows, array('class' => 'rules-ng-configurations')));
+    return array('#value' => theme('table', $header, $rows, array('class' => 'rules-rule-configurations')));
   }
 
   return array('#value' => '<p>'. t('None') .'</p>');
@@ -107,16 +107,16 @@ function rules_admin_overview_table($params) {
 /**
  * Returns the status of the configuration as html.
  */
-function rules_admin_configuration_status($rule) {
-  if ($rule['#status'] == 'altered') {
+function rules_admin_configuration_status($status) {
+  if ($status == 'altered') {
     $help = t('This rule has been provided by a module, but has been modified.');
     return '<span title="'. $help .'">'. t('Modified'). '</span>';
   }
-  else if ($rule['#status'] == 'fixed') {
+  else if ($status == 'fixed') {
     $help = t('This rule has been provided by a module and can\'t be customized.');
     return '<span title="'. $help .'">'. t('Fixed') .'</span>';
   }
-  else if ($rule['#status'] == 'custom') {
+  else if ($status == 'custom') {
     $help = t('A custom defined rule.');
     return '<span title="'. $help .'">'. t('Custom'). '</span>';
   }
