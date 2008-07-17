@@ -199,6 +199,18 @@ function rules_action_load_user($settings) {
 }
 
 /**
+ * Implementation of hook_rules_data_type_info()
+ */
+function user_rules_data_type_info() {
+  return array(
+    'user' => array(
+      'label' => t('User'),
+      'class' => 'rules_data_type_user',
+    ),
+  );
+}
+
+/**
  * Defines the user data type
  * @ingroup rules
  */

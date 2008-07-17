@@ -246,7 +246,17 @@ function rules_action_load_node_variable_label($settings) {
   return t('Content with id @id', array('@id' => $settings['nid']));
 }
 
-
+/**
+ * Implementation of hook_rules_data_type_info()
+ */
+function node_rules_data_type_info() {
+  return array(
+    'node' => array(
+      'label' => t('Content'),
+      'class' => 'rules_data_type_node',
+    ),
+  );
+}
 
 /**
  * Defines the node type

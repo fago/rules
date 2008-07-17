@@ -9,9 +9,10 @@
  * Gets the right data object for the given argument information
  */
 function rules_get_data_object($info) {
-  $class = 'rules_data_type_'. $info['type'];
-  $class = class_exists($class) ? $class : 'rules_data_type';
-
+  $class = 'rules_data_type';
+  if (($data_type = rules_get_data_types($info['type'])) && class_exists($data_type['class'])) {
+    $class = $data_type['class'];
+  }
   return new $class;
 }
 
@@ -119,7 +120,17 @@ class rules_data_type {
 
 }
 
-
+/**
+ * Implementation of hook_rules_data_type_info()
+ */
+function rules_rules_data_type_info() {
+  return array(
+    'string' => array(
+      'label' => t('String'),
+      'class' => 'rules_data_type_string',
+    ),
+  );
+}
 
 
 /**

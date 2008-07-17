@@ -286,6 +286,13 @@ function rules_get_items($key = 'all') {
 }
 
 /**
+ * Returns info about all defined data types
+ */
+function rules_get_data_types($key = 'all') {
+  return rules_gather_data('rules_data_type_info', $key);
+}
+
+/**
  * Returns all defined item defaults
  * $item_type Which defaults to return, e.g. 'rules', 'rule_sets' or 'states'
  */
