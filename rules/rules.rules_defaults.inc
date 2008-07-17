@@ -17,7 +17,7 @@ array (
       '#label' => 'Example rule',
       '#active' => 1,
       '#weight' => '0',
-      '#name' => 'rules_1',
+      '#name' => 'rules_default_rule_1',
       '#conditions' =>
       array (
         0 =>

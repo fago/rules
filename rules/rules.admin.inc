@@ -65,7 +65,9 @@ function rules_admin_overview_table($params) {
   $params += array('category' => NULL, 'set' => NULL, 'active' => TRUE, 'fixed' => FALSE);
   extract($params);
 
-  $header = array(t('Label'), t('Event'), t('Category'), t('Status'), t('Operations'));
+  $is_set = $set && strpos($set, 'event_') === FALSE;
+
+  $header = array(t('Label'), $is_set ? t('Set') : t('Event'), t('Category'), t('Status'), t('Operations'));
   $rows = array();
 
   foreach (element_children($rules) as $name) {
@@ -212,6 +214,7 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
 
+  rules_admin_fix_breadcrumb(strpos($rule['#set'], 'event_') === FALSE);
   $form = rules_admin_form_rule_settings($rule);
 
   //help
@@ -1084,3 +1087,15 @@ function rules_admin_settings(&$form_state) {
   );
   return system_settings_form($form);
 }
+
+
+/**
+ * Fixes the breadcrumb on the rule edit/delete/revert
+ */
+function rules_admin_fix_breadcrumb($is_set = FALSE) {
+  $breadcrumb = drupal_get_breadcrumb();
+  $item = menu_get_item($is_set ? RULES_ADMIN_SET_PATH : RULES_ADMIN_TRIGGER_PATH);
+  $breadcrumb[] = l($item['title'], $item['href'], $item['localized_options']);
+  drupal_set_breadcrumb($breadcrumb);
+}
+
