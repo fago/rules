@@ -291,7 +291,6 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
 function rules_admin_form_add_action(&$form_state, &$element) {
   $vars = $form_state['proxy']->get_available_variables();
   $actions = rules_admin_filter_info($vars, rules_get_actions());
-
   $form['name'] = array(
     '#type' => 'select',
     '#title' => t('Select an action to add'),
