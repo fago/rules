@@ -120,6 +120,11 @@ class rules_data_type {
 
 }
 
+
+
+
+
+
 /**
  * Implementation of hook_rules_data_type_info()
  */

@@ -136,7 +136,7 @@ function rules_admin_form_edit_rule_set(&$form_state, $set_info) {
 /**
  * Returns the form for the settings of a rule
  */
-function rules_admin_form_rule_set_settings($set_info) {
+function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule set settings'),
@@ -149,6 +149,15 @@ function rules_admin_form_rule_set_settings($set_info) {
     '#default_value' => isset($set_info['label']) ? $set_info['label'] : '',
     '#required' => TRUE,
   );
+  if ($add) {
+    $form['settings']['name'] = array(
+      '#title' => t('Machine readable name'),
+      '#type' => 'textfield',
+      '#description' => t('Specify a unique name containing only digits, numbers and underscores.'),
+      '#default_value' => isset($set_info['name']) ? $set_info['name'] : '',
+      '#required' => TRUE,
+    );
+  }
   $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
   return $form;
 }
@@ -162,4 +171,209 @@ function rules_admin_form_edit_rule_set_submit($form, &$form_state) {
   unset($set_info['name']);
   rules_item_save('rule_sets', $form_state['set']['name'], $set_info);
   drupal_set_message(t("The rule set %label has been updated.", array('%label' => $set_info['label'])));
+}
+
+
+/**
+ * Form for adding a rule set
+ */
+function rules_admin_form_add_rule_set(&$form_state) {
+  //in case of non-js we degrade to a multistep form
+  $set_info = isset($form_state['set']) ? $form_state['set'] : array('arguments' => array());
+
+  $form = rules_admin_form_rule_set_settings($set_info, TRUE);
+  unset($form['settings']['button']);
+
+  //add form for specifying arguments
+  $form['args'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Arguments'),
+    '#collapsible' => TRUE,
+    '#prefix' => '<div id="rules-set-args">',
+    '#suffix' => '</div>',
+    '#tree' => TRUE,
+    '#theme' => 'rules_admin_form_arguments',
+    '#description' => t('You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only digits, numbers and underscores.'),
+  );
+  foreach ($set_info['arguments'] as $name => $info) {
+    $form['settings']['args'][$name] = _rules_admin_form_argument($name, $info);
+  }
+  for ($i = 0; $i < 3; $i++) {
+    $form['args'][$i] = _rules_admin_form_argument();
+  }
+
+  $form['args']['rules_more'] = array(
+    '#type' => 'submit',
+    '#value' => t('More arguments'),
+    '#description' => t("If the amount of boxes above isn't enough, click here to add more arguments."),
+    '#weight' => 1,
+    '#submit' => array('rules_admin_form_add_rule_set_rebuild'), // If no javascript action.
+    '#ahah' => array(
+      'path' => RULES_ADMIN_SET_PATH .'/js',
+      'wrapper' => 'rules-set-args',
+      'method' => 'replace',
+    ),
+  );
+  $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save'));
+  return $form;
+}
+
+/**
+ * Validates the set and builds it -> $form_state['set']
+ */
+function rules_admin_form_add_rule_set_validate($form, &$form_state) {
+
+  if (!eregi('^[0-9a-z_]*$', $form_state['values']['name'])) {
+    form_set_error('name', t('The name may contain only digits, numbers and underscores.'));
+  }
+
+  //validate the arguments
+  unset($form_state['values']['args']['rules_more']);
+  foreach ($form_state['values']['args'] as $i => $values) {
+    if (array_filter($values)) {
+      foreach (array('name', 'type', 'label') as $key) {
+        if (!$values[$key]) {
+          form_set_error(implode('][', array('args', $i, $key)), t('All fields of an argument are required.'));
+        }
+      }
+      if (!eregi('^[0-9a-z_]*$', $values['name'])) {
+        form_set_error(implode('][', array('args', $i, 'name')), t('The name may contain only digits, numbers and underscores.'));
+      }
+    }
+    else {
+      unset($form_state['values']['args'][$i]);
+    }
+  }
+  //build  the set
+  $set_info = array('arguments' => array());
+  $set_info['label'] = $form_state['values']['label'];
+  $set_info['name'] = $form_state['values']['name'];
+
+  foreach ($form_state['values']['args'] as $i => $values) {
+    if (isset($set_info['arguments'][ $values['name'] ])) {
+      form_set_error('args]['. $i .'][name', t('Each name may be used only once.'));
+    }
+    else {
+      $set_info['arguments'][ $values['name'] ] = array(
+        'label' => $values['label'],
+        'type' => $values['type'],
+      );
+    }
+  }
+  $form_state['set'] = $set_info;
+}
+
+function rules_admin_form_add_rule_set_rebuild($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+}
+
+function _rules_admin_form_argument($name = '', $info = array()) {
+  $form = array();
+  $form['label'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Label'),
+    '#size' => 40,
+    '#default_value' => isset($info['label']) ? $info['label'] : '',
+  );
+  $options = rules_extract_property(rules_get_data_types(), 'label');
+  asort($options);
+  $form['type'] = array(
+    '#type' => 'select',
+    '#title' => t('Data type'),
+    '#options' => array(0 => '--') + $options,
+    '#default_value' => isset($info['type']) ? $info['type'] : '',
+  );
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Machine readable variable name'),
+    '#size' => 40,
+    '#default_value' => $name,
+  );
+  return $form;
+}
+
+/**
+ * A generic AHAH JS callback. Gets the cached form and passes it to the given callback
+ * to alter it. The callback returns the a reference on the to be rendered form,
+ * which is rendered and returned to the JS.
+ */
+function rules_admin_form_js($callback) {
+  $form_state = array('submitted' => FALSE);
+  $form_build_id = $_POST['form_build_id'];
+  // Add the new element to the stored form. Without adding the element to the
+  // form, Drupal is not aware of this new elements existence and will not
+  // process it. We retreive the cached form, add the element, and resave.
+  $form = form_get_cache($form_build_id, $form_state);
+
+  $render =& $callback($form);
+
+  form_set_cache($form_build_id, $form, $form_state);
+  $form += array(
+    '#post' => $_POST,
+    '#programmed' => FALSE,
+  );
+  // Rebuild the form.
+  $form = form_builder($_POST['form_id'], $form, $form_state);
+
+  // Render the new output.
+  print drupal_to_js(array('data' => drupal_render($render), 'status' => TRUE));
+  exit();
+}
+
+/**
+ * rules AHAH JS callback for adding arguments
+ */
+function &rules_admin_form_add_rule_set_add_arguments(&$form) {
+  $start = count($form['args']) - 1;
+  for ($i = $start; $i - $start < 3; $i++) {
+    $form['args'][$i] = _rules_admin_form_argument();
+  }
+  return $form['args'];
+}
+
+/**
+ * Themes the rules set arguments adding form
+ */
+function theme_rules_admin_form_arguments($form) {
+  $rows = array();
+  $headers = array(
+    t('Label'),
+    t('Data type'),
+    t('Machine readable name'),
+  );
+
+  $button = drupal_render($form['rules_more']);
+  unset($form['rules_more']);
+
+  foreach (element_children($form) as $key) {
+    // No need to print the field title every time.
+    unset($form[$key]['label']['#title'], $form[$key]['name']['#title'], $form[$key]['type']['#title']);
+    // Build the table row.
+    $row = array(
+      'data' => array(
+        array('data' => drupal_render($form[$key]['label']), 'class' => 'rules-argument-label'),
+        array('data' => drupal_render($form[$key]['type']), 'class' => 'rules-argument-data-type'),
+        array('data' => drupal_render($form[$key]['name']), 'class' => 'rules-argument-name'),
+      ),
+    );
+    // Add additional attributes to the row, such as a class for this row.
+    if (isset($form[$key]['#attributes'])) {
+      $row = array_merge($row, $form[$key]['#attributes']);
+    }
+    $rows[] = $row;
+  }
+
+  $output = theme('table', $headers, $rows);
+  $output .= drupal_render($form) . $button;
+  return $output;
+}
+
+
+function rules_admin_form_add_rule_set_submit($form, &$form_state) {
+  $set_info = $form_state['set'];
+  $set_info['status'] = 'custom';
+  unset($set_info['name']);
+  rules_item_save('rule_sets', 'rules_'. $form_state['set']['name'], $set_info);
+  drupal_set_message(t("The rule set %label has been added.", array('%label' => $set_info['label'])));
+  $form_state['redirect'] = RULES_ADMIN_SET_PATH;
 }
