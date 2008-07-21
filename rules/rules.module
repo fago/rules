@@ -171,6 +171,26 @@ function rules_menu() {
     'weight' => 0,
     'file' => 'rules.admin_sets.inc',
   );
+  $items[RULES_ADMIN_SET_PATH .'/list'] = array(
+    'title' => 'Overview',
+    'weight' => -5,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+  $items[RULES_ADMIN_SET_PATH .'/add'] = array(
+    'title' => 'Add a new rule set',
+    'type' => MENU_LOCAL_TASK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_form_add_rule_set', 2),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin_sets.inc',
+  );
+  $items[RULES_ADMIN_SET_PATH .'/js'] = array(
+    'type' => MENU_CALLBACK,
+    'page callback' => 'rules_admin_form_js',
+    'page arguments' => array('rules_admin_form_add_rule_set_add_arguments'),
+    'access arguments' => array('administer rules'),
+    'file' => 'rules.admin_sets.inc',
+  );
   $items[RULES_ADMIN_SET_PATH .'/%rules_item'] = array(
     'type' => MENU_CALLBACK,
     'title callback' => 'rules_item_title',
@@ -260,6 +280,10 @@ function rules_theme() {
       'file' => 'rules.admin_render.inc'
     );
   }
+  $items['rules_admin_form_arguments'] = array(
+    'arguments' => array('elements' => NULL),
+    'file' => 'rules.admin_sets.inc'
+  );
   return $items;
 }
 
