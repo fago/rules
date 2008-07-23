@@ -6,6 +6,18 @@
  */
 require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
 
+/**
+ * Implementation of hook_help().
+ */
+function rules_help($path, $arg) {
+  switch ($path) {
+    case 'admin/rules/rule_sets':
+      return '<p>' . t('Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module.') . '</p>';
+    case 'admin/rules/trigger':
+      return '<p>' . t('This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met.') . '</p>';
+  }
+}
+
 
 /**
  * Lists the available rules.
