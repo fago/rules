@@ -17,8 +17,9 @@ function rules_uninstall() {
   drupal_uninstall_schema('rules');
   variable_del('rules_inactive_sets');
   variable_del('rules_show_fixed');
+  variable_del('rules_hide_token_message');
   variable_del('rules_debug');
-
+  
   //item tables have to be dropped manually, as the rules schema doesn't include it
   //when the item's module is disabled
   $ret = array();
