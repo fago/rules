@@ -11,6 +11,8 @@ require_once drupal_get_path('module', 'rules') . '/rules.admin_rule_proxy.inc';
  * Lists the available rules.
  */
 function rules_admin_form_overview(&$form_state) {
+  // Check if token module is present.
+  rules_admin_check_token();
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -104,6 +106,19 @@ function rules_admin_overview_table($params) {
   }
 
   return array('#value' => '<p>'. t('None') .'</p>');
+}
+
+/**
+ * Check to see if the token module is installed, and if not put up
+ * a message.
+ *
+ * Only call this function if the user is already in a position for this to
+ * be useful.
+ */
+function rules_admin_check_token() {
+  if (!variable_get('rules_hide_token_message', FALSE) && !module_exists('token')) {
+    drupal_set_message(t('If you install the token module from !href, token replacements will be supported (but it\'s not yet done). <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/token', 'http://drupal.org/project/token'), '@hide' => url('admin/rules/settings'))));
+  }
 }
 
 /**
@@ -1081,6 +1096,12 @@ function rules_admin_settings(&$form_state) {
     '#title' => t('Show fixed rules and rule sets'),
     '#default_value' => variable_get('rules_show_fixed', FALSE),
     '#description' => t('When activated, fixed items provided by modules are shown in the admin center too.'),
+  );
+  $form['rules_hide_token_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Ignore missing token module'),
+    '#default_value' => variable_get('rules_hide_token_message', FALSE),
+    '#description' => t('Rules can use the token module to provide token replacements; if this module is not present rules will complain, unless this setting is checked.'),
   );
   return system_settings_form($form);
 }
