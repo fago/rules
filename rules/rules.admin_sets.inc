@@ -14,7 +14,7 @@ function rules_admin_sets_overview() {
   $sets = array_filter($sets, 'rules_admin_element_filter');
   ksort($sets);
 
-  $header = array(t('Label'), t('Category'), t('Status'), t('Operations'));
+  $header = array(t('Label'), t('Name'), t('Category'), t('Status'), t('Operations'));
   $rows = array();
 
   foreach ($sets as $name => $set_info) {
@@ -35,6 +35,7 @@ function rules_admin_sets_overview() {
 
     $rows[] = array(
       l($set_info['label'], $path .'/edit'),
+      check_plain($name),
       implode(', ', $categories),
       rules_admin_configuration_status($set_info['status']),
       implode(' ', $ops),

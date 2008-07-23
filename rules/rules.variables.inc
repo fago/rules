@@ -96,6 +96,7 @@ function rules_get_execution_arguments($element, &$state) {
     //we always append some other useful variables
     $settings = isset($element['#settings']) ? $element['#settings'] : array();
     $exec_args[] = $settings;
+    $exec_args[] = $element;
     $exec_args[] = &$state;
     return $exec_args;
   }

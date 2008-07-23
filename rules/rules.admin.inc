@@ -626,22 +626,20 @@ function rules_admin_form_edit_delete_submit($form, &$form_state) {
  */
 function rules_admin_element_alter_form(&$form, &$form_state, $element) {
   rules_include('rules_forms');
-  $function = $element['#name']. '_form';
+  $element += array('#settings' => array());
 
-  if (function_exists($function)) {
-    $element += array('#settings' => array());
-    $function($element['#settings'], $form, $form_state);
-    $form['submit']['#validate'][] = $element['#name']. '_validate';
-  }
+  rules_element_invoke($element, 'form', array($element['#settings'], &$form, &$form_state), FALSE);
+  $form['submit']['#validate'][] = 'rules_admin_element_alter_form_validate';
+}
+
+function rules_admin_element_alter_form_validate(&$form, &$form_state) {
+  rules_include('rules_forms');
+  rules_element_invoke($form_state['element'], 'validate', array(&$form, &$form_state), FALSE);
 }
 
 function rules_admin_element_alter_form_submit(&$form, &$form_state, $element) {
   rules_include('rules_forms');
-  $function = $element['#name']. '_submit';
-
-  if (function_exists($function)) {
-    $function($element['#settings'], $form, $form_state);
-  }
+  rules_element_invoke($element, 'submit', array($element['#settings'], &$form, &$form_state), FALSE);
 }
 
 /**
