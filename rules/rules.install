@@ -31,10 +31,12 @@ function rules_uninstall() {
  * Implementation of hook_schema.
  */
 function rules_schema() {
-  //define a table for each item
+  // define a table for each item
   $items = rules_get_items();
 
   if (!module_exists('rules')) {
+    // when the module is installed, the hook implementation of rules is not invoked,
+    // as the module is not yet active. So we manually add our item types in here.
     $items += rules_rules_item_info();
   }
 
@@ -72,7 +74,7 @@ function rules_schema() {
  */
 function rules_helper_do_recursive($function, &$elements) {
   $function($elements);
-  //recurse
+  // recurse
   foreach (element_children($elements) as $key) {
     rules_helper_do_recursive($function, $elements[$key]);
   }
