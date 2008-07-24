@@ -1111,7 +1111,7 @@ if (!function_exists('array_intersect_key')) {
  * Implementation of hook_form_alter()
  * Clear the cache when a module is deactivated
  */
-function rules_form_alter($form_id, $form) {
+function rules_form_alter($form, $form_state, $form_id) {
   if ($form_id == 'system_modules') {
     rules_clear_cache();
   }
