@@ -100,7 +100,6 @@ function rules_php_eval_return($code, $arguments = array()) {
 }
 
 
-
 /**
  * Implementation of hook_action_info()
  */

@@ -34,7 +34,8 @@ function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
 
   $output .= theme('table', $headers, $rows, array('class' => 'rules-php-help'));
   if ($save_info) {
-    $output .= '<p>'. t('To let rules intelligently save variables that support "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
+    $output .= '<p>'. t('Note that variables are passed by reference, so you can change them.'). ' ';
+    $output .= t('If you want to make the changes permanent, you can let rules intelligently save the changes when the variable\'s data type supports it. To make use of "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
   }
   return $output;
 }
