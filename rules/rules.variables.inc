@@ -89,7 +89,12 @@ function rules_get_mapped_argument_names($element) {
  */
 function rules_get_execution_arguments(&$element, &$state) {
   //apply the input evaluators
-  rules_apply_input_evaluators($element, $state);
+  $success = rules_apply_input_evaluators($element, $state);
+
+  if ($success === FALSE) {
+    rules_log(t('Element %name has not been executed. There are not all execution arguments needed by an input evaluator available.', array('%name' => rules_get_element_label($element))));
+    return FALSE;
+  }
 
   $element['#settings'] += array('#argument map' => array());
   //first off map the names to the argument names of the evaluated set
