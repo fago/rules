@@ -488,7 +488,6 @@ function rules_admin_form_edit_action_submit($form, &$form_state) {
   rules_admin_new_variables_form_submit($form, $form_state, $element);
   rules_admin_save_element_label($form, $form_state, $element);
   rules_admin_element_alter_form_submit($form, $form_state, $element);
-
   drupal_set_message(t('The action %label has been saved.', array('%label' => rules_get_element_label($element))));
 }
 
@@ -741,6 +740,7 @@ function rules_admin_new_variables_form_submit(&$form, &$form_state, &$element) 
  * Returns the argument form for the given element
  */
 function rules_admin_default_argument_form(&$form, &$form_state, $element) {
+  $form['input_help'] = rules_input_evaluators_help($element, $form_state['proxy']->get_available_variables($form_state['element']['#id']));
   $form['settings'] = array('#tree' => TRUE);
   $form['map'] = array('#tree' => TRUE);
 

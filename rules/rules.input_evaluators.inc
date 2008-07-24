@@ -64,3 +64,23 @@ function rules_apply_input_evaluators(&$element, &$state) {
   }
 }
 
+/**
+ * Returns help for the input evalutors as an array as suitable for drupal_render().
+ */
+function rules_input_evaluators_help($element, $variables) {
+  $render = array();
+  if (rules_get_settings_to_evaluate($element)) {
+    foreach(rules_get_input_evaluators() as $base => $info) {
+      $render[$base] = array(
+        '#type' => 'fieldset',
+        '#title' => check_plain($info['label']),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#weight' => $info['weight'],
+      );
+      $return = call_user_func_array($base. '_help', array($variables));
+      $render[$base]['content'] = is_array($return) ? $return : array('#value' => $return);
+    }
+  }
+  return $render;
+}
