@@ -29,13 +29,15 @@ function php_rules_evaluator() {
  *   If NULL is returned the input evaluator will be skipped later.
  */
 function rules_input_evaluator_php_prepare($string, $variables) {
-  $used_vars = array();
-  foreach ($variables as $name => $info) {
-    if (strpos($string, '$'. $name) !== FALSE) {
-      $used_vars[] = $name;
+  if (strpos($string, '<?') !== FALSE) {
+    $used_vars = array();
+    foreach ($variables as $name => $info) {
+      if (strpos($string, '$'. $name) !== FALSE) {
+        $used_vars[] = $name;
+      }
     }
+    return $used_vars;
   }
-  return $used_vars;
 }
 
 /**
@@ -62,8 +64,32 @@ function rules_input_evaluator_php_apply($string, $data = NULL, &$state) {
 /**
  * Returns some help for the admin using the evaluator
  */
-function rules_input_evaluator_php_help() {
+function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
+  $output = '<p>'.t('PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2.');
+  $output .= ' '. t('Furthermore you can make use of the following variables:') . '</p>';
+  $headers = array(t('Variable'), t('Type'), t('Description'), );
+  if ($save_info) {
+    $headers[] = t('Saveable');
+  }
+  $rows = array();
+  foreach ($variables as $name => $info) {
+    $row = array();
+    $row[] = '$'. check_plain($name);
+    $row[] = check_plain($info['type']);
+    $row[] = check_plain($info['label']);
+    if ($save_info) {
+      if (isset($entity_info[$argument['#entity']]['#save']) && function_exists($entity_info[$argument['#entity']]['#save'])) {
+        $row[] = (isset($argument['#saved']) && $argument['#saved']) ? t('Yes (Automatic)') : t('Yes');
+      }
+      else {
+        $row[] = t('No');
+      }
+    }
+    $rows[] = $row;
+  }
 
+  $output .= theme('table', $headers, $rows, array('class' => 'rules-php-help'));
+  return $output;
 }
 
 
