@@ -773,6 +773,7 @@ function rules_get_element_info(&$element) {
       'arguments' => array(),
       'new variables' => array(),
       'hidden' => FALSE,
+      'eval input' => array(),
       'label callback' => $element['#name'] .'_label'
     );
   }
@@ -1055,7 +1056,7 @@ function rules_rules_item_info() {
     ),
     'rule_sets' => array(
       'label' => t('Rule Sets'),
-      'db_table' => 'rule_sets',
+      'db_table' => 'rules_sets',
       'base' => 'rules_item_rule_set',
     ),
   );
@@ -1158,9 +1159,10 @@ function _rules_include_get_files($type) {
   $rules_path = drupal_get_path('module', 'rules');
 
   if ($type == 'rules') {
-    //make sure this is included before, as it contains the data base class
+    //make sure this is included before, as it contains some base classes
     $files[] = $rules_path . '/rules.data_types.inc';
     $files[] = $rules_path . '/rules.variables.inc';
+    $files[] = $rules_path . '/rules.input_evaluators.inc';
   }
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);

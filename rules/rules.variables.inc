@@ -36,7 +36,7 @@ function _rules_initialize_variables(&$state, $args) {
 }
 
 /**
- * Gets an array of entities.
+ * Gets an array of variables.
  * @param $names An array of variable names to get
  * @param $state The current evalutation state
  * @param $load Use variable handler to load variables, if necessary.
@@ -80,13 +80,17 @@ function rules_get_mapped_argument_names($element) {
 
 /**
  * Returns the execution arguments needed by the given element
- * It applies the #argument map and gets all needed arguments.
+ * It applies the input evaluators and the #argument map and gets
+ * all needed arguments.
  *
  * @param $element The configured element, which is to be executed
  * @param $state The current evaluation state
  * @return If not all execution arguments are available, it returns FALSE
  */
 function rules_get_execution_arguments($element, &$state) {
+  //apply the input evaluators
+  rules_apply_input_evaluators($element, $state);
+
   $element['#settings'] += array('#argument map' => array());
   //first off map the names to the argument names of the evaluated set
   $names = rules_get_mapped_argument_names($element);
