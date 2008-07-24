@@ -87,7 +87,7 @@ function rules_get_mapped_argument_names($element) {
  * @param $state The current evaluation state
  * @return If not all execution arguments are available, it returns FALSE
  */
-function rules_get_execution_arguments($element, &$state) {
+function rules_get_execution_arguments(&$element, &$state) {
   //apply the input evaluators
   rules_apply_input_evaluators($element, $state);
 
@@ -114,7 +114,6 @@ function rules_get_execution_arguments($element, &$state) {
 function rules_save_variables($element, $result, &$state) {
   $element_info = rules_get_element_info($element);
   $reverse_map = array_flip($element['#settings']['#argument map']);
-
   foreach (element_children($result) as $argument_name) {
     $reverse_map += array($argument_name => $argument_name);
 
