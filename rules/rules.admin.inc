@@ -663,9 +663,9 @@ function rules_admin_element_alter_form_validate(&$form, &$form_state) {
   rules_element_invoke($form_state['element'], 'validate', array(&$form, &$form_state), FALSE);
 }
 
-function rules_admin_element_alter_form_submit(&$form, &$form_state, $element) {
+function rules_admin_element_alter_form_submit(&$form, &$form_state, &$element) {
   rules_include('rules_forms');
-  rules_element_invoke($element, 'submit', array($element['#settings'], &$form, &$form_state), FALSE);
+  rules_element_invoke($element, 'submit', array(&$element['#settings'], &$form, &$form_state), FALSE);
 }
 
 /**
