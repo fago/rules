@@ -113,7 +113,7 @@ function node_rules_condition_info() {
  * Condition: Check for selected content types
  * @ingroup rules
  */
-function rules_condition_content_is_type($node, $settings) {
+function rules_condition_content_is_type(&$node, $settings) {
   return in_array($node->type, $settings['type']);
 }
 
