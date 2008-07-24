@@ -59,6 +59,10 @@ function rules_apply_input_evaluators(&$element, &$state) {
     foreach ($settings['#eval input'] as $base => $info) {
       foreach ($info as $name => $data) {
         $settings[$name] = call_user_func_array($base. '_apply', array($settings[$name], $data, &$state));
+        if ($settings[$name] === FALSE) {
+          // application failed
+          return FALSE;
+        }
       }
     }
   }

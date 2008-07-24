@@ -59,8 +59,8 @@ function rules_input_evaluator_php_apply($string, $data = NULL, &$state, $return
   if ($data) {
     $vars = rules_get_variables($data, $state);
     if (!$vars) {
-      rules_log(t('PHP code is not evaluated as there are not all used variables available.'));
-      return $string;
+      //there not all needed variables available!
+      return FALSE;
     }
   }
   $function = $return_output ? 'rules_php_eval' : 'rules_php_eval_return';
