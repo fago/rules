@@ -104,11 +104,11 @@ function rules_admin_overview_table($params) {
       $categories = array_map('check_plain', $rule['#categories']);
 
       $rows[] = array(
-        l($rule['#label'], $path .'/edit'),
-        check_plain(rules_get_element_label(rules_get_rule_sets($rule['#set']))),
-        implode(', ', $categories),
-        rules_admin_configuration_status($rule['#status']),
-        implode(' ', $ops),
+      l($rule['#label'], $path .'/edit'),
+      check_plain(rules_get_element_label(rules_get_rule_sets($rule['#set']))),
+      implode(', ', $categories),
+      rules_admin_configuration_status($rule['#status']),
+      implode(' ', $ops),
       );
     }
   }
@@ -528,7 +528,7 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
     '#value' => t('Save'),
     '#validate' => array('rules_admin_form_unpack_storage'),
     '#submit' => array('rules_admin_form_edit_condition_submit', 'rules_admin_form_edit_save'),
-    );
+  );
   if (isset($element['#id'])) {
     $form['delete'] = array(
       '#type' => 'submit',
@@ -786,7 +786,7 @@ function rules_admin_default_argument_form_submit($form, &$form_state, &$element
   if (isset($form_state['values']['settings'])) {
     $element['#settings'] += $form_state['values']['settings'];
   }
-  //TODO: apply input filter preparation
+  rules_prepare_input_evaluators($element, $form_state['proxy']->get_available_variables($form_state['element']['#id']));
 }
 
 

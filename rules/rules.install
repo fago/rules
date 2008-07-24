@@ -24,7 +24,7 @@ function rules_uninstall() {
   //when the item's module is disabled
   $ret = array();
   db_drop_table($ret, 'rules_rules');
-  db_drop_table($ret, 'rule_sets');
+  db_drop_table($ret, 'rules_sets');
 }
 
 /**
