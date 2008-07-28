@@ -218,8 +218,7 @@ function rules_action_node_promote($node, $settings) {
  */
 function rules_action_add_node($author, $settings) {
   if (!$settings['node_access'] || node_access('create', $settings['type'], $author)) {
-
-    include_once drupal_get_path('module', 'node'). '/node.pages.inc';
+    module_load_include('inc', 'node', 'node.pages.inc');
 
     $node = (object)array('type' => $settings['type']);
     node_object_prepare($node);
