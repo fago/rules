@@ -4,7 +4,9 @@
  * @file Rules default rules - this rules are used by the tests
  */
 
-
+/**
+ * Implementation of hook_rules_defaults.
+ */
 function rules_test_rules_defaults() {
   $rules = array();
 

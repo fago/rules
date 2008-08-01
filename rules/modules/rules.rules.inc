@@ -104,6 +104,43 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
 }
 
 /**
+ * Action implementation: Execute a core action
+ */
+function rules_core_action_execute() {
+  $args = func_get_args();
+  $state = array_pop($args);
+  $element = array_pop($args);
+  $info = rules_get_element_info($element);
+
+  call_user_func_array($info['action_name'], $args);
+}
+
+/**
+ * Action form implementation: Get the core actions form
+ */
+function rules_core_action_execute_form($settings, &$form, &$form_state) {
+  $element = $form_state['element'];
+  $info = rules_get_element_info($element);
+  if ($info['configurable']) {
+    $function = $info['action_name']. '_form';
+    $form['settings'] = $function($settings);
+  }
+}
+
+/**
+ * Action form submit implementation: Apply the core actions form submit
+ */
+function rules_core_action_execute_submit(&$settings, &$form, &$form_state) {
+  $element = $form_state['element'];
+  $info = rules_get_element_info($element);
+  if ($info['configurable']) {
+    $function = $info['action_name']. '_submit';
+    $settings = $function($form['settings'], $form_state) + $settings;
+  }
+}
+
+
+/**
  * Implementation of hook_rules_action_type_map().
  *
  * Maps core action types to rules action info.
@@ -145,37 +182,16 @@ function rules_rules_action_type_map() {
 
 
 /**
- * Action implementation: Execute a core action
+ * Implementation of hook_rules_action_info_alter().
+ *
+ * Adapts the action info of some core actions to better fit for being
+ * used with rules.
  */
-function rules_core_action_execute() {
-  $args = func_get_args();
-  $state = array_pop($args);
-  $element = array_pop($args);
-  $info = rules_get_element_info($element);
-
-  call_user_func_array($info['action_name'], $args);
+function rules_rules_action_info_alter(&$actions) {
+  // This action doesn't take the user argument.
+  $actions['rules_core_user_block_ip_action']['arguments'] = array();
+  // This action can be configured to other users than the current one, so improve the label
+  $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
 }
 
-/**
- * Action form implementation: Get the core actions form
- */
-function rules_core_action_execute_form($settings, &$form, &$form_state) {
-  $element = $form_state['element'];
-  $info = rules_get_element_info($element);
-  if ($info['configurable']) {
-    $function = $info['action_name']. '_form';
-    $form['settings'] = $function($settings);
-  }
-}
 
-/**
- * Action form submit implementation: Apply the core actions form submit
- */
-function rules_core_action_execute_submit(&$settings, &$form, &$form_state) {
-  $element = $form_state['element'];
-  $info = rules_get_element_info($element);
-  if ($info['configurable']) {
-    $function = $info['action_name']. '_submit';
-    $settings = $function($form['settings'], $form_state) + $settings;
-  }
-}
