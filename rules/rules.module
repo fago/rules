@@ -376,7 +376,7 @@ function &rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) 
     rules_include('rules');
     $data[$name] = module_invoke_all($name);
     if ($alter) {
-      drupal_alter($name, $data['name']);
+      drupal_alter($name, $data[$name]);
     }
   }
   if ($key != 'all') {
