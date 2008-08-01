@@ -928,7 +928,9 @@ function rules_admin_get_grouped_labels($elements) {
       $ungrouped[$name] = rules_get_element_label($element);
     }
   }
-  array_map('asort', $grouped);
+  foreach ($grouped as $name => $group) {
+    asort($grouped[$name]);
+  }
   ksort($grouped);
   asort($ungrouped);
   return $ungrouped + $grouped;
