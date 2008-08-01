@@ -673,13 +673,13 @@ function rules_execute_and(&$elements, &$state) {
 function rules_execute_action($element, &$state) {
   $exec_args = rules_get_execution_arguments($element, $state);
   if ($exec_args !== FALSE) {
-    $result = rules_element_invoke($element, '', $exec_args);
+    rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element))));
 
+    $result = rules_element_invoke($element, '', $exec_args);
     //An action may return altered variables, which are saved automatically
     if (isset($result) && is_array($result)) {
       rules_save_variables($element, $result, $state);
     }
-    rules_log(t('Action execution: @name', array('@name' => rules_get_element_label($element))));
   }
   return TRUE;
 }
@@ -697,7 +697,7 @@ function rules_execute_condition($element, &$state) {
   if ($exec_args !== FALSE) {
     $result = rules_element_invoke($element, '', $exec_args);
 
-    rules_log(t('Condition %name evaluated to @bool.', array('%name' => rules_get_element_label($element, $state), '@bool' => $result ? 'TRUE' : 'FALSE')));
+    rules_log(t('Condition %name evaluated to @bool.', array('%name' => rules_get_element_label($element), '@bool' => $result !== FALSE ? 'TRUE' : 'FALSE')));
     return $result;
   }
   return FALSE;
@@ -901,28 +901,28 @@ function _rules_show_log(&$i, $data, &$error) {
   $start = &$data[0]['time'];
   $output = array();
   while ($i < count($data)) {
-
-    $diff = ($data[$i]['time']['sec'] - $start['sec'])*1000000 + $data[$i]['time']['usec'] - $start['usec'];
-    $formatted_diff = round($diff * 1000, 3). ' ms';
-    $msg = $formatted_diff . ' '. $data[$i]['msg'];
-
-    if ($data[$i]['error']) {
-      $error = TRUE;
-      $msg = '<strong>'. $msg .'</strong>';
-    }
-
-    $output[] = $msg;
-
-    if (isset($data[$i]['start']) && !$data[$i]['start']) {
-      //this was the last log entry of this set
-      $i++;
-      return theme('item_list', $output);
-    }
-    $i++;
-    if (isset($data[$i]['start']) && $data[$i]['start']) {
+    if ($output && isset($data[$i]['start']) && $data[$i]['start']) {
       //the next entry stems from another evaluated set, add in its log messages here
       $output[] = _rules_show_log($i, $data, $error);
     }
+    else {
+      $diff = ($data[$i]['time']['sec'] - $start['sec'])*1000000 + $data[$i]['time']['usec'] - $start['usec'];
+      $formatted_diff = round($diff * 1000, 3). ' ms';
+      $msg = $formatted_diff . ' '. $data[$i]['msg'];
+
+      if ($data[$i]['error']) {
+        $error = TRUE;
+        $msg = '<strong>'. $msg .'</strong>';
+      }
+
+      $output[] = $msg;
+
+      if (isset($data[$i]['start']) && !$data[$i]['start']) {
+        //this was the last log entry of this set
+        return theme('item_list', $output);
+      }
+    }
+    $i++;
   }
   return theme('item_list', $output);
 }
