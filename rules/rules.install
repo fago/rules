@@ -19,26 +19,17 @@ function rules_uninstall() {
   variable_del('rules_show_fixed');
   variable_del('rules_hide_token_message');
   variable_del('rules_debug');
-
-  //item tables have to be dropped manually, as the rules schema doesn't include it
-  //when the item's module is disabled
-  $ret = array();
-  db_drop_table($ret, 'rules_rules');
-  db_drop_table($ret, 'rules_sets');
 }
 
 /**
  * Implementation of hook_schema.
  */
 function rules_schema() {
-  // define a table for each item
-  $items = rules_get_items();
+  // We define a table for each item type.
 
-  if (!module_exists('rules')) {
-    // when the module is installed, the hook implementation of rules is not invoked,
-    // as the module is not yet active. So we manually add our item types in here.
-    $items += rules_rules_item_info();
-  }
+  // When the module is installed, the hook implementation of rules is not invoked,
+  // as the module is not yet active. So we manually retrieve our item types then.
+  $items = !module_exists('rules') ? rules_rules_item_info() : rules_get_items();
 
   foreach ($items as $name => $info) {
     $schema[$info['db_table']] = array(
