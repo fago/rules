@@ -97,6 +97,13 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
     return array();
   }
   $info['label'] = $core_action_info['description'];
+
+  // Special handling of labels for node actions
+  // For consistency with the rule naming convention of calling a node "content".
+  if ($core_action_info['type'] == 'node') {
+    $info['label'] = str_replace('post', t('content'), $info['label']);
+  }
+
   $info['base'] = 'rules_core_action_execute';
   $info['action_name'] = $name;
   $info['configurable'] = $core_action_info['configurable'];
@@ -178,6 +185,7 @@ function rules_rules_action_type_map() {
       'module' => 'System',
     ),
   );
+  //TODO: add comment support
 }
 
 
@@ -192,6 +200,14 @@ function rules_rules_action_info_alter(&$actions) {
   $actions['rules_core_user_block_ip_action']['arguments'] = array();
   // This action can be configured to other users than the current one, so improve the label
   $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
+  // The rules action is more powerful, so hide the core action
+  unset($actions['rules_core_node_assign_owner_action']);
+  // We prefer handling saving by rules - not by the user.
+  unset($actions['rules_core_node_save_action']);
+  // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
+  unset($actions['rules_core_system_goto_action']);
+  // The next to rely heavily on contexts - which we handle already in rules.
+  // So we provide our own actions.
+  unset($actions['rules_core_system_message_action']);
+  unset($actions['rules_core_system_send_email_action']);
 }
-
-

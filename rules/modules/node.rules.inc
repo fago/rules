@@ -140,20 +140,6 @@ function node_rules_action_info() {
       ),
       'module' => 'Node',
     ),
-    'rules_action_node_publish' => array(
-      'label' => t('Publish/unpublish content'),
-      'arguments' => array(
-        'node' => array('type' => 'node', 'label' => t('Content')),
-      ),
-      'module' => 'Node',
-    ),
-    'rules_action_node_promote' => array(
-      'label' => t('Promote/demote content to/from the front page'),
-      'arguments' => array(
-        'node' => array('type' => 'node', 'label' => t('Content')),
-      ),
-      'module' => 'Node',
-    ),
     'rules_action_add_node' => array(
       'label' => t('Add new content'),
       'arguments' => array(
@@ -188,28 +174,6 @@ function rules_action_node_set_author($node, $author) {
 
 function rules_action_node_set_author_label($settings, $argument_labels) {
   return t('Set the author of @node to @author', $argument_labels);
-}
-
-/**
- * Sets a node's Published flag
- * @ingroup rules
- */
-function rules_action_node_publish($node, $settings) {
-  if ($node->status != $settings['published']) {
-    $node->status = $settings['published'];
-    return array('node' => $node);
-  }
-}
-
-/**
- * Sets a node's Promoted flag
- * @ingroup rules
- */
-function rules_action_node_promote($node, $settings) {
-  if ($node->promote != $settings['promote']) {
-    $node->promote = $settings['promote'];
-    return array('node' => $node);
-  }
 }
 
 /**
