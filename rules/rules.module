@@ -1119,8 +1119,8 @@ function rules_form_alter($form, $form_state, $form_id) {
 
 /**
  * Includes rules specific include files
- * @param $type One of 'rules', 'rules_forms', 'rules_defaults' or 'rules_admin'
- * @param $use_cache
+ * @param $type
+ *   One of 'rules', 'rules_forms', 'rules_defaults' or 'rules_admin'.
  */
 function rules_include($type = 'rules') {
   static $included;
@@ -1131,20 +1131,15 @@ function rules_include($type = 'rules') {
   if (!isset($included[$type])) {
     $included[$type] = TRUE;
 
-    //During installation we can't use the cache as the table isn't there yet
-    $use_cache = !function_exists('rules_install');
-
     if ($type == 'rules_admin') {
       $files = array(drupal_get_path('module', 'rules') .'/rules.admin.inc');
     }
-    else if ($use_cache && ($cache = cache_get('include_'. $type, 'cache_rules'))) {
+    else if ($cache = cache_get('include_'. $type, 'cache_rules')) {
       $files = $cache->data;
     }
     else {
       $files = _rules_include_get_files($type);
-      if ($use_cache) {
-        cache_set('include_'. $type, $files, 'cache_rules');
-      }
+      cache_set('include_'. $type, $files, 'cache_rules');
     }
 
     foreach ($files as $file) {
