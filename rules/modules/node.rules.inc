@@ -90,8 +90,6 @@ function rules_events_argument_unchanged_node_author($node) {
   return rules_events_argument_node_author(rules_events_argument_node_unchanged($node));
 }
 
-
-
 /**
  * Implementation of hook_rules_condition_info()
  * @ingroup rules
@@ -117,14 +115,6 @@ function rules_condition_content_is_type(&$node, $settings) {
   return in_array($node->type, $settings['type']);
 }
 
-/**
- * Condition: Check for selected content types - Label callback
- * @ingroup rules
- */
-function rules_condition_content_is_type_label($settings) {
-  $names = array_intersect_key(node_get_types('names'), $settings['type']);
-  return t('Content is @type', array('@type' => implode(' or ', $names)));
-}
 
 /**
  * Implementation of hook_rules_action_info
@@ -144,10 +134,15 @@ function node_rules_action_info() {
       'label' => t('Add new content'),
       'arguments' => array(
         'author' => array('type' => 'user', 'label' => t('User, which is set as author of the content')),
-     // 'title' => array('type' => 'string', 'label' => t('Title'), 'description' => t('Enter the title of the newly created content.')),
+        'title' => array('type' => 'string', 'label' => t('Title'), 'description' => t('Enter the title of the newly created content.')),
       ),
       'new variables' => array(
-        'node_added' => array('type' => 'node', 'label' => t('Added content'), 'save' => TRUE),
+        'node_added' => array(
+          'type' => 'node',
+          'label' => t('New content'),
+          'save' => TRUE,
+          'label callback' => 'rules_action_add_node_variable_label',
+        ),
       ),
       'module' => 'Node',
     ),
@@ -172,15 +167,11 @@ function rules_action_node_set_author($node, $author) {
   return array('node' => $node);
 }
 
-function rules_action_node_set_author_label($settings, $argument_labels) {
-  return t('Set the author of @node to @author', $argument_labels);
-}
-
 /**
  * Action "Add a node"
  * @ingroup rules
  */
-function rules_action_add_node($author, $settings) {
+function rules_action_add_node($author, $title, $settings) {
   if (!$settings['node_access'] || node_access('create', $settings['type'], $author)) {
     module_load_include('inc', 'node', 'node.pages');
 
@@ -190,7 +181,7 @@ function rules_action_add_node($author, $settings) {
     $node->name = $author->name;
     $node->uid = $author->uid;
     $node->type = $settings['type'];
-    $node->title = $settings['title'];
+    $node->title = $title;
     return array('node_added' => $node);
   }
 }
@@ -204,9 +195,6 @@ function rules_action_load_node($settings) {
   return array('node_loaded' => node_load($settings['nid'], $settings['vid'] ? $settings['vid'] : NULL));
 }
 
-function rules_action_load_node_variable_label($settings) {
-  return t('Content with id @id', array('@id' => $settings['nid']));
-}
 
 /**
  * Implementation of hook_rules_data_type_info()
