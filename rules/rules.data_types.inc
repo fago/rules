@@ -13,7 +13,9 @@ function rules_get_data_object($info) {
   if (($data_type = rules_get_data_types($info['type'])) && class_exists($data_type['class'])) {
     $class = $data_type['class'];
   }
-  return new $class;
+  $object = new $class;
+  $object->construct($info['type'], isset($data_type) ? $data_type : array());
+  return $object;
 }
 
 
@@ -24,6 +26,25 @@ function rules_get_data_object($info) {
 class rules_data_type {
 
   var $_data;
+  var $_info;
+  var $type;
+
+  /**
+   * Constructor
+   * @param $type
+   *   The data type of this object
+   * @param $info
+   *   If given, the info about this data type. If it's not given, it will be
+   *   retrieved automatically.
+   */
+  function construct($type, $info = NULL) {
+    $this->type = $type;
+
+    if (!isset($info)) {
+      $info = rules_get_data_types($type);
+    }
+    $this->_info = isset($info) ? $info : array();
+  }
 
   /**
    * Inititate the data
@@ -71,20 +92,21 @@ class rules_data_type {
     return isset($info['eval_input']) && $info['eval_input'];
   }
 
-
-
-
   /**
-   * Defines the capabilites of this data type.
-   * If php4 would support interfaces, this would be interfaces.
+   * Gets the information about this data type.
    */
   function get_info() {
-    return array(
+    return $this->_info + array(
       'saveable' => FALSE,
       'identifiable' => FALSE,
       'eval_input' => FALSE,
     );
   }
+
+
+
+
+
 
   /**
    * Makes changes to the data permanent.

@@ -140,8 +140,8 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
   }
   if ($info['arguments']) {
     $arg = array_shift($info['arguments']);
-    $data_object = rules_get_data_object($arg);
-    if ($data_object->is_saveable()) {
+    $data_type = rules_get_data_types($arg['type']);
+    if ($data_type['saveable']) {
       $settings += array('auto_save' => TRUE);
       $form['settings']['auto_save'] = array(
         '#type' => 'checkbox',
@@ -226,7 +226,7 @@ function rules_rules_action_info_alter(&$actions) {
   unset($actions['rules_core_node_save_action']);
   // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
   unset($actions['rules_core_system_goto_action']);
-  // The next to rely heavily on contexts - which we handle already in rules.
+  // The next two rely heavily on contexts - which we handle already in rules.
   // So we provide our own actions.
   unset($actions['rules_core_system_message_action']);
   unset($actions['rules_core_system_send_email_action']);

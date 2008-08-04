@@ -216,6 +216,8 @@ function node_rules_data_type_info() {
     'node' => array(
       'label' => t('Content'),
       'class' => 'rules_data_type_node',
+      'saveable' => TRUE,
+      'identifiable' => TRUE,
     ),
   );
 }
@@ -225,13 +227,6 @@ function node_rules_data_type_info() {
  * @ingroup rules
  */
 class rules_data_type_node extends rules_data_type {
-
-  function get_info() {
-    return array(
-      'saveable' => TRUE,
-      'identifiable' => TRUE,
-    );
-  }
 
   function save() {
     $node = &$this->get();
