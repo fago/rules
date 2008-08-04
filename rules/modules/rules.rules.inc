@@ -208,7 +208,6 @@ function rules_rules_action_type_map() {
       'module' => 'System',
     ),
   );
-  //TODO: add comment support
 }
 
 

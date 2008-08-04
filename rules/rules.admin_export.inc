@@ -26,6 +26,11 @@ function rules_admin_form_import() {
 function rules_admin_form_import_submit($form, $form_state) {
   @eval('$import = '. $form_state['values']['import'] .';');
   if (isset($import) && is_array($import) && count($import)) {
+    // Check whether it are workflow-ng rules
+    if (rules_admin_import_workflow_ng($import)) {
+      return;
+    }
+
     foreach ($import as $item_type => $elements) {
       foreach ($elements as $name => $element) {
         //let the item type alter the data before it's saved
@@ -113,4 +118,34 @@ function rules_item_rule_export(&$rule) {
 }
 function rules_item_rule_set_export(&$rule_set) {
   unset($rule_set['status']);
+}
+
+
+
+/**
+ * Tries to import workflow-ng rules.
+ *
+ * @return TRUE, only if workflow-ng rules are detected.
+ */
+function rules_admin_import_workflow_ng($import) {
+  foreach ($import as $name => $cfg) {
+    if (count(element_children($cfg)) == count($cfg)) {
+      // This is no workflow-ng rule, so exit
+      return FALSE;
+    }
+    rules_include('rules');
+
+    // Load the include files, as there modules may provide upgrade information.
+    module_load_all_includes('install');
+    $rule = rules_import_workflow_ng_rule($name, $cfg);
+    if ($rule) {
+      rules_item_save('rules', $rule['#name'], $rule);
+      drupal_set_message(t('Successfully imported the workflow-ng rule %label.', array('%label' => $rule['#label'])));
+    }
+    else {
+      drupal_set_message(t('Failed importing the workflow-ng rule %label.', array('%label' => $rule['#label'])), 'error');
+    }
+  }
+  rules_clear_cache();
+  return TRUE;
 }

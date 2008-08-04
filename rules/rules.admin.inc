@@ -1014,6 +1014,9 @@ function rules_admin_filter_info($variables, $infos) {
         }
       }
     }
+    else {
+      $filtered[$key] = $info;
+    }
   }
   return $filtered;
 }
@@ -1060,7 +1063,7 @@ function rules_admin_get_categories() {
     if (isset($rule['#categories']) && is_array($rule['#categories']) && rules_admin_element_filter($rule)) {
       foreach ($rule['#categories'] as $category) {
         if (!in_array($category, $categories)) {
-          $categories[$element['#categories']] = $element['#categories'];
+          $categories[$category] = $category;
         }
       }
     }
