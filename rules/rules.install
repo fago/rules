@@ -59,14 +59,158 @@ function rules_schema() {
 }
 
 
+
+/**
+ * Upgrade from workflow-ng
+ */
+function rules_update_6001() {
+  require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
+  rules_include('rules');
+  $ret = array();
+
+  if (db_table_exists('workflow_ng_cfgs')) {
+    //Return all custom created configurations
+    $result = db_query("SELECT * FROM {workflow_ng_cfgs}");
+
+    while ($row = db_fetch_object($result)) {
+      $cfg = unserialize($row->data);
+      $rule = rules_import_workflow_ng_rule($row->name, $cfg);
+      if ($rule) {
+        rules_item_save('rules', $rule['#name'], $rule);
+        $msg = t('Successfully imported rule %label.', array('%label' => $rule['#label']));
+        $ret[] = array('success' => TRUE, 'query' => $msg);
+        db_query("DELETE FROM {workflow_ng_cfgs} WHERE name = '%s'", $row->name);
+      }
+      else {
+        $msg = t('Failed importing the rule %label.', array('%label' => $rule['#label']));
+        $ret[] = array('success' => FALSE, 'query' => $msg);
+        $failed = TRUE;
+      }
+    }
+    // Uninstall workflow-ng
+    if (!isset($failed) || !$failed) {
+      db_query("DROP TABLE {cache_workflow_ng}");
+      db_query("DROP TABLE {workflow_ng_cfgs}");
+      variable_del('workflow_ng_configurations');
+      variable_del('workflow_ng_show_fixed');
+    }
+  }
+  return array();
+}
+
+
+
+/**
+ * Transform a workflow-ng rule into a rule
+ */
+function rules_import_workflow_ng_rule($name, $cfg) {
+  $rule = array('#type' => 'rule');
+  $rule['#name'] = _rules_import_replace_module_name($name);
+  foreach (array('#altered', '#active', '#weight') as $key) {
+    if (isset($cfg[$key])) {
+      $rule[$key] = $cfg[$key];
+    }
+  }
+  $rule['#categories'] = array('imported'); // TODO: fix
+  $rule['#label'] = _rules_import_replace_module_name($cfg['#label']);
+  $rule['#set'] = 'event_'. $cfg['#event'];
+  if (isset($cfg['#fixed']) && $cfg['#fixed']) {
+    $rule['#status'] = 'fixed';
+  }
+  else if ($cfg['#module'] == 'workflow-ng') {
+    $rule['#status'] = 'custom';
+    $rule['#name'] = _rules_admin_rule_get_new_unique_name();
+  }
+  else {
+    $rule['#status'] = 'default';
+  }
+
+  // Separate actions and conditions.
+  foreach (element_children($cfg) as $key) {
+    if (isset($cfg[$key]['#type']) && $cfg[$key]['#type'] == 'action') {
+      $rule['#actions'][$key] = $cfg[$key];
+    }
+    else {
+      $rule['#conditions'][$key] = $cfg[$key];
+    }
+  }
+
+  // Transform elements to be compatible with workflow-ng
+  $success = rules_helper_do_recursive('_rules_import_transform_element', $rule['#actions']);
+  if ($success) {
+    $success = rules_helper_do_recursive('_rules_import_transform_element', $rule['#conditions']);
+  }
+  return $success ? $rule : FALSE;
+}
+
+/**
+ * Transforms a single element to be compatible with workflow-ng
+ */
+function _rules_import_transform_element(&$element) {
+
+  if (!isset($element['#name'])) {
+    // Just keep it.
+  }
+  else if (function_exists($function = $element['#name'] .'_upgrade')) {
+    $element = $function($element);
+  }
+  else if (function_exists($function = _rules_import_replace_module_name($element['#name']))) {
+    $element['#name'] = $function;
+  }
+  else {
+    drupal_set_message(t('No upgrade information for the element %name found. Aborting.', array('%name' => $element['#name'])), 'error');
+    return FALSE;
+  }
+
+  // Upgrade to element to the new format
+  rules_init_element_info($element);
+  if (isset($element['#argument map'])) {
+    $element['#settings']['#argument map'] = $element['#argument map'];
+    unset($element['#argument map']);
+  }
+  unset($element['#id']);
+
+  if (isset($element['#settings'])) {
+    // Adapt the settings so that token integration stays working
+    foreach ($element['#settings'] as $name => $data) {
+      if (is_array($data) && $pos = strpos($name, '_args')) {
+        $setting_name = substr($name, 0, $pos);
+        $element['#settings']['#eval input']['token_rules_input_evaluator'][$setting_name] = $data;
+        unset($element['#settings'][$name]);
+      }
+    }
+  }
+}
+
+
+function _rules_import_replace_module_name($string) {
+  $search = array();
+  $replace = array();
+  $search[] = 'worklfow_ng_ui';
+  $replace[] = 'rules';
+  $search[] = 'workflow_ng';
+  $replace[] = 'rules';
+  $search[] = 'Workflow-ng';
+  $replace[] = 'Rules';
+  $search[] = 'Workflow-ng';
+  $replace[] = 'Rules';
+  return str_replace($search, $replace, $string);
+}
+
+
 /**
  * Helper function
- * Applies the function $function to all elements
+ * Applies the function $function to all elements. Aborts if FALSE is returned.
  */
 function rules_helper_do_recursive($function, &$elements) {
-  $function($elements);
+  if ($function($elements) === FALSE) {
+    return FALSE;
+  }
   // recurse
   foreach (element_children($elements) as $key) {
-    rules_helper_do_recursive($function, $elements[$key]);
+    if (rules_helper_do_recursive($function, $elements[$key]) === FALSE) {
+      return FALSE;
+    }
   }
+  return TRUE;
 }
