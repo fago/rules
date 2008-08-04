@@ -521,7 +521,7 @@ function rules_invoke_rule_set() {
     rules_evaluate_elements($set['rules'], $state);
 
     //save all changed variables..
-    foreach ($state['variables'] as &$variable) {
+    foreach ($state['variables'] as $variable) {
       $variable->save_changes();
     }
 

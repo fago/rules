@@ -198,7 +198,7 @@ function rules_rules_action_type_map() {
 function rules_rules_action_info_alter(&$actions) {
   // This action doesn't take the user argument.
   $actions['rules_core_user_block_ip_action']['arguments'] = array();
-  // This action can be configured to other users than the current one, so improve the label
+  // This action can be configured to other users than the current one, so improve the label.
   $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
   // The rules action is more powerful, so hide the core action
   unset($actions['rules_core_node_assign_owner_action']);
