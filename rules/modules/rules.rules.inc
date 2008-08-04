@@ -120,6 +120,12 @@ function rules_core_action_execute() {
   $info = rules_get_element_info($element);
 
   call_user_func_array($info['action_name'], $args);
+
+  $settings = array_pop($args);
+  if (isset($settings['auto_save']) && $settings['auto_save']) {
+    $argument_name = array_shift(array_keys($info['arguments']));
+    return array($argument_name => $args[0]);
+  }
 }
 
 /**
@@ -131,6 +137,20 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
   if ($info['configurable']) {
     $function = $info['action_name']. '_form';
     $form['settings'] = $function($settings);
+  }
+  if ($info['arguments']) {
+    $arg = array_shift($info['arguments']);
+    $data_object = rules_get_data_object($arg);
+    if ($data_object->is_saveable()) {
+      $settings += array('auto_save' => TRUE);
+      $form['settings']['auto_save'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Permanently apply changes.'),
+        '#description' => t('If checked, changes are saved automatically.'),
+        '#default_value' => $settings['auto_save'],
+        '#weight' => -10,
+      );
+    }
   }
 }
 
