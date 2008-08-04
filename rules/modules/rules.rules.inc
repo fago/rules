@@ -12,6 +12,9 @@ function rules_rules_data_type_info() {
     'string' => array(
       'label' => t('String'),
       'class' => 'rules_data_type_string',
+      'saveable' => FALSE,
+      'identifiable' => FALSE,
+      'eval_input' => TRUE,
     ),
   );
 }
@@ -22,14 +25,6 @@ function rules_rules_data_type_info() {
  */
 class rules_data_type_string extends rules_data_type {
 
-  function get_info() {
-    return array(
-      'saveable' => FALSE,
-      'identifiable' => FALSE,
-      'eval_input' => TRUE,
-    );
-  }
-
   /**
    * Gets the input form for the data
    * Implement it, if your data is not identifiable.
@@ -37,7 +32,7 @@ class rules_data_type_string extends rules_data_type {
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     return array(
-      '#type' => $info['long'] ? 'textfield' : 'textarea',
+      '#type' => $info['long'] ? 'textarea' : 'textfield',
       '#title' => $info['label'],
       '#description' => $info['description'],
       '#required' => $info['required'],
@@ -96,6 +91,7 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
   if (!isset($info)) {
     return array();
   }
+  $info += array('arguments' => array('object' => array('type' => 'value', 'default value' => NULL)));
   $info['label'] = $core_action_info['description'];
 
   // Special handling of labels for node actions
@@ -113,18 +109,15 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
 /**
  * Action implementation: Execute a core action
  */
-function rules_core_action_execute() {
-  $args = func_get_args();
-  $state = array_pop($args);
-  $element = array_pop($args);
+function rules_core_action_execute(&$object, $settings, $element, &$state) {
   $info = rules_get_element_info($element);
 
+  $args = isset($object) ? array(&$object, $settings) : array($settings);
   call_user_func_array($info['action_name'], $args);
 
-  $settings = array_pop($args);
   if (isset($settings['auto_save']) && $settings['auto_save']) {
     $argument_name = array_shift(array_keys($info['arguments']));
-    return array($argument_name => $args[0]);
+    return array($argument_name => $object);
   }
 }
 

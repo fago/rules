@@ -960,20 +960,37 @@ function rules_admin_element_filter($element) {
 }
 
 /**
- * Determines if the given data type is supported by the given info
+ * Determines if the given data type is valid for the given argument.
  *
- * @param $data_type The data type to check
- * @param $info The information data containing the #type property
+ * @param $data_type
+ *   The data type to check.
+ * @param $arg_type
+ *   The arguments needed data type.
+ * @return
+ *   True or false.
  */
-function rules_admin_is_valid_data_type($data_type, $info) {
-  if (is_array($info['type'])) {
-    return in_array($data_type, $info['type']);
+function rules_admin_is_valid_data_type($data_type, $arg_type) {
+  if (is_array($arg_type)) {
+    foreach ($arg_type as $type) {
+      // We have multiple options to check for.
+      if (rules_admin_is_valid_data_type($data_type, $type)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
-  if ($info['type'] == '*') {
+  if ($arg_type == '*') {
     return TRUE;
   }
-  return $info['type'] == $data_type;
+  if (($type_info = rules_get_data_types($arg_type))) {
+    if (isset($type_info['identifiable']) && !$type_info['identifiable']) {
+      // Argument value will be set on configuration time.
+      return TRUE;
+    }
+  }
+  return $arg_type == $data_type;
 }
+
 
 /**
  * Determines which operation should be added
@@ -1080,9 +1097,6 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value) {
 /**
  * Gets the labels of the variables, which are configured to be passed as arguments
  * to the given element.
- *
- * Note that this works only during rule configuration as it makes use of the rule proxy.
- * If the proxy is not available, FALSE will be returned.
  */
 function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
@@ -1090,7 +1104,9 @@ function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $vars = $proxy->get_available_variables();
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
-    $labels[$prefix . $argument_name] = $vars[$variable_name]['label'];
+    if (isset($vars[$variable_name]['label'])) {
+      $labels[$prefix . $argument_name] = $vars[$variable_name]['label'];
+    }
   }
   return $labels;
 }

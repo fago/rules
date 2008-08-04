@@ -37,16 +37,33 @@ function _rules_initialize_variables(&$state, $args) {
 
 /**
  * Gets an array of variables.
- * @param $names An array of variable names to get
- * @param $state The current evalutation state
- * @param $load Use variable handler to load variables, if necessary.
- * @return The array of entities or FALSE.
+ * If an element is specified, it will be used to retrieve not identifiable
+ * variables, which have been set on configuration time.
+ * Furthermore it's used to retrieve any existing default values of arguments,
+ * which are applied when the variable is undefined.
+ *
+ * @param $names
+ *   An array of variable names to get.
+ * @param $state
+ *   The current evalutation state.
+ * @param $load
+ *   Use variable handler to load variables, if necessary.
+ * @param $element
+ *   Optionally an element may be specified, for which we retrieve the variables.
+ * @return
+ *   The array of variables or FALSE.
  */
-function rules_get_variables($names, &$state, $load = TRUE) {
+function rules_get_variables($names, &$state, $load = TRUE, $element = NULL) {
   $args = array();
   foreach ($names as $name) {
     if (isset($state['variables'][$name])) {
       $args[$name] = &$state['variables'][$name]->get($load);
+    }
+    else if (isset($element['#settings'][$name])) {
+      $args[$name] = $element['#settings'][$name];
+    }
+    else if (isset($element['#info']['arguments'][$name]['default value'])) {
+      $args[$name] = $element['#settings'][$name];
     }
     else {
       return FALSE;
@@ -99,7 +116,7 @@ function rules_get_execution_arguments(&$element, &$state) {
   $element['#settings'] += array('#argument map' => array());
   //first off map the names to the argument names of the evaluated set
   $names = rules_get_mapped_argument_names($element);
-  $exec_args = rules_get_variables($names, $state);
+  $exec_args = rules_get_variables($names, $state, TRUE, $element);
 
   if ($exec_args !== FALSE) {
     //we always append some other useful variables

@@ -5,7 +5,7 @@
  */
 
 /**
- *  Check for content types - Configuration form
+ * Condition: Check for content types - Configuration form
  */
 function rules_condition_content_is_type_form($settings, &$form) {
   $form['settings']['type'] = array(
@@ -19,36 +19,18 @@ function rules_condition_content_is_type_form($settings, &$form) {
 }
 
 /**
- * Action node publish configuration form
+ * Condition: Check for selected content types - Label callback
  */
-function rules_action_node_publish_form($settings, &$form) {
-  $form['settings']['published'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Published'),
-    '#default_value' => isset($settings['published']) ? $settings['published'] : 0,
-  );
+function rules_condition_content_is_type_label($settings) {
+  $names = array_intersect_key(node_get_types('names'), $settings['type']);
+  return t('Content is @type', array('@type' => implode(' or ', $names)));
 }
 
 /**
- * Action node promote configuration form
+ * Action set node author - Label callback
  */
-function rules_action_node_promote_form($settings, &$form) {
-  $form['settings']['promote'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Promoted to front page'),
-    '#default_value' => isset($settings['promote']) ? $settings['promote'] : 0,
-  );
-}
-
-/**
- * Action node sticky configuration form
- */
-function rules_action_node_sticky_form($settings, &$form) {
-  $form['settings']['sticky'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Sticky at top of lists'),
-    '#default_value' => isset($settings['sticky']) ? $settings['sticky'] : 0,
-  );
+function rules_action_node_set_author_label($settings, $argument_labels) {
+  return t('Set the author of @node to @author', $argument_labels);
 }
 
 /**
@@ -68,13 +50,10 @@ function rules_action_add_node_form($settings, &$form) {
     '#title' => t('Create content only if the given author has access permission to do so'),
     '#default_value' => isset($settings['node_access']) ? $settings['node_access'] : 0,
   );
-  $form['settings']['title'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Title'),
-    '#default_value' => isset($settings['title']) ? $settings['title'] : '',
-    '#description' => t('Enter the title of the newly created content.'),
-    '#required' => TRUE,
-  );
+}
+
+function rules_action_add_node_variable_label($settings) {
+  return t('New content of type @type', array('@type' => $settings['type']));
 }
 
 /**
@@ -93,4 +72,8 @@ function rules_action_load_node_form($settings, &$form) {
     '#default_value' => isset($settings['vid']) ? $settings['vid'] : '',
     '#description' => t('If you want to load a specific revision, enter it\'s revision id. Else leave it empty to load the current revision.'),
   );
+}
+
+function rules_action_load_node_variable_label($settings) {
+  return t('Content with id @id', array('@id' => $settings['nid']));
 }

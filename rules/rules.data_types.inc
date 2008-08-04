@@ -98,7 +98,7 @@ class rules_data_type {
   function get_info() {
     return $this->_info + array(
       'saveable' => FALSE,
-      'identifiable' => FALSE,
+      'identifiable' => TRUE,
       'eval_input' => FALSE,
     );
   }
