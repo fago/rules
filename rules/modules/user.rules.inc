@@ -206,6 +206,8 @@ function user_rules_data_type_info() {
     'user' => array(
       'label' => t('User'),
       'class' => 'rules_data_type_user',
+      'saveable' => FALSE,
+      'identifiable' => TRUE,
     ),
   );
 }
@@ -215,13 +217,6 @@ function user_rules_data_type_info() {
  * @ingroup rules
  */
 class rules_data_type_user extends rules_data_type {
-
-  function get_info() {
-    return array(
-      'saveable' => FALSE,
-      'identifiable' => TRUE,
-    );
-  }
 
   function load($uid) {
     return user_load($uid);
