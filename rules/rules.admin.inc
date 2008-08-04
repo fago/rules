@@ -748,11 +748,6 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
   $info = rules_get_element_info($element);
 
   if (isset($info['arguments']) && count($info['arguments'])) {
-    $form['map'] += array(
-      '#type' => 'fieldset',
-      '#title' => t('Arguments configuration'),
-      '#weight' => -2,
-    );
     $variables = $form_state['proxy']->get_available_variables($element['#id']);
 
     foreach ($info['arguments'] as $name => $arg_info) {
@@ -761,8 +756,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
         $value = isset($element['#settings'][$name]) ? $element['#settings'][$name] : NULL;
         $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value);
       }
-      //fall back to an argument map
-      if (empty($form['settings'][$name])) {
+      else {
         $args = rules_admin_map_get_possible_arguments($arg_info, $variables);
         $form['map'][$name] = array(
           '#type' => 'select',
@@ -772,6 +766,13 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
           '#description' => isset($arg_info['description']) ? $arg_info['description'] : '',
         );
       }
+    }
+    if (element_children($form['map'])) {
+      $form['map'] += array(
+        '#type' => 'fieldset',
+        '#title' => t('Arguments configuration'),
+        '#weight' => -2,
+      );
     }
   }
 }
@@ -787,24 +788,6 @@ function rules_admin_default_argument_form_submit($form, &$form_state, &$element
     $element['#settings'] += $form_state['values']['settings'];
   }
   rules_prepare_input_evaluators($element, $form_state['proxy']->get_available_variables($form_state['element']['#id']));
-}
-
-
-/**
- * Gets the possible arguments (= of the same entity) for an argument
- */
-function rules_admin_map_get_possible_arguments($arg_info, $variables, $print_error = TRUE) {
-  $matches = array();
-  foreach ($variables as $name => $info) {
-    if (rules_admin_is_valid_data_type($info['type'], $arg_info)) {
-      $matches[$name] = $info['label'];
-    }
-  }
-  if ($print_error && count($matches) == 0) {
-    drupal_set_message(t('There is no suitable variable for the argument %name available.', array('%name', $info['label'])), 'error');
-    drupal_goto(RULES_ADMIN_RULES_PATH);
-  }
-  return $matches;
 }
 
 /*
@@ -982,12 +965,6 @@ function rules_admin_is_valid_data_type($data_type, $arg_type) {
   if ($arg_type == '*') {
     return TRUE;
   }
-  if (($type_info = rules_get_data_types($arg_type))) {
-    if (isset($type_info['identifiable']) && !$type_info['identifiable']) {
-      // Argument value will be set on configuration time.
-      return TRUE;
-    }
-  }
   return $arg_type == $data_type;
 }
 
@@ -1032,14 +1009,46 @@ function rules_admin_filter_info($variables, $infos) {
   foreach ($infos as $key => $info) {
     if (isset($info['arguments']) && is_array($info['arguments'])) {
       foreach ($info['arguments'] as $name => $argument_info) {
-        if (count(rules_admin_map_get_possible_arguments($argument_info, $variables, FALSE)) == 0) {
-          continue 2; //don't add this element to the filtered one
+        if (rules_admin_argument_satisifable($argument_info, $variables)) {
+          $filtered[$key] = $info;
         }
       }
     }
-    $filtered[$key] = $info;
   }
   return $filtered;
+}
+
+/**
+ * Determines whether the argument can be configured properly, so whether
+ * there are matching variables available or needed.
+ */
+function rules_admin_argument_satisifable($info, $variables) {
+  if ($info['type'] == '*') {
+    return TRUE;
+  }
+  if (($type_info = rules_get_data_types($info['type']))) {
+    if (isset($type_info['identifiable']) && !$type_info['identifiable']) {
+      // Argument value will be set on configuration time.
+      return TRUE;
+    }
+  }
+  if (count(rules_admin_map_get_possible_arguments($info, $variables))) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Gets the possible arguments (= of the same entity) for an argument
+ */
+function rules_admin_map_get_possible_arguments($arg_info, $variables) {
+  $matches = array();
+  foreach ($variables as $name => $info) {
+    if (rules_admin_is_valid_data_type($info['type'], $arg_info)) {
+      $matches[$name] = $info['label'];
+    }
+  }
+  return $matches;
 }
 
 /**

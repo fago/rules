@@ -16,6 +16,12 @@ function rules_rules_data_type_info() {
       'identifiable' => FALSE,
       'eval_input' => TRUE,
     ),
+    'value' => array(
+      'label' => t('A fixed value'),
+      'class' => 'rules_data_type',
+      'identifiable' => FALSE,
+      'hidden' => TRUE,
+    ),
   );
 }
 
@@ -91,7 +97,9 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
   if (!isset($info)) {
     return array();
   }
+  // Make sure there is a object.
   $info += array('arguments' => array('object' => array('type' => 'value', 'default value' => NULL)));
+
   $info['label'] = $core_action_info['description'];
 
   // Special handling of labels for node actions
@@ -134,7 +142,8 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
   if ($info['arguments']) {
     $arg = array_shift($info['arguments']);
     $data_type = rules_get_data_types($arg['type']);
-    if ($data_type['saveable']) {
+
+    if (isset($data_type['saveable']) && $data_type['saveable']) {
       $settings += array('auto_save' => TRUE);
       $form['settings']['auto_save'] = array(
         '#type' => 'checkbox',
@@ -163,7 +172,8 @@ function rules_core_action_execute_submit(&$settings, &$form, &$form_state) {
 /**
  * Implementation of hook_rules_action_type_map().
  *
- * Maps core action types to rules action info.
+ * Maps core action types to rules action info. This provides mappings for all
+ * action types used in core.
  */
 function rules_rules_action_type_map() {
   return array(
@@ -210,13 +220,10 @@ function rules_rules_action_type_map() {
  */
 function rules_rules_action_info_alter(&$actions) {
   // This action doesn't take the user argument.
-  $actions['rules_core_user_block_ip_action']['arguments'] = array();
+  $actions['rules_core_user_block_ip_action']['arguments'] = array('object' => array('type' => 'value', 'default value' => NULL));
   // This action can be configured to other users than the current one, so improve the label.
   $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
-  // The rules action is more powerful, so hide the core action
-  unset($actions['rules_core_node_assign_owner_action']);
-  // We prefer handling saving by rules - not by the user.
-  unset($actions['rules_core_node_save_action']);
+
   // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
   unset($actions['rules_core_system_goto_action']);
   // The next two rely heavily on contexts - which we handle already in rules.

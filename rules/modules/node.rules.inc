@@ -21,8 +21,16 @@ function node_rules_event_info() {
       'label' => t('Content has been updated'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('updated content'), t('content author')) + array(
-        'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
-        'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
+        'node_unchanged' => array(
+          'type' => 'node',
+          'label' => t('unchanged content'),
+          'handler' => 'rules_events_argument_node_unchanged',
+        ),
+        'author_unchanged' => array(
+          'type' => 'user',
+          'label' => t('unchanged content\'s author'),
+          'handler' => 'rules_events_argument_unchanged_node_author',
+        ),
       ),
       'redirect' => TRUE,
     ),
@@ -30,7 +38,11 @@ function node_rules_event_info() {
       'label' => t('Content is going to be saved'),
       'module' => 'Node',
       'arguments' => array(
-        'node' => array('type' => 'node', 'label' => t('content'), 'saved' => TRUE),
+        'node' => array(
+          'type' => 'node',
+          'label' => t('content'),
+          'saved' => TRUE
+        ),
         'author' => array('type' => 'user', 'label' => t('content author'), 'handler' => 'rules_events_argument_node_author'),
         'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
         'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
@@ -61,9 +73,15 @@ function node_rules_event_info() {
  */
 function rules_events_node_arguments($node_label, $author_label) {
   return array(
-    'node' => array('type' => 'node', 'label' => $node_label),
-    'author' => array('type' => 'user', 'label' => $author_label, 'handler' => 'rules_events_argument_node_author'),
-  ) + rules_events_global_user_argument();
+    'node' => array(
+      'type' => 'node',
+      'label' => $node_label,
+    ),
+    'author' => array(
+      'type' => 'user',
+      'label' => $author_label,
+      'handler' => 'rules_events_argument_node_author'),
+    ) + rules_events_global_user_argument();
 }
 
 /**
@@ -99,7 +117,10 @@ function node_rules_condition_info() {
     'rules_condition_content_is_type' => array(
       'label' => t('Content has type'),
       'arguments' => array(
-        'node' => array('type' => 'node', 'label' => t('Content')),
+        'node' => array(
+          'type' => 'node',
+          'label' => t('Content'),
+        ),
       ),
       'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
       'module' => 'Node',
@@ -125,16 +146,29 @@ function node_rules_action_info() {
     'rules_action_node_set_author' => array(
       'label' => t('Set the content author'),
       'arguments' => array(
-        'node' => array('type' => 'node', 'label' => t('Content')),
-        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
+        'node' => array(
+          'type' => 'node',
+          'label' => t('Content'),
+         ),
+        'author' => array(
+          'type' => 'user',
+          'label' => t('User, which is set as author'),
+         ),
       ),
       'module' => 'Node',
     ),
     'rules_action_add_node' => array(
       'label' => t('Add new content'),
       'arguments' => array(
-        'author' => array('type' => 'user', 'label' => t('User, which is set as author of the content')),
-        'title' => array('type' => 'string', 'label' => t('Title'), 'description' => t('Enter the title of the newly created content.')),
+        'author' => array(
+          'type' => 'user',
+          'label' => t('User, which is set as author'),
+        ),
+        'title' => array(
+          'type' => 'string',
+          'label' => t('Title'),
+          'description' => t('Enter the title of the newly created content.'),
+        ),
       ),
       'new variables' => array(
         'node_added' => array(
@@ -149,7 +183,11 @@ function node_rules_action_info() {
     'rules_action_load_node' => array(
       'label' => t('Load content by id'),
       'new variables' => array(
-        'node_loaded' => array('type' => 'node', 'label' => t('Loaded content'), 'label callback' => 'rules_action_load_node_variable_label'),
+        'node_loaded' => array(
+          'type' => 'node',
+          'label' => t('Loaded content'),
+          'label callback' => 'rules_action_load_node_variable_label',
+        ),
       ),
       'module' => 'Node',
     ),
@@ -193,6 +231,22 @@ function rules_action_add_node($author, $title, $settings) {
 function rules_action_load_node($settings) {
 //TODO: fix token
   return array('node_loaded' => node_load($settings['nid'], $settings['vid'] ? $settings['vid'] : NULL));
+}
+
+
+
+
+
+/**
+ * Implementation of hook_rules_action_info_alter().
+ *
+ * Adapts the action info of the core actions to better fit for rules.
+ */
+function node_rules_action_info_alter(&$actions) {
+  // The rules action is more powerful, so hide the core action
+  unset($actions['rules_core_node_assign_owner_action']);
+  // We prefer handling saving by rules - not by the user.
+  unset($actions['rules_core_node_save_action']);
 }
 
 
