@@ -62,8 +62,8 @@ function rules_get_variables($names, &$state, $load = TRUE, $element = NULL) {
     else if (isset($element['#settings'][$name])) {
       $args[$name] = $element['#settings'][$name];
     }
-    else if (isset($element['#info']['arguments'][$name]['default value'])) {
-      $args[$name] = $element['#settings'][$name];
+    else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
+      $args[$name] = $element['#info']['arguments'][$name]['default value'];
     }
     else {
       return FALSE;
