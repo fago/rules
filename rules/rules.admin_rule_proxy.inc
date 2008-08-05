@@ -233,14 +233,15 @@ class rules_admin_rule_proxy {
   /**
    * Gets info about all available variables
    * This are the arguments of the rule's set as well as further arguments that
-   * might be provided by actions of this or preceding rules
+   * might be provided by actions of this or preceding rules and aren't set to be hidden.
    *
    * @param $id The id of the element of the current rule until which we should get new variables.
    *   If not given all new variables of this rule will be considered.
    */
   function get_available_variables($id = NULL) {
     $set_info = $this->get_set_info();
-    return $this->get_new_variables($id) + $this->_get_available_variables() + $set_info['arguments'];
+    $vars = $this->get_new_variables($id) + $this->_get_available_variables() + $set_info['arguments'];
+    return array_filter($vars, 'rules_admin_element_filter');
   }
 
   /**
@@ -256,7 +257,7 @@ class rules_admin_rule_proxy {
     if (isset($id)) {
       $vars = array_diff_assoc($vars, $this->element_get_new_variables($this->get_element($id)));
     }
-    return $vars;
+    return rules_admin_element_filter($vars);
   }
 
   /**
