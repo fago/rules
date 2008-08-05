@@ -807,11 +807,11 @@ function rules_admin_map_get_configured_argument($name, $element) {
  */
 function rules_admin_element_help(&$form, $element) {
   $info = rules_get_element_info($element);
-  if (isset($element['#help']) || isset($info['#help'])) {
+  if (isset($info['help']) || isset($element['help'])) {
     $form['help'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Configuration help'),
-      '#description' => isset($element['#help']) ? $element['#help'] : $info['#help'],
+      '#title' => t('Description'),
+      '#description' => isset($element['help']) ? $element['help'] : $info['help'],
     );
   }
 }

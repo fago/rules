@@ -52,7 +52,7 @@ function node_rules_event_info() {
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
       'module' => 'Node',
-      'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
+      'help' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
       'arguments' => rules_events_node_arguments(t('viewed content'), t('content author')) + array(
         'teaser' => array('type' => 'boolean', 'label' => t('Content is displayed as teaser')),
         'page' => array('type' => 'boolean', 'label' => t('Content is displayed as page')),
