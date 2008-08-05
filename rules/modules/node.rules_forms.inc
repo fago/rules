@@ -77,3 +77,22 @@ function rules_action_load_node_form($settings, &$form) {
 function rules_action_load_node_variable_label($settings) {
   return t('Content with id @id', array('@id' => $settings['nid']));
 }
+
+
+/**
+ * The following functions help converting node actions
+ * when upgrading from workflow-ng
+ */
+
+function workflow_ng_action_node_publish_upgrade(&$element) {
+  $element['#name'] = $element['#settings']['published'] ? 'rules_core_node_publish_action' : 'rules_core_node_unpublish_action';
+  $element['#settings'] = array('auto_save' => TRUE);
+}
+function workflow_ng_action_node_promote_upgrade(&$element) {
+  $element['#name'] = $element['#settings']['promote'] ? 'rules_core_node_promote_action' : 'rules_core_node_unpromote_action';
+  $element['#settings'] = array('auto_save' => TRUE);
+}
+function workflow_ng_action_node_sticky_upgrade(&$element) {
+  $element['#name'] = $element['#settings']['sticky'] ? 'rules_core_node_make_sticky_action' : 'rules_core_node_make_unsticky_action';
+  $element['#settings'] = array('auto_save' => TRUE);
+}
