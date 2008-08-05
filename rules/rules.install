@@ -152,7 +152,7 @@ function _rules_import_transform_element(&$element) {
     // Just keep it.
   }
   else if (function_exists($function = $element['#name'] .'_upgrade')) {
-    $element = $function($element);
+    $function($element);
   }
   else if (function_exists($function = _rules_import_replace_module_name($element['#name']))) {
     $element['#name'] = $function;

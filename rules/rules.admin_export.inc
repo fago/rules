@@ -135,8 +135,11 @@ function rules_admin_import_workflow_ng($import) {
     }
     rules_include('rules');
 
-    // Load the include files, as there modules may provide upgrade information.
+    // Load the install and form include files, as there modules
+    // may provide upgrade information.
     module_load_all_includes('install');
+    rules_include('rules_forms');
+
     $rule = rules_import_workflow_ng_rule($name, $cfg);
     if ($rule) {
       rules_item_save('rules', $rule['#name'], $rule);
