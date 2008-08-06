@@ -140,6 +140,15 @@ class rules_data_type {
 
   }
 
+  /**
+   * Checks the value of your data type. E.g. the number data type
+   * uses this to make sure the value is a number.
+   *
+   * It's only used, if your data type is not identifiable.
+   */
+  function check_value($variable_info, $value) {
+    return $value;
+  }
 }
 
 

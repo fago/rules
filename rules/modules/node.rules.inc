@@ -167,7 +167,7 @@ function node_rules_action_info() {
         'title' => array(
           'type' => 'string',
           'label' => t('Title'),
-          'description' => t('Enter the title of the newly created content.'),
+          'description' => t('The title of the newly created content.'),
         ),
       ),
       'new variables' => array(
@@ -182,6 +182,18 @@ function node_rules_action_info() {
     ),
     'rules_action_load_node' => array(
       'label' => t('Load content by id'),
+      'arguments' => array(
+        'nid' => array(
+          'type' => 'number',
+          'label' => t('Content ID'),
+        ),
+        'vid' => array(
+          'type' => 'number',
+          'label' => t('Content Revision ID'),
+          'description' => t('If you want to load a specific revision, specify it\'s revision id. Else leave it empty to load the current revision.'),
+          'required' => FALSE,
+        ),
+      ),
       'new variables' => array(
         'node_loaded' => array(
           'type' => 'node',
@@ -226,11 +238,9 @@ function rules_action_add_node($author, $title, $settings) {
 
 /**
  * Loads a node
- * @ingroup rules
  */
-function rules_action_load_node($settings) {
-//TODO: fix token
-  return array('node_loaded' => node_load($settings['nid'], $settings['vid'] ? $settings['vid'] : NULL));
+function rules_action_load_node($nid, $vid = NULL) {
+  return array('node_loaded' => node_load($nid, $vid ? $vid : NULL));
 }
 
 
