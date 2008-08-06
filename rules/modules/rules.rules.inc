@@ -13,13 +13,13 @@ function rules_rules_data_type_info() {
       'label' => t('String'),
       'class' => 'rules_data_type_string',
       'identifiable' => FALSE,
-      'eval_input' => TRUE,
+      'eval input' => TRUE,
     ),
     'number' => array(
       'label' => t('Number'),
       'class' => 'rules_data_type_number',
       'identifiable' => FALSE,
-      'eval_input' => TRUE,
+      'eval input' => TRUE,
     ),
     'value' => array(
       'label' => t('A fixed value'),

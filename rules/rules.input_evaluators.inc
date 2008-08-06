@@ -43,10 +43,22 @@ function rules_prepare_input_evaluators(&$element, $variables) {
   }
 }
 
+/**
+ * Gets all settings that should be evaluated - this are manually specified settings
+ * and arguments of a data type like string, which has 'eval input' turned on.
+ */
 function rules_get_settings_to_evaluate($element) {
   $info = rules_get_element_info($element);
-  //TODO: include arguments
-  return $info['eval input'];
+  $eval_args = $info['eval input'];
+
+  foreach ($info['arguments'] as $name => $arg_info) {
+    if ($data_type = rules_get_data_types($arg_info['type'])) {
+      if (isset($data_type['eval input']) && $data_type['eval input']) {
+        $eval_args[] = $name;
+      }
+    }
+  }
+  return $eval_args;
 }
 
 /**
