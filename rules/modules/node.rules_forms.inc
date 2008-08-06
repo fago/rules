@@ -81,3 +81,10 @@ function workflow_ng_action_node_sticky_upgrade(&$element) {
   $element['#name'] = $element['#settings']['sticky'] ? 'rules_core_node_make_sticky_action' : 'rules_core_node_make_unsticky_action';
   $element['#settings'] = array('auto_save' => TRUE);
 }
+
+/**
+ * Implementation of hook_rules_upgrade_event_map().
+ */
+function node_rules_upgrade_event_map() {
+  return array('node_submit' => 'node_presave');
+}

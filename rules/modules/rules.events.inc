@@ -10,7 +10,7 @@
  */
 function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
-  if (in_array($op, array('view', 'insert', 'update', 'submit', 'delete'))) {
+  if (in_array($op, array('view', 'insert', 'update', 'presave', 'delete'))) {
     // We pass the node by reference so that changes are saved automatically on op submit
     $arguments = ($op == 'view') ? array('node' => &$node, 'teaser' => $teaser, 'page' => $page) : array('node' => &$node);
     rules_invoke_event('node_'. $op, $arguments);
