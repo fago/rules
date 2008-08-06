@@ -113,7 +113,7 @@ function rules_import_workflow_ng_rule($name, $cfg) {
   }
   $rule['#categories'] = array('imported'); // TODO: fix
   $rule['#label'] = _rules_import_replace_module_name($cfg['#label']);
-  $rule['#set'] = 'event_'. $cfg['#event'];
+  $rule['#set'] = _rules_import_get_set($cfg);
   if (isset($cfg['#fixed']) && $cfg['#fixed']) {
     $rule['#status'] = 'fixed';
   }
@@ -125,6 +125,7 @@ function rules_import_workflow_ng_rule($name, $cfg) {
     $rule['#status'] = 'default';
   }
 
+  $rule += array('#actions' => array(), '#conditions' => array());
   // Separate actions and conditions.
   foreach (element_children($cfg) as $key) {
     if (isset($cfg[$key]['#type']) && $cfg[$key]['#type'] == 'action') {
@@ -195,6 +196,12 @@ function _rules_import_replace_module_name($string) {
   $search[] = 'Workflow-ng';
   $replace[] = 'Rules';
   return str_replace($search, $replace, $string);
+}
+
+function _rules_import_get_set($cfg) {
+  $map = rules_gather_data('rules_upgrade_event_map', 'all', FALSE);
+  $event = isset($map[$cfg['#event']]) ? $map[$cfg['#event']] : $cfg['#event'];
+  return 'event_'. $event;
 }
 
 

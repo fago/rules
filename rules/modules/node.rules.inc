@@ -10,43 +10,23 @@
  * @ingroup rules
  */
 function node_rules_event_info() {
-  return array(
+  $items = array(
     'node_insert' => array(
-      'label' => t('Content has been created'),
+      'label' => t('After saving new content'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('created content'), t('content\'s author')),
       'redirect' => TRUE,
     ),
     'node_update' => array(
-      'label' => t('Content has been updated'),
+      'label' => t('After updating existing content'),
       'module' => 'Node',
-      'arguments' => rules_events_node_arguments(t('updated content'), t('content author')) + array(
-        'node_unchanged' => array(
-          'type' => 'node',
-          'label' => t('unchanged content'),
-          'handler' => 'rules_events_argument_node_unchanged',
-        ),
-        'author_unchanged' => array(
-          'type' => 'user',
-          'label' => t('unchanged content\'s author'),
-          'handler' => 'rules_events_argument_unchanged_node_author',
-        ),
-      ),
+      'arguments' => rules_events_node_arguments(t('updated content'), t('content\'s author'), TRUE),
       'redirect' => TRUE,
     ),
-    'node_submit' => array(
+    'node_presave' => array(
       'label' => t('Content is going to be saved'),
       'module' => 'Node',
-      'arguments' => array(
-        'node' => array(
-          'type' => 'node',
-          'label' => t('content'),
-          'saved' => TRUE
-        ),
-        'author' => array('type' => 'user', 'label' => t('content author'), 'handler' => 'rules_events_argument_node_author'),
-        'node_unchanged' => array('type' => 'node', 'label' => t('unchanged content'), 'handler' => 'rules_events_argument_node_unchanged'),
-        'author_unchanged' => array('type' => 'user', 'label' => t('unchanged content\'s author'), 'handler' => 'rules_events_argument_unchanged_node_author'),
-      ) + rules_events_global_user_argument(),
+      'arguments' => rules_events_node_arguments(t('saved content'), t('content\'s author'), TRUE),
       'redirect' => TRUE,
     ),
     'node_view' => array(
@@ -59,20 +39,23 @@ function node_rules_event_info() {
       ),
     ),
     'node_delete' => array(
-      'label' => t('Content has been deleted'),
+      'label' => t('After deleting content'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('deleted content'), t('content author')),
       'redirect' => TRUE,
     ),
   );
+  // Specify that on presave the node is saved anyway.
+  $items['node_presave']['arguments']['node']['saved'] = TRUE;
+  return $items;
 }
 
 /**
  * Returns some arguments suitable for using it with a node
  * @ingroup rules
  */
-function rules_events_node_arguments($node_label, $author_label) {
-  return array(
+function rules_events_node_arguments($node_label, $author_label, $update = FALSE) {
+  $args = array(
     'node' => array(
       'type' => 'node',
       'label' => $node_label,
@@ -81,7 +64,22 @@ function rules_events_node_arguments($node_label, $author_label) {
       'type' => 'user',
       'label' => $author_label,
       'handler' => 'rules_events_argument_node_author'),
-    ) + rules_events_global_user_argument();
+    );
+  if ($update) {
+    $args += array(
+      'node_unchanged' => array(
+        'type' => 'node',
+        'label' => t('unchanged content'),
+        'handler' => 'rules_events_argument_node_unchanged',
+      ),
+      'author_unchanged' => array(
+        'type' => 'user',
+        'label' => t('unchanged content\'s author'),
+        'handler' => 'rules_events_argument_unchanged_node_author',
+      ),
+    );
+  }
+  return $args + rules_events_global_user_argument();
 }
 
 /**
@@ -107,6 +105,8 @@ function rules_events_argument_node_unchanged($node) {
 function rules_events_argument_unchanged_node_author($node) {
   return rules_events_argument_node_author(rules_events_argument_node_unchanged($node));
 }
+
+
 
 /**
  * Implementation of hook_rules_condition_info()
