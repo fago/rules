@@ -525,6 +525,7 @@ function rules_invoke_rule_set() {
     }
 
     _rules_log_set_invocation(t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
+    rules_log_evaluation_clear($set_name);
 
     //only show the log, if this is no nested evaluation
     if (rules_log_evaluation_finished()) {
@@ -609,20 +610,19 @@ function rules_execute_element(&$element, &$state) {
  * Execution handler for rules
  */
 function rules_execute_rule(&$element, &$state) {
-  if ($element['#active'] && !$element['#recursion'] && rules_log_rule_is_evaluated($element['#name'])) {
+
+  if ($element['#active'] && !$element['#recursion'] && rules_log_rule_is_evaluated($element)) {
     rules_log(t('Not executing the rule %name on rule set %set to prevent recursion.', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
   }
   else if ($element['#active']) {
     //remember that we are processing this rule to prevent recursion
-    rules_log_evaluated_rule($element['#name'], TRUE);
+    rules_log_evaluated_rule($element, TRUE);
     rules_log(t('Executing the rule %name on rule set %set', array('%name' => $element['#label'], '%set' => $state['set_info']['label'])));
 
     $result = rules_evaluate_elements($element['#conditions'], $state);
     if ($result) {
       rules_evaluate_elements($element['#actions'], $state);
     }
-
-    rules_log_evaluated_rule($element['#name'], FALSE);
   }
   //return true, so that the next rules are evaluated too
   return TRUE;
@@ -929,32 +929,35 @@ function _rules_show_log(&$i, $data, &$error) {
 /**
  * Remembers the currently evaluated rules. With this information, recursion is prevented
  *
- * @param $name The name of the rule, which execution should be logged
- * @param $start Whether evaluation just started or finished
+ * @param $rule The rule, which execution should be logged
  */
-function rules_log_evaluated_rule($name, $start) {
+function rules_log_evaluated_rule($rule) {
   global $_rules_exec_log;
 
   if (!isset($_rules_exec_log)) {
     $_rules_exec_log = array();
   }
-  if ($start) {
-    $_rules_exec_log[$name] = $name;
-  }
-  else {
-    unset($_rules_exec_log[$name]);
-  }
+  $_rules_exec_log[$rule['#set']][$rule['#name']] = TRUE;
 }
 
 /**
- * Checks whether the given rule is currently evaluated.
+ * Clears the rule evaluation log for the given rule set.
+ */
+function rules_log_evaluation_clear($set_name) {
+  global $_rules_exec_log;
+
+  unset($_rules_exec_log[$set_name]);
+}
+
+/**
+ * Checks if the given rule is currently evaluated.
  *
  * @param $name The name of the rule, which execution should be logged
  */
-function rules_log_rule_is_evaluated($name) {
+function rules_log_rule_is_evaluated($rule) {
   global $_rules_exec_log;
 
-  return is_array($_rules_exec_log) && in_array($name, $_rules_exec_log);
+  return is_array($_rules_exec_log) && isset($_rules_exec_log[$rule['#set']][$rule['#name']]);
 }
 
 /**
