@@ -57,23 +57,8 @@ function rules_action_add_node_variable_label($settings) {
 }
 
 /**
- * Action "Load a node" configuration form
+ * Action "Load a node" variable label callback
  */
-function rules_action_load_node_form($settings, &$form) {
-  $form['settings']['nid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Content ID'),
-    '#default_value' => isset($settings['nid']) ? $settings['nid'] : '',
-    '#required' => TRUE,
-  );
-  $form['settings']['vid'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Content Revision ID'),
-    '#default_value' => isset($settings['vid']) ? $settings['vid'] : '',
-    '#description' => t('If you want to load a specific revision, enter it\'s revision id. Else leave it empty to load the current revision.'),
-  );
-}
-
 function rules_action_load_node_variable_label($settings) {
   return t('Content with id @id', array('@id' => $settings['nid']));
 }

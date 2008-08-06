@@ -59,8 +59,9 @@ function rules_get_variables($names, &$state, $load = TRUE, $element = NULL) {
     if (isset($state['variables'][$name])) {
       $args[$name] = &$state['variables'][$name]->get($load);
     }
-    else if (isset($element['#settings'][$name])) {
-      $args[$name] = $element['#settings'][$name];
+    else if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
+      $object = rules_get_data_object($element['#info']['arguments'][$name]);
+      $args[$name] = $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
     }
     else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
       $args[$name] = $element['#info']['arguments'][$name]['default value'];

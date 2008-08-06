@@ -10,12 +10,11 @@
  * @file Rules engine module
  */
 
-/**
- * Implementation of hook_init()
- */
-function rules_init() {
-  require_once drupal_get_path('module', 'rules') . '/modules/rules.events.inc';
-}
+
+// We don't use hook_init() to include this as this
+// causes problems invoking rules_nodeapi.
+module_load_include('inc', 'rules', 'modules/rules.events');
+
 
 //admin interface paths
 define('RULES_ADMIN_PATH', 'admin/rules');

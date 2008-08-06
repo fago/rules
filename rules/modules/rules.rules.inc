@@ -12,7 +12,12 @@ function rules_rules_data_type_info() {
     'string' => array(
       'label' => t('String'),
       'class' => 'rules_data_type_string',
-      'saveable' => FALSE,
+      'identifiable' => FALSE,
+      'eval_input' => TRUE,
+    ),
+    'number' => array(
+      'label' => t('Number'),
+      'class' => 'rules_data_type_number',
       'identifiable' => FALSE,
       'eval_input' => TRUE,
     ),
@@ -46,6 +51,21 @@ class rules_data_type_string extends rules_data_type {
     );
   }
 }
+
+/**
+ * Rules number data type
+ * @ingroup rules
+ */
+class rules_data_type_number extends rules_data_type_string {
+
+  function check_value($info, $value) {
+    return (float)$value;
+  }
+}
+
+
+
+
 
 /**
  * Implementation of hook_rules_action_info
