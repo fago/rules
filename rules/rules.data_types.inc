@@ -89,7 +89,7 @@ class rules_data_type {
    */
   function eval_input() {
     $info = $this->get_info();
-    return isset($info['eval_input']) && $info['eval_input'];
+    return isset($info['eval input']) && $info['eval input'];
   }
 
   /**
@@ -99,7 +99,7 @@ class rules_data_type {
     return $this->_info + array(
       'saveable' => FALSE,
       'identifiable' => TRUE,
-      'eval_input' => FALSE,
+      'eval input' => FALSE,
     );
   }
 
