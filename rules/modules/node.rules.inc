@@ -146,24 +146,15 @@ function node_rules_action_info() {
     'rules_action_node_set_author' => array(
       'label' => t('Set the content author'),
       'arguments' => array(
-        'node' => array(
-          'type' => 'node',
-          'label' => t('Content'),
-         ),
-        'author' => array(
-          'type' => 'user',
-          'label' => t('User, which is set as author'),
-         ),
+        'node' => array('type' => 'node', 'label' => t('Content')),
+        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
       ),
       'module' => 'Node',
     ),
     'rules_action_add_node' => array(
       'label' => t('Add new content'),
       'arguments' => array(
-        'author' => array(
-          'type' => 'user',
-          'label' => t('User, which is set as author'),
-        ),
+        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
         'title' => array(
           'type' => 'string',
           'label' => t('Title'),
@@ -183,10 +174,7 @@ function node_rules_action_info() {
     'rules_action_load_node' => array(
       'label' => t('Load content by id'),
       'arguments' => array(
-        'nid' => array(
-          'type' => 'number',
-          'label' => t('Content ID'),
-        ),
+        'nid' => array('type' => 'number', 'label' => t('Content ID')),
         'vid' => array(
           'type' => 'number',
           'label' => t('Content Revision ID'),

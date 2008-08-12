@@ -21,6 +21,12 @@ function rules_rules_data_type_info() {
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
+    'boolean' => array(
+      'label' => t('Truth value'),
+      'class' => 'rules_data_type_boolean',
+      'identifiable' => FALSE,
+      'eval input' => TRUE,
+    ),
     'value' => array(
       'label' => t('A fixed value'),
       'class' => 'rules_data_type',
@@ -54,7 +60,6 @@ class rules_data_type_string extends rules_data_type {
 
 /**
  * Rules number data type
- * @ingroup rules
  */
 class rules_data_type_number extends rules_data_type_string {
 
@@ -63,12 +68,91 @@ class rules_data_type_number extends rules_data_type_string {
   }
 }
 
+/**
+ * Rules boolean data type
+ */
+class rules_data_type_boolean extends rules_data_type_string {
+
+  function check_value($info, $value) {
+    return (boolean)$value;
+  }
+
+  function get_default_input_form($info, $value) {
+    $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
+    $info['description'] = t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.') . ' ' . $info['description'];
+    return parent::get_default_input_form($info, isset($value) ? $value : 1);
+  }
+}
+
+
+/**
+ * Implementation of hook_condition_info().
+ */
+function rules_rules_condition_info() {
+  return array(
+    'rules_condition_text_compare' => array(
+      'label' => t('Textual comparison'),
+      'arguments' => array(
+        'text1' => array('label' => t('Text 1'), 'type' => 'string'),
+        'text2' => array('label' => t('Text 2'), 'type' => 'string'),
+      ),
+      'description' => t('This condition just compares two texts. It returns TRUE, if both texts are equal.'),
+      'module' => 'Rules',
+    ),
+    'rules_condition_number_compare' => array(
+      'label' => t('Numeric comparison'),
+      'arguments' => array(
+        'number1' => array('label' => t('Number 1'), 'type' => 'number'),
+        'number2' => array('label' => t('Number 2'), 'type' => 'number'),
+      ),
+      'description' => t('This condition does a numeric comparison. Select greater than, less than or equal to.'),
+      'module' => 'Rules',
+    ),
+    'rules_condition_check_boolean' => array(
+      'label' => t('Check a truth value'),
+      'arguments' => array(
+        'boolean' => array('type' => 'boolean', 'label' => t('Truth value')),
+      ),
+      'description' => t('Check a truth value, i.e. TRUE or FALSE.'),
+      'module' => 'Rules',
+    ),
+  );
+}
+
+
+/**
+ * Condition Implementation: Textual comparison.
+ */
+function rules_condition_text_compare($text1, $text2, $settings) {
+  return $settings['regex'] ? ereg($text2, $text1) : $text1 == $text2;
+}
+
+/**
+ * Condition implementation: Numeric comparison.
+ */
+function rules_condition_number_compare($number1, $number2, $settings) {
+  switch ($settings['operation']) {
+    case 'greater':
+      return $number1 > $number2;
+    case 'equal':
+      return $number1 == $number2;
+    case 'less':
+      return $number1 < $number2;
+  }
+}
+
+/**
+ * Condition implementation: Boolean check.
+ */
+function rules_condition_check_boolean($boolean) {
+  return (bool)$boolean;
+}
 
 
 
 
 /**
- * Implementation of hook_rules_action_info
+ * Implementation of hook_rules_action_info().
  */
 function rules_rules_action_info() {
   $items = array();
