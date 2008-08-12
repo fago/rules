@@ -10,15 +10,17 @@
 function user_rules_event_info() {
   return array(
     'user_insert' => array(
-      'label' => t('User has registered'),
+      'label' => t('User account has been created'),
       'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('registered user')),
       'redirect' => TRUE,
     ),
     'user_update' => array(
-      'label' => t('User has updated his account details'),
+      'label' => t('User account details have been updated'),
       'module' => 'User',
-      'arguments' => rules_events_hook_user_arguments(t('updated user')) + array('account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'))),
+      'arguments' => rules_events_hook_user_arguments(t('updated user')) + array(
+        'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user')),
+      ),
       'redirect' => TRUE,
     ),
     'user_view' => array(
@@ -36,13 +38,17 @@ function user_rules_event_info() {
     'user_login' => array(
       'label' => t('User has logged in'),
       'module' => 'User',
-      'arguments' => array('account' => array('type' => 'user', 'label' => t('logged in user'))),
+      'arguments' => array(
+        'account' => array('type' => 'user', 'label' => t('logged in user')),
+      ),
       'redirect' => TRUE,
     ),
     'user_logout' => array(
       'label' => t('User has logged out'),
       'module' => 'User',
-      'arguments' => array('account' => array('type' => 'user', 'label' => t('logged out user'))),
+      'arguments' => array(
+        'account' => array('type' => 'user', 'label' => t('logged out user')),
+      ),
       'redirect' => TRUE,
     ),
   );
@@ -82,10 +88,10 @@ function user_rules_condition_info() {
     'rules_condition_user_comparison' => array(
       'label' => t('Compare two users'),
       'arguments' => array(
-        'user1' => array('type' => 'user', 'label' => t('First user to compare')),
-        'user2' => array('type' => 'user', 'label' => t('Second user to compare')),
+        'user1' => array('type' => 'user', 'label' => t('User account 1')),
+        'user2' => array('type' => 'user', 'label' => t('User account 2')),
       ),
-      'help' => t('Evaluates to TRUE, if both compared users are the same user account.'),
+      'help' => t('Evaluates to TRUE, if both given user accounts are the same.'),
       'module' => 'User',
     ),
     'rules_condition_user_hasrole' => array(
@@ -151,7 +157,7 @@ function user_rules_action_info() {
       'module' => 'User',
     ),
     'rules_action_load_user' => array(
-      'label' => t('Load user by name'),
+      'label' => t('Load a user account'),
       'new variables' => array(
         'user_loaded' => array('type' => 'user', 'label' => t('Loaded user')),
       ),
