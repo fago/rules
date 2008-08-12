@@ -5,8 +5,7 @@
  */
 
 /**
- * Implementation of hook_nodeapi
- * @ingroup rules
+ * Implementation of hook_nodeapi().
  */
 function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 
@@ -18,8 +17,7 @@ function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 }
 
 /**
- * Implementation of hook_user
- * @ingroup rules
+ * Implementation of hook_user().
  */
 function rules_user($op, $edit, &$account, $category = NULL) {
   static $account_unchanged;
@@ -35,4 +33,18 @@ function rules_user($op, $edit, &$account, $category = NULL) {
   else if (in_array($op, array('insert', 'login', 'logout', 'view', 'delete'))) {
     rules_invoke_event('user_'. $op, array('account' => &$account));
   }
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function rules_init() {
+  rules_invoke_event('init');
+}
+
+/**
+ * Implementation of hook_cron().
+ */
+function rules_cron() {
+  rules_invoke_event('cron');
 }
