@@ -85,7 +85,7 @@ function rules_apply_input_evaluators(&$element, &$state) {
  */
 function rules_input_evaluators_help($element, $variables) {
   $render = array();
-  if (rules_get_settings_to_evaluate($element)) {
+  if (rules_get_settings_to_evaluate($element) && $variables) {
     rules_include('rules_forms');
     foreach(rules_get_input_evaluators() as $base => $info) {
       $render[$base] = array(
