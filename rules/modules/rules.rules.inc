@@ -171,6 +171,43 @@ function rules_rules_action_info() {
     $items[ 'rules_core_'. $name ] = rules_core_action_transform_info($name, $core_action_info, $type_map);
   }
   array_filter($items);
+
+  // Add an action to add a new variable for all not identifiable data types
+  foreach (rules_get_data_types() as $name => $type_info) {
+    if (isset($type_info['identifiable']) && !$type_info['identifiable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
+      $items[ 'rules_add_var_'. $name ] = array(
+        'module' => 'Rules',
+        'base' => 'rules_action_save_variable',
+        'label' => t('Add a new @type variable', array('@type' => $type_info['label'])),
+        'arguments' => array(
+          'var_name' => array('type' => 'value', 'default value' => $name),
+          $name => array('type' => $name, 'label' => $type_info['label']),
+        ),
+        'new variables' => array(
+          $name => array(
+            'type' => $name,
+            'label' => t('Added @type', array('@type' => $type_info['label'])),
+          ),
+        ),
+      );
+    }
+  }
+  // Add an action to save savable data types intelligently
+  foreach (rules_get_data_types() as $name => $type_info) {
+    if (isset($type_info['saveable']) && $type_info['saveable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
+      $items[ 'rules_save_var_'. $name ] = array(
+        'module' => 'Rules',
+        'base' => 'rules_action_save_variable',
+        'label' => t('Save @type', array('@type' => $type_info['label'])),
+        'arguments' => array(
+          'var_name' => array('type' => 'value', 'default value' => $name),
+          $name => array('type' => $name, 'label' => $type_info['label']),
+        ),
+        'help' => t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .
+          ' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.'),
+      );
+    }
+  }
   return $items;
 }
 
@@ -186,6 +223,16 @@ function rules_action_invoke_set() {
   array_unshift($args, $element['#info']['set']);
   call_user_func_array('rules_invoke_rule_set', $args);
 }
+
+
+/**
+ * Base action implementation for adding a new variable and saving variables
+ */
+function rules_action_save_variable($name, $variable) {
+  return array($name => $variable);
+}
+
+
 
 /**
  * Transforms action info written for core to the rules format.

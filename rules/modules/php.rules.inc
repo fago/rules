@@ -59,7 +59,7 @@ function rules_input_evaluator_php_apply($string, $data = NULL, &$state, $return
   if ($data) {
     $vars = rules_get_variables($data, $state);
     if (!$vars) {
-      //there not all needed variables available!
+      rules_log(t('PHP is not evaluated as there are not all necessary variables available.'));
       return FALSE;
     }
   }
