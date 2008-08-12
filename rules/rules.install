@@ -66,6 +66,7 @@ function rules_schema() {
 function rules_update_6001() {
   require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
   rules_include('rules');
+  rules_include('rules_forms');
   $ret = array();
 
   if (db_table_exists('workflow_ng_cfgs')) {
@@ -82,7 +83,7 @@ function rules_update_6001() {
         db_query("DELETE FROM {workflow_ng_cfgs} WHERE name = '%s'", $row->name);
       }
       else {
-        $msg = t('Failed importing the rule %label.', array('%label' => $rule['#label']));
+        $msg = t('Failed importing the rule %label.', array('%label' => $cfg['#label']));
         $ret[] = array('success' => FALSE, 'query' => $msg);
         $failed = TRUE;
       }
@@ -95,7 +96,8 @@ function rules_update_6001() {
       variable_del('workflow_ng_show_fixed');
     }
   }
-  return array();
+  rules_clear_cache(FALSE);
+  return $ret;
 }
 
 
