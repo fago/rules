@@ -81,3 +81,109 @@ function rules_action_mail_form($settings = array(), &$form) {
   );
   rules_action_mail_to_user_form($settings, $form);
 }
+
+/**
+ * Action "Send a mail to users of a role" configuration form
+ */
+function rules_action_mail_to_users_of_role_form($settings = array(), &$form) {
+  // Select only non-anonymous user roles because anonymous users won't have emails.
+  $roles = user_roles(TRUE);
+
+  $form['settings']['recipients'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Recipient roles'),
+    '#prefix' => t('WARNING: This may cause problems if there are too many users of these roles on your site, as your server may not be able to handle all the mail requests all at once.'),
+    '#required' => TRUE,
+    '#default_value' => isset($settings['recipients']) ? $settings['recipients'] : array(),
+    '#options' => $roles,
+    '#description' => t('Select the roles whose users should receive this email.'),
+  );
+  rules_action_mail_to_user_form($settings, $form);
+}
+
+function rules_action_mail_to_users_of_role_submit(&$settings, $form, $form_state) {
+  $settings['recipients'] = array_filter(array_keys(array_filter($settings['recipients'])));
+}
+
+/**
+ * Action "Page redirect" configuration form
+ */
+function rules_action_drupal_goto_form($settings = array(), &$form, $form_state) {
+  $settings += array('path' => '', 'query' => '', 'fragment' => '', 'force' => 0);
+  // Enable override by default, when the event states that there happens a redirect.
+  $set_info = $form_state['proxy']->get_set_info();
+  $settings['override'] = isset($set_info['redirect']) && $set_info['redirect'];
+
+  $form['settings']['path'] = array(
+    '#type' => 'textfield',
+    '#size' => 30,
+    '#prefix' => '<br /><div class="container-inline">',
+    '#title' => t('To'),
+    '#default_value' => $settings['path'],
+  );
+  $form['settings'][] = array(
+    '#value' => '?',
+  );
+  $form['settings']['query'] = array(
+    '#type' => 'textfield',
+    '#size' => 12,
+    '#default_value' => $settings['query'],
+  );
+  $form['settings'][] = array(
+    '#value' => '#',
+  );
+  $form['settings']['fragment'] = array(
+    '#type' => 'textfield',
+    '#size' => 12,
+    '#default_value' => $settings['fragment'],
+    '#suffix' => '</div>',
+  );
+  $form['settings']['force'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Force redirecting to the given path, even if a destination parameter is given'),
+    '#description' => t('Per default drupal doesn\'t redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination paramter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url', array('!example_url' => 'http://example.com/user/login?destination=node/2')),
+    '#default_value' => $settings['force'],
+    '#weight' => 7,
+  );
+  $form['settings']['override'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Override another path redirect by setting the destination parameter'),
+    '#description' => t('If checked, the path redirect isn\'t initiated by this action, but the destination parameter gets set. So if something else redirects, the redirect will use the configured path.'),
+    '#default_value' => $settings['override'],
+    '#weight' => 8,
+  );
+}
+
+
+/**
+ * Action "Watchdog" configuration form
+ */
+function rules_action_watchdog_form($settings = array(), &$form) {
+  $form['settings']['severity'] = array(
+    '#type' => 'select',
+    '#title' => t('Severity'),
+    '#options' => watchdog_severity_levels(),
+    '#default_value' => isset($settings['severity']) ? $settings['severity'] : WATCHDOG_NOTICE,
+    '#required' => TRUE,
+  );
+  $form['settings']['type'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Category'),
+    '#default_value' => isset($settings['type']) ? $settings['type'] : 'rules',
+    '#description' => t('The category to which this message belongs.'),
+    '#required' => TRUE,
+  );
+  $form['settings']['message'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Message'),
+    '#default_value' => isset($settings['message']) ? $settings['message'] : '',
+    '#description' => t('The message to log.'),
+    '#required' => TRUE,
+  );
+  $form['settings']['link'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Link (optional)'),
+    '#default_value' => isset($settings['link']) ? $settings['link'] : '',
+    '#description' => t('A link to associate with the message.'),
+  );
+}
