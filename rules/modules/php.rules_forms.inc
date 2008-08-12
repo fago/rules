@@ -15,10 +15,11 @@ function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
     $headers[] = t('Intelligent saving');
   }
   $rows = array();
+  $data_types = rules_get_data_types();
   foreach ($variables as $name => $info) {
     $row = array();
     $row[] = '$'. check_plain($name);
-    $row[] = check_plain($info['type']);
+    $row[] = check_plain($data_types[$info['type']]['label']);
     $row[] = check_plain($info['label']);
     if ($save_info) {
       $data_type = rules_get_data_object($info);
