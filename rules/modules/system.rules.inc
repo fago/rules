@@ -53,6 +53,22 @@ function system_rules_action_info() {
       'module' => 'System',
       'eval input' => array('subject', 'message', 'from', 'to'),
     ),
+    'rules_action_mail_to_users_of_role' => array(
+      'label' => t('Send a mail to all users of a role'),
+      'module' => 'System',
+      'eval input' => array('subject', 'message', 'from'),
+    ),
+    'rules_action_drupal_goto' => array(
+      'label' => t('Page redirect'),
+      'module' => 'System',
+      'eval input' => array('path', 'query', 'fragment'),
+      'help' => t('Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".'),
+    ),
+    'rules_action_watchdog' => array(
+      'label' => t('Log to watchdog'),
+      'module' => 'System',
+      'eval input' => array('type', 'message', 'link'),
+    ),
   );
 }
 
@@ -120,3 +136,62 @@ function rules_action_mail($settings) {
   rules_action_mail_to_user(NULL, $settings);
 }
 
+
+/**
+ * Action: Send mail to all users of a specific role group(s).
+ */
+function rules_action_mail_to_users_of_role($settings) {
+  $recipients = $settings['recipients'];
+  $from = isset($settings['from']) ? str_replace(array("\r", "\n"), '', $settings['from']) : NULL;
+
+  // All authenticated users, which is everybody.
+  if (in_array(DRUPAL_AUTHENTICATED_RID, $recipients)) {
+    $result = db_query('SELECT mail FROM {users} WHERE uid > 0');
+  }
+  else {
+    $rids = implode(',', $recipients);
+    // Avoid sending emails to members of two or more target role groups.
+    $result = db_query('SELECT DISTINCT u.mail FROM {users} u INNER JOIN {users_roles} r ON u.uid = r.uid WHERE r.rid IN ('. $rids .')');
+  }
+
+  // Now, actually send the mails.
+  $message = array('result' => TRUE);
+  while (($account = db_fetch_object($result)) && $message['result']) {
+    $message = drupal_mail('rules', 'rules_action_role_mail', $account->mail, language_default(), $settings, $from);
+  }
+  if ($message['result']) {
+    $roles = array_intersect_key(user_roles(TRUE), drupal_map_assoc($recipients));
+    watchdog('rules', 'Successfully sent email to the role(s) %roles.', array('%roles' => implode(', ', $roles)));
+  }
+}
+
+/**
+ * Action Implementation: Page redirect.
+ */
+function rules_action_drupal_goto($settings) {
+  extract( $settings );
+
+  if ($force) {
+    if (strpos($query, 'destination') === FALSE) {
+      if (!empty($query)) {
+        $query .= '&';
+      }
+      $query .= $_REQUEST['destination'] ? 'destination='. urlencode($_REQUEST['destination']) : NULL;
+    }
+    unset($_REQUEST['destination']);
+  }
+  if ($override) {
+    // Override the destination parameter, so another drupal_goto goes to our url :)
+    $_REQUEST['destination'] = urlencode($path) . ($query ? '?'. urlencode($query) : '') . ($fragment ? '#'. urlencode($fragment) : '');
+  }
+  else {
+    drupal_goto($path, $query ? $query : NULL, $fragment ? $fragment : NULL);
+  }
+}
+
+/**
+ * Action Implementation: Log to watchdog.
+ */
+function rules_action_watchdog($settings) {
+  watchdog($settings['type'], $settings['message'], NULL, $settings['severity'], $settings['link']);
+}
