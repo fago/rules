@@ -276,7 +276,7 @@ function _rules_admin_form_argument($name = '', $info = array()) {
     '#size' => 40,
     '#default_value' => isset($info['label']) ? $info['label'] : '',
   );
-  $options = rules_extract_property(rules_get_data_types(), 'label');
+  $options = rules_extract_property(array_filter(rules_get_data_types(), 'rules_admin_element_filter'), 'label');
   asort($options);
   $form['type'] = array(
     '#type' => 'select',
