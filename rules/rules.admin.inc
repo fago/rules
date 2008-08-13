@@ -1009,10 +1009,12 @@ function rules_admin_filter_info($variables, $infos) {
   foreach ($infos as $key => $info) {
     if (isset($info['arguments']) && is_array($info['arguments'])) {
       foreach ($info['arguments'] as $name => $argument_info) {
-        if (rules_admin_argument_satisifable($argument_info, $variables)) {
-          $filtered[$key] = $info;
+        if (!rules_admin_argument_satisifable($argument_info, $variables)) {
+          // Skip this element
+          continue 2;
         }
       }
+      $filtered[$key] = $info;
     }
     else {
       $filtered[$key] = $info;
