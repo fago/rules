@@ -247,7 +247,7 @@ class rules_variable {
    */
   function save_changes() {
     //if the variable is not saved automatically, save it
-    if ($this->_changed && !$this->info['saved'] && $this->data->is_saveable()) {
+    if ($this->_changed && !$this->info['saved'] && $this->data->is_savable()) {
       $return = $this->data->save();
 
       if ($return) {

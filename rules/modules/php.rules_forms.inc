@@ -23,7 +23,7 @@ function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
     $row[] = check_plain($info['label']);
     if ($save_info) {
       $data_type = rules_get_data_object($info);
-      if ($data_type->is_saveable()) {
+      if ($data_type->is_savable()) {
         $row[] = t('Yes');
       }
       else {

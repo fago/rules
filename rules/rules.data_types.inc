@@ -69,11 +69,11 @@ class rules_data_type {
   }
 
   /**
-   * Returns whether this data is saveable
+   * Returns whether this data is savable
    */
-  function is_saveable() {
+  function is_savable() {
     $info = $this->get_info();
-    return isset($info['saveable']) && $info['saveable'];
+    return isset($info['savable']) && $info['savable'];
   }
 
   /**
@@ -97,7 +97,7 @@ class rules_data_type {
    */
   function get_info() {
     return $this->_info + array(
-      'saveable' => FALSE,
+      'savable' => FALSE,
       'identifiable' => TRUE,
       'eval input' => FALSE,
     );
@@ -110,7 +110,7 @@ class rules_data_type {
 
   /**
    * Makes changes to the data permanent.
-   * Implement it, if your data type is saveable.
+   * Implement it, if your data type is savable.
    */
   function save() {
 

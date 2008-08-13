@@ -212,7 +212,7 @@ function user_rules_data_type_info() {
     'user' => array(
       'label' => t('User'),
       'class' => 'rules_data_type_user',
-      'saveable' => FALSE,
+      'savable' => FALSE,
       'identifiable' => TRUE,
     ),
   );
