@@ -19,11 +19,20 @@ function rules_condition_content_is_type_form($settings, &$form) {
 }
 
 /**
- * Condition: Check for selected content types - Label callback
+ * Some label callbacks for the conditions
  */
-function rules_condition_content_is_type_label($settings) {
+function rules_condition_content_is_type_label($settings, $argument_labels) {
   $names = array_intersect_key(node_get_types('names'), $settings['type']);
-  return t('Content is @type', array('@type' => implode(' or ', $names)));
+  return t('@node is @type', $argument_labels + array('@type' => implode(' or ', $names)));
+}
+function rules_condition_content_is_published_label($settings, $argument_labels) {
+  return t('@node is published', $argument_labels);
+}
+function rules_condition_content_is_sticky_label($settings, $argument_labels) {
+  return t('@node is sticky', $argument_labels);
+}
+function rules_condition_content_is_promoted_label($settings, $argument_labels) {
+  return t('@node is promoted to frontpage', $argument_labels);
 }
 
 /**
