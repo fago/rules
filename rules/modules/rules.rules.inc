@@ -196,7 +196,7 @@ function rules_rules_action_info() {
   foreach (rules_get_data_types() as $name => $type_info) {
     if (isset($type_info['savable']) && $type_info['savable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
       $items[ 'rules_save_var_'. $name ] = array(
-        'module' => 'Rules',
+        'module' => isset($type_info['module']) ? $type_info['module'] : 'Rules',
         'base' => 'rules_action_save_variable',
         'label' => t('Save @type', array('@type' => $type_info['label'])),
         'arguments' => array(

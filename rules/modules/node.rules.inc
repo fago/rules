@@ -258,6 +258,7 @@ function node_rules_data_type_info() {
       'class' => 'rules_data_type_node',
       'savable' => TRUE,
       'identifiable' => TRUE,
+      'module' => 'Node',
     ),
   );
 }
