@@ -269,6 +269,11 @@ function rules_action_load_node($nid, $vid = NULL) {
  * Adapts the action info of the core actions to better fit for rules.
  */
 function node_rules_action_info_alter(&$actions) {
+  // Add a label callback to improve the labels of the actions.
+  foreach (array_keys(node_action_info()) as $name) {
+    $actions['rules_core_'. $name]['label callback'] = 'rules_core_node_label_callback';
+  }
+
   // The rules action is more powerful, so hide the core action
   unset($actions['rules_core_node_assign_owner_action']);
   // We prefer handling saving by rules - not by the user.
