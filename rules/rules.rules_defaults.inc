@@ -14,13 +14,13 @@ array (
     array (
       '#type' => 'rule',
       '#set' => 'event_node_view',
-      '#label' => 'Example rule',
-      '#active' => 1,
+      '#label' => 'Example rule: When viewing an unpublished page, publish it.',
+      '#active' => 0,
       '#weight' => '0',
       '#name' => 'rules_default_rule_1',
       '#conditions' =>
       array (
-        0 =>
+        1 =>
         array (
           '#settings' =>
           array (
@@ -28,14 +28,31 @@ array (
             array (
               'node' => 'node',
             ),
-            'type' =>
-            array (
-              'page' => 'page',
-            ),
           ),
+          '#negate' => 1,
           '#info' =>
           array (
-            'label' => 'Content is Page',
+            'label' => 'viewed content is published',
+            'arguments' =>
+            array (
+              'node' =>
+              array (
+                'type' => 'node',
+                'label' => 'Content',
+              ),
+            ),
+            'module' => 'Node',
+          ),
+          '#name' => 'rules_condition_content_is_published',
+          '#type' => 'condition',
+        ),
+        0 =>
+        array (
+          '#type' => 'condition',
+          '#name' => 'rules_condition_content_is_type',
+          '#info' =>
+          array (
+            'label' => 'viewed content is Page',
             'arguments' =>
             array (
               'node' =>
@@ -47,38 +64,50 @@ array (
             'help' => 'Evaluates to TRUE, if the given content has one of the selected content types.',
             'module' => 'Node',
           ),
-          '#name' => 'rules_condition_content_is_type',
-          '#type' => 'condition',
-        ),
-      ),
-      '#actions' =>
-      array (
-        0 =>
-        array (
-          '#type' => 'action',
-          '#name' => 'rules_action_node_publish',
-          '#info' =>
-          array (
-            'label' => 'Publish content',
-            'label callback' => false,
-            'arguments' =>
-            array (
-              'node' =>
-              array (
-                'type' => 'node',
-                'label' => 'Content',
-              ),
-            ),
-            'module' => 'Node',
-          ),
           '#settings' =>
           array (
             '#argument map' =>
             array (
               'node' => 'node',
             ),
-            'published' => 1,
+            'type' =>
+            array (
+              'page' => 'page',
+            ),
           ),
+        ),
+      ),
+      '#actions' =>
+      array (
+        0 =>
+        array (
+          '#settings' =>
+          array (
+            '#argument map' =>
+            array (
+              'node' => 'node',
+            ),
+            'auto_save' => 1,
+          ),
+          '#info' =>
+          array (
+            'label' => 'Publish viewed viewed content',
+            'module' => 'Node',
+            'arguments' =>
+            array (
+              'node' =>
+              array (
+                'label' => 'Content',
+                'type' => 'node',
+              ),
+            ),
+            'base' => 'rules_core_action_execute',
+            'action_name' => 'node_publish_action',
+            'configurable' => false,
+            'label callback' => 'rules_core_node_label_callback',
+          ),
+          '#name' => 'rules_core_node_publish_action',
+          '#type' => 'action',
         ),
       ),
     ),
