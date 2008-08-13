@@ -113,27 +113,55 @@ function rules_events_argument_unchanged_node_author($node) {
  * @ingroup rules
  */
 function node_rules_condition_info() {
-  return array(
-    'rules_condition_content_is_type' => array(
-      'label' => t('Content has type'),
-      'arguments' => array(
-        'node' => array(
-          'type' => 'node',
-          'label' => t('Content'),
-        ),
-      ),
-      'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
-      'module' => 'Node',
+  $items = array();
+  $defaults = array(
+    'arguments' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
     ),
+    'module' => 'Node',
   );
+  $items['rules_condition_content_is_type'] = $defaults + array(
+    'label' => t('Content has type'),
+    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+  );
+  $items['rules_condition_content_is_published'] = $defaults + array(
+    'label' => t('Content is published'),
+  );
+  $items['rules_condition_content_is_sticky'] = $defaults + array(
+    'label' => t('Content is sticky'),
+  );
+  $items['rules_condition_content_is_promoted'] = $defaults + array(
+    'label' => t('Content is promoted to frontpage'),
+  );
+  return $items;
 }
 
 /**
  * Condition: Check for selected content types
- * @ingroup rules
  */
 function rules_condition_content_is_type(&$node, $settings) {
   return in_array($node->type, $settings['type']);
+}
+
+/**
+ * Condition: Check if the node is published
+ */
+function rules_condition_content_is_published(&$node, $settings) {
+  return $node->status == 1;
+}
+
+/**
+ * Condition: Check if the node is sticky
+ */
+function rules_condition_content_is_sticky(&$node, $settings) {
+  return $node->sticky == 1;
+}
+
+/**
+ * Condition: Check if the node is promoted to the frontpage
+ */
+function rules_condition_content_is_promoted(&$node, $settings) {
+  return $node->promote == 1;
 }
 
 
