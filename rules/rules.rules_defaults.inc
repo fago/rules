@@ -17,7 +17,6 @@ array (
       '#label' => 'Example rule: When viewing an unpublished page, publish it.',
       '#active' => 0,
       '#weight' => '0',
-      '#name' => 'rules_default_rule_1',
       '#conditions' =>
       array (
         1 =>

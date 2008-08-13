@@ -77,7 +77,7 @@ function rules_update_6001() {
       $cfg = unserialize($row->data);
       $rule = rules_import_workflow_ng_rule($row->name, $cfg);
       if ($rule) {
-        rules_item_save('rules', $rule['#name'], $rule);
+        rules_item_save('rules', $row->name, $rule);
         $msg = t('Successfully imported rule %label.', array('%label' => $rule['#label']));
         $ret[] = array('success' => TRUE, 'query' => $msg);
         db_query("DELETE FROM {workflow_ng_cfgs} WHERE name = '%s'", $row->name);
@@ -105,9 +105,9 @@ function rules_update_6001() {
 /**
  * Transform a workflow-ng rule into a rule
  */
-function rules_import_workflow_ng_rule($name, $cfg) {
+function rules_import_workflow_ng_rule(&$name, $cfg) {
   $rule = array('#type' => 'rule');
-  $rule['#name'] = _rules_import_replace_module_name($name);
+  $name = _rules_import_replace_module_name($name);
   foreach (array('#altered', '#active', '#weight') as $key) {
     if (isset($cfg[$key])) {
       $rule[$key] = $cfg[$key];
@@ -121,7 +121,7 @@ function rules_import_workflow_ng_rule($name, $cfg) {
   }
   else if ($cfg['#module'] == 'workflow-ng') {
     $rule['#status'] = 'custom';
-    $rule['#name'] = _rules_admin_rule_get_new_unique_name();
+    $name = _rules_admin_rule_get_new_unique_name();
   }
   else {
     $rule['#status'] = 'default';

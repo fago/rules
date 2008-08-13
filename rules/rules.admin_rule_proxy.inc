@@ -12,19 +12,22 @@
 class rules_admin_rule_proxy {
 
   var $_rule;
+  var $_rule_name;
   var $_counter;      //used when generating ids
   var $_variables;    //variables defined by previous rules
   var $map = array(); //stores the id => element map
 
   /**
    * Constructor
+   * @param $rule_name The name of the rule
    * @param $rule The rule to create a proxy for.
    */
-  function rules_admin_rule_proxy(&$rule) {
+  function rules_admin_rule_proxy($rule_name, &$rule) {
     $rule += array('#conditions' => array(), '#actions' => array());
 
     //save a copy of the original rule for later
     $this->_rule = $rule;
+    $this->_rule_name = $rule_name;
 
     //and the reference
     $this->map[0] = &$rule;
@@ -45,8 +48,7 @@ class rules_admin_rule_proxy {
    * Gets the rule's name
    */
   function get_rule_name() {
-    $rule = $this->get_rule();
-    return $rule['#name'];
+    return $this->_rule_name;
   }
 
   /**
@@ -143,7 +145,7 @@ class rules_admin_rule_proxy {
     if (!isset($rule['#status']) || $rule['#status'] == 'default') {
       $rule['#status'] = 'altered';
     }
-    rules_item_save('rules', $rule['#name'], $rule);
+    rules_item_save('rules', $this->get_rule_name(), $rule);
   }
 
   /**
@@ -151,7 +153,7 @@ class rules_admin_rule_proxy {
    */
   function delete_rule() {
     $rule = $this->get_rule();
-    rules_item_delete('rules', $rule['#name'], $rule);
+    rules_item_delete('rules', $this->get_rule_name(), $rule);
   }
 
 
@@ -269,13 +271,12 @@ class rules_admin_rule_proxy {
     if (!isset($this->_variables)) {
       $this->_variables = array();
       $set = $this->get_set();
-      $this_rule = $this->get_rule();
 
       //sort the rules
       _rules_sort_children($set['rules']);
 
       foreach (element_children($set['rules']) as $name) {
-        if ($name == $this_rule['#name']) {
+        if ($name == $this->get_rule_name()) {
           if (!$all) {
             return $this->_variables;
           }

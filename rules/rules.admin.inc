@@ -129,7 +129,7 @@ function rules_admin_overview_table($params) {
  */
 function rules_admin_check_token() {
   if (!variable_get('rules_hide_token_message', FALSE) && !module_exists('token')) {
-    drupal_set_message(t('If you install the token module from !href, token replacements will be supported (but it\'s not yet done). <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/token', 'http://drupal.org/project/token'), '@hide' => url('admin/rules/settings'))));
+    drupal_set_message(t('If you install the token module from !href, token replacements will be supported. See http://drupal.org/node/286803. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/token', 'http://drupal.org/project/token'), '@hide' => url('admin/rules/settings'))));
   }
 }
 
@@ -174,12 +174,12 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   $rule['#status'] = 'custom';
 
   //get an unique name
-  $rule['#name'] = _rules_admin_rule_get_new_unique_name();
+  $rule_name = _rules_admin_rule_get_new_unique_name();
 
-  rules_item_save('rules', $rule['#name'], $rule);
+  rules_item_save('rules', $rule_name, $rule);
   rules_clear_cache();
   drupal_set_message(t("The rule %label has been added.", array('%label' => $rule['#label'])));
-  $form_state['redirect'] =  RULES_ADMIN_RULE_PATH .'/'. $rule['#name'];
+  $form_state['redirect'] =  RULES_ADMIN_RULE_PATH .'/'. $rule_name;
 }
 
 /**
@@ -256,6 +256,7 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   //this will render the whole rule with the help of drupal_render(),
   //see rules.admin_render.inc
   $form['elements']['rule'] = $proxy->get_indexed_rule();
+  $form['elements']['rule']['#name'] = $proxy->get_rule_name();
   $form['elements']['rule']['#theme'] = array('rules_admin_rule_render');
 
   return $form;

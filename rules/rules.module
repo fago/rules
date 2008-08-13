@@ -231,7 +231,7 @@ function rule_load($name) {
   }
   else if (!isset($proxies[$name])) {
     rules_include('rules_admin');
-    $proxies[$name] = new rules_admin_rule_proxy($rules[$name]);
+    $proxies[$name] = new rules_admin_rule_proxy($name, $rules[$name]);
   }
   return $proxies[$name];
 }
@@ -454,6 +454,8 @@ function _rules_get_rule_sets() {
   foreach ($rules as $name => $rule) {
     $sets += array($rule['#set'] => array());
     $sets[ $rule['#set'] ]['info'] = rules_get_rule_sets($rule['#set']);
+    // Set the name for rules, so that it's avaialbe during evaluation
+    $rule['#name'] = $name;
     $sets[ $rule['#set'] ]['rules'][$name] = $rule;
   }
   return $sets;
