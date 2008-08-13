@@ -194,7 +194,7 @@ function rules_rules_action_info() {
   }
   // Add an action to save savable data types intelligently
   foreach (rules_get_data_types() as $name => $type_info) {
-    if (isset($type_info['saveable']) && $type_info['saveable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
+    if (isset($type_info['savable']) && $type_info['savable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
       $items[ 'rules_save_var_'. $name ] = array(
         'module' => 'Rules',
         'base' => 'rules_action_save_variable',
@@ -294,7 +294,7 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
     $arg = array_shift($info['arguments']);
     $data_type = rules_get_data_types($arg['type']);
 
-    if (isset($data_type['saveable']) && $data_type['saveable']) {
+    if (isset($data_type['savable']) && $data_type['savable']) {
       $settings += array('auto_save' => TRUE);
       $form['settings']['auto_save'] = array(
         '#type' => 'checkbox',

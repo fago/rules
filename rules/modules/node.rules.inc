@@ -256,7 +256,7 @@ function node_rules_data_type_info() {
     'node' => array(
       'label' => t('Content'),
       'class' => 'rules_data_type_node',
-      'saveable' => TRUE,
+      'savable' => TRUE,
       'identifiable' => TRUE,
     ),
   );
