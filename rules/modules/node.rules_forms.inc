@@ -72,6 +72,14 @@ function rules_action_load_node_variable_label($settings) {
   return t('Content with id @id', array('@id' => $settings['nid']));
 }
 
+/**
+ * Label callback for the node core actions
+ */
+function rules_core_node_label_callback($settings, $argument_labels, $element) {
+  $text = str_replace(t('content'), '@node', $element['#info']['label']);
+  return t($text, $argument_labels);
+}
+
 
 /**
  * The following functions help converting node actions
