@@ -50,14 +50,34 @@ function rules_admin_form_import_submit($form, $form_state) {
  * Item type callback: Customize to be imported rules
  */
 function rules_item_rule_import(&$name, &$rule) {
-  if (!isset($rule['#status']) || $rule['#status'] == 'custom') {
+  $rules = rules_get_configured_items('rules');
+
+  if (!isset($rule['#status']) || $rule['#status'] == 'default') {
+    if (!isset($rules[$name])) {
+      // This default rule doesn't exist on this system, so we make it custom
+      $rule['#status'] = 'custom';
+    }
+  }
+  if (isset($rule['#status']) && $rule['#status'] == 'custom' && (!isset($rules[$name]) || $rules[$name]['#label'] != $rule['#label'] || $rules[$name]['#set'] != $rule['#set'])) {
     //generate a new unique name for this rule
     $name = _rules_admin_rule_get_new_unique_name();
-    $rule['#name'] = $name;
     $rule['#status'] = 'custom';
   }
 }
+/**
+ * Item type callback: Customize to be imported rule sets
+ */
+function rules_item_rule_set_import(&$name, &$rule_set) {
 
+  if (!isset($rule_set['status']) || $rule_set['status'] == 'default') {
+    $sets = rules_get_configured_items('rule_sets');
+
+    if (!isset($sets[$name])) {
+      // This default rule set doesn't exist on this system, so we make it custom
+      $rule_set['status'] = 'custom';
+    }
+  }
+}
 
 /**
  * Exports one ore more configurations
@@ -111,13 +131,10 @@ function rules_admin_form_export_submit($form, &$form_state) {
 }
 
 /**
- * Item type callback: Customize to be exported rules
+ * Item type callback: Customize to be exported rule sets
  */
-function rules_item_rule_export(&$rule) {
-  unset($rule['#status']);
-}
 function rules_item_rule_set_export(&$rule_set) {
-  unset($rule_set['status']);
+  // TODO: add the rules of the set to the export
 }
 
 
@@ -142,7 +159,7 @@ function rules_admin_import_workflow_ng($import) {
 
     $rule = rules_import_workflow_ng_rule($name, $cfg);
     if ($rule) {
-      rules_item_save('rules', $rule['#name'], $rule);
+      rules_item_save('rules', $name, $rule);
       drupal_set_message(t('Successfully imported the workflow-ng rule %label.', array('%label' => $rule['#label'])));
     }
     else {
