@@ -28,9 +28,6 @@ function rules_prepare_input_evaluators(&$element, $variables) {
   $settings =& $element['#settings'];
 
   foreach ($evaluators as $base => $info) {
-    // mark the evaluator to be used
-    $settings['#eval input'][$base] = array();
-
     foreach ($eval_settings as $name) {
       if (isset($settings[$name]) && $settings[$name]) {
         // prepare the evaluation
