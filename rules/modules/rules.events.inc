@@ -19,7 +19,7 @@ function rules_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
 /**
  * Implementation of hook_user().
  */
-function rules_user($op, $edit, &$account, $category = NULL) {
+function rules_user($op, &$edit, &$account, $category = NULL) {
   static $account_unchanged;
 
   // We don't support updates for other categories than 'account'
@@ -32,6 +32,12 @@ function rules_user($op, $edit, &$account, $category = NULL) {
   }
   else if (in_array($op, array('insert', 'login', 'logout', 'view', 'delete'))) {
     rules_invoke_event('user_'. $op, array('account' => &$account));
+
+    // Allow adding user roles during registration
+    if ($op == 'insert' && isset($account->roles)) {
+      $edit += array('roles' => array());
+      $edit['roles'] += $account->roles;
+    }
   }
 }
 
