@@ -8,13 +8,16 @@
 /**
  * Gets the right data object for the given argument information
  */
-function rules_get_data_object($info) {
+function rules_get_data_object($info, $data = NULL) {
   $class = 'rules_data_type';
   if (($data_type = rules_get_data_types($info['type'])) && class_exists($data_type['class'])) {
     $class = $data_type['class'];
   }
   $object = new $class;
   $object->construct($info['type'], isset($data_type) ? $data_type : array());
+  if (isset($data)) {
+    $object->init($data);
+  }
   return $object;
 }
 
@@ -117,7 +120,9 @@ class rules_data_type {
   }
 
   /**
-   * Loads the data identified with an identifier as returned by get_identifier()
+   * Loads the data identified with an identifier as returned by get_identifier().
+   * Return FALSE if loading the data failed.
+   *
    * Implement it, if your data type is identifiable.
    */
   function load($identifier) {

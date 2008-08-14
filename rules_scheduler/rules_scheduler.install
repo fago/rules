@@ -30,7 +30,7 @@ function rules_scheduler_schema() {
         'not null' => TRUE,
         'description' => t('The scheduled task\s id.'),
       ),
-      'set' => array(
+      'set_name' => array(
         'type' => 'varchar',
         'length' => '255',
         'default' => '',

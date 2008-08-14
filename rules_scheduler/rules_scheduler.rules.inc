@@ -36,13 +36,22 @@ function rules_scheduler_action() {
   $state = array_pop($args);
   $element = array_pop($args);
   $settings = array_pop($args);
+
   $date = array_shift($args);
-  return;
-  drupal_write_record('rules_scheduler', $task = array(
-    'date' => $date,
-    'set' => $element['#info']['set'],
-    'arguments' => rules_pack_variables($args),
-  ));
+  array_shift($element['#info']['arguments']);
+
+  $pack = rules_pack_variables($element['#info']['arguments'], $args);
+
+  if ($pack === FALSE) {
+    rules_log(t('Packing arguments for scheduling the rule set %set failed.', array('%set' => $element['#info']['set'])), TRUE);
+  }
+  else {
+    drupal_write_record('rules_scheduler', $task = array(
+      'date' => $date,
+      'set_name' => $element['#info']['set'],
+      'arguments' => $pack,
+    ));
+  }
 }
 
 /**
