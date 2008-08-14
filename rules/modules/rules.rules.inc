@@ -298,8 +298,8 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
       $settings += array('auto_save' => TRUE);
       $form['settings']['auto_save'] = array(
         '#type' => 'checkbox',
-        '#title' => t('Permanently apply changes.'),
-        '#description' => t('If checked, changes are saved automatically.'),
+        '#title' => t('Permanently apply changes'),
+        '#description' => t('If checked, changes to the argument are saved automatically.'),
         '#default_value' => $settings['auto_save'],
         '#weight' => -10,
       );
