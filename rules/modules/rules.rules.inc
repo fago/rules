@@ -4,6 +4,8 @@
  * @file rules integration for the rules module
  */
 
+define('RULES_DATE_REGEX_LOOSE', '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/');
+
 /**
  * Implementation of hook_rules_data_type_info()
  */
@@ -18,6 +20,12 @@ function rules_rules_data_type_info() {
     'number' => array(
       'label' => t('Number'),
       'class' => 'rules_data_type_number',
+      'identifiable' => FALSE,
+      'eval input' => TRUE,
+    ),
+    'date' => array(
+      'label' => t('Date'),
+      'class' => 'rules_data_type_date',
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
@@ -69,6 +77,31 @@ class rules_data_type_number extends rules_data_type_string {
 }
 
 /**
+ * Rules date data type
+ */
+class rules_data_type_date extends rules_data_type_string {
+
+  function get_default_input_form($info, $value) {
+    $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
+    $value = isset($value) ? $value : date('Y-m-d H:i:s', time() + 86400);
+    $info['description'] .= ' '. t('Format: %format or a timestamp in GMT. ', array('%format' => date('Y-m-d H:i:s', time() + 86400)));
+    $info['description'] .= '<br />'. t('E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>'). '</pre>'));
+    return parent::get_default_input_form($info, $value);
+  }
+
+  function check_value($info, $value) {
+    if (is_numeric($value)) {
+      $value = date('Y-m-d H:i:s', $value);
+    }
+    if (is_string($value) && preg_match(RULES_DATE_REGEX_LOOSE, $value)) {
+      return $value;
+    }
+    rules_log(t('The argument %label is no valid date.', array('%label' => $info['label'])));
+  }
+}
+
+
+/**
  * Rules boolean data type
  */
 class rules_data_type_boolean extends rules_data_type_string {
@@ -79,7 +112,7 @@ class rules_data_type_boolean extends rules_data_type_string {
 
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
-    $info['description'] = t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.') . ' ' . $info['description'];
+    $info['description'] .= ' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
     return parent::get_default_input_form($info, isset($value) ? $value : 1);
   }
 }
