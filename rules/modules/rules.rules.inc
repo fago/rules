@@ -129,7 +129,7 @@ function rules_rules_condition_info() {
         'text1' => array('label' => t('Text 1'), 'type' => 'string'),
         'text2' => array('label' => t('Text 2'), 'type' => 'string'),
       ),
-      'description' => t('This condition just compares two texts. It returns TRUE, if both texts are equal.'),
+      'help' => t('This condition just compares two texts. It returns TRUE, if both texts are equal.'),
       'module' => 'Rules',
     ),
     'rules_condition_number_compare' => array(
@@ -138,7 +138,7 @@ function rules_rules_condition_info() {
         'number1' => array('label' => t('Number 1'), 'type' => 'number'),
         'number2' => array('label' => t('Number 2'), 'type' => 'number'),
       ),
-      'description' => t('This condition does a numeric comparison. Select greater than, less than or equal to.'),
+      'help' => t('This condition does a numeric comparison. Select greater than, less than or equal to.'),
       'module' => 'Rules',
     ),
     'rules_condition_check_boolean' => array(
@@ -146,7 +146,7 @@ function rules_rules_condition_info() {
       'arguments' => array(
         'boolean' => array('type' => 'boolean', 'label' => t('Truth value')),
       ),
-      'description' => t('Check a truth value, i.e. TRUE or FALSE.'),
+      'help' => t('Check a !truth, i.e. TRUE or FALSE.', array('!truth' => l(t('truth value'), 'http://en.wikipedia.org/wiki/Logical_value'))),
       'module' => 'Rules',
     ),
   );
@@ -211,7 +211,7 @@ function rules_rules_action_info() {
       $items[ 'rules_add_var_'. $name ] = array(
         'module' => 'Rules',
         'base' => 'rules_action_save_variable',
-        'label' => t('Add a new @type variable', array('@type' => $type_info['label'])),
+        'label' => t('Add a new @type variable', array('@type' => strtolower($type_info['label']))),
         'arguments' => array(
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),
