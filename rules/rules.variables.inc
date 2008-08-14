@@ -164,7 +164,61 @@ function rules_save_variables($element, $result, &$state) {
 }
 
 /**
- * Handles a variable
+ * Packs the given variables ready for serialization. Data types which
+ * are identifiable are replaced by their identifiers and loaded fresh from
+ * the db when the variables are unpacked.
+ *
+ * @param $variables
+ *   An array of variable information
+ * @param $data
+ *   An array of data for the given variables, in the same order as the information.
+ * @return
+ *   The packed variables or FALSE if packing failed.
+ */
+function rules_pack_variables($variables, $data) {
+  $packed = array('variables' => $variables, 'data' => array());
+  foreach (array_values($variables) as $i => $info) {
+    $type = rules_get_data_object($info, $data[$i]);
+    if (isset($type) && $type->is_identifiable()) {
+      $id = $type->get_identifier();
+      if (!isset($id)) {
+        return FALSE;
+      }
+      $packed['data'][$i] = $id;
+    }
+    else {
+      $packed['data'][$i] = $data[$i];
+    }
+  }
+  return $packed;
+}
+
+/**
+ * Unacks the given packed variables.
+ *
+ * @param $packed
+ *   Packed variables, as returned from rules_pack_variables().
+ * @return
+ *   An array, containing the key 'variables' with info about the packed
+ *   variables and the key 'data' with the actual data.
+ *   If unpacking failed, FALSE.
+ */
+function rules_unpack_variables($packed) {
+  foreach (array_values($packed['variables']) as $i => $info) {
+    $type = rules_get_data_object($info);
+    if (isset($type) && $type->is_identifiable()) {
+      $packed['data'][$i] = $type->load($packed['data'][$i]);
+      if ($packed['data'][$i] === FALSE) {
+        return FALSE;
+      }
+    }
+  }
+  return $packed;
+}
+
+
+/**
+ * Handles loading and saving a variable
  */
 class rules_variable {
 
@@ -223,8 +277,7 @@ class rules_variable {
 
   function _set_data(&$data) {
     if (isset($data)) {
-      $this->data = rules_get_data_object($this->info);
-      $this->data->init($data);
+      $this->data = rules_get_data_object($this->info, $data);
     }
   }
 

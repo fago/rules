@@ -4,3 +4,25 @@
 /**
  * @file Rules scheduler module
  */
+
+/**
+ * Implementation of hook_cron().
+ */
+function rules_scheduler_cron() {
+  // Do max 30 rule sets
+  //TODO: make this configureable
+  $result = db_query_range("SELECT * FROM {rules_scheduler} WHERE date < '%s'", date('Y-m-d H:i:s'), 0, 30);
+
+  while ($row = db_fetch_object($result)) {
+    rules_include('rules');
+    $vars = rules_unpack_variables(unserialize($row->arguments));
+
+    if ($vars) {
+      // Invoke the rule set
+      $args = $vars['data'];
+      array_unshift($args, $row->set_name);
+      call_user_func_array('rules_invoke_rule_set', $args);
+    }
+    db_query("DELETE FROM {rules_scheduler} WHERE tid = %d", $row->tid);
+  }
+}
