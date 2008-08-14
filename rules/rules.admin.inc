@@ -809,10 +809,17 @@ function rules_admin_map_get_configured_argument($name, $element) {
 function rules_admin_element_help(&$form, $element) {
   $info = rules_get_element_info($element);
   if (isset($info['help']) || isset($element['help'])) {
+    $help = isset($element['help']) ? $element['help'] : $info['help'];
+  }
+  else if (isset($element['#type']) && in_array($element['#type'], array('action', 'condition'))) {
+    rules_include('rules_forms');
+    $help = rules_element_invoke($element, 'help', array());
+  }
+  if (isset($help) && $help) {
     $form['help'] = array(
       '#type' => 'fieldset',
       '#title' => t('Description'),
-      '#description' => isset($element['help']) ? $element['help'] : $info['help'],
+      '#description' => $help,
     );
   }
 }
