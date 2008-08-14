@@ -141,7 +141,7 @@ function rules_action_drupal_goto_form($settings = array(), &$form, $form_state)
   $form['settings']['force'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force redirecting to the given path, even if a destination parameter is given'),
-    '#description' => t('Per default drupal doesn\'t redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination paramter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url', array('!example_url' => 'http://example.com/user/login?destination=node/2')),
+    '#description' => t('Per default drupal doesn\'t redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url', array('!example_url' => 'http://example.com/user/login?destination=node/2')),
     '#default_value' => $settings['force'],
     '#weight' => 7,
   );
