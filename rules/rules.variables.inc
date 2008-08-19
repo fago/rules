@@ -46,18 +46,19 @@ function _rules_initialize_variables(&$state, $args) {
  *   An array of variable names to get.
  * @param $state
  *   The current evalutation state.
- * @param $load
- *   Use variable handler to load variables, if necessary.
+ * @param $force
+ *   Use variable handler to load variables, if necessary. If it's not possible
+ *   to get all variables, FALSE will be returned.
  * @param $element
  *   Optionally an element may be specified, for which we retrieve the variables.
  * @return
- *   The array of variables or FALSE.
+ *   The array of requested variables or FALSE.if it failed.
  */
-function rules_get_variables($names, &$state, $load = TRUE, $element = NULL) {
+function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
   $args = array();
   foreach ($names as $name) {
     if (isset($state['variables'][$name])) {
-      $args[$name] = &$state['variables'][$name]->get($load);
+      $args[$name] = &$state['variables'][$name]->get($force);
     }
     else if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
       $object = rules_get_data_object($element['#info']['arguments'][$name]);
@@ -66,7 +67,8 @@ function rules_get_variables($names, &$state, $load = TRUE, $element = NULL) {
     else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
       $args[$name] = $element['#info']['arguments'][$name]['default value'];
     }
-    if (!isset($args[$name])) {
+    if (!isset($args[$name]) && $force) {
+      // If $force is FALSE, we ignore not retrieved variables.
       return FALSE;
     }
   }
