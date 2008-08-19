@@ -7,8 +7,12 @@
 
 /**
  * Gets the right data object for the given argument information
+ * @param $info
+ *   Info about the data type.
+ * @param $data
+ *   Optional data to set. Warning: Only use this, when loosing a reference is ok.
  */
-function rules_get_data_object($info, $data = NULL) {
+function rules_get_data_object($info, &$data = NULL) {
   $class = 'rules_data_type';
   if (($data_type = rules_get_data_types($info['type'])) && class_exists($data_type['class'])) {
     $class = $data_type['class'];

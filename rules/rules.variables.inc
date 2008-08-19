@@ -279,7 +279,9 @@ class rules_variable {
 
   function _set_data(&$data) {
     if (isset($data)) {
-      $this->data = rules_get_data_object($this->info, $data);
+      $this->data = rules_get_data_object($this->info);
+      // Set the data in the data object and make sure to keep a reference intact
+      $this->data->init($data);
     }
   }
 
