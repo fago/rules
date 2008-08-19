@@ -84,14 +84,17 @@ class rules_data_type_date extends rules_data_type_string {
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     $value = isset($value) ? $value : date('Y-m-d H:i:s', time() + 86400);
-    $info['description'] .= ' '. t('Format: %format or a timestamp in GMT. ', array('%format' => date('Y-m-d H:i:s', time() + 86400)));
-    $info['description'] .= '<br />'. t('E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>'). '</pre>'));
+    $info['description'] .= ' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
+    $info['description'] .= '<br />'. t('You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>'). '</pre>'));
     return parent::get_default_input_form($info, $value);
   }
 
   function check_value($info, $value) {
     if (is_numeric($value)) {
-      $value = date('Y-m-d H:i:s', $value);
+      $value = gmdate('Y-m-d H:i:s', $value);
+    }
+    else if (is_string($value)) {
+      $value = gmdate('Y-m-d H:i:s', strtotime($value));
     }
     if (is_string($value) && preg_match(RULES_DATE_REGEX_LOOSE, $value)) {
       return $value;

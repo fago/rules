@@ -11,7 +11,7 @@
 function rules_scheduler_cron() {
   // Do max 30 rule sets
   //TODO: make this configureable
-  $result = db_query_range("SELECT * FROM {rules_scheduler} WHERE date < '%s'", date('Y-m-d H:i:s'), 0, 30);
+  $result = db_query_range("SELECT * FROM {rules_scheduler} WHERE date < '%s'", gmdate('Y-m-d H:i:s'), 0, 30);
 
   while ($row = db_fetch_object($result)) {
     rules_include('rules');
