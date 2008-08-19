@@ -290,7 +290,6 @@ function rules_theme() {
  * Returns info about all defined actions
  */
 function rules_get_actions($key = 'all') {
-  //TODO: integrate d6 actions
   return rules_gather_data('rules_action_info', $key);
 }
 
@@ -485,7 +484,7 @@ function rules_clear_cache($immediate = TRUE) {
 }
 
 /**
- * Implementation of hook_flush_caches
+ * Implementation of hook_flush_caches().
  */
 function rules_flush_caches() {
   variable_del('rules_inactive_sets');
