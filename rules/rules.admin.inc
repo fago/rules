@@ -1103,7 +1103,7 @@ function rules_admin_save_element_label($form, &$form_state, &$element) {
  *
  * @return An array of changed properties of the given info
  */
-function _rules_admin_get_label(&$form_state, $info, $element, $value) {
+function _rules_admin_get_label(&$form_state, $info, &$element, $value) {
   $info_changes = array();
   if ($info['label'] != $value) {
     //label has been customized
