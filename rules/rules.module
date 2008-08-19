@@ -160,7 +160,6 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'rules.admin.inc',
   );
-
   $items[RULES_ADMIN_SET_PATH] = array(
     'title' => 'Rule sets',
     'description' => 'Create and manage rule sets.',
@@ -168,19 +167,6 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => 0,
-    'file' => 'rules.admin_sets.inc',
-  );
-  $items[RULES_ADMIN_SET_PATH .'/list'] = array(
-    'title' => 'Overview',
-    'weight' => -5,
-    'type' => MENU_DEFAULT_LOCAL_TASK,
-  );
-  $items[RULES_ADMIN_SET_PATH .'/add'] = array(
-    'title' => 'Add a new rule set',
-    'type' => MENU_LOCAL_TASK,
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_add_rule_set', 2),
-    'access arguments' => array('administer rules'),
     'file' => 'rules.admin_sets.inc',
   );
   $items[RULES_ADMIN_SET_PATH .'/js'] = array(
@@ -210,7 +196,7 @@ function rules_menu() {
     'title' => 'Add a new rule',
     'type' => MENU_LOCAL_TASK,
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_admin_form_add_rule', 2),
+    'page arguments' => array('rules_admin_form_add_rule', 3),
     'access arguments' => array('administer rules'),
     'load arguments' => array(2),
     'file' => 'rules.admin.inc',

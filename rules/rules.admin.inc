@@ -157,11 +157,9 @@ function rules_admin_configuration_status($status) {
  * Returns the add rule form
  */
 function rules_admin_form_add_rule(&$form_state, $set_info = FALSE) {
-  $form_state['is_set'] = (boolean)$set_info;
-  $form = rules_admin_form_rule_settings(array(), $form_state['is_set']);
-  if ($set_info) {
-    $form['settings']['set']['#default_value'] = $set_info['name'];
-  }
+
+  $form = rules_admin_form_rule_settings(array(), (boolean)$set_info);
+  $form['settings']['set']['#default_value'] = $set_info['name'];
   return $form;
 }
 
@@ -184,6 +182,9 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
 
 /**
  * Returns the form for the settings of a rule
+ *
+ * @param $is_set
+ *   When adding a new rule for a rule set, TRUE.
  */
 function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
   $form['settings'] = array(
@@ -241,8 +242,9 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
 
-  rules_admin_fix_breadcrumb(strpos($rule['#set'], 'event_') === FALSE);
-  $form = rules_admin_form_rule_settings($rule);
+  $is_set = strpos($rule['#set'], 'event_') === FALSE;
+  rules_admin_fix_breadcrumb($is_set, $rule['#set'], $proxy->get_set_info());
+  $form = rules_admin_form_rule_settings($rule, $is_set);
 
   //help
   rules_admin_element_help($form, $proxy->get_set_info());
@@ -1162,10 +1164,13 @@ function rules_admin_settings(&$form_state) {
 /**
  * Fixes the breadcrumb on the rule edit/delete/revert
  */
-function rules_admin_fix_breadcrumb($is_set = FALSE) {
+function rules_admin_fix_breadcrumb($is_set = FALSE, $set_name, $set_info) {
   $breadcrumb = drupal_get_breadcrumb();
   $item = menu_get_item($is_set ? RULES_ADMIN_SET_PATH : RULES_ADMIN_TRIGGER_PATH);
   $breadcrumb[] = l($item['title'], $item['href'], $item['localized_options']);
+  if ($is_set) {
+    $breadcrumb[] = l($set_info['label'], RULES_ADMIN_SET_PATH .'/'. $set_name);
+  }
   drupal_set_breadcrumb($breadcrumb);
 }
 
