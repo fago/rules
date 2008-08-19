@@ -67,8 +67,8 @@ function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
     else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
       $args[$name] = $element['#info']['arguments'][$name]['default value'];
     }
-    if (!isset($args[$name]) && $force) {
-      // If $force is FALSE, we ignore not retrieved variables.
+    // Use array_key_exists, so that NULL default values are allowed!
+    if (!array_key_exists($name, $args)) {
       return FALSE;
     }
   }
