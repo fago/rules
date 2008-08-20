@@ -336,6 +336,8 @@ function &rules_admin_form_add_rule_set_add_arguments(&$form) {
  * Themes the rules set arguments adding form
  */
 function theme_rules_admin_form_arguments($form) {
+  drupal_add_js(drupal_get_path('module', 'rules'). '/rules.admin.js', 'module');
+
   $rows = array();
   $headers = array(
     t('Label'),
