@@ -294,12 +294,12 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
     $element =& $form_state['element'];
     $element += array('#id' => NULL);
 
-    //get the item assocaited with $id
     if ($form_state['step'] == 0) {
       if (isset($parent_id) && is_array($parent = $proxy->get_element(intval($parent_id)))) {
         if (function_exists($function = 'rules_admin_form_add_'. $element['#type'])) {
           $form_state['step']++;
           $form_state['parent_id'] = intval($parent_id);
+          _rules_element_defaults($parent);
           return $function($form_state, $element, $parent);
         }
       }
@@ -340,9 +340,8 @@ function rules_admin_form_add_action(&$form_state, &$element) {
  * Returns the form for the first condition add page
  */
 function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
-  $info = rules_get_element_info($parent);
 
-  if (!isset($parent['#type']) || isset($info['#logical_op']) && $info['#logical_op']) {
+  if (!isset($parent['#type']) || isset($parent['#logical_op']) && $parent['#logical_op']) {
     $vars = $form_state['proxy']->get_available_variables(0);
     $conditions = rules_admin_filter_info($vars, rules_get_conditions());
     $form['name'] = array(
