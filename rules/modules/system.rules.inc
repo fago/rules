@@ -195,3 +195,17 @@ function rules_action_drupal_goto($settings) {
 function rules_action_watchdog($settings) {
   watchdog($settings['type'], $settings['message'], NULL, $settings['severity'], $settings['link']);
 }
+
+/**
+ * Implementation of hook_rules_action_info_alter().
+ *
+ * Adapts the action info of the core actions to better fit for rules.
+ */
+function system_rules_action_info_alter(&$actions) {
+  // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
+  unset($actions['rules_core_system_goto_action']);
+  // The next two rely heavily on contexts - which we handle already in rules.
+  // So we provide our own actions.
+  unset($actions['rules_core_system_message_action']);
+  unset($actions['rules_core_system_send_email_action']);
+}
