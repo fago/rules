@@ -99,3 +99,20 @@ function rules_condition_custom_php_submit(&$settings, $form, $form_state) {
   $variables = $form_state['proxy']->get_available_variables($form_state['element']['#id']);
   $settings['vars'] = rules_input_evaluator_php_prepare('<?'. $settings['code'], $variables);
 }
+
+
+/**
+ * The following functions help converting the workflow-ng php condition/actions
+ * when upgrading from workflow-ng
+ */
+function workflow_ng_action_custom_php_upgrade(&$element) {
+  $element['#name'] = 'rules_action_custom_php';
+  $old_settings = $element['#settings'];
+  $element['#settings'] = array('code' => $old_settings['php']);
+  $element['#settings']['code_args'] = $old_settings['used_arguments'];
+  $element['#settings']['vars'] = $old_settings['used_php_arguments'];
+}
+function workflow_ng_condition_custom_php_upgrade(&$element) {
+  workflow_ng_action_custom_php_upgrade($element);
+  $element['#name'] = 'rules_condition_custom_php';
+}
