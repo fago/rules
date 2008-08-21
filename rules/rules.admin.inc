@@ -1138,7 +1138,7 @@ function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
     if (isset($vars[$variable_name]['label'])) {
-      $labels[$prefix . $argument_name] = strtolower($vars[$variable_name]['label']);
+      $labels[$prefix . $argument_name] = $vars[$variable_name]['label'];
     }
   }
   return $labels;
