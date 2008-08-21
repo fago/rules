@@ -569,12 +569,29 @@ function rules_evaluate_elements($elements, &$state) {
 }
 
 /**
- * Sorts the children of the elements
+ * Sorts the children of the elements by maintaining the order of the elements
+ * if the weight is equal
  */
-function _rules_sort_children(&$element) {
-  if (!isset($element['#_sorted'])) {
-    $element['#_sorted'] = TRUE;
-    uasort($element, "element_sort");
+function rules_sort_children(&$element) {
+  $count = 0;
+  foreach (element_children($element) as $key) {
+    $element[$key] += array('#weight' => 0);
+    $element[$key]['#weight'] += $count/1000;
+    $count++;
+  }
+  uasort($element, "element_sort");
+  foreach (element_children($element) as $key) {
+    $element[$key]['#weight'] = floor($element[$key]['#weight']);
+  }
+}
+
+/**
+ * Recursivly sorts the elements with rules_sort_children().
+ */
+function rules_sort_elements(&$elements) {
+  rules_sort_children($elements);
+  foreach (element_children($elements) as $key) {
+    rules_sort_elements($elements[$key]);
   }
 }
 
@@ -634,9 +651,6 @@ function rules_execute_rule(&$element, &$state) {
  * Evaluates to TRUE if at least one children evaluate to TRUE..
  */
 function rules_execute_or(&$elements, &$state) {
-  //first sort the children then process them
-  _rules_sort_children($elements);
-
   foreach (element_children($elements) as $key) {
     $result = rules_evaluate_elements($elements[$key], $state);
     if ($result) {
@@ -651,9 +665,6 @@ function rules_execute_or(&$elements, &$state) {
  * Evaluates to TRUE if all children evaluate to TRUE..
  */
 function rules_execute_and(&$elements, &$state) {
-  //first sort the children then process them
-  _rules_sort_children($elements);
-
   foreach (element_children($elements) as $key) {
     $result = rules_evaluate_elements($elements[$key], $state);
     if ($result === FALSE) {

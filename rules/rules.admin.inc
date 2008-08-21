@@ -73,7 +73,8 @@ function rules_admin_form_overview_submit($form_id, &$form_state) {
  */
 function rules_admin_overview_table($params) {
   $rules = rules_get_configured_items('rules');
-  _rules_sort_children($rules);
+  _rules_element_defaults($rules);
+  rules_sort_children($rules);
 
   //set parameter defaults
   $params += array('category' => NULL, 'set' => NULL, 'active' => TRUE, 'fixed' => FALSE);

@@ -33,7 +33,7 @@ function theme_rules_admin_rule_render($element) {
 
   //propagate the rule name down the tree, as the name is needed for rendering the elements
   $render['#rule'] = $element['#name'];
-  rules_propagate_rule_name($render);
+  rules_prepare_render($render);
 
   //add a surrounding div to prevent bugs with the fieldset
   $render['#prefix'] = '<div>';
@@ -44,11 +44,13 @@ function theme_rules_admin_rule_render($element) {
 
 /**
  * Propagates the #rule property down the tree
+ * and set #sorted, as we have already sorted the rule.
  */
-function rules_propagate_rule_name(&$elements) {
+function rules_prepare_render(&$elements) {
   foreach (element_children($elements) as $key) {
     $elements[$key]['#rule'] = $elements['#rule'];
-    rules_propagate_rule_name($elements[$key]);
+    $elements[$key]['#sorted'] = TRUE;
+    rules_prepare_render($elements[$key]);
   }
 }
 

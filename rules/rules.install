@@ -143,6 +143,10 @@ function rules_import_workflow_ng_rule(&$name, $cfg) {
   if ($success) {
     $success = rules_helper_do_recursive('_rules_import_transform_element', $rule['#conditions']);
   }
+  if ($success) {
+    rules_sort_elements($rule['#actions']);
+    rules_sort_elements($rule['#conditions']);
+  }
   return $success ? $rule : FALSE;
 }
 

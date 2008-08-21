@@ -96,9 +96,6 @@ class rules_admin_rule_proxy {
    * Creates an id for each element and stores a reference on it
    */
   function _generate_index(&$elements) {
-    //sort the elements
-    uasort($elements, "element_sort");
-
     //generate ids
     $this->_counter++;
     $this->map[$this->_counter] = &$elements;
@@ -122,9 +119,6 @@ class rules_admin_rule_proxy {
   }
 
   function _generate_index_rule(&$elements) {
-    //sort the elements
-    uasort($elements, "element_sort");
-
     //generate ids
     $this->_counter++;
     $elements['#id'] = $this->_counter;
@@ -145,6 +139,11 @@ class rules_admin_rule_proxy {
     if (!isset($rule['#status']) || $rule['#status'] == 'default') {
       $rule['#status'] = 'altered';
     }
+
+    // Sort conditions and actions.
+    rules_sort_elements($rule['#conditions']);
+    rules_sort_elements($rule['#actions']);
+
     rules_item_save('rules', $this->get_rule_name(), $rule);
   }
 
@@ -273,7 +272,7 @@ class rules_admin_rule_proxy {
       $set = $this->get_set();
 
       //sort the rules
-      _rules_sort_children($set['rules']);
+      rules_sort_children($set['rules']);
 
       foreach (element_children($set['rules']) as $name) {
         if ($name == $this->get_rule_name()) {
