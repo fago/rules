@@ -233,3 +233,17 @@ class rules_data_type_user extends rules_data_type {
     return $user->uid;
   }
 }
+
+
+/**
+ * Implementation of hook_rules_action_info_alter().
+ *
+ * Adapts the action info of some core actions to better fit for being
+ * used with rules.
+ */
+function user_rules_action_info_alter(&$actions) {
+  // This action doesn't take the user argument.
+  $actions['rules_core_user_block_ip_action']['arguments'] = array('object' => array('type' => 'value', 'default value' => NULL));
+  // This action can be configured to other users than the current one, so improve the label.
+  $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
+}

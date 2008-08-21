@@ -307,8 +307,7 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
 function rules_core_action_execute(&$object, $settings, $element, &$state) {
   $info = rules_get_element_info($element);
 
-  $args = isset($object) ? array(&$object, $settings) : array($settings);
-  call_user_func_array($info['action_name'], $args);
+  $info['action_name']($object, $settings);
 
   if (isset($settings['auto_save']) && $settings['auto_save']) {
     $argument_name = array_shift(array_keys($info['arguments']));
@@ -395,25 +394,4 @@ function rules_rules_action_type_map() {
       'module' => 'System',
     ),
   );
-}
-
-
-/**
- * Implementation of hook_rules_action_info_alter().
- *
- * Adapts the action info of some core actions to better fit for being
- * used with rules.
- */
-function rules_rules_action_info_alter(&$actions) {
-  // This action doesn't take the user argument.
-  $actions['rules_core_user_block_ip_action']['arguments'] = array('object' => array('type' => 'value', 'default value' => NULL));
-  // This action can be configured to other users than the current one, so improve the label.
-  $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
-
-  // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
-  unset($actions['rules_core_system_goto_action']);
-  // The next two rely heavily on contexts - which we handle already in rules.
-  // So we provide our own actions.
-  unset($actions['rules_core_system_message_action']);
-  unset($actions['rules_core_system_send_email_action']);
 }
