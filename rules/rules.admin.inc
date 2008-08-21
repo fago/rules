@@ -906,15 +906,18 @@ function rules_admin_get_compatible_sets($rule, $sets) {
 /**
  * Gets an array of element labels grouped by modules
  *
- * @param $elements An array of info elements, e.g. as returned from rules_get_events()
+ * @param $elements
+ *   An array of info elements, e.g. as returned from rules_get_events().
+ * @param $key
+ *   The key for which the value is used for grouping the elements.
  */
-function rules_admin_get_grouped_labels($elements) {
+function rules_admin_get_grouped_labels($elements, $key = 'module') {
   $grouped = array();
   $ungrouped = array();
 
   foreach (array_filter($elements, 'rules_admin_element_filter') as $name => $element) {
-    if (isset($element['module'])) {
-      $grouped[$element['module']][$name] = rules_get_element_label($element);
+    if (isset($element[$key])) {
+      $grouped[$element[$key]][$name] = rules_get_element_label($element);
     }
     else {
       $ungrouped[$name] = rules_get_element_label($element);

@@ -80,66 +80,6 @@ function rules_item_rule_set_import(&$name, &$rule_set) {
 }
 
 /**
- * Exports one ore more configurations
- */
-function rules_admin_form_export($form_state) {
-  $form = array();
-  if (!isset($form_state['cfgs'])) {
-    $form['cfg'] = array('#tree' => TRUE);
-    foreach (rules_get_items() as $name => $info) {
-      $form['cfg'][$name] = array(
-        '#type' => 'select',
-        '#title' => t('Select the %label to export', array('%label' => $info['label'])),
-        '#options' => rules_admin_get_grouped_labels(rules_get_configured_items($name)),
-        '#multiple' => TRUE,
-        '#default_value' => 0,
-      );
-    }
-    $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Export'));
-  }
-  else {
-    //show a textarea containg the exported configs
-    $form['result'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Exported rule configurations'),
-      '#description' => t('Copy these data and paste them into the import page, to import.'),
-      '#rows' => 15,
-      '#attributes' => array('readonly' => 'readonly'),
-      '#default_value' => var_export($form_state['cfgs'], TRUE),
-    );
-  }
-  return $form;
-}
-
-function rules_admin_form_export_submit($form, &$form_state) {
-  $cfgs = array();
-  foreach (array_filter($form_state['values']['cfg']) as $item_type => $item_names) {
-    $items = rules_get_configured_items($item_type);
-    $cfgs[$item_type] = array_intersect_key($items, array_filter($item_names));
-    //allow item specific adaption
-    foreach ($cfgs[$item_type] as $item_name => $item) {
-      rules_item_type_invoke($item_type, 'export', array(&$cfgs[$item_type][$item_name]));
-    }
-  }
-  if ($cfgs) {
-    $form_state['cfgs'] = $cfgs;
-  }
-  else {
-    drupal_set_message(t('Please select the items to export.'), 'error');
-  }
-  $form_state['rebuild'] = TRUE;
-}
-
-/**
- * Item type callback: Customize to be exported rule sets
- */
-function rules_item_rule_set_export(&$rule_set) {
-  // TODO: add the rules of the set to the export
-}
-
-
-
-/**
  * Tries to import workflow-ng rules.
  *
  * @return TRUE, only if workflow-ng rules are detected.
@@ -168,4 +108,69 @@ function rules_admin_import_workflow_ng($import) {
   }
   rules_clear_cache();
   return TRUE;
+}
+
+
+
+/**
+ * Exports one ore more configurations
+ */
+function rules_admin_form_export($form_state) {
+  $form = array();
+  if (!isset($form_state['export'])) {
+    $form['export'] = array('#tree' => TRUE);
+    foreach (rules_get_items() as $name => $info) {
+      $form['export'][$name] = array(
+        '#type' => 'select',
+        '#title' => t('Select the %label to export', array('%label' => $info['label'])),
+        '#options' => rules_admin_get_grouped_labels(rules_get_configured_items($name)),
+        '#multiple' => TRUE,
+        '#default_value' => 0,
+      );
+    }
+    $form['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Export'));
+  }
+  else {
+    //show a textarea containg the exported configs
+    $form['result'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Exported rule configurations'),
+      '#description' => t('Copy these data and paste them into the import page, to import.'),
+      '#rows' => 15,
+      '#attributes' => array('readonly' => 'readonly'),
+      '#default_value' => var_export($form_state['export'], TRUE),
+    );
+  }
+  return $form;
+}
+
+function rules_admin_form_export_submit($form, &$form_state) {
+  $export = array();
+  foreach (array_filter($form_state['values']['export']) as $item_type => $item_names) {
+    $items = rules_get_configured_items($item_type);
+    $export[$item_type] = array_intersect_key($items, array_filter($item_names));
+    //allow item specific adaption
+    foreach ($export[$item_type] as $item_name => $item) {
+      rules_item_type_invoke($item_type, 'export', array($item_name, &$export[$item_type][$item_name], &$export));
+    }
+  }
+  if ($export) {
+    $form_state['export'] = $export;
+  }
+  else {
+    drupal_set_message(t('Please select the items to export.'), 'error');
+  }
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Item type callback: When exporting a rule set, add its rules to the export.
+ */
+function rules_item_rule_set_export($set_name, &$rule_set, &$export) {
+  $rules = rules_get_configured_items('rules');
+  foreach ($rules as $name => $rule) {
+    if ($rule['#set'] == $set_name) {
+      $export['rules'][$name] = $rule;
+    }
+  }
 }
