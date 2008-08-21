@@ -539,6 +539,11 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
       '#submit' => array('rules_admin_form_edit_delete_submit'),
     );
   }
+  else {
+    // For conditions we set the id to 0, so new variables of this rules aren't shown
+    // in argument mapping forms.
+    $element['#id'] = 0;
+  }
   rules_admin_element_help($form, $element);
   rules_admin_default_argument_form($form, $form_state, $element);
   rules_admin_element_alter_form($form, $form_state, $element);
@@ -621,7 +626,7 @@ function rules_admin_form_edit_save($form, &$form_state) {
   //remove empty values
   $element = array_filter($element);
 
-  if (isset($element['#id'])) {
+  if (isset($element['#id']) && $element['#id']) {
     //save edited element
     $element_ref =& $form_state['proxy']->get_element($element['#id']);
     $element_ref = $element;
@@ -630,6 +635,7 @@ function rules_admin_form_edit_save($form, &$form_state) {
   else {
     $parent_ref =& $form_state['proxy']->get_element($form_state['parent_id']);
     //just add the element to the parent
+    unset($element['#id']);
     $parent_ref = rules_configure($parent_ref, $element);
   }
   $form_state['proxy']->save_changes();
@@ -1132,7 +1138,7 @@ function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
     if (isset($vars[$variable_name]['label'])) {
-      $labels[$prefix . $argument_name] = $vars[$variable_name]['label'];
+      $labels[$prefix . $argument_name] = strtolower($vars[$variable_name]['label']);
     }
   }
   return $labels;
