@@ -1,7 +1,8 @@
 <?php
 // $Id$
 /**
- * @file rules Invokes events for supported modules
+ * @file rules Invokes events for supported modules. Usually this should be directly
+ *   in the module providing rules integration instead.
  */
 
 /**
@@ -53,4 +54,16 @@ function rules_init() {
  */
 function rules_cron() {
   rules_invoke_event('cron');
+}
+
+/**
+ * Implementation of hook_comment().
+ */
+function rules_comment($comment, $op) {
+  if (in_array($op, array('insert', 'update', 'delete', 'view', 'publish', 'unpublish'))) {
+    if (is_array($comment)) {
+      $comment = (object)$comment;
+    }
+    rules_invoke_event('comment_'. $op, $comment);
+  }
 }
