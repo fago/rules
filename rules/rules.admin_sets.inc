@@ -103,7 +103,7 @@ function rules_admin_item_form_revert_submit($form, &$form_state) {
  * Item type callback: Deleted rule set
  */
 function rules_item_rule_set_delete($set_name) {
-  //delete all rules belonging to this set too
+  // Delete all rules belonging to this set too
   $rules = rules_get_configured_items('rules');
   foreach ($rules as $name => $rule) {
     if ($rule['#set'] == $set_name) {
