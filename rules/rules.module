@@ -421,10 +421,12 @@ function rules_get_rule_set($set_name, $reset = FALSE) {
       $sets[$set_name] = $cache->data;
     }
     else {
-      //cache miss, so refresh the cache for all sets
+      // Cache miss, so refresh the cache for all sets
       $sets = _rules_get_rule_sets();
-      //and write the cache
+
       foreach ($sets as $name => $set) {
+        // Make sure the rules are sorted before writing to the cache.
+        rules_sort_children($set['rules']);
         cache_set('set_'. $name, $set, 'cache_rules');
       }
       //get all inactive sets and store them to speed up later calls
@@ -586,7 +588,7 @@ function rules_sort_children(&$element) {
 }
 
 /**
- * Recursivly sorts the elements with rules_sort_children().
+ * Recursively sorts the elements with rules_sort_children().
  */
 function rules_sort_elements(&$elements) {
   rules_sort_children($elements);
