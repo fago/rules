@@ -23,47 +23,33 @@ at least the basic concepts. You can find it here:
                           http://drupal.org/node/156288
 
  * Copy the whole rules directory to your modules directory and
-   activate the rules modules.
+   activate the rules module.
  * You can find the admin interface at /admin/rules.
 
 Notes:
+
  * If you have the php module activated, you can use a php input evaluator in 
    your rules.
- * If you install the token module, you can use token replacements in your rules.
-   http://drupal.org/project/token
- 
 
- 
-Upgrade from Workflow-ng
----------------------------
-You can easily upgrade from workflow-ng (5.x) installations to 6.x. First off install
-the rules module as usual, then go to update.php and run update 6001 - which is the 
-upgrade procedure. It will detect the old workflow-ng installation and convert the 
-workflow-ng rules to rules.
+ * If you install the token module, you can make use of token replacements in your rules.
+   Get the module from http://drupal.org/project/token and activate it - that's it.
 
-Furthermore you can import exported workflow-ng rules with the normal rules import tool.
-It's a good idea to export all workflow-ng rules before upgrading to rules, so you can
-import an old workflow-ng at any time.
+   You don't need to enable the token actions module as rules provides already equivalent
+   actions, which are better integrated into the rules module. 
 
 
-Important notes when converting a workflow-ng rule:
+Rules Scheduler
+---------------
 
-  * When converting a workflow-ng rule, you need to have support for all used
-    events, conditions or actions in 6.x too - otherwise the rule
-    conversion will fail.
-    
-    E.g. if you have used actions provided by the og module, install and upgrade
-    the og module first, then convert the rule.
-    
-    When the module conversion fails, make sure you have all involved modules upgraded
-    and try again. 
+ * If you enable the rules scheduler module, you get new actions, that allow you to
+   schedule the execution of rule sets.
+ * Make sure that you have configured cron for your drupal installation as cron
+   is used for scheduling the rule sets. For help see http://drupal.org/cron
 
 
-  * Modules may help upgrading provided actions. E.g. the rules module provides
-    an upgrade path for upgrading from the workflow-ng "Make content (un)sticky"
-    action to the two core "Make content sticky" or "Make content unsticky" actions.
+Rules Simpletest
+----------------
 
-    If a module has changed its actions, but doesn't provide an upgrade path, file
-    a bug report / feature request for this module. 
+ This module just provides some test case for the rules module. You don't need to
+ activate it unless you want to run these tests with the simpletest module.
 
-  * The workflow-ng extension modules are not yet ported.
