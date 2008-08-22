@@ -5,7 +5,7 @@
  */
 
 /**
- * Condition: Textual comparision configuration form
+ * Condition: Textual comparison configuration form
  */
 function rules_condition_text_compare_form($settings = array(), &$form) {
   $form['settings']['text1']['#title'] = t('Two texts to compare');
