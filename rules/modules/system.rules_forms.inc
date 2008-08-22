@@ -8,16 +8,18 @@
  * Action drupal message configuration form.
  */
 function rules_action_drupal_message_form($settings, &$form) {
+  $settings += array('message' => '', 'error' => '');
+
   $form['settings']['message'] = array(
     '#type' => 'textarea',
     '#title' => t('Message'),
-    '#default_value' => isset($settings['message']) ? $settings['message'] : '',
+    '#default_value' => $settings['message'],
     '#description' => t('The message that should be displayed.'),
   );
   $form['settings']['error'] = array(
     '#type' => 'checkbox',
     '#title' => t('Display as error message'),
-    '#default_value' => isset($settings['error']) ? $settings['error'] : '',
+    '#default_value' => $settings['error'],
   );
 }
 
