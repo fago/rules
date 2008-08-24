@@ -23,6 +23,7 @@ function _rules_initialize_variables(&$state, $args) {
     $data = $args[0];
   }
   else {
+    $data = array();
     foreach ($args as $index => $arg) {
       $data[ $argument_names[$index] ] = &$args[$index];
     }
