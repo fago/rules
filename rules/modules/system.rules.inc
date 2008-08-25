@@ -7,6 +7,7 @@
 
 /**
  * Implementation of hook_rules_event_info().
+ * @ingroup rules
  */
 function system_rules_event_info() {
   return array(
@@ -27,6 +28,7 @@ function system_rules_event_info() {
 
 /**
  * Implementation of hook_rules_action_info().
+ * @ingroup rules
  */
 function system_rules_action_info() {
   return array(
@@ -200,6 +202,7 @@ function rules_action_watchdog($settings) {
  * Implementation of hook_rules_action_info_alter().
  *
  * Adapts the action info of the core actions to better fit for rules.
+ * @ingroup rules
  */
 function system_rules_action_info_alter(&$actions) {
   // The goto action doesn't work (object!?) and is dangeroures - so we provide our own.
