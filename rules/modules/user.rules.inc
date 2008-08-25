@@ -5,7 +5,8 @@
  */
 
 /**
- * Implementation of hook_rules_event_info()
+ * Implementation of hook_rules_event_info().
+ * @ingroup rules
  */
 function user_rules_event_info() {
   return array(
@@ -81,7 +82,8 @@ function rules_events_argument_global_user() {
 
 
 /**
- * Implementation of hook_rules_condition_info()
+ * Implementation of hook_rules_condition_info().
+ * @ingroup rules
  */
 function user_rules_condition_info() {
   return array(
@@ -205,7 +207,8 @@ function rules_action_load_user($settings) {
 }
 
 /**
- * Implementation of hook_rules_data_type_info()
+ * Implementation of hook_rules_data_type_info().
+ * @ingroup rules
  */
 function user_rules_data_type_info() {
   return array(
@@ -240,6 +243,7 @@ class rules_data_type_user extends rules_data_type {
  *
  * Adapts the action info of some core actions to better fit for being
  * used with rules.
+ * @ingroup rules
  */
 function user_rules_action_info_alter(&$actions) {
   // This action doesn't take the user argument.

@@ -7,25 +7,26 @@
  */
 
 /**
- * @defgroup rules_hooks Rules' hooks
+ * @defgroup rules Rules module integration
  * @{
- * Hooks that can be implemented by other modules in order to extend the rules module.
+ *
  */
 
 /**
- * This hook should be placed in MODULENAME.rules.inc and it will be auto-loaded.
+ * This hook should be placed in MODULENAME.rules.inc.
  */
 function hook_rules_action_info() {
   // example code here
+
 }
 
 /**
- * This hook should be placed in MODULENAME.rules.inc and it will be auto-loaded.
+ * This hook should be placed in MODULENAME.rules.inc.
  */
-function hook_rules_action_info() {
+function hook_rules_condition_info() {
   // example code here
-}
 
+}
 
 
 /**

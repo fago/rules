@@ -6,7 +6,6 @@
 
 /**
  * Implementation of hook_event_info()
- *
  * @ingroup rules
  */
 function node_rules_event_info() {
@@ -52,7 +51,6 @@ function node_rules_event_info() {
 
 /**
  * Returns some arguments suitable for using it with a node
- * @ingroup rules
  */
 function rules_events_node_arguments($node_label, $author_label, $update = FALSE) {
   $args = array(
@@ -84,7 +82,6 @@ function rules_events_node_arguments($node_label, $author_label, $update = FALSE
 
 /**
  * Gets the author's account of a node
- * @ingroup rules
  */
 function rules_events_argument_node_author($node) {
   return user_load(array('uid' => $node->uid));
@@ -92,7 +89,6 @@ function rules_events_argument_node_author($node) {
 
 /**
  * Gets the node object, that doesn't contain the modified changes
- * @ingroup rules
  */
 function rules_events_argument_node_unchanged($node) {
   return $node->nid ? node_load($node->nid) : $node;
@@ -100,7 +96,6 @@ function rules_events_argument_node_unchanged($node) {
 
 /**
  * Gets the author of the unchanged node object
- * @ingroup rules
  */
 function rules_events_argument_unchanged_node_author($node) {
   return rules_events_argument_node_author(rules_events_argument_node_unchanged($node));
@@ -166,7 +161,7 @@ function rules_condition_content_is_promoted(&$node, $settings) {
 
 
 /**
- * Implementation of hook_rules_action_info
+ * Implementation of hook_rules_action_info().
  * @ingroup rules
  */
 function node_rules_action_info() {
@@ -225,7 +220,6 @@ function node_rules_action_info() {
 
 /**
  * Modifies a node as configured
- * @ingroup rules
  */
 function rules_action_node_set_author($node, $author) {
   $node->uid = $author->uid;
@@ -235,7 +229,6 @@ function rules_action_node_set_author($node, $author) {
 
 /**
  * Action "Add a node"
- * @ingroup rules
  */
 function rules_action_add_node($author, $title, $settings) {
   if (!$settings['node_access'] || node_access('create', $settings['type'], $author)) {
@@ -265,6 +258,7 @@ function rules_action_load_node($nid, $vid = NULL) {
 
 /**
  * Implementation of hook_rules_action_info_alter().
+ * @ingroup rules
  *
  * Adapts the action info of the core actions to better fit for rules.
  */
@@ -283,6 +277,7 @@ function node_rules_action_info_alter(&$actions) {
 
 /**
  * Implementation of hook_rules_data_type_info()
+ * @ingroup rules
  */
 function node_rules_data_type_info() {
   return array(

@@ -7,6 +7,7 @@
 
 /**
  * Implementation of hook_event_info()
+ * @ingroup rules
  */
 function comment_rules_event_info() {
   return array(

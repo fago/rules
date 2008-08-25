@@ -6,7 +6,8 @@
  */
 
 /**
- * Implementation of hook_condition_info()
+ * Implementation of hook_rules_condition_info().
+ * @ingroup rules
  */
 function path_rules_condition_info() {
   return array(
@@ -39,7 +40,8 @@ function rules_condition_alias_exists($settings) {
 }
 
 /**
- * Implementation of hook_action_info()
+ * Implementation of hook_rules_action_info().
+ * @ingroup rules
  */
 function path_rules_action_info() {
   return array(
