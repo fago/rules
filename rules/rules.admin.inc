@@ -130,7 +130,7 @@ function rules_admin_overview_table($params) {
  */
 function rules_admin_check_token() {
   if (!variable_get('rules_hide_token_message', FALSE) && !module_exists('token')) {
-    drupal_set_message(t('If you install the token module from !href, token replacements will be supported. See http://drupal.org/node/286803. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/token', 'http://drupal.org/project/token'), '@hide' => url('admin/rules/settings'))));
+    drupal_set_message(t('If you install the token module from !href, token replacements will be supported. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/token', 'http://drupal.org/project/token'), '@hide' => url('admin/rules/settings'))));
   }
 }
 
