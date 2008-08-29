@@ -32,6 +32,15 @@ function rules_condition_number_compare_form($settings = array(), &$form) {
   );
 }
 
+function rules_condition_check_boolean_help() {
+  return t('Check a !truth, i.e. TRUE or FALSE.', array('!truth' => l(t('truth value'), 'http://en.wikipedia.org/wiki/Logical_value')));
+}
+
+function rules_action_save_variable_help() {
+  return t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .
+          ' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.');
+}
+
 /**
  * The following functions help converting actions
  * when upgrading from workflow-ng

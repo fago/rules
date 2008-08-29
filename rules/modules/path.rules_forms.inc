@@ -88,3 +88,7 @@ function rules_action_node_path_alias_form($settings, &$form) {
 function rules_action_node_path_alias_label($settings, $argument_labels) {
   return t('Create or delete @node\'s URL alias', $argument_labels);
 }
+
+function rules_action_node_path_alias_help() {
+  return t('This action only works if the acting user has %perm1 or %perm2 permsissions. If this doesn\'t suit, use the generic "Create or delete an URL alias" action together with the existing system path "node/{ID}".', array('%perm1' => t('create url aliases'), '%perm2' => t('administer url aliases')));
+}

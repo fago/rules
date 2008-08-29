@@ -93,7 +93,7 @@ function user_rules_condition_info() {
         'user1' => array('type' => 'user', 'label' => t('User account 1')),
         'user2' => array('type' => 'user', 'label' => t('User account 2')),
       ),
-      'help' => t('Evaluates to TRUE, if both given user accounts are the same.'),
+      'help' => 'Evaluates to TRUE, if both given user accounts are the same.',
       'module' => 'User',
     ),
     'rules_condition_user_hasrole' => array(
@@ -101,7 +101,7 @@ function user_rules_condition_info() {
       'arguments' => array(
         'user' => array('type' => 'user', 'label' => t('User')),
       ),
-      'help' => t('Whether the user has the selected role(s).'),
+      'help' => 'Whether the user has the selected role(s).',
       'module' => 'User',
     ),
   );
@@ -163,7 +163,7 @@ function user_rules_action_info() {
       'new variables' => array(
         'user_loaded' => array('type' => 'user', 'label' => t('Loaded user')),
       ),
-      'help' => t('Enter an id or a name of the user to load.'),
+      'help' => 'Enter an id or a name of the user to load.',
       'module' => 'User',
      ),
   );
