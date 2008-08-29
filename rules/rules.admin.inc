@@ -811,13 +811,13 @@ function rules_admin_map_get_configured_argument($name, $element) {
   return isset($reverse_map[$name]) ? $reverse_map[$name] : $name;
 }
 
-/*
- * Shows the element description
+/**
+ * Shows the element help
  */
 function rules_admin_element_help(&$form, $element) {
   $info = rules_get_element_info($element);
   if (isset($info['help']) || isset($element['help'])) {
-    $help = isset($element['help']) ? $element['help'] : $info['help'];
+    $help = isset($element['help']) ? t($element['help']) : t($info['help']);
   }
   else if (isset($element['#type']) && in_array($element['#type'], array('action', 'condition'))) {
     rules_include('rules_forms');
