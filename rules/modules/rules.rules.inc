@@ -60,7 +60,7 @@ class rules_data_type_string extends rules_data_type {
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
       '#title' => $info['label'],
-      '#description' => $info['description'],
+      '#description' => t($info['description']),
       '#required' => $info['required'],
       '#default_value' => $value,
     );
@@ -87,9 +87,15 @@ class rules_data_type_date extends rules_data_type_string {
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     $value = isset($value) ? $value : date('Y-m-d H:i:s', time() + 86400);
-    $info['description'] .= ' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
+    $info['description'] = t($info['description']) .' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
     $info['description'] .= '<br />'. t('You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>'). '</pre>'));
-    return parent::get_default_input_form($info, $value);
+    return array(
+      '#type' => $info['long'] ? 'textarea' : 'textfield',
+      '#title' => $info['label'],
+      '#description' => $info['description'],
+      '#required' => $info['required'],
+      '#default_value' => $value,
+    );
   }
 
   function check_value($info, $value) {
@@ -119,8 +125,14 @@ class rules_data_type_boolean extends rules_data_type_string {
 
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
-    $info['description'] .= ' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
-    return parent::get_default_input_form($info, isset($value) ? $value : 1);
+    $info['description'] = t($info['description']) .' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
+    return array(
+      '#type' => $info['long'] ? 'textarea' : 'textfield',
+      '#title' => $info['label'],
+      '#description' => $info['description'],
+      '#required' => $info['required'],
+      '#default_value' => $value,
+    );
   }
 }
 
@@ -137,7 +149,7 @@ function rules_rules_condition_info() {
         'text1' => array('label' => t('Text 1'), 'type' => 'string'),
         'text2' => array('label' => t('Text 2'), 'type' => 'string'),
       ),
-      'help' => t('This condition just compares two texts. It returns TRUE, if both texts are equal.'),
+      'help' => 'TRUE is returned, if both texts are equal.',
       'module' => 'Rules',
     ),
     'rules_condition_number_compare' => array(
@@ -146,7 +158,7 @@ function rules_rules_condition_info() {
         'number1' => array('label' => t('Number 1'), 'type' => 'number'),
         'number2' => array('label' => t('Number 2'), 'type' => 'number'),
       ),
-      'help' => t('This condition does a numeric comparison. Select greater than, less than or equal to.'),
+      'help' => 'Select greater than, less than or equal to.',
       'module' => 'Rules',
     ),
     'rules_condition_check_boolean' => array(
@@ -154,7 +166,6 @@ function rules_rules_condition_info() {
       'arguments' => array(
         'boolean' => array('type' => 'boolean', 'label' => t('Truth value')),
       ),
-      'help' => t('Check a !truth, i.e. TRUE or FALSE.', array('!truth' => l(t('truth value'), 'http://en.wikipedia.org/wiki/Logical_value'))),
       'module' => 'Rules',
     ),
   );
@@ -245,8 +256,6 @@ function rules_rules_action_info() {
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),
         ),
-        'help' => t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .
-          ' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.'),
       );
     }
   }

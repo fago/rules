@@ -57,7 +57,6 @@ function path_rules_action_info() {
       ),
       'module' => 'Path',
       'eval input' => array('dst'),
-      'help' => t('This action only works if the acting user has %perm1 or %perm2 permsissions. If this doesn\'t suit, use the generic "Create or delete an URL alias" action together with the existing system path "node/{ID}".', array('%perm1' => t('create url aliases'), '%perm2' => t('administer url aliases'))),
     ),
   );
 }
