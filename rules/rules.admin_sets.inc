@@ -154,7 +154,7 @@ function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
     $form['settings']['name'] = array(
       '#title' => t('Machine readable name'),
       '#type' => 'textfield',
-      '#description' => t('Specify a unique name containing only digits, numbers and underscores.'),
+      '#description' => t('Specify a unique name containing only alphanumeric characters, and underscores.'),
       '#default_value' => isset($set_info['name']) ? $set_info['name'] : '',
       '#required' => TRUE,
     );
@@ -194,7 +194,7 @@ function rules_admin_form_add_rule_set(&$form_state) {
     '#suffix' => '</div>',
     '#tree' => TRUE,
     '#theme' => 'rules_admin_form_arguments',
-    '#description' => t('You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only digits, numbers and underscores.'),
+    '#description' => t('You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores.'),
   );
   foreach ($set_info['arguments'] as $name => $info) {
     $form['settings']['args'][$name] = _rules_admin_form_argument($name, $info);
