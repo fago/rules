@@ -700,7 +700,7 @@ function rules_admin_new_variables_form(&$form, &$form_state, $element) {
       $form['new'][$name]['name'] = array(
         '#type' => 'textfield',
         '#title' => t('Machine readable variable name'),
-        '#description' => t('Specify a unique name containing only digits, numbers and underscores.'),
+        '#description' => t('Specify a unique name containing only alphanumeric characters, and underscores.'),
         '#default_value' => $name,
         '#required' => TRUE,
       );
