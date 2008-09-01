@@ -305,16 +305,14 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
           $form_state['parent_id'] = intval($parent_id);
           _rules_element_defaults($parent);
           $form = $function($form_state, $element, $parent);
-          rules_admin_form_pack_storage($form, $form_state);
-          return $form;
+          return rules_admin_form_pack_storage($form, $form_state);
         }
       }
     }
     else {
       if (function_exists($function = 'rules_admin_form_edit_'. $type)) {
         $form = $function($form_state, $element);
-        rules_admin_form_pack_storage($form, $form_state);
-        return $form;
+        return rules_admin_form_pack_storage($form, $form_state);
       }
     }
   }
@@ -338,7 +336,7 @@ function rules_admin_form_add_action(&$form_state, &$element) {
     '#type' => 'submit',
     '#weight' => 10,
     '#value' => t('Forward'),
-    '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_add_submit'),
+    '#submit' => array('rules_admin_form_add_submit'),
   );
   return $form;
 }
@@ -361,7 +359,7 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
       '#type' => 'submit',
       '#weight' => 10,
       '#value' => t('Forward'),
-      '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_add_submit'),
+      '#submit' => array('rules_admin_form_add_submit'),
     );
     return $form;
   }
@@ -409,18 +407,25 @@ function rules_admin_form_pack_storage($form, &$form_state) {
       $form_state['storage'][$key] =& $form_state[$key];
     }
   }
+  // Register an after build callback that unpacks the storage.
+  $form['#after_build'][] = 'rules_admin_form_unpack_storage';
+  return $form;
 }
 
 /**
- * Use this when the current form is or might be not the first step of the form.
- * It puts the variables out of storage on their usual place.
+ * Puts the variables out of storage on their usual place. Invoked through
+ * #after_build, which is set by rules_admin_form_pack_storage().
  */
 function rules_admin_form_unpack_storage($form, &$form_state) {
-  foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
-    if (isset($form_state['storage'][$key])) {
-      $form_state[$key] =& $form_state['storage'][$key];
+  if (!isset($form_state['unpacked'])) {
+    foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
+      if (isset($form_state['storage'][$key])) {
+        $form_state[$key] =& $form_state['storage'][$key];
+      }
     }
+    $form_state['unpacked'] = TRUE;
   }
+  return $form;
 }
 
 
@@ -467,7 +472,6 @@ function rules_admin_form_edit_action(&$form_state, $element) {
     '#type' => 'submit',
     '#weight' => 10,
     '#value' => t('Save'),
-    '#validate' => array('rules_admin_form_unpack_storage'),
     '#submit' => array('rules_admin_form_edit_action_submit', 'rules_admin_form_edit_save'),
   );
   if (isset($element['#id'])) {
@@ -533,7 +537,6 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
     '#type' => 'submit',
     '#weight' => 10,
     '#value' => t('Save'),
-    '#validate' => array('rules_admin_form_unpack_storage'),
     '#submit' => array('rules_admin_form_edit_condition_submit', 'rules_admin_form_edit_save'),
   );
   if (isset($element['#id'])) {
@@ -659,6 +662,8 @@ function rules_admin_form_edit_delete_submit($form, &$form_state) {
     'path' => $base_path . '/delete/'. $element['#id'],
     'query' => 'destination='. $base_path,
   );
+  // We need to empty the storage or there will be no redirect.
+  $form_state['storage'] = NULL;
 }
 
 /**
