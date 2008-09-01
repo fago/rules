@@ -275,7 +275,7 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
 }
 
-/*
+/**
  * Returns the form for the add operation
  * This handles adding conditions and actions
  *
@@ -295,20 +295,26 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
     $element =& $form_state['element'];
     $element += array('#id' => NULL);
 
+    // Due to adding storage during the form build, the form will be rebuilt
+    // immediately. So be sure to increase the step only out of a #submit callback.
+    // Also see http://drupal.org/node/302240.
+
     if ($form_state['step'] == 0) {
       if (isset($parent_id) && is_array($parent = $proxy->get_element(intval($parent_id)))) {
         if (function_exists($function = 'rules_admin_form_add_'. $element['#type'])) {
-          $form_state['step']++;
           $form_state['parent_id'] = intval($parent_id);
           _rules_element_defaults($parent);
-          return $function($form_state, $element, $parent);
+          $form = $function($form_state, $element, $parent);
+          rules_admin_form_pack_storage($form, $form_state);
+          return $form;
         }
       }
     }
     else {
       if (function_exists($function = 'rules_admin_form_edit_'. $type)) {
-        $form_state['step']++;
-        return $function($form_state, $element);
+        $form = $function($form_state, $element);
+        rules_admin_form_pack_storage($form, $form_state);
+        return $form;
       }
     }
   }
@@ -332,7 +338,7 @@ function rules_admin_form_add_action(&$form_state, &$element) {
     '#type' => 'submit',
     '#weight' => 10,
     '#value' => t('Forward'),
-    '#submit' => array('rules_admin_form_add_submit', 'rules_admin_form_pack_storage'),
+    '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_add_submit'),
   );
   return $form;
 }
@@ -355,7 +361,7 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
       '#type' => 'submit',
       '#weight' => 10,
       '#value' => t('Forward'),
-      '#submit' => array('rules_admin_form_add_submit', 'rules_admin_form_pack_storage'),
+      '#submit' => array('rules_admin_form_unpack_storage', 'rules_admin_form_add_submit'),
     );
     return $form;
   }
@@ -389,6 +395,7 @@ function rules_admin_form_add_op(&$form_state, $element, $parent) {
 
 function rules_admin_form_add_submit($form, &$form_state) {
   $form_state['element']['#name'] = $form_state['values']['name'];
+  $form_state['step']++;
   rules_init_element_info($form_state['element']);
 }
 
@@ -407,8 +414,6 @@ function rules_admin_form_pack_storage($form, &$form_state) {
 /**
  * Use this when the current form is or might be not the first step of the form.
  * It puts the variables out of storage on their usual place.
- * Note: We can't use the storage place everywhere, as it would result in unnecessary form rebuilds
- *   when building the form initially.
  */
 function rules_admin_form_unpack_storage($form, &$form_state) {
   foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
