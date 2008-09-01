@@ -1159,7 +1159,7 @@ function rules_include($type = 'rules') {
     }
 
     foreach ($files as $file) {
-      require_once $file;
+      include_once $file;
     }
     rules_log(t('Included MODULE.'. $type. '.inc files.'));
   }
@@ -1179,6 +1179,9 @@ function _rules_include_get_files($type) {
     $module_path = drupal_get_path('module', $module);
     if (file_exists("$module_path/$module.$type.inc")) {
       $files[] = "./$module_path/$module.$type.inc";
+    }
+    else if (file_exists("$module_path/includes/$module.$type.inc")) {
+      $files[] = "./$module_path/includes/$module.$type.inc";
     }
     else if (file_exists("$rules_path/modules/$module.$type.inc")) {
       $files[] = "./$rules_path/modules/$module.$type.inc";
