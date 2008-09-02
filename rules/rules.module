@@ -29,7 +29,7 @@ define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rules');
  */
 function rules_menu() {
   $items = array();
-  $items['admin/rules'] = array(
+  $items[RULES_ADMIN_PATH] = array(
     'title' => 'Rules',
     'description' => 'Rules administration links.',
     'position' => 'right',
