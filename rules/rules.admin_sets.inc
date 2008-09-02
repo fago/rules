@@ -42,11 +42,11 @@ function rules_admin_sets_overview() {
     );
   }
 
-  if (count($rows)) {
-    return theme('table', $header, $rows, array('class' => 'rules-sets-configurations'));
+  if (empty($rows)) {
+    $rows[] = array(array('data' => t('There are no rule sets.'), 'colspan' => 6));
   }
 
-  return '<p>'. t('None') .'</p>';
+  return theme('table', $header, $rows, array('class' => 'rules-sets-configurations'));
 }
 
 /**
