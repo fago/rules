@@ -3,25 +3,40 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  rules/rules.admin.inc: n/a
-#  rules.module,v 1.1.2.11 2008/07/11 12:49:43 fago
-#  rules.admin_export.inc,v 1.1.2.2 2008/07/11 11:55:37 fago
-#  rules/rules.admin_render.inc: n/a
-#  rules/rules.variables.inc: n/a
+#  rules.admin.inc,v 1.1.2.47 2008/08/21 13:20:24 fago
+#  rules.admin_sets.inc,v 1.1.2.8 2008/08/21 08:18:16 fago
+#  system.rules_forms.inc,v 1.1.2.5 2008/08/22 15:17:26 fago
+#  rules.module,v 1.1.2.34 2008/08/21 11:42:46 fago
+#  rules.rules_forms.inc,v 1.1.2.2 2008/08/22 15:17:26 fago
+#  php.rules_forms.inc,v 1.1.2.5 2008/08/21 14:28:57 fago
+#  rules.admin_export.inc,v 1.1.2.7 2008/08/21 08:18:16 fago
+#  rules.admin_render.inc,v 1.1.2.5 2008/08/21 10:24:08 fago
+#  rules.variables.inc,v 1.1.2.21 2008/08/24 18:16:25 fago
 #  rules.info,v 1.1.2.2 2008/07/10 08:15:04 fago
-#  rules_test.info,v 1.1.2.2 2008/07/10 08:15:05 fago
-#  rules.install,v 1.1.2.3 2008/07/11 11:11:31 fago
-#  node.rules.inc,v 1.1.2.5 2008/07/11 11:21:08 fago
-#  user.rules.inc,v 1.1.2.2 2008/07/11 11:21:08 fago
-#  rules/modules/node.rules_forms.inc: n/a
-#  rules_test.rules_defaults.inc,v 1.1.2.11 2008/07/11 11:11:31 fago
+#  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
+#  rules_test.info,v 1.1.2.3 2008/07/23 15:42:06 fago
+#  system.rules.inc,v 1.1.2.5 2008/08/21 07:55:37 fago
+#  rules.install,v 1.1.2.15 2008/08/21 10:24:08 fago
+#  rules_scheduler.install,v 1.1.2.2 2008/08/14 15:43:55 fago
+#  comment.rules.inc,v 1.1.2.1 2008/08/21 13:20:24 fago
+#  rules.rules.inc,v 1.1.2.21 2008/08/21 07:55:37 fago
+#  node.rules.inc,v 1.1.2.25 2008/08/13 11:33:40 fago
+#  user.rules.inc,v 1.1.2.8 2008/08/21 07:55:37 fago
+#  path.rules.inc,v 1.1.2.1 2008/08/21 12:19:47 fago
+#  node.rules_forms.inc,v 1.1.2.13 2008/08/19 09:12:03 fago
+#  path.rules_forms.inc,v 1.1.2.1 2008/08/21 12:19:47 fago
+#  php.rules.inc,v 1.1.2.6 2008/08/12 11:01:25 fago
+#  user.rules_forms.inc,v 1.1.2.2 2008/07/14 15:48:28 fago
+#  rules_scheduler.rules.inc,v 1.1.2.2 2008/08/14 15:43:55 fago
+#  rules_scheduler.module,v 1.1.2.3 2008/08/19 11:58:21 fago
+#  rules_test.rules_defaults.inc,v 1.1.2.13 2008/08/01 17:17:57 fago
 #  rules_test.module,v 1.1.2.3 2008/07/11 11:21:09 fago
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-07-12 14:10+0200\n"
+"POT-Creation-Date: 2008-08-25 20:43+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -30,312 +45,328 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: rules/rules.admin.inc:12;28
+#: rules/rules.admin.inc:15
+msgid "Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module."
+msgstr ""
+
+#: rules/rules.admin.inc:17
+msgid "This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met."
+msgstr ""
+
+#: rules/rules.admin.inc:30;46
 msgid "Filter"
 msgstr ""
 
-#: rules/rules.admin.inc:18
+#: rules/rules.admin.inc:36
 msgid "Filter by event"
 msgstr ""
 
-#: rules/rules.admin.inc:24
+#: rules/rules.admin.inc:42
 msgid "Filter by category"
 msgstr ""
 
-#: rules/rules.admin.inc:33
+#: rules/rules.admin.inc:51 rules/rules.admin_sets.inc:123
 msgid "Active rules"
 msgstr ""
 
-#: rules/rules.admin.inc:36
+#: rules/rules.admin.inc:54 rules/rules.admin_sets.inc:126
 msgid "Inactive rules"
 msgstr ""
 
-#: rules/rules.admin.inc:40
+#: rules/rules.admin.inc:58 rules/rules.admin_sets.inc:130
 msgid "Fixed rules"
 msgstr ""
 
-#: rules/rules.admin.inc:64;158;431;492;679
+#: rules/rules.admin.inc:85;197;444;504;696 rules/rules.admin_sets.inc:17;147;275;343
 msgid "Label"
 msgstr ""
 
-#: rules/rules.admin.inc:64;178
+#: rules/rules.admin.inc:85
+msgid "Set"
+msgstr ""
+
+#: rules/rules.admin.inc:85;217
 msgid "Event"
 msgstr ""
 
-#: rules/rules.admin.inc:64
+#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17 rules/modules/system.rules_forms.inc:173
 msgid "Category"
 msgstr ""
 
-#: rules/rules.admin.inc:64
+#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17
 msgid "Status"
 msgstr ""
 
-#: rules/rules.admin.inc:64
+#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17
 msgid "Operations"
 msgstr ""
 
-#: rules/rules.admin.inc:75
+#: rules/rules.admin.inc:96 rules/rules.admin_sets.inc:26
 msgid "edit"
 msgstr ""
 
-#: rules/rules.admin.inc:78
+#: rules/rules.admin.inc:99 rules/rules.admin_sets.inc:29
 msgid "delete"
 msgstr ""
 
-#: rules/rules.admin.inc:81
+#: rules/rules.admin.inc:102 rules/rules.admin_sets.inc:32
 msgid "revert"
 msgstr ""
 
-#: rules/rules.admin.inc:83
+#: rules/rules.admin.inc:104
 msgid "clone"
 msgstr ""
 
-#: rules/rules.admin.inc:100
-msgid "None."
+#: rules/rules.admin.inc:121 rules/rules.admin_sets.inc:49
+msgid "None"
 msgstr ""
 
-#: rules/rules.admin.inc:108
+#: rules/rules.admin.inc:133
+msgid "If you install the token module from !href, token replacements will be supported. See http://drupal.org/node/286803. <a href=\"@hide\">Hide this message.</a>"
+msgstr ""
+
+#: rules/rules.admin.inc:142
 msgid "This rule has been provided by a module, but has been modified."
 msgstr ""
 
-#: rules/rules.admin.inc:109
+#: rules/rules.admin.inc:143
 msgid "Modified"
 msgstr ""
 
-#: rules/rules.admin.inc:112
+#: rules/rules.admin.inc:146
 msgid "This rule has been provided by a module and can't be customized."
 msgstr ""
 
-#: rules/rules.admin.inc:113
+#: rules/rules.admin.inc:147
 msgid "Fixed"
 msgstr ""
 
-#: rules/rules.admin.inc:116
+#: rules/rules.admin.inc:150
 msgid "A custom defined rule."
 msgstr ""
 
-#: rules/rules.admin.inc:117
+#: rules/rules.admin.inc:151
 msgid "Custom"
 msgstr ""
 
-#: rules/rules.admin.inc:119
+#: rules/rules.admin.inc:153
 msgid "This rule has been provided by a module."
 msgstr ""
 
-#: rules/rules.admin.inc:120
+#: rules/rules.admin.inc:154
 msgid "Default"
 msgstr ""
 
-#: rules/rules.admin.inc:144
+#: rules/rules.admin.inc:180
 msgid "The rule %label has been added."
 msgstr ""
 
-#: rules/rules.admin.inc:154
+#: rules/rules.admin.inc:193
 msgid "Rule settings"
 msgstr ""
 
-#: rules/rules.admin.inc:160
+#: rules/rules.admin.inc:199
 msgid "Choose an appropriate label for this rule."
 msgstr ""
 
-#: rules/rules.admin.inc:171
+#: rules/rules.admin.inc:210
 msgid "Rule set"
 msgstr ""
 
-#: rules/rules.admin.inc:173
+#: rules/rules.admin.inc:212
 msgid "Select to which rule set this rule should belong."
 msgstr ""
 
-#: rules/rules.admin.inc:180
+#: rules/rules.admin.inc:219
 msgid "Select the event on which you want to evaluate this rule."
 msgstr ""
 
-#: rules/rules.admin.inc:184
+#: rules/rules.admin.inc:223
 msgid "This rule is active and should be evaluated when the associated event occurs."
 msgstr ""
 
-#: rules/rules.admin.inc:189;442;509;569
+#: rules/rules.admin.inc:228;455;521;587
 msgid "Weight"
 msgstr ""
 
-#: rules/rules.admin.inc:191
+#: rules/rules.admin.inc:230
 msgid "Adjust the weight to customize the ordering of rules."
 msgstr ""
 
-#: rules/rules.admin.inc:194
+#: rules/rules.admin.inc:233 rules/rules.admin_sets.inc:162
 msgid "Save changes"
 msgstr ""
 
-#: rules/rules.admin.inc:214
+#: rules/rules.admin.inc:255
 msgid "Rule elements"
 msgstr ""
 
-#: rules/rules.admin.inc:233
+#: rules/rules.admin.inc:275
 msgid "The rule %label has been updated."
 msgstr ""
 
-#: rules/rules.admin.inc:249
-msgid "Are you sure you want to revert the rule %label to its defaults?"
-msgstr ""
-
-#: rules/rules.admin.inc:251;840;854
-msgid "This action cannot be undone."
-msgstr ""
-
-#: rules/rules.admin.inc:251
-msgid "Revert"
-msgstr ""
-
-#: rules/rules.admin.inc:251;840;854
-msgid "Cancel"
-msgstr ""
-
-#: rules/rules.admin.inc:259
-msgid "The rule %label has been reverted to its defaults."
-msgstr ""
-
-#: rules/rules.admin.inc:313
+#: rules/rules.admin.inc:327
 msgid "Select an action to add"
 msgstr ""
 
-#: rules/rules.admin.inc:320;344
+#: rules/rules.admin.inc:334;357
 msgid "Forward"
 msgstr ""
 
-#: rules/rules.admin.inc:337
+#: rules/rules.admin.inc:350
 msgid "Select the condition to add"
 msgstr ""
 
-#: rules/rules.admin.inc:433
-msgid "Choose an appropriate label for this action."
+#: rules/rules.admin.inc:446
+msgid "Customize the label for this action."
 msgstr ""
 
-#: rules/rules.admin.inc:439
+#: rules/rules.admin.inc:452
 msgid "Editing action %label"
 msgstr ""
 
-#: rules/rules.admin.inc:444
+#: rules/rules.admin.inc:457
 msgid "Adjust the weight to customize the ordering of actions."
 msgstr ""
 
-#: rules/rules.admin.inc:451;518;577
+#: rules/rules.admin.inc:464;530;595 rules/rules.admin_sets.inc:218
 msgid "Save"
 msgstr ""
 
-#: rules/rules.admin.inc:459;526;584;840;854 rules/rules.module:132;140
+#: rules/rules.admin.inc:472;538;602;856 rules/rules.admin_sets.inc:66 rules/rules.module:68;147
 msgid "Delete"
 msgstr ""
 
-#: rules/rules.admin.inc:482
+#: rules/rules.admin.inc:494
 msgid "The action %label has been saved."
 msgstr ""
 
-#: rules/rules.admin.inc:494
-msgid "Choose an appropriate label for this condition."
+#: rules/rules.admin.inc:506
+msgid "Customize the label for this condition."
 msgstr ""
 
-#: rules/rules.admin.inc:500
+#: rules/rules.admin.inc:512
 msgid "Editing condition %label"
 msgstr ""
 
-#: rules/rules.admin.inc:503;555
+#: rules/rules.admin.inc:515;573
 msgid "Negate"
 msgstr ""
 
-#: rules/rules.admin.inc:505
+#: rules/rules.admin.inc:517
 msgid "If checked, the condition returns TRUE, if it evaluates to FALSE."
 msgstr ""
 
-#: rules/rules.admin.inc:511
+#: rules/rules.admin.inc:523
 msgid "Adjust the weight to customize the ordering of conditions."
 msgstr ""
 
-#: rules/rules.admin.inc:546
+#: rules/rules.admin.inc:564
 msgid "The condition %label has been saved."
 msgstr ""
 
-#: rules/rules.admin.inc:553
+#: rules/rules.admin.inc:571
 msgid "Editing condition group %label"
 msgstr ""
 
-#: rules/rules.admin.inc:557
+#: rules/rules.admin.inc:575
 msgid "If checked, the operation will be negated. E.g. AND would be handled as NOT AND."
 msgstr ""
 
-#: rules/rules.admin.inc:561
+#: rules/rules.admin.inc:579 rules/modules/rules.rules_forms.inc:29
 msgid "Operation"
 msgstr ""
 
-#: rules/rules.admin.inc:563
+#: rules/rules.admin.inc:581
 msgid "The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE."
 msgstr ""
 
-#: rules/rules.admin.inc:571
+#: rules/rules.admin.inc:589
 msgid "Adjust the weight to customize the ordering."
 msgstr ""
 
-#: rules/rules.admin.inc:600
+#: rules/rules.admin.inc:618
 msgid "The condition group %label has been saved."
 msgstr ""
 
-#: rules/rules.admin.inc:674
+#: rules/rules.admin.inc:691
 msgid "Variable @label settings"
 msgstr ""
 
-#: rules/rules.admin.inc:685
+#: rules/rules.admin.inc:702 rules/rules.admin_sets.inc:289
 msgid "Machine readable variable name"
 msgstr ""
 
-#: rules/rules.admin.inc:686
+#: rules/rules.admin.inc:703 rules/rules.admin_sets.inc:157
 msgid "Specify a unique name containing only digits, numbers and underscores."
 msgstr ""
 
-#: rules/rules.admin.inc:702
+#: rules/rules.admin.inc:719
 msgid "A variable with this name does already exist. Please choose another name."
 msgstr ""
 
-#: rules/rules.admin.inc:705
+#: rules/rules.admin.inc:722
 msgid "The name contains not allowed characters."
 msgstr ""
 
-#: rules/rules.admin.inc:741
+#: rules/rules.admin.inc:782
 msgid "Arguments configuration"
 msgstr ""
 
-#: rules/rules.admin.inc:792
-msgid "There is no suitable variable for the argument %name available."
+#: rules/rules.admin.inc:829 rules/modules/php.rules_forms.inc:13
+msgid "Description"
 msgstr ""
 
-#: rules/rules.admin.inc:818
-msgid "Configuration help"
-msgstr ""
-
-#: rules/rules.admin.inc:838
-msgid "Are you sure you want to delete the rule %label?"
-msgstr ""
-
-#: rules/rules.admin.inc:849
+#: rules/rules.admin.inc:851
 msgid "Are you sure you want to delete the logical operation %label?"
 msgstr ""
 
-#: rules/rules.admin.inc:852
+#: rules/rules.admin.inc:854 rules/rules.admin_sets.inc:64
 msgid "Are you sure you want to delete %label?"
 msgstr ""
 
-#: rules/rules.admin.inc:863
-msgid "The rule %label has been deleted."
+#: rules/rules.admin.inc:856 rules/rules.admin_sets.inc:66;91
+msgid "This action cannot be undone."
 msgstr ""
 
-#: rules/rules.admin.inc:870
+#: rules/rules.admin.inc:856 rules/rules.admin_sets.inc:66;91
+msgid "Cancel"
+msgstr ""
+
+#: rules/rules.admin.inc:865
 msgid "The logical operation %label has been deleted."
 msgstr ""
 
-#: rules/rules.admin.inc:875
+#: rules/rules.admin.inc:870 rules/rules.admin_sets.inc:73
 msgid "%label has been deleted."
 msgstr ""
 
-#: rules/rules.admin.inc:895
+#: rules/rules.admin.inc:889
 msgid "Alter the settings for the cloned rule."
+msgstr ""
+
+#: rules/rules.admin.inc:1153
+msgid "Debug rule evaluation"
+msgstr ""
+
+#: rules/rules.admin.inc:1155
+msgid "When activated, debugging information is shown when rules are evaluated."
+msgstr ""
+
+#: rules/rules.admin.inc:1159
+msgid "Show fixed rules and rule sets"
+msgstr ""
+
+#: rules/rules.admin.inc:1161
+msgid "When activated, fixed items provided by modules are shown in the admin center too."
+msgstr ""
+
+#: rules/rules.admin.inc:1165
+msgid "Ignore missing token module"
+msgstr ""
+
+#: rules/rules.admin.inc:1167
+msgid "Rules can use the token module to provide token replacements; if this module is not present rules will complain, unless this setting is checked."
 msgstr ""
 
 #: rules/rules.admin_export.inc:17
@@ -346,215 +377,299 @@ msgstr ""
 msgid "Just paste your exported configuration here."
 msgstr ""
 
-#: rules/rules.admin_export.inc:22 rules/rules.module:96
+#: rules/rules.admin_export.inc:22 rules/rules.module:102
 msgid "Import"
 msgstr ""
 
-#: rules/rules.admin_export.inc:34
+#: rules/rules.admin_export.inc:39
 msgid "Imported %label."
 msgstr ""
 
-#: rules/rules.admin_export.inc:40
+#: rules/rules.admin_export.inc:45
 msgid "Import failed."
 msgstr ""
 
-#: rules/rules.admin_export.inc:66
+#: rules/rules.admin_export.inc:103
+msgid "Successfully imported the workflow-ng rule %label."
+msgstr ""
+
+#: rules/rules.admin_export.inc:106
+msgid "Failed importing the workflow-ng rule %label."
+msgstr ""
+
+#: rules/rules.admin_export.inc:125
 msgid "Select the %label to export"
 msgstr ""
 
-#: rules/rules.admin_export.inc:72 rules/rules.module:91
+#: rules/rules.admin_export.inc:131 rules/rules.module:97
 msgid "Export"
 msgstr ""
 
-#: rules/rules.admin_export.inc:78
+#: rules/rules.admin_export.inc:137
 msgid "Exported rule configurations"
 msgstr ""
 
-#: rules/rules.admin_export.inc:79
+#: rules/rules.admin_export.inc:138
 msgid "Copy these data and paste them into the import page, to import."
 msgstr ""
 
-#: rules/rules.admin_export.inc:98
+#: rules/rules.admin_export.inc:161
 msgid "Please select the items to export."
 msgstr ""
 
-#: rules/rules.admin_render.inc:17
+#: rules/rules.admin_render.inc:19
 msgid "Conditions"
 msgstr ""
 
-#: rules/rules.admin_render.inc:21 rules/rules.module:676
+#: rules/rules.admin_render.inc:23 rules/rules.module:758
 msgid "AND"
 msgstr ""
 
-#: rules/rules.admin_render.inc:23
+#: rules/rules.admin_render.inc:25
 msgid "Actions"
 msgstr ""
 
-#: rules/rules.admin_render.inc:29
+#: rules/rules.admin_render.inc:31
 msgid "Add a condition"
 msgstr ""
 
-#: rules/rules.admin_render.inc:30
+#: rules/rules.admin_render.inc:32
 msgid "Add an action"
 msgstr ""
 
-#: rules/rules.admin_render.inc:69
+#: rules/rules.admin_render.inc:73
 msgid "Indent this condition by adding a logical operation."
 msgstr ""
 
-#: rules/rules.admin_render.inc:71;131
+#: rules/rules.admin_render.inc:75;135
 msgid "NOT"
 msgstr ""
 
-#: rules/rules.admin_render.inc:111
+#: rules/rules.admin_render.inc:115
 msgid "Empty"
 msgstr ""
 
-#: rules/rules.admin_render.inc:132
+#: rules/rules.admin_render.inc:136
 msgid "!not%label group"
 msgstr ""
 
-#: rules/rules.admin_render.inc:133
+#: rules/rules.admin_render.inc:137
 msgid "Add another condition to this group"
 msgstr ""
 
-#: rules/rules.admin_render.inc:134
+#: rules/rules.admin_render.inc:138
 msgid "Edit this condition group"
 msgstr ""
 
-#: rules/rules.variables.inc:101
+#: rules/rules.admin_sets.inc:17
+msgid "Name"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:89
+msgid "Are you sure you want to revert %label?"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:91 rules/rules.module:77
+msgid "Revert"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:98
+msgid "%label has been reverted."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:143
+msgid "Rule set settings"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:149
+msgid "Choose an appropriate label for this rule set."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:155;345
+msgid "Machine readable name"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:174
+msgid "The rule set %label has been updated."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:191
+msgid "Arguments"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:197
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only digits, numbers and underscores."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:208
+msgid "More arguments"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:209
+msgid "If the amount of boxes above isn't enough, click here to add more arguments."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:228;241
+msgid "The name may contain only digits, numbers and underscores."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:237
+msgid "All fields of an argument are required."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:255
+msgid "Each name may be used only once."
+msgstr ""
+
+#: rules/rules.admin_sets.inc:283;344
+msgid "Data type"
+msgstr ""
+
+#: rules/rules.admin_sets.inc:380
+msgid "The rule set %label has been added."
+msgstr ""
+
+#: rules/rules.variables.inc:116
+msgid "Element %name has not been executed. There are not all execution arguments needed by an input evaluator available."
+msgstr ""
+
+#: rules/rules.variables.inc:133
 msgid "Element %name has not been executed. There are not all execution arguments available."
 msgstr ""
 
-#: rules/rules.variables.inc:128
+#: rules/rules.variables.inc:161
 msgid "Successfully added the new variable @arg"
 msgstr ""
 
-#: rules/rules.variables.inc:131
+#: rules/rules.variables.inc:164
 msgid "Unknown variable name %var return by action %name."
 msgstr ""
 
-#: rules/rules.variables.inc:186
+#: rules/rules.variables.inc:273
 msgid "Loaded variable @arg"
 msgstr ""
 
-#: rules/rules.variables.inc:224
+#: rules/rules.variables.inc:312
 msgid "Saved variable @name of type @type."
 msgstr ""
 
-#: rules/rules.variables.inc:227
+#: rules/rules.variables.inc:315
 msgid "Failed saving variable @name of type @type."
 msgstr ""
 
-#: rules/rules.module:438
+#: rules/rules.module:518
 msgid "%label has been invoked."
 msgstr ""
 
-#: rules/rules.module:450
+#: rules/rules.module:530
 msgid "Evaluation of %label has been finished."
 msgstr ""
 
-#: rules/rules.module:536
+#: rules/rules.module:635
 msgid "Not executing the rule %name on rule set %set to prevent recursion."
 msgstr ""
 
-#: rules/rules.module:541
+#: rules/rules.module:640
 msgid "Executing the rule %name on rule set %set"
 msgstr ""
 
-#: rules/rules.module:606
+#: rules/rules.module:689
 msgid "Action execution: @name"
 msgstr ""
 
-#: rules/rules.module:628
+#: rules/rules.module:713
 msgid "Condition %name evaluated to @bool."
 msgstr ""
 
-#: rules/rules.module:675
+#: rules/rules.module:757
 msgid "OR"
 msgstr ""
 
-#: rules/rules.module:729
+#: rules/rules.module:805
 msgid "unlabelled"
 msgstr ""
 
-#: rules/rules.module:802
+#: rules/rules.module:905
 msgid "An error occured during rule evaluation. This is the evaluation log:"
 msgstr ""
 
-#: rules/rules.module:962;34 rules/rules.info:0;0 rules_test/rules_test.info:0
+#: rules/rules.module:1069;33 rules/rules.info:0;0 rules_scheduler/rules_scheduler.info:0 rules_test/rules_test.info:0
 msgid "Rules"
 msgstr ""
 
-#: rules/rules.module:967
+#: rules/rules.module:1074
 msgid "Rule Sets"
 msgstr ""
 
-#: rules/rules.module:981
+#: rules/rules.module:1088
 msgid "Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated."
 msgstr ""
 
-#: rules/rules.module:984
+#: rules/rules.module:1091
 msgid "Unable to find %type of name %name. Perhaps the according module has been deactivated."
 msgstr ""
 
-#: rules/rules.module:997
+#: rules/rules.module:1104
 msgid "Show rule configuration"
 msgstr ""
 
-#: rules/rules.module:202
+#: rules/rules.module:268
 msgid "administer rules"
 msgstr ""
 
-#: rules/rules.module:35
+#: rules/rules.module:34
 msgid "Rules administration links."
 msgstr ""
 
-#: rules/rules.module:44
+#: rules/rules.module:43
 msgid "Triggered rules"
 msgstr ""
 
-#: rules/rules.module:45
+#: rules/rules.module:44
 msgid "Customize your site by configuring rules that are evaluated on events."
 msgstr ""
 
-#: rules/rules.module:54;77
+#: rules/rules.module:53;173;204
 msgid "Overview"
 msgstr ""
 
-#: rules/rules.module:59
+#: rules/rules.module:58;210
 msgid "Add a new rule"
 msgstr ""
 
-#: rules/rules.module:67
-msgid "Rule sets"
-msgstr ""
-
-#: rules/rules.module:68
-msgid "Create and manage rule sets."
-msgstr ""
-
-#: rules/rules.module:82
+#: rules/rules.module:88
 msgid "Import / Export"
 msgstr ""
 
-#: rules/rules.module:115
+#: rules/rules.module:111
+msgid "Settings"
+msgstr ""
+
+#: rules/rules.module:130
 msgid "Add"
 msgstr ""
 
-#: rules/rules.module:123
+#: rules/rules.module:138
 msgid "Edit"
 msgstr ""
 
-#: rules/rules.module:149
-msgid "Revert rule configuration"
-msgstr ""
-
-#: rules/rules.module:157
+#: rules/rules.module:156
 msgid "Clone rule"
 msgstr ""
 
-#: rules/rules.module:0
+#: rules/rules.module:164
+msgid "Rule sets"
+msgstr ""
+
+#: rules/rules.module:165
+msgid "Create and manage rule sets."
+msgstr ""
+
+#: rules/rules.module:178
+msgid "Add a new rule set"
+msgstr ""
+
+#: rules/rules.module:0 rules/modules/system.rules.inc:114;164
 msgid "rules"
 msgstr ""
 
@@ -562,7 +677,7 @@ msgstr ""
 msgid "The name of the item."
 msgstr ""
 
-#: rules/rules.install:49
+#: rules/rules.install:49 rules_scheduler/rules_scheduler.install:49
 msgid "The whole, serialized item configuration."
 msgstr ""
 
@@ -570,123 +685,219 @@ msgstr ""
 msgid "Cache table for the rules engine to store configured items."
 msgstr ""
 
+#: rules/rules.install:81
+msgid "Successfully imported rule %label."
+msgstr ""
+
+#: rules/rules.install:86
+msgid "Failed importing the rule %label."
+msgstr ""
+
+#: rules/rules.install:168
+msgid "No upgrade information for the element %name found. Aborting."
+msgstr ""
+
 #: rules/rules.info:0
 msgid "Lets you define conditionally executed actions based on occurring events."
 msgstr ""
 
+#: rules/modules/comment.rules.inc:14
+msgid "After saving a new comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:16
+msgid "created comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:20
+msgid "After saving an updated comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:22
+msgid "updated comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:26
+msgid "After deleting a comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:28
+msgid "deleted comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:32
+msgid "Comment is being viewed"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:34
+msgid "viewed comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:37
+msgid "After publishing a comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:39
+msgid "published comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:43
+msgid "After unpublishing a comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:45
+msgid "unpublished comment"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:62
+msgid "author"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:67
+msgid "commented content"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:72
+msgid "commented content author"
+msgstr ""
+
+#: rules/modules/comment.rules.inc:104 rules/modules/rules.rules.inc:379
+msgid "Comment"
+msgstr ""
+
 #: rules/modules/node.rules.inc:15
-msgid "Content has been created"
+msgid "After saving new content"
 msgstr ""
 
 #: rules/modules/node.rules.inc:17
 msgid "created content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:17
+#: rules/modules/node.rules.inc:17;23;29
 msgid "content's author"
 msgstr ""
 
 #: rules/modules/node.rules.inc:21
-msgid "Content has been updated"
+msgid "After updating existing content"
 msgstr ""
 
 #: rules/modules/node.rules.inc:23
 msgid "updated content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:23;34;47;52
-msgid "content author"
-msgstr ""
-
-#: rules/modules/node.rules.inc:24;35
-msgid "unchanged content"
-msgstr ""
-
-#: rules/modules/node.rules.inc:25;36
-msgid "unchanged content's author"
-msgstr ""
-
-#: rules/modules/node.rules.inc:30
+#: rules/modules/node.rules.inc:27
 msgid "Content is going to be saved"
 msgstr ""
 
-#: rules/modules/node.rules.inc:33
-msgid "content"
+#: rules/modules/node.rules.inc:29
+msgid "saved content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:41
+#: rules/modules/node.rules.inc:33
 msgid "Content is going to be viewed"
 msgstr ""
 
-#: rules/modules/node.rules.inc:43 rules/modules/user.rules.inc:27
+#: rules/modules/node.rules.inc:35 rules/modules/system.rules.inc:16 rules/modules/user.rules.inc:29
 msgid "Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."
 msgstr ""
 
-#: rules/modules/node.rules.inc:45
-msgid "Content is displayed as teaser"
-msgstr ""
-
-#: rules/modules/node.rules.inc:46
-msgid "Content is displayed as page"
-msgstr ""
-
-#: rules/modules/node.rules.inc:47
+#: rules/modules/node.rules.inc:36
 msgid "viewed content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:50
-msgid "Content has been deleted"
+#: rules/modules/node.rules.inc:36;44
+msgid "content author"
 msgstr ""
 
-#: rules/modules/node.rules.inc:52
+#: rules/modules/node.rules.inc:37
+msgid "Content is displayed as teaser"
+msgstr ""
+
+#: rules/modules/node.rules.inc:38
+msgid "Content is displayed as page"
+msgstr ""
+
+#: rules/modules/node.rules.inc:42
+msgid "After deleting content"
+msgstr ""
+
+#: rules/modules/node.rules.inc:44
 msgid "deleted content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:102
-msgid "Content has type"
+#: rules/modules/node.rules.inc:72
+msgid "unchanged content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:104;129;137;144
+#: rules/modules/node.rules.inc:77
+msgid "unchanged content's author"
+msgstr ""
+
+#: rules/modules/node.rules.inc:119;177;290 rules/modules/path.rules.inc:54 rules/modules/rules.rules.inc:370
 msgid "Content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:106
+#: rules/modules/node.rules.inc:124
+msgid "Content has type"
+msgstr ""
+
+#: rules/modules/node.rules.inc:125
 msgid "Evaluates to TRUE, if the given content has one of the selected content types."
 msgstr ""
 
-#: rules/modules/node.rules.inc:127
-msgid "Set the post author"
+#: rules/modules/node.rules.inc:128
+msgid "Content is published"
 msgstr ""
 
-#: rules/modules/node.rules.inc:130
+#: rules/modules/node.rules.inc:131
+msgid "Content is sticky"
+msgstr ""
+
+#: rules/modules/node.rules.inc:134
+msgid "Content is promoted to frontpage"
+msgstr ""
+
+#: rules/modules/node.rules.inc:175
+msgid "Set the content author"
+msgstr ""
+
+#: rules/modules/node.rules.inc:178;185
 msgid "User, which is set as author"
 msgstr ""
 
-#: rules/modules/node.rules.inc:135
-msgid "Publish/unpublish content"
-msgstr ""
-
-#: rules/modules/node.rules.inc:142
-msgid "Promote/demote content to/from the front page"
-msgstr ""
-
-#: rules/modules/node.rules.inc:149
+#: rules/modules/node.rules.inc:183
 msgid "Add new content"
 msgstr ""
 
-#: rules/modules/node.rules.inc:151
-msgid "User, which is set as author of the content"
+#: rules/modules/node.rules.inc:188
+msgid "Title"
 msgstr ""
 
-#: rules/modules/node.rules.inc:154
-msgid "Added content"
+#: rules/modules/node.rules.inc:189
+msgid "The title of the newly created content."
 msgstr ""
 
-#: rules/modules/node.rules.inc:159
+#: rules/modules/node.rules.inc:195
+msgid "New content"
+msgstr ""
+
+#: rules/modules/node.rules.inc:203
 msgid "Load content by id"
 msgstr ""
 
-#: rules/modules/node.rules.inc:161
+#: rules/modules/node.rules.inc:205
+msgid "Content ID"
+msgstr ""
+
+#: rules/modules/node.rules.inc:208
+msgid "Content Revision ID"
+msgstr ""
+
+#: rules/modules/node.rules.inc:209
+msgid "If you want to load a specific revision, specify it's revision id. Else leave it empty to load the current revision."
+msgstr ""
+
+#: rules/modules/node.rules.inc:216
 msgid "Loaded content"
 msgstr ""
 
@@ -694,56 +905,488 @@ msgstr ""
 msgid "Content types"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:28
-msgid "Published"
+#: rules/modules/node.rules_forms.inc:26
+msgid "@node is @type"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:39
-msgid "Promoted to front page"
+#: rules/modules/node.rules_forms.inc:29
+msgid "@node is published"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:50
-msgid "Sticky at top of lists"
+#: rules/modules/node.rules_forms.inc:32
+msgid "@node is sticky"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:61
+#: rules/modules/node.rules_forms.inc:35
+msgid "@node is promoted to frontpage"
+msgstr ""
+
+#: rules/modules/node.rules_forms.inc:42
+msgid "Set the author of @node to @author"
+msgstr ""
+
+#: rules/modules/node.rules_forms.inc:51
 msgid "Content type to be used"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:64
-msgid "Select a single content type that will be created when this action is invoked."
+#: rules/modules/node.rules_forms.inc:54
+msgid "Select a content type that will be created when this action is invoked."
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:69
-msgid "Create content only if the acting user (i.e. logged in user) has access rights to do so"
+#: rules/modules/node.rules_forms.inc:59
+msgid "Create content only if the given author has access permission to do so"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:71
-msgid "Enable this in order for the system to check if the user has access rights for creating the\n      required content. Note that even if the user arguments are set to 'content author ' the system will still check the 'acting user'"
+#: rules/modules/node.rules_forms.inc:65
+msgid "New content of type @type"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:76
-msgid "Title"
+#: rules/modules/node.rules_forms.inc:72
+msgid "Content with id @id"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:78
-msgid "Enter the title of the new created content."
+#: rules/modules/node.rules_forms.inc:80 rules/modules/rules.rules.inc:295
+msgid "content"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:96
-msgid "Content ID"
+#: rules/modules/path.rules.inc:14
+msgid "Path has alias(es)"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:102
-msgid "Content Revision ID"
+#: rules/modules/path.rules.inc:19
+msgid "URL alias exists"
 msgstr ""
 
-#: rules/modules/node.rules_forms.inc:104
-msgid "If you want to load a specific revision, enter it's revision id. Else leave it empty to load the current revision."
+#: rules/modules/path.rules.inc:47
+msgid "Create or delete an URL alias"
+msgstr ""
+
+#: rules/modules/path.rules.inc:52
+msgid "Create or delete a content's URL alias"
+msgstr ""
+
+#: rules/modules/path.rules.inc:58
+msgid "This action only works if the acting user has %perm1 or %perm2 permsissions. If this doesn't suit, use the generic \"Create or delete an URL alias\" action together with the existing system path \"node/{ID}\"."
+msgstr ""
+
+#: rules/modules/path.rules.inc:58
+msgid "create url aliases"
+msgstr ""
+
+#: rules/modules/path.rules.inc:58
+msgid "administer url aliases"
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:12;48
+msgid "Existing system path"
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:15
+msgid "Specify the existing path for which you want to check if an URL alias exists."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:25;57
+msgid "Path alias"
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:28
+msgid "Specify the path alias which you want to check if it already exists."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:34
+msgid "Before checking, replace non ascii characters with"
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:38;70
+msgid "Leave this textfield empty to disable the replacement of non ascii characters."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:51
+msgid "Specify the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:52
+msgid "Leave it empty to delete URL aliases pointing to the given path alias."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:60
+msgid "Specify an alternative path by which this data can be accessed. For example, type \"about\" when writing an about page. Use a relative path and don't add a trailing slash or the URL alias won't work."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:61
+msgid "Leave it empty to delete URL aliases pointing to the given system path."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:66
+msgid "Replace non ascii characters with"
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:77
+msgid "You have to enter at least eiter an existing system path or a path alias."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:89
+msgid "Create or delete @node's URL alias"
+msgstr ""
+
+#: rules/modules/php.rules.inc:14
+msgid "PHP Evaluation"
+msgstr ""
+
+#: rules/modules/php.rules.inc:62
+msgid "PHP is not evaluated as there are not all necessary variables available."
+msgstr ""
+
+#: rules/modules/php.rules.inc:109;132
+msgid "Execute custom PHP code"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:11
+msgid "PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2."
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:12
+msgid "Furthermore you can make use of the following variables:"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:13
+msgid "Variable"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:13
+msgid "Type"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:15
+msgid "Intelligent saving"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:27
+msgid "Yes"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:30
+msgid "No"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:38
+msgid "Note that variables are passed by reference, so you can change them."
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:39
+msgid "If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it. To make use of \"intelligent saving\" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times."
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:51;77
+msgid "PHP Code"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:53;79
+msgid "The code that should be executed. Don't include &lt;?php ?&gt; delimiters."
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:79
+msgid "Be sure to always return a boolean value, e.g.: !code"
+msgstr ""
+
+#: rules/modules/php.rules_forms.inc:91
+msgid "The code has to always return a boolean value."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:15
+msgid "String"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:21
+msgid "Number"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:27
+msgid "Date"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:33;150
+msgid "Truth value"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:39
+msgid "A fixed value"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:87
+msgid "Format: %format or other values known by the PHP !strtotime function like \"+1 day\". "
+msgstr ""
+
+#: rules/modules/rules.rules.inc:88
+msgid "You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. "
+msgstr ""
+
+#: rules/modules/rules.rules.inc:102
+msgid "The argument %label is no valid date."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:118
+msgid "Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:130
+msgid "Textual comparison"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:132
+msgid "Text 1"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:133
+msgid "Text 2"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:135
+msgid "This condition just compares two texts. It returns TRUE, if both texts are equal."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:139
+msgid "Numeric comparison"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:141
+msgid "Number 1"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:142
+msgid "Number 2"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:144
+msgid "This condition does a numeric comparison. Select greater than, less than or equal to."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:148
+msgid "Check a truth value"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:152
+msgid "Check a !truth, i.e. TRUE or FALSE."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:152
+msgid "truth value"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:217
+msgid "Add a new @type variable"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:225
+msgid "Added @type"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:237
+msgid "Save @type"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:242
+msgid "Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:243
+msgid "Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:336
+msgid "Permanently apply changes"
+msgstr ""
+
+#: rules/modules/rules.rules.inc:337
+msgid "If checked, changes to the argument are saved automatically."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:388 rules/modules/user.rules.inc:100;213
+msgid "User"
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:11
+msgid "Two texts to compare"
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:15
+msgid "Evaluate the second text as a regular expression."
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:30
+msgid "Greater than"
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:30
+msgid "Equal to"
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:30
+msgid "Less than"
+msgstr ""
+
+#: rules/modules/system.rules.inc:14
+msgid "User is going to view a page"
+msgstr ""
+
+#: rules/modules/system.rules.inc:20
+msgid "Cron maintenance tasks are performed"
+msgstr ""
+
+#: rules/modules/system.rules.inc:34
+msgid "Show a configurable message on the site"
+msgstr ""
+
+#: rules/modules/system.rules.inc:39
+msgid "Set breadcrumb"
+msgstr ""
+
+#: rules/modules/system.rules.inc:44
+msgid "Send a mail to a user"
+msgstr ""
+
+#: rules/modules/system.rules.inc:46 rules/modules/system.rules_forms.inc:78
+msgid "Recipient"
+msgstr ""
+
+#: rules/modules/system.rules.inc:52
+msgid "Send a mail to an arbitrary mail address"
+msgstr ""
+
+#: rules/modules/system.rules.inc:57
+msgid "Send a mail to all users of a role"
+msgstr ""
+
+#: rules/modules/system.rules.inc:62
+msgid "Page redirect"
+msgstr ""
+
+#: rules/modules/system.rules.inc:65
+msgid "Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after \"?\" and (optional) anchor after \"#\"."
+msgstr ""
+
+#: rules/modules/system.rules.inc:68
+msgid "Log to watchdog"
+msgstr ""
+
+#: rules/modules/system.rules.inc:86
+msgid "Home"
+msgstr ""
+
+#: rules/modules/system.rules.inc:114
+msgid "Successfully sent email to %recipient"
+msgstr ""
+
+#: rules/modules/system.rules.inc:164
+msgid "Successfully sent email to the role(s) %roles."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:15;66;180
+msgid "Message"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:17
+msgid "The message that should be displayed."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:21
+msgid "Display as error message"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:33
+msgid "Titles"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:35
+msgid "A list of titles for the breadcrumb links, one on each line."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:40
+msgid "Paths"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:42
+msgid "A list of Drupal paths for the breadcrumb links, one on each line."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:54
+msgid "Sender"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:56
+msgid "The mail's \"from\" address. Leave it empty to use the site-wide configured address."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:60
+msgid "Subject"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:62
+msgid "The mail's subject."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:68
+msgid "The mail's message body."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:80
+msgid "The mail's recipient address. You may separate multiple addresses with \",\"."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:96
+msgid "Recipient roles"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:97
+msgid "WARNING: This may cause problems if there are too many users of these roles on your site, as your server may not be able to handle all the mail requests all at once."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:101
+msgid "Select the roles whose users should receive this email."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:123
+msgid "To"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:145
+msgid "Force redirecting to the given path, even if a destination parameter is given"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:146
+msgid "Per default drupal doesn't redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:152
+msgid "Override another path redirect by setting the destination parameter"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:153
+msgid "If checked, the path redirect isn't initiated by this action, but the destination parameter gets set. So if something else redirects, the redirect will use the configured path."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:166
+msgid "Severity"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:175
+msgid "The category to which this message belongs."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:182
+msgid "The message to log."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:187
+msgid "Link (optional)"
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:189
+msgid "A link to associate with the message."
 msgstr ""
 
 #: rules/modules/user.rules.inc:13
-msgid "user has registered"
+msgid "User account has been created"
 msgstr ""
 
 #: rules/modules/user.rules.inc:15
@@ -751,118 +1394,206 @@ msgid "registered user"
 msgstr ""
 
 #: rules/modules/user.rules.inc:19
-msgid "user has updated his account details"
+msgid "User account details have been updated"
 msgstr ""
 
 #: rules/modules/user.rules.inc:21
 msgid "updated user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:21
+#: rules/modules/user.rules.inc:22
 msgid "unchanged user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:25
-msgid "user page has been viewed"
+#: rules/modules/user.rules.inc:27
+msgid "User page has been viewed"
 msgstr ""
 
-#: rules/modules/user.rules.inc:28
+#: rules/modules/user.rules.inc:30
 msgid "viewed user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:31
-msgid "user has been deleted"
+#: rules/modules/user.rules.inc:33
+msgid "User has been deleted"
 msgstr ""
 
-#: rules/modules/user.rules.inc:33
+#: rules/modules/user.rules.inc:35
 msgid "deleted user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:37
-msgid "user has logged in"
+#: rules/modules/user.rules.inc:39
+msgid "User has logged in"
 msgstr ""
 
-#: rules/modules/user.rules.inc:39
+#: rules/modules/user.rules.inc:42
 msgid "logged in user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:43
-msgid "user has logged out"
+#: rules/modules/user.rules.inc:47
+msgid "User has logged out"
 msgstr ""
 
-#: rules/modules/user.rules.inc:45
+#: rules/modules/user.rules.inc:50
 msgid "logged out user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:55
+#: rules/modules/user.rules.inc:61
 msgid "acting user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:83
+#: rules/modules/user.rules.inc:89
 msgid "Compare two users"
 msgstr ""
 
-#: rules/modules/user.rules.inc:85
-msgid "First user to compare"
-msgstr ""
-
-#: rules/modules/user.rules.inc:86
-msgid "Second user to compare"
-msgstr ""
-
-#: rules/modules/user.rules.inc:88
-msgid "Evaluates to TRUE, if both compared users are the same user account."
+#: rules/modules/user.rules.inc:91
+msgid "User account 1"
 msgstr ""
 
 #: rules/modules/user.rules.inc:92
-msgid "user has role(s)"
+msgid "User account 2"
 msgstr ""
 
 #: rules/modules/user.rules.inc:94
-msgid "user to test"
+msgid "Evaluates to TRUE, if both given user accounts are the same."
 msgstr ""
 
-#: rules/modules/user.rules.inc:96
+#: rules/modules/user.rules.inc:98
+msgid "User has role(s)"
+msgstr ""
+
+#: rules/modules/user.rules.inc:102
 msgid "Whether the user has the selected role(s)."
 msgstr ""
 
-#: rules/modules/user.rules.inc:142
+#: rules/modules/user.rules.inc:146
 msgid "Add user role"
 msgstr ""
 
-#: rules/modules/user.rules.inc:144;151
-msgid "user whos roles should be changed"
+#: rules/modules/user.rules.inc:148;155
+msgid "User whos roles should be changed"
 msgstr ""
 
-#: rules/modules/user.rules.inc:149
+#: rules/modules/user.rules.inc:153
 msgid "Remove user role"
 msgstr ""
 
-#: rules/modules/user.rules.inc:156
-msgid "Load user by name"
+#: rules/modules/user.rules.inc:160
+msgid "Load a user account"
 msgstr ""
 
-#: rules/modules/user.rules.inc:158
+#: rules/modules/user.rules.inc:162
 msgid "Loaded user"
 msgstr ""
 
-#: rules/modules/user.rules.inc:160
+#: rules/modules/user.rules.inc:164
 msgid "Enter an id or a name of the user to load."
 msgstr ""
 
-#: rules_test/rules_test.rules_defaults.inc:15
+#: rules/modules/user.rules.inc:248
+msgid "Block a user"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:14
+msgid "Match against any or all of the selected roles"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:15
+msgid "any"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:15
+msgid "all"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:16
+msgid "If matching against all selected roles the user must have <em>all</em> the roles checked in the list above."
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:60
+msgid "Select role(s)"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:71
+msgid "User name"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:76
+msgid "Name of the user to be loaded."
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:80
+msgid "User id"
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:82
+msgid "Id of the user to be loaded."
+msgstr ""
+
+#: rules/modules/user.rules_forms.inc:88
+msgid "You have to enter the user name or the user id."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:20
+msgid "Schedule @set"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:24
+msgid "Scheduled evaluation date"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:46
+msgid "Packing arguments for scheduling the rule set %set failed."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:61
+msgid "The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:62
+msgid "Also note that the scheduling time accuracy depends on your configured cron interval."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.module:0
+msgid "rules_scheduler"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.install:25
+msgid "Stores a schedule for rule sets."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.install:31
+msgid "The scheduled task\\s id."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.install:38
+msgid "The scheduled rule set's name."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.install:43
+msgid "When the task is to be scheduled."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.info:0
+msgid "Rules Scheduler"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.info:0
+msgid "Schedule the execution of rule sets."
+msgstr ""
+
+#: rules_test/rules_test.rules_defaults.inc:17
 msgid "Test altering arguments by reference"
 msgstr ""
 
-#: rules_test/rules_test.rules_defaults.inc:40;80
+#: rules_test/rules_test.rules_defaults.inc:42;82
 msgid "Test changing arguments per action"
 msgstr ""
 
-#: rules_test/rules_test.rules_defaults.inc:58
+#: rules_test/rules_test.rules_defaults.inc:60
 msgid "Test changing arguments per action - check"
 msgstr ""
 
-#: rules_test/rules_test.rules_defaults.inc:102
+#: rules_test/rules_test.rules_defaults.inc:104
 msgid "Test adding a new variable"
 msgstr ""
 
