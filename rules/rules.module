@@ -1189,3 +1189,21 @@ function _rules_include_get_files($type) {
   }
   return $files;
 }
+
+/**
+ * An form after build callback that can be used to include arbitrary
+ * files needed by the form.
+ */
+function rules_after_build_include_files($form, $form_state) {
+  static $files = array();
+
+  if (isset($form['#includes'])) {
+    foreach ($form['#includes'] as $file) {
+      if (!isset($files[$file])) {
+        include_once $file;
+        $files[$file] = TRUE;
+      }
+    }
+  }
+  return $form;
+}
