@@ -1003,7 +1003,7 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
     $info = rules_get_items($item_type);
 
     //get and add altered default items
-    $result = db_query("SELECT * FROM {". $info['db_table']. "}");
+    $result = db_query("SELECT * FROM {". $info['db_table']. "} ORDER by name");
 
     $configurations[$item_type] = array();
     while ($row = db_fetch_object($result)) {

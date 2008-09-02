@@ -19,6 +19,7 @@ function rules_uninstall() {
   variable_del('rules_show_fixed');
   variable_del('rules_hide_token_message');
   variable_del('rules_debug');
+  variable_del('rules_counter');
 }
 
 /**
@@ -100,6 +101,15 @@ function rules_update_6001() {
   return $ret;
 }
 
+
+/**
+ * Initialize the new rules counter variable
+ */
+function rules_update_6002() {
+  $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
+  variable_set('rules_counter', db_result($result) + 10);
+  return array();
+}
 
 
 /**
