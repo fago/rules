@@ -1110,8 +1110,10 @@ function rules_admin_get_categories() {
 }
 
 function _rules_admin_rule_get_new_unique_name() {
-  $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
-  return 'rules_'. (db_result($result) + 1);
+  $id = variable_get('rules_counter', 0);
+  $id++;
+  variable_set('rules_counter', $id);
+  return 'rules_'. $id;
 }
 
 /**
