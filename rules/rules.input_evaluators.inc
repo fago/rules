@@ -29,11 +29,32 @@ function rules_prepare_input_evaluators(&$element, $variables) {
 
   foreach ($evaluators as $base => $info) {
     foreach ($eval_settings as $name) {
-      if (isset($settings[$name]) && $settings[$name]) {
+      $setting = _rules_get_setting($settings, $name);
+      if (isset($setting)) {
         // prepare the evaluation
-        $data = call_user_func_array($base. '_prepare', array($settings[$name], $variables));
+        $data = call_user_func_array($base. '_prepare', array($setting, $variables));
         if (isset($data)) {
           $settings['#eval input'][$base][$name] = $data;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Applies the available input evaluator on the element.
+ */
+function rules_apply_input_evaluators(&$element, &$state) {
+  $settings =& $element['#settings'];
+
+  if (isset($settings['#eval input'])) {
+    foreach ($settings['#eval input'] as $base => $info) {
+      foreach ($info as $name => $data) {
+        $setting =& _rules_get_setting($settings, $name);
+        $setting = call_user_func_array($base. '_apply', array($setting, $data, &$state));
+        if ($setting === FALSE) {
+          // application failed
+          return FALSE;
         }
       }
     }
@@ -59,22 +80,16 @@ function rules_get_settings_to_evaluate($element) {
 }
 
 /**
- * Applies the available input evaluator on the element.
+ * Returns a setting of a given name. For settings sitting a nested array
+ * the array keys may be separated by '|' in the name.
  */
-function rules_apply_input_evaluators(&$element, &$state) {
-  $settings =& $element['#settings'];
-
-  if (isset($settings['#eval input'])) {
-    foreach ($settings['#eval input'] as $base => $info) {
-      foreach ($info as $name => $data) {
-        $settings[$name] = call_user_func_array($base. '_apply', array($settings[$name], $data, &$state));
-        if ($settings[$name] === FALSE) {
-          // application failed
-          return FALSE;
-        }
-      }
-    }
+function &_rules_get_setting(&$settings, $name) {
+  $names = explode('|', $name);
+  $setting = &$settings;
+  foreach ($names as $name) {
+    $setting =& $setting[$name];
   }
+  return $setting;
 }
 
 /**
