@@ -407,7 +407,14 @@ function rules_admin_form_pack_storage($form, &$form_state) {
       $form_state['storage'][$key] =& $form_state[$key];
     }
   }
+  // Add a mechanism that includes arbitrary files needed by the form.
+  // This can be used by configuration forms that need to rely on other files.
+  $form['#after_build'][] = 'rules_after_build_include_files';
+
   // Register an after build callback that unpacks the storage.
+  // However let the rules.admin.inc file be included previously, so that
+  // #ahah callbacks from other modules keep working.
+  $form['#includes'][] = "./". drupal_get_path('module', 'rules') ."/rules.admin.inc";
   $form['#after_build'][] = 'rules_admin_form_unpack_storage';
   return $form;
 }
@@ -419,7 +426,7 @@ function rules_admin_form_pack_storage($form, &$form_state) {
 function rules_admin_form_unpack_storage($form, &$form_state) {
   if (!isset($form_state['unpacked'])) {
     foreach (array('proxy', 'step', 'element', 'parent_id') as $key) {
-      if (isset($form_state['storage'][$key])) {
+      if (isset($form_state['storage'][$key]) && !isset($form_state[$key])) {
         $form_state[$key] =& $form_state['storage'][$key];
       }
     }
@@ -495,7 +502,6 @@ function rules_admin_form_edit_action(&$form_state, $element) {
 function rules_admin_form_edit_action_submit($form, &$form_state) {
   $element =& $form_state['element'];
   $element['#weight'] = $form_state['values']['weight'];
-
   rules_admin_default_argument_form_submit($form, $form_state, $element);
   rules_admin_new_variables_form_submit($form, $form_state, $element);
   rules_admin_save_element_label($form, $form_state, $element);
@@ -685,6 +691,9 @@ function rules_admin_element_alter_form_validate(&$form, &$form_state) {
 function rules_admin_element_alter_form_submit(&$form, &$form_state, &$element) {
   rules_include('rules_forms');
   rules_element_invoke($element, 'submit', array(&$element['#settings'], &$form, &$form_state), FALSE);
+
+  // After altering we can apply the input evaluators.
+  rules_prepare_input_evaluators($element, $form_state['proxy']->get_available_variables($form_state['element']['#id']));
 }
 
 /**
@@ -798,15 +807,13 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
 
 function rules_admin_default_argument_form_submit($form, &$form_state, &$element) {
   //save the argument map
-  $element['#settings'] = array();
   if (isset($form_state['values']['map'])) {
     $element['#settings']['#argument map'] = array_flip($form_state['values']['map']);
   }
   //add in values of not identifiable variables
   if (isset($form_state['values']['settings'])) {
-    $element['#settings'] += $form_state['values']['settings'];
+    $element['#settings'] = $form_state['values']['settings'] + $element['#settings'];
   }
-  rules_prepare_input_evaluators($element, $form_state['proxy']->get_available_variables($form_state['element']['#id']));
 }
 
 /*
