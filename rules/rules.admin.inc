@@ -293,7 +293,7 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
       $form_state += array('element' => array('#type' => $type), 'step' => 0);
     }
     $element =& $form_state['element'];
-    $element += array('#id' => NULL);
+    $element += array('#id' => NULL, '#settings' => array());
 
     // Due to adding storage during the form build, the form will be rebuilt
     // immediately. So be sure to increase the step only out of a #submit callback.
