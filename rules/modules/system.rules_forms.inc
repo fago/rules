@@ -114,7 +114,7 @@ function rules_action_drupal_goto_form($settings = array(), &$form, $form_state)
   $settings += array('path' => '', 'query' => '', 'fragment' => '', 'force' => 0);
   // Enable override by default, when the event states that there happens a redirect.
   $set_info = $form_state['proxy']->get_set_info();
-  $settings['override'] = isset($set_info['redirect']) && $set_info['redirect'];
+  $settings += array('override' => !empty($set_info['redirect']));
 
   $form['settings']['path'] = array(
     '#type' => 'textfield',
