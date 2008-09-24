@@ -142,7 +142,7 @@ class rules_data_type {
   }
 
   /**
-   * Gets the input form for the data
+   * Gets an input form for creating an instance of your data type.
    * Implement it, if your data is not identifiable.
    */
   function get_default_input_form($variable_info, $value) {
