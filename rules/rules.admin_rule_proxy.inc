@@ -212,7 +212,7 @@ class rules_admin_rule_proxy {
     $vars = array();
     $i = 0;
     $element = TRUE;
-    while (isset($id) && $i < $id || !isset($id) && $element) {
+    while (isset($id) && $i < $id || !isset($id) && $element !== FALSE) {
       $element = $this->get_element($i);
       $vars = $this->element_get_new_variables($element) + $vars;
       $i++;
