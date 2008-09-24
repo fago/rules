@@ -53,7 +53,7 @@ function _rules_initialize_variables(&$state, $args) {
  * @param $element
  *   Optionally an element may be specified, for which we retrieve the variables.
  * @return
- *   The array of requested variables or FALSE.if it failed.
+ *   The array of requested variables or FALSE. If it failed, FALSE.
  */
 function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
   $args = array();
