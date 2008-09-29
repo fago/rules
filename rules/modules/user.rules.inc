@@ -173,29 +173,33 @@ function user_rules_action_info() {
  * Action user: adds roles to a particular user
  */
 function rules_action_user_addrole($user, $settings) {
-  // Get role list (minus the anonymous)
-  $role_list = user_roles(TRUE);
-
-  foreach ($settings['roles'] as $rid) {
-    $user->roles[$rid] = $role_list[$rid];
+  if ($user->uid) {
+    // Get role list (minus the anonymous)
+    $role_list = user_roles(TRUE);
+  
+    foreach ($settings['roles'] as $rid) {
+      $user->roles[$rid] = $role_list[$rid];
+    }
+    user_save($user, array('roles' => $user->roles));
+    return array('user' => $user);
   }
-  user_save($user, array('roles' => $user->roles));
-  return array('user' => $user);
 }
 
 /**
  * User Action: deletes roles from a given user
  */
 function rules_action_user_removerole($user, $settings) {
-  $roles = $settings['roles'];
-  foreach ($roles as $rid) {
-    // If the user has this role, delete it
-    if (isset($user->roles[$rid])) {
-      unset($user->roles[$rid]);
+  if ($user->uid) {
+    $roles = $settings['roles'];
+    foreach ($roles as $rid) {
+      // If the user has this role, delete it
+      if (isset($user->roles[$rid])) {
+        unset($user->roles[$rid]);
+      }
     }
+    user_save($user, array('roles' => $user->roles));
+    return array('user' => $user);
   }
-  user_save($user, array('roles' => $user->roles));
-  return array('user' => $user);
 }
 
 /**
