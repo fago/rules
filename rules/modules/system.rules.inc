@@ -124,7 +124,7 @@ function rules_action_mail_to_user($user, $settings) {
 function rules_mail($key, &$message, $settings) {
 
   $message['subject'] .= str_replace(array("\r", "\n"), '', $settings['subject']);
-  $message['body'][] = drupal_html_to_text($settings['message']);
+  $message['body'][] = $settings['message'];
 }
 
 
