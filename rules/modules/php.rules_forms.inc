@@ -36,7 +36,8 @@ function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
   $output .= theme('table', $headers, $rows, array('class' => 'rules-php-help'));
   if ($save_info) {
     $output .= '<p>'. t('Note that variables are passed by reference, so you can change them.'). ' ';
-    $output .= t('If you want to make the changes permanent, you can let rules intelligently save the changes when the variable\'s data type supports it. To make use of "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
+    $output .= t("If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it."). ' '.
+      t('To make use of "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
   }
   return $output;
 }
@@ -50,7 +51,7 @@ function rules_action_custom_php_form($settings, &$form, $form_state) {
     '#type' => 'textarea',
     '#title' => t('PHP Code'),
     '#default_value' => isset($settings['code']) ? $settings['code'] : '',
-    '#description' => t('The code that should be executed. Don\'t include &lt;?php ?&gt; delimiters.'),
+    '#description' => t("The code that should be executed. Don't include &lt;?php ?&gt; delimiters."),
     '#required' => TRUE,
   );
   // add help including some info for saving the variables
@@ -76,7 +77,7 @@ function rules_condition_custom_php_form($settings, &$form, $form_state) {
     '#type' => 'textarea',
     '#title' => t('PHP Code'),
     '#default_value' => isset($settings['code']) ? $settings['code'] : '',
-    '#description' => t('The code that should be executed. Don\'t include &lt;?php ?&gt; delimiters.') .' '. t('Be sure to always return a boolean value, e.g.: !code', array('!code' => '<pre>return $author->name != "bot";</pre>')),
+    '#description' => t("The code that should be executed. Don't include &lt;?php ?&gt; delimiters.") .' '. t('Be sure to always return a boolean value, e.g.: !code', array('!code' => '<pre>return $author->name != "bot";</pre>')),
     '#required' => TRUE,
   );
   $form['input_help']['rules_input_evaluator_php']['#collapsed'] = FALSE;

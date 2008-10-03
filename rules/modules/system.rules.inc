@@ -14,7 +14,6 @@ function system_rules_event_info() {
     'init' => array(
       'label' => t('User is going to view a page'),
       'module' => 'System',
-      'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
       'arguments' => rules_events_global_user_argument(),
     ),
     'cron' => array(

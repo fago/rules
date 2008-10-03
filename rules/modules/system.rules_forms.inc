@@ -53,19 +53,19 @@ function rules_action_mail_to_user_form($settings = array(), &$form) {
     '#type' => 'textfield',
     '#title' => t('Sender'),
     '#default_value' => $settings['from'],
-    '#description' => t('The mail\'s "from" address. Leave it empty to use the site-wide configured address.'),
+    '#description' => t("The mail's from address. Leave it empty to use the site-wide configured address."),
   );
   $form['settings']['subject'] = array(
     '#type' => 'textfield',
     '#title' => t('Subject'),
     '#default_value' => $settings['subject'],
-    '#description' => t('The mail\'s subject.'),
+    '#description' => t("The mail's subject."),
   );
   $form['settings']['message'] = array(
     '#type' => 'textarea',
     '#title' => t('Message'),
     '#default_value' => $settings['message'],
-    '#description' => t('The mail\'s message body.'),
+    '#description' => t("The mail's message body."),
   );
 }
 
@@ -77,7 +77,7 @@ function rules_action_mail_form($settings = array(), &$form) {
     '#type' => 'textfield',
     '#title' => t('Recipient'),
     '#default_value' => isset($settings['to']) ? $settings['to'] : '',
-    '#description' => t('The mail\'s recipient address. You may separate multiple addresses with ",".'),
+    '#description' => t("The mail's recipient address. You may separate multiple addresses with ','."),
     '#required' => TRUE,
     '#weight' => -1,
   );
@@ -143,14 +143,14 @@ function rules_action_drupal_goto_form($settings = array(), &$form, $form_state)
   $form['settings']['force'] = array(
     '#type' => 'checkbox',
     '#title' => t('Force redirecting to the given path, even if a destination parameter is given'),
-    '#description' => t('Per default drupal doesn\'t redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url', array('!example_url' => 'http://example.com/user/login?destination=node/2')),
+    '#description' => t("Per default drupal doesn't redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url", array('!example_url' => 'http://example.com/user/login?destination=node/2')),
     '#default_value' => $settings['force'],
     '#weight' => 7,
   );
   $form['settings']['override'] = array(
     '#type' => 'checkbox',
     '#title' => t('Override another path redirect by setting the destination parameter'),
-    '#description' => t('If checked, the path redirect isn\'t initiated by this action, but the destination parameter gets set. So if something else redirects, the redirect will use the configured path.'),
+    '#description' => t("If checked, the path redirect isn't initiated by this action, but the destination parameter gets set. So if something else redirects, the redirect will use the configured path."),
     '#default_value' => $settings['override'],
     '#weight' => 8,
   );

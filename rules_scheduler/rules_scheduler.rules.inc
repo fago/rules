@@ -58,6 +58,6 @@ function rules_scheduler_action() {
  * Help for the base action implementation.
  */
 function rules_scheduler_action_help() {
-  return t('The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site\'s !status.', array('!status' => l('Status report', 'admin/reports/status'))) .
+  return t("The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status.", array('!status' => l('Status report', 'admin/reports/status'))) .
     ' '. t('Also note that the scheduling time accuracy depends on your configured cron interval.');
 }

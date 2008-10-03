@@ -60,7 +60,7 @@ class rules_data_type_string extends rules_data_type {
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
       '#title' => $info['label'],
-      '#description' => t($info['description']),
+      '#description' => $info['description'],
       '#required' => $info['required'],
       '#default_value' => $value,
     );
@@ -87,7 +87,7 @@ class rules_data_type_date extends rules_data_type_string {
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     $value = isset($value) ? $value : date('Y-m-d H:i:s', time() + 86400);
-    $info['description'] = t($info['description']) .' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
+    $info['description'] = $info['description'] .' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
     $info['description'] .= '<br />'. t('You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>'). '</pre>'));
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
@@ -125,7 +125,7 @@ class rules_data_type_boolean extends rules_data_type_string {
 
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
-    $info['description'] = t($info['description']) .' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
+    $info['description'] = $info['description'] .' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
       '#title' => $info['label'],
@@ -149,7 +149,7 @@ function rules_rules_condition_info() {
         'text1' => array('label' => t('Text 1'), 'type' => 'string'),
         'text2' => array('label' => t('Text 2'), 'type' => 'string'),
       ),
-      'help' => 'TRUE is returned, if both texts are equal.',
+      'help' => t('TRUE is returned, if both texts are equal.'),
       'module' => 'Rules',
     ),
     'rules_condition_number_compare' => array(
@@ -158,7 +158,7 @@ function rules_rules_condition_info() {
         'number1' => array('label' => t('Number 1'), 'type' => 'number'),
         'number2' => array('label' => t('Number 2'), 'type' => 'number'),
       ),
-      'help' => 'Select greater than, less than or equal to.',
+      'help' => t('Select greater than, less than or equal to.'),
       'module' => 'Rules',
     ),
     'rules_condition_check_boolean' => array(

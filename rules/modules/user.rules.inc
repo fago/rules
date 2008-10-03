@@ -27,8 +27,8 @@ function user_rules_event_info() {
     'user_view' => array(
       'label' => t('User page has been viewed'),
       'module' => 'User',
-      'description' => t('Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.'),
       'arguments' => rules_events_hook_user_arguments(t('viewed user')),
+      'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
     ),
     'user_delete' => array(
       'label' => t('User has been deleted'),
@@ -93,7 +93,7 @@ function user_rules_condition_info() {
         'user1' => array('type' => 'user', 'label' => t('User account 1')),
         'user2' => array('type' => 'user', 'label' => t('User account 2')),
       ),
-      'help' => 'Evaluates to TRUE, if both given user accounts are the same.',
+      'help' => t('Evaluates to TRUE, if both given user accounts are the same.'),
       'module' => 'User',
     ),
     'rules_condition_user_hasrole' => array(
@@ -101,7 +101,7 @@ function user_rules_condition_info() {
       'arguments' => array(
         'user' => array('type' => 'user', 'label' => t('User')),
       ),
-      'help' => 'Whether the user has the selected role(s).',
+      'help' => t('Whether the user has the selected role(s).'),
       'module' => 'User',
     ),
   );
@@ -163,7 +163,7 @@ function user_rules_action_info() {
       'new variables' => array(
         'user_loaded' => array('type' => 'user', 'label' => t('Loaded user')),
       ),
-      'help' => 'Enter an id or a name of the user to load.',
+      'help' => t('Enter an id or a name of the user to load.'),
       'module' => 'User',
      ),
   );
@@ -176,7 +176,7 @@ function rules_action_user_addrole($user, $settings) {
   if ($user->uid) {
     // Get role list (minus the anonymous)
     $role_list = user_roles(TRUE);
-  
+
     foreach ($settings['roles'] as $rid) {
       $user->roles[$rid] = $role_list[$rid];
     }

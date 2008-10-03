@@ -363,7 +363,7 @@ function rules_get_event_sets() {
  * @param $reset If the static cache should be reseted. Note that if set to true, nothing will be
  *               returned.
  */
-function &rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
+function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
   static $data = array();
 
   if ($reset) {
@@ -761,23 +761,31 @@ function rules_elements() {
 
 /**
  * Initiates the element info property (#info) of an element (actions, conditions,..).
- * Note that the element defaults will be applied before, if not yet done.
  */
 function rules_init_element_info(&$element) {
+  if (empty($element['#info']) && ($info = rules_retrieve_element_info($element))) {
+    unset($info['help']);
+    $element['#info'] = &$info;
+  }
+}
+
+/**
+ * Retrieves the element (actions, conditions,..) info.
+ */
+function rules_retrieve_element_info(&$element) {
   $element_copy = $element;
   _rules_element_defaults($element_copy);
 
-  if (isset($element_copy['#info']) && !$element_copy['#info'] && isset($element['#name'])) {
-    if ($info =& rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
-      //be sure to use references, so that multiple infos in a rule get serialized only once
-      $element['#info'] = &$info;
+  if (isset($element_copy['#info']) && isset($element['#name'])) {
+    if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
+      return $info;
     }
     rules_error_missing_implementation($element);
   }
 }
 
 /**
- * Returns the element info of the element
+ * Returns the cached element info of the element.
  */
 function rules_get_element_info(&$element) {
   rules_init_element_info($element);

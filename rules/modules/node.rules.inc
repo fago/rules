@@ -13,25 +13,25 @@ function node_rules_event_info() {
     'node_insert' => array(
       'label' => t('After saving new content'),
       'module' => 'Node',
-      'arguments' => rules_events_node_arguments(t('created content'), t('content\'s author')),
+      'arguments' => rules_events_node_arguments(t('created content'), t("content's author")),
       'redirect' => TRUE,
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
       'module' => 'Node',
-      'arguments' => rules_events_node_arguments(t('updated content'), t('content\'s author'), TRUE),
+      'arguments' => rules_events_node_arguments(t('updated content'), t("content's author"), TRUE),
       'redirect' => TRUE,
     ),
     'node_presave' => array(
       'label' => t('Content is going to be saved'),
       'module' => 'Node',
-      'arguments' => rules_events_node_arguments(t('saved content'), t('content\'s author'), TRUE),
+      'arguments' => rules_events_node_arguments(t('saved content'), t("content's author"), TRUE),
       'redirect' => TRUE,
     ),
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
       'module' => 'Node',
-      'help' => 'Note that if drupal\'s page cache is enabled, this event won\'t be generated for pages served from cache.',
+      'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
       'arguments' => rules_events_node_arguments(t('viewed content'), t('content author')) + array(
         'teaser' => array('type' => 'boolean', 'label' => t('Content is displayed as teaser')),
         'page' => array('type' => 'boolean', 'label' => t('Content is displayed as page')),
@@ -72,7 +72,7 @@ function rules_events_node_arguments($node_label, $author_label, $update = FALSE
       ),
       'author_unchanged' => array(
         'type' => 'user',
-        'label' => t('unchanged content\'s author'),
+        'label' => t("unchanged content's author"),
         'handler' => 'rules_events_argument_unchanged_node_author',
       ),
     );
@@ -117,7 +117,7 @@ function node_rules_condition_info() {
   );
   $items['rules_condition_content_is_type'] = $defaults + array(
     'label' => t('Content has type'),
-    'help' => 'Evaluates to TRUE, if the given content has one of the selected content types.',
+    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
   );
   $items['rules_condition_content_is_published'] = $defaults + array(
     'label' => t('Content is published'),
@@ -201,7 +201,7 @@ function node_rules_action_info() {
         'vid' => array(
           'type' => 'number',
           'label' => t('Content Revision ID'),
-          'description' => t('If you want to load a specific revision, specify it\'s revision id. Else leave it empty to load the current revision.'),
+          'description' => t("If you want to load a specific revision, specify it's revision id. Else leave it empty to load the current revision."),
           'required' => FALSE,
         ),
       ),
