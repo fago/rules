@@ -223,7 +223,7 @@ function rules_rules_action_info() {
     $type_map = rules_gather_data('rules_action_type_map');
     $items[ 'rules_core_'. $name ] = rules_core_action_transform_info($name, $core_action_info, $type_map);
   }
-  array_filter($items);
+  $items = array_filter($items);
 
   // Add an action to add a new variable for all not identifiable data types
   foreach (rules_get_data_types() as $name => $type_info) {
