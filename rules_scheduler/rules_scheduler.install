@@ -35,7 +35,7 @@ function rules_scheduler_schema() {
         'length' => '255',
         'default' => '',
         'not null' => TRUE,
-        'description' => t('The scheduled rule set\'s name.'),
+        'description' => t("The scheduled rule set's name."),
       ),
       'date' => array(
         'type' => 'datetime',

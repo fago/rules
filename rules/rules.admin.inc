@@ -143,7 +143,7 @@ function rules_admin_configuration_status($status) {
     return '<span title="'. $help .'">'. t('Modified'). '</span>';
   }
   else if ($status == 'fixed') {
-    $help = t('This rule has been provided by a module and can\'t be customized.');
+    $help = t("This rule has been provided by a module and can't be customized.");
     return '<span title="'. $help .'">'. t('Fixed') .'</span>';
   }
   else if ($status == 'custom') {
@@ -773,7 +773,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
   $form['map'] = array('#tree' => TRUE);
 
   $function = $element['#name']. '_form';
-  $info = rules_get_element_info($element);
+  $info = rules_retrieve_element_info($element);
 
   if (isset($info['arguments']) && count($info['arguments'])) {
     $variables = $form_state['proxy']->get_available_variables($element['#id']);
@@ -832,7 +832,7 @@ function rules_admin_map_get_configured_argument($name, $element) {
  * Shows the element help
  */
 function rules_admin_element_help(&$form, $element) {
-  $info = rules_get_element_info($element);
+  $info = rules_retrieve_element_info($element);
   if (isset($info['help']) || isset($element['help'])) {
     $help = isset($element['help']) ? t($element['help']) : t($info['help']);
   }
@@ -1121,7 +1121,7 @@ function _rules_admin_rule_get_new_unique_name() {
  */
 function rules_admin_save_element_label($form, &$form_state, &$element) {
   $info = _rules_admin_get_label($form_state, rules_get_element_info($element), $element, $form_state['values']['label']);
-  //this makes sure we don't save the applied defaults
+  // This makes sure we don't save the applied defaults
   $element['#info'] = $info + $element['#info'];
 }
 

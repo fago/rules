@@ -51,7 +51,7 @@ function path_rules_action_info() {
       'eval input' => array('src', 'dst'),
     ),
     'rules_action_node_path_alias' => array(
-      'label' => t('Create or delete a content\'s URL alias'),
+      'label' => t("Create or delete a content's URL alias"),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
       ),

@@ -57,7 +57,7 @@ function rules_action_path_alias_form($settings, &$form) {
     '#title' => t('Path alias'),
     '#default_value' => $settings['dst'],
     '#maxlength' => 256,
-    '#description' => t('Specify an alternative path by which this data can be accessed. For example, type "about" when writing an about page. Use a relative path and don\'t add a trailing slash or the URL alias won\'t work.')
+    '#description' => t('Specify an alternative path by which this data can be accessed. For example, type "about" when writing an about page. Use a relative path and do not add a trailing slash or the URL alias will not work.')
     .' '. t('Leave it empty to delete URL aliases pointing to the given system path.'),
     '#field_prefix' => url('', array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
   );
@@ -86,9 +86,9 @@ function rules_action_node_path_alias_form($settings, &$form) {
 }
 
 function rules_action_node_path_alias_label($settings, $argument_labels) {
-  return t('Create or delete @node\'s URL alias', $argument_labels);
+  return t("Create or delete @node's URL alias", $argument_labels);
 }
 
 function rules_action_node_path_alias_help() {
-  return t('This action only works if the acting user has %perm1 or %perm2 permsissions. If this doesn\'t suit, use the generic "Create or delete an URL alias" action together with the existing system path "node/{ID}".', array('%perm1' => t('create url aliases'), '%perm2' => t('administer url aliases')));
+  return t('This action only works if the acting user has %perm1 or %perm2 permsissions. If this does not suit, use the generic "Create or delete an URL alias" action together with the existing system path "node/{ID}".', array('%perm1' => t('create url aliases'), '%perm2' => t('administer url aliases')));
 }
