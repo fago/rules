@@ -120,7 +120,7 @@ function theme_rules_operation($element) {
   foreach (element_children($element) as $key) {
     $content[] = drupal_render($element[$key]);
   }
-  $print_op = theme('rules_logical_operation_label', strtolower($element['#label']), $element['#label']);
+  $print_op = theme('rules_logical_operation_label', drupal_strtolower($element['#label']), $element['#label']);
   return implode($print_op, $content);
 }
 
