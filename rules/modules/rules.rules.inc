@@ -290,15 +290,13 @@ function rules_action_save_variable($name, $variable) {
  * If the action should not be used by the rules modules, an empty array is returned.
  */
 function rules_core_action_transform_info($name, $core_action_info, $type_map) {
+  // If there is no entry in the type map or we should ignore it, we don't use this action.
+  if (!empty($core_action_info['rules_ignore']) || !isset($type_map[$core_action_info['type']])) {
+    return array();
+  }
 
-  if (isset($core_action_info['rules_ignore']) && $core_action_info['rules_ignore']) {
-    return array();
-  }
   $info = $type_map[$core_action_info['type']];
-  // If there is no entry in the type map, so we don't use this action.
-  if (!isset($info)) {
-    return array();
-  }
+
   // Make sure there is a object.
   $info += array('arguments' => array('object' => array('type' => 'value', 'default value' => NULL)));
 
@@ -405,9 +403,6 @@ function rules_rules_action_type_map() {
           'type' => 'user',
         ),
       ),
-    ),
-    'system' => array(
-      'module' => 'System',
     ),
   );
 }
