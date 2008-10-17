@@ -231,7 +231,7 @@ function rules_rules_action_info() {
       $items[ 'rules_add_var_'. $name ] = array(
         'module' => 'Rules',
         'base' => 'rules_action_save_variable',
-        'label' => t('Add a new @type variable', array('@type' => strtolower($type_info['label']))),
+        'label' => t('Add a new @type variable', array('@type' => drupal_strtolower($type_info['label']))),
         'arguments' => array(
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),
@@ -251,7 +251,7 @@ function rules_rules_action_info() {
       $items[ 'rules_save_var_'. $name ] = array(
         'module' => isset($type_info['module']) ? $type_info['module'] : 'Rules',
         'base' => 'rules_action_save_variable',
-        'label' => t('Save @type', array('@type' => $type_info['label'])),
+        'label' => t('Save a @type', array('@type' => drupal_strtolower($type_info['label']))),
         'arguments' => array(
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),
