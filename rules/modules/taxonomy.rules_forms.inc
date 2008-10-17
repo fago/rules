@@ -63,7 +63,6 @@ function rules_action_taxonomy_load_term_form($settings, &$form, $form_state) {
 }
 
 function rules_action_taxonomy_load_term_form_step_submit($form, &$form_state) {
-  rules_admin_save_element_label($form, $form_state, $form_state['element']);
   $form_state['element']['#settings']['vocabulary'] = $form_state['values']['settings']['vocabulary'];
 }
 

@@ -461,7 +461,7 @@ function rules_admin_form_edit_action(&$form_state, $element) {
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Customize the label for this action.'),
-    '#default_value' => $label,
+    '#default_value' => isset($form_state['values']['label']) ? $form_state['values']['label'] : $label,
     '#required' => TRUE,
     '#weight' => -5,
   );
@@ -519,7 +519,7 @@ function rules_admin_form_edit_condition(&$form_state, $element) {
     '#title' => t('Label'),
     '#type' => 'textfield',
     '#description' => t('Customize the label for this condition.'),
-    '#default_value' => $label,
+    '#default_value' => isset($form_state['values']['label']) ? $form_state['values']['label'] : $label,
     '#required' => TRUE,
     '#weight' => -5,
   );
@@ -1131,7 +1131,7 @@ function rules_admin_save_element_label($form, &$form_state, &$element) {
  *
  * @return An array of changed properties of the given info
  */
-function _rules_admin_get_label(&$form_state, $info, &$element, $value) {
+function _rules_admin_get_label(&$form_state, $info, $element, $value) {
   $info_changes = array();
   if ($info['label'] != $value) {
     //label has been customized
