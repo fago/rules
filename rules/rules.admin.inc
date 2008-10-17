@@ -784,7 +784,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
         $value = isset($element['#settings'][$name]) ? $element['#settings'][$name] : NULL;
         $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value);
       }
-      if (empty($form['settings'][$name])) {
+      else {
         $args = rules_admin_map_get_possible_arguments($arg_info, $variables);
         $form['map'][$name] = array(
           '#type' => 'select',
