@@ -782,7 +782,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
       $arg = rules_get_data_object($arg_info);
       if (!$arg->is_identifiable()) {
         $value = isset($element['#settings'][$name]) ? $element['#settings'][$name] : NULL;
-        $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value);
+        $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value, $form_state);
       }
       else {
         $args = rules_admin_map_get_possible_arguments($arg_info, $variables);
