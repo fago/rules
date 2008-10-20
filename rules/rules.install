@@ -1,12 +1,11 @@
 <?php
 // $Id$
 
-include_once('./'. drupal_get_path('module', 'rules') .'/rules.module');
-
 /**
  * Implementation of hook_install().
  */
 function rules_install() {
+  drupal_load('module', 'rules');
   drupal_install_schema('rules');
 }
 
@@ -14,6 +13,7 @@ function rules_install() {
  * Implementation of hook_uninstall().
  */
 function rules_uninstall() {
+  drupal_load('module', 'rules');
   drupal_uninstall_schema('rules');
   variable_del('rules_inactive_sets');
   variable_del('rules_show_fixed');
@@ -26,6 +26,7 @@ function rules_uninstall() {
  * Implementation of hook_schema.
  */
 function rules_schema() {
+  drupal_load('module', 'rules');
   // We define a table for each item type.
 
   // When the module is installed, the hook implementation of rules is not invoked,
@@ -65,6 +66,7 @@ function rules_schema() {
  * Upgrade from workflow-ng
  */
 function rules_update_6001() {
+  drupal_load('module', 'rules');
   require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
   rules_include('rules');
   rules_include('rules_forms');
@@ -106,6 +108,7 @@ function rules_update_6001() {
  * Initialize the new rules counter variable
  */
 function rules_update_6002() {
+  drupal_load('module', 'rules');
   $result = db_query("SELECT COUNT(name) FROM {rules_rules} WHERE name LIKE 'rules_%%'");
   variable_set('rules_counter', db_result($result) + 10);
   return array();
@@ -116,6 +119,7 @@ function rules_update_6002() {
  * Transform a workflow-ng rule into a rule
  */
 function rules_import_workflow_ng_rule(&$name, $cfg) {
+  drupal_load('module', 'rules');
   $rule = array('#type' => 'rule');
   $name = _rules_import_replace_module_name($name);
   foreach (array('#altered', '#active', '#weight') as $key) {
@@ -226,6 +230,7 @@ function _rules_import_get_set($cfg) {
  * Applies the function $function to all elements. Aborts if FALSE is returned.
  */
 function rules_helper_do_recursive($function, &$elements) {
+  drupal_load('module', 'rules');
   if ($function($elements) === FALSE) {
     return FALSE;
   }
