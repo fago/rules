@@ -710,6 +710,8 @@ function rules_admin_new_variables_form(&$form, &$form_state, $element) {
         '#title' => t('Variable @label settings', array('@label' => $var['label'])),
         '#collapsible' => TRUE,
       );
+      // Make sure the variable label is in lower case.
+      $var['label'] = drupal_strtolower(drupal_substr($var['label'], 0, 1)) . drupal_substr($var['label'], 1);
       $form['new'][$name]['label'] = array(
         '#type' => 'textfield',
         '#title' => t('Label'),
@@ -749,7 +751,7 @@ function rules_admin_new_variables_form_submit(&$form, &$form_state, &$element) 
 
       //handle the label
       $info = &$element['#info']['new variables'][$old_name];
-      $info = _rules_admin_get_label($form_state, $info, $element, $values['label']) + $info;
+      $info = _rules_admin_get_label($form_state, $info, $element, $values['label'], FALSE) + $info;
 
       if ($old_name != $values['name']) {
         //add it to the argument map
@@ -1120,7 +1122,7 @@ function _rules_admin_rule_get_new_unique_name() {
  * Saves the element label.
  */
 function rules_admin_save_element_label($form, &$form_state, &$element) {
-  $info = _rules_admin_get_label($form_state, rules_get_element_info($element), $element, $form_state['values']['label']);
+  $info = _rules_admin_get_label($form_state, rules_get_element_info($element), $element, $form_state['values']['label'], TRUE);
   // This makes sure we don't save the applied defaults
   $element['#info'] = $info + $element['#info'];
 }
@@ -1129,9 +1131,11 @@ function rules_admin_save_element_label($form, &$form_state, &$element) {
  * Gets the label for the info of the given element by apply label callbacks.
  * Note that this is also used for argument infos.
  *
+ * @param $cfirst
+ *   If TRUE, capitalize the first letter, if FALSE lower case the first letter.
  * @return An array of changed properties of the given info
  */
-function _rules_admin_get_label(&$form_state, $info, $element, $value) {
+function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst = NULL) {
   $info_changes = array();
   if ($info['label'] != $value) {
     //label has been customized
@@ -1141,6 +1145,10 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value) {
   else if (isset($info['label callback']) && $info['label callback'] && function_exists($info['label callback'])) {
     $argument_labels = rules_admin_get_argument_labels($form_state['proxy'], $element);
     $info_changes['label'] = $info['label callback']($element['#settings'], $argument_labels, $element);
+    if (isset($cfirst)) {
+      $function = $cfirst ? 'drupal_strtoupper' : 'drupal_strtolower';
+      $info_changes['label'] = $function(drupal_substr($info_changes['label'], 0, 1)) . drupal_substr($info_changes['label'], 1);
+    }
   }
   return $info_changes;
 }
