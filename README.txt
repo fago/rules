@@ -32,7 +32,9 @@ Notes:
    your rules.
 
  * If you install the token module, you can make use of token replacements in your rules.
-   Get the module from http://drupal.org/project/token and activate it - that's it.
+   Get the module from http://drupal.org/project/token. Make sure you have a recent version,
+   a development snapshot which stems from >27.08.08 or once released version 6.12. Then
+   just activate the module - that's it.
 
    You don't need to enable the token actions module as rules provides already equivalent
    actions, which are better integrated into the rules module. 
