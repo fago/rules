@@ -41,6 +41,12 @@ function rules_condition_content_is_promoted_label($settings, $argument_labels) 
 function rules_action_node_set_author_label($settings, $argument_labels) {
   return t('Set the author of @node to @author', $argument_labels);
 }
+/**
+ * Action set node title - Label callback
+ */
+function rules_action_set_node_title_label($settings, $argument_labels) {
+  return t("Set @node's title", $argument_labels);
+}
 
 /**
  * Action "Add a node" configuration form
