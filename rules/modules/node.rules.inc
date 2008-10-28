@@ -174,6 +174,14 @@ function node_rules_action_info() {
       ),
       'module' => 'Node',
     ),
+    'rules_action_set_node_title' => array(
+      'label' => t('Set content title'),
+      'arguments' => array(
+        'node' => array('type' => 'node', 'label' => t('Content')),
+        'title' => array('type' => 'string', 'label' => t('Title')),
+      ),
+      'module' => 'Node',
+    ),
     'rules_action_add_node' => array(
       'label' => t('Add new content'),
       'arguments' => array(
@@ -224,6 +232,14 @@ function node_rules_action_info() {
 function rules_action_node_set_author($node, $author) {
   $node->uid = $author->uid;
   $node->name = $author->name;
+  return array('node' => $node);
+}
+
+/**
+ * Sets the content title
+ */
+function rules_action_set_node_title($node, $title) {
+  $node->title = $title;
   return array('node' => $node);
 }
 
