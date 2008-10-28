@@ -72,7 +72,6 @@ function rules_action_taxonomy_load_term_form_step_submit($form, &$form_state) {
 function rules_taxonomy_form($vid, $value = 0, $help = NULL, $name = 'taxonomy') {
   $vocabulary = taxonomy_vocabulary_load($vid);
   $help = ($help) ? $help : $vocabulary->help;
-  $blank = ($vocabulary->required) ? t('- Please choose -') : t('- None selected -');
-  return _taxonomy_term_select(check_plain($vocabulary->name), $name, $value, $vid, $help, FALSE, $blank);
+  return _taxonomy_term_select(check_plain($vocabulary->name), $name, $value, $vid, $help, FALSE, t('- None selected -'));
 }
 
