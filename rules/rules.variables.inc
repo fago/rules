@@ -53,23 +53,23 @@ function _rules_initialize_variables(&$state, $args) {
  * @param $element
  *   Optionally an element may be specified, for which we retrieve the variables.
  * @return
- *   The array of requested variables or FALSE. If it failed, FALSE.
+ *   The array of requested variables with the keys as given in $names. If it failed, FALSE.
  */
 function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
   $args = array();
-  foreach ($names as $name) {
+  foreach ($names as $key => $name) {
     if (isset($state['variables'][$name])) {
-      $args[$name] = &$state['variables'][$name]->get($force);
+      $args[$key] = &$state['variables'][$name]->get($force);
     }
     else if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
       $object = rules_get_data_object($element['#info']['arguments'][$name]);
-      $args[$name] = $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
+      $args[$key] = $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
     }
     else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
-      $args[$name] = $element['#info']['arguments'][$name]['default value'];
+      $args[$key] = $element['#info']['arguments'][$name]['default value'];
     }
     // Use array_key_exists, so that NULL default values are allowed!
-    if (!array_key_exists($name, $args)) {
+    if (!array_key_exists($key, $args)) {
       return FALSE;
     }
   }
