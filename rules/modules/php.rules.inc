@@ -58,7 +58,7 @@ function rules_input_evaluator_php_apply($string, $data = NULL, &$state, $return
   $vars = array();
 
   if ($data) {
-    $vars = rules_get_variables($data, $state);
+    $vars = rules_get_variables(drupal_map_assoc($data), $state);
     if (!$vars) {
       rules_log(t('PHP is not evaluated as there are not all necessary variables available.'));
       return FALSE;
