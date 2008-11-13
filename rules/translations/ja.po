@@ -96,7 +96,7 @@ msgstr "カテゴリ"
 #: rules.admin.inc:85
 #: rules.admin_sets.inc:17
 msgid "Status"
-msgstr "ステータス"
+msgstr "状態"
 
 #: rules.admin.inc:85
 #: rules.admin_sets.inc:17
@@ -342,7 +342,7 @@ msgstr "%label を本当に削除しますか？"
 #: rules.admin.inc:875
 #: rules.admin_sets.inc:66;91
 msgid "This action cannot be undone."
-msgstr "この操作は取り消すことができません。"
+msgstr "この操作は元に戻すことができませんので、十分に注意して実行してください。"
 
 #: rules.admin.inc:875
 #: rules.admin_sets.inc:66;91
@@ -657,7 +657,7 @@ msgstr "イベントごとに実施されるルールを設定することでサ
 
 #: rules.module:53;173;204
 msgid "Overview"
-msgstr "概略"
+msgstr "概観"
 
 #: rules.module:58;210
 msgid "Add a new rule"
@@ -669,7 +669,7 @@ msgstr "インポート / エクスポート"
 
 #: rules.module:111
 msgid "Settings"
-msgstr "設定"
+msgstr "環境設定"
 
 #: rules.module:130
 msgid "Add"
@@ -730,7 +730,7 @@ msgstr "発生するイベントにしたがって実行されるアクション
 
 #: modules/comment.rules.inc:15
 msgid "After saving a new comment"
-msgstr "新しいコメント追加後"
+msgstr "新しいコメントを保存後"
 
 #: modules/comment.rules.inc:17
 msgid "created comment"
@@ -738,7 +738,7 @@ msgstr "作成するコメント"
 
 #: modules/comment.rules.inc:21
 msgid "After saving an updated comment"
-msgstr "更新コメント保存後"
+msgstr "更新したコメントを保存後"
 
 #: modules/comment.rules.inc:23
 msgid "updated comment"
@@ -746,7 +746,7 @@ msgstr "更新するコメント"
 
 #: modules/comment.rules.inc:27
 msgid "After deleting a comment"
-msgstr "コメント削除後"
+msgstr "コメントの削除後"
 
 #: modules/comment.rules.inc:29
 msgid "deleted comment"
@@ -902,7 +902,7 @@ msgstr "コンテンツのタイトルをセット"
 
 #: modules/node.rules.inc:181;191
 msgid "Title"
-msgstr "題名"
+msgstr "タイトル"
 
 #: modules/node.rules.inc:186
 msgid "Add new content"
@@ -1031,7 +1031,7 @@ msgstr "このテキストフィールドを空欄にすると、ASCII文字で�
 
 #: modules/path.rules_forms.inc:51
 msgid "Specify the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2."
-msgstr "エイリアスを設定したい既存のパスを指定してください。例: node/28、forum/1、taxonomy/term/1+2"
+msgstr "エイリアスの元となる既存のパスを入力してください。 例： node/28、forum/1、taxonomy/term/1+2"
 
 #: modules/path.rules_forms.inc:52
 msgid "Leave it empty to delete URL aliases pointing to the given path alias."
@@ -1244,7 +1244,7 @@ msgstr "2つ目の文字列を正規表現として評価。"
 
 #: modules/rules.rules_forms.inc:30
 msgid "Greater than"
-msgstr "より大きい"
+msgstr "大なり記号（&gt;）"
 
 #: modules/rules.rules_forms.inc:30
 msgid "Equal to"
@@ -1252,7 +1252,7 @@ msgstr "等しい"
 
 #: modules/rules.rules_forms.inc:30
 msgid "Less than"
-msgstr "より小さい"
+msgstr "小なり記号（&lt;）"
 
 #: modules/rules.rules_forms.inc:36
 msgid "Check a !truth, i.e. TRUE or FALSE."
@@ -1409,7 +1409,7 @@ msgstr "チェックがあると、このアクションによってはリダイ
 
 #: modules/system.rules_forms.inc:166
 msgid "Severity"
-msgstr "深刻度"
+msgstr "重大度"
 
 #: modules/system.rules_forms.inc:175
 msgid "The category to which this message belongs."
@@ -1473,7 +1473,7 @@ msgstr "追加"
 
 #: modules/taxonomy.rules_forms.inc:39
 msgid "Continue"
-msgstr "続行"
+msgstr "継続"
 
 #: modules/taxonomy.rules_forms.inc:50
 msgid "!vocab's terms"
@@ -1497,7 +1497,7 @@ msgstr "任意: ロードするタームのID (<em>ターム名ではなく</em>
 
 #: modules/taxonomy.rules_forms.inc:75
 msgid "- None selected -"
-msgstr "- 未選択 -"
+msgstr "- 選択されていません -"
 
 #: modules/user.rules.inc:14
 msgid "User account has been created"
