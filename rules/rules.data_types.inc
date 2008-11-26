@@ -92,7 +92,14 @@ class rules_data_type {
   }
 
   /**
-   * Returns whether this data makes use of an input form for creating
+   * Returns whether this data makes use of an input form for creating an instance on the fly.
+   */
+  function uses_input_form() {
+    $info = $this->get_info();
+    return isset($info['use_input_form']) && $info['use_input_form'];
+  }
+  
+  /**
    * Returns whether the input evaluator should be used for this data
    */
   function eval_input() {
@@ -104,18 +111,22 @@ class rules_data_type {
    * Gets the information about this data type.
    */
   function get_info() {
+    // For backward compatibility set use_input_form to !identifiable if it's unset.
     return $this->_info + array(
       'savable' => FALSE,
       'identifiable' => TRUE,
+      'use_input_form' => empty($this->_info['identifiable']),
       'eval input' => FALSE,
     );
   }
-
-
-
-
-
-
+  
+  /**
+   * When implementing a new data type, check the comments of the methods below. They tell you
+   * whether you have to implement the method.
+   * Once rules is php5 compatible only this can be changed to make use of interfaes.
+   */
+  
+  
   /**
    * Makes changes to the data permanent.
    * Implement it, if your data type is savable.
@@ -126,7 +137,7 @@ class rules_data_type {
 
   /**
    * Loads the data identified with an identifier as returned by get_identifier().
-   * Return FALSE if loading the data failed.
+   * Just return the data or FALSE if loading the data failed.
    *
    * Implement it, if your data type is identifiable.
    */
@@ -135,7 +146,7 @@ class rules_data_type {
   }
 
   /**
-   * Gets the identifier of this data, can be of every php data type - even an array.
+   * Gets the identifier of this data, which can be of every php data type - even an array.
    * Implement it, if your data type is identifiable.
    */
   function get_identifier() {
@@ -144,7 +155,7 @@ class rules_data_type {
 
   /**
    * Gets an input form for creating an instance of your data type.
-   * Implement it, if your data is not identifiable.
+   * Implement it, if your data type has set use_input_form to TRUE.
    */
   function get_default_input_form($variable_info, $value, &$form_state) {
 
@@ -154,11 +165,9 @@ class rules_data_type {
    * Checks the value of your data type. E.g. the number data type
    * uses this to make sure the value is a number.
    *
-   * It's only used, if your data type is not identifiable.
+   * It's only used, if your data type has set use_input_form to TRUE.
    */
   function check_value($variable_info, $value) {
     return $value;
   }
 }
-
-
