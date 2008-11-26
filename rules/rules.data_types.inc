@@ -92,6 +92,7 @@ class rules_data_type {
   }
 
   /**
+   * Returns whether this data makes use of an input form for creating
    * Returns whether the input evaluator should be used for this data
    */
   function eval_input() {

@@ -782,7 +782,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
 
     foreach ($info['arguments'] as $name => $arg_info) {
       $arg = rules_get_data_object($arg_info);
-      if (!$arg->is_identifiable()) {
+      if ($arg->uses_input_form()) {
         $value = isset($element['#settings'][$name]) ? $element['#settings'][$name] : NULL;
         $form['settings'][$name] = $arg->get_default_input_form($arg_info, $value, $form_state);
       }
@@ -1070,7 +1070,8 @@ function rules_admin_argument_satisifable($info, $variables) {
     return TRUE;
   }
   if (($type_info = rules_get_data_types($info['type']))) {
-    if (isset($type_info['identifiable']) && !$type_info['identifiable']) {
+    // For backward compatibility use_input_form is interpreted as !identifiable if it's unset.
+    if (!empty($type_info['use_input_form']) || (!isset($type_info['use_input_form']) && empty($type_info['identifiable']))) {
       // Argument value will be set on configuration time.
       return TRUE;
     }
