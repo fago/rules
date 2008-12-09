@@ -20,7 +20,7 @@ Installation
 *Before* starting, make sure that you have read at least the introduction - so you know 
 at least the basic concepts. You can find it here:
                      
-                          http://drupal.org/node/156288
+                          http://drupal.org/node/298480
 
  * Copy the whole rules directory to your modules directory and
    activate the rules module.
@@ -38,6 +38,10 @@ Notes:
 
    You don't need to enable the token actions module as rules provides already equivalent
    actions, which are better integrated into the rules module. 
+   
+Documentation
+-------------
+Check out the docs at http://drupal.org/node/298476
 
 
 Rules Scheduler
