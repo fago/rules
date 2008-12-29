@@ -283,6 +283,12 @@ function rules_theme() {
     'arguments' => array('elements' => NULL),
     'file' => 'rules.admin_sets.inc'
   );
+  $items['rules_admin_unsatisfied_elements'] = array(
+    'arguments' => array('element' => NULL),
+  );
+  $items['rules_admin_unsatisfied_elements_group'] = array(
+    'arguments' => array('grouped_rules' => NULL, 'elements' => array()),
+  );
   return $items;
 }
 
