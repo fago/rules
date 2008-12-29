@@ -325,13 +325,30 @@ function rules_admin_form_add(&$form_state, $proxy, $type, $parent_id = NULL) {
  */
 function rules_admin_form_add_action(&$form_state, &$element) {
   $vars = $form_state['proxy']->get_available_variables();
-  $actions = rules_admin_filter_info($vars, rules_get_actions());
+  $all_actions = rules_get_actions();
+  $satisfied_actions = rules_admin_filter_info($vars, $all_actions);
+  $unsatisfied_actions = array_filter(array_diff_assoc($all_actions, $satisfied_actions), 'rules_admin_element_filter');
   $form['name'] = array(
     '#type' => 'select',
     '#title' => t('Select an action to add'),
-    '#options' => rules_admin_get_grouped_labels($actions),
+    '#options' => rules_admin_get_grouped_labels($satisfied_actions),
     '#required' => TRUE,
   );
+  if (!empty($unsatisfied_actions)){
+    // Hold all the actions that are disabled because argument(s) are missing.
+    $form['unsatisfied'] = array(
+      '#type' => 'fieldset',
+      '#title' => format_plural(count($unsatisfied_actions), '1 action is not configurable', '@count actions are not configurable'),
+      '#description' => t("The following actions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these actions, you must first add some action that adds variables of this kind, or have an event that passes the required variables."),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['unsatisfied']['items'] = array(
+      '#type' => 'item',
+      '#unsatisfied_grouped_options' => $unsatisfied_actions,
+      '#theme' => 'rules_admin_unsatisfied_elements',
+    );
+  }
   $form['submit'] = array(
     '#type' => 'submit',
     '#weight' => 10,
@@ -348,13 +365,30 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
 
   if (!isset($parent['#type']) || isset($parent['#logical_op']) && $parent['#logical_op']) {
     $vars = $form_state['proxy']->get_available_variables(0);
-    $conditions = rules_admin_filter_info($vars, rules_get_conditions());
+    $all_conditions = rules_get_conditions();
+    $satisfied_conditions = rules_admin_filter_info($vars, $all_conditions);
+    $unsatisfied_conditions = array_filter(array_diff_assoc($all_conditions, $satisfied_conditions), 'rules_admin_element_filter');
     $form['name'] = array(
       '#type' => 'select',
       '#title' => t('Select the condition to add'),
-      '#options' => rules_admin_get_grouped_labels($conditions),
+      '#options' => rules_admin_get_grouped_labels($satisfied_conditions),
       '#required' => TRUE,
     );
+    if (!empty($unsatisfied_conditions)){
+    // Hold all the actions that are disabled because argument(s) are missing.
+    $form['unsatisfied'] = array(
+      '#type' => 'fieldset',
+      '#title' => format_plural(count($unsatisfied_conditions), '1 condition is not configurable', '@count conditions are not configurable'),
+      '#description' => t("The following conditions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these conditions, you must first add some action that adds variables of this kind in a previous rule, or have an event that passes the required variables."),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+    );
+    $form['unsatisfied']['items'] = array(
+      '#type' => 'item',
+      '#unsatisfied_grouped_options' => $unsatisfied_conditions,
+      '#theme' => 'rules_admin_unsatisfied_elements',
+    );
+  }
     $form['submit'] = array(
       '#type' => 'submit',
       '#weight' => 10,
@@ -1039,20 +1073,26 @@ function _rules_admin_element_is_logical_op($element) {
 
 /**
  * Filters the info about elements (actions, conditions), so that only elements
- * compatible with the given variables are kept, which means suiting variables for all arguments
- * are available, so that the action/condition can be configured
+ * compatible with the given variables are kept, which means suiting variables
+ * for all arguments are available, so that the action/condition can be
+ * configured.
+ * Additionally, arguments having no suiting variables are recorded
+ * in the 'unsatisfied arguments' slot of the element in $infos.
  */
-function rules_admin_filter_info($variables, $infos) {
+function rules_admin_filter_info($variables, &$infos) {
   $filtered = array();
   foreach ($infos as $key => $info) {
     if (isset($info['arguments']) && is_array($info['arguments'])) {
       foreach ($info['arguments'] as $name => $argument_info) {
         if (!rules_admin_argument_satisifable($argument_info, $variables)) {
-          // Skip this element
-          continue 2;
+          // Get the unsatisfied arguments.
+          $infos[$key] += array('unsatisfied arguments' => array());
+          $infos[$key]['unsatisfied arguments'][$name] = $argument_info['label'];
         }
       }
-      $filtered[$key] = $info;
+      if (empty($infos[$key]['unsatisfied arguments'])) {
+        $filtered[$key] = $info;
+      }
     }
     else {
       $filtered[$key] = $info;
@@ -1093,6 +1133,41 @@ function rules_admin_map_get_possible_arguments($arg_info, $variables) {
     }
   }
   return $matches;
+}
+
+/**
+ * Themes the a list of actions or conditions, that are not satisfiable.
+ */
+function theme_rules_admin_unsatisfied_elements($element) {
+  $output = '';
+  $output .= '<div class="rules-unsatisfied-arguments">';
+  foreach (rules_admin_get_grouped_labels($element['#unsatisfied_grouped_options']) as $grouped_rules) {
+    $output .= theme('rules_admin_unsatisfied_elements_group', $grouped_rules, $element['#unsatisfied_grouped_options']);
+  }
+  $output .= '</div>';
+  return $output;
+}
+
+/**
+ * Themes not satisifable elements of a group.
+ */
+function theme_rules_admin_unsatisfied_elements_group($grouped_rules, $elements) {
+  $output = '<dl>';
+  foreach ($grouped_rules as $name => $value) {
+    $fieldset = array(
+      '#type' => 'fieldset',
+      '#title' => t('@group module', array('@group' => $elements[$name]['module'])),
+      '#collapsible' => FALSE,
+    );
+    $output .= '<dt>'. check_plain($elements[$name]['label']) .'</dt>';
+    $output .= '<dd><em>'. format_plural(count($elements[$name]['unsatisfied arguments']), 'Unavailable argument: @arguments', 'Unavailable arguments: @arguments', array('@arguments' => implode(', ', $elements[$name]['unsatisfied arguments']))) .'</em></dd>';
+  }
+  $output .= '</dl>';
+  $fieldset['items'] = array(
+    '#type' => 'markup',
+    '#value' => $output,
+  );
+  return drupal_render($fieldset);
 }
 
 /**

@@ -170,7 +170,7 @@ function node_rules_action_info() {
       'label' => t('Set the content author'),
       'arguments' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
-        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
+        'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
       ),
       'module' => 'Node',
     ),
@@ -185,7 +185,7 @@ function node_rules_action_info() {
     'rules_action_add_node' => array(
       'label' => t('Add new content'),
       'arguments' => array(
-        'author' => array('type' => 'user', 'label' => t('User, which is set as author')),
+        'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
         'title' => array(
           'type' => 'string',
           'label' => t('Title'),
