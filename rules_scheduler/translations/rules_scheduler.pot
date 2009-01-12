@@ -1,0 +1,79 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  rules_scheduler.rules.inc,v 1.1.2.3 2008/10/03 10:21:04 fago
+#  rules_scheduler.module,v 1.1.2.3 2008/08/19 11:58:21 fago
+#  rules_scheduler.install,v 1.1.2.3 2008/10/03 10:21:04 fago
+#  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-01-12 23:25+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: rules_scheduler.rules.inc:20
+msgid "Schedule @set"
+msgstr ""
+
+#: rules_scheduler.rules.inc:24
+msgid "Scheduled evaluation date"
+msgstr ""
+
+#: rules_scheduler.rules.inc:46
+msgid "Packing arguments for scheduling the rule set %set failed."
+msgstr ""
+
+#: rules_scheduler.rules.inc:61
+msgid "The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status."
+msgstr ""
+
+#: rules_scheduler.rules.inc:62
+msgid "Also note that the scheduling time accuracy depends on your configured cron interval."
+msgstr ""
+
+#: rules_scheduler.module:0
+msgid "rules_scheduler"
+msgstr ""
+
+#: rules_scheduler.install:25
+msgid "Stores a schedule for rule sets."
+msgstr ""
+
+#: rules_scheduler.install:31
+msgid "The scheduled task\\s id."
+msgstr ""
+
+#: rules_scheduler.install:38
+msgid "The scheduled rule set's name."
+msgstr ""
+
+#: rules_scheduler.install:43
+msgid "When the task is to be scheduled."
+msgstr ""
+
+#: rules_scheduler.install:49
+msgid "The whole, serialized item configuration."
+msgstr ""
+
+#: rules_scheduler.info:0
+msgid "Rules Scheduler"
+msgstr ""
+
+#: rules_scheduler.info:0
+msgid "Schedule the execution of rule sets."
+msgstr ""
+
+#: rules_scheduler.info:0
+msgid "Rules"
+msgstr ""
+
