@@ -67,3 +67,13 @@ function rules_comment($comment, $op) {
     rules_invoke_event('comment_'. $op, $comment);
   }
 }
+
+/**
+ * Implementation of hook_taxonomy().
+ */
+function rules_taxonomy($op, $type, $array) {
+  if ($type == 'term' && in_array($op, array('insert', 'update'))) {
+    $taxonomy_object = (object) $array;
+    rules_invoke_event('taxonomy_term_'. $op, $taxonomy_object);
+  }
+}

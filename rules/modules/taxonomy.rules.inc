@@ -8,6 +8,54 @@
 
 
 /**
+ * Implementation of hook_rules_event_info().
+ * @ingroup rules
+ */
+function taxonomy_rules_event_info() {
+  return array(
+    'taxonomy_term_insert' => array(
+      'label' => t('After saving a new term'),
+      'module' => 'Taxonomy',
+      'arguments' => rules_events_hook_taxonomy_term_arguments(t('created term'))
+      ),
+    'taxonomy_term_update' => array(
+      'label' => t('After updating a term'),
+      'module' => 'Taxonomy',
+      'arguments' => rules_events_hook_taxonomy_term_arguments(t('updated term'), TRUE)
+      ),
+  );
+}
+
+/**
+ * Returns some arguments suitable for using it with a term
+ */
+function rules_events_hook_taxonomy_term_arguments($term_label, $update = FALSE) {
+  $args = array(
+    'term' => array(
+      'type' => 'taxonomy_term',
+      'label' => $term_label,
+    ),
+  );
+  if ($update) {
+    $args += array(
+      'term_unchanged' => array(
+        'type' => 'taxonomy_term',
+        'label' => t('unchanged term'),
+        'handler' => 'rules_events_argument_taxonomy_term_unchanged',
+      ),
+    );
+  }
+  return $args + rules_events_global_user_argument();
+}
+
+/**
+ * Gets the term object, that doesn't contain the modified changes
+ */
+function rules_events_argument_taxonomy_term_unchanged($taxonomy_term) {
+  return $taxonomy_term->tid ? taxonomy_get_term($taxonomy_term->tid) : $taxonomy_term;
+}
+
+/**
  * Implementation of hook_rules_action_info().
  */
 function taxonomy_rules_action_info() {
