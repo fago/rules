@@ -90,7 +90,7 @@ array (
           ),
           '#info' =>
           array (
-            'label' => 'Publish viewed viewed content',
+            'label' => 'Publish viewed content',
             'module' => 'Node',
             'arguments' =>
             array (
