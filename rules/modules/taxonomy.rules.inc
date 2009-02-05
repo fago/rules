@@ -60,6 +60,7 @@ function rules_events_argument_taxonomy_term_unchanged($taxonomy_term) {
  */
 function taxonomy_rules_action_info() {
   $info = array();
+  // Term actions.
   $info['rules_action_taxonomy_load_term'] = array(
     'label' => t('Load a term'),
     'new variables' => array(
@@ -100,6 +101,29 @@ function taxonomy_rules_action_info() {
     ),
     'module' => 'Taxonomy',
   );
+  // Vocabulary actions.
+  $info['rules_action_taxonomy_load_vocab'] = array(
+    'label' => t('Load a vocabulary'),
+    'new variables' => array(
+      'taxonomy_vocab' => array(
+        'type' => 'taxonomy_vocab',
+        'label' => t('Taxonomy vocabulary'),
+      ),
+    ),
+    'eval input' => array('vocab_text'),
+    'help' => t('Loading a taxonomy vocabulary will allow you to act on this vocabulary.'),
+    'module' => 'Taxonomy',
+  );
+  $info['rules_action_taxonomy_add_vocab'] = array(
+    'label' => t('Add a new vocabulary'),
+    'new variables' => array(
+      'taxonomy_vocab' => array(
+        'type' => 'taxonomy_vocab',
+        'label' => t('Taxonomy vocabulary'),
+      ),
+    ),
+    'module' => 'Taxonomy',
+  );
   return $info;
 }
 
@@ -133,6 +157,22 @@ function rules_action_taxonomy_term_remove_from_content($node, $taxonomy_term, $
 }
 
 /**
+ * Action: Load a vocabulary.
+ */
+function rules_action_taxonomy_load_vocab($settings) {
+  $vid = !empty($settings['vocabulary']['vocab_text']) ? $settings['vocabulary']['vocab_text'] : $settings['vocabulary']['vocab_select'];
+  return array('taxonomy_vocab' => taxonomy_vocabulary_load($vid));
+}
+
+/**
+ * Action: Add a new vocabulary.
+ */
+function rules_action_taxonomy_add_vocab($settings) {
+  taxonomy_save_vocabulary($settings);
+  return array('taxonomy_vocab' => $settings);
+}
+
+/**
  * Implementation of hook_rules_data_type_info().
  */
 function taxonomy_rules_data_type_info() {
@@ -140,6 +180,13 @@ function taxonomy_rules_data_type_info() {
     'taxonomy_term' => array(
       'label' => t('Taxonomy term'),
       'class' => 'rules_data_type_taxonomy_term',
+      'savable' => FALSE,
+      'identifiable' => TRUE,
+      'module' => 'Taxonomy',
+    ),
+    'taxonomy_vocab' => array(
+      'label' => t('Taxonomy vocabulary'),
+      'class' => 'rules_data_type_taxonomy_vocab',
       'savable' => FALSE,
       'identifiable' => TRUE,
       'module' => 'Taxonomy',
@@ -159,5 +206,20 @@ class rules_data_type_taxonomy_term extends rules_data_type {
   function get_identifier() {
     $term = &$this->get();
     return $term->tid;
+  }
+}
+
+/**
+ * Defines the taxonomy vocab data type.
+ */
+class rules_data_type_taxonomy_vocab extends rules_data_type {
+
+  function load($vid) {
+    return taxonomy_vocabulary_load($vid);
+  }
+
+  function get_identifier() {
+    $vocab = &$this->get();
+    return $vocab->vid;
   }
 }
