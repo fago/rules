@@ -361,8 +361,7 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
 function rules_core_action_execute_validate(&$form, &$form_state) {
   $element = $form_state['element'];
   $info = rules_get_element_info($element);
-  if ($info['configurable']) {
-    $function = $info['action_name']. '_validate';
+  if ($info['configurable'] && function_exists($function = $info['action_name']. '_validate')) {
     $function($form['settings'], $form_state);
   }
 }
