@@ -1021,7 +1021,7 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
 
     $configurations[$item_type] = array();
     while ($row = db_fetch_object($result)) {
-      $configurations[$item_type][$row->name] = unserialize($row->data);
+      $configurations[$item_type][$row->name] = unserialize(db_decode_blob($row->data));
     }
     //add not altered default items
     $configurations[$item_type] += rules_get_item_defaults($item_type);
