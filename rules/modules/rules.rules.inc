@@ -356,6 +356,18 @@ function rules_core_action_execute_form($settings, &$form, &$form_state) {
 }
 
 /**
+ * Apply the core actions form validation
+ */
+function rules_core_action_execute_validate(&$form, &$form_state) {
+  $element = $form_state['element'];
+  $info = rules_get_element_info($element);
+  if ($info['configurable']) {
+    $function = $info['action_name']. '_validate';
+    $function($form['settings'], $form_state);
+  }
+}
+
+/**
  * Action form submit implementation: Apply the core actions form submit
  */
 function rules_core_action_execute_submit(&$settings, &$form, &$form_state) {
