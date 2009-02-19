@@ -106,7 +106,7 @@ function rules_admin_overview_table($params) {
       // rule can't be edited.
       $rows[] = array(
       $set_info ? l($rule['#label'], $path .'/edit') : check_plain($rule['#label']),
-      $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => $rule['#set']),
+      $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => check_plain($rule['#set'])),
       implode(', ', $categories),
       rules_admin_configuration_status($rule['#status']),
       implode(' ', $ops),
