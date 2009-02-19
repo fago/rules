@@ -92,9 +92,6 @@ function rules_admin_overview_table($params) {
     if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {
       $path = RULES_ADMIN_RULE_PATH .'/'. $name;
       $ops = array();
-      if ($rule['#status'] != 'fixed') {
-        $ops[] = l(t('edit'), $path .'/edit');
-      }
       if ($rule['#status'] == 'custom') {
         $ops[] = l(t('delete'), $path .'/delete', array('query' => drupal_get_destination()));
       }
