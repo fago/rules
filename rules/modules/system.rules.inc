@@ -19,7 +19,7 @@ function system_rules_event_info() {
     'cron' => array(
       'label' => t('Cron maintenance tasks are performed'),
       'module' => 'System',
-      'arguments' => array(),
+      'arguments' => rules_events_global_user_argument(),
     ),
   );
 }
