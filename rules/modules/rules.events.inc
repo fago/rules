@@ -26,7 +26,7 @@ function rules_user($op, &$edit, &$account, $category = NULL) {
   // We don't support updates for other categories than 'account'
   if ($op == 'update' && $category == 'account') {
     // Save the unchanged account for the use with op after_update.
-    $account_unchanged = $account;
+    $account_unchanged = drupal_clone($account);
   }
   else if ($op == 'after_update' && $category == 'account') {
     rules_invoke_event('user_update', array('account' => &$account, 'account_unchanged' => $account_unchanged));
