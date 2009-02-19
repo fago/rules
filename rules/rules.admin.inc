@@ -45,8 +45,8 @@ function rules_admin_form_overview(&$form_state) {
   );
   $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
 
-  $category = isset($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
-  $set = isset($form_state['values']['set']) ? 'event_'. $form_state['values']['set'] : FALSE;
+  $category = !empty($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
+  $set = !empty($form_state['values']['set']) ? 'event_'. $form_state['values']['set'] : FALSE;
 
   $form['active_header'] = array('#value' => '<h3>'. t('Active rules'). '</h3>');
   $form['active'] = rules_admin_overview_table(array('category' => $category, 'set' => $set, 'active' => TRUE));
@@ -101,13 +101,19 @@ function rules_admin_overview_table($params) {
       $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
       $categories = array_map('check_plain', $rule['#categories']);
 
+      $set_info = rules_get_rule_sets($rule['#set']);
+      // If the set info is missing, the module providing the event is gone and the
+      // rule can't be edited.
       $rows[] = array(
-      l($rule['#label'], $path .'/edit'),
-      check_plain(rules_get_element_label(rules_get_rule_sets($rule['#set']))),
+      $set_info ? l($rule['#label'], $path .'/edit') : check_plain($rule['#label']),
+      $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => $rule['#set']),
       implode(', ', $categories),
       rules_admin_configuration_status($rule['#status']),
       implode(' ', $ops),
       );
+      if (!$set_info) {
+        rules_handle_error_msg('%set can\'t be found. Probably the providing module has been deactivated.', array('%set' => $rule['#set']));
+      }
     }
   }
 
