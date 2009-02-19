@@ -224,14 +224,15 @@ function rules_menu() {
  */
 function rule_load($name) {
   static $proxies = array();
-  $rules = rules_get_configured_items('rules');
 
-  if (!isset($rules[$name])) {
-    return FALSE;
-  }
-  else if (!isset($proxies[$name])) {
-    rules_include('rules_admin');
-    $proxies[$name] = new rules_admin_rule_proxy($name, $rules[$name]);
+  if (!isset($proxies[$name])) {
+    $proxies[$name] = FALSE;
+    $rules = rules_get_configured_items('rules');
+    // Let's make sure the #set actually exists
+    if (isset($rules[$name]) && rules_get_rule_sets($rules[$name]['#set'])) {
+      rules_include('rules_admin');
+      $proxies[$name] = new rules_admin_rule_proxy($name, $rules[$name]);
+    }
   }
   return $proxies[$name];
 }
@@ -810,7 +811,7 @@ function rules_get_element_info(&$element) {
  * Gets the element's label
  */
 function rules_get_element_label(&$element) {
-  foreach (array('#label', 'label') as $key) {
+  foreach (array('#label', 'label', '#name') as $key) {
     if (isset($element[$key])) {
       return $element[$key];
     }
