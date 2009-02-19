@@ -97,6 +97,40 @@ function rules_events_argument_comment_node_author($comment) {
 }
 
 /**
+ * Implementation of hook_rules_action_info().
+ * @ingroup rules
+ */
+function comment_rules_action_info() {
+  return array(
+    'rules_action_load_comment' => array(
+      'label' => t('Load comment by id'),
+      'arguments' => array(
+        'cid' => array(
+          'type' => 'number',
+          'label' => t('Comment id'),
+          'required' => TRUE,
+        ),
+      ),
+      'new variables' => array(
+        'comment_loaded' => array(
+          'type' => 'comment',
+          'label' => t('Loaded comment'),
+          'label callback' => 'rules_action_load_comment_variable_label',
+        ),
+      ),
+      'module' => 'Comment',
+    ),
+  );
+}
+
+/**
+ * Action: Load a comment by id.
+ */
+function rules_action_load_comment($cid) {
+  return array('comment_loaded' => _comment_load($cid));
+}
+
+/**
  * Implementation of hook_rules_data_type_info()
  */
 function comment_rules_data_type_info() {
