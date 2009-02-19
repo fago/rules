@@ -811,7 +811,7 @@ function rules_get_element_info(&$element) {
  * Gets the element's label
  */
 function rules_get_element_label(&$element) {
-  foreach (array('#label', 'label', '#name') as $key) {
+  foreach (array('#label', 'label') as $key) {
     if (isset($element[$key])) {
       return $element[$key];
     }
