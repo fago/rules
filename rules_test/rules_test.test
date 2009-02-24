@@ -26,8 +26,7 @@ class RulesTestCase extends DrupalWebTestCase {
     rules_invoke_rule_set('rules_test_1', $argument);
     $error = FALSE;
     $log = rules_test_show_log($error);
-    $this->assertFalse($error);
-    $this->assertPattern('Rules Test 1 - Success', $log);
+    $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
   }
 
   //Test changing an argument by action and verify that the changes are kept for later rules
@@ -37,8 +36,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $error = FALSE;
     $log = rules_test_show_log($error);
 
-    $this->assertFalse($error);
-    $this->assertPattern('/Rules Test 2 - Success/', $log);
+    $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
   }
 
   //Test passing arguments by reference to a set
@@ -48,9 +46,8 @@ class RulesTestCase extends DrupalWebTestCase {
     $error = FALSE;
     $log = rules_test_show_log($error);
 
-    $this->assertFalse($error);
-    $this->assertTrue(isset($argument['altered']) && $argument['altered']);
-    $this->assertPattern('/Rules Test 2 - Success/', $log);
+    $this->assertTrue(isset($argument['altered']) && $argument['altered'], t('Argument has not been altered correctly.'));
+    $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
   }
 
   //Tests argument mapping and argument loading by handler
@@ -60,9 +57,8 @@ class RulesTestCase extends DrupalWebTestCase {
     $error = FALSE;
     $log = rules_test_show_log($error);
 
-    $this->assertFalse($error);
-    $this->assertPattern('/Loaded variable/', $log);
-    $this->assertPattern('/Rules Test 4 - Success/', $log);
+    $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
+    $this->assert(strpos($log, 'Loaded variable node') !== FALSE, t('Variable was not loaded successfully.') .' '. $log);
   }
 
   //Tests adding a new variable
@@ -70,8 +66,8 @@ class RulesTestCase extends DrupalWebTestCase {
     rules_invoke_rule_set('rules_test_5', $argument);
     $error = FALSE;
     $log = rules_test_show_log($error);
-    $this->assertFalse($error);
-    $this->assertPattern('/Successfully added the new variable/', $log);
+    $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
+    $this->assert(strpos($log, 'Successfully added the new variable test') !== FALSE, t('Variable was not added successfully.') .' '. $log);
   }
 }
 
