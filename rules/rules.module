@@ -1036,7 +1036,7 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
 function rules_item_save($item_type, $name, $item) {
   if ($info = rules_get_items($item_type)) {
     db_query("DELETE FROM {". $info['db_table']. "} WHERE name = '%s'", $name);
-    db_query("INSERT INTO {". $info['db_table']. "} (name, data) VALUES ('%s', '%s')", $name, serialize($item));
+    db_query("INSERT INTO {". $info['db_table']. "} (name, data) VALUES ('%s', %b)", $name, serialize($item));
   }
 }
 
