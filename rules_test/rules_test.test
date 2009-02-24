@@ -12,6 +12,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp();
+    drupal_install_modules(array('rules','rules_test'));
     rules_test_keep_rules_log();
   }
   function tearDown() {
@@ -26,7 +27,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $error = FALSE;
     $log = rules_test_show_log($error);
     $this->assertFalse($error);
-    $this->assertPattern('/Rules Test 1 - Success/', $log);
+    $this->assertPattern('Rules Test 1 - Success', $log);
   }
 
   //Test changing an argument by action and verify that the changes are kept for later rules
