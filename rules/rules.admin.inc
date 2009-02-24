@@ -469,6 +469,7 @@ function rules_admin_form_unpack_storage($form, &$form_state) {
     }
     $form_state['unpacked'] = TRUE;
   }
+  
   return $form;
 }
 
@@ -527,6 +528,7 @@ function rules_admin_form_edit_action(&$form_state, $element) {
     );
   }
   rules_admin_element_help($form, $element);
+  $form['help']['#weight'] = -4; // Move upwards
   rules_admin_default_argument_form($form, $form_state, $element);
   rules_admin_new_variables_form($form, $form_state, $element);
   rules_admin_element_alter_form($form, $form_state, $element);
