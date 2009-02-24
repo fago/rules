@@ -61,9 +61,8 @@ function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
     if (isset($state['variables'][$name])) {
       $args[$key] = &$state['variables'][$name]->get($force);
     }
-    else if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
-      $object = rules_get_data_object($element['#info']['arguments'][$name]);
-      $args[$key] = $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
+    else if ($var = rules_get_element_variable($element, $name)) {
+      $args[$key] = &$var;
     }
     else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
       $args[$key] = $element['#info']['arguments'][$name]['default value'];
@@ -74,6 +73,22 @@ function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
     }
   }
   return $args;
+}
+
+/**
+ * Gets a variable for the given element which uses an own input form.
+ *
+ * @param $element
+ *   The element to get the variable for.
+ * @param $name
+ *   The name of the variable to get.
+ * @return The variable, if available.
+ */
+function rules_get_element_variable($element, $name) {
+  if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
+    $object = rules_get_data_object($element['#info']['arguments'][$name]);
+    return $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
+  }
 }
 
 /**
