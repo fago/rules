@@ -58,13 +58,13 @@ function _rules_initialize_variables(&$state, $args) {
 function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
   $args = array();
   foreach ($names as $key => $name) {
-    if (isset($state['variables'][$name])) {
+    if (($var = rules_get_element_variable($element, $name)) !== NULL) {
+      $args[$key] = $var;
+    }
+    elseif (isset($state['variables'][$name])) {
       $args[$key] = &$state['variables'][$name]->get($force);
     }
-    else if (($var = rules_get_element_variable($element, $name)) !== NULL) {
-      $args[$key] = &$var;
-    }
-    else if (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
+    elseif (isset($element['#info']['arguments'][$name]) && array_key_exists('default value', $element['#info']['arguments'][$name])) {
       $args[$key] = $element['#info']['arguments'][$name]['default value'];
     }
     // Use array_key_exists, so that NULL default values are allowed!
@@ -88,7 +88,11 @@ function rules_get_variables($names, &$state, $force = TRUE, $element = NULL) {
 function rules_get_element_variable($element, $name) {
   if (isset($element['#settings'][$name]) && isset($element['#info']['arguments'][$name])) {
     $object = rules_get_data_object($element['#info']['arguments'][$name]);
-    return $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
+    if ($object->uses_input_form()) {
+      // Only return the variable if it really uses an input form, as the name might clash with
+      // an usual state variable not using an input form.
+      return $object->check_value($element['#info']['arguments'][$name], $element['#settings'][$name]);
+    }
   }
 }
 
