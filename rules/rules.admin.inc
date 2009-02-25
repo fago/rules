@@ -776,12 +776,14 @@ function rules_admin_new_variables_form(&$form, &$form_state, $element) {
 
 function rules_admin_new_variables_form_validate($form, &$form_state) {
   $variables = $form_state['proxy']->get_defined_variables($form_state['element']['#id']);
-  foreach ($form_state['values']['new'] as $name => $values) {
-    if (isset($variables[ $values['name'] ])) {
-      form_set_error(implode('][', array('new', $name, 'name')), t('A variable with this name does already exist. Please choose another name.'));
+  foreach ($form_state['values']['new'] as $old_name => $values) {
+    // If the variable name changed or we add a new element we have to ensure
+    // that the variable name is not taken yet.
+    if (isset($variables[ $values['name'] ]) && ($values['name'] != $old_name || !isset($form_state['element']['#id']))) {
+      form_set_error(implode('][', array('new', $old_name, 'name')), t('A variable with this name does already exist. Please choose another name.'));
     }
     if (!eregi('^[0-9a-z_]*$', $values['name'])) {
-      form_set_error(implode('][', array('new', $name, 'name')), t('The name contains not allowed characters.'));
+      form_set_error(implode('][', array('new', $old_name, 'name')), t('The name contains not allowed characters.'));
     }
   }
 }
