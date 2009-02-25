@@ -1228,6 +1228,8 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst =
   else if (isset($info['label callback']) && $info['label callback'] && function_exists($info['label callback'])) {
     $argument_labels = rules_admin_get_argument_labels($form_state['proxy'], $element);
     $info_changes['label'] = $info['label callback']($element['#settings'], $argument_labels, $element);
+    // Labels are treated as user input, so we decode any entites.
+    $info_changes['label'] = decode_entities($info_changes['label']);
     if (isset($cfirst)) {
       $function = $cfirst ? 'drupal_strtoupper' : 'drupal_strtolower';
       $info_changes['label'] = $function(drupal_substr($info_changes['label'], 0, 1)) . drupal_substr($info_changes['label'], 1);
