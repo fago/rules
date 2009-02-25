@@ -41,6 +41,21 @@ function rules_condition_content_is_promoted_label($settings, $argument_labels) 
 function rules_action_node_set_author_label($settings, $argument_labels) {
   return t('Set the author of @node to @author', $argument_labels);
 }
+
+/**
+ * Action load node author label callback
+ */
+function rules_action_node_load_author_label($settings, $argument_labels) {
+  return t('Load the @node author', $argument_labels);
+}
+
+/**
+ * Action load node author variable label callback
+ */
+function rules_action_node_load_author_variable_label($settings, $argument_labels) {
+  return t('@node author', $argument_labels);
+}
+
 /**
  * Action set node title - Label callback
  */
