@@ -99,6 +99,9 @@ function rules_admin_import_workflow_ng($import) {
 
     $rule = rules_import_workflow_ng_rule($name, $cfg);
     if ($rule) {
+      // Handle rule format upgrades as the workflow-ng import just returns rules of the initial format
+      $rule = rules_rule_format_upgrade($rule);
+
       rules_item_save('rules', $name, $rule);
       drupal_set_message(t('Successfully imported the workflow-ng rule %label.', array('%label' => $rule['#label'])));
     }

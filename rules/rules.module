@@ -328,6 +328,10 @@ function rules_get_data_types($key = 'all') {
 function rules_get_item_defaults($item_type = 'rules') {
   rules_include('rules_defaults');
   $defaults = rules_gather_data('rules_defaults', 'all', FALSE);
+  if ($item_type == 'rules' && isset($defaults[$item_type])) {
+    // Apply the rule format upgrade to each rule if necessary.
+    return array_map('rules_rule_format_upgrade', $defaults[$item_type]);
+  }
   return isset($defaults[$item_type]) ? $defaults[$item_type] : array();
 }
 
@@ -1222,3 +1226,25 @@ function rules_after_build_include_files($form, $form_state) {
   }
   return $form;
 }
+
+/**
+ * Makes sure the rule is in the latest format. If not it will be upgraded
+ * automatically.
+ */
+function rules_rule_format_upgrade($rule) {
+  static $included = FALSE;
+
+  $upgrades = array();
+  if (!isset($rule['#version'])) {
+    $upgrades[] = 'rules_rule_format_upgrade_6003';
+  }
+  if (!empty($upgrades) && !$included) {
+    module_load_include('install', 'rules');
+    $included = TRUE;
+  }
+  foreach ($upgrades as $upgrade) {
+    $rule = $upgrade($rule);
+  }
+  return $rule;
+}
+

@@ -764,8 +764,10 @@ function rules_admin_new_variables_form(&$form, &$form_state, $element) {
         '#default_value' => $name,
         '#required' => TRUE,
       );
-      //preserve its old argument map value
-      $default_name = isset($element['#settings']['#argument map'][$name]) ? $element['#settings']['#argument map'][$name] : $name;
+      // Preserve its old argument map value or initialize the map
+      $element['#settings'] += array('#argument map' => array());
+      $default_name = array_search($name, $element['#settings']['#argument map']);
+      $default_name = $default_name === FALSE ? $name : $default_name;
       $form['map'][$default_name] = array('#type' => 'value', '#value' => $name);
     }
     $form['submit']['#validate'][] = 'rules_admin_new_variables_form_validate';
@@ -794,9 +796,8 @@ function rules_admin_new_variables_form_submit(&$form, &$form_state, &$element) 
 
       if ($old_name != $values['name']) {
         //add it to the argument map
-        $default_name = $element['#settings']['#argument map'][$old_name];
-        $element['#settings']['#argument map'][ $values['name'] ] = $default_name;
-        unset($element['#settings']['#argument map'][$old_name]);
+        $default_name = array_search($old_name, $element['#settings']['#argument map']);
+        $element['#settings']['#argument map'][ $default_name ] = $values['name'];
         //and alter the info about the variable to reflect the name change
         $element['#info']['new variables'][ $values['name'] ] = $element['#info']['new variables'][$old_name];
         unset($element['#info']['new variables'][$old_name]);
@@ -849,7 +850,7 @@ function rules_admin_default_argument_form(&$form, &$form_state, $element) {
 function rules_admin_default_argument_form_submit($form, &$form_state, &$element) {
   //save the argument map
   if (isset($form_state['values']['map'])) {
-    $element['#settings']['#argument map'] = array_flip($form_state['values']['map']);
+    $element['#settings']['#argument map'] = $form_state['values']['map'];
   }
   //add in values of not identifiable variables
   if (isset($form_state['values']['settings'])) {
@@ -865,8 +866,8 @@ function rules_admin_map_get_configured_argument($name, $element) {
     //per default try the the same name
     return $name;
   }
-  $reverse_map = array_flip($element['#settings']['#argument map']);
-  return isset($reverse_map[$name]) ? $reverse_map[$name] : $name;
+  $map = $element['#settings']['#argument map'];
+  return isset($map[$name]) ? $map[$name] : $name;
 }
 
 /**
