@@ -1219,7 +1219,8 @@ function rules_admin_save_element_label($form, &$form_state, &$element) {
  */
 function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst = NULL) {
   $info_changes = array();
-  if ($info['label'] != $value) {
+
+  if (drupal_strtolower($info['label']) != drupal_strtolower($value)) {
     //label has been customized
     $info_changes['label'] = $value;
     $info_changes['label callback'] = FALSE;
