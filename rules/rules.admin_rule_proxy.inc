@@ -255,10 +255,7 @@ class rules_admin_rule_proxy {
   function get_defined_variables($id = NULL) {
     $set_info = $this->get_set_info();
     $vars = $this->_get_available_variables(TRUE) + $set_info['arguments'];
-    if (isset($id)) {
-      $vars = array_diff_assoc($vars, $this->element_get_new_variables($this->get_element($id)));
-    }
-    return rules_admin_element_filter($vars);
+    return array_filter($vars, 'rules_admin_element_filter');
   }
 
   /**
@@ -267,8 +264,8 @@ class rules_admin_rule_proxy {
    * @param $all If set to TRUE all variables defined in this rule set will returned.
    */
   function _get_available_variables($all = FALSE) {
-    if (!isset($this->_variables)) {
-      $this->_variables = array();
+    if (!isset($this->_variables[$all])) {
+      $this->_variables[$all] = array();
       $set = $this->get_set();
 
       //sort the rules
@@ -277,15 +274,15 @@ class rules_admin_rule_proxy {
       foreach (element_children($set['rules']) as $name) {
         if ($name == $this->get_rule_name()) {
           if (!$all) {
-            return $this->_variables;
+            return $this->_variables[$all];
           }
         }
         foreach ($set['rules'][$name]['#actions'] as $action) {
           $info = rules_get_element_info($action);
-          $this->_variables += $info['new variables'];
+          $this->_variables[$all] += $info['new variables'];
         }
       }
     }
-    return $this->_variables;
+    return $this->_variables[$all];
   }
 }
