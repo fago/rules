@@ -40,7 +40,7 @@ function rules_admin_form_overview(&$form_state) {
   $form['filter']['category'] = array(
     '#type' => 'select',
     '#title' => t('Filter by category'),
-    '#options' => array(0 => '<All>') + rules_admin_get_categories(),
+    '#options' => array(0 => '<All>') + rules_admin_get_categories('rules'),
     '#default_value' => isset($form_state['values']['category']) ? $form_state['values']['category'] : 0,
   );
   $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
@@ -173,6 +173,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   foreach (array('set', 'label', 'active', 'weight') as $key) {
     $rule['#'. $key] = $form_state['values'][$key];
   }
+  $rule['#categories'] = array_map('trim', explode(',', $form_state['values']['categories']));
   $rule['#status'] = 'custom';
 
   //get an unique name
@@ -222,6 +223,13 @@ function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
       '#description' => t('Select the event on which you want to evaluate this rule.'),
     );
   };
+  $form['settings']['categories'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Categories'),
+    '#default_value' => isset($rule['#categories']) ? implode(', ', $rule['#categories']) : '',
+    '#description' => t('A comma-separated list of terms describing this rule. Example: funny, bungee jumping.'),
+    '#autocomplete_path' => RULES_ADMIN_PATH .'/autocomplete',
+  );
   $form['settings']['active'] = array(
     '#title' => t('This rule is active and should be evaluated when the associated event occurs.'),
     '#type' => 'checkbox',
@@ -274,6 +282,7 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
   foreach (array('label', 'active', 'weight', 'set') as $key) {
     $rule_ref['#'. $key] = $form_state['values'][$key];
   }
+  $rule_ref['#categories'] = array_map('trim', explode(',', $form_state['values']['categories']));
 
   $form_state['proxy']->save_changes();
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
@@ -1001,7 +1010,7 @@ function rules_admin_get_grouped_labels($elements, $key = 'module') {
 }
 
 /**
- * This is used for filtering the rules, action and conditions that should be shown.
+ * This is used for filtering the rules, sets, action and conditions that should be shown.
  * Rules and sets are filtered when they are fixed and the variable 'rules_show_fixed'
  * is  not set to on. Actions and conditions are filtered out if they are marked as
  * being hidden.
@@ -1181,19 +1190,43 @@ function theme_rules_admin_unsatisfied_elements_group($grouped_rules, $elements)
 
 /**
  * Returns an array of all existing categories
+ *
+ * @param $item_type
+ *   Either 'rules' or 'rule_sets'
+ * @return
+ *   An array of categories to use.
  */
-function rules_admin_get_categories() {
+function rules_admin_get_categories($item_type) {
   $categories = array();
-  foreach (rules_get_configured_items('rules') as $rule) {
-    if (isset($rule['#categories']) && is_array($rule['#categories']) && rules_admin_element_filter($rule)) {
-      foreach ($rule['#categories'] as $category) {
-        if (!in_array($category, $categories)) {
-          $categories[$category] = $category;
-        }
-      }
+  foreach (array_filter(rules_get_configured_items($item_type), 'rules_admin_element_filter') as $item) {
+    if ($item_type == 'rules' && isset($item['#categories']) && is_array($item['#categories'])) {
+      $categories = $categories + drupal_map_assoc($item['#categories']);
+    }
+    if ($item_type == 'rule_sets' && isset($item['categories']) && is_array($item['categories'])) {
+      $categories = $categories + drupal_map_assoc($item['categories']);
     }
   }
   return $categories;
+}
+
+/**
+ * Menu callback for the autocompletion of categories.
+ */
+function rules_admin_categories_autocomplete($string) {
+  // The user enters a comma-separated list of tags. We only autocomplete the last tag.
+  $array = drupal_explode_tags($string);
+  // Fetch last tag
+  $last_string = drupal_strtolower(trim(array_pop($array)));
+  $prefix = count($array) ? implode(', ', $array) .', ' : '';
+  $tags = rules_admin_get_categories('rules') + rules_admin_get_categories('rule_sets');
+
+  $matches = array();
+  foreach ($tags as $tag) {
+    if (strpos(drupal_strtolower($tag), $last_string) !== FALSE) {
+      $matches[$prefix . $tag] = check_plain($tag);
+    }
+  }
+  drupal_json($matches);
 }
 
 function _rules_admin_rule_get_new_unique_name() {

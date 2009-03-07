@@ -39,6 +39,12 @@ function rules_menu() {
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
+  $items[RULES_ADMIN_PATH .'/autocomplete'] = array(
+    'page callback' => 'rules_admin_categories_autocomplete',
+    'access arguments' => array('administer rules'),
+    'type' => MENU_CALLBACK,
+    'file' => 'rules.admin.inc',
+  );
   $items[RULES_ADMIN_TRIGGER_PATH] = array(
     'title' => 'Triggered rules',
     'description' => 'Customize your site by configuring rules that are evaluated on events.',
