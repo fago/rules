@@ -24,6 +24,7 @@ at least the basic concepts. You can find it here:
 
  * Copy the whole rules directory to your modules directory and
    activate the rules module.
+ * You don't need to enable the "rules simpletest" module unless you want to run the tests!
  * You can find the admin interface at /admin/rules.
 
 Notes:
