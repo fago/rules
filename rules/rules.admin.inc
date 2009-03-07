@@ -180,7 +180,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
 
   rules_item_save('rules', $rule_name, $rule);
   rules_clear_cache();
-  drupal_set_message(t("The rule %label has been added.", array('%label' => $rule['#label'])));
+  drupal_set_message(t("The rule %label has been added. You can start adding some conditions or actions now.", array('%label' => $rule['#label'])));
   $form_state['redirect'] =  RULES_ADMIN_RULE_PATH .'/'. $rule_name;
 }
 
@@ -249,6 +249,7 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $is_set = strpos($rule['#set'], 'event_') === FALSE;
   rules_admin_fix_breadcrumb($is_set, $rule['#set'], $proxy->get_set_info());
   $form = rules_admin_form_rule_settings($rule, $is_set);
+  $form['settings']['#collapsed'] = TRUE;
 
   //help
   rules_admin_element_help($form, $proxy->get_set_info());
