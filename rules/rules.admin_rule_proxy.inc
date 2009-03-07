@@ -277,6 +277,7 @@ class rules_admin_rule_proxy {
             return $this->_variables[$all];
           }
         }
+        $set['rules'][$name] += array('#actions' => array());
         foreach ($set['rules'][$name]['#actions'] as $action) {
           $info = rules_get_element_info($action);
           $this->_variables[$all] += $info['new variables'];
