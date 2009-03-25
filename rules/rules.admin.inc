@@ -785,7 +785,7 @@ function rules_admin_new_variables_form(&$form, &$form_state, $element) {
 }
 
 function rules_admin_new_variables_form_validate($form, &$form_state) {
-  $variables = $form_state['proxy']->get_defined_variables($form_state['element']['#id']);
+  $variables = $form_state['proxy']->get_defined_variables();
   foreach ($form_state['values']['new'] as $old_name => $values) {
     // If the variable name changed or we add a new element we have to ensure
     // that the variable name is not taken yet.
@@ -1282,7 +1282,7 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst =
 function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
   $names = rules_get_mapped_argument_names($element);
-  $vars = $proxy->get_available_variables();
+  $vars = $proxy->element_get_new_variables($element);
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
     if (isset($vars[$variable_name]['label'])) {
