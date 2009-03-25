@@ -234,7 +234,8 @@ class rules_admin_rule_proxy {
   /**
    * Gets info about all available variables
    * This are the arguments of the rule's set as well as further arguments that
-   * might be provided by actions of this or preceding rules and aren't set to be hidden.
+   * might be provided by actions of this or preceding rules. Variables set to be hidden
+   * are left out.
    *
    * @param $id The id of the element of the current rule until which we should get new variables.
    *   If not given all new variables of this rule will be considered.
@@ -247,21 +248,19 @@ class rules_admin_rule_proxy {
 
   /**
    * Gets info about all defined variables
-   * This are all available variables as well as variables defined after the given element.
-   * Variables defined by the element of the given id are left out.
-   *
-   * @param $id The id of the element, for which we should not add defined variables (optional)
+   * This are all available variables as well as variables defined in and after this rule.
    */
-  function get_defined_variables($id = NULL) {
+  function get_defined_variables() {
     $set_info = $this->get_set_info();
     $vars = $this->_get_available_variables(TRUE) + $set_info['arguments'];
     return array_filter($vars, 'rules_admin_element_filter');
   }
 
   /**
-   * Gets all new variables defined by actions in rules, which are evaluated until this rule.
+   * Gets new variables defined by actions in rules, which are evaluated until this rule.
    *
-   * @param $all If set to TRUE all variables defined in this rule set will returned.
+   * @param $all
+   *   If set to TRUE all variables defined by any rules in this rule set will returned.
    */
   function _get_available_variables($all = FALSE) {
     if (!isset($this->_variables[$all])) {
@@ -279,8 +278,7 @@ class rules_admin_rule_proxy {
         }
         $set['rules'][$name] += array('#actions' => array());
         foreach ($set['rules'][$name]['#actions'] as $action) {
-          $info = rules_get_element_info($action);
-          $this->_variables[$all] += $info['new variables'];
+          $this->_variables[$all] += $this->element_get_new_variables($action);
         }
       }
     }
