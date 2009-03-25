@@ -167,20 +167,14 @@ function user_rules_action_info() {
       'module' => 'User',
     ),
     'rules_action_user_create' => array(
-      'label' => t('Create User'),
+      'label' => t('Create a user'),
       'arguments' => array(
         'username' => array('type' => 'string', 'label' => t('User name')),
         'email' => array('type' => 'string', 'label' => t("User's E-mail")),
-        ),
+      ),
       'new variables' => array(
-        'user_added' => array(
-          'type' => 'user',
-          'label' => t('New user'),
-        ),
-        'user_added_pw' => array(
-          'type' => 'string',
-          'label' => t("New user's password"),
-        ),
+        'user_added' => array('type' => 'user', 'label' => t('New user')),
+        'user_added_pw' => array('type' => 'string', 'label' => t("New user's password")),
       ),
       'module' => 'User',
     ),
@@ -229,8 +223,8 @@ function rules_action_load_user($settings) {
 }
 
 /**
-  * Creates a user
-  */
+ * Action: Creates a user.
+ */
 function rules_action_user_create($user_name, $user_mail)  {
   $password = user_password();
   $user_data = array(
@@ -239,25 +233,25 @@ function rules_action_user_create($user_name, $user_mail)  {
     'status' => 1,
     'pass' => $password,
   );
-  //validate name input
+  //validate name input.
   if (user_validate_name($user_data['name'])) {
     rules_log(t('No appropriate user name. No user has been created.'));
   }
-  else if (drupal_is_denied('user', $user_data['name'])) {
+  elseif (drupal_is_denied('user', $user_data['name'])) {
     rules_log(t('The name %name has been denied access. No user has been created.', array('%name' => $user_data['name'])));
   }
-  else if ($account = user_load(array('name' => $user_data['name']))) {
+  elseif ($account = user_load(array('name' => $user_data['name']))) {
     rules_log(t('User !name already exists. No user has been created.', array('!name' => $user_data['name'])));
   }
-  //validate e-mail
-  else if ($error = user_validate_mail($user_data['mail'])) {
+  //validate e-mail.
+  elseif ($error = user_validate_mail($user_data['mail'])) {
     rules_log(t('No appropriate mail address. No user has been created.'));
   }
-  else if (drupal_is_denied('mail', $user_data['mail'])) {
+  elseif (drupal_is_denied('mail', $user_data['mail'])) {
     rules_log(t('The e-mail address %email has been denied access. No user has been created.', array('%email' => $user_data['mail'])));
   }
-  else if ($account = user_load(array('mail' => $user_data['mail']))) {
-     rules_log(t('The e-mail address %email is already registered. No user has been created.', array('%email' => $user_data['mail'])));
+  elseif ($account = user_load(array('mail' => $user_data['mail']))) {
+    rules_log(t('The e-mail address %email is already registered. No user has been created.', array('%email' => $user_data['mail'])));
   }
   else {
     $user = user_save(NULL, $user_data);
