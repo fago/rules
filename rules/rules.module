@@ -124,6 +124,7 @@ function rules_menu() {
   );
   //paths for modifing rules
   $items[RULES_ADMIN_RULE_PATH .'/%rule'] = array(
+    'title' => 'Editing rule @label', // This is here only for the pot extracter
     'title callback' => 'rules_rule_title',
     'title arguments' => array('Editing rule @label', 3),
     'type' => MENU_CALLBACK,
