@@ -16,7 +16,6 @@ function rules_condition_user_hasrole_form($settings, &$form) {
     '#description' => t('If matching against all selected roles the user must have <em>all</em> the roles checked in the list above.'),
     '#default_value' => isset($settings['operation']) ? $settings['operation'] : 'OR',
   );
-  return $form;
 }
 
 function rules_condition_user_hasrole_submit(&$settings, $form, $form_state) {
