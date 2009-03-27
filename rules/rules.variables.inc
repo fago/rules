@@ -159,7 +159,9 @@ function rules_get_execution_arguments(&$element, &$state) {
  */
 function rules_save_variables($element, $result, &$state) {
   $element_info = rules_get_element_info($element);
+  $element['#settings'] += array('#argument map' => array());
   $map = $element['#settings']['#argument map'];
+
   foreach (element_children($result) as $argument_name) {
     $map += array($argument_name => $argument_name);
 
