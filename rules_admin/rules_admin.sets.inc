@@ -20,9 +20,6 @@ function rules_admin_sets_overview() {
 
     $path = RULES_ADMIN_SET_PATH .'/'. $name;
     $ops = array();
-    if ($set_info['status'] != 'fixed') {
-      $ops[] = l(t('edit'), $path .'/edit');
-    }
     if ($set_info['status'] == 'custom') {
       $ops[] = l(t('delete'), $path .'/delete', array('query' => drupal_get_destination()));
     }
