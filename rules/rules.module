@@ -928,7 +928,7 @@ function rules_show_log() {
     $_rules_log = NULL;
 
     if ($error) {
-      rules_handle_error_msg(t('An error occured during rule evaluation. This is the evaluation log:') .' '. $msg, NULL);
+      rules_handle_error_msg('An error occured during rule evaluation. It follows the evaluation log: !log', array('!log' => $msg));
     }
     else if (variable_get('rules_debug', FALSE)) {
       drupal_set_message($msg);

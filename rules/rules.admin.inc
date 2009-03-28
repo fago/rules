@@ -105,11 +105,11 @@ function rules_admin_overview_table($params) {
       // If the set info is missing, the module providing the event is gone and the
       // rule can't be edited.
       $rows[] = array(
-      $set_info ? l($rule['#label'], $path .'/edit') : check_plain($rule['#label']),
-      $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => check_plain($rule['#set'])),
-      implode(', ', $categories),
-      rules_admin_configuration_status($rule['#status']),
-      implode(' ', $ops),
+        $set_info ? l($rule['#label'], $path .'/edit') : check_plain($rule['#label']),
+        $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => check_plain($rule['#set'])),
+        implode(', ', $categories),
+        rules_admin_configuration_status($rule['#status']),
+        implode(' ', $ops),
       );
       if (!$set_info) {
         rules_handle_error_msg('%set can\'t be found. Probably the providing module has been deactivated.', array('%set' => $rule['#set']));
