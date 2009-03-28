@@ -52,22 +52,22 @@ msgid "Filter by category"
 msgstr "Nach Kategorie filtern"
 
 #: rules/rules.admin.inc:51
-#: rules/rules.admin_sets.inc:123
+#: rules/rules_admin.sets.inc:123
 msgid "Active rules"
 msgstr "Aktive Regeln"
 
 #: rules/rules.admin.inc:54
-#: rules/rules.admin_sets.inc:126
+#: rules/rules_admin.sets.inc:126
 msgid "Inactive rules"
 msgstr "Inaktive Regeln"
 
 #: rules/rules.admin.inc:58
-#: rules/rules.admin_sets.inc:130
+#: rules/rules_admin.sets.inc:130
 msgid "Fixed rules"
 msgstr "Fixierte Regeln"
 
 #: rules/rules.admin.inc:85;200;499;558;756
-#: rules/rules.admin_sets.inc:17;147;275;343
+#: rules/rules_admin.sets.inc:17;147;275;343
 msgid "Label"
 msgstr "Bezeichnung"
 
@@ -80,28 +80,28 @@ msgid "Event"
 msgstr "Ereignis"
 
 #: rules/rules.admin.inc:85
-#: rules/rules.admin_sets.inc:17
+#: rules/rules_admin.sets.inc:17
 #: rules/modules/system.rules_forms.inc:173
 msgid "Category"
 msgstr "Kategorie"
 
 #: rules/rules.admin.inc:85
-#: rules/rules.admin_sets.inc:17
+#: rules/rules_admin.sets.inc:17
 msgid "Status"
 msgstr "Status"
 
 #: rules/rules.admin.inc:85
-#: rules/rules.admin_sets.inc:17
+#: rules/rules_admin.sets.inc:17
 msgid "Operations"
 msgstr "Vorgänge"
 
 #: rules/rules.admin.inc:96
-#: rules/rules.admin_sets.inc:29
+#: rules/rules_admin.sets.inc:29
 msgid "delete"
 msgstr "löschen"
 
 #: rules/rules.admin.inc:99
-#: rules/rules.admin_sets.inc:32
+#: rules/rules_admin.sets.inc:32
 msgid "revert"
 msgstr "zurücksetzen"
 
@@ -186,7 +186,7 @@ msgid "Adjust the weight to customize the ordering of rules."
 msgstr "Legen Sie die Gewichtung fest, um die Reihenfolge der Regeln anzupassen."
 
 #: rules/rules.admin.inc:236
-#: rules/rules.admin_sets.inc:162
+#: rules/rules_admin.sets.inc:162
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
@@ -231,12 +231,12 @@ msgid "Adjust the weight to customize the ordering of actions."
 msgstr "Passen Sie die Gewichtung an, um die Reihenfolge der Aktionen anzupassen."
 
 #: rules/rules.admin.inc:519;584;648
-#: rules/rules.admin_sets.inc:218
+#: rules/rules_admin.sets.inc:218
 msgid "Save"
 msgstr "Speichern"
 
 #: rules/rules.admin.inc:526;591;655;917
-#: rules/rules.admin_sets.inc:66
+#: rules/rules_admin.sets.inc:66
 #: rules/rules.module:68;147
 msgid "Delete"
 msgstr "Löschen"
@@ -299,12 +299,12 @@ msgid "Variable @label settings"
 msgstr "Einstellungen für Variable @label"
 
 #: rules/rules.admin.inc:762
-#: rules/rules.admin_sets.inc:289
+#: rules/rules_admin.sets.inc:289
 msgid "Machine readable variable name"
 msgstr "Maschinenlesbarer Variablen-Name"
 
 #: rules/rules.admin.inc:763
-#: rules/rules.admin_sets.inc:157
+#: rules/rules_admin.sets.inc:157
 msgid "Specify a unique name containing only alphanumeric characters, and underscores."
 msgstr "Geben Sie einen eindeutigen Namen an, der nur aus alphanumerischen Zeichen und Unterstrichen besteht."
 
@@ -330,17 +330,17 @@ msgid "Are you sure you want to delete the logical operation %label?"
 msgstr "Sind Sie sicher, dass Sie die logische Operation %label löschen möchten?"
 
 #: rules/rules.admin.inc:915
-#: rules/rules.admin_sets.inc:64
+#: rules/rules_admin.sets.inc:64
 msgid "Are you sure you want to delete %label?"
 msgstr "Sind Sie sicher, dass Sie %label löschen möchten?"
 
 #: rules/rules.admin.inc:917
-#: rules/rules.admin_sets.inc:66;91
+#: rules/rules_admin.sets.inc:66;91
 msgid "This action cannot be undone."
 msgstr "Dieser Vorgang kann nicht rückgängig gemacht werden."
 
 #: rules/rules.admin.inc:917
-#: rules/rules.admin_sets.inc:66;91
+#: rules/rules_admin.sets.inc:66;91
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -349,7 +349,7 @@ msgid "The logical operation %label has been deleted."
 msgstr "Die logische Operation %label wurde gelöscht."
 
 #: rules/rules.admin.inc:931
-#: rules/rules.admin_sets.inc:73
+#: rules/rules_admin.sets.inc:73
 msgid "%label has been deleted."
 msgstr "%label wurde gelöscht."
 
@@ -498,80 +498,80 @@ msgstr "Dieser Gruppe eine weitere Bedingung hinzufügen"
 msgid "Edit this condition group"
 msgstr "Diese Bedingungsgruppe bearbeiten"
 
-#: rules/rules.admin_sets.inc:17
+#: rules/rules_admin.sets.inc:17
 msgid "Name"
 msgstr "Name"
 
-#: rules/rules.admin_sets.inc:26
+#: rules/rules_admin.sets.inc:26
 msgid "edit"
 msgstr "bearbeiten"
 
-#: rules/rules.admin_sets.inc:46
+#: rules/rules_admin.sets.inc:46
 msgid "There are no rule sets."
 msgstr "Es gibt keine Regel-Sets."
 
-#: rules/rules.admin_sets.inc:89
+#: rules/rules_admin.sets.inc:89
 msgid "Are you sure you want to revert %label?"
 msgstr "Soll %label wirklich umgekehrt werden?"
 
-#: rules/rules.admin_sets.inc:91
+#: rules/rules_admin.sets.inc:91
 #: rules/rules.module:77
 msgid "Revert"
 msgstr "Zurücksetzen"
 
-#: rules/rules.admin_sets.inc:98
+#: rules/rules_admin.sets.inc:98
 msgid "%label has been reverted."
 msgstr "%label wurde umgekehrt."
 
-#: rules/rules.admin_sets.inc:143
+#: rules/rules_admin.sets.inc:143
 msgid "Rule set settings"
 msgstr "Regel-Set-Einstellungen"
 
-#: rules/rules.admin_sets.inc:149
+#: rules/rules_admin.sets.inc:149
 msgid "Choose an appropriate label for this rule set."
 msgstr "Wählen Sie eine passende Bezeichnung für dieses Regel-Set"
 
-#: rules/rules.admin_sets.inc:155;345
+#: rules/rules_admin.sets.inc:155;345
 msgid "Machine readable name"
 msgstr "Maschinenlesbarer Name"
 
-#: rules/rules.admin_sets.inc:174
+#: rules/rules_admin.sets.inc:174
 msgid "The rule set %label has been updated."
 msgstr "Das Regel-Set %label wurde aktualisiert."
 
-#: rules/rules.admin_sets.inc:191
+#: rules/rules_admin.sets.inc:191
 msgid "Arguments"
 msgstr "Argumente"
 
-#: rules/rules.admin_sets.inc:197
+#: rules/rules_admin.sets.inc:197
 msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr "Es können Argumente angegeben werden, die beim Aufruf an das Regel-Set übergeben werden. Für jedes Argument muss eine Bezeichnung, ein bestimmter Datentyp und ein eindeutiger maschinenlesbarer Name (der nur alphanumerische Zeichen und Unterstriche enthält) angegeben werden."
 
-#: rules/rules.admin_sets.inc:208
+#: rules/rules_admin.sets.inc:208
 msgid "More arguments"
 msgstr "Weitere Argumente"
 
-#: rules/rules.admin_sets.inc:209
+#: rules/rules_admin.sets.inc:209
 msgid "If the amount of boxes above isn't enough, click here to add more arguments."
 msgstr "Wenn oben nicht genug KÄSTCHEN sind, kann hier geklickt werden um weitere Argumente hinzuzufügen."
 
-#: rules/rules.admin_sets.inc:228;241
+#: rules/rules_admin.sets.inc:228;241
 msgid "The name may contain only digits, numbers and underscores."
 msgstr "Der Name darf nur Buchstaben, Ziffern und Unterstriche enthalten."
 
-#: rules/rules.admin_sets.inc:237
+#: rules/rules_admin.sets.inc:237
 msgid "All fields of an argument are required."
 msgstr "Alle Felder eines Arguments sind erforderlich."
 
-#: rules/rules.admin_sets.inc:255
+#: rules/rules_admin.sets.inc:255
 msgid "Each name may be used only once."
 msgstr "Jeder Name darf nur einmal verwendet werden."
 
-#: rules/rules.admin_sets.inc:283;344
+#: rules/rules_admin.sets.inc:283;344
 msgid "Data type"
 msgstr "Datentyp"
 
-#: rules/rules.admin_sets.inc:380
+#: rules/rules_admin.sets.inc:380
 msgid "The rule set %label has been added."
 msgstr "Das Regel-Set %label wurde hinzugefügt."
 

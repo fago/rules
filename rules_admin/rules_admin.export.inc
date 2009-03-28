@@ -5,7 +5,7 @@
  * @file Rules Import/Export Admin UI
  */
 
-require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
+rules_include('rules_admin');
 
 /**
  * Imports a configuration of rules, rule sets, ..
