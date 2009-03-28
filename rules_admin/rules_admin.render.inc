@@ -2,10 +2,11 @@
 // $Id$
 
 /**
- * @file
- * Contains functions, that are used for rendering rules with drupal_render()
- * If a rule is viewed, it's passed to drupal_get_form so it is rendered
+ * @file Rules Admin UI
+ *   Functions for rendering a rule.
+ *   If a rule is viewed, it's passed to drupal_get_form so it is rendered with drupal_render().
  */
+
 
 /**
  * Adds surrounding elements like headlines for conditions and actions
@@ -13,7 +14,7 @@
  */
 function theme_rules_admin_rule_render($element) {
   //add css
-  $path = drupal_get_path('module', 'rules') .'/rules_admin.css';
+  $path = drupal_get_path('module', 'rules_admin') .'/rules_admin.css';
   drupal_add_css($path, 'module', 'all', FALSE);
 
   $render['condition_headline'] = array('#weight' => -6, '#value' => '<h3 class="conditions">'. t('Conditions') .'</h3>');
@@ -91,7 +92,7 @@ function theme_action($element) {
  * Themes a icon
  */
 function theme_rules_icon($name, $title = NULL) {
-  $path = drupal_get_path('module', 'rules') .'/icons/'. $name .'.png';
+  $path = drupal_get_path('module', 'rules_admin') .'/icons/'. $name .'.png';
   return theme('image', $path, $name, $title ? $title : $name, array('class' => 'rules-icon'));
 }
 

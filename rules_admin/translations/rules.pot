@@ -4,7 +4,7 @@
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
 #  rules.admin.inc,v 1.1.2.61 2008/10/24 10:53:17 fago
-#  rules.admin_sets.inc,v 1.1.2.10 2008/09/02 14:47:52 fago
+#  rules_admin.sets.inc,v 1.1.2.10 2008/09/02 14:47:52 fago
 #  system.rules_forms.inc,v 1.1.2.7 2008/10/03 10:21:04 fago
 #  rules.module,v 1.1.2.39 2008/10/03 10:21:04 fago
 #  rules.rules_forms.inc,v 1.1.2.3 2008/08/29 12:02:55 fago
@@ -67,19 +67,19 @@ msgstr ""
 msgid "Filter by category"
 msgstr ""
 
-#: rules/rules.admin.inc:51 rules/rules.admin_sets.inc:123
+#: rules/rules.admin.inc:51 rules/rules_admin.sets.inc:123
 msgid "Active rules"
 msgstr ""
 
-#: rules/rules.admin.inc:54 rules/rules.admin_sets.inc:126
+#: rules/rules.admin.inc:54 rules/rules_admin.sets.inc:126
 msgid "Inactive rules"
 msgstr ""
 
-#: rules/rules.admin.inc:58 rules/rules.admin_sets.inc:130
+#: rules/rules.admin.inc:58 rules/rules_admin.sets.inc:130
 msgid "Fixed rules"
 msgstr ""
 
-#: rules/rules.admin.inc:85;197;461;519;717 rules/rules.admin_sets.inc:17;147;275;343
+#: rules/rules.admin.inc:85;197;461;519;717 rules/rules_admin.sets.inc:17;147;275;343
 msgid "Label"
 msgstr ""
 
@@ -91,27 +91,27 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
-#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17 rules/modules/system.rules_forms.inc:173
+#: rules/rules.admin.inc:85 rules/rules_admin.sets.inc:17 rules/modules/system.rules_forms.inc:173
 msgid "Category"
 msgstr ""
 
-#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17
+#: rules/rules.admin.inc:85 rules/rules_admin.sets.inc:17
 msgid "Status"
 msgstr ""
 
-#: rules/rules.admin.inc:85 rules/rules.admin_sets.inc:17
+#: rules/rules.admin.inc:85 rules/rules_admin.sets.inc:17
 msgid "Operations"
 msgstr ""
 
-#: rules/rules.admin.inc:96 rules/rules.admin_sets.inc:26
+#: rules/rules.admin.inc:96 rules/rules_admin.sets.inc:26
 msgid "edit"
 msgstr ""
 
-#: rules/rules.admin.inc:99 rules/rules.admin_sets.inc:29
+#: rules/rules.admin.inc:99 rules/rules_admin.sets.inc:29
 msgid "delete"
 msgstr ""
 
-#: rules/rules.admin.inc:102 rules/rules.admin_sets.inc:32
+#: rules/rules.admin.inc:102 rules/rules_admin.sets.inc:32
 msgid "revert"
 msgstr ""
 
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Adjust the weight to customize the ordering of rules."
 msgstr ""
 
-#: rules/rules.admin.inc:233 rules/rules.admin_sets.inc:162
+#: rules/rules.admin.inc:233 rules/rules_admin.sets.inc:162
 msgid "Save changes"
 msgstr ""
 
@@ -231,11 +231,11 @@ msgstr ""
 msgid "Adjust the weight to customize the ordering of actions."
 msgstr ""
 
-#: rules/rules.admin.inc:481;545;609 rules/rules.admin_sets.inc:218
+#: rules/rules.admin.inc:481;545;609 rules/rules_admin.sets.inc:218
 msgid "Save"
 msgstr ""
 
-#: rules/rules.admin.inc:488;552;616;875 rules/rules.admin_sets.inc:66 rules/rules.module:68;147
+#: rules/rules.admin.inc:488;552;616;875 rules/rules_admin.sets.inc:66 rules/rules.module:68;147
 msgid "Delete"
 msgstr ""
 
@@ -295,11 +295,11 @@ msgstr ""
 msgid "Variable @label settings"
 msgstr ""
 
-#: rules/rules.admin.inc:723 rules/rules.admin_sets.inc:289
+#: rules/rules.admin.inc:723 rules/rules_admin.sets.inc:289
 msgid "Machine readable variable name"
 msgstr ""
 
-#: rules/rules.admin.inc:724 rules/rules.admin_sets.inc:157
+#: rules/rules.admin.inc:724 rules/rules_admin.sets.inc:157
 msgid "Specify a unique name containing only alphanumeric characters, and underscores."
 msgstr ""
 
@@ -323,15 +323,15 @@ msgstr ""
 msgid "Are you sure you want to delete the logical operation %label?"
 msgstr ""
 
-#: rules/rules.admin.inc:873 rules/rules.admin_sets.inc:64
+#: rules/rules.admin.inc:873 rules/rules_admin.sets.inc:64
 msgid "Are you sure you want to delete %label?"
 msgstr ""
 
-#: rules/rules.admin.inc:875 rules/rules.admin_sets.inc:66;91
+#: rules/rules.admin.inc:875 rules/rules_admin.sets.inc:66;91
 msgid "This action cannot be undone."
 msgstr ""
 
-#: rules/rules.admin.inc:875 rules/rules.admin_sets.inc:66;91
+#: rules/rules.admin.inc:875 rules/rules_admin.sets.inc:66;91
 msgid "Cancel"
 msgstr ""
 
@@ -339,7 +339,7 @@ msgstr ""
 msgid "The logical operation %label has been deleted."
 msgstr ""
 
-#: rules/rules.admin.inc:889 rules/rules.admin_sets.inc:73
+#: rules/rules.admin.inc:889 rules/rules_admin.sets.inc:73
 msgid "%label has been deleted."
 msgstr ""
 
@@ -463,75 +463,75 @@ msgstr ""
 msgid "Edit this condition group"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:17
+#: rules/rules_admin.sets.inc:17
 msgid "Name"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:46
+#: rules/rules_admin.sets.inc:46
 msgid "There are no rule sets."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:89
+#: rules/rules_admin.sets.inc:89
 msgid "Are you sure you want to revert %label?"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:91 rules/rules.module:77
+#: rules/rules_admin.sets.inc:91 rules/rules.module:77
 msgid "Revert"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:98
+#: rules/rules_admin.sets.inc:98
 msgid "%label has been reverted."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:143
+#: rules/rules_admin.sets.inc:143
 msgid "Rule set settings"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:149
+#: rules/rules_admin.sets.inc:149
 msgid "Choose an appropriate label for this rule set."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:155;345
+#: rules/rules_admin.sets.inc:155;345
 msgid "Machine readable name"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:174
+#: rules/rules_admin.sets.inc:174
 msgid "The rule set %label has been updated."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:191
+#: rules/rules_admin.sets.inc:191
 msgid "Arguments"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:197
+#: rules/rules_admin.sets.inc:197
 msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:208
+#: rules/rules_admin.sets.inc:208
 msgid "More arguments"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:209
+#: rules/rules_admin.sets.inc:209
 msgid "If the amount of boxes above isn't enough, click here to add more arguments."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:228;241
+#: rules/rules_admin.sets.inc:228;241
 msgid "The name may contain only digits, numbers and underscores."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:237
+#: rules/rules_admin.sets.inc:237
 msgid "All fields of an argument are required."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:255
+#: rules/rules_admin.sets.inc:255
 msgid "Each name may be used only once."
 msgstr ""
 
-#: rules/rules.admin_sets.inc:283;344
+#: rules/rules_admin.sets.inc:283;344
 msgid "Data type"
 msgstr ""
 
-#: rules/rules.admin_sets.inc:380
+#: rules/rules_admin.sets.inc:380
 msgid "The rule set %label has been added."
 msgstr ""
 

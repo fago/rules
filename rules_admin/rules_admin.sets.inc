@@ -5,9 +5,7 @@
  * @file Rules Sets Admin UI
  */
 
-require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
-
-
+rules_include('rules_admin');
 
 function rules_admin_sets_overview() {
   $sets = rules_get_configured_items('rule_sets');
@@ -135,7 +133,7 @@ function rules_admin_form_edit_rule_set(&$form_state, $set_info) {
 
 
 /**
- * Returns the form for the settings of a rule
+ * Returns the form for the settings of a rule set
  */
 function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
   $form['settings'] = array(
@@ -315,7 +313,6 @@ function rules_admin_form_js($callback) {
   );
   // Rebuild the form.
   $form = form_builder($_POST['form_id'], $form, $form_state);
-
   // Render the new output.
   print drupal_to_js(array('data' => drupal_render($render), 'status' => TRUE));
   exit();
@@ -336,7 +333,7 @@ function &rules_admin_form_add_rule_set_add_arguments(&$form) {
  * Themes the rules set arguments adding form
  */
 function theme_rules_admin_form_arguments($form) {
-  drupal_add_js(drupal_get_path('module', 'rules'). '/rules.admin.js', 'module');
+  drupal_add_js(drupal_get_path('module', 'rules_admin'). '/rules_admin.js', 'module');
 
   $rows = array();
   $headers = array(

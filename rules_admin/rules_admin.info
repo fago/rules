@@ -1,0 +1,5 @@
+; $Id$
+name = Rules Administration UI
+description = Provides the administration UI for rules.
+package = Rules
+core = 6.x

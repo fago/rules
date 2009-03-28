@@ -4,7 +4,7 @@
 # Copyright 2008 PineRay <matsudaterutaka@gmail.com>
 # Generated from files:
 #  rules.admin.inc,v 1.1.2.61 2008/10/24 10:53:17 fago
-#  rules.admin_sets.inc,v 1.1.2.10 2008/09/02 14:47:52 fago
+#  rules_admin.sets.inc,v 1.1.2.10 2008/09/02 14:47:52 fago
 #  system.rules_forms.inc,v 1.1.2.7 2008/10/03 10:21:04 fago
 #  rules.module,v 1.1.2.39 2008/10/03 10:21:04 fago
 #  rules.rules_forms.inc,v 1.1.2.3 2008/08/29 12:02:55 fago
@@ -60,22 +60,22 @@ msgid "Filter by category"
 msgstr "カテゴリで絞り込み"
 
 #: rules.admin.inc:51
-#: rules.admin_sets.inc:123
+#: rules_admin.sets.inc:123
 msgid "Active rules"
 msgstr "動作中のルール"
 
 #: rules.admin.inc:54
-#: rules.admin_sets.inc:126
+#: rules_admin.sets.inc:126
 msgid "Inactive rules"
 msgstr "動作していないルール"
 
 #: rules.admin.inc:58
-#: rules.admin_sets.inc:130
+#: rules_admin.sets.inc:130
 msgid "Fixed rules"
 msgstr "固定のルール"
 
 #: rules.admin.inc:85;197;461;519;717
-#: rules.admin_sets.inc:17;147;275;343
+#: rules_admin.sets.inc:17;147;275;343
 msgid "Label"
 msgstr "ラベル"
 
@@ -88,33 +88,33 @@ msgid "Event"
 msgstr "イベント"
 
 #: rules.admin.inc:85
-#: rules.admin_sets.inc:17
+#: rules_admin.sets.inc:17
 #: modules/system.rules_forms.inc:173
 msgid "Category"
 msgstr "カテゴリ"
 
 #: rules.admin.inc:85
-#: rules.admin_sets.inc:17
+#: rules_admin.sets.inc:17
 msgid "Status"
 msgstr "状態"
 
 #: rules.admin.inc:85
-#: rules.admin_sets.inc:17
+#: rules_admin.sets.inc:17
 msgid "Operations"
 msgstr "操作"
 
 #: rules.admin.inc:96
-#: rules.admin_sets.inc:26
+#: rules_admin.sets.inc:26
 msgid "edit"
 msgstr "編集"
 
 #: rules.admin.inc:99
-#: rules.admin_sets.inc:29
+#: rules_admin.sets.inc:29
 msgid "delete"
 msgstr "削除"
 
 #: rules.admin.inc:102
-#: rules.admin_sets.inc:32
+#: rules_admin.sets.inc:32
 msgid "revert"
 msgstr "戻す"
 
@@ -199,7 +199,7 @@ msgid "Adjust the weight to customize the ordering of rules."
 msgstr "重み付けを変更することで、ルールの並び順を調整できます。"
 
 #: rules.admin.inc:233
-#: rules.admin_sets.inc:162
+#: rules_admin.sets.inc:162
 msgid "Save changes"
 msgstr "変更を保存"
 
@@ -236,12 +236,12 @@ msgid "Adjust the weight to customize the ordering of actions."
 msgstr "重み付けを変更することで、アクションの並び順を調整できます。"
 
 #: rules.admin.inc:481;545;609
-#: rules.admin_sets.inc:218
+#: rules_admin.sets.inc:218
 msgid "Save"
 msgstr "保存"
 
 #: rules.admin.inc:488;552;616;875
-#: rules.admin_sets.inc:66
+#: rules_admin.sets.inc:66
 #: rules.module:68;147
 msgid "Delete"
 msgstr "削除"
@@ -304,12 +304,12 @@ msgid "Variable @label settings"
 msgstr "変数 @label の設定"
 
 #: rules.admin.inc:723
-#: rules.admin_sets.inc:289
+#: rules_admin.sets.inc:289
 msgid "Machine readable variable name"
 msgstr "機械で判読可能な変数名"
 
 #: rules.admin.inc:724
-#: rules.admin_sets.inc:157
+#: rules_admin.sets.inc:157
 msgid "Specify a unique name containing only alphanumeric characters, and underscores."
 msgstr "英数字と下線(_)だけで固有の名前を指定してください。"
 
@@ -335,17 +335,17 @@ msgid "Are you sure you want to delete the logical operation %label?"
 msgstr "論理演算 %label を本当に削除しますか？"
 
 #: rules.admin.inc:873
-#: rules.admin_sets.inc:64
+#: rules_admin.sets.inc:64
 msgid "Are you sure you want to delete %label?"
 msgstr "%label を本当に削除しますか？"
 
 #: rules.admin.inc:875
-#: rules.admin_sets.inc:66;91
+#: rules_admin.sets.inc:66;91
 msgid "This action cannot be undone."
 msgstr "この操作は元に戻すことができませんので、十分に注意して実行してください。"
 
 #: rules.admin.inc:875
-#: rules.admin_sets.inc:66;91
+#: rules_admin.sets.inc:66;91
 msgid "Cancel"
 msgstr "キャンセル"
 
@@ -354,7 +354,7 @@ msgid "The logical operation %label has been deleted."
 msgstr "論理演算 %label を削除しました。"
 
 #: rules.admin.inc:889
-#: rules.admin_sets.inc:73
+#: rules_admin.sets.inc:73
 msgid "%label has been deleted."
 msgstr "%label を削除しました。"
 
@@ -481,76 +481,76 @@ msgstr "このグループに条件を追加"
 msgid "Edit this condition group"
 msgstr "この条件グループを編集"
 
-#: rules.admin_sets.inc:17
+#: rules_admin.sets.inc:17
 msgid "Name"
 msgstr "名前"
 
-#: rules.admin_sets.inc:46
+#: rules_admin.sets.inc:46
 msgid "There are no rule sets."
 msgstr "ルールセットがありません。"
 
-#: rules.admin_sets.inc:89
+#: rules_admin.sets.inc:89
 msgid "Are you sure you want to revert %label?"
 msgstr "%label を本当に元に戻しますか？"
 
-#: rules.admin_sets.inc:91
+#: rules_admin.sets.inc:91
 #: rules.module:77
 msgid "Revert"
 msgstr "戻す"
 
-#: rules.admin_sets.inc:98
+#: rules_admin.sets.inc:98
 msgid "%label has been reverted."
 msgstr "%label を元に戻しました。"
 
-#: rules.admin_sets.inc:143
+#: rules_admin.sets.inc:143
 msgid "Rule set settings"
 msgstr "ルールセットの設定"
 
-#: rules.admin_sets.inc:149
+#: rules_admin.sets.inc:149
 msgid "Choose an appropriate label for this rule set."
 msgstr "このルールセットに適切な題名を選択してください。"
 
-#: rules.admin_sets.inc:155;345
+#: rules_admin.sets.inc:155;345
 msgid "Machine readable name"
 msgstr "機械で判読可能な名前"
 
-#: rules.admin_sets.inc:174
+#: rules_admin.sets.inc:174
 msgid "The rule set %label has been updated."
 msgstr "ルールセット %label を更新しました。"
 
-#: rules.admin_sets.inc:191
+#: rules_admin.sets.inc:191
 msgid "Arguments"
 msgstr "引数"
 
-#: rules.admin_sets.inc:197
+#: rules_admin.sets.inc:197
 msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr "ルールセットが実行される際に渡される引数を指定することができます。題名とデータ型、そして英数字と下線(_)だけを含む機械で判読可能な固有の名前を各引数に設定できます。"
 
-#: rules.admin_sets.inc:208
+#: rules_admin.sets.inc:208
 msgid "More arguments"
 msgstr "引数の追加"
 
-#: rules.admin_sets.inc:209
+#: rules_admin.sets.inc:209
 msgid "If the amount of boxes above isn't enough, click here to add more arguments."
 msgstr "ボックスの数が足りなければ、こちらをクリックして引数をさらに追加します。"
 
-#: rules.admin_sets.inc:228;241
+#: rules_admin.sets.inc:228;241
 msgid "The name may contain only digits, numbers and underscores."
 msgstr "名前には小文字の英数字と下線(_)だけを含ませることができます。"
 
-#: rules.admin_sets.inc:237
+#: rules_admin.sets.inc:237
 msgid "All fields of an argument are required."
 msgstr "引数に関するフィールドはすべて必須項目です。"
 
-#: rules.admin_sets.inc:255
+#: rules_admin.sets.inc:255
 msgid "Each name may be used only once."
 msgstr "名前はそれぞれ別個のものを指定してください。"
 
-#: rules.admin_sets.inc:283;344
+#: rules_admin.sets.inc:283;344
 msgid "Data type"
 msgstr "データ型"
 
-#: rules.admin_sets.inc:380
+#: rules_admin.sets.inc:380
 msgid "The rule set %label has been added."
 msgstr "ルールセット %label を追加しました。"
 

@@ -67,9 +67,9 @@ function rules_schema() {
  */
 function rules_update_6001() {
   drupal_load('module', 'rules');
-  require_once drupal_get_path('module', 'rules') . '/rules.admin.inc';
   rules_include('rules');
   rules_include('rules_forms');
+  rules_include('rules_admin');
   $ret = array();
 
   if (db_table_exists('workflow_ng_cfgs')) {
@@ -148,6 +148,19 @@ function _rules_element_flip_argument_map(&$element) {
     $element['#settings']['#argument map'] = array_flip($element['#settings']['#argument map']);
   }
 }
+
+/**
+ * Enable the new separated Admin UI module
+ */
+function rules_update_6004() {
+  drupal_install_modules(array('rules_admin'));
+  menu_rebuild();
+  drupal_clear_css_cache();
+  drupal_clear_js_cache();
+  drupal_set_message(t('The now separated rules administration UI module has been enabled.'));
+  return array();
+}
+
 
 
 /**
