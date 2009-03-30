@@ -263,7 +263,7 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst =
 function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
   $names = rules_get_mapped_argument_names($element);
-  $vars = $proxy->element_get_new_variables($element);
+  $vars = $proxy->get_available_variables($element['#id']);
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
     if (isset($vars[$variable_name]['label'])) {
