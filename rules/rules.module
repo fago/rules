@@ -602,9 +602,10 @@ function rules_configure() {
  *
  * @param $name The name of condition to create, as specified at hook_condition_info()
  * @param $params An optional array of properties to add, e.g. #settings
+ * @param $label An optional label for the condition
  */
-function rules_use_condition($name, $params = array()) {
-  return rules_use_element('condition', array('#name' => $name)) + $params;
+function rules_use_condition($name, $params = array(), $label = NULL) {
+  return _rules_element_set_label(rules_use_element('condition', array('#name' => $name) + $params), $label);
 }
 
 /**
@@ -612,9 +613,16 @@ function rules_use_condition($name, $params = array()) {
  *
  * @param $name The name of action to create, as specified at hook_action_info()
  * @param $params An optional array of properties to add, e.g. #settings
+ * @param $label An optional label for the action
  */
-function rules_use_action($name, $params = array()) {
-  return rules_use_element('action', array('#name' => $name)) + $params;
+function rules_use_action($name, $params = array(), $label = NULL) {
+  return _rules_element_set_label(rules_use_element('action', array('#name' => $name) + $params), $label);
+}
+
+function _rules_element_set_label($element, $label = NULL) {
+  $info = isset($label) ? array('label' => $label) : array();
+  $element['#info'] = $info + $element['#info'];
+  return $element;
 }
 
 /**
@@ -889,7 +897,7 @@ function rules_include($type = 'rules') {
     if ($type == 'rules_admin') {
       $files = array(drupal_get_path('module', 'rules_admin') .'/rules_admin.inc');
     }
-    else if ($cache = cache_get('include_'. $type, 'cache_rules')) {
+    elseif ($cache = cache_get('include_'. $type, 'cache_rules')) {
       $files = $cache->data;
     }
     else {
