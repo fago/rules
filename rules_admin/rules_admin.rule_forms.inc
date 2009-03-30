@@ -170,8 +170,13 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $form = rules_admin_form_rule_settings($rule, $is_set);
   $form['settings']['#collapsed'] = TRUE;
 
-  //help
+  // Add help
   rules_admin_element_help($form, $proxy->get_set_info());
+
+  // Show a warning when editing custom rules form other modules
+  if ($rule['#status'] == 'custom' && strpos($proxy->get_rule_name(), 'rules_') !== 0) {
+    drupal_set_message(t('<em>Warning</em>: This rule has been provided by another module. <br />Be aware that any changes made through this interface might be overwritten once the providing module updates the rule.'));
+  }
 
   $form['elements'] = array(
     '#type' => 'fieldset',
