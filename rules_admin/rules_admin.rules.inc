@@ -227,7 +227,7 @@ function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
   $form['settings']['weight'] = array(
     '#title' => t('Weight'),
     '#type' => 'weight',
-    '#description' => t('Adjust the weight to customize the ordering of rules.'),
+    '#description' => t('Adjust the weight to customize the evaluation order of rules.'),
     '#default_value' => isset($rule['#weight']) ? $rule['#weight'] : 0,
   );
   $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
