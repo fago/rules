@@ -604,8 +604,7 @@ function rules_configure() {
  * @param $params An optional array of properties to add, e.g. #settings
  */
 function rules_use_condition($name, $params = array()) {
-  $params += array('#name' => $name);
-  return rules_use_element('condition', $params);
+  return rules_use_element('condition', array('#name' => $name)) + $params;
 }
 
 /**
@@ -615,12 +614,11 @@ function rules_use_condition($name, $params = array()) {
  * @param $params An optional array of properties to add, e.g. #settings
  */
 function rules_use_action($name, $params = array()) {
-  $params += array('#name' => $name);
-  return rules_use_element('action', $params);
+  return rules_use_element('action', array('#name' => $name)) + $params;
 }
 
 /**
- * Configures an element of type $type with the further properties $params for using in a configuration
+ * Configures an element of type $type with the further properties $params
  */
 function rules_use_element($type, $params = array()) {
   $element = array('#type' => $type);
@@ -757,7 +755,7 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
 }
 
 /**
- * Deletes the given item from the database
+ * Saves the given item to the database
  */
 function rules_item_save($item_type, $name, $item) {
   if ($info = rules_get_items($item_type)) {
