@@ -33,7 +33,9 @@ function rules_get_conditions($key = 'all') {
  * Returns info about all defined items
  */
 function rules_get_items($key = 'all') {
-  return rules_gather_data('rules_item_info', $key);
+  // During module installation, the hook implementation of rules is not invoked,
+  // as the module is not yet active. So we force it here to always return our own item infos.
+  return !module_exists('rules') ? rules_rules_item_info() : rules_gather_data('rules_item_info', $key);
 }
 
 /**
