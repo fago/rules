@@ -8,6 +8,10 @@
  * so users can delete them.
  */
 function rules_admin_install() {
+  // Make sure the rules module is loaded. Important when both modules are installed at
+  // the same time.
+  drupal_load('module', 'rules');
+  
   _rules_admin_install_example_rules();
   _rules_admin_install_example_rule_sets();
   rules_clear_cache();

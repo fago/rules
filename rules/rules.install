@@ -27,11 +27,9 @@ function rules_uninstall() {
  */
 function rules_schema() {
   drupal_load('module', 'rules');
-  // We define a table for each item type.
 
-  // When the module is installed, the hook implementation of rules is not invoked,
-  // as the module is not yet active. So we manually retrieve our item types then.
-  $items = !module_exists('rules') ? rules_rules_item_info() : rules_get_items();
+  // We define a table for each item type.
+  $items = rules_get_items();
 
   foreach ($items as $name => $info) {
     $schema[$info['db_table']] = array(
