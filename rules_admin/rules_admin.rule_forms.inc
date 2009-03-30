@@ -55,65 +55,6 @@ function rules_admin_form_overview_submit($form_id, &$form_state) {
 }
 
 /**
- * Returns a table of rules filtered by the given parameters
- *
- * Supported parameters: fixed, category, set, active.
- * Category and set may be set to NULL to hide their columns.
- */
-function rules_admin_overview_table($params) {
-  $rules = rules_get_configured_items('rules');
-  _rules_element_defaults($rules);
-  rules_sort_children($rules);
-
-  //set parameter defaults
-  $params += array('category' => NULL, 'set' => NULL, 'active' => TRUE, 'fixed' => FALSE);
-  extract($params);
-
-  $is_set = $set && strpos($set, 'event_') === FALSE;
-
-  $header = array(t('Label'), $is_set ? t('Set') : t('Event'), t('Category'), t('Status'), t('Operations'));
-  $rows = array();
-
-  foreach (element_children($rules) as $name) {
-    $rule = $rules[$name];
-    _rules_element_defaults($rule);
-
-    if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {
-      $path = RULES_ADMIN_RULE_PATH .'/'. $name;
-      $ops = array();
-      if ($rule['#status'] == 'custom') {
-        $ops[] = l(t('delete'), $path .'/delete', array('query' => drupal_get_destination()));
-      }
-      else if ($rule['#status'] == 'altered') {
-        $ops[] = l(t('revert'), $path .'/revert', array('query' => drupal_get_destination()));
-      }
-      $ops[] = l(t('clone'), $path .'/clone', array(), drupal_get_destination());
-      $categories = array_map('check_plain', $rule['#categories']);
-
-      $set_info = rules_get_rule_sets($rule['#set']);
-      // If the set info is missing, the module providing the event is gone and the
-      // rule can't be edited.
-      $rows[] = array(
-        $set_info ? l($rule['#label'], $path .'/edit') : check_plain($rule['#label']),
-        $set_info ? check_plain(rules_get_element_label($set_info)) : array('class' => 'error', 'data' => check_plain($rule['#set'])),
-        implode(', ', $categories),
-        rules_admin_configuration_status($rule['#status']),
-        implode(' ', $ops),
-      );
-      if (!$set_info) {
-        rules_handle_error_msg('%set can\'t be found. Probably the providing module has been deactivated.', array('%set' => $rule['#set']));
-      }
-    }
-  }
-
-  if (count($rows)) {
-    return array('#value' => theme('table', $header, $rows, array('class' => 'rules-rule-configurations')));
-  }
-
-  return array('#value' => '<p>'. t('None') .'</p>');
-}
-
-/**
  * Check to see if the token module is installed, and if not put up
  * a message.
  *
@@ -126,25 +67,6 @@ function rules_admin_check_token() {
   }
 }
 
-/**
- * Returns the status of the configuration as html.
- */
-function rules_admin_configuration_status($status) {
-  if ($status == 'altered') {
-    $help = t('This rule has been provided by a module, but has been modified.');
-    return '<span title="'. $help .'">'. t('Modified'). '</span>';
-  }
-  else if ($status == 'fixed') {
-    $help = t("This rule has been provided by a module and can't be customized.");
-    return '<span title="'. $help .'">'. t('Fixed') .'</span>';
-  }
-  else if ($status == 'custom') {
-    $help = t('A custom defined rule.');
-    return '<span title="'. $help .'">'. t('Custom'). '</span>';
-  }
-  $help = t('This rule has been provided by a module.');
-  return '<span title="'. $help .'">'. t('Default') .'</span>';
-}
 
 /**
  * Returns the add rule form
@@ -448,9 +370,9 @@ function rules_admin_form_pack_storage($form, &$form_state) {
   $form['#after_build'][] = 'rules_after_build_include_files';
 
   // Register an after build callback that unpacks the storage.
-  // However let the rules_admin.rules.inc file be included previously, so that
+  // However let the rules_admin.rule_forms.inc file be included previously, so that
   // #ahah callbacks from other modules keep working.
-  $form['#includes'][] = "./". drupal_get_path('module', 'rules_admin') ."/rules_admin.rules.inc";
+  $form['#includes'][] = "./". drupal_get_path('module', 'rules_admin') ."/rules_admin.rule_forms.inc";
   $form['#after_build'][] = 'rules_admin_form_unpack_storage';
   return $form;
 }
@@ -1012,7 +934,6 @@ function rules_admin_categories_autocomplete($string) {
  */
 function rules_admin_save_element_label($form, &$form_state, &$element) {
   $info = _rules_admin_get_label($form_state, rules_get_element_info($element), $element, $form_state['values']['label'], TRUE);
-  // This makes sure we don't save the applied defaults
   $element['#info'] = $info + $element['#info'];
 }
 

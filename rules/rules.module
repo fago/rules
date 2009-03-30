@@ -620,8 +620,10 @@ function rules_use_action($name, $params = array(), $label = NULL) {
 }
 
 function _rules_element_set_label($element, $label = NULL) {
-  $info = isset($label) ? array('label' => $label) : array();
-  $element['#info'] = $info + $element['#info'];
+  if (!empty($element['#info'])) {
+    $info = isset($label) ? array('label' => $label) : array();
+    $element['#info'] = $info + $element['#info'];
+  }
   return $element;
 }
 
