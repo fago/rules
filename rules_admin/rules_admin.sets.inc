@@ -32,7 +32,7 @@ function rules_admin_sets_overview() {
       l($set_info['label'], $path .'/edit'),
       check_plain($name),
       implode(', ', $categories),
-      rules_admin_configuration_status($set_info['status']),
+      theme('rules_admin_configuration_status', $set_info['status']),
       implode(' ', $ops),
     );
   }

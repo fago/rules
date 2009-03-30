@@ -44,7 +44,7 @@ function rules_admin_menu() {
     'page callback' => 'rules_admin_categories_autocomplete',
     'access arguments' => array('administer rules'),
     'type' => MENU_CALLBACK,
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_TRIGGER_PATH] = array(
     'title' => 'Triggered rules',
@@ -54,7 +54,7 @@ function rules_admin_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => -2,
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_TRIGGER_PATH .'/list'] = array(
     'title' => 'Overview',
@@ -67,7 +67,7 @@ function rules_admin_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_add_rule', FALSE),
     'access arguments' => array('administer rules'),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
 
   foreach (rules_get_items() as $item_type => $info) {
@@ -119,7 +119,7 @@ function rules_admin_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_settings'),
     'access arguments' => array('administer rules'),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
     'weight' => 7,
     'type' => MENU_NORMAL_ITEM,
   );
@@ -132,7 +132,7 @@ function rules_admin_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_edit_rule', 3),
     'access arguments' => array('administer rules'),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/add'] = array(
     'title' => 'Add',
@@ -140,7 +140,7 @@ function rules_admin_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_add', 3),
     'access arguments' => array('administer rules'),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/edit/%rule_element'] = array(
     'title' => 'Edit',
@@ -149,7 +149,7 @@ function rules_admin_menu() {
     'page arguments' => array('rules_admin_form_edit', 3, 5),
     'access arguments' => array('administer rules'),
     'load arguments' => array(3),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/delete/%rule_element'] = array(
     'title' => 'Delete',
@@ -158,7 +158,7 @@ function rules_admin_menu() {
     'page arguments' => array('rules_admin_form_delete', 3, 5),
     'access arguments' => array('administer rules'),
     'load arguments' => array(3),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_RULE_PATH .'/%rule/clone'] = array(
     'title' => 'Clone rule',
@@ -166,7 +166,7 @@ function rules_admin_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_clone', 3),
     'access arguments' => array('administer rules'),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   $items[RULES_ADMIN_SET_PATH] = array(
     'title' => 'Rule sets',
@@ -221,7 +221,7 @@ function rules_admin_menu() {
     'page arguments' => array('rules_admin_form_add_rule', 3),
     'access arguments' => array('administer rules'),
     'load arguments' => array(2),
-    'file' => 'rules_admin.rules.inc',
+    'file' => 'rules_admin.rule_forms.inc',
   );
   return $items;
 }
@@ -290,9 +290,19 @@ function rules_admin_theme() {
   );
   $items['rules_admin_unsatisfied_elements'] = array(
     'arguments' => array('element' => NULL),
+    'file' => 'rules_admin.inc'
   );
   $items['rules_admin_unsatisfied_elements_group'] = array(
     'arguments' => array('grouped_rules' => NULL, 'elements' => array()),
+    'file' => 'rules_admin.inc'
+  );
+  $items['rules_admin_unsatisfied_elements_group'] = array(
+    'arguments' => array('grouped_rules' => NULL, 'elements' => array()),
+    'file' => 'rules_admin.inc'
+  );
+  $items['rules_admin_configuration_status'] = array(
+    'arguments' => array('status' => NULL),
+    'file' => 'rules_admin.inc'
   );
   return $items;
 }
