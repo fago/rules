@@ -165,7 +165,7 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
 
-  $is_set = strpos($rule['#set'], 'event_') === FALSE;
+  $is_set = strpos($rule['#set'], 'event_') !== 0;
   rules_admin_fix_breadcrumb($is_set, $rule['#set'], $proxy->get_set_info());
   $form = rules_admin_form_rule_settings($rule, $is_set);
   $form['settings']['#collapsed'] = TRUE;
