@@ -84,7 +84,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   foreach (array('set', 'label', 'active', 'weight') as $key) {
     $rule['#'. $key] = $form_state['values'][$key];
   }
-  $rule['#categories'] = array_map('trim', explode(',', $form_state['values']['categories']));
+  $rule['#categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
   $rule['#status'] = 'custom';
 
   //get an unique name
@@ -198,7 +198,7 @@ function rules_admin_form_edit_rule_submit($form, &$form_state) {
   foreach (array('label', 'active', 'weight', 'set') as $key) {
     $rule_ref['#'. $key] = $form_state['values'][$key];
   }
-  $rule_ref['#categories'] = array_map('trim', explode(',', $form_state['values']['categories']));
+  $rule_ref['#categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
 
   $form_state['proxy']->save_changes();
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
@@ -919,7 +919,7 @@ function theme_rules_admin_unsatisfied_elements_group($grouped_rules, $elements)
  */
 function rules_admin_categories_autocomplete($string) {
   // The user enters a comma-separated list of tags. We only autocomplete the last tag.
-  $array = drupal_explode_tags($string);
+  $array = array_filter(drupal_explode_tags($string));
   // Fetch last tag
   $last_string = drupal_strtolower(trim(array_pop($array)));
   $prefix = count($array) ? implode(', ', $array) .', ' : '';
@@ -927,7 +927,7 @@ function rules_admin_categories_autocomplete($string) {
 
   $matches = array();
   foreach ($tags as $tag) {
-    if (strpos(drupal_strtolower($tag), $last_string) !== FALSE) {
+    if ($last_string && strpos(drupal_strtolower($tag), $last_string) !== FALSE) {
       $matches[$prefix . $tag] = check_plain($tag);
     }
   }

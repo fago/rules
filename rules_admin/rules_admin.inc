@@ -213,7 +213,7 @@ function rules_admin_get_categories($item_type) {
       $categories = $categories + drupal_map_assoc($item['categories']);
     }
   }
-  return $categories;
+  return array_filter($categories);
 }
 
 /**
