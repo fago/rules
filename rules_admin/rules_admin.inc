@@ -296,7 +296,7 @@ function rules_admin_overview_table($params) {
     $rule = $rules[$name];
     _rules_element_defaults($rule);
 
-    if ((!$category || in_array($category, $rule['#categories'])) && (!$set || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {
+    if ((!$category || in_array($category, $rule['#categories'])) && (!$set && strpos($rule['#set'], 'event_') === 0 || $rule['#set'] == $set) && $rule['#active'] == $active && ($rule['#status'] == 'fixed') == $fixed) {
       $path = RULES_ADMIN_RULE_PATH .'/'. $name;
       $ops = array();
       if ($rule['#status'] == 'custom') {
