@@ -281,7 +281,7 @@ function rules_admin_form_add_action(&$form_state, &$element) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#weight' => 10,
-    '#value' => t('Forward'),
+    '#value' => t('Next'),
     '#submit' => array('rules_admin_form_add_submit'),
   );
   return $form;
@@ -321,7 +321,7 @@ function rules_admin_form_add_condition(&$form_state, &$element, $parent) {
     $form['submit'] = array(
       '#type' => 'submit',
       '#weight' => 10,
-      '#value' => t('Forward'),
+      '#value' => t('Next'),
       '#submit' => array('rules_admin_form_add_submit'),
     );
     return $form;
