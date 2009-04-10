@@ -14,7 +14,6 @@ function user_rules_event_info() {
       'label' => t('User account has been created'),
       'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('registered user')),
-      'redirect' => TRUE,
     ),
     'user_update' => array(
       'label' => t('User account details have been updated'),
@@ -22,7 +21,6 @@ function user_rules_event_info() {
       'arguments' => rules_events_hook_user_arguments(t('updated user')) + array(
         'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user')),
       ),
-      'redirect' => TRUE,
     ),
     'user_view' => array(
       'label' => t('User page has been viewed'),
@@ -34,7 +32,6 @@ function user_rules_event_info() {
       'label' => t('User has been deleted'),
       'module' => 'User',
       'arguments' => rules_events_hook_user_arguments(t('deleted user')),
-      'redirect' => TRUE,
     ),
     'user_login' => array(
       'label' => t('User has logged in'),
@@ -42,7 +39,6 @@ function user_rules_event_info() {
       'arguments' => array(
         'account' => array('type' => 'user', 'label' => t('logged in user')),
       ),
-      'redirect' => TRUE,
     ),
     'user_logout' => array(
       'label' => t('User has logged out'),
@@ -50,7 +46,6 @@ function user_rules_event_info() {
       'arguments' => array(
         'account' => array('type' => 'user', 'label' => t('logged out user')),
       ),
-      'redirect' => TRUE,
     ),
   );
 }

@@ -112,9 +112,8 @@ function rules_action_mail_to_users_of_role_submit(&$settings, $form, $form_stat
  */
 function rules_action_drupal_goto_form($settings = array(), &$form, $form_state) {
   $settings += array('path' => '', 'query' => '', 'fragment' => '', 'force' => 0);
-  // Enable override by default, when the event states that there happens a redirect.
-  $set_info = $form_state['proxy']->get_set_info();
-  $settings += array('override' => !empty($set_info['redirect']));
+  // For settings backward compatibility respect the override setting as default
+  $settings += array('immediate' => isset($settings['override']) && !$settings['override']);
 
   $form['settings']['path'] = array(
     '#type' => 'textfield',
@@ -147,11 +146,11 @@ function rules_action_drupal_goto_form($settings = array(), &$form, $form_state)
     '#default_value' => $settings['force'],
     '#weight' => 7,
   );
-  $form['settings']['override'] = array(
+  $form['settings']['immediate'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Override another path redirect by setting the destination parameter'),
-    '#description' => t("If checked, the path redirect isn't initiated by this action, but the destination parameter gets set. So if something else redirects, the redirect will use the configured path."),
-    '#default_value' => $settings['override'],
+    '#title' => t('Immediately issue the page redirect'),
+    '#description' => t("Use this with <em>caution</em>! If checked, the path redirect is issued immediately, so the normal execution flow is interrupted."),
+    '#default_value' => $settings['immediate'],
     '#weight' => 8,
   );
 }

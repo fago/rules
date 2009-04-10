@@ -15,19 +15,16 @@ function comment_rules_event_info() {
       'label' => t('After saving a new comment'),
       'module' => 'Comment',
       'arguments' => rules_events_hook_comment_arguments(t('created comment')),
-      'redirect' => TRUE,
     ),
     'comment_update' => array(
       'label' => t('After saving an updated comment'),
       'module' => 'Comment',
       'arguments' => rules_events_hook_comment_arguments(t('updated comment')),
-      'redirect' => TRUE,
     ),
     'comment_delete' => array(
       'label' => t('After deleting a comment'),
       'module' => 'Comment',
       'arguments' => rules_events_hook_comment_arguments(t('deleted comment')),
-      'redirect' => TRUE,
     ),
     'comment_view' => array(
       'label' => t('Comment is being viewed'),
@@ -38,13 +35,11 @@ function comment_rules_event_info() {
       'label' => t('After publishing a comment'),
       'module' => 'Comment',
       'arguments' => rules_events_hook_comment_arguments(t('published comment')),
-      'redirect' => TRUE,
     ),
     'comment_unpublish' => array(
       'label' => t('After unpublishing a comment'),
       'module' => 'Comment',
       'arguments' => rules_events_hook_comment_arguments(t('unpublished comment')),
-      'redirect' => TRUE,
     ),
   );
 }
