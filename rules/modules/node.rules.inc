@@ -14,19 +14,16 @@ function node_rules_event_info() {
       'label' => t('After saving new content'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('created content'), t("content's author")),
-      'redirect' => TRUE,
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('updated content'), t("content's author"), TRUE),
-      'redirect' => TRUE,
     ),
     'node_presave' => array(
       'label' => t('Content is going to be saved'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('saved content'), t("content's author"), TRUE),
-      'redirect' => TRUE,
     ),
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
@@ -41,7 +38,6 @@ function node_rules_event_info() {
       'label' => t('After deleting content'),
       'module' => 'Node',
       'arguments' => rules_events_node_arguments(t('deleted content'), t('content author')),
-      'redirect' => TRUE,
     ),
   );
   // Specify that on presave the node is saved anyway.

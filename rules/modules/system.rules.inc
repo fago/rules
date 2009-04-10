@@ -170,6 +170,8 @@ function rules_action_mail_to_users_of_role($settings) {
  * Action Implementation: Page redirect.
  */
 function rules_action_drupal_goto($settings) {
+  // For settings backward compatibility respect the override setting as default
+  $settings += array('immediate' => isset($settings['override']) && !$settings['override']);
   extract( $settings );
 
   if ($force) {
@@ -177,16 +179,35 @@ function rules_action_drupal_goto($settings) {
       if (!empty($query)) {
         $query .= '&';
       }
-      $query .= $_REQUEST['destination'] ? 'destination='. urlencode($_REQUEST['destination']) : NULL;
+      // Keep the current destination parameter if there is one.
+      $query .= isset($_REQUEST['destination']) ? 'destination='. urlencode($_REQUEST['destination']) : NULL;
     }
     unset($_REQUEST['destination']);
   }
-  if ($override) {
-    // Override the destination parameter, so another drupal_goto goes to our url :)
-    $_REQUEST['destination'] = urlencode($path) . ($query ? '?'. urlencode($query) : '') . ($fragment ? '#'. urlencode($fragment) : '');
+  if ($immediate) {
+    drupal_goto($path, $query ? $query : NULL, $fragment ? $fragment : NULL);
   }
   else {
-    drupal_goto($path, $query ? $query : NULL, $fragment ? $fragment : NULL);
+    // If someone else issues a drupal_goto(), we hijack it by setting the destination parameter
+    // But obey any already set destination parameter.
+    if (!isset($_REQUEST['destination'])) {
+      $_REQUEST['destination'] = urlencode($path) . ($query ? '?'. urlencode($query) : '') . ($fragment ? '#'. urlencode($fragment) : '');
+    }
+    // This lets _rules_action_drupal_goto_handler() invoke drupal_goto before the page is output.
+    $GLOBALS['_rules_action_drupal_goto_do'] = TRUE;
+  }
+}
+
+/**
+ * Page template preprocess handler for the drupal goto action.
+ *
+ * @see rules_theme_registry_alter().
+ */
+function _rules_action_drupal_goto_handler($variables) {
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    unset($GLOBALS['_rules_action_drupal_goto_do']);
+    // We have already set $_REQUEST['destination'] which drupal_goto() is going to respect.
+    drupal_goto('');
   }
 }
 
