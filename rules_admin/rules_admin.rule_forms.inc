@@ -18,7 +18,7 @@ function rules_admin_form_overview(&$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Filter'),
     '#collapsible' => TRUE,
-    '#collapsed' => isset($form_state['values']),
+    '#collapsed' => isset($form_state['values']) || count(rules_get_configured_items('rules')) < 20,
   );
   $form['filter']['set'] = array(
     '#type' => 'select',
