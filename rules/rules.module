@@ -35,7 +35,13 @@ function rules_get_conditions($key = 'all') {
 function rules_get_items($key = 'all') {
   // During module installation, the hook implementation of rules is not invoked,
   // as the module is not yet active. So we force it here to always return our own item infos.
-  return !module_exists('rules') ? rules_rules_item_info() : rules_gather_data('rules_item_info', $key);
+  if (module_exists('rules')) {
+    return rules_gather_data('rules_item_info', $key);
+  }
+  else {
+    $info = rules_rules_item_info();
+    return $key == 'all' ? $info : $info[$key];
+  }
 }
 
 /**
