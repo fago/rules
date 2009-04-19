@@ -154,6 +154,13 @@ function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
       '#required' => TRUE,
     );
   }
+  $form['settings']['categories'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Categories'),
+    '#default_value' => isset($set_info['categories']) ? implode(', ', $set_info['categories']) : '',
+    '#description' => t('A comma-separated list of terms describing this rule set. Example: funny, bungee jumping.'),
+    '#autocomplete_path' => RULES_ADMIN_PATH .'/autocomplete',
+  );
   $form['settings']['button'] = array('#type' => 'submit', '#weight' => 10, '#value' => t('Save changes'));
   return $form;
 }
@@ -164,6 +171,7 @@ function rules_admin_form_edit_rule_set_submit($form, &$form_state) {
   if (!isset($set_info['status']) || $set_info['status'] == 'default') {
     $set_info['status'] = 'altered';
   }
+  $set_info['categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
   unset($set_info['name']);
   rules_item_save('rule_sets', $form_state['set']['name'], $set_info);
   drupal_set_message(t("The rule set %label has been updated.", array('%label' => $set_info['label'])));
