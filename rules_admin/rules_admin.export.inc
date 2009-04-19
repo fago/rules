@@ -125,10 +125,27 @@ function rules_admin_form_export($form_state) {
   if (!isset($form_state['export'])) {
     $form['export'] = array('#tree' => TRUE);
     foreach (rules_get_items() as $name => $info) {
-      $form['export'][$name] = array(
+      $items = rules_admin_get_grouped_labels(rules_get_configured_items($name));
+      if (count($items)) {
+        $form['export'][$name] = array(
+          '#type' => 'select',
+          '#title' => t('Select the %label to export', array('%label' => $info['label'])),
+          '#options' => array(0 => '-') + $items,
+          '#multiple' => TRUE,
+          '#default_value' => 0,
+        );
+      }
+      else {
+        $msg = t('There are no %label to be exported.', array('%label' => $info['label']));
+        $form['export'][$name] = array('#value' => '<p>'. $msg . '</p>');
+      }
+    }
+    // Add the possibility to export by category
+    if ($tags = rules_admin_get_categories('rules') + rules_admin_get_categories('rule_sets')) {
+      $form['export_by_tag'] = array(
         '#type' => 'select',
-        '#title' => t('Select the %label to export', array('%label' => $info['label'])),
-        '#options' => rules_admin_get_grouped_labels(rules_get_configured_items($name)),
+        '#title' => t('Export by category'),
+        '#options' => array(0 => '-') + $tags,
         '#multiple' => TRUE,
         '#default_value' => 0,
       );
@@ -154,12 +171,26 @@ function rules_admin_form_export_submit($form, &$form_state) {
   foreach (array_filter($form_state['values']['export']) as $item_type => $item_names) {
     $items = rules_get_configured_items($item_type);
     $export[$item_type] = array_intersect_key($items, array_filter($item_names));
-    //allow item specific adaption
-    foreach ($export[$item_type] as $item_name => $item) {
-      rules_item_type_invoke($item_type, 'export', array($item_name, &$export[$item_type][$item_name], &$export));
+  }
+  if ($tags_to_export = array_filter($form_state['values']['export_by_tag'])) {
+    // Search all items for the given tag.
+    foreach (rules_get_items() as $item_type => $info) {
+      $items = array_filter(rules_get_configured_items($item_type), 'rules_admin_element_filter');
+      foreach ($items as $name => $item) {
+        $categories = isset($item['categories']) ? $item['categories'] : (isset($item['#categories']) ? $item['#categories'] : array());
+        if (array_intersect($tags_to_export, $categories)) {
+          $export[$item_type][$name] = $item;
+        }
+      }
     }
   }
-  if ($export) {
+  if (array_filter($export)) {
+    foreach (array_keys($export) as $item_type) {
+      // Allow item specific adaption before exporting
+      foreach ($export[$item_type] as $item_name => $item) {
+        rules_item_type_invoke($item_type, 'export', array($item_name, &$export[$item_type][$item_name], &$export));
+      }
+    }
     $form_state['export'] = $export;
   }
   else {
