@@ -374,6 +374,7 @@ function theme_rules_admin_form_arguments($form) {
 function rules_admin_form_add_rule_set_submit($form, &$form_state) {
   $set_info = $form_state['set'];
   $set_info['status'] = 'custom';
+  $set_info['categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
   unset($set_info['name']);
   rules_item_save('rule_sets', 'rules_'. $form_state['set']['name'], $set_info);
   drupal_set_message(t("The rule set %label has been added.", array('%label' => $set_info['label'])));
