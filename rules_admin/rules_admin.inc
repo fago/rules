@@ -354,3 +354,39 @@ function theme_rules_admin_configuration_status($status) {
   return '<span title="'. $help .'">'. t('Default') .'</span>';
 }
 
+/**
+ * Fixes the breadcrumb on the rule edit/delete/revert
+ */
+function rules_admin_fix_breadcrumb($rule, $name) {
+  $crumbs = array();
+  if (strpos($rule['#set'], 'event_') !== 0) {
+    $crumbs[] = l(t('Rule sets'), RULES_ADMIN_SET_PATH);
+    $set_info = rules_get_rule_sets($rule['#set']);
+    $crumbs[] = l($set_info['label'], RULES_ADMIN_SET_PATH .'/'. $rule['#set']);
+  }
+  else {
+    $crumbs[] = l(t('Triggered rules'), RULES_ADMIN_TRIGGER_PATH);
+  }
+  if (arg(5)) {
+    // Also add a crumb to the rule itself.
+    $crumbs[] = l($rule['#label'], RULES_ADMIN_RULE_PATH .'/'. $name);
+  }
+  rules_admin_add_crumbs($crumbs);
+}
+
+/**
+ * Adds some further crumbs to the breadcrumb.
+ * Due to the bug http://drupal.org/node/430304, some pages might have no breadcrumb.
+ */
+function rules_admin_add_crumbs($crumbs) {
+  if ($breadcrumb = drupal_get_breadcrumb()) {
+    if (count($breadcrumb) == 1) {
+      // Bug - try to fix it.
+      //TODO: Get actual menu items.
+      $breadcrumb[] = l(t('Administer'), 'admin');
+      $breadcrumb[] = l(t('Rules'), 'admin/rules');
+    }
+    $breadcrumb = array_merge($breadcrumb, $crumbs);
+    drupal_set_breadcrumb($breadcrumb);
+  }
+}

@@ -240,6 +240,7 @@ function rule_load($name) {
     if (isset($rules[$name]) && rules_get_rule_sets($rules[$name]['#set'])) {
       rules_include('rules_admin');
       $proxies[$name] = new rules_admin_rule_proxy($name, $rules[$name]);
+      rules_admin_fix_breadcrumb($rules[$name], $name);
     }
   }
   return $proxies[$name];
