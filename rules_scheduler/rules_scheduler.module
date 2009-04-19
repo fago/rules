@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules scheduler module
  */
@@ -26,3 +27,4 @@ function rules_scheduler_cron() {
     db_query("DELETE FROM {rules_scheduler} WHERE tid = %d", $row->tid);
   }
 }
+

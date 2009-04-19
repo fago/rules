@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file rules integration for the node module
  */
@@ -57,8 +59,9 @@ function rules_events_node_arguments($node_label, $author_label, $update = FALSE
     'author' => array(
       'type' => 'user',
       'label' => $author_label,
-      'handler' => 'rules_events_argument_node_author'),
-    );
+      'handler' => 'rules_events_argument_node_author',
+    ),
+  );
   if ($update) {
     $args += array(
       'node_unchanged' => array(
@@ -96,8 +99,6 @@ function rules_events_argument_node_unchanged($node) {
 function rules_events_argument_unchanged_node_author($node) {
   return rules_events_argument_node_author(rules_events_argument_node_unchanged($node));
 }
-
-
 
 /**
  * Implementation of hook_rules_condition_info()
@@ -154,7 +155,6 @@ function rules_condition_content_is_sticky(&$node, $settings) {
 function rules_condition_content_is_promoted(&$node, $settings) {
   return $node->promote == 1;
 }
-
 
 /**
  * Implementation of hook_rules_action_info().
@@ -235,7 +235,6 @@ function node_rules_action_info() {
   );
 }
 
-
 /**
  * Modifies a node as configured
  */
@@ -270,9 +269,9 @@ function rules_action_add_node($author, $title, $settings) {
     $node = (object)array('type' => $settings['type']);
     node_object_prepare($node);
 
-    $node->name = $author->name;
-    $node->uid = $author->uid;
-    $node->type = $settings['type'];
+    $node->name  = $author->name;
+    $node->uid   = $author->uid;
+    $node->type  = $settings['type'];
     $node->title = $title;
     return array('node_added' => $node);
   }
@@ -284,10 +283,6 @@ function rules_action_add_node($author, $title, $settings) {
 function rules_action_load_node($nid, $vid = NULL) {
   return array('node_loaded' => node_load($nid, $vid ? $vid : NULL));
 }
-
-
-
-
 
 /**
  * Implementation of hook_rules_action_info_alter().
@@ -306,7 +301,6 @@ function node_rules_action_info_alter(&$actions) {
   // We prefer handling saving by rules - not by the user.
   unset($actions['rules_core_node_save_action']);
 }
-
 
 /**
  * Implementation of hook_rules_data_type_info()
@@ -329,7 +323,6 @@ function node_rules_data_type_info() {
  * @ingroup rules
  */
 class rules_data_type_node extends rules_data_type {
-
   function save() {
     $node = &$this->get();
     node_save($node);

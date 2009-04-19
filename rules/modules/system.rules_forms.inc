@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Rules configuration forms for the system module
  */
@@ -155,7 +157,6 @@ function rules_action_drupal_goto_form($settings = array(), &$form, $form_state)
   );
 }
 
-
 /**
  * Action "Watchdog" configuration form
  */
@@ -188,3 +189,4 @@ function rules_action_watchdog_form($settings = array(), &$form) {
     '#description' => t('A link to associate with the message.'),
   );
 }
+

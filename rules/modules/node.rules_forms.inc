@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Rules configuration forms for the node module
  */
@@ -25,12 +27,15 @@ function rules_condition_content_is_type_label($settings, $argument_labels) {
   $names = array_intersect_key(node_get_types('names'), $settings['type']);
   return t('@node is @type', $argument_labels + array('@type' => implode(' or ', $names)));
 }
+
 function rules_condition_content_is_published_label($settings, $argument_labels) {
   return t('@node is published', $argument_labels);
 }
+
 function rules_condition_content_is_sticky_label($settings, $argument_labels) {
   return t('@node is sticky', $argument_labels);
 }
+
 function rules_condition_content_is_promoted_label($settings, $argument_labels) {
   return t('@node is promoted to frontpage', $argument_labels);
 }
@@ -103,20 +108,20 @@ function rules_core_node_label_callback($settings, $argument_labels, &$element) 
   return t($element['#info']['label_skeleton'], $argument_labels);
 }
 
-
 /**
  * The following functions help converting node actions
  * when upgrading from workflow-ng
  */
-
 function workflow_ng_action_node_publish_upgrade(&$element) {
   $element['#name'] = $element['#settings']['published'] ? 'rules_core_node_publish_action' : 'rules_core_node_unpublish_action';
   $element['#settings'] = array('auto_save' => TRUE);
 }
+
 function workflow_ng_action_node_promote_upgrade(&$element) {
   $element['#name'] = $element['#settings']['promote'] ? 'rules_core_node_promote_action' : 'rules_core_node_unpromote_action';
   $element['#settings'] = array('auto_save' => TRUE);
 }
+
 function workflow_ng_action_node_sticky_upgrade(&$element) {
   $element['#name'] = $element['#settings']['sticky'] ? 'rules_core_node_make_sticky_action' : 'rules_core_node_make_unsticky_action';
   $element['#settings'] = array('auto_save' => TRUE);
@@ -128,3 +133,4 @@ function workflow_ng_action_node_sticky_upgrade(&$element) {
 function node_rules_upgrade_event_map() {
   return array('node_submit' => 'node_presave');
 }
+

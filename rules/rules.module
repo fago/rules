@@ -1,11 +1,13 @@
 <?php
 // $Id$
 
+
 /**
  * @defgroup rules Rules engine: A rules engine for drupal.
  *
  * Lets you define conditionally executed actions based on occurring events.
  */
+
 /**
  * @file Rules engine module
  */
@@ -93,7 +95,6 @@ function rules_get_event_sets() {
   return $sets;
 }
 
-
 /**
  * Gathers module definitions for the given name
  * Used for collecting events, rules, actions and condtions from other modules
@@ -130,6 +131,7 @@ function rules_gather_data($name, $key = 'all', $alter = TRUE, $reset = FALSE) {
  *
  * @param $key The name of the property to extract
  * @param $elements An array of elements
+ *
  * @return An array of extracted properties.
  */
 function rules_extract_property($elements, $key) {
@@ -146,6 +148,7 @@ function rules_extract_property($elements, $key) {
  *
  * @param $set_name The name of the set which should be returned.
  * @param $reset May be set to true to clear the static $sets cache.
+ *
  * @return Returns the set only containing active rules, ready for evaluation
  */
 function rules_get_rule_set($set_name, $reset = FALSE) {
@@ -195,10 +198,10 @@ function _rules_get_rule_sets() {
   $rules = array_filter(rules_get_configured_items('rules'), '_rules_rule_is_active');
   foreach ($rules as $name => $rule) {
     $sets += array($rule['#set'] => array());
-    $sets[ $rule['#set'] ]['info'] = rules_get_rule_sets($rule['#set']);
+    $sets[$rule['#set']]['info'] = rules_get_rule_sets($rule['#set']);
     // Set the name for rules, so that it's avaialbe during evaluation
     $rule['#name'] = $name;
-    $sets[ $rule['#set'] ]['rules'][$name] = $rule;
+    $sets[$rule['#set']]['rules'][$name] = $rule;
   }
   return $sets;
 }
@@ -213,6 +216,7 @@ function _rules_rule_is_active($rule) {
 
 /**
  * Clears the rule set cache
+ *
  * @param $immediate If FALSE, the static cache will be kept until the next page load.
  *    Might be dangerous, so only use if you know what you are doing.
  */
@@ -236,6 +240,7 @@ function rules_flush_caches() {
 
 /**
  * Invokes configured rules for the given event
+ *
  * @param $event_name The events name
  * @params $args Pass further arguments as defined in hook_event_info() for this event.
  */
@@ -247,6 +252,7 @@ function rules_invoke_event() {
 
 /**
  * Invokes configured rules for the given rule set
+ *
  * @param $set_name The name of the rule set to invoke
  * @params $args Further arguments as defined for the rule set
  */
@@ -319,7 +325,7 @@ function rules_sort_children(&$element) {
   $count = 0;
   foreach (element_children($element) as $key) {
     $element[$key] += array('#weight' => 0);
-    $element[$key]['#weight'] += $count/1000;
+    $element[$key]['#weight'] += $count / 1000;
     $count++;
   }
   uasort($element, "element_sort");
@@ -356,6 +362,7 @@ function _rules_element_defaults(&$element) {
  *
  * @param $elements An array of elements to process
  * @param $state The current evaluation state
+ *
  * @return The execution result, or FALSE if there is no valid execution handler.
  */
 function rules_execute_element(&$element, &$state) {
@@ -422,6 +429,7 @@ function rules_execute_and(&$elements, &$state) {
  *
  * @param $element The action's configuration element
  * @param $state The current evaluation state
+ *
  * @return TRUE to let rules proceed wit executing actions, only FALSE if $result['#halt'] is set.
  */
 function rules_execute_action($element, &$state) {
@@ -444,6 +452,7 @@ function rules_execute_action($element, &$state) {
  *
  * @param $element The condition's configuration element
  * @param $state The current evaluation state
+ *
  * @return The execution result of the condition, or if it is no valid condition FALSE.
  */
 function rules_execute_condition($element, &$state) {
@@ -483,7 +492,6 @@ function _rules_log_set_invocation($message, $start = TRUE) {
   $_rules_log[] = array('time' => array('sec' => $sec, 'usec' => $usec), 'msg' => $message, 'error' => FALSE, 'start' => $start);
 }
 
-
 /**
  * Implementation of hook_elements()
  * Defines default values for all available properties of rules's element types
@@ -491,12 +499,12 @@ function _rules_log_set_invocation($message, $start = TRUE) {
  * Note that the #process handlers are only used by the form API, but not by the rules engine.
  */
 function rules_elements() {
-  $types = array();
-  $types['rule'] = array('#name' => '', '#set' => '', '#status' => 'default', '#categories' => array(), '#recursion' => FALSE, '#active' => TRUE, '#execute' => 'rules_execute_rule');
+  $types              = array();
+  $types['rule']      = array('#name' => '', '#set' => '', '#status' => 'default', '#categories' => array(), '#recursion' => FALSE, '#active' => TRUE, '#execute' => 'rules_execute_rule');
   $types['condition'] = array('#name' => '', '#info' => array(), '#negate' => FALSE, '#settings' => array('#argument map' => array()), '#execute' => 'rules_execute_condition', '#suffix' => '<br clear="all" />');
-  $types['action'] = array('#name' => '', '#info' => array(), '#settings' => array('#argument map' => array()), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
-  $types['OR'] = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
-  $types['AND'] = array('#execute' => 'rules_execute_and', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('AND'));
+  $types['action']    = array('#name' => '', '#info' => array(), '#settings' => array('#argument map' => array()), '#execute' => 'rules_execute_action', '#suffix' => '<br clear="all" />');
+  $types['OR']        = array('#execute' => 'rules_execute_or', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('OR'));
+  $types['AND']       = array('#execute' => 'rules_execute_and', '#logical_op' => TRUE, '#negate' => FALSE, '#theme' => 'rules_operation', '#label' => t('AND'));
   return $types;
 }
 
@@ -518,7 +526,7 @@ function rules_retrieve_element_info(&$element) {
   _rules_element_defaults($element_copy);
 
   if (isset($element_copy['#info']) && isset($element['#name'])) {
-    if ($info = rules_gather_data('rules_'. $element['#type']. '_info', $element['#name'])) {
+    if ($info = rules_gather_data('rules_'. $element['#type'] .'_info', $element['#name'])) {
       return $info;
     }
     rules_error_missing_implementation($element);
@@ -536,7 +544,7 @@ function rules_get_element_info(&$element) {
       'new variables' => array(),
       'hidden' => FALSE,
       'eval input' => array(),
-      'label callback' => $element['#name'] .'_label'
+      'label callback' => $element['#name'] .'_label',
     );
   }
 }
@@ -563,6 +571,7 @@ function rules_get_element_label(&$element) {
  * @param $params An array of parameters which should be passed to the invoked
  *   function.
  * @param $error Whether an error should be generated, when no implementation is found.
+ *
  * @return FALSE, if no implementation is found. Else the return of the implementation will
  *   be passed through.
  */
@@ -676,9 +685,9 @@ function _rules_show_log(&$i, $data, &$error) {
       $output[] = _rules_show_log($i, $data, $error);
     }
     else {
-      $diff = ($data[$i]['time']['sec'] - $start['sec'])*1000000 + $data[$i]['time']['usec'] - $start['usec'];
-      $formatted_diff = round($diff * 1000, 3). ' ms';
-      $msg = $formatted_diff . ' '. $data[$i]['msg'];
+      $diff = ($data[$i]['time']['sec'] - $start['sec']) * 1000000 + $data[$i]['time']['usec'] - $start['usec'];
+      $formatted_diff = round($diff * 1000, 3) .' ms';
+      $msg = $formatted_diff .' '. $data[$i]['msg'];
 
       if ($data[$i]['error']) {
         $error = TRUE;
@@ -740,13 +749,13 @@ function rules_log_evaluation_finished() {
   return !is_array($_rules_exec_log) || count($_rules_exec_log) == 0;
 }
 
-
 /**
  * Gets all configured items, regardless if defined by the admin
  * or by a module
  *
  * @param $items Which items to get, e.g. 'rules' or 'rule_sets'. Use NULL when clearing the cache.
  * @param Whether the cache should be cleared
+ *
  * @return An array of configured items, where the structure of the item configuration
  *   depends on the item
  */
@@ -760,7 +769,7 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
     $info = rules_get_items($item_type);
 
     //get and add altered default items
-    $result = db_query("SELECT * FROM {". $info['db_table']. "} ORDER by name");
+    $result = db_query("SELECT * FROM {". $info['db_table'] ."} ORDER by name");
 
     $configurations[$item_type] = array();
     while ($row = db_fetch_object($result)) {
@@ -777,8 +786,8 @@ function rules_get_configured_items($item_type = 'rules', $reset = FALSE) {
  */
 function rules_item_save($item_type, $name, $item) {
   if ($info = rules_get_items($item_type)) {
-    db_query("DELETE FROM {". $info['db_table']. "} WHERE name = '%s'", $name);
-    db_query("INSERT INTO {". $info['db_table']. "} (name, data) VALUES ('%s', %b)", $name, serialize($item));
+    db_query("DELETE FROM {". $info['db_table'] ."} WHERE name = '%s'", $name);
+    db_query("INSERT INTO {". $info['db_table'] ."} (name, data) VALUES ('%s', %b)", $name, serialize($item));
   }
 }
 
@@ -788,7 +797,7 @@ function rules_item_save($item_type, $name, $item) {
 function rules_item_delete($item_type, $name) {
   if ($info = rules_get_items($item_type)) {
     rules_item_type_invoke($item_type, 'delete', $name);
-    db_query("DELETE FROM {". $info['db_table']. "} WHERE name = '%s'", $name);
+    db_query("DELETE FROM {". $info['db_table'] ."} WHERE name = '%s'", $name);
   }
 }
 
@@ -812,7 +821,7 @@ function rules_enable_items($item_type, $ret = array()) {
  */
 function rules_item_type_invoke($item_type, $op, $params) {
   $info = rules_get_items($item_type);
-  if (function_exists($function = $info['base']. '_'. $op)) {
+  if (function_exists($function = $info['base'] .'_'. $op)) {
     return call_user_func_array($function, $params);
   }
 }
@@ -892,6 +901,7 @@ function rules_form_alter($form, $form_state, $form_id) {
 
 /**
  * Includes rules specific include files
+ *
  * @param $type
  *   One of 'rules', 'rules_forms', 'rules_defaults' or 'rules_admin'.
  */
@@ -918,7 +928,7 @@ function rules_include($type = 'rules') {
     foreach ($files as $file) {
       include_once $file;
     }
-    rules_log(t('Included MODULE.'. $type. '.inc files.'));
+    rules_log(t('Included MODULE.'. $type .'.inc files.'));
   }
 }
 
@@ -928,9 +938,9 @@ function _rules_include_get_files($type) {
 
   if ($type == 'rules') {
     //make sure this is included before, as it contains some base classes
-    $files[] = $rules_path . '/rules.data_types.inc';
-    $files[] = $rules_path . '/rules.variables.inc';
-    $files[] = $rules_path . '/rules.input_evaluators.inc';
+    $files[] = $rules_path .'/rules.data_types.inc';
+    $files[] = $rules_path .'/rules.variables.inc';
+    $files[] = $rules_path .'/rules.input_evaluators.inc';
   }
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);

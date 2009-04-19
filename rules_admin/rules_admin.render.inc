@@ -1,12 +1,12 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules Admin UI
  *   Functions for rendering a rule.
  *   If a rule is viewed, it's passed to drupal_get_form so it is rendered with drupal_render().
  */
-
 
 /**
  * Adds surrounding elements like headlines for conditions and actions
@@ -21,16 +21,18 @@ function theme_rules_admin_rule_render($element) {
   $render['conditions'] = $element['#conditions'];
   $render['conditions']['#weight'] = 0;
   /* render the conditions of the rule like an AND */
+
+
   $render['conditions'] += array('#theme' => 'rules_operation', '#label' => t('AND'), '#_root' => TRUE);
 
   $render['actions_headline'] = array('#weight' => 10, '#value' => '<h3 class="actions">'. t('Actions') .'</h3>');
   $render['actions'] = $element['#actions'];
   $render['actions']['#weight'] = 20;
 
-  $add_img = theme('rules_icon', 'add'). '';
+  $add_img = theme('rules_icon', 'add') .'';
   $link_options = array('attributes' => array('class' => 'modify'), 'query' => drupal_get_destination());
-  $render['condition_add'] = array('#weight' => 5, '#value' => $add_img . l(t('Add a condition'), RULES_ADMIN_RULE_PATH .'/'. $element['#name']. '/add/condition/1', $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
-  $render['action_add'] = array('#weight' => 100, '#value' => $add_img . l(t('Add an action'), RULES_ADMIN_RULE_PATH .'/'. $element['#name']. '/add/action/'. $element['#actions']['#id'], $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
+  $render['condition_add'] = array('#weight' => 5, '#value' => $add_img . l(t('Add a condition'), RULES_ADMIN_RULE_PATH .'/'. $element['#name'] .'/add/condition/1', $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
+  $render['action_add'] = array('#weight' => 100, '#value' => $add_img . l(t('Add an action'), RULES_ADMIN_RULE_PATH .'/'. $element['#name'] .'/add/action/'. $element['#actions']['#id'], $link_options), '#prefix' => '<p>', '#suffix' => '</p>');
 
   //propagate the rule name down the tree, as the name is needed for rendering the elements
   $render['#rule'] = $element['#name'];
@@ -64,12 +66,12 @@ function theme_rule($element) {
  */
 function theme_condition($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
-  $title = theme('rules_icon', 'condition'). ' '. check_plain(rules_get_element_label($element));
-  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
-  $options = array('attributes' => _rules_attributes_add_class($attributes, 'condition'), 'query' => drupal_get_destination(), 'html' => TRUE);
-  $link = l($title, $path, $options);
+  $title      = theme('rules_icon', 'condition') .' '. check_plain(rules_get_element_label($element));
+  $path       = RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/edit/'. $element['#id'];
+  $options    = array('attributes' => _rules_attributes_add_class($attributes, 'condition'), 'query' => drupal_get_destination(), 'html' => TRUE);
+  $link       = l($title, $path, $options);
 
-  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/add/op/'. $element['#id'];
+  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/add/op/'. $element['#id'];
   $options['attributes'] = _rules_attributes_add_class($attributes, 'condition_add');
   $indent_link = l(theme_rules_icon('indent', t('Indent this condition by adding a logical operation.')), $path, $options);
 
@@ -82,9 +84,9 @@ function theme_condition($element) {
  */
 function theme_action($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
-  $title = theme('rules_icon', 'action'). ' '. check_plain(rules_get_element_label($element));
-  $path = RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id'];
-  $options = array('attributes' => _rules_attributes_add_class($attributes, 'action'), 'query' => drupal_get_destination(), 'html' => TRUE);
+  $title      = theme('rules_icon', 'action') .' '. check_plain(rules_get_element_label($element));
+  $path       = RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/edit/'. $element['#id'];
+  $options    = array('attributes' => _rules_attributes_add_class($attributes, 'action'), 'query' => drupal_get_destination(), 'html' => TRUE);
   return l($title, $path, $options);
 }
 
@@ -134,9 +136,9 @@ function theme_OR($element) {
   $element['#collapsible'] = FALSE;
 
   $print_op = $element['#negate'] ? t('NOT') .' ' : '';
-  $element['#title'] = t("!not%label group", array('!not' =>  $print_op , '%label' => $element['#label']));
-  $element['#children'] .= '<p class="logical-op-add">'. theme('rules_icon', 'add'). l(t('Add another condition to this group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/add/condition/'. $element['#id']). '</p>';
-  $element['#children'] .= '<p class="logical-op-edit">'. theme('rules_icon', 'edit'). l(t('Edit this condition group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule']. '/edit/'. $element['#id']). '</p>';
+  $element['#title'] = t("!not%label group", array('!not' => $print_op, '%label' => $element['#label']));
+  $element['#children'] .= '<p class="logical-op-add">'. theme('rules_icon', 'add') . l(t('Add another condition to this group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/add/condition/'. $element['#id']) .'</p>';
+  $element['#children'] .= '<p class="logical-op-edit">'. theme('rules_icon', 'edit') . l(t('Edit this condition group'), RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/edit/'. $element['#id']) .'</p>';
   return theme('fieldset', $element);
 }
 
@@ -153,3 +155,4 @@ function theme_AND($element) {
 function theme_rules_logical_operation_label($op, $label) {
   return "<div class='logical-op-$op'>$label</div>";
 }
+

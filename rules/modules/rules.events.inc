@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file rules Invokes events for supported modules. Usually this should be directly
  *   in the module providing rules integration instead.
@@ -89,3 +91,4 @@ function rules_taxonomy($op, $type, $array) {
 function rules_theme_registry_alter(&$items) {
   array_unshift($items['page']['preprocess functions'], '_rules_action_drupal_goto_handler');
 }
+

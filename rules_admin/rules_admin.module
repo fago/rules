@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules administration UI
  *
@@ -9,9 +10,9 @@
 
 // Defines paths of the admin interface
 define('RULES_ADMIN_PATH', 'admin/rules');
-define('RULES_ADMIN_TRIGGER_PATH', RULES_ADMIN_PATH. '/trigger');
-define('RULES_ADMIN_SET_PATH', RULES_ADMIN_PATH. '/rule_sets');
-define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rules');
+define('RULES_ADMIN_TRIGGER_PATH', RULES_ADMIN_PATH .'/trigger');
+define('RULES_ADMIN_SET_PATH', RULES_ADMIN_PATH .'/rule_sets');
+define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH .'/rules');
 
 /**
  * Implementation of hook_help().
@@ -19,9 +20,10 @@ define('RULES_ADMIN_RULE_PATH', RULES_ADMIN_PATH. '/rules');
 function rules_help($path, $arg) {
   switch ($path) {
     case RULES_ADMIN_SET_PATH:
-      return '<p>' . t('Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module.') . '</p>';
+      return '<p>'. t('Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module.') .'</p>';
+
     case RULES_ADMIN_TRIGGER_PATH:
-      return '<p>' . t('This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met.') . '</p>';
+      return '<p>'. t('This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met.') .'</p>';
   }
 }
 
@@ -281,28 +283,29 @@ function rules_admin_theme() {
   foreach (array('rules_admin_rule_render', 'rule', 'condition', 'action', 'rules_icon', 'rules_operation', 'OR', 'AND', 'rules_logical_operation_label') as $name) {
     $items[$name] = array(
       'arguments' => array('elements' => NULL),
-      'file' => 'rules_admin.render.inc'
+      'file' => 'rules_admin.render.inc',
     );
   }
   $items['rules_admin_form_arguments'] = array(
     'arguments' => array('elements' => NULL),
-    'file' => 'rules_admin.sets.inc'
+    'file' => 'rules_admin.sets.inc',
   );
   $items['rules_admin_unsatisfied_elements'] = array(
     'arguments' => array('element' => NULL),
-    'file' => 'rules_admin.inc'
+    'file' => 'rules_admin.inc',
   );
   $items['rules_admin_unsatisfied_elements_group'] = array(
     'arguments' => array('grouped_rules' => NULL, 'elements' => array()),
-    'file' => 'rules_admin.inc'
+    'file' => 'rules_admin.inc',
   );
   $items['rules_admin_unsatisfied_elements_group'] = array(
     'arguments' => array('grouped_rules' => NULL, 'elements' => array()),
-    'file' => 'rules_admin.inc'
+    'file' => 'rules_admin.inc',
   );
   $items['rules_admin_configuration_status'] = array(
     'arguments' => array('status' => NULL),
-    'file' => 'rules_admin.inc'
+    'file' => 'rules_admin.inc',
   );
   return $items;
 }
+

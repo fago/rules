@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * Rules configuration forms for the taxonomy module.
@@ -45,7 +46,7 @@ function rules_action_taxonomy_load_term_form($settings, &$form, $form_state) {
     $form['settings']['term'] = array(
       '#type' => 'fieldset',
       '#title' => t("!vocab's terms", array('!vocab' => $vocabulary->name)),
-      '#description' => empty($options) ? t('There are no terms in the vocabulary, you should !add one.', array('!add' => l(t('add'), 'admin/content/taxonomy/'. $vocabulary->vid .'/add/term' ))) : t('Select an existing term or manually enter the name of the term that should be added or removed from the content.'),
+      '#description' => empty($options) ? t('There are no terms in the vocabulary, you should !add one.', array('!add' => l(t('add'), 'admin/content/taxonomy/'. $vocabulary->vid .'/add/term'))) : t('Select an existing term or manually enter the name of the term that should be added or removed from the content.'),
     );
     $form['settings']['term']['term_select'] = rules_taxonomy_form($vocabulary->vid, !empty($settings['term']['term_select']) ? $settings['term']['term_select'] : 0);
 
@@ -77,8 +78,8 @@ function rules_taxonomy_form($vid, $value = 0, $help = NULL, $name = 'taxonomy')
  */
 function rules_action_taxonomy_load_vocab_form($settings, &$form, $form_state) {
   $form['settings']['vocabulary'] = array(
-   '#type' => 'fieldset',
-   '#title' => t('Vocabulary selection'),
+    '#type' => 'fieldset',
+    '#title' => t('Vocabulary selection'),
   );
   $options = _rules_action_taxonomy_get_vocab();
   $form['settings']['vocabulary']['vocab_select'] = array(
@@ -153,3 +154,4 @@ function _rules_action_taxonomy_get_vocab() {
   }
   return $options;
 }
+

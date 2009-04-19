@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Forsm for the integration provided by rules
  */
@@ -37,8 +39,7 @@ function rules_condition_check_boolean_help() {
 }
 
 function rules_action_save_variable_help() {
-  return t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .
-          ' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.');
+  return t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.');
 }
 
 /**
@@ -48,10 +49,12 @@ function rules_action_save_variable_help() {
 function workflow_ng_condition_token_compare_upgrade(&$element) {
   $element['#name'] = 'rules_condition_text_compare';
 }
+
 function workflow_ng_condition_token_numeric_upgrade(&$element) {
   $element['#name'] = 'rules_condition_number_compare';
   foreach (array('text1', 'text2', 'text1_args', 'text2_args') as $key) {
-    $element['#settings'][ str_replace('text', 'number', $key) ] = $element['#settings'][$key];
+    $element['#settings'][str_replace('text', 'number', $key)] = $element['#settings'][$key];
     unset($element['#settings'][$key]);
   }
 }
+

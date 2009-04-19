@@ -1,12 +1,14 @@
 <?php
 // $Id$
 
+
 /**
  * @file Defines the data type class
  */
 
 /**
  * Gets the right data object for the given argument information
+ *
  * @param $info
  *   Info about the data type.
  * @param $data
@@ -25,7 +27,6 @@ function rules_get_data_object($info, $data = NULL) {
   return $object;
 }
 
-
 /**
  * Base data type class, from which special data types can be derived.
  * @ingroup rules
@@ -38,6 +39,7 @@ class rules_data_type {
 
   /**
    * Constructor
+   *
    * @param $type
    *   The data type of this object
    * @param $info
@@ -55,6 +57,7 @@ class rules_data_type {
 
   /**
    * Inititate the data
+   *
    * @param $data If available, the actual argument.
    */
   function init(&$data) {
@@ -98,7 +101,7 @@ class rules_data_type {
     $info = $this->get_info();
     return isset($info['use_input_form']) && $info['use_input_form'];
   }
-  
+
   /**
    * Returns whether the input evaluator should be used for this data
    */
@@ -119,21 +122,18 @@ class rules_data_type {
       'eval input' => FALSE,
     );
   }
-  
+
   /**
    * When implementing a new data type, check the comments of the methods below. They tell you
    * whether you have to implement the method.
    * Once rules is php5 compatible only this can be changed to make use of interfaes.
    */
-  
-  
+
   /**
    * Makes changes to the data permanent.
    * Implement it, if your data type is savable.
    */
-  function save() {
-
-  }
+  function save() {}
 
   /**
    * Loads the data identified with an identifier as returned by get_identifier().
@@ -141,25 +141,19 @@ class rules_data_type {
    *
    * Implement it, if your data type is identifiable.
    */
-  function load($identifier) {
-
-  }
+  function load($identifier) {}
 
   /**
    * Gets the identifier of this data, which can be of every php data type - even an array.
    * Implement it, if your data type is identifiable.
    */
-  function get_identifier() {
-
-  }
+  function get_identifier() {}
 
   /**
    * Gets an input form for creating an instance of your data type.
    * Implement it, if your data type has set use_input_form to TRUE.
    */
-  function get_default_input_form($variable_info, $value, &$form_state) {
-
-  }
+  function get_default_input_form($variable_info, $value, &$form_state) {}
 
   /**
    * Checks the value of your data type. E.g. the number data type
@@ -171,3 +165,4 @@ class rules_data_type {
     return $value;
   }
 }
+
