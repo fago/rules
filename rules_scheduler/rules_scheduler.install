@@ -3,6 +3,10 @@
 
 
 /**
+ * @file Rules Scheduler - Installation file.
+ */
+
+/**
  * Implementation of hook_install().
  */
 function rules_scheduler_install() {
@@ -28,7 +32,7 @@ function rules_scheduler_schema() {
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t('The scheduled task\s id.'),
+        'description' => t("The scheduled task's id."),
       ),
       'set_name' => array(
         'type' => 'varchar',

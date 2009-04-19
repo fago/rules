@@ -35,7 +35,7 @@ function rules_condition_number_compare_form($settings = array(), &$form) {
 }
 
 function rules_condition_check_boolean_help() {
-  return t('Check a !truth, i.e. TRUE or FALSE.', array('!truth' => l(t('truth value'), 'http://en.wikipedia.org/wiki/Logical_value')));
+  return t('Check a <a href="http://en.wikipedia.org/wiki/Logical_value">truth value</a>, i.e. TRUE or FALSE.');
 }
 
 function rules_action_save_variable_help() {

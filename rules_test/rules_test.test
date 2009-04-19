@@ -1,6 +1,10 @@
 <?php
 // $Id$
 
+/**
+ * @file Rules Testing Module - File containing test cases.
+ */
+
 class RulesTestCase extends DrupalWebTestCase {
   function getInfo() {
     return array(
@@ -12,7 +16,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
   function setUp() {
     parent::setUp();
-    drupal_install_modules(array('rules','rules_test'));
+    drupal_install_modules(array('rules', 'rules_test'));
     rules_test_keep_rules_log();
   }
   function tearDown() {

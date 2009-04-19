@@ -25,7 +25,7 @@ function rules_admin_element_map_variable_name($name, $element) {
 function rules_admin_element_help(&$form, $element) {
   $info = rules_retrieve_element_info($element);
   if (isset($info['help']) || isset($element['help'])) {
-    $help = isset($element['help']) ? t($element['help']) : t($info['help']);
+    $help = isset($element['help']) ? $element['help'] : $info['help'];
   }
   else if (isset($element['#type']) && in_array($element['#type'], array('action', 'condition'))) {
     rules_include('rules_forms');
@@ -323,7 +323,7 @@ function rules_admin_overview_table($params) {
         implode(' ', $ops),
       );
       if (!$set_info) {
-        rules_handle_error_msg('%set can\'t be found. Probably the providing module has been deactivated.', array('%set' => $rule['#set']));
+        rules_handle_error_msg("%set can't be found. Probably the providing module has been deactivated.", array('%set' => $rule['#set']));
       }
     }
   }

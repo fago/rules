@@ -3,6 +3,10 @@
 
 
 /**
+ * @file Rules - Installation file.
+ */
+
+/**
  * Implementation of hook_install().
  */
 function rules_install() {
