@@ -1,10 +1,10 @@
 <?php
 // $Id$
 
+
 /**
  * @file Provides functions and classes for handling variables
  */
-
 
 /**
  * Processes the given variables and initializes the variables data of the state
@@ -45,6 +45,7 @@ function _rules_initialize_variables(&$state, $args) {
  *   The current evalutation state.
  * @param $force
  *   Use specified variable handlers to load variables, if necessary.
+ *
  * @return
  *   The array of requested variables with the keys as given in $names. If it's not possible
  *   to get all variables, FALSE will be returned.
@@ -74,6 +75,7 @@ function rules_get_variables($names, &$state, $force = TRUE) {
  *   The element to get arguments for.
  * @param $state
  *   The current evalutation state.
+ *
  * @return
  *   An array of argument values. If it's not possible to get all arguments, FALSE
  *   will be returned.
@@ -87,8 +89,8 @@ function rules_get_element_arguments($element, &$state) {
     if (($var = rules_get_element_variable($element, $name)) !== NULL) {
       $args[$key] = $var;
     }
-    elseif (isset($map[$name]) && isset($state['variables'][ $map[$name] ])) {
-      $args[$key] = &$state['variables'][ $map[$name] ]->get();
+    elseif (isset($map[$name]) && isset($state['variables'][$map[$name]])) {
+      $args[$key] = &$state['variables'][$map[$name]]->get();
     }
     elseif (array_key_exists('default value', $element_info['arguments'][$name])) {
       $args[$key] = $element_info['arguments'][$name]['default value'];
@@ -108,6 +110,7 @@ function rules_get_element_arguments($element, &$state) {
  *   The element to get the variable for.
  * @param $name
  *   The name of the variable to get.
+ *
  * @return The variable, if available.
  */
 function rules_get_element_variable($element, $name) {
@@ -123,6 +126,7 @@ function rules_get_element_variable($element, $name) {
  *
  * @param $element The configured element, which variables to map
  * @param $state The current evaluation state
+ *
  * @return The argument map.
  */
 function rules_get_mapped_argument_names($element) {
@@ -143,6 +147,7 @@ function rules_get_mapped_argument_names($element) {
  *
  * @param $element The configured element, which is to be executed
  * @param $state The current evaluation state
+ *
  * @return If not all execution arguments are available, it returns FALSE
  */
 function rules_get_execution_arguments(&$element, &$state) {
@@ -159,7 +164,7 @@ function rules_get_execution_arguments(&$element, &$state) {
 
   if ($exec_args !== FALSE) {
     // Then we always append some other useful variables
-    $settings = isset($element['#settings']) ? $element['#settings'] : array();
+    $settings    = isset($element['#settings']) ? $element['#settings'] : array();
     $exec_args[] = $settings;
     $exec_args[] = $element;
     $exec_args[] = &$state;
@@ -212,6 +217,7 @@ function rules_save_variables($element, $result, &$state) {
  *   An array of variable information
  * @param $data
  *   An array of data for the given variables, in the same order as the information.
+ *
  * @return
  *   The packed variables or FALSE if packing failed.
  */
@@ -238,6 +244,7 @@ function rules_pack_variables($variables, $data) {
  *
  * @param $packed
  *   Packed variables, as returned from rules_pack_variables().
+ *
  * @return
  *   An array, containing the key 'variables' with info about the packed
  *   variables and the key 'data' with the actual data.
@@ -256,7 +263,6 @@ function rules_unpack_variables($packed) {
   return $packed;
 }
 
-
 /**
  * Handles loading and saving a variable
  */
@@ -270,16 +276,18 @@ class rules_variable {
 
   /**
    * Constructor
+   *
    * @param $state The current evaluation state
    * @param $name The name of the given variable
    * @param $data If available, the actual data, else NULL.
    * @param $info If given, the info for the variable. If not given it will be retrieved
    *   from the current's set info.
+   *
    * @return If the variable name isn't valid, FALSE.
    */
   function construct(&$state, $name, &$data, $info = NULL) {
     $this->_state = &$state;
-    $info = isset($info)? $info : $state['set_info']['arguments'][$name];
+    $info = isset($info) ? $info : $state['set_info']['arguments'][$name];
 
     if (isset($info)) {
       $this->info = $info + array('saved' => FALSE, 'handler' => '');
@@ -295,6 +303,7 @@ class rules_variable {
    * Gets the actual data. Be sure to keep the reference intact.
    *
    * @param $load Use the variable handler to load the variable, if necessary.
+   *
    * @return The data or NULL.
    */
   function &get($load = TRUE) {
@@ -306,7 +315,7 @@ class rules_variable {
       $data = call_user_func_array($this->info['handler'], $args);
       $this->_set_data($data);
 
-      $this->info['handler'] = ''; //do not invoke it twice, if it fails
+      $this->info['handler'] = ''; // Do not invoke it twice, if it fails
       rules_log(t('Loaded variable @arg', array('@arg' => $this->info['label'])));
     }
     else if (isset($this->data)) {
@@ -353,5 +362,5 @@ class rules_variable {
       }
     }
   }
-
 }
+

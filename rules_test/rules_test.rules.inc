@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Define some conditions and actions, used by the tests
  */
@@ -13,12 +15,12 @@ function rules_test_rules_condition_info() {
       'label' => 'Alter data',
       'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
       'hidden' => TRUE,
-     ),
+    ),
     'rules_test_condition_check_for_altered_arg' => array(
       'label' => 'Check for altered data',
       'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
       'hidden' => TRUE,
-     ),
+    ),
   );
 }
 
@@ -31,17 +33,17 @@ function rules_test_rules_action_info() {
       'label' => 'Logs a message to the rules log',
       'arguments' => array(),
       'hidden' => TRUE,
-     ),
+    ),
     'rules_test_change_arg' => array(
       'label' => 'Changes the argument',
       'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
       'hidden' => TRUE,
-     ),
+    ),
     'rules_test_add_var' => array(
       'label' => 'Adds a new variable',
       'new variables' => array('rules_test' => array('type' => 'rules_test', 'label' => 'test')),
       'hidden' => TRUE,
-     ),
+    ),
   );
 }
 
@@ -67,3 +69,4 @@ function rules_test_add_var() {
   $array['altered'] = FALSE;
   return array('rules_test' => $array);
 }
+

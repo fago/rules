@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules Import/Export Admin UI
  */
@@ -66,6 +67,7 @@ function rules_item_rule_import(&$name, &$rule) {
     $rule['#status'] = 'custom';
   }
 }
+
 /**
  * Item type callback: Customize to be imported rule sets
  */
@@ -115,8 +117,6 @@ function rules_admin_import_workflow_ng($import) {
   return TRUE;
 }
 
-
-
 /**
  * Exports one ore more configurations
  */
@@ -137,7 +137,7 @@ function rules_admin_form_export($form_state) {
       }
       else {
         $msg = t('There are no %label to be exported.', array('%label' => $info['label']));
-        $form['export'][$name] = array('#value' => '<p>'. $msg . '</p>');
+        $form['export'][$name] = array('#value' => '<p>'. $msg .'</p>');
       }
     }
     // Add the possibility to export by category
@@ -210,3 +210,4 @@ function rules_item_rule_set_export($set_name, &$rule_set, &$export) {
     }
   }
 }
+

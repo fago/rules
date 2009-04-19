@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file rules integration for the comment module
  */
@@ -66,8 +67,9 @@ function rules_events_hook_comment_arguments($comment_label) {
     'node_author' => array(
       'type' => 'user',
       'label' => t('commented content author'),
-      'handler' => 'rules_events_argument_comment_node_author'),
-    ) + rules_events_global_user_argument();
+      'handler' => 'rules_events_argument_comment_node_author',
+    ),
+  ) + rules_events_global_user_argument();
 }
 
 /**
@@ -144,7 +146,6 @@ function comment_rules_data_type_info() {
  * Defines the comment data type
  */
 class rules_data_type_comment extends rules_data_type {
-
   function load($cid) {
     return _comment_load($cid);
   }
@@ -154,3 +155,4 @@ class rules_data_type_comment extends rules_data_type {
     return $comment->cid;
   }
 }
+

@@ -54,3 +54,4 @@ function rules_scheduler_schema() {
   );
   return $schema;
 }
+

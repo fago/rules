@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules integration for the path module
  */
@@ -95,3 +96,4 @@ function rules_clean_path($path, $replace) {
     return $path;
   }
 }
+

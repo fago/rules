@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file rules integration for the php module
  * This provides an php input evaluator as well as a execute php code action.
@@ -25,6 +27,7 @@ function php_rules_evaluator() {
  *   The string to evaluate later.
  * @param $variables
  *   An array of available variables.
+ *
  * @return
  *   Arbitrary data, which is passed to the evaluator on evaluation.
  *   If NULL is returned the input evaluator will be skipped later.
@@ -72,8 +75,9 @@ function rules_input_evaluator_php_apply($string, $data = NULL, &$state, $return
  * Evalutes the given PHP code, with the given variables defined. This is like
  * drupal_eval() but allows to pass some arguments to the code.
  *
- * @param $code The PHP code to run, with <? ?>
+ * @param $code The PHP code to run, with <?php ?>
  * @param $arguments Array containing variables to be extracted to the code
+ *
  * @return The output of the php code.
  */
 function rules_php_eval($code, $arguments = array()) {
@@ -91,15 +95,15 @@ function rules_php_eval($code, $arguments = array()) {
  * Evalutes the given PHP code, with the given variables defined. This is like
  * rules_php_eval() but does return the returned data from the PHP code.
  *
- * @param $code The PHP code to run, without <? ?>
+ * @param $code The PHP code to run, without <?php ?>
  * @param $arguments Array containing variables to be extracted to the code
+ *
  * @return The return value of eval
  */
 function rules_php_eval_return($code, $arguments = array()) {
   extract($arguments);
   return eval($code);
 }
-
 
 /**
  * Implementation of hook_rules_action_info().
@@ -148,3 +152,4 @@ function rules_condition_custom_php($settings, $element, &$state) {
 
   return rules_input_evaluator_php_apply($settings['code'], $settings['vars'], $state, FALSE);
 }
+

@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Rules configuration forms for the user module
  */
@@ -72,13 +74,13 @@ function rules_action_load_user_form($settings, &$form) {
     '#autocomplete_path' => 'user/autocomplete',
     '#default_value' => isset($settings['username']) ? $settings['username'] : '',
     '#weight' => -1,
-    '#description' => t('Name of the user to be loaded.')
+    '#description' => t('Name of the user to be loaded.'),
   );
   $form['settings']['userid'] = array(
     '#type' => 'textfield',
     '#title' => t('User id'),
     '#default_value' => isset($settings['userid']) ? $settings['userid'] : '',
-    '#description' => t('Id of the user to be loaded.')
+    '#description' => t('Id of the user to be loaded.'),
   );
 }
 
@@ -87,3 +89,4 @@ function rules_action_load_user_validate($form, $form_state) {
     form_set_error('username', t('You have to enter the user name or the user id.'));
   }
 }
+

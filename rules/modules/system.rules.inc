@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file rules integration for the system module
  */
@@ -23,7 +24,6 @@ function system_rules_event_info() {
     ),
   );
 }
-
 
 /**
  * Implementation of hook_rules_action_info().
@@ -127,8 +127,6 @@ function rules_mail($key, &$message, $settings) {
   $message['body'][] = $settings['message'];
 }
 
-
-
 /**
  * Action Implementation: rules_action_mail
  * This action makes use of the rules_action_mail_to_user action implementation.
@@ -136,7 +134,6 @@ function rules_mail($key, &$message, $settings) {
 function rules_action_mail($settings) {
   rules_action_mail_to_user(NULL, $settings);
 }
-
 
 /**
  * Action: Send mail to all users of a specific role group(s).
@@ -172,7 +169,7 @@ function rules_action_mail_to_users_of_role($settings) {
 function rules_action_drupal_goto($settings) {
   // For settings backward compatibility respect the override setting as default
   $settings += array('immediate' => isset($settings['override']) && !$settings['override']);
-  extract( $settings );
+  extract($settings);
 
   if ($force) {
     if (strpos($query, 'destination') === FALSE) {

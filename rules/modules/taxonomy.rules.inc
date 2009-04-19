@@ -1,11 +1,11 @@
 <?php
 // $Id$
 
+
 /**
  * @file
  * Rules integration for the taxonomy module.
  */
-
 
 /**
  * Implementation of hook_rules_event_info().
@@ -16,13 +16,13 @@ function taxonomy_rules_event_info() {
     'taxonomy_term_insert' => array(
       'label' => t('After saving a new term'),
       'module' => 'Taxonomy',
-      'arguments' => rules_events_hook_taxonomy_term_arguments(t('created term'))
-      ),
+      'arguments' => rules_events_hook_taxonomy_term_arguments(t('created term')),
+    ),
     'taxonomy_term_update' => array(
       'label' => t('After updating a term'),
       'module' => 'Taxonomy',
-      'arguments' => rules_events_hook_taxonomy_term_arguments(t('updated term'), TRUE)
-      ),
+      'arguments' => rules_events_hook_taxonomy_term_arguments(t('updated term'), TRUE),
+    ),
   );
 }
 
@@ -198,7 +198,6 @@ function taxonomy_rules_data_type_info() {
  * Defines the taxonomy term data type.
  */
 class rules_data_type_taxonomy_term extends rules_data_type {
-
   function load($tid) {
     return taxonomy_get_term($tid);
   }
@@ -213,7 +212,6 @@ class rules_data_type_taxonomy_term extends rules_data_type {
  * Defines the taxonomy vocab data type.
  */
 class rules_data_type_taxonomy_vocab extends rules_data_type {
-
   function load($vid) {
     return taxonomy_vocabulary_load($vid);
   }
@@ -223,3 +221,4 @@ class rules_data_type_taxonomy_vocab extends rules_data_type {
     return $vocab->vid;
   }
 }
+

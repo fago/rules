@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Rules default rules - this rules are used by the tests
  */
@@ -20,17 +22,17 @@ function rules_test_rules_defaults() {
     '#status' => 'fixed',
   );
   $condition1 = rules_use_condition('rules_test_condition_alter_arg', array(
-    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
-    '#weight' => -1,
-  ));
+      '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
+      '#weight' => -1,
+    ));
   $condition2 = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
-  ));
+      '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
+    ));
   $action = rules_use_action('rules_test_action_log_msg', array(
-    '#settings' => array(
-      'msg' => 'Rules Test 1 - Success!',
-    )
-  ));
+      '#settings' => array(
+        'msg' => 'Rules Test 1 - Success!',
+      ),
+    ));
   $rules['rules_test_1'] += array(
     '#conditions' => array($condition1, $condition2, $condition2),
     '#actions' => array($action),
@@ -46,9 +48,9 @@ function rules_test_rules_defaults() {
     '#status' => 'fixed',
   );
   $action = rules_use_action('rules_test_change_arg', array(
-  //  leave out this argument map, as it should take this as default value!
-  //  '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
-  ));
+    //  leave out this argument map, as it should take this as default value!
+    //  '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
+    ));
   $rules['rules_test_2_1'] += array(
     '#conditions' => array(),
     '#actions' => array($action),
@@ -63,13 +65,13 @@ function rules_test_rules_defaults() {
     '#status' => 'fixed',
   );
   $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
-  ));
+      '#settings' => array('#argument map' => array('rules_test' => 'rules_test')),
+    ));
   $action = rules_use_action('rules_test_action_log_msg', array(
-    '#settings' => array(
-      'msg' => 'Rules Test 2 - Success!',
-    )
-  ));
+      '#settings' => array(
+        'msg' => 'Rules Test 2 - Success!',
+      ),
+    ));
   $rules['rules_test_2_2'] += array(
     '#conditions' => array($condition),
     '#actions' => array($action),
@@ -85,13 +87,13 @@ function rules_test_rules_defaults() {
     '#status' => 'fixed',
   );
   $condition = rules_use_condition('rules_test_condition_check_for_altered_arg', array(
-    '#settings' => array('#argument map' => array('rules_test_2' => 'rules_test')),
-  ));
+      '#settings' => array('#argument map' => array('rules_test_2' => 'rules_test')),
+    ));
   $action = rules_use_action('rules_test_action_log_msg', array(
-    '#settings' => array(
-      'msg' => 'Rules Test 4 - Success!',
-    )
-  ));
+      '#settings' => array(
+        'msg' => 'Rules Test 4 - Success!',
+      ),
+    ));
   $rules['rules_test_4_1'] += array(
     '#conditions' => array($condition),
     '#actions' => array($action),
@@ -107,12 +109,12 @@ function rules_test_rules_defaults() {
     '#status' => 'fixed',
   );
   $action = rules_use_action('rules_test_add_var', array(
-    '#settings' => array('#argument map' => array('rules_test_var' => 'rules_test')),
-    '#info' => array(
-      'label' => 'Adds a new variable',
-      'new variables' => array('rules_test_var' => array('type' => 'rules_test', 'label' => 'test')),
-     ),
-  ));
+      '#settings' => array('#argument map' => array('rules_test_var' => 'rules_test')),
+      '#info' => array(
+        'label' => 'Adds a new variable',
+        'new variables' => array('rules_test_var' => array('type' => 'rules_test', 'label' => 'test')),
+      ),
+    ));
   $rules['rules_test_5_1'] += array(
     '#conditions' => array(),
     '#actions' => array($action),
@@ -125,27 +127,26 @@ function rules_test_rules_defaults() {
         'label' => 'Rule Testing 1',
         'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'node')),
         'status' => 'fixed',
-       ),
+      ),
       'rules_test_2' => array(
         'label' => 'Rule Testing 2',
         'arguments' => array('rules_test' => array('type' => 'rules_test', 'label' => 'node')),
         'status' => 'fixed',
-       ),
+      ),
       'rules_test_4' => array(
         'label' => 'Rule Testing 4',
         'arguments' => array(
           'rules_test_1' => array('type' => 'rules_test', 'label' => 'node'),
           'rules_test_2' => array('type' => 'rules_test', 'label' => 'node', 'handler' => 'rules_test_4_load_data'),
-         ),
+        ),
         'status' => 'fixed',
-       ),
+      ),
       'rules_test_5' => array(
         'label' => 'Rule Testing 5',
         'arguments' => array(),
         'status' => 'fixed',
-       ),
+      ),
     ),
   );
 }
-
 

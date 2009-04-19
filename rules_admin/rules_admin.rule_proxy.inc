@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Contains the rules proxy class
  */
@@ -19,6 +20,7 @@ class rules_admin_rule_proxy {
 
   /**
    * Constructor
+   *
    * @param $rule_name The name of the rule
    * @param $rule The rule to create a proxy for.
    */
@@ -129,7 +131,6 @@ class rules_admin_rule_proxy {
     }
   }
 
-
   /**
    * Saves a the rule in the database
    */
@@ -155,15 +156,12 @@ class rules_admin_rule_proxy {
     rules_item_delete('rules', $this->get_rule_name(), $rule);
   }
 
-
-
-
   /**
    * Cleans the given rule. This means, array keys that are neither elements
    * nor properties are removed.
    */
   function clean_rule() {
-    $rule =& $this->get_rule();
+    $rule = &$this->get_rule();
     $this->_clean_rule($rule['#conditions']);
     $this->_clean_rule($rule['#actions']);
   }
@@ -285,3 +283,4 @@ class rules_admin_rule_proxy {
     return $this->_variables[$all];
   }
 }
+

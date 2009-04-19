@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules input evaluation system.
  */
@@ -23,16 +24,16 @@ function _rules_evaluator_sort($a, $b) {
  */
 function rules_prepare_input_evaluators(&$element, $variables) {
 
-  $evaluators = rules_get_input_evaluators();
+  $evaluators    = rules_get_input_evaluators();
   $eval_settings = rules_get_settings_to_evaluate($element);
-  $settings =& $element['#settings'];
+  $settings      = &$element['#settings'];
 
   foreach ($evaluators as $base => $info) {
     foreach ($eval_settings as $name) {
       $setting = _rules_get_setting($settings, $name);
       if (isset($setting)) {
         // prepare the evaluation
-        $data = call_user_func_array($base. '_prepare', array($setting, $variables));
+        $data = call_user_func_array($base .'_prepare', array($setting, $variables));
         if (isset($data)) {
           $settings['#eval input'][$base][$name] = $data;
         }
@@ -45,13 +46,13 @@ function rules_prepare_input_evaluators(&$element, $variables) {
  * Applies the available input evaluator on the element.
  */
 function rules_apply_input_evaluators(&$element, &$state) {
-  $settings =& $element['#settings'];
+  $settings = &$element['#settings'];
 
   if (isset($settings['#eval input'])) {
     foreach ($settings['#eval input'] as $base => $info) {
       foreach ($info as $name => $data) {
-        $setting =& _rules_get_setting($settings, $name);
-        $setting = call_user_func_array($base. '_apply', array($setting, $data, &$state));
+        $setting = &_rules_get_setting($settings, $name);
+        $setting = call_user_func_array($base .'_apply', array($setting, $data, &$state));
         if ($setting === FALSE) {
           // application failed
           return FALSE;
@@ -87,7 +88,7 @@ function &_rules_get_setting(&$settings, $name) {
   $names = explode('|', $name);
   $setting = &$settings;
   foreach ($names as $name) {
-    $setting =& $setting[$name];
+    $setting = &$setting[$name];
   }
   return $setting;
 }
@@ -99,7 +100,7 @@ function rules_input_evaluators_help($element, $variables) {
   $render = array();
   if (rules_get_settings_to_evaluate($element) && $variables) {
     rules_include('rules_forms');
-    foreach(rules_get_input_evaluators() as $base => $info) {
+    foreach (rules_get_input_evaluators() as $base => $info) {
       $render[$base] = array(
         '#type' => 'fieldset',
         '#title' => check_plain($info['label']),
@@ -107,9 +108,10 @@ function rules_input_evaluators_help($element, $variables) {
         '#collapsed' => TRUE,
         '#weight' => $info['weight'],
       );
-      $return = call_user_func_array($base. '_help', array($variables));
+      $return = call_user_func_array($base .'_help', array($variables));
       $render[$base]['content'] = is_array($return) ? $return : array('#value' => $return);
     }
   }
   return $render;
 }
+

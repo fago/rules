@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * Implementation of hook_install().
  *
@@ -11,7 +12,7 @@ function rules_admin_install() {
   // Make sure the rules module is loaded. Important when both modules are installed at
   // the same time.
   drupal_load('module', 'rules');
-  
+
   _rules_admin_install_example_rules();
   _rules_admin_install_example_rule_sets();
   rules_clear_cache();
@@ -27,21 +28,21 @@ function _rules_admin_install_example_rules() {
     '#active' => 0,
   );
   $condition1 = rules_use_condition('rules_condition_content_is_published', array(
-    '#settings' => array('#argument map' => array('node' => 'node')),
-    '#negate' => 1,
-  ), t('Viewed content is published'));
+      '#settings' => array('#argument map' => array('node' => 'node')),
+      '#negate' => 1,
+    ), t('Viewed content is published'));
   $condition2 = rules_use_condition('rules_condition_content_is_type', array(
-    '#settings' => array(
-      '#argument map' => array('node' => 'node'),
-      'type' => array('page'),
-    ),
-  ), t('Viewed content is Page'));
+      '#settings' => array(
+        '#argument map' => array('node' => 'node'),
+        'type' => array('page'),
+      ),
+    ), t('Viewed content is Page'));
   $action1 = rules_use_action('rules_core_node_publish_action', array(
-    '#settings' => array(
-      '#argument map' => array('node' => 'node'),
-      'auto_save' => TRUE,
-    ),
-  ), t('Publish viewed content'));
+      '#settings' => array(
+        '#argument map' => array('node' => 'node'),
+        'auto_save' => TRUE,
+      ),
+    ), t('Publish viewed content'));
   $rule += array(
     '#conditions' => array($condition1, $condition2),
     '#actions' => array($action1),
@@ -76,7 +77,7 @@ function rules_admin_update_6001() {
   elseif (!isset($rules['rules_example_1'])) {
     _rules_admin_install_example_rules();
   }
-  
+
   $sets = rules_get_configured_items('rule_sets');
   if (isset($sets['rules_set_1']) && $sets['rules_set_1']['status'] == 'altered') {
     $sets['rules_set_1']['status'] = 'custom';
@@ -98,3 +99,4 @@ function rules_admin_update_6002() {
   drupal_rebuild_theme_registry();
   return array();
 }
+

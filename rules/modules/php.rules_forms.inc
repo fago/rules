@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file Rules configuration forms for the php module
  */
@@ -8,16 +10,17 @@
  * Returns some help for the admin using the evaluator
  */
 function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
-  $output = '<p>'.t('PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2.');
-  $output .= ' '. t('Furthermore you can make use of the following variables:') . '</p>';
-  $headers = array(t('Variable'), t('Type'), t('Description'), );
+  $output = '<p>'. t('PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2.');
+  $output .= ' '. t('Furthermore you can make use of the following variables:') .'</p>';
+  $headers = array(t('Variable'), t('Type'), t('Description'),
+  );
   if ($save_info) {
     $headers[] = t('Intelligent saving');
   }
   $rows = array();
   $data_types = rules_get_data_types();
   foreach ($variables as $name => $info) {
-    $row = array();
+    $row   = array();
     $row[] = '$'. check_plain($name);
     $row[] = check_plain($data_types[$info['type']]['label']);
     $row[] = check_plain($info['label']);
@@ -35,13 +38,11 @@ function rules_input_evaluator_php_help($variables, $save_info = FALSE) {
 
   $output .= theme('table', $headers, $rows, array('class' => 'rules-php-help'));
   if ($save_info) {
-    $output .= '<p>'. t('Note that variables are passed by reference, so you can change them.'). ' ';
-    $output .= t("If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it."). ' '.
-      t('To make use of "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
+    $output .= '<p>'. t('Note that variables are passed by reference, so you can change them.') .' ';
+    $output .= t("If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it.") .' '. t('To make use of "intelligent saving" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times.', array('!code' => '<pre>return array("node" => $node);</pre>')) .'</p>';
   }
   return $output;
 }
-
 
 /**
  * Execute custom php code action configuration form.
@@ -101,7 +102,6 @@ function rules_condition_custom_php_submit(&$settings, $form, $form_state) {
   $settings['vars'] = rules_input_evaluator_php_prepare('<?'. $settings['code'], $variables);
 }
 
-
 /**
  * The following functions help converting the workflow-ng php condition/actions
  * when upgrading from workflow-ng
@@ -113,7 +113,9 @@ function workflow_ng_action_custom_php_upgrade(&$element) {
   $element['#settings']['code_args'] = $old_settings['used_arguments'];
   $element['#settings']['vars'] = $old_settings['used_php_arguments'];
 }
+
 function workflow_ng_condition_custom_php_upgrade(&$element) {
   workflow_ng_action_custom_php_upgrade($element);
   $element['#name'] = 'rules_condition_custom_php';
 }
+

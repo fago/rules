@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file
  * This file contains no working PHP code; it exists to provide additional documentation
@@ -17,7 +19,6 @@
  */
 function hook_rules_action_info() {
   // example code here
-
 }
 
 /**
@@ -25,10 +26,9 @@ function hook_rules_action_info() {
  */
 function hook_rules_condition_info() {
   // example code here
-
 }
-
 
 /**
  * @}
  */
+

@@ -1,6 +1,7 @@
 <?php
 // $Id$
 
+
 /**
  * Implementation of hook_install().
  */
@@ -58,8 +59,6 @@ function rules_schema() {
   return $schema;
 }
 
-
-
 /**
  * Upgrade from workflow-ng
  */
@@ -84,8 +83,8 @@ function rules_update_6001() {
         db_query("DELETE FROM {workflow_ng_cfgs} WHERE name = '%s'", $row->name);
       }
       else {
-        $msg = t('Failed importing the rule %label.', array('%label' => $cfg['#label']));
-        $ret[] = array('success' => FALSE, 'query' => $msg);
+        $msg    = t('Failed importing the rule %label.', array('%label' => $cfg['#label']));
+        $ret[]  = array('success' => FALSE, 'query' => $msg);
         $failed = TRUE;
       }
     }
@@ -100,7 +99,6 @@ function rules_update_6001() {
   rules_clear_cache(FALSE);
   return $ret;
 }
-
 
 /**
  * Initialize the new rules counter variable
@@ -117,9 +115,9 @@ function rules_update_6002() {
  */
 function rules_update_6003() {
   drupal_load('module', 'rules');
-  
+
   $rules = rules_get_configured_items('rules');
-  
+
   foreach ($rules as $name => $rule) {
     if (($rule['#status'] == 'altered' || $rule['#status'] == 'custom') && !isset($rule['#version'])) {
       $rule = rules_rule_format_upgrade_6003($rule);
@@ -159,8 +157,6 @@ function rules_update_6004() {
   return array();
 }
 
-
-
 /**
  * Transform a workflow-ng rule into a rule
  */
@@ -173,9 +169,9 @@ function rules_import_workflow_ng_rule(&$name, $cfg) {
       $rule[$key] = $cfg[$key];
     }
   }
-  $rule['#categories'] = array('imported'); // TODO: fix
-  $rule['#label'] = _rules_import_replace_module_name($cfg['#label']);
-  $rule['#set'] = _rules_import_get_set($cfg);
+  $rule['#categories'] = array('imported');
+  $rule['#label']      = _rules_import_replace_module_name($cfg['#label']);
+  $rule['#set']        = _rules_import_get_set($cfg);
   if (isset($cfg['#fixed']) && $cfg['#fixed']) {
     $rule['#status'] = 'fixed';
   }
@@ -249,17 +245,16 @@ function _rules_import_transform_element(&$element) {
   }
 }
 
-
 function _rules_import_replace_module_name($string) {
-  $search = array();
-  $replace = array();
-  $search[] = 'worklfow_ng_ui';
+  $search    = array();
+  $replace   = array();
+  $search[]  = 'worklfow_ng_ui';
   $replace[] = 'rules';
-  $search[] = 'workflow_ng';
+  $search[]  = 'workflow_ng';
   $replace[] = 'rules';
-  $search[] = 'Workflow-ng';
+  $search[]  = 'Workflow-ng';
   $replace[] = 'Rules';
-  $search[] = 'Workflow-ng';
+  $search[]  = 'Workflow-ng';
   $replace[] = 'Rules';
   return str_replace($search, $replace, $string);
 }
@@ -269,7 +264,6 @@ function _rules_import_get_set($cfg) {
   $event = isset($map[$cfg['#event']]) ? $map[$cfg['#event']] : $cfg['#event'];
   return 'event_'. $event;
 }
-
 
 /**
  * Helper function
@@ -288,3 +282,4 @@ function rules_helper_do_recursive($function, &$elements) {
   }
   return TRUE;
 }
+

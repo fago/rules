@@ -1,10 +1,11 @@
 <?php
 // $Id$
 
+
 /**
  * @file Rules Admin UI - Utility functions
  */
-require_once drupal_get_path('module', 'rules_admin') . '/rules_admin.rule_proxy.inc';
+require_once drupal_get_path('module', 'rules_admin') .'/rules_admin.rule_proxy.inc';
 
 /**
  * Gets the variable, which is assigned (mapped) to the given argument.
@@ -112,6 +113,7 @@ function rules_admin_element_filter($element) {
  *   The data type to check.
  * @param $arg_type
  *   The arguments needed data type.
+ *
  * @return
  *   True or false.
  */
@@ -200,6 +202,7 @@ function rules_admin_map_get_possible_arguments($arg_info, $variables) {
  *
  * @param $item_type
  *   Either 'rules' or 'rule_sets'
+ *
  * @return
  *   An array of categories to use.
  */
@@ -232,6 +235,7 @@ function _rules_admin_rule_get_new_unique_name() {
  *
  * @param $cfirst
  *   If TRUE, capitalize the first letter, if FALSE lower case the first letter.
+ *
  * @return An array of changed properties of the given info
  */
 function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst = NULL) {
@@ -261,8 +265,8 @@ function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst =
  */
 function rules_admin_get_argument_labels($proxy, $element, $prefix = '@') {
   $labels = array();
-  $names = rules_get_mapped_argument_names($element);
-  $vars = $proxy->get_available_variables($element['#id']);
+  $names  = rules_get_mapped_argument_names($element);
+  $vars   = $proxy->get_available_variables($element['#id']);
   $labels = array();
   foreach ($names as $argument_name => $variable_name) {
     if (isset($vars[$variable_name]['label'])) {
@@ -330,14 +334,13 @@ function rules_admin_overview_table($params) {
   return array('#value' => '<p>'. t('None') .'</p>');
 }
 
-
 /**
  * Returns the given status rendered as html.
  */
 function theme_rules_admin_configuration_status($status) {
   if ($status == 'altered') {
     $help = t('This rule has been provided by a module, but has been modified.');
-    return '<span title="'. $help .'">'. t('Modified'). '</span>';
+    return '<span title="'. $help .'">'. t('Modified') .'</span>';
   }
   else if ($status == 'fixed') {
     $help = t("This rule has been provided by a module and can't be customized.");
@@ -345,8 +348,9 @@ function theme_rules_admin_configuration_status($status) {
   }
   else if ($status == 'custom') {
     $help = t('A custom defined rule.');
-    return '<span title="'. $help .'">'. t('Custom'). '</span>';
+    return '<span title="'. $help .'">'. t('Custom') .'</span>';
   }
   $help = t('This rule has been provided by a module.');
   return '<span title="'. $help .'">'. t('Default') .'</span>';
 }
+

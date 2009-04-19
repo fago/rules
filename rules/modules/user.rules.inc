@@ -1,5 +1,7 @@
 <?php
 // $Id$
+
+
 /**
  * @file rules integration for the user module
  */
@@ -57,7 +59,6 @@ function rules_events_global_user_argument() {
   return array('user' => array('type' => 'user', 'label' => t('acting user'), 'handler' => 'rules_events_argument_global_user'));
 }
 
-
 /**
  * Returns some arguments suitable for hook_user
  */
@@ -74,7 +75,6 @@ function rules_events_argument_global_user() {
   global $user;
   return user_load(array('uid' => $user->uid));
 }
-
 
 /**
  * Implementation of hook_rules_condition_info().
@@ -124,6 +124,7 @@ function rules_condition_user_hasrole($user, $settings) {
         }
       }
       return FALSE;
+
     case 'AND':
       foreach ($roles as $rid) {
         if (!isset($user->roles[$rid])) {
@@ -220,7 +221,7 @@ function rules_action_load_user($settings) {
 /**
  * Action: Creates a user.
  */
-function rules_action_user_create($user_name, $user_mail)  {
+function rules_action_user_create($user_name, $user_mail) {
   $password = user_password();
   $user_data = array(
     'name' => $user_name,
@@ -252,9 +253,7 @@ function rules_action_user_create($user_name, $user_mail)  {
     $user = user_save(NULL, $user_data);
     return array('user_added' => $user, 'user_added_pw' => $password);
   }
-
 }
-
 
 /**
  * Implementation of hook_rules_data_type_info().
@@ -276,7 +275,6 @@ function user_rules_data_type_info() {
  * @ingroup rules
  */
 class rules_data_type_user extends rules_data_type {
-
   function load($uid) {
     return user_load($uid);
   }
@@ -286,7 +284,6 @@ class rules_data_type_user extends rules_data_type {
     return $user->uid;
   }
 }
-
 
 /**
  * Implementation of hook_rules_action_info_alter().
@@ -301,5 +298,4 @@ function user_rules_action_info_alter(&$actions) {
   // This action can be configured to other users than the current one, so improve the label.
   $actions['rules_core_user_block_user_action']['label'] = t('Block a user');
 }
-
 
