@@ -3,6 +3,10 @@
 
 
 /**
+ * @file Rules Admin UI - Installation file.
+ */
+
+/**
  * Implementation of hook_install().
  *
  * We just add some example rules and rule sets here. They aren't added as default rules,

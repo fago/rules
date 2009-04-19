@@ -78,7 +78,7 @@ function taxonomy_rules_action_info() {
     'arguments' => array(
       'node' => array(
         'type' => 'node',
-        'label' => t('Content which term will be assigned to'),
+        'label' => t('Content'),
       ),
       'taxonomy_term' => array(
         'type' => 'taxonomy_term',
@@ -92,7 +92,7 @@ function taxonomy_rules_action_info() {
     'arguments' => array(
       'node' => array(
         'type' => 'node',
-        'label' => t('Content which term will be removed from'),
+        'label' => t('Content'),
       ),
       'taxonomy_term' => array(
         'type' => 'taxonomy_term',

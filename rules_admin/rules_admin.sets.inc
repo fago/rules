@@ -7,6 +7,7 @@
  */
 
 rules_include('rules_admin');
+
 function rules_admin_sets_overview() {
   $sets = rules_get_configured_items('rule_sets');
   $sets = array_filter($sets, 'rules_admin_element_filter');

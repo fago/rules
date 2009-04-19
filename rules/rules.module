@@ -928,7 +928,7 @@ function rules_include($type = 'rules') {
     foreach ($files as $file) {
       include_once $file;
     }
-    rules_log(t('Included MODULE.'. $type .'.inc files.'));
+    rules_log(t('Included @module.rules.inc files.', array('@module.rules.inc' => 'MODULE.'. $type .'.inc')));
   }
 }
 

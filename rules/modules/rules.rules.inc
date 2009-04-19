@@ -297,7 +297,7 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
   // Special handling of labels for node actions
   // For consistency with the rule naming convention of calling a node "content".
   if ($core_action_info['type'] == 'node') {
-    $info['label'] = str_replace('post', t('content'), $info['label']);
+    $info['label'] = str_replace(t('post'), t('content'), $info['label']);
   }
 
   $info['base'] = 'rules_core_action_execute';

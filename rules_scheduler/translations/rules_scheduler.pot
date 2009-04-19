@@ -3,16 +3,16 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  rules_scheduler.rules.inc,v 1.1.2.3 2008/10/03 10:21:04 fago
-#  rules_scheduler.module,v 1.1.2.3 2008/08/19 11:58:21 fago
-#  rules_scheduler.install,v 1.1.2.3 2008/10/03 10:21:04 fago
+#  rules_scheduler.rules.inc,v 1.1.2.4 2009/04/19 15:03:43 fago
+#  rules_scheduler.module,v 1.1.2.4 2009/04/19 15:03:43 fago
+#  rules_scheduler.install,v 1.1.2.4 2009/04/19 15:03:43 fago
 #  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-01-12 23:25+0200\n"
+"POT-Creation-Date: 2009-04-19 20:15+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -21,23 +21,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: rules_scheduler.rules.inc:20
+#: rules_scheduler.rules.inc:22
 msgid "Schedule @set"
 msgstr ""
 
-#: rules_scheduler.rules.inc:24
+#: rules_scheduler.rules.inc:26
 msgid "Scheduled evaluation date"
 msgstr ""
 
-#: rules_scheduler.rules.inc:46
+#: rules_scheduler.rules.inc:48
 msgid "Packing arguments for scheduling the rule set %set failed."
 msgstr ""
 
-#: rules_scheduler.rules.inc:61
+#: rules_scheduler.rules.inc:63
 msgid "The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status."
 msgstr ""
 
-#: rules_scheduler.rules.inc:62
+#: rules_scheduler.rules.inc:63
 msgid "Also note that the scheduling time accuracy depends on your configured cron interval."
 msgstr ""
 
@@ -45,23 +45,23 @@ msgstr ""
 msgid "rules_scheduler"
 msgstr ""
 
-#: rules_scheduler.install:25
+#: rules_scheduler.install:29
 msgid "Stores a schedule for rule sets."
 msgstr ""
 
-#: rules_scheduler.install:31
-msgid "The scheduled task\\s id."
+#: rules_scheduler.install:35
+msgid "The scheduled task's id."
 msgstr ""
 
-#: rules_scheduler.install:38
+#: rules_scheduler.install:42
 msgid "The scheduled rule set's name."
 msgstr ""
 
-#: rules_scheduler.install:43
+#: rules_scheduler.install:47
 msgid "When the task is to be scheduled."
 msgstr ""
 
-#: rules_scheduler.install:49
+#: rules_scheduler.install:53
 msgid "The whole, serialized item configuration."
 msgstr ""
 
