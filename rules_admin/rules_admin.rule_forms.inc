@@ -166,7 +166,6 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   _rules_element_defaults($rule);
 
   $is_set = strpos($rule['#set'], 'event_') !== 0;
-  rules_admin_fix_breadcrumb($is_set, $rule['#set'], $proxy->get_set_info());
   $form = rules_admin_form_rule_settings($rule, $is_set);
   $form['settings']['#collapsed'] = TRUE;
 
@@ -965,17 +964,3 @@ function rules_admin_settings(&$form_state) {
   );
   return system_settings_form($form);
 }
-
-/**
- * Fixes the breadcrumb on the rule edit/delete/revert
- */
-function rules_admin_fix_breadcrumb($is_set = FALSE, $set_name, $set_info) {
-  $breadcrumb = drupal_get_breadcrumb();
-  $item = menu_get_item($is_set ? RULES_ADMIN_SET_PATH : RULES_ADMIN_TRIGGER_PATH);
-  $breadcrumb[] = l($item['title'], $item['href'], $item['localized_options']);
-  if ($is_set) {
-    $breadcrumb[] = l($set_info['label'], RULES_ADMIN_SET_PATH .'/'. $set_name);
-  }
-  drupal_set_breadcrumb($breadcrumb);
-}
-

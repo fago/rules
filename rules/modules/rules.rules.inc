@@ -258,16 +258,45 @@ function rules_rules_action_info() {
 }
 
 /**
- * Base action implementation for invoking all rule sets
+ * Base action implementation for invoking all rule sets.
+ *
+ * We could just call rules_invoke_rule_set(), but then the changed variables
+ * would be saved immediately. Instead we create a new evaluation state,
+ * mapping to existing variables, so the outer state takes care of saving changes
+ * for those variables.
  */
 function rules_action_invoke_set() {
   $args     = func_get_args();
   $state    = array_pop($args);
   $element  = array_pop($args);
   $settings = array_pop($args);
+  $set_name = $element['#info']['set'];
+  $set      = rules_get_rule_set($set_name);
 
-  array_unshift($args, $element['#info']['set']);
-  call_user_func_array('rules_invoke_rule_set', $args);
+  // We create a new evaluation state, that maps the variables to the outer
+  // state whenever possible. If necessary, we initialize new variables. So
+  // we have to care for saving the changes of the new variables only.
+  $new_state = array('set_info' => $set['info']);
+  $new_vars = array();
+  $map = rules_get_mapped_argument_names($element);
+
+  foreach (array_keys($set['info']['arguments']) as $i => $name) {
+    if (isset($map[$name]) && isset($state['variables'][$map[$name]])) {
+      $new_state['variables'][$name] =& $state['variables'][$map[$name]];
+    }
+    else {
+      $variable = new rules_variable;
+      $variable->construct($new_state, $name, $args[$i]);
+      $new_vars[] =& $variable;
+    }
+  }
+  // Evaluate, but don't save all variables.
+  rules_evaluate_rule_set($set_name, $set, $new_state, FALSE);
+
+  // Newly created variables are dropped now, so save changes.
+  foreach ($new_vars as $variable) {
+    $variable->save_changes();
+  }
 }
 
 /**

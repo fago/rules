@@ -261,27 +261,44 @@ function rules_invoke_rule_set() {
   $set_name = array_shift($args);
 
   if ($set = rules_get_rule_set($set_name)) {
-    $state = array('set_info' => $set['info']);
-    _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
-
     rules_include('rules');
 
+    $state = array('set_info' => $set['info']);
     _rules_initialize_variables($state, $args);
-    rules_evaluate_elements($set['rules'], $state);
 
-    //save all changed variables..
-    foreach ($state['variables'] as $variable) {
-      $variable->save_changes();
-    }
-
-    _rules_log_set_invocation(t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
-    rules_log_evaluation_clear($set_name);
+    rules_evaluate_rule_set($set_name, $set, $state);
 
     //only show the log, if this is no nested evaluation
     if (rules_log_evaluation_finished()) {
       rules_show_log();
     }
   }
+}
+
+/**
+ * Evaluates the configured rules for the given rule set and evaluation state.
+ * This is used, when rule sets are invoked by action. So the action can set up
+ * a new state, working with the same variables. So the original execution state
+ * can take over variable saving.
+ *
+ * @param $set_name The name of the rule set to invoke
+ * @param $set The rule set, as returned from rules_get_rule_set().
+ * @param $state The evaluation state.
+ * @param $save Whether the changed variables should be saved, when evaluation finished.
+ */
+function rules_evaluate_rule_set($set_name, $set, &$state, $save = TRUE) {
+  _rules_log_set_invocation(t('%label has been invoked.', array('%label' => $state['set_info']['label'])), TRUE);
+
+  rules_evaluate_elements($set['rules'], $state);
+
+  if ($save) {
+    foreach ($state['variables'] as $variable) {
+      $variable->save_changes();
+    }
+  }
+
+  _rules_log_set_invocation(t('Evaluation of %label has been finished.', array('%label' => $state['set_info']['label'])), FALSE);
+  rules_log_evaluation_clear($set_name);
 }
 
 /**
