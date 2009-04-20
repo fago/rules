@@ -172,7 +172,7 @@ function rules_admin_form_export_submit($form, &$form_state) {
     $items = rules_get_configured_items($item_type);
     $export[$item_type] = array_intersect_key($items, array_filter($item_names));
   }
-  if ($tags_to_export = array_filter($form_state['values']['export_by_tag'])) {
+  if (isset($form_state['values']['export_by_tag']) && $tags_to_export = array_filter($form_state['values']['export_by_tag'])) {
     // Search all items for the given tag.
     foreach (rules_get_items() as $item_type => $info) {
       $items = array_filter(rules_get_configured_items($item_type), 'rules_admin_element_filter');
