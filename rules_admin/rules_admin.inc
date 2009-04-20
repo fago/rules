@@ -380,12 +380,6 @@ function rules_admin_fix_breadcrumb($rule, $name) {
  */
 function rules_admin_add_crumbs($crumbs) {
   if ($breadcrumb = drupal_get_breadcrumb()) {
-    if (count($breadcrumb) == 1) {
-      // Bug - try to fix it.
-      //TODO: Get actual menu items.
-      $breadcrumb[] = l(t('Administer'), 'admin');
-      $breadcrumb[] = l(t('Rules'), 'admin/rules');
-    }
     $breadcrumb = array_merge($breadcrumb, $crumbs);
     drupal_set_breadcrumb($breadcrumb);
   }
