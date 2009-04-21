@@ -157,6 +157,7 @@ function rules_update_6004() {
   menu_rebuild();
   drupal_clear_css_cache();
   drupal_clear_js_cache();
+  rules_clear_cache();
   drupal_set_message(t('The now separated rules administration UI module has been enabled.'));
   return array();
 }
