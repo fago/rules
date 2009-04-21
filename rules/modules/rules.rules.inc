@@ -280,6 +280,7 @@ function rules_action_invoke_set() {
   $new_vars = array();
   $map = rules_get_mapped_argument_names($element);
 
+  $set['info'] += array('arguments' => array());
   foreach (array_keys($set['info']['arguments']) as $i => $name) {
     if (isset($map[$name]) && isset($state['variables'][$map[$name]])) {
       $new_state['variables'][$name] =& $state['variables'][$map[$name]];
