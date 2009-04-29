@@ -352,13 +352,12 @@ class rules_variable {
   function save_changes() {
     //if the variable is not saved automatically, save it
     if ($this->_changed && !$this->info['saved'] && $this->data->is_savable()) {
+      rules_log(t('Saved variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
+
       $return = $this->data->save();
 
-      if ($return) {
-        rules_log(t('Saved variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
-      }
-      else {
-        rules_log(t('Failed saving variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
+      if (!$return) {
+        rules_log(t('Failed saving variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])), TRUE);
       }
     }
   }
