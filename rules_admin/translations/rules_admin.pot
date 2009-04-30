@@ -3,20 +3,20 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  rules_admin.export.inc,v 1.1.2.4 2009/04/19 15:03:43 fago
-#  rules_admin.module,v 1.1.2.3 2009/04/19 15:03:43 fago
-#  rules_admin.inc,v 1.1.2.7 2009/04/19 15:03:43 fago
-#  rules_admin.rule_forms.inc,v 1.1.2.7 2009/04/19 15:03:43 fago
-#  rules_admin.sets.inc,v 1.1.2.5 2009/04/19 15:03:43 fago
+#  rules_admin.export.inc,v 1.1.2.5 2009/04/20 11:26:45 fago
+#  rules_admin.module,v 1.1.2.5 2009/04/19 21:21:31 fago
+#  rules_admin.inc,v 1.1.2.10 2009/04/20 11:45:58 fago
+#  rules_admin.rule_forms.inc,v 1.1.2.8 2009/04/19 21:21:31 fago
+#  rules_admin.sets.inc,v 1.1.2.7 2009/04/19 20:21:53 fago
 #  rules_admin.render.inc,v 1.1.2.2 2009/04/19 15:03:43 fago
 #  rules_admin.info,v 1.1.2.2 2009/03/30 17:34:26 fago
-#  rules_admin.install,v 1.1.2.3 2009/04/19 15:03:43 fago
+#  rules_admin.install,v 1.1.2.4 2009/04/19 18:19:06 fago
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-04-19 20:12+0200\n"
+"POT-Creation-Date: 2009-04-30 16:08+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;424;482;680 rules_admin.sets.inc:16;141;276;343
+#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;423;481;679 rules_admin.sets.inc:16;141;276;343
 msgid "Label"
 msgstr ""
 
@@ -155,6 +155,14 @@ msgstr ""
 
 #: rules_admin.inc:354
 msgid "Default"
+msgstr ""
+
+#: rules_admin.inc:363 rules_admin.module:173
+msgid "Rule sets"
+msgstr ""
+
+#: rules_admin.inc:368 rules_admin.module:52
+msgid "Triggered rules"
 msgstr ""
 
 #: rules_admin.render.inc:20
@@ -265,7 +273,7 @@ msgstr ""
 msgid "This rule is active and should be evaluated when the associated event occurs."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:150;435;499;564
+#: rules_admin.rule_forms.inc:150;434;498;563
 msgid "Weight"
 msgstr ""
 
@@ -277,203 +285,203 @@ msgstr ""
 msgid "Save changes"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:178
+#: rules_admin.rule_forms.inc:177
 msgid "<em>Warning</em>: This rule has been provided by another module. <br />Be aware that any changes made through this interface might be overwritten once the providing module updates the rule."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:183
+#: rules_admin.rule_forms.inc:182
 msgid "Rule elements"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:204
+#: rules_admin.rule_forms.inc:203
 msgid "The rule %label has been updated."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:262
+#: rules_admin.rule_forms.inc:261
 msgid "Select an action to add"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:271
+#: rules_admin.rule_forms.inc:270
 msgid "The following actions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these actions, you must first add some action that adds variables of this kind, or have an event that passes the required variables."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:284;324
+#: rules_admin.rule_forms.inc:283;323
 msgid "Next"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:302
+#: rules_admin.rule_forms.inc:301
 msgid "Select the condition to add"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:311
+#: rules_admin.rule_forms.inc:310
 msgid "The following conditions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these conditions, you must first add some action that adds variables of this kind in a previous rule, or have an event that passes the required variables."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:426
+#: rules_admin.rule_forms.inc:425
 msgid "Customize the label for this action."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:432
+#: rules_admin.rule_forms.inc:431
 msgid "Editing action %label"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:437
+#: rules_admin.rule_forms.inc:436
 msgid "Adjust the weight to customize the ordering of actions."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:444;508;572 rules_admin.sets.inc:219
+#: rules_admin.rule_forms.inc:443;507;571 rules_admin.sets.inc:219
 msgid "Save"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:451;515;579;808 rules_admin.sets.inc:62 rules_admin.module:77;156
+#: rules_admin.rule_forms.inc:450;514;578;807 rules_admin.sets.inc:62 rules_admin.module:77;156
 msgid "Delete"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:473
+#: rules_admin.rule_forms.inc:472
 msgid "The action %label has been saved."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:484
+#: rules_admin.rule_forms.inc:483
 msgid "Customize the label for this condition."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:490
+#: rules_admin.rule_forms.inc:489
 msgid "Editing condition %label"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:493;550
+#: rules_admin.rule_forms.inc:492;549
 msgid "Negate"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:495
+#: rules_admin.rule_forms.inc:494
 msgid "If checked, the condition returns TRUE, if it evaluates to FALSE."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:501
+#: rules_admin.rule_forms.inc:500
 msgid "Adjust the weight to customize the ordering of conditions."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:541
+#: rules_admin.rule_forms.inc:540
 msgid "The condition %label has been saved."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:548
+#: rules_admin.rule_forms.inc:547
 msgid "Editing condition group %label"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:552
+#: rules_admin.rule_forms.inc:551
 msgid "If checked, the operation will be negated. E.g. AND would be handled as NOT AND."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:556
+#: rules_admin.rule_forms.inc:555
 msgid "Operation"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:558
+#: rules_admin.rule_forms.inc:557
 msgid "The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:566
+#: rules_admin.rule_forms.inc:565
 msgid "Adjust the weight to customize the ordering."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:595
+#: rules_admin.rule_forms.inc:594
 msgid "The condition group %label has been saved."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:673
+#: rules_admin.rule_forms.inc:672
 msgid "Variable @label settings"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:686 rules_admin.sets.inc:290
+#: rules_admin.rule_forms.inc:685 rules_admin.sets.inc:290
 msgid "Machine readable variable name"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:687 rules_admin.sets.inc:151
+#: rules_admin.rule_forms.inc:686 rules_admin.sets.inc:151
 msgid "Specify a unique name containing only alphanumeric characters, and underscores."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:707
+#: rules_admin.rule_forms.inc:706
 msgid "A variable with this name does already exist. Please choose another name."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:710
+#: rules_admin.rule_forms.inc:709
 msgid "The name contains not allowed characters."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:769
+#: rules_admin.rule_forms.inc:768
 msgid "Arguments configuration"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:803
+#: rules_admin.rule_forms.inc:802
 msgid "Are you sure you want to delete the logical operation %label?"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:806 rules_admin.sets.inc:60
+#: rules_admin.rule_forms.inc:805 rules_admin.sets.inc:60
 msgid "Are you sure you want to delete %label?"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:808 rules_admin.sets.inc:62;87
+#: rules_admin.rule_forms.inc:807 rules_admin.sets.inc:62;87
 msgid "This action cannot be undone."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:808 rules_admin.sets.inc:62;87
+#: rules_admin.rule_forms.inc:807 rules_admin.sets.inc:62;87
 msgid "Cancel"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:817
+#: rules_admin.rule_forms.inc:816
 msgid "The logical operation %label has been deleted."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:822 rules_admin.sets.inc:69
+#: rules_admin.rule_forms.inc:821 rules_admin.sets.inc:69
 msgid "%label has been deleted."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:841
+#: rules_admin.rule_forms.inc:840
 msgid "Alter the settings for the cloned rule."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:902
+#: rules_admin.rule_forms.inc:901
 msgid "@group module"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:950
+#: rules_admin.rule_forms.inc:949
 msgid "Debug rule evaluation"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:952
+#: rules_admin.rule_forms.inc:951
 msgid "When activated, debugging information is shown when rules are evaluated."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:956
+#: rules_admin.rule_forms.inc:955
 msgid "Show fixed rules and rule sets"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:958
+#: rules_admin.rule_forms.inc:957
 msgid "When activated, fixed items provided by modules are shown in the admin center too."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:962
+#: rules_admin.rule_forms.inc:961
 msgid "Ignore missing token module"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:964
+#: rules_admin.rule_forms.inc:963
 msgid "Rules can use the token module to provide token replacements; if this module is not present rules will complain, unless this setting is checked."
 msgstr ""
 
-#: rules_admin.rule_forms.inc:270
+#: rules_admin.rule_forms.inc:269
 msgid "1 action is not configurable"
 msgid_plural "@count actions are not configurable"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rules_admin.rule_forms.inc:310
+#: rules_admin.rule_forms.inc:309
 msgid "1 condition is not configurable"
 msgid_plural "@count conditions are not configurable"
 msgstr[0] ""
 msgstr[1] ""
 
-#: rules_admin.rule_forms.inc:906
+#: rules_admin.rule_forms.inc:905
 msgid "Unavailable argument: @arguments"
 msgid_plural "Unavailable arguments: @arguments"
 msgstr[0] ""
@@ -551,7 +559,7 @@ msgstr ""
 msgid "Data type"
 msgstr ""
 
-#: rules_admin.sets.inc:379
+#: rules_admin.sets.inc:380
 msgid "The rule set %label has been added."
 msgstr ""
 
@@ -563,7 +571,7 @@ msgstr ""
 msgid "This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met."
 msgstr ""
 
-#: rules_admin.module:275
+#: rules_admin.module:276
 msgid "administer rules"
 msgstr ""
 
@@ -573,10 +581,6 @@ msgstr ""
 
 #: rules_admin.module:37
 msgid "Rules administration links."
-msgstr ""
-
-#: rules_admin.module:52
-msgid "Triggered rules"
 msgstr ""
 
 #: rules_admin.module:53
@@ -609,10 +613,6 @@ msgstr ""
 
 #: rules_admin.module:165
 msgid "Clone rule"
-msgstr ""
-
-#: rules_admin.module:173
-msgid "Rule sets"
 msgstr ""
 
 #: rules_admin.module:174
