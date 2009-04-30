@@ -355,6 +355,7 @@ class rules_variable {
       rules_log(t('Saved variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])));
 
       $return = $this->data->save();
+      $this->_changed = FALSE;
 
       if (!$return) {
         rules_log(t('Failed saving variable @name of type @type.', array('@name' => $this->info['label'], '@type' => $this->info['type'])), TRUE);

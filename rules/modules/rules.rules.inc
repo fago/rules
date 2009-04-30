@@ -240,9 +240,9 @@ function rules_rules_action_info() {
       );
     }
   }
-  // Add an action to save savable data types intelligently
+  // Add an action to save savable data types
   foreach (rules_get_data_types() as $name => $type_info) {
-    if (isset($type_info['savable']) && $type_info['savable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
+    if (!empty($type_info['savable']) && empty($type_info['hidden']) && empty($type_info['use_input_form'])) {
       $items['rules_save_var_'. $name] = array(
         'module' => isset($type_info['module']) ? $type_info['module'] : 'Rules',
         'base' => 'rules_action_save_variable',
@@ -296,10 +296,18 @@ function rules_action_invoke_set() {
 }
 
 /**
- * Base action implementation for adding a new variable and saving variables
+ * Base action implementation for adding a new variable and saving variables.
  */
-function rules_action_save_variable($name, $variable) {
-  return array($name => $variable);
+function rules_action_save_variable($name, $variable, $settings, $element, &$state) {
+  if (!empty($settings['immediate'])) {
+    $map = rules_get_mapped_argument_names($element);
+    // Force imediate saving!
+    $state['variables'][$map[$name]]->save();
+    $state['variables'][$map[$name]]->save_changes();
+  }
+  else {
+    return array($name => $variable);
+  }
 }
 
 /**
