@@ -38,6 +38,19 @@ function rules_condition_check_boolean_help() {
   return t('Check a <a href="http://en.wikipedia.org/wiki/Logical_value">truth value</a>, i.e. TRUE or FALSE.');
 }
 
+function rules_action_save_variable_form($settings, &$form, $form_state) {
+  // Only add this form for the save variable action, not for the add variable action.
+  if (!isset($form_state['element']['#info']['new variables'])) {
+    $settings += array('immediate' => 0);
+    $form['settings']['immediate'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Force immediate saving.'),
+      '#description' => t('If enabled, intelligent saving is bypassed to ensure immediate saving.'),
+      '#default_value' => $settings['immediate'],
+    );
+  }
+}
+
 function rules_action_save_variable_help() {
   return t('Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does.') .' '. t('Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes.');
 }
