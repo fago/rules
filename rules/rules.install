@@ -12,6 +12,9 @@
 function rules_install() {
   drupal_load('module', 'rules');
   drupal_install_schema('rules');
+  // Set the modules' weight to 20, see
+  // http://drupal.org/node/445084#comment-1533280 for the reasoning.
+  db_query("UPDATE {system} SET weight = 20 WHERE name = 'rules'");
 }
 
 /**
@@ -161,6 +164,17 @@ function rules_update_6004() {
   drupal_set_message(t('The now separated rules administration UI module has been enabled.'));
   return array();
 }
+
+/**
+ * Update the modules weight to 20.
+ */
+function rules_update_6005() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 20 WHERE name = 'rules'");
+  return $ret;
+}
+
+
 
 /**
  * Transform a workflow-ng rule into a rule
