@@ -26,8 +26,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Rules 6.x\n"
-"POT-Creation-Date: 2009-04-19 19:31+0200\n"
-"PO-Revision-Date: 2009-04-20 13:14+0100\n"
+"POT-Creation-Date: 2009-05-03 18:20+0000\n"
+"PO-Revision-Date: 2009-05-03 23:23+0100\n"
 "Last-Translator: Magnus Gunnarsson <seals@passagen.se>\n"
 "Language-Team: drupalsverige.se\n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr "Okänt variabelnamn %var returnerades av åtgärden %name."
 msgid "Loaded variable @arg"
 msgstr "Laddade variabel @arg"
 
-#: rules.variables.inc:358
+#: rules.variables.inc:355
 msgid "Saved variable @name of type @type."
 msgstr "Sparade variabel @name av typen @type."
 
@@ -74,93 +74,97 @@ msgstr "Sparade variabel @name av typen @type."
 msgid "Failed saving variable @name of type @type."
 msgstr "Misslyckades spara variabel @name av typen @type."
 
-#: rules.module:265
+#: rules.module:291
 msgid "%label has been invoked."
 msgstr "%label har anropats."
 
-#: rules.module:277
+#: rules.module:302
 msgid "Evaluation of %label has been finished."
 msgstr "Evaluering av %label har slutförts."
 
-#: rules.module:383
+#: rules.module:400
 msgid "Not executing the rule %name on rule set %set to prevent recursion."
 msgstr "Exekverade inte regeln %name på regeluppsättningen %set för att förhindra tillbakasyftning."
 
-#: rules.module:388
+#: rules.module:405
 msgid "Executing the rule %name on rule set %set"
 msgstr "Exekverade regeln %name på regeluppsättningen %set"
 
-#: rules.module:438
+#: rules.module:456
 msgid "Action execution: @name"
 msgstr "Exekverade åtgärd: @name"
 
-#: rules.module:463
+#: rules.module:481
 msgid "Condition %name evaluated to @bool."
 msgstr "Villkoret %name evaluerades till @bool."
 
-#: rules.module:506
+#: rules.module:524
 msgid "OR"
 msgstr "OR"
 
-#: rules.module:507
+#: rules.module:525
 msgid "AND"
 msgstr "AND"
 
-#: rules.module:562
+#: rules.module:580
 msgid "unlabelled"
 msgstr "ej ettikerad"
 
-#: rules.module:835
+#: rules.module:858
 #: rules.info:0;0
 msgid "Rules"
 msgstr "Regler"
 
-#: rules.module:840
+#: rules.module:863
 msgid "Rule Sets"
 msgstr "Regeluppsättningar"
 
-#: rules.module:854
+#: rules.module:877
 msgid "Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated."
 msgstr "Kunde inte hitta %type av namn %name med etiketten %label. Kanske har tillhörande modul inaktiverats."
 
-#: rules.module:857
+#: rules.module:880
 msgid "Unable to find %type of name %name. Perhaps the according module has been deactivated."
 msgstr "Kunde inte hitta %type av namn %namel. Kanske har tillhörande modul inaktiverats."
 
-#: rules.module:870
+#: rules.module:893
 msgid "Show rule configuration"
 msgstr "Visa regelkonfiguration"
+
+#: rules.module:954
+msgid "Included @module.rules.inc files."
+msgstr "Inkluderade filerna @module.rules.inc."
 
 #: rules.module:0
 #: modules/system.rules.inc:115;162
 msgid "rules"
 msgstr "regler"
 
-#: rules.install:43
+#: rules.install:50
 msgid "The name of the item."
 msgstr "Namnet för alternativet."
 
-#: rules.install:50
+#: rules.install:57
 msgid "The whole, serialized item configuration."
 msgstr "Det hela, seriella alternativets konfiguration."
 
-#: rules.install:58
+#: rules.install:65
 msgid "Cache table for the rules engine to store configured items."
 msgstr "Cachetabell för regelmotorn att lagra konfigurerade alternativ."
 
-#: rules.install:81
+#: rules.install:88
 msgid "Successfully imported rule %label."
 msgstr "Importerade regeln %label utan problem."
 
-#: rules.install:86
+#: rules.install:93
 msgid "Failed importing the rule %label."
 msgstr "Misslyckades importera regeln %label."
 
-#: rules.install:156
+#: rules.install:164
 msgid "The now separated rules administration UI module has been enabled."
 msgstr "Den numera separerade modulen för administrering av regler, har aktiverats."
 
-#: rules.install:224
+#: rules.install:243
 msgid "No upgrade information for the element %name found. Aborting."
 msgstr "Ingen uppgraderingsinformation för elementet %name funnen. Avbryter."
 
@@ -241,7 +245,7 @@ msgid "Loaded comment"
 msgstr "Laddade kommentar"
 
 #: modules/comment.rules.inc:136
-#: modules/rules.rules.inc:395
+#: modules/rules.rules.inc:428
 msgid "Comment"
 msgstr "Kommentar"
 
@@ -320,7 +324,8 @@ msgstr "författare till oförändrat innehåll"
 
 #: modules/node.rules.inc:111;168;176;190;312
 #: modules/path.rules.inc:57
-#: modules/rules.rules.inc:386
+#: modules/rules.rules.inc:419
+#: modules/taxonomy.rules.inc:81;95
 msgid "Content"
 msgstr "Innehåll"
 
@@ -457,7 +462,7 @@ msgid "Content with id @id"
 msgstr "Innehåll med ID @id"
 
 #: modules/node.rules_forms.inc:106
-#: modules/rules.rules.inc:300
+#: modules/rules.rules.inc:333
 msgid "content"
 msgstr "innehåll"
 
@@ -697,15 +702,19 @@ msgstr "Lade till @type"
 msgid "Save a @type"
 msgstr "Spara en @type"
 
-#: modules/rules.rules.inc:341
+#: modules/rules.rules.inc:333
+msgid "post"
+msgstr "skicka"
+
+#: modules/rules.rules.inc:374
 msgid "Permanently apply changes"
 msgstr "Lägg till ändringar permanent"
 
-#: modules/rules.rules.inc:342
+#: modules/rules.rules.inc:375
 msgid "If checked, changes to the argument are saved automatically."
 msgstr "Ändringar till argumentet sparas automatiskt, om kontrollerad."
 
-#: modules/rules.rules.inc:404
+#: modules/rules.rules.inc:437
 #: modules/user.rules.inc:97;265
 msgid "User"
 msgstr "Användare"
@@ -735,18 +744,22 @@ msgid "Less than"
 msgstr "Mindre än"
 
 #: modules/rules.rules_forms.inc:38
-msgid "Check a !truth, i.e. TRUE or FALSE."
-msgstr "Kontrollera ett !truth, till exempel TRUE eller FALSE."
+msgid "Check a <a href=\"http://en.wikipedia.org/wiki/Logical_value\">truth value</a>, i.e. TRUE or FALSE."
+msgstr "Kontrollera ett <a href=\"http://en.wikipedia.org/wiki/Logical_value\">sanningsvärde</a>, till exempel SANT eller FALSKT."
 
-#: modules/rules.rules_forms.inc:38
-msgid "truth value"
-msgstr "sanningsvärde"
+#: modules/rules.rules_forms.inc:47
+msgid "Force immediate saving."
+msgstr "Tvinga fram omedelbart sparande."
 
-#: modules/rules.rules_forms.inc:42
+#: modules/rules.rules_forms.inc:48
+msgid "If enabled, intelligent saving is bypassed to ensure immediate saving."
+msgstr "Om aktiverad så är logiskt sparande förbigått för att säkerställa omedelbart sparande."
+
+#: modules/rules.rules_forms.inc:55
 msgid "Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does."
 msgstr "Vanligtvis behöver du inte bry dig om att spara ändringar gjorda av åtgärder. Däremot låter denna åtgärd dig tvinga fram sparande av ändringar, om ingen åtgärd gör det."
 
-#: modules/rules.rules_forms.inc:42
+#: modules/rules.rules_forms.inc:55
 msgid "Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes."
 msgstr "Observera dessutom att ändringar sparas logiskt, vilket betyder att ändringar sparas enbart en gång, även om flera åtgärder kräver sparande av ändringar."
 
@@ -947,17 +960,9 @@ msgstr "Laddning av en taxonomiterm låter dig verka på denna term, till exempe
 msgid "Assign a term to content"
 msgstr "Tilldela en term till innehåll"
 
-#: modules/taxonomy.rules.inc:81
-msgid "Content which term will be assigned to"
-msgstr "Innehåll som term kommer att tilldelas till"
-
 #: modules/taxonomy.rules.inc:91
 msgid "Remove a term from content"
 msgstr "Ta bort en term från innehåll"
-
-#: modules/taxonomy.rules.inc:95
-msgid "Content which term will be removed from"
-msgstr "Innehåll som term kommer att tas bort ifrån"
 
 #: modules/taxonomy.rules.inc:106
 msgid "Load a vocabulary"
@@ -983,13 +988,9 @@ msgstr "Vokabulär"
 msgid "Select the vocabulary."
 msgstr "Välj vokabuläret."
 
-#: modules/taxonomy.rules_forms.inc:25
-msgid "There are no existing vocabularies, you should !add one."
-msgstr "Det finns inga existerande vokabulär, du bör !add ett."
-
-#: modules/taxonomy.rules_forms.inc:25;49
-msgid "add"
-msgstr "lägga till"
+#: modules/taxonomy.rules_forms.inc:25;90
+msgid "There are no existing vocabularies, you should <a href=\"@add-url\">add</a> one."
+msgstr "Det finns inga existerande vokabulär, du måste <a href=\"@add-url\">lägga till</a> ett."
 
 #: modules/taxonomy.rules_forms.inc:37
 msgid "Continue"
@@ -1000,8 +1001,8 @@ msgid "!vocab's terms"
 msgstr "termer för !vocab"
 
 #: modules/taxonomy.rules_forms.inc:49
-msgid "There are no terms in the vocabulary, you should !add one."
-msgstr "Det finns inga termer i detta vokabulär, du bör !add ett."
+msgid "There are no terms in the vocabulary, you should <a href=\"@add-url\">add</a> one."
+msgstr "Det finns inga termer i vokabuläret, du måste <a href=\"@add-url\">lägga till</a>  ett."
 
 #: modules/taxonomy.rules_forms.inc:49
 msgid "Select an existing term or manually enter the name of the term that should be added or removed from the content."
@@ -1027,13 +1028,9 @@ msgstr "Urval för vokabulär"
 msgid "Select a vocabulary"
 msgstr "Välj ett vokabulär"
 
-#: modules/taxonomy.rules_forms.inc:90
-msgid "There are no existing vocabularies, you should <a href=\"!taxonomy-add-vocabulary\">add</a> one."
-msgstr "Det finns inga existerande vokabulär, du bör <a href=\"!taxonomy-add-vocabulary\">lägga till</a> ett."
-
 #: modules/taxonomy.rules_forms.inc:99
-msgid "Optional: enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded . If this field is used \"Select a vocabulary\" field will be ignored."
-msgstr "Valfritt: ange vokabulärets ID (<em>inte vokabulärets namn</em>) som skall laddas. Om detta fält används \"Välj ett vokabulär\" kommer fältet att ignoreras."
+msgid "Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded . If this field is used, the \"Select a vocabulary\" field will be ignored."
+msgstr "Valfritt: Ange vokabulärets ID (<em>inte vokabulärets namn</em>) som skall laddas. Om detta fält används \"Välj ett vokabulär\" kommer fältet att ignoreras."
 
 #: modules/taxonomy.rules_forms.inc:112
 msgid "Vocabulary settings"
@@ -1227,4 +1224,17 @@ msgstr "ID för användaren att ladda."
 #: modules/user.rules_forms.inc:89
 msgid "You have to enter the user name or the user id."
 msgstr "Du måste ange användarnamnet eller ID för användaren."
+
+#~ msgid "Check a !truth, i.e. TRUE or FALSE."
+#~ msgstr "Kontrollera ett !truth, till exempel TRUE eller FALSE."
+#~ msgid "truth value"
+#~ msgstr "sanningsvärde"
+#~ msgid "Content which term will be assigned to"
+#~ msgstr "Innehåll som term kommer att tilldelas till"
+#~ msgid "Content which term will be removed from"
+#~ msgstr "Innehåll som term kommer att tas bort ifrån"
+#~ msgid "There are no existing vocabularies, you should !add one."
+#~ msgstr "Det finns inga existerande vokabulär, du bör !add ett."
+#~ msgid "add"
+#~ msgstr "lägga till"
 
