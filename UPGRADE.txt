@@ -40,7 +40,8 @@ Important notes when converting a workflow-ng rule:
         Deprecated in favour of using CCK, which comes with rules support.
         Support for "states on users" is dropped for now.
       Per entity logging:
-        It's not yet ported, but it's planned to happen right after rules 1.0.
+        It's not yet ported, but the port is planned right after rules 1.0
+        and will be released as a separate module.
       CCLinks:
         Deprecated by the flag module, which comes with nice rules support.
         Scheduling support is built into rules itself.
