@@ -1,13 +1,6 @@
 <?php
 // $Id$
 
-
-/**
- * @defgroup rules Rules engine: A rules engine for drupal.
- *
- * Lets you define conditionally executed actions based on occurring events.
- */
-
 /**
  * @file Rules engine module
  */
