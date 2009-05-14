@@ -169,7 +169,8 @@ function rules_action_taxonomy_load_vocab($settings) {
  */
 function rules_action_taxonomy_add_vocab($settings) {
   taxonomy_save_vocabulary($settings);
-  return array('taxonomy_vocab' => $settings);
+  $vocabs = taxonomy_get_vocabularies();
+  return array('taxonomy_vocab' => $vocabs[$settings['vid']]);
 }
 
 /**
