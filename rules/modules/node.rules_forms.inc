@@ -4,6 +4,9 @@
 
 /**
  * @file Rules configuration forms for the node module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -134,3 +137,6 @@ function node_rules_upgrade_event_map() {
   return array('node_submit' => 'node_presave');
 }
 
+/**
+ * @}
+ */

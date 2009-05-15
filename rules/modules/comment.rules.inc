@@ -4,11 +4,13 @@
 
 /**
  * @file rules integration for the comment module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
- * Implementation of hook_event_info()
- * @ingroup rules
+ * Implementation of hook_rules_event_info()
  */
 function comment_rules_event_info() {
   return array(
@@ -95,7 +97,6 @@ function rules_events_argument_comment_node_author($comment) {
 
 /**
  * Implementation of hook_rules_action_info().
- * @ingroup rules
  */
 function comment_rules_action_info() {
   return array(
@@ -156,3 +157,6 @@ class rules_data_type_comment extends rules_data_type {
   }
 }
 
+/**
+ * @}
+ */

@@ -4,6 +4,9 @@
 
 /**
  * @file Rules configuration forms for the system module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -190,3 +193,6 @@ function rules_action_watchdog_form($settings = array(), &$form) {
   );
 }
 
+/**
+ * @}
+ */

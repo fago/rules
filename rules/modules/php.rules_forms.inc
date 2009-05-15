@@ -4,6 +4,9 @@
 
 /**
  * @file Rules configuration forms for the php module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -119,3 +122,6 @@ function workflow_ng_condition_custom_php_upgrade(&$element) {
   $element['#name'] = 'rules_condition_custom_php';
 }
 
+/**
+ * @}
+ */

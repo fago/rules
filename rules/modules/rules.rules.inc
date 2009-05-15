@@ -4,13 +4,15 @@
 
 /**
  * @file rules integration for the rules module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 define('RULES_DATE_REGEX_LOOSE', '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/');
 
 /**
  * Implementation of hook_rules_data_type_info().
- * @ingroup rules
  */
 function rules_rules_data_type_info() {
   return array(
@@ -49,7 +51,6 @@ function rules_rules_data_type_info() {
 
 /**
  * Rules string data type
- * @ingroup rules
  */
 class rules_data_type_string extends rules_data_type {
 
@@ -71,7 +72,6 @@ class rules_data_type_string extends rules_data_type {
 
 /**
  * Rules number data type
- * @ingroup rules
  */
 class rules_data_type_number extends rules_data_type_string {
   function check_value($info, $value) {
@@ -81,7 +81,6 @@ class rules_data_type_number extends rules_data_type_string {
 
 /**
  * Rules date data type
- * @ingroup rules
  */
 class rules_data_type_date extends rules_data_type_string {
   function get_default_input_form($info, $value) {
@@ -114,7 +113,6 @@ class rules_data_type_date extends rules_data_type_string {
 
 /**
  * Rules boolean data type
- * @ingroup rules
  */
 class rules_data_type_boolean extends rules_data_type_string {
   function check_value($info, $value) {
@@ -136,7 +134,6 @@ class rules_data_type_boolean extends rules_data_type_string {
 
 /**
  * Implementation of hook_rules_condition_info().
- * @ingroup rules
  */
 function rules_rules_condition_info() {
   return array(
@@ -200,7 +197,6 @@ function rules_condition_check_boolean($boolean) {
 
 /**
  * Implementation of hook_rules_action_info().
- * @ingroup rules
  */
 function rules_rules_action_info() {
   $items = array();
@@ -408,7 +404,6 @@ function rules_core_action_execute_submit(&$settings, &$form, &$form_state) {
  *
  * Maps core action types to rules action info. This provides mappings for all
  * action types used in core.
- * @ingroup rules
  */
 function rules_rules_action_type_map() {
   return array(
@@ -442,3 +437,6 @@ function rules_rules_action_type_map() {
   );
 }
 
+/**
+ * @}
+ */

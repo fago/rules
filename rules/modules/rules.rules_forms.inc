@@ -3,7 +3,10 @@
 
 
 /**
- * @file Forsm for the integration provided by rules
+ * @file Forms for the integration provided by rules
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -71,3 +74,6 @@ function workflow_ng_condition_token_numeric_upgrade(&$element) {
   }
 }
 
+/**
+ * @}
+ */

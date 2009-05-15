@@ -3,8 +3,10 @@
 
 
 /**
- * @file
- * Rules configuration forms for the taxonomy module.
+ * @file Rules configuration forms for the taxonomy module.
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -155,3 +157,6 @@ function _rules_action_taxonomy_get_vocab() {
   return $options;
 }
 
+/**
+ * @}
+ */

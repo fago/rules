@@ -237,7 +237,7 @@ function rules_flush_caches() {
  * @param $event_name
  *   The events name
  * @param $args
- *   Pass further arguments as defined in hook_event_info() for this event.
+ *   Pass further arguments as defined in hook_rules_event_info() for this event.
  *   Arguments can be passed as usual, one by one, in the order as defined
  *   in hook_rules_event_info(). As an alternative the arguments can also
  *   be passed as an array, with the argument names as keys. See

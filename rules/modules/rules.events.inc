@@ -3,8 +3,11 @@
 
 
 /**
- * @file rules Invokes events for supported modules. Usually this should be directly
- *   in the module providing rules integration instead.
+ * @file Invokes events for supported modules. Usually this should be
+ *   directly in the module providing rules integration instead.
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -92,3 +95,6 @@ function rules_theme_registry_alter(&$items) {
   array_unshift($items['page']['preprocess functions'], '_rules_action_drupal_goto_handler');
 }
 
+/**
+ * @}
+ */

@@ -4,6 +4,9 @@
 
 /**
  * @file Rules configuration forms for the user module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
@@ -90,3 +93,6 @@ function rules_action_load_user_validate($form, $form_state) {
   }
 }
 
+/**
+ * @}
+ */
