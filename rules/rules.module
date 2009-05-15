@@ -234,8 +234,14 @@ function rules_flush_caches() {
 /**
  * Invokes configured rules for the given event
  *
- * @param $event_name The events name
- * @params $args Pass further arguments as defined in hook_event_info() for this event.
+ * @param $event_name
+ *   The events name
+ * @param $args
+ *   Pass further arguments as defined in hook_event_info() for this event.
+ *   Arguments can be passed as usual, one by one, in the order as defined
+ *   in hook_rules_event_info(). As an alternative the arguments can also
+ *   be passed as an array, with the argument names as keys. See
+ *   http://drupal.org/node/298549.
  */
 function rules_invoke_event() {
   $args = func_get_args();
@@ -247,7 +253,7 @@ function rules_invoke_event() {
  * Invokes configured rules for the given rule set
  *
  * @param $set_name The name of the rule set to invoke
- * @params $args Further arguments as defined for the rule set
+ * @param $args Further arguments as defined for the rule set
  */
 function rules_invoke_rule_set() {
   $args = func_get_args();
