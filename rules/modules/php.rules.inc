@@ -50,7 +50,7 @@ function rules_input_evaluator_php_prepare($string, $variables) {
  * @param $string
  *   The string to evaluate.
  * @param $data
- *   If the prepare method is used, the data as return from prepare().
+ *   The data as returned from the prepare() callback.
  * @param $state
  *   The current evaluation state.
  * @param $return_output
