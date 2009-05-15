@@ -3,13 +3,14 @@
 
 
 /**
- * @file
- * Rules integration for the taxonomy module.
+ * @file Rules integration for the taxonomy module.
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
  * Implementation of hook_rules_event_info().
- * @ingroup rules
  */
 function taxonomy_rules_event_info() {
   return array(
@@ -223,3 +224,6 @@ class rules_data_type_taxonomy_vocab extends rules_data_type {
   }
 }
 
+/**
+ * @}
+ */

@@ -4,11 +4,13 @@
 
 /**
  * @file rules integration for the system module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
  * Implementation of hook_rules_event_info().
- * @ingroup rules
  */
 function system_rules_event_info() {
   return array(
@@ -27,7 +29,6 @@ function system_rules_event_info() {
 
 /**
  * Implementation of hook_rules_action_info().
- * @ingroup rules
  */
 function system_rules_action_info() {
   return array(
@@ -215,3 +216,6 @@ function rules_action_watchdog($settings) {
   watchdog($settings['type'], $settings['message'], NULL, $settings['severity'], $settings['link']);
 }
 
+/**
+ * @}
+ */

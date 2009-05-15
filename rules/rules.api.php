@@ -535,8 +535,83 @@ function rules_input_evaluator_callback_help($variables) {
   return $form;
 }
 
+/**
+ * Alter rules compatible actions.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc.
+ *
+ * @param $actions
+ *   The items of all modules as returned from hook_rules_action_info().
+ *
+ * @see hook_rules_action_info().
+ */
+function hook_rules_action_info_alter(&$actions) {
+  // The rules action is more powerful, so hide the core action
+  unset($actions['rules_core_node_assign_owner_action']);
+  // We prefer handling saving by rules - not by the user.
+  unset($actions['rules_core_node_save_action']);
+}
+
+/**
+ * Alter rules conditions.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc.
+ *
+ * @param $conditions
+ *   The items of all modules as returned from hook_rules_condition_info().
+ *
+ * @see hook_rules_condition_info().
+ */
+function hook_rules_condition_info_alter(&$conditions) {
+  // Change conditions
+}
+
+/**
+ * Alter rules events.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc.
+ *
+ * @param $events
+ *   The items of all modules as returned from hook_rules_event_info().
+ *
+ * @see hook_rules_event_info().
+ */
+function hook_rules_event_info_alter(&$events) {
+  // Change events
+}
+
+/**
+ * Map core action types to rules actions.
+ *
+ * Core actions of a special type usually work with one argument and a fixed
+ * data type. Mappings from this hook are used to automatically generate
+ * rules compatible actions for core actions. To further customize the action
+ * info of a specific action use hook_rules_action_info_alter(). Also see
+ * http://drupal.org/node/299055.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc.
+ *
+ *
+ * @return
+ *   An array of mappings, where the key is the core action type. The provided
+ *   mapping values are used for generating hook_rules_action_info() entries
+ *   for core action of the given type. Thus all attributes supported by
+ *   hook_rules_action_info() can be used here.
+ */
+function hook_rules_action_type_map() {
+  return array(
+    'node' => array(
+      'module' => 'Node',
+      'arguments' => array(
+        'node' => array(
+          'label' => t('Content'),
+          'type' => 'node',
+        ),
+      ),
+    ),
+  );
+}
 
 /**
  * @}
  */
-

@@ -4,11 +4,13 @@
 
 /**
  * @file rules integration for the node module
+ *
+ * @addtogroup rules
+ * @{
  */
 
 /**
- * Implementation of hook_event_info()
- * @ingroup rules
+ * Implementation of hook_rules_event_info()
  */
 function node_rules_event_info() {
   $items = array(
@@ -102,7 +104,6 @@ function rules_events_argument_unchanged_node_author($node) {
 
 /**
  * Implementation of hook_rules_condition_info()
- * @ingroup rules
  */
 function node_rules_condition_info() {
   $items = array();
@@ -158,7 +159,6 @@ function rules_condition_content_is_promoted(&$node, $settings) {
 
 /**
  * Implementation of hook_rules_action_info().
- * @ingroup rules
  */
 function node_rules_action_info() {
   return array(
@@ -286,7 +286,6 @@ function rules_action_load_node($nid, $vid = NULL) {
 
 /**
  * Implementation of hook_rules_action_info_alter().
- * @ingroup rules
  *
  * Adapts the action info of the core actions to better fit for rules.
  */
@@ -304,7 +303,6 @@ function node_rules_action_info_alter(&$actions) {
 
 /**
  * Implementation of hook_rules_data_type_info()
- * @ingroup rules
  */
 function node_rules_data_type_info() {
   return array(
@@ -320,7 +318,6 @@ function node_rules_data_type_info() {
 
 /**
  * Defines the node type
- * @ingroup rules
  */
 class rules_data_type_node extends rules_data_type {
   function save() {
@@ -339,3 +336,6 @@ class rules_data_type_node extends rules_data_type {
   }
 }
 
+/**
+ * @}
+ */

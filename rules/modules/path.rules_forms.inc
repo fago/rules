@@ -1,10 +1,14 @@
 <?php
 // $Id$
 
-
 /**
  * @file Rules configuration forms for the path module
+ *
+ * @addtogroup rules
+ * @{
  */
+
+
 function rules_condition_url_has_alias_form($settings, &$form) {
   $settings += array('src' => '');
   $form['settings']['src'] = array(
@@ -87,3 +91,6 @@ function rules_action_node_path_alias_help() {
   return t('This action only works if the acting user has %perm1 or %perm2 permsissions. If this does not suit, use the generic "Create or delete an URL alias" action together with the existing system path "node/{ID}".', array('%perm1' => t('create url aliases'), '%perm2' => t('administer url aliases')));
 }
 
+/**
+ * @}
+ */
