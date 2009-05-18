@@ -16,7 +16,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-04-30 16:08+0200\n"
+"POT-Creation-Date: 2009-05-18 14:11+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -85,7 +85,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;423;481;679 rules_admin.sets.inc:16;141;276;343
+#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;423;481;679 rules_admin.sets.inc:16;141;276;344
 msgid "Label"
 msgstr ""
 
@@ -393,7 +393,7 @@ msgstr ""
 msgid "Variable @label settings"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:685 rules_admin.sets.inc:290
+#: rules_admin.rule_forms.inc:685 rules_admin.sets.inc:291
 msgid "Machine readable variable name"
 msgstr ""
 
@@ -515,7 +515,7 @@ msgstr ""
 msgid "Choose an appropriate label for this rule set."
 msgstr ""
 
-#: rules_admin.sets.inc:149;345
+#: rules_admin.sets.inc:149;346
 msgid "Machine readable name"
 msgstr ""
 
@@ -555,11 +555,11 @@ msgstr ""
 msgid "Each name may be used only once."
 msgstr ""
 
-#: rules_admin.sets.inc:284;344
+#: rules_admin.sets.inc:285;345
 msgid "Data type"
 msgstr ""
 
-#: rules_admin.sets.inc:380
+#: rules_admin.sets.inc:381
 msgid "The rule set %label has been added."
 msgstr ""
 
@@ -654,4 +654,3 @@ msgstr ""
 #: rules_admin.info:0
 msgid "Provides the administration UI for rules."
 msgstr ""
-
