@@ -278,6 +278,7 @@ function _rules_admin_form_argument($name = '', $info = array()) {
     '#default_value' => isset($info['label']) ? $info['label'] : '',
   );
   $options = rules_extract_property(array_filter(rules_get_data_types(), 'rules_admin_element_filter'), 'label');
+  $options = array_map('drupal_ucfirst', $options);
   asort($options);
   $form['type'] = array(
     '#type' => 'select',

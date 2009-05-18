@@ -262,7 +262,7 @@ function rules_action_user_create($user_name, $user_mail) {
 function user_rules_data_type_info() {
   return array(
     'user' => array(
-      'label' => t('User'),
+      'label' => t('user'),
       'class' => 'rules_data_type_user',
       'savable' => FALSE,
       'identifiable' => TRUE,

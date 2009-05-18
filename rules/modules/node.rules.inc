@@ -307,7 +307,7 @@ function node_rules_action_info_alter(&$actions) {
 function node_rules_data_type_info() {
   return array(
     'node' => array(
-      'label' => t('Content'),
+      'label' => t('content'),
       'class' => 'rules_data_type_node',
       'savable' => TRUE,
       'identifiable' => TRUE,

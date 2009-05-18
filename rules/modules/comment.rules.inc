@@ -134,7 +134,7 @@ function rules_action_load_comment($cid) {
 function comment_rules_data_type_info() {
   return array(
     'comment' => array(
-      'label' => t('Comment'),
+      'label' => t('comment'),
       'class' => 'rules_data_type_comment',
       'savable' => FALSE,
       'identifiable' => TRUE,
