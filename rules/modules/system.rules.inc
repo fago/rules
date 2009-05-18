@@ -64,7 +64,7 @@ function system_rules_action_info() {
       'label' => t('Page redirect'),
       'module' => 'System',
       'eval input' => array('path', 'query', 'fragment'),
-      'help' => 'Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".',
+      'help' => t('Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".'),
     ),
     'rules_action_watchdog' => array(
       'label' => t('Log to watchdog'),

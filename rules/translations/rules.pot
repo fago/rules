@@ -3,22 +3,22 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  rules.api.php,v 1.1.2.3 2009/05/15 13:03:12 fago
+#  rules.api.php,v 1.1.2.4 2009/05/18 12:05:20 fago
 #  system.rules.inc,v 1.1.2.15 2009/05/18 09:31:26 fago
 #  system.rules_forms.inc,v 1.1.2.10 2009/05/15 13:03:12 fago
 #  node.rules_forms.inc,v 1.1.2.18 2009/05/18 11:40:57 fago
 #  user.rules_forms.inc,v 1.1.2.5 2009/05/15 13:03:12 fago
-#  rules.rules.inc,v 1.1.2.36 2009/05/15 13:03:12 fago
-#  user.rules.inc,v 1.1.2.18 2009/05/15 13:03:12 fago
-#  node.rules.inc,v 1.1.2.36 2009/05/15 13:03:12 fago
+#  rules.rules.inc,v 1.1.2.37 2009/05/18 12:05:20 fago
+#  user.rules.inc,v 1.1.2.19 2009/05/18 12:05:20 fago
+#  node.rules.inc,v 1.1.2.37 2009/05/18 12:05:20 fago
 #  php.rules.inc,v 1.1.2.11 2009/05/15 13:03:12 fago
 #  path.rules.inc,v 1.1.2.6 2009/05/15 13:03:12 fago
-#  taxonomy.rules.inc,v 1.1.2.7 2009/05/15 13:03:12 fago
+#  taxonomy.rules.inc,v 1.1.2.8 2009/05/18 12:05:20 fago
 #  rules.variables.inc,v 1.1.2.32 2009/04/30 11:58:30 fago
 #  rules.module,v 1.1.2.61 2009/05/15 13:03:12 fago
 #  rules.info,v 1.1.2.2 2008/07/10 08:15:04 fago
 #  rules.install,v 1.1.2.24 2009/04/30 09:48:39 fago
-#  comment.rules.inc,v 1.1.2.6 2009/05/15 13:03:12 fago
+#  comment.rules.inc,v 1.1.2.7 2009/05/18 12:05:20 fago
 #  comment.rules_forms.inc,v 1.1.2.3 2009/05/15 13:03:12 fago
 #  path.rules_forms.inc,v 1.1.2.5 2009/05/15 13:03:12 fago
 #  php.rules_forms.inc,v 1.1.2.8 2009/05/15 13:03:12 fago
@@ -29,7 +29,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-05-18 14:09+0200\n"
+"POT-Creation-Date: 2009-05-18 14:26+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -866,6 +866,10 @@ msgstr ""
 msgid "Page redirect"
 msgstr ""
 
+#: modules/system.rules.inc:67
+msgid "Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after \"?\" and (optional) anchor after \"#\"."
+msgstr ""
+
 #: modules/system.rules.inc:70
 msgid "Log to watchdog"
 msgstr ""
@@ -1245,4 +1249,3 @@ msgstr ""
 #: modules/user.rules_forms.inc:86
 msgid "Id of the user to be loaded."
 msgstr ""
-
