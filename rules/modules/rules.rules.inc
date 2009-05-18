@@ -17,31 +17,31 @@ define('RULES_DATE_REGEX_LOOSE', '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d
 function rules_rules_data_type_info() {
   return array(
     'string' => array(
-      'label' => t('String'),
+      'label' => t('string'),
       'class' => 'rules_data_type_string',
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
     'number' => array(
-      'label' => t('Number'),
+      'label' => t('number'),
       'class' => 'rules_data_type_number',
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
     'date' => array(
-      'label' => t('Date'),
+      'label' => t('date'),
       'class' => 'rules_data_type_date',
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
     'boolean' => array(
-      'label' => t('Truth value'),
+      'label' => t('truth value'),
       'class' => 'rules_data_type_boolean',
       'identifiable' => FALSE,
       'eval input' => TRUE,
     ),
     'value' => array(
-      'label' => t('A fixed value'),
+      'label' => t('a fixed value'),
       'class' => 'rules_data_type',
       'identifiable' => FALSE,
       'hidden' => TRUE,
@@ -222,7 +222,7 @@ function rules_rules_action_info() {
       $items['rules_add_var_'. $name] = array(
         'module' => 'Rules',
         'base' => 'rules_action_save_variable',
-        'label' => t('Add a new @type variable', array('@type' => drupal_strtolower($type_info['label']))),
+        'label' => t('Add a new @type variable', array('@type' => $type_info['label'])),
         'arguments' => array(
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),
@@ -242,7 +242,7 @@ function rules_rules_action_info() {
       $items['rules_save_var_'. $name] = array(
         'module' => isset($type_info['module']) ? $type_info['module'] : 'Rules',
         'base' => 'rules_action_save_variable',
-        'label' => t('Save a @type', array('@type' => drupal_strtolower($type_info['label']))),
+        'label' => t('Save a @type', array('@type' => $type_info['label'])),
         'arguments' => array(
           'var_name' => array('type' => 'value', 'default value' => $name),
           $name => array('type' => $name, 'label' => $type_info['label']),

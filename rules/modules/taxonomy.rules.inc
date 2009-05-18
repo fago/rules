@@ -180,14 +180,14 @@ function rules_action_taxonomy_add_vocab($settings) {
 function taxonomy_rules_data_type_info() {
   return array(
     'taxonomy_term' => array(
-      'label' => t('Taxonomy term'),
+      'label' => t('taxonomy term'),
       'class' => 'rules_data_type_taxonomy_term',
       'savable' => FALSE,
       'identifiable' => TRUE,
       'module' => 'Taxonomy',
     ),
     'taxonomy_vocab' => array(
-      'label' => t('Taxonomy vocabulary'),
+      'label' => t('taxonomy vocabulary'),
       'class' => 'rules_data_type_taxonomy_vocab',
       'savable' => FALSE,
       'identifiable' => TRUE,

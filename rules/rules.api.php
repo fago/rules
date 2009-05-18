@@ -392,7 +392,7 @@ function hook_rules_event_info() {
  *   Possible attributes for each sub-array are:
  *
  *    - 'label'
- *         The label of the data type. Start capitalized. Required.
+ *         The label of the data type. Start uncapitalized. Required.
  *    - 'class'
  *         The implementing class of the data type. It has to extend the class
  *         'rules_data_type' and override methods depending on the other
@@ -424,7 +424,7 @@ function hook_rules_event_info() {
 function hook_rules_data_type_info() {
   return array(
     'node' => array(
-      'label' => t('Content'),
+      'label' => t('content'),
       'class' => 'rules_data_type_node',
       'savable' => TRUE,
       'identifiable' => TRUE,
