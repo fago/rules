@@ -109,7 +109,7 @@ function rules_action_set_breadcrumb($settings) {
 function rules_action_mail_to_user($user, $settings) {
   // We also handle $settings['to'] if it's set.
   $to = isset($settings['to']) ? str_replace(array("\r", "\n"), '', $settings['to']) : $user->mail;
-  $from = isset($settings['from']) ? str_replace(array("\r", "\n"), '', $settings['from']) : NULL;
+  $from = ($settings['from']) ? str_replace(array("\r", "\n"), '', $settings['from']) : NULL;
 
   $message = drupal_mail('rules', 'rules_action_mail', $to, language_default(), $settings, $from);
   if ($message['result']) {
@@ -141,7 +141,7 @@ function rules_action_mail($settings) {
  */
 function rules_action_mail_to_users_of_role($settings) {
   $recipients = $settings['recipients'];
-  $from = isset($settings['from']) ? str_replace(array("\r", "\n"), '', $settings['from']) : NULL;
+  $from = ($settings['from']) ? str_replace(array("\r", "\n"), '', $settings['from']) : NULL;
 
   // All authenticated users, which is everybody.
   if (in_array(DRUPAL_AUTHENTICATED_RID, $recipients)) {
