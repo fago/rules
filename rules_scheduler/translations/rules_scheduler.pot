@@ -5,14 +5,14 @@
 # Generated from files:
 #  rules_scheduler.rules.inc,v 1.1.2.4 2009/04/19 15:03:43 fago
 #  rules_scheduler.module,v 1.1.2.4 2009/04/19 15:03:43 fago
-#  rules_scheduler.install,v 1.1.2.4 2009/04/19 15:03:43 fago
+#  rules_scheduler.install,v 1.1.2.5 2009/04/19 18:19:07 fago
 #  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-04-19 20:15+0200\n"
+"POT-Creation-Date: 2009-05-18 14:12+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -76,4 +76,3 @@ msgstr ""
 #: rules_scheduler.info:0
 msgid "Rules"
 msgstr ""
-
