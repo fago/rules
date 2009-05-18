@@ -28,7 +28,7 @@ function rules_condition_content_is_type_form($settings, &$form) {
  */
 function rules_condition_content_is_type_label($settings, $argument_labels) {
   $names = array_intersect_key(node_get_types('names'), $settings['type']);
-  return t('@node is @type', $argument_labels + array('@type' => implode(' or ', $names)));
+  return t('@node is @type', $argument_labels + array('@type' => implode(' '. t('or') .' ', $names)));
 }
 
 function rules_condition_content_is_published_label($settings, $argument_labels) {
