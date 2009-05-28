@@ -70,7 +70,7 @@ function taxonomy_rules_action_info() {
         'label' => t('Taxonomy term'),
       ),
     ),
-    'eval input' => array('term_text'),
+    'eval input' => array('term|term_text'),
     'help' => t('Loading a taxonomy term will allow you to act on this term, for example you will be able to assign this term to a content.'),
     'module' => 'Taxonomy',
   );
@@ -111,7 +111,7 @@ function taxonomy_rules_action_info() {
         'label' => t('Taxonomy vocabulary'),
       ),
     ),
-    'eval input' => array('vocab_text'),
+    'eval input' => array('vocabulary|vocab_text'),
     'help' => t('Loading a taxonomy vocabulary will allow you to act on this vocabulary.'),
     'module' => 'Taxonomy',
   );
