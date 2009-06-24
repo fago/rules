@@ -269,6 +269,11 @@ function rules_action_invoke_set() {
   $set_name = $element['#info']['set'];
   $set      = rules_get_rule_set($set_name);
 
+  if (!$set) {
+    rules_log(t("The configured rule set %set doesn't exist any more.", array('%set' => $set_name)), TRUE);
+    return;
+  }
+
   // We create a new evaluation state, that maps the variables to the outer
   // state whenever possible. If necessary, we initialize new variables. So
   // we have to care for saving the changes of the new variables only.
