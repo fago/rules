@@ -702,7 +702,7 @@ function _rules_show_log(&$i, $data, &$error) {
       $output[] = _rules_show_log($i, $data, $error);
     }
     else {
-      $diff = ($data[$i]['time']['sec'] - $start['sec']) * 1000000 + $data[$i]['time']['usec'] - $start['usec'];
+      $diff = ($data[$i]['time']['sec'] - $start['sec']) + $data[$i]['time']['usec'] - $start['usec'];
       $formatted_diff = round($diff * 1000, 3) .' ms';
       $msg = $formatted_diff .' '. $data[$i]['msg'];
 
