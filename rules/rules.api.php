@@ -53,9 +53,11 @@
  *         variable has to be described by a sub-array with possible
  *         attributes as described afterwards.
  *   - 'eval input'
- *         An array containg form element names of elements contained in the
+ *         Optional; An array containing form element names of elements contained in the
  *         actions settings form ($form['settings']) to which input evaluators
- *         should be attached. Optional.
+ *         should be attached. 
+ *         For settings in a nested array the array keys may be separated by '|' 
+ *         in the name.
  *   - 'label callback'
  *         A callback to improve the action's label once it has been configured.
  *         Optional (Defaults to {ACTION_NAME}_label).
