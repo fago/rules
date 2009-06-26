@@ -1,66 +1,61 @@
 # $Id$
 #
 # Japanese translation of Drupal (general)
-# Copyright 2008 PineRay <matsudaterutaka@gmail.com>
+# Copyright PineRay <matsudaterutaka@gmail.com>
 # Generated from files:
-#  rules_scheduler.rules.inc,v 1.1.2.3 2008/10/03 10:21:04 fago
-#  rules_scheduler.module,v 1.1.2.3 2008/08/19 11:58:21 fago
-#  rules_scheduler.install,v 1.1.2.3 2008/10/03 10:21:04 fago
+#  rules_scheduler.rules.inc,v 1.1.2.4 2009/04/19 15:03:43 fago
+#  rules_scheduler.install,v 1.1.2.5 2009/04/19 18:19:07 fago
 #  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Rules 6.x\n"
-"POT-Creation-Date: 2008-11-07 15:05+0900\n"
-"PO-Revision-Date: 2008-11-07 15:44+0900\n"
+"Project-Id-Version: rules\n"
+"POT-Creation-Date: 2009-06-26 11:51+0900\n"
+"PO-Revision-Date: 2009-06-26 12:45+0900\n"
 "Last-Translator: PineRay <matsudaterutaka@gmail.com>\n"
-"Language-Team: Japanese <matsudaterutaka@gmail.com>\n"
+"Language-Team: Japanese <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: rules_scheduler.rules.inc:20
+#: rules_scheduler.rules.inc:22
 msgid "Schedule @set"
 msgstr "スケジュール @set"
 
-#: rules_scheduler.rules.inc:24
+#: rules_scheduler.rules.inc:26
 msgid "Scheduled evaluation date"
 msgstr "予定済み評価日時"
 
-#: rules_scheduler.rules.inc:46
+#: rules_scheduler.rules.inc:48
 msgid "Packing arguments for scheduling the rule set %set failed."
 msgstr "ルールセット %set の予定を立てるために引数をまとめるのに失敗しました。"
 
-#: rules_scheduler.rules.inc:61
+#: rules_scheduler.rules.inc:63
 msgid "The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status."
 msgstr "ルールセットの評価はcronによって予定されています。そのため、サイトの!statusをチェックして、cronが正しく設定されているか確認してください。"
 
-#: rules_scheduler.rules.inc:62
+#: rules_scheduler.rules.inc:63
 msgid "Also note that the scheduling time accuracy depends on your configured cron interval."
 msgstr "また、予定時間はcronの実行間隔に左右されることにも注意してください。"
 
-#: rules_scheduler.module:0
-msgid "rules_scheduler"
-msgstr "rules_scheduler"
-
-#: rules_scheduler.install:25
+#: rules_scheduler.install:29
 msgid "Stores a schedule for rule sets."
 msgstr "ルールセットのスケジュールを保存。"
 
-#: rules_scheduler.install:31
-msgid "The scheduled task\\s id."
+#: rules_scheduler.install:35
+msgid "The scheduled task's id."
 msgstr "予定済みタスクのID。"
 
-#: rules_scheduler.install:38
+#: rules_scheduler.install:42
 msgid "The scheduled rule set's name."
 msgstr "予定済みルールセットの名前。"
 
-#: rules_scheduler.install:43
+#: rules_scheduler.install:47
 msgid "When the task is to be scheduled."
 msgstr "タスクの予定実行日時。"
 
-#: rules_scheduler.install:49
+#: rules_scheduler.install:53
 msgid "The whole, serialized item configuration."
 msgstr "シリアライズされたアイテムの設定すべて。"
 
