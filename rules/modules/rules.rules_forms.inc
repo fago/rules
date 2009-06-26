@@ -19,6 +19,7 @@ function rules_condition_text_compare_form($settings = array(), &$form) {
     '#type' => 'checkbox',
     '#title' => t('Evaluate the second text as a regular expression.'),
     '#default_value' => isset($settings['regex']) ? $settings['regex'] : 0,
+    '#description' => t('If enabled, the matching pattern will be interpreted as a <a href="@regex-wikipedia">regex</a>.  Tip: <a href="@RegExr">RegExr: Online Regular Expression Testing Tool</a> is helpful for learning, writing, and testing Regular Expressions.', array('@regex-wikipedia' => 'http://en.wikipedia.org/wiki/Regular_expression', '@RegExr' => 'http://gskinner.com/RegExr/')),
   );
 }
 
