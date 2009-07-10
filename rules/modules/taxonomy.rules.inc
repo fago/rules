@@ -123,6 +123,7 @@ function taxonomy_rules_action_info() {
         'label' => t('Taxonomy vocabulary'),
       ),
     ),
+    'eval input' => array('name', 'description', 'help'),
     'module' => 'Taxonomy',
   );
   return $info;
