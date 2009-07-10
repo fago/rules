@@ -76,6 +76,36 @@ function rules_taxonomy_form($vid, $value = 0, $help = NULL, $name = 'taxonomy')
 }
 
 /**
+ * Action: Add a new term to vocabulary configuration form.
+ *
+ * As we allow adding terms to vocabularies that are created on the fly, we
+ * can't present the term's advanced settings.
+ */
+function rules_action_taxonomy_add_term_form($settings, &$form, $form_state) {
+  // Fields definition taken from taxonomy_form_term().
+  $form['settings']['term'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Term Identification'),
+    '#collapsible' => TRUE,
+  );
+  $form['settings']['term']['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Term name'),
+    '#default_value' => !empty($settings['term']['name']) ? $settings['term']['name'] : '',
+    '#maxlength' => 255,
+    '#description' => t('The name of this term.'),
+    '#required' => TRUE,
+  );
+
+  $form['settings']['term']['description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Description'),
+    '#default_value' => !empty($settings['term']['description']) ? $settings['term']['description'] : '',
+    '#description' => t('A description of the term. To be displayed on taxonomy/term pages and RSS feeds.'),
+  );
+}
+
+/**
  * Action: Load a vocabulary configuration form.
  */
 function rules_action_taxonomy_load_vocab_form($settings, &$form, $form_state) {
