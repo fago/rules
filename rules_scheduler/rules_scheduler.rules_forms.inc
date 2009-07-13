@@ -1,0 +1,32 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Contains forms for rules scheduler actions.
+ */
+
+/**
+ * Changes the style of the action form, rule sets have to be selected from a select box.
+ */
+function rules_scheduler_action_delete_form($settings, &$form) {
+  $form['settings']['ruleset']['#type'] = 'select';
+  $rule_sets = array('' => '');
+  foreach (rules_get_configured_items('rule_sets') as $name => $set_info) {
+    $rule_sets[$name] = $set_info['label'] .' ('. $name .')';
+  }
+  $form['settings']['ruleset']['#options'] = $rule_sets;
+  $form['settings']['ruleset']['#multiple'] = FALSE;
+  $form['settings']['ruleset']['#required'] = FALSE;
+  
+  $form['settings']['task_identifier']['#required'] = FALSE;
+}
+
+/**
+ * Validates the parameters of the delete action, at least one must be specified.
+ */
+function rules_scheduler_action_delete_validate($form, $form_state) {
+  if ($form_state['values']['settings']['task_identifier'] === "" && empty($form_state['values']['settings']['ruleset'])) {
+    form_set_error('settings', t('You have specify at least one field.'));
+  }
+}

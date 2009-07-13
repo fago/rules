@@ -5,6 +5,7 @@
  * @file Rules engine module
  */
 
+define('RULES_DATE_REGEX_LOOSE', '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/');
 
 // We don't use hook_init() to include this as this
 // causes problems invoking rules_nodeapi.
@@ -1018,3 +1019,17 @@ function rules_rule_format_upgrade($rule) {
   return $rule;
 }
 
+/**
+ * Convert a time string to a GMT (UTC) unix timestamp
+ */
+function rules_gmstrtotime($time) {
+  if (preg_match(RULES_DATE_REGEX_LOOSE, $time)) {
+    // Append 'UTC' to indicate that the time string is in GMT/UTC.
+    return strtotime($time .' UTC');;
+  }
+  // If the time string is not in plain old date format (e.g. 'now', '+1 day'
+  // etc.), we need to convert it first.
+  $value = strtotime($time);
+  $date = gmdate('Y-m-d H:i:s', $value);
+  return strtotime($date .' UTC');
+}
