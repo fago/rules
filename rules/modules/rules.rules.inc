@@ -9,8 +9,6 @@
  * @{
  */
 
-define('RULES_DATE_REGEX_LOOSE', '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/');
-
 /**
  * Implementation of hook_rules_data_type_info().
  */
@@ -85,8 +83,8 @@ class rules_data_type_number extends rules_data_type_string {
 class rules_data_type_date extends rules_data_type_string {
   function get_default_input_form($info, $value) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
-    $value = isset($value) ? $value : date('Y-m-d H:i:s', time() + 86400);
-    $info['description'] = $info['description'] .' '. t('Format: %format or other values known by the PHP !strtotime function like "+1 day". ', array('%format' => date('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
+    $value = isset($value) ? $value : gmdate('Y-m-d H:i:s', time());
+    $info['description'] = $info['description'] .' '. t('Format: %format or other values in GMT known by the PHP !strtotime function like "+1 day". ', array('%format' => gmdate('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
     $info['description'] .= '<br />'. t('You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. ', array('!code' => '<pre>'. check_plain('<?php echo time() + 86400 * 1; ?>') .'</pre>'));
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
@@ -102,7 +100,7 @@ class rules_data_type_date extends rules_data_type_string {
       $value = gmdate('Y-m-d H:i:s', $value);
     }
     else if (is_string($value)) {
-      $value = gmdate('Y-m-d H:i:s', strtotime($value));
+      $value = gmdate('Y-m-d H:i:s', rules_gmstrtotime($value));
     }
     if (is_string($value) && preg_match(RULES_DATE_REGEX_LOOSE, $value)) {
       return $value;

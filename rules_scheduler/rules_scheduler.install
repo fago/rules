@@ -3,7 +3,8 @@
 
 
 /**
- * @file Rules Scheduler - Installation file.
+ * @file
+ * Rules Scheduler - Installation file.
  */
 
 /**
@@ -21,7 +22,7 @@ function rules_scheduler_uninstall() {
 }
 
 /**
- * Implementation of hook_schema.
+ * Implementation of hook_schema().
  */
 function rules_scheduler_schema() {
 
@@ -52,10 +53,34 @@ function rules_scheduler_schema() {
         'serialize' => TRUE,
         'description' => t('The whole, serialized item configuration.'),
       ),
+      'identifier' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+        'not null' => FALSE,
+        'description' => t('The user defined string identifying this task.'),
+      ),
     ),
     'primary key' => array('tid'),
     'indexes' => array('date' => array('date')),
   );
   return $schema;
+}
+
+/**
+ * Implementation of hook_update_N(). Adds an identifier field to the table.
+ */
+function rules_scheduler_update_6100() {
+  $spec = array(
+    'type' => 'varchar',
+    'length' => '255',
+    'default' => '',
+    'not null' => FALSE,
+    'description' => t('The user defined string identifying this task.'),
+  );
+  $ret = array();
+  db_add_field($ret, 'rules_scheduler', 'identifier', $spec);
+  drupal_set_message(t('Notice: concrete scheduling dates have to be specified in GMT now, so be aware to add out your local timezone!'));
+  return $ret;
 }
 
