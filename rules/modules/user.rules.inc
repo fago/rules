@@ -162,6 +162,7 @@ function user_rules_action_info() {
       ),
       'help' => t('Enter an id or a name of the user to load.'),
       'module' => 'User',
+      'eval input' => array('userid', 'username'),
     ),
     'rules_action_user_create' => array(
       'label' => t('Create a user'),
