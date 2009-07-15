@@ -51,6 +51,8 @@ Rules Scheduler
    schedule the execution of rule sets.
  * Make sure that you have configured cron for your drupal installation as cron
    is used for scheduling the rule sets. For help see http://drupal.org/cron
+ * If the views module (http://drupal.org/project/views) is installed, the module displays
+   the list of scheduled tasks in the UI. 
 
 
 Rules Simpletest
