@@ -7,6 +7,8 @@
  */
 
 rules_include('rules_admin');
+module_load_include('inc', 'rules', 'rules.export');
+
 
 /**
  * Imports a configuration of rules, rule sets, ..
@@ -158,9 +160,8 @@ function rules_admin_form_export($form_state) {
       '#type' => 'textarea',
       '#title' => t('Exported rule configurations'),
       '#description' => t('Copy these data and paste them into the import page, to import.'),
-      '#rows' => 15,
-      '#attributes' => array('readonly' => 'readonly'),
-      '#default_value' => var_export($form_state['export'], TRUE),
+      '#rows' => 30,
+      '#default_value' => $form_state['export'],
     );
   }
   return $form;
@@ -184,30 +185,12 @@ function rules_admin_form_export_submit($form, &$form_state) {
       }
     }
   }
-  if (array_filter($export)) {
-    foreach (array_keys($export) as $item_type) {
-      // Allow item specific adaption before exporting
-      foreach ($export[$item_type] as $item_name => $item) {
-        rules_item_type_invoke($item_type, 'export', array($item_name, &$export[$item_type][$item_name], &$export));
-      }
-    }
-    $form_state['export'] = $export;
+  if ($export = array_filter($export)) {
+    $form_state['export'] = rules_export_items($export);
   }
   else {
     drupal_set_message(t('Please select the items to export.'), 'error');
   }
   $form_state['rebuild'] = TRUE;
-}
-
-/**
- * Item type callback: When exporting a rule set, add its rules to the export.
- */
-function rules_item_rule_set_export($set_name, &$rule_set, &$export) {
-  $rules = rules_get_configured_items('rules');
-  foreach ($rules as $name => $rule) {
-    if ($rule['#set'] == $set_name) {
-      $export['rules'][$name] = $rule;
-    }
-  }
 }
 
