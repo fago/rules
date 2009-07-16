@@ -232,6 +232,13 @@ function node_rules_action_info() {
       ),
       'module' => 'Node',
     ),
+    'rules_action_delete_node' => array(
+      'label' => t('Delete content'),
+      'arguments' => array(
+        'node' => array('type' => 'node', 'label' => t('Content')),
+      ),
+      'module' => 'Node',
+    ),
   );
 }
 
@@ -282,6 +289,30 @@ function rules_action_add_node($author, $title, $settings) {
  */
 function rules_action_load_node($nid, $vid = NULL) {
   return array('node_loaded' => node_load($nid, $vid ? $vid : NULL));
+}
+
+/**
+ * Action "Delete a node".
+ *
+ * We cannot use node_delete() because it does access checks and output.
+ * @see node_delete()
+ */
+function rules_action_delete_node($node) {
+  db_query('DELETE FROM {node} WHERE nid = %d', $node->nid);
+  db_query('DELETE FROM {node_revisions} WHERE nid = %d', $node->nid);
+
+  // Call the node-specific callback (if any):
+  node_invoke($node, 'delete');
+  node_invoke_nodeapi($node, 'delete');
+
+  // Clear the page and block caches.
+  cache_clear_all();
+
+  // Remove this node from the search index if needed.
+  if (function_exists('search_wipe')) {
+    search_wipe($node->nid, 'node');
+  }
+  watchdog('content', '@type: deleted %title.', array('@type' => $node->type, '%title' => $node->title));
 }
 
 /**

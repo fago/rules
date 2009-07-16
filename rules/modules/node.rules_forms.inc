@@ -112,6 +112,13 @@ function rules_core_node_label_callback($settings, $argument_labels, &$element) 
 }
 
 /**
+ * Action "Delete content" - Label callback
+ */
+function rules_action_delete_node_label($settings, $argument_labels) {
+  return t('Delete @node', $argument_labels);
+}
+
+/**
  * The following functions help converting node actions
  * when upgrading from workflow-ng
  */
