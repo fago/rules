@@ -57,7 +57,7 @@ function rules_get_variables($names, &$state, $force = TRUE) {
       $args[$key] = &$state['variables'][$name]->get($force);
     }
     else {
-      rules_log(t('Warning: Unable to get variable %name.', array('%name' => $key)));
+      rules_log(t('Warning: Unable to get variable "@name".', array('@name' => $key)));
       return FALSE;
     }
   }
@@ -96,7 +96,7 @@ function rules_get_element_arguments($element, &$state) {
       $args[$key] = $element_info['arguments'][$name]['default value'];
     }
     else {
-      rules_log(t('Warning: Unable to get argument %name.', array('%name' => $key)));
+      rules_log(t('Warning: Unable to get argument "@name".', array('@name' => $key)));
       return FALSE;
     }
   }
@@ -155,7 +155,7 @@ function rules_get_execution_arguments(&$element, &$state) {
   $success = rules_apply_input_evaluators($element, $state);
 
   if ($success === FALSE) {
-    rules_log(t('Element %name has not been executed. There are not all execution arguments needed by an input evaluator available.', array('%name' => rules_get_element_label($element))));
+    rules_log(t('Element "@name" has not been executed. There are not all execution arguments needed by an input evaluator available.', array('@name' => rules_get_element_label($element))));
     return FALSE;
   }
 
@@ -170,7 +170,7 @@ function rules_get_execution_arguments(&$element, &$state) {
     $exec_args[] = &$state;
     return $exec_args;
   }
-  rules_log(t('Element %name has not been executed. There are not all execution arguments available.', array('%name' => rules_get_element_label($element))));
+  rules_log(t('Element "@name" has not been executed. There are not all execution arguments available.', array('@name' => rules_get_element_label($element))));
   return FALSE;
 }
 
@@ -200,10 +200,10 @@ function rules_save_variables($element, $result, &$state) {
       if (isset($info['save']) && $info['save']) {
         $variable->save();
       }
-      rules_log(t('Successfully added the new variable @arg', array('@arg' => $info['label'])));
+      rules_log(t('Successfully added the new variable "@arg"', array('@arg' => $info['label'])));
     }
     else {
-      rules_log(t('Unknown variable name %var return by action %name.', array('%var' => $argument_name, '%name' => $element['#name'])), TRUE);
+      rules_log(t('Unknown variable name "@var" return by action "@name".', array('@var' => $argument_name, '@name' => $element['#name'])), TRUE);
     }
   }
 }
@@ -316,7 +316,7 @@ class rules_variable {
       $this->_set_data($data);
 
       $this->info['handler'] = ''; // Do not invoke it twice, if it fails
-      rules_log(t('Loaded variable @arg', array('@arg' => $this->info['label'])));
+      rules_log(t('Loaded variable "@arg"', array('@arg' => $this->info['label'])));
     }
     else if (isset($this->data)) {
       $data = &$this->data->get();
