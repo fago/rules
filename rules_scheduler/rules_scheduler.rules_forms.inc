@@ -27,6 +27,6 @@ function rules_scheduler_action_delete_form($settings, &$form) {
  */
 function rules_scheduler_action_delete_validate($form, $form_state) {
   if ($form_state['values']['settings']['task_identifier'] === "" && empty($form_state['values']['settings']['ruleset'])) {
-    form_set_error('settings', t('You have specify at least one field.'));
+    form_set_error('settings', t('You have to specify at least one field.'));
   }
 }
