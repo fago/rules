@@ -55,6 +55,14 @@ Rules Scheduler
    the list of scheduled tasks in the UI. 
 
 
+Rules Forms
+-----------
+
+ * If you want to manipulate or customize forms on your site, you can use the rules
+   forms module. It provides events, conditions and actions for rule-based form customization.
+ * Take a look at the README.txt file in rules forms module subfolder.
+ 
+
 Rules Simpletest
 ----------------
 
