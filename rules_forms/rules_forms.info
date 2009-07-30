@@ -1,0 +1,6 @@
+; $Id$
+name = Rules Forms support
+description = Provides events, conditions and actions for rule-based form customization.
+dependencies[] = rules
+package = Rules
+core = 6.x
