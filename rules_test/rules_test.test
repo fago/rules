@@ -62,7 +62,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $log = rules_test_show_log($error);
 
     $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
-    $this->assertTrue(strpos($log, 'Loaded variable node') !== FALSE, t('Variable was not loaded successfully.') .' '. $log);
+    $this->assertTrue(strpos($log, 'Loaded variable "node"') !== FALSE, t('Variable was not loaded successfully.') .' '. $log);
   }
 
   //Tests adding a new variable
@@ -71,7 +71,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $error = FALSE;
     $log = rules_test_show_log($error);
     $this->assertFalse($error, t('Rule was not evaluated successfully.') .' '. $log);
-    $this->assertTrue(strpos($log, 'Successfully added the new variable test') !== FALSE, t('Variable was not added successfully.') .' '. $log);
+    $this->assertTrue(strpos($log, 'Successfully added the new variable "test"') !== FALSE, t('Variable was not added successfully.') .' '. $log);
   }
 }
 
