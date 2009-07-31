@@ -94,7 +94,7 @@ function rules_action_mail_form($settings = array(), &$form) {
  */
 function rules_action_mail_to_users_of_role_form($settings = array(), &$form) {
   // Select only non-anonymous user roles because anonymous users won't have emails.
-  $roles = user_roles(TRUE);
+  $roles = array_map('filter_xss_admin', user_roles(TRUE));
 
   $form['settings']['recipients'] = array(
     '#type' => 'checkboxes',

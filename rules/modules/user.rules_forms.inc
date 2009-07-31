@@ -53,7 +53,7 @@ function rules_action_user_removerole_submit(&$settings, $form, $form_state) {
  * Helper function to create role form
  */
 function _rules_user_form_roles($settings = array(), $roles_only = TRUE) {
-  $roles = user_roles($roles_only);
+  $roles = array_map('filter_xss_admin', user_roles($roles_only));
   if ($roles_only) {
     unset($roles[DRUPAL_AUTHENTICATED_RID]);
   }
