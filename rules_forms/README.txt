@@ -2,6 +2,7 @@ $Id$
 
 Rules Forms Module
 ------------------
+maintained by Klaus Purer <klaus.purer@gmail.com>
 
 This module allows you to manipulate/customize forms on your site with Rules. 
 
@@ -45,7 +46,7 @@ need the ID of the element. This guide shows you you how to find them.
  * Select the checkbox "Display form element IDs" and hit the "Save settings" button.
  * Go to the target form on your site, where you will see the form element ID below
    each form element.
- * Copy the ID of the form element you would like to examine or mainpulate, e.g.
+ * Copy the ID of the form element you would like to examine or manipulate, e.g.
    copy "body_field[body]" on the "Create Story" form if you want to do something
    with the node body textarea.
  * Paste this ID when you create a condition or an action which requires a form
