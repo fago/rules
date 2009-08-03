@@ -558,7 +558,7 @@ msgid "Arguments"
 msgstr "引数"
 
 #: rules_admin.sets.inc:198
-msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr "ルールセットが実行される際に渡される引数を指定することができます。題名とデータ型、そして英数字と下線(_)だけを含む機械で判読可能な固有の名前を各引数に設定できます。"
 
 #: rules_admin.sets.inc:209

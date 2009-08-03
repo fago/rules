@@ -95,6 +95,7 @@ function rules_admin_menu() {
 
   $items[RULES_ADMIN_PATH .'/ie'] = array(
     'title' => 'Import / Export',
+    'description' => 'Export your rules as text or import rules.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_form_export'),
     'access arguments' => array('administer rules'),
@@ -118,6 +119,7 @@ function rules_admin_menu() {
   );
   $items[RULES_ADMIN_PATH .'/settings'] = array(
     'title' => 'Settings',
+    'description' => 'Set display options, show/hide Rules messages.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_settings'),
     'access arguments' => array('administer rules'),

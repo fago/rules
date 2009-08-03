@@ -195,7 +195,7 @@ function rules_admin_form_add_rule_set(&$form_state) {
     '#suffix' => '</div>',
     '#tree' => TRUE,
     '#theme' => 'rules_admin_form_arguments',
-    '#description' => t('You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores.'),
+    '#description' => t('You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores.'),
   );
   foreach ($set_info['arguments'] as $name => $info) {
     $form['settings']['args'][$name] = _rules_admin_form_argument($name, $info);
@@ -341,8 +341,8 @@ function theme_rules_admin_form_arguments($form) {
 
   $rows = array();
   $headers = array(
-    t('Label'),
     t('Data type'),
+    t('Label'),
     t('Machine readable name'),
   );
 
@@ -355,8 +355,8 @@ function theme_rules_admin_form_arguments($form) {
     // Build the table row.
     $row = array(
       'data' => array(
-        array('data' => drupal_render($form[$key]['label']), 'class' => 'rules-argument-label'),
         array('data' => drupal_render($form[$key]['type']), 'class' => 'rules-argument-data-type'),
+        array('data' => drupal_render($form[$key]['label']), 'class' => 'rules-argument-label'),
         array('data' => drupal_render($form[$key]['name']), 'class' => 'rules-argument-name'),
       ),
     );

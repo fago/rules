@@ -3,11 +3,11 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  rules_admin.export.inc,v 1.1.2.5 2009/04/20 11:26:45 fago
+#  rules_admin.export.inc,v 1.1.2.6 2009/07/15 16:00:00 fago
 #  rules_admin.module,v 1.1.2.5 2009/04/19 21:21:31 fago
 #  rules_admin.inc,v 1.1.2.10 2009/04/20 11:45:58 fago
 #  rules_admin.rule_forms.inc,v 1.1.2.8 2009/04/19 21:21:31 fago
-#  rules_admin.sets.inc,v 1.1.2.7 2009/04/19 20:21:53 fago
+#  rules_admin.sets.inc,v 1.1.2.8 2009/05/18 12:05:20 fago
 #  rules_admin.render.inc,v 1.1.2.2 2009/04/19 15:03:43 fago
 #  rules_admin.info,v 1.1.2.2 2009/03/30 17:34:26 fago
 #  rules_admin.install,v 1.1.2.4 2009/04/19 18:19:06 fago
@@ -16,7 +16,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2009-05-18 14:11+0200\n"
+"POT-Creation-Date: 2009-08-03 15:26+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -25,59 +25,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: rules_admin.export.inc:18
+#: rules_admin.export.inc:20
 msgid "Configuration to import"
 msgstr ""
 
-#: rules_admin.export.inc:19
+#: rules_admin.export.inc:21
 msgid "Just paste your exported configuration here."
 msgstr ""
 
-#: rules_admin.export.inc:23 rules_admin.module:111
+#: rules_admin.export.inc:25 rules_admin.module:112
 msgid "Import"
 msgstr ""
 
-#: rules_admin.export.inc:40
+#: rules_admin.export.inc:42
 msgid "Imported %label."
 msgstr ""
 
-#: rules_admin.export.inc:46
+#: rules_admin.export.inc:48
 msgid "Import failed."
 msgstr ""
 
-#: rules_admin.export.inc:110
+#: rules_admin.export.inc:112
 msgid "Successfully imported the workflow-ng rule %label."
 msgstr ""
 
-#: rules_admin.export.inc:113
+#: rules_admin.export.inc:115
 msgid "Failed importing the workflow-ng rule %label."
 msgstr ""
 
-#: rules_admin.export.inc:132
+#: rules_admin.export.inc:135 rules_admin.inc:368 rules_admin.module:52
+msgid "Triggered rules"
+msgstr ""
+
+#: rules_admin.export.inc:141
 msgid "Select the %label to export"
 msgstr ""
 
-#: rules_admin.export.inc:139
+#: rules_admin.export.inc:148
 msgid "There are no %label to be exported."
 msgstr ""
 
-#: rules_admin.export.inc:147
+#: rules_admin.export.inc:156
 msgid "Export by category"
 msgstr ""
 
-#: rules_admin.export.inc:153 rules_admin.module:106
+#: rules_admin.export.inc:162 rules_admin.module:107
 msgid "Export"
 msgstr ""
 
-#: rules_admin.export.inc:159
+#: rules_admin.export.inc:168
 msgid "Exported rule configurations"
 msgstr ""
 
-#: rules_admin.export.inc:160
+#: rules_admin.export.inc:169
 msgid "Copy these data and paste them into the import page, to import."
 msgstr ""
 
-#: rules_admin.export.inc:197
+#: rules_admin.export.inc:199
 msgid "Please select the items to export."
 msgstr ""
 
@@ -85,7 +89,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;423;481;679 rules_admin.sets.inc:16;141;276;344
+#: rules_admin.inc:296 rules_admin.rule_forms.inc:112;423;481;679 rules_admin.sets.inc:16;141;276;345
 msgid "Label"
 msgstr ""
 
@@ -157,55 +161,59 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: rules_admin.inc:363 rules_admin.module:173
+#: rules_admin.inc:363 rules_admin.module:175
 msgid "Rule sets"
 msgstr ""
 
-#: rules_admin.inc:368 rules_admin.module:52
-msgid "Triggered rules"
+#: rules_admin.render.inc:24
+msgid "ON event %event"
 msgstr ""
 
-#: rules_admin.render.inc:20
-msgid "Conditions"
-msgstr ""
-
-#: rules_admin.render.inc:26
-msgid "AND"
-msgstr ""
-
-#: rules_admin.render.inc:28
-msgid "Actions"
+#: rules_admin.render.inc:30
+msgid "IN rule set %ruleset"
 msgstr ""
 
 #: rules_admin.render.inc:34
+msgid "IF"
+msgstr ""
+
+#: rules_admin.render.inc:39
+msgid "AND"
+msgstr ""
+
+#: rules_admin.render.inc:42
+msgid "DO"
+msgstr ""
+
+#: rules_admin.render.inc:48
 msgid "Add a condition"
 msgstr ""
 
-#: rules_admin.render.inc:35
+#: rules_admin.render.inc:49
 msgid "Add an action"
 msgstr ""
 
-#: rules_admin.render.inc:76
+#: rules_admin.render.inc:90
 msgid "Indent this condition by adding a logical operation."
 msgstr ""
 
-#: rules_admin.render.inc:78;138
+#: rules_admin.render.inc:92;152
 msgid "NOT"
 msgstr ""
 
-#: rules_admin.render.inc:118
+#: rules_admin.render.inc:132
 msgid "Empty"
 msgstr ""
 
-#: rules_admin.render.inc:139
+#: rules_admin.render.inc:153
 msgid "!not%label group"
 msgstr ""
 
-#: rules_admin.render.inc:140
+#: rules_admin.render.inc:154
 msgid "Add another condition to this group"
 msgstr ""
 
-#: rules_admin.render.inc:141
+#: rules_admin.render.inc:155
 msgid "Edit this condition group"
 msgstr ""
 
@@ -333,7 +341,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: rules_admin.rule_forms.inc:450;514;578;807 rules_admin.sets.inc:62 rules_admin.module:77;156
+#: rules_admin.rule_forms.inc:450;514;578;807 rules_admin.sets.inc:62 rules_admin.module:77;158
 msgid "Delete"
 msgstr ""
 
@@ -532,7 +540,7 @@ msgid "Arguments"
 msgstr ""
 
 #: rules_admin.sets.inc:198
-msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr ""
 
 #: rules_admin.sets.inc:209
@@ -555,7 +563,7 @@ msgstr ""
 msgid "Each name may be used only once."
 msgstr ""
 
-#: rules_admin.sets.inc:285;345
+#: rules_admin.sets.inc:285;344
 msgid "Data type"
 msgstr ""
 
@@ -571,7 +579,7 @@ msgstr ""
 msgid "This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met."
 msgstr ""
 
-#: rules_admin.module:276
+#: rules_admin.module:278
 msgid "administer rules"
 msgstr ""
 
@@ -587,11 +595,11 @@ msgstr ""
 msgid "Customize your site by configuring rules that are evaluated on events."
 msgstr ""
 
-#: rules_admin.module:62;182;213
+#: rules_admin.module:62;184;215
 msgid "Overview"
 msgstr ""
 
-#: rules_admin.module:67;219
+#: rules_admin.module:67;221
 msgid "Add a new rule"
 msgstr ""
 
@@ -599,32 +607,36 @@ msgstr ""
 msgid "Import / Export"
 msgstr ""
 
-#: rules_admin.module:120
+#: rules_admin.module:98
+msgid "Display your rules as text or create new rules from pasted text."
+msgstr ""
+
+#: rules_admin.module:121
 msgid "Settings"
 msgstr ""
 
-#: rules_admin.module:139
+#: rules_admin.module:122
+msgid "Set display options, show/hide Rules messages."
+msgstr ""
+
+#: rules_admin.module:141
 msgid "Add"
 msgstr ""
 
-#: rules_admin.module:147
+#: rules_admin.module:149
 msgid "Edit"
 msgstr ""
 
-#: rules_admin.module:165
+#: rules_admin.module:167
 msgid "Clone rule"
 msgstr ""
 
-#: rules_admin.module:174
+#: rules_admin.module:176
 msgid "Create and manage rule sets."
 msgstr ""
 
-#: rules_admin.module:187
+#: rules_admin.module:189
 msgid "Add a new rule set"
-msgstr ""
-
-#: rules_admin.module:0
-msgid "rules_admin"
 msgstr ""
 
 #: rules_admin.install:29
@@ -654,3 +666,4 @@ msgstr ""
 #: rules_admin.info:0
 msgid "Provides the administration UI for rules."
 msgstr ""
+
