@@ -16,16 +16,31 @@ function theme_rules_admin_rule_render($element) {
   //add css
   $path = drupal_get_path('module', 'rules_admin') .'/rules_admin.css';
   drupal_add_css($path, 'module', 'all', FALSE);
+  
+  if (rules_admin_is_event_rule($element)) {
+    // Render event headline on event-triggered rules
+    $events = rules_get_event_sets();
+    $event_label = $events[$element['#set']]['label'];
+    $render['event_headline'] = array('#weight' => -10, '#value' => '<h3 class="event">'. t('ON event %event', array('%event' => $event_label)) .'</h3>');
+  }
+  else {
+    // Render rule set headline
+    $rulesets = rules_get_rule_sets();
+    $ruleset_label = $rulesets[$element['#set']]['label'];
+    $render['event_headline'] = array('#weight' => -10, '#value' => '<h3 class="event">'. t('IN rule set %ruleset', array('%ruleset' => $ruleset_label)) .'</h3>');
+  }
+  
+  $conditions = element_children($element['#conditions']);
+  if (!empty($conditions)) {
+    $render['condition_headline'] = array('#weight' => -6, '#value' => '<h3 class="conditions">'. t('IF') .'</h3>');
+    $render['conditions'] = $element['#conditions'];
+    $render['conditions']['#weight'] = 0;
+    
+    /* render the conditions of the rule like an AND */
+    $render['conditions'] += array('#theme' => 'rules_operation', '#label' => t('AND'), '#_root' => TRUE);
+  }
 
-  $render['condition_headline'] = array('#weight' => -6, '#value' => '<h3 class="conditions">'. t('Conditions') .'</h3>');
-  $render['conditions'] = $element['#conditions'];
-  $render['conditions']['#weight'] = 0;
-  /* render the conditions of the rule like an AND */
-
-
-  $render['conditions'] += array('#theme' => 'rules_operation', '#label' => t('AND'), '#_root' => TRUE);
-
-  $render['actions_headline'] = array('#weight' => 10, '#value' => '<h3 class="actions">'. t('Actions') .'</h3>');
+  $render['actions_headline'] = array('#weight' => 10, '#value' => '<h3 class="actions">'. t('DO') .'</h3>');
   $render['actions'] = $element['#actions'];
   $render['actions']['#weight'] = 20;
 
@@ -66,7 +81,7 @@ function theme_rule($element) {
  */
 function theme_condition($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
-  $title      = theme('rules_icon', 'condition') .' '. check_plain(rules_get_element_label($element));
+  $title      = theme('rules_icon', 'condition') . check_plain(rules_get_element_label($element));
   $path       = RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/edit/'. $element['#id'];
   $options    = array('attributes' => _rules_attributes_add_class($attributes, 'condition'), 'query' => drupal_get_destination(), 'html' => TRUE);
   $link       = l($title, $path, $options);
@@ -84,7 +99,7 @@ function theme_condition($element) {
  */
 function theme_action($element) {
   $attributes = isset($element['#attributes']) ? $element['#attributes'] : array();
-  $title      = theme('rules_icon', 'action') .' '. check_plain(rules_get_element_label($element));
+  $title      = theme('rules_icon', 'action') . check_plain(rules_get_element_label($element));
   $path       = RULES_ADMIN_RULE_PATH .'/'. $element['#rule'] .'/edit/'. $element['#id'];
   $options    = array('attributes' => _rules_attributes_add_class($attributes, 'action'), 'query' => drupal_get_destination(), 'html' => TRUE);
   return l($title, $path, $options);

@@ -503,7 +503,7 @@ msgid "Arguments"
 msgstr "Παράμετροι"
 
 #: rules/rules_admin.sets.inc:197
-msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr "Μπορείτε να ορίσετε ορισμένες παραμέτρους, που θα περνιούνται στο σύνολο κανόνων όταν αυτό καλείται. Για κάθε παράμετρο, πρέπει να ορίσετε μια ετικέτα, ένα συγκεκριμένο τύπο δεδομένων και ένα μοναδικό αναγνωρίσιμο από τη μηχανή όνομα που να περιέχει μόνο αλφαριθμητικούς χαρακτήρες και το χαρακτήρα '_' (underscore)."
 
 #: rules/rules_admin.sets.inc:208

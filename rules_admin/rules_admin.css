@@ -9,16 +9,9 @@ a.action, a.condition {
 }
 img.rules-icon {
   position: relative;
-  top: 0.5em;
-}
-a.action img.rules-icon {
-  position: relative;
-  top: 3px;
-  left: 2px;
-}
-a.condition img.rules-icon {
-  position: relative;
-  top: 2px;
+  top: -0.2em;
+  vertical-align: bottom;
+  margin-right: 5px;
 }
 div.configuration-fixed a.modify {
   display:none;
@@ -30,18 +23,18 @@ div.logical-op-not {
 p.logical-op-add, h3.actions {
   margin-top: 2em;
 }
-h3.conditions {
+h3.conditions, h3.event {
   margin-top: 1em;
 }
 p.logical-op-add {
   margin-bottom: 0em;
 }
-p.logical-op-edit img.rules-icon {
-  top: -0.2em;
-  vertical-align: bottom;
+p.logical-op-edit {
+  margin-top: 0em;
+  margin-bottom: 0em;
 }
-img.rules-icon {
-  margin: 0px 3px;
+a.condition_add img.rules-icon {
+  top: 0.5em;
 }
 div.rules-filter {
   padding-bottom: 2em;

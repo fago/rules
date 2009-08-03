@@ -581,11 +581,11 @@ msgid "Arguments"
 msgstr "Argumente"
 
 #: rules_admin.sets.inc:198
-msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a label, a certain data type and a unique machine readable name containing only alphanumeric characters, and underscores."
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
 msgstr ""
 "Es können Argumente angegeben werden, die beim Aufruf an das "
-"Regel-Set übergeben werden. Für jedes Argument muss eine "
-"Bezeichnung, ein bestimmter Datentyp und ein eindeutiger "
+"Regel-Set übergeben werden. Für jedes Argument muss ein "
+"bestimmter Datentyp, eine Bezeichnung und ein eindeutiger "
 "maschinenlesbarer Name (der nur alphanumerische Zeichen und "
 "Unterstriche enthält) angegeben werden."
 

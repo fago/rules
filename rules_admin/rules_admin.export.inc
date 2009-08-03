@@ -120,14 +120,21 @@ function rules_admin_import_workflow_ng($import) {
 }
 
 /**
- * Exports one ore more configurations
+ * Exports one or more configurations
  */
 function rules_admin_form_export($form_state) {
   $form = array();
   if (!isset($form_state['export'])) {
     $form['export'] = array('#tree' => TRUE);
     foreach (rules_get_items() as $name => $info) {
-      $items = rules_admin_get_grouped_labels(rules_get_configured_items($name));
+      $items = rules_get_configured_items($name);
+      if ($name === 'rules') {
+        // Filter out rules within rule sets, we only want event-triggered,
+        // standalone rules.
+        $items = array_filter($items, 'rules_admin_is_event_rule');
+        $info['label'] = t('Triggered rules');
+      }
+      $items = rules_admin_get_grouped_labels($items);
       if (count($items)) {
         $form['export'][$name] = array(
           '#type' => 'select',

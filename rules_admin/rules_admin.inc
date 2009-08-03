@@ -384,3 +384,7 @@ function rules_admin_add_crumbs($crumbs) {
     drupal_set_breadcrumb($breadcrumb);
   }
 }
+
+function rules_admin_is_event_rule($rule) {
+  return !empty($rule['#set']) && strpos($rule['#set'], 'event_') === 0;
+}
