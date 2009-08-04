@@ -98,6 +98,13 @@ function rules_forms_action_hide_element_label($settings, $argument_labels) {
 }
 
 /**
+ * Label callback for disabling form elements action.
+ */
+function rules_forms_action_disable_element_label($settings, $argument_labels) {
+  return t("Disable form element '@element'", array('@element' => $settings['disable']));
+}
+
+/**
  * Label callback for redirect action.
  */
 function rules_forms_action_redirect_label($settings, $argument_labels) {

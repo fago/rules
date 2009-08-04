@@ -75,6 +75,18 @@ function rules_forms_rules_action_info() {
       ),
       'module' => 'Rules Forms',
     ),
+    'rules_forms_action_disable_element' => array(
+      'label' => t('Disable an element of the form'),
+      'arguments' => array(
+        'form' => array('type' => 'form', 'label' => t('Form')),
+        'disable' => array(
+          'type' => 'string',
+          'label' => t('Form element ID'),
+          'description' => t('The element that should be disabled.') .' '. _rules_forms_element_description() .' '. t('Note that this will not disable CCK fields.'),
+        ),
+      ),
+      'module' => 'Rules Forms',
+    ),    
     'rules_forms_action_adjust_weight' => array(
       'label' => t('Adjust weight of an element in the form'),
       'arguments' => array(
@@ -175,6 +187,14 @@ function rules_forms_action_redirect(&$form, $path, $query, $fragment) {
 function rules_forms_action_hide_element(&$form, $hide) {
   $form_element = &_rules_forms_get_element($form, $hide);
   $form_element['#access'] = FALSE;
+}
+
+/**
+ * Action implementation: Disable a form element.
+ */
+function rules_forms_action_disable_element(&$form, $disable) {
+  $form_element = &_rules_forms_get_element($form, $disable);
+  $form_element['#disabled'] = TRUE;
 }
 
 /**
