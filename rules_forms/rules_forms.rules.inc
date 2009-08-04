@@ -148,7 +148,7 @@ function rules_forms_rules_data_type_info() {
       'class' => 'rules_data_type',
       'savable' => FALSE,
       'identifiable' => FALSE,
-      'uses_input_form' => FALSE,
+      'use_input_form' => FALSE,
       'module' => 'Rules Forms',
     ),
     'form_state' => array(
@@ -156,7 +156,7 @@ function rules_forms_rules_data_type_info() {
       'class' => 'rules_data_type',
       'savable' => FALSE,
       'identifiable' => FALSE,
-      'uses_input_form' => FALSE,
+      'use_input_form' => FALSE,
       'module' => 'Rules Forms',
     ),
   );
