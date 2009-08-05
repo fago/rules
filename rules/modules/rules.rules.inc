@@ -19,24 +19,28 @@ function rules_rules_data_type_info() {
       'class' => 'rules_data_type_string',
       'identifiable' => FALSE,
       'eval input' => TRUE,
+      'token type' => FALSE,
     ),
     'number' => array(
       'label' => t('number'),
       'class' => 'rules_data_type_number',
       'identifiable' => FALSE,
       'eval input' => TRUE,
+      'token type' => FALSE,
     ),
     'date' => array(
       'label' => t('date'),
       'class' => 'rules_data_type_date',
       'identifiable' => FALSE,
       'eval input' => TRUE,
+      'token type' => FALSE,
     ),
     'boolean' => array(
       'label' => t('truth value'),
       'class' => 'rules_data_type_boolean',
       'identifiable' => FALSE,
       'eval input' => TRUE,
+      'token type' => FALSE,
     ),
     'value' => array(
       'label' => t('a fixed value'),
