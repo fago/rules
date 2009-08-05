@@ -55,8 +55,8 @@
  *   - 'eval input'
  *         Optional; An array containing form element names of elements contained in the
  *         actions settings form ($form['settings']) to which input evaluators
- *         should be attached. 
- *         For settings in a nested array the array keys may be separated by '|' 
+ *         should be attached.
+ *         For settings in a nested array the array keys may be separated by '|'
  *         in the name.
  *   - 'label callback'
  *         A callback to improve the action's label once it has been configured.
@@ -413,6 +413,9 @@ function hook_rules_event_info() {
  *    - 'eval input'
  *         If the data type uses an input form, this can be used to enable input
  *         evaluation for it. Optional (defaults to FALSE).
+ *    - 'token type'
+ *         The type name as used by the token module. Defaults to the type name
+ *         as used by rules. Use FALSE to let token ignore this type. Optional.
  *    - 'hidden'
  *         Whether the data type should be hidden from the UI. Optional
  *         (defaults to FALSE).

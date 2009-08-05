@@ -235,6 +235,7 @@ function taxonomy_rules_data_type_info() {
       'savable' => FALSE,
       'identifiable' => TRUE,
       'module' => 'Taxonomy',
+      'token type' => 'taxonomy',
     ),
     'taxonomy_vocab' => array(
       'label' => t('taxonomy vocabulary'),
@@ -242,6 +243,7 @@ function taxonomy_rules_data_type_info() {
       'savable' => FALSE,
       'identifiable' => TRUE,
       'module' => 'Taxonomy',
+      'token type' => FALSE,
     ),
   );
 }
