@@ -123,7 +123,17 @@ function rules_forms_after_build($form, &$form_state) {
   if (!$form_state['submitted']) {
     return $form;
   }
-  $form_state['submit_handlers'][] = 'rules_forms_event_submit';
-  $form_state['validate_handlers'][] = 'rules_forms_event_validate';
+  if (empty($form_state['submit_handlers'])) {
+    $form['#submit'][] = 'rules_forms_event_submit';
+  }
+  else {
+    $form_state['submit_handlers'][] = 'rules_forms_event_submit';
+  }
+  if (empty($form_state['validate_handlers'])) {
+    $form['#validate'][] = 'rules_forms_event_validate';
+  }
+  else {
+    $form_state['validate_handlers'][] = 'rules_forms_event_validate';
+  }
   return $form;
 }
