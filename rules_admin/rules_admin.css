@@ -20,11 +20,15 @@ div.logical-op-not {
   float: left;
   margin-top: 0.7em;
 }
-p.logical-op-add, h3.actions {
-  margin-top: 2em;
+p.logical-op-add {
+	margin-top: 2em;
 }
-h3.conditions, h3.event {
+h3.actions {
   margin-top: 1em;
+}
+h3.event {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 p.logical-op-add {
   margin-bottom: 0em;
