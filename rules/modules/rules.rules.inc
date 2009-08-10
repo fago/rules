@@ -218,9 +218,10 @@ function rules_rules_action_info() {
   }
   $items = array_filter($items);
 
-  // Add an action to add a new variable for all not identifiable data types
+  // Add an action to add a new variable for all data types that use an input form.
   foreach (rules_get_data_types() as $name => $type_info) {
-    if (isset($type_info['identifiable']) && !$type_info['identifiable'] && (!isset($type_info['hidden']) || !$type_info['hidden'])) {
+    $type_info += array('use_input_form' => empty($type_info['identifiable']));
+    if (!empty($type_info['use_input_form']) && empty($type_info['hidden'])) {
       $items['rules_add_var_'. $name] = array(
         'module' => 'Rules',
         'base' => 'rules_action_save_variable',
