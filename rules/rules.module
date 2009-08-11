@@ -397,7 +397,7 @@ function rules_execute_element(&$element, &$state) {
  */
 function rules_execute_rule(&$element, &$state) {
   if ($element['#active'] && !$element['#recursion'] && rules_log_rule_is_evaluated($element)) {
-    rules_log(t('Not executing the rule "@name" on rule set "@set" to prevent recursion.', array('%name' => $element['#label'], '@set' => $state['set_info']['label'])));
+    rules_log(t('Not executing the rule "@name" on rule set "@set" to prevent recursion.', array('@name' => $element['#label'], '@set' => $state['set_info']['label'])));
     // Remember this, so the recursion count is still positive after this evaluation.
     rules_log_evaluated_rule($element);
   }
