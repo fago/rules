@@ -97,18 +97,24 @@ function rules_forms_invoke_event($event_type, &$form, &$form_state, $form_id = 
 }
 
 /**
- * Add element IDs as suffix code to all form elements.
+ * Add element IDs as prefix/suffix code to all form elements.
  */
 function rules_forms_add_element_id(&$form, $parent = '') {
   $bracket = ($parent === '') ? '' : ']';
   foreach (element_children($form) as $key) {
-    if (!isset($form[$key]['#type']) || $form[$key]['#type'] === 'hidden' || $form[$key]['#type'] === 'token') {
-      $element_id = '<div class="rules_forms_element_id">'. t('Hidden Element ID: %elem', array('%elem' => $parent . $key . $bracket)) .'</div>';
+    if (isset($form[$key]['#type'])) {
+      if ($form[$key]['#type'] === 'hidden' || $form[$key]['#type'] === 'token') {
+        $element_id = '<div class="rules_forms_element_id">'. t('Hidden element ID: %elem', array('%elem' => $parent . $key . $bracket)) .'</div>';
+      }
+      else {
+        $element_id = '<div class="rules_forms_element_id">'. t('Element ID: %elem', array('%elem' => $parent . $key . $bracket)) .'</div>';
+      }
+      $form[$key]['#suffix'] = isset($form[$key]['#suffix']) ? $form[$key]['#suffix'] . $element_id : $element_id;
     }
     else {
-      $element_id = '<div class="rules_forms_element_id">'. t('Element ID: %elem', array('%elem' => $parent . $key . $bracket)) .'</div>';
+      $element_id = '<div class="rules_forms_element_id">'. t('Container element ID: %elem', array('%elem' => $parent . $key . $bracket)) .'</div>';
+      $form[$key]['#prefix'] = isset($form[$key]['#suffix']) ? $form[$key]['#suffix'] . $element_id : $element_id;
     }
-    $form[$key]['#suffix'] = isset($form[$key]['#suffix']) ? $form[$key]['#suffix'] . $element_id : $element_id;
     // recursive call on children
     rules_forms_add_element_id($form[$key], $parent . $key . $bracket .'[');
   }
