@@ -82,7 +82,7 @@ function rules_forms_rules_action_info() {
         'disable' => array(
           'type' => 'string',
           'label' => t('Form element ID'),
-          'description' => t('The element that should be disabled.') .' '. _rules_forms_element_description() .' '. t('Note that this will not disable CCK fields.'),
+          'description' => t('The element that should be disabled.') .' '. _rules_forms_element_description(),
         ),
       ),
       'module' => 'Rules Forms',
@@ -193,8 +193,44 @@ function rules_forms_action_hide_element(&$form, $hide) {
  * Action implementation: Disable a form element.
  */
 function rules_forms_action_disable_element(&$form, $disable) {
-  $form_element = &_rules_forms_get_element($form, $disable);
-  $form_element['#disabled'] = TRUE;
+  // Register an after build handler because some form elements might not
+  // exsist yet.
+  $form['#rules_forms']['#disable'][] = $disable;
+  if (empty($form['#after_build']) || !in_array('rules_forms_element_action_after_build', $form['#after_build'])) {
+    $form['#after_build'][] = 'rules_forms_element_action_after_build';
+  }
+}
+
+/**
+ * Form after build handler for disabling form elements.
+ */
+function rules_forms_element_action_after_build($form, &$form_state) {
+  // Get the element that should be extracted.
+  foreach ($form['#rules_forms']['#disable'] as $field) {
+    rules_forms_disable_field_recurse(_rules_forms_get_element($form, $field));
+  }
+  return $form;
+}
+
+/**
+ * Recursively set the disabled attribute of a form element and all its dependent
+ * FAPI elements.
+ *
+ * @see http://drupal.org/node/357328
+ */
+function rules_forms_disable_field_recurse(&$elements) {
+  foreach (element_children($elements) as $key) {
+    if (isset($elements[$key]) && $elements[$key]) {
+
+      // Recurse through all children elements.
+     rules_forms_disable_field_recurse($elements[$key]);
+    }
+  }
+
+  if (!isset($elements['#attributes'])) {
+    $elements['#attributes'] = array();
+  }
+  $elements['#attributes']['disabled'] = 'disabled';
 }
 
 /**
