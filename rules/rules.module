@@ -1026,7 +1026,7 @@ function rules_rule_format_upgrade($rule) {
 function rules_gmstrtotime($time) {
   if (preg_match(RULES_DATE_REGEX_LOOSE, $time)) {
     // Append 'UTC' to indicate that the time string is in GMT/UTC.
-    return strtotime($time .' UTC');;
+    return strtotime($time .' UTC');
   }
   // If the time string is not in plain old date format (e.g. 'now', '+1 day'
   // etc.), we need to convert it first.
