@@ -86,7 +86,7 @@ function rules_forms_rules_action_info() {
         ),
       ),
       'module' => 'Rules Forms',
-    ),    
+    ),
     'rules_forms_action_adjust_weight' => array(
       'label' => t('Adjust weight of an element in the form'),
       'arguments' => array(
@@ -139,6 +139,23 @@ function rules_forms_rules_action_info() {
           'type' => 'string',
           'label' => t('Message'),
           'description' => t('The message that should be displayed to the user.'),
+        ),
+      ),
+      'module' => 'Rules Forms',
+    ),
+    'rules_forms_action_set_element' => array(
+      'label' => t('Set the default value of a form element'),
+      'arguments' => array(
+        'form' => array('type' => 'form', 'label' => t('Form')),
+        'element' => array(
+          'type' => 'string',
+          'label' => t('Form element ID'),
+          'description' => t('The element that should be targeted.') .' '. _rules_forms_element_description(),
+        ),
+        'value' => array(
+          'type' => 'string',
+          'label' => t('Default value'),
+          'description' => t('The value(s) that will be displayed as default. If the form element allows multiple values, enter one value per line.'),
         ),
       ),
       'module' => 'Rules Forms',
@@ -221,9 +238,8 @@ function rules_forms_element_action_after_build($form, &$form_state) {
 function rules_forms_disable_field_recurse(&$elements) {
   foreach (element_children($elements) as $key) {
     if (isset($elements[$key]) && $elements[$key]) {
-
       // Recurse through all children elements.
-     rules_forms_disable_field_recurse($elements[$key]);
+      rules_forms_disable_field_recurse($elements[$key]);
     }
   }
 
@@ -289,6 +305,39 @@ function rules_forms_action_set_error(&$form, $element, $message) {
     }
   }
   form_set_error($element, $message);
+}
+
+/**
+ * Action implementation: Set the default value.
+ */
+function rules_forms_action_set_element(&$form, $element, $value) {
+  $form_element = &_rules_forms_get_element($form, $element);
+  if (empty($form_element) || !array_key_exists('#default_value', $form_element)) {
+    return;
+  }
+  $lines = explode("\r\n", $value);
+  // Check if the form element is a CCK field
+  if (array_key_exists('#field_name', $form_element)) {
+    // Check if multiple default values are allowed
+    if (isset($form_element['#default_value'][0])) {
+      // Unset old default values
+      $form_element['#default_value'] = array();
+      foreach ($lines as $i => $line) {
+        $form_element['#default_value'][$i]['value'] = $line;
+      }
+    }
+    else {
+      $form_element['#default_value']['value'] = $value;
+    }
+  }
+  else {
+    if (count($lines) == 1) {
+      $form_element['#default_value'] = $value;
+    }
+    else {
+      $form_element['#default_value'] = $lines;
+    }
+  }
 }
 
 /**

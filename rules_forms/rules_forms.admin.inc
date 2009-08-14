@@ -6,7 +6,7 @@
  * @file
  * Implements forms events management screen.
  */
- 
+
 /**
  * Defines the forms events settings form
  */
