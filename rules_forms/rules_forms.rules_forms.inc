@@ -84,6 +84,14 @@ function rules_forms_action_prefix_suffix_html_validate($form, $form_state) {
 }
 
 /**
+ * Action set element configuration form.
+ */
+function rules_forms_action_set_element_form($settings, &$form) {
+  $form['settings']['value']['#type'] = 'textarea';
+  $form['settings']['value']['#required'] = FALSE;
+}
+
+/**
  * Label callback for adjusting weights action.
  */
 function rules_forms_action_adjust_weight_label($settings, $argument_labels) {
@@ -138,6 +146,13 @@ function rules_forms_action_set_error_label($settings, $argument_labels) {
     return t('Set a form error');
   }
   return t("Set form error on element '@element'", array('@element' => $settings['element']));
+}
+
+/**
+ * Label callback for set default value action.
+ */
+function rules_forms_action_set_element_label($settings, $argument_labels) {
+  return t("Set default value on form element '@element'", array('@element' => $settings['element']));
 }
 
 /**
