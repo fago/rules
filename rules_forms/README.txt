@@ -29,8 +29,8 @@ This is a short usage guide to build Rules on you forms:
  * Confirm the activation by clicking the "Activate" button.
  * Go to the "Triggered rules" admin page (admin/rules/trigger) and click the "Add
    a new rule" tab.
- * Fill out the label, choose a form event by selecting one in the "Forms" group
-   and confirm with "Save changes".
+ * Fill out the label, choose a form event by selecting one in the "Rules Forms"
+   group and confirm with "Save changes".
  * Now you can add conditions and actions to react on the form event.
 
 
