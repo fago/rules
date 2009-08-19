@@ -143,3 +143,25 @@ function rules_forms_after_build($form, &$form_state) {
   }
   return $form;
 }
+
+/**
+ * Implementation of hook_rules_import().
+ * We need to activate the form event of the imported rule.
+ */
+function rules_forms_rules_import(&$rule) {
+  $event = $rule['#set'];
+  // Check if it is a form-event-triggered rule
+  if (preg_match('/^event_(.)+_form_(built|submit|validate)$/', $event)) {
+    // Remove prefix/suffixes to get the form ID
+    $exploded = explode('_', $event);
+    $length = count($exploded);
+    unset($exploded[0], $exploded[$length-1], $exploded[$length-2]);
+    $form_id = implode('_', $exploded);
+    $form_events = variable_get('rules_forms_events', array());
+    // Activate event if it hasn't been activated yet.
+    if (!isset($form_events[$form_id])) {
+      $form_events[$form_id] = drupal_ucfirst(str_replace('_', ' ', $form_id));
+      variable_set('rules_forms_events', $form_events);
+    }
+  }
+}

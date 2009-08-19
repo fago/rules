@@ -68,6 +68,7 @@ function rules_item_rule_import(&$name, &$rule) {
     }
     $rule['#status'] = 'custom';
   }
+  rules_import_hook($rule);
 }
 
 /**

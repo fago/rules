@@ -618,5 +618,23 @@ function hook_rules_action_type_map() {
 }
 
 /**
+ * React on an import of a rule.
+ *
+ * This hook is called if a rule is imported through the import/export admin
+ * interface or if a default rule is provided by a module via
+ * hook_rules_defaults().
+ *
+ * @param $rule
+ *   An array representing the rule with its properties.
+ */
+function hook_rules_import($rule) {
+  // Examine the rule, e.g. check if it is event-triggered.
+  if ($rule['#set'] === 'event_my_module') {
+    // Initiate post-processing that is needed to make to rule work.
+  }
+}
+
+
+/**
  * @}
  */

@@ -56,7 +56,9 @@ function rules_get_item_defaults($item_type = 'rules') {
   $defaults = rules_gather_data('rules_defaults', 'all', FALSE);
   if ($item_type == 'rules' && isset($defaults[$item_type])) {
     // Apply the rule format upgrade to each rule if necessary.
-    return array_map('rules_rule_format_upgrade', $defaults[$item_type]);
+    $items = array_map('rules_rule_format_upgrade', $defaults[$item_type]);
+    $items = array_map('rules_import_hook', $items);
+    return $items;
   }
   return isset($defaults[$item_type]) ? $defaults[$item_type] : array();
 }
@@ -1033,4 +1035,12 @@ function rules_gmstrtotime($time) {
   $value = strtotime($time);
   $date = gmdate('Y-m-d H:i:s', $value);
   return strtotime($date .' UTC');
+}
+
+/**
+ * Calls the import hook to allow modules to react on the import.
+ */
+function rules_import_hook(&$rule) {
+  module_invoke_all('rules_import', $rule);
+  return $rule;
 }
