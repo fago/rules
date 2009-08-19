@@ -235,10 +235,13 @@ function _rules_admin_rule_get_new_unique_name() {
  *
  * @param $cfirst
  *   If TRUE, capitalize the first letter, if FALSE lower case the first letter.
+ * @param $element
+ *   The element having or containing this label. Pass by referenec to allow
+ *   callbacks to alter some info, used by rules_core_node_label_callback().
  *
  * @return An array of changed properties of the given info
  */
-function _rules_admin_get_label(&$form_state, $info, $element, $value, $cfirst = NULL) {
+function _rules_admin_get_label(&$form_state, $info, &$element, $value, $cfirst = NULL) {
   $info_changes = array();
 
   if (drupal_strtolower($info['label']) != drupal_strtolower($value)) {
