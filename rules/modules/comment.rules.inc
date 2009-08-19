@@ -78,7 +78,18 @@ function rules_events_hook_comment_arguments($comment_label) {
  * Gets the author of the comment
  */
 function rules_events_argument_comment_author($comment) {
-  return user_load(array('uid' => $comment->uid));
+  // if comment author is anonymous user get basic info from comment
+  if (!$comment->uid) {
+    $account = new stdClass();
+    $account->uid = 0;
+    $account->name = $comment->name;
+    $account->mail = $comment->mail;
+    $account->roles = array(DRUPAL_ANONYMOUS_RID => 'anonymous user');
+  }
+  else {
+    $account = user_load(array('uid' => $comment->uid));
+  }
+  return $account;
 }
 
 /**
