@@ -43,6 +43,10 @@ function rules_condition_content_is_promoted_label($settings, $argument_labels) 
   return t('@node is promoted to frontpage', $argument_labels);
 }
 
+function rules_condition_content_is_new_label($settings, $argument_labels) {
+  return t('@node is new', $argument_labels);
+}
+
 /**
  * Action set node author - Label callback
  */

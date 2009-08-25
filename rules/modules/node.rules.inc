@@ -1,7 +1,6 @@
 <?php
 // $Id$
 
-
 /**
  * @file rules integration for the node module
  *
@@ -126,6 +125,10 @@ function node_rules_condition_info() {
   $items['rules_condition_content_is_promoted'] = $defaults + array(
     'label' => t('Content is promoted to frontpage'),
   );
+  $items['rules_condition_content_is_new'] = $defaults + array(
+    'label' => t('Content is new'),
+    'help' => t('Evaluates to TRUE, if the given content has not been saved yet.'),
+  );
   return $items;
 }
 
@@ -155,6 +158,13 @@ function rules_condition_content_is_sticky(&$node, $settings) {
  */
 function rules_condition_content_is_promoted(&$node, $settings) {
   return $node->promote == 1;
+}
+
+/**
+ * Condition: Check if the node is new
+ */
+function rules_condition_content_is_new($node, $settings = array()) {
+  return empty($node->nid) || !empty($node->is_new);
 }
 
 /**
