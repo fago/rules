@@ -10,7 +10,7 @@
 
 
 function rules_condition_url_has_alias_form($settings, &$form) {
-  $settings += array('src' => '');
+  $settings += array('src' => '', 'language' => '');
   $form['settings']['src'] = array(
     '#type' => 'textfield',
     '#title' => t('Existing system path'),
@@ -20,10 +20,19 @@ function rules_condition_url_has_alias_form($settings, &$form) {
     '#field_prefix' => url('', array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
     '#required' => TRUE,
   );
+  if (module_exists('locale')) {
+    $form['settings']['language'] = array(
+      '#type' => 'select',
+      '#title' => t('Language'),
+      '#default_value' => $settings['language'],
+      '#options' => array('' => '') + locale_language_list(),
+      '#description' => t('Optionally only check for a language specific path alias.'),
+    );
+  }
 }
 
 function rules_condition_alias_exists_form($settings, &$form) {
-  $settings += array('dst' => '', 'replace' => '-');
+  $settings += array('dst' => '', 'replace' => '-', 'language' => '');
   $form['settings']['dst'] = array(
     '#type' => 'textfield',
     '#title' => t('Path alias'),
@@ -33,6 +42,15 @@ function rules_condition_alias_exists_form($settings, &$form) {
     '#field_prefix' => url('', array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
     '#required' => TRUE,
   );
+  if (module_exists('locale')) {
+    $form['settings']['language'] = array(
+      '#type' => 'select',
+      '#title' => t('Language'),
+      '#default_value' => $settings['language'],
+      '#options' => array('' => '') + locale_language_list(),
+      '#description' => t('Optionally check for a language specific path alias.'),
+    );
+  }
   $form['settings']['replace'] = array(
     '#type' => 'textfield',
     '#title' => t('Before checking, replace non ascii characters with'),
@@ -44,7 +62,8 @@ function rules_condition_alias_exists_form($settings, &$form) {
 }
 
 function rules_action_path_alias_form($settings, &$form) {
-  $settings += array('dst' => '', 'src' => '', 'replace' => '-');
+  $settings += array('dst' => '', 'src' => '', 'replace' => '-', 'language' => '');
+
   $form['settings']['src'] = array(
     '#type' => 'textfield',
     '#title' => t('Existing system path'),
@@ -61,6 +80,15 @@ function rules_action_path_alias_form($settings, &$form) {
     '#description' => t('Specify an alternative path by which this data can be accessed. For example, type "about" when writing an about page. Use a relative path and do not add a trailing slash or the URL alias will not work.') .' '. t('Leave it empty to delete URL aliases pointing to the given system path.'),
     '#field_prefix' => url('', array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
   );
+  if (module_exists('locale')) {
+    $form['settings']['language'] = array(
+      '#type' => 'select',
+      '#title' => t('Language'),
+      '#default_value' => $settings['language'],
+      '#options' => array('' => '') + locale_language_list(),
+      '#description' => t('Optionally make the path alias language specific.'),
+    );
+  }
   $form['settings']['replace'] = array(
     '#type' => 'textfield',
     '#title' => t('Replace non ascii characters with'),
