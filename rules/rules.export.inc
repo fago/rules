@@ -171,6 +171,7 @@ function rules_features_export($data, &$export, $module_name = '') {
   
   // Closer look at the rules to be exported...
   $pipe = array();
+  rules_include('rules_forms');
   foreach ($export['features']['rules'] as $rule) {
     rules_features_process_rule($rule, $export, $pipe);
   }
@@ -255,8 +256,7 @@ function rules_features_process_set($set_name, &$export, &$pipe) {
 }
 
 /**
- * Retrieves all necessary module dependencies for a rule and
- * returns a pipe if some sets need to be added.
+ * Processes a rule and identifes needed components or dependencies.
  */
 function rules_features_process_rule($rule, &$export, &$pipe) {
   $dependencies = array();
@@ -275,18 +275,13 @@ function rules_features_process_rule($rule, &$export, &$pipe) {
 /**
  * Helper to recursively process all elements of a rule.
  */
-function _rules_features_process_rule(&$element, &$export, &$pipe) {
+function _rules_features_process_rule($element, &$export, &$pipe) {
   if (isset($element['#type']) && isset($element['#name']) && $module = rules_element_providing_module($element['#type'], $element['#name'])) {
     $export['dependencies'][$module] = $module;
   }
-  if (isset($element['#info']['base']) && ($element['#info']['base'] == 'rules_action_invoke_set' || $element['#info']['base'] == 'rules_scheduler_action')) {
-    // Also add in the invoked rule set.
-    $set_name = $element['#info']['set'];
-    if (!isset($export['features']['rules_sets'][$set_name])) {
-      $export['features']['rules_sets'][$set_name] = $set_name;
-      rules_features_process_set($set_name, $export, $pipe);
-    }
-  }
+  // Invoke the features_export callback if any.
+  $element += array('#settings' => array());
+  rules_element_invoke($element, 'features_export', array(&$export, &$pipe, $element['#settings'], $element), FALSE);
   //TODO add input evaluators.
   
   // Recurse
