@@ -163,9 +163,6 @@ function rules_features_export($data, &$export, $module_name = '') {
 
   $rules_export = rules_export_items($rules_export, $module);
   
-
-  drupal_set_message(print_r(array_keys($rules_export['rules']),1));
-  
   // Add to exports
   $export['features']['rules'] = $rules_export['rules'];
   
