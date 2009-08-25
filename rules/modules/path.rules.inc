@@ -31,7 +31,7 @@ function path_rules_condition_info() {
  * Condition implementation: Check if the path has an alias
  */
 function rules_condition_url_has_alias($settings) {
-  return (bool)drupal_lookup_path('alias', $settings['src']);
+  return (bool)drupal_lookup_path('alias', $settings['src'], $settings['language']);
 }
 
 /**
@@ -39,7 +39,7 @@ function rules_condition_url_has_alias($settings) {
  */
 function rules_condition_alias_exists($settings) {
   $dst = rules_clean_path($settings['dst'], $settings['replace']);
-  return (bool)drupal_lookup_path('source', $dst);
+  return (bool)drupal_lookup_path('source', $dst, $settings['language']);
 }
 
 /**
@@ -68,15 +68,28 @@ function path_rules_action_info() {
  */
 function rules_action_path_alias($settings) {
   $dst = rules_clean_path($settings['dst'], $settings['replace']);
-  path_set_alias($settings['src'], $dst);
+  // Only set the alias if the path alias isn't taken yet.
+  if (!drupal_lookup_path('source', $dst)) {
+    path_set_alias($settings['src'], $dst, NULL, $settings['language']);
+  }
 }
 
 /**
  * Action Implementation
  */
 function rules_action_node_path_alias($node, $settings) {
-  $node->path = rules_clean_path($settings['dst'], $settings['replace']);
-  return array('node' => $node);
+  $dst = rules_clean_path($settings['dst'], $settings['replace']);
+  // Only set the alias if the path alias isn't taken yet.
+  if (!drupal_lookup_path('source', $dst)) {
+    $node->path = $dst;
+    if (user_access('create url aliases') || user_access('administer url aliases')) {
+      // Path module is going to save the alias on node save.
+      return array('node' => $node);
+    }
+    else {
+      path_set_alias('node/'. $node->nid, $node->path, isset($node->pid) ? $node->pid : NULL, isset($node->language) ? $node->language : '');
+    }
+  }
 }
 
 /**
