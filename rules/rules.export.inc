@@ -263,7 +263,7 @@ function rules_features_process_rule($rule, &$export, &$pipe) {
   // If it is an event-triggered rule, add event dependencies
   if (strpos($rule['#set'], 'event_') === 0) {
     $event = substr($rule['#set'], strlen('event_'));
-    if ($module = rules_element_providing_module('event', $event)) {
+    if ($module = rules_features_providing_module('event_info', $event)) {
       $export['dependencies'][$module] = $module;
     }
   }
@@ -276,13 +276,20 @@ function rules_features_process_rule($rule, &$export, &$pipe) {
  * Helper to recursively process all elements of a rule.
  */
 function _rules_features_process_rule($element, &$export, &$pipe) {
-  if (isset($element['#type']) && isset($element['#name']) && $module = rules_element_providing_module($element['#type'], $element['#name'])) {
+  if (isset($element['#type']) && isset($element['#name']) && $module = rules_features_providing_module($element['#type'] .'_info', $element['#name'])) {
     $export['dependencies'][$module] = $module;
   }
   // Invoke the features_export callback if any.
   $element += array('#settings' => array());
   rules_element_invoke($element, 'features_export', array(&$export, &$pipe, $element['#settings'], $element), FALSE);
-  //TODO add input evaluators.
+
+  // Add used input evaluators.
+  $element['#settings'] += array('#eval input' => array());
+  foreach ($element['#settings']['#eval input'] as $base => $info) {
+    if ($module = rules_features_providing_module('evaluator', $base)) {
+      $export['dependencies'][$module] = $module;
+    }
+  }
   
   // Recurse
   foreach (element_children($element) as $key) {
@@ -292,25 +299,25 @@ function _rules_features_process_rule($element, &$export, &$pipe) {
 
 
 /**
- * Retrieves the providing module for events, conditions and actions.
+ * Retrieves the providing module for any items defined with rules hooks.
  *
- * @param $type
- *   'event', 'condition' or 'action'
+ * @param $hook
+ *   The name of the hook without the 'rules_' prefix.
  * @param $name
- *   the identifier
+ *   The name of the item provided by the given hook.
  * @return
- *   An array of module dependencies.
+ *   The module name or FALSE if it can't be found.
  */
-function rules_element_providing_module($type, $name) {
+function rules_features_providing_module($hook, $name) {
   static $map = array();
 
-  if (!isset($map[$type])) {
-    $map[$type] = array();
-    foreach (module_implements('rules_'. $type .'_info') as $module) {
-      $module_info = array_keys(module_invoke($module, 'rules_'. $type .'_info'));
-      $map[$type] += array_combine($module_info, array_fill(0, count($module_info), $module));
+  if (!isset($map[$hook])) {
+    $map[$hook] = array();
+    foreach (module_implements('rules_'. $hook ) as $module) {
+      $module_info = array_keys(module_invoke($module, 'rules_'. $hook));
+      $map[$hook] += array_combine($module_info, array_fill(0, count($module_info), $module));
     }
   }
-  return isset($map[$type][$name]) ? $map[$type][$name] : FALSE;
+  return isset($map[$hook][$name]) ? $map[$hook][$name] : FALSE;
 }
 
