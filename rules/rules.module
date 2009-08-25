@@ -1038,6 +1038,29 @@ function rules_gmstrtotime($time) {
 }
 
 /**
+ * Implementation of hook_features_api().
+ */
+function rules_features_api() {
+  return array(
+    'rules' => array(
+      'feature_source' => TRUE,
+      'default_hook' => 'rules_defaults',
+      'file' => drupal_get_path('module', 'rules') .'/rules.export.inc',
+    ),
+    'rules_sets' => array(
+      'feature_source' => TRUE,
+      'default_hook' => 'rules_defaults',
+      'file' => drupal_get_path('module', 'rules') .'/rules.export.inc',
+    ),
+    'rules_categories' => array(
+      'feature_source' => TRUE,
+      'default_hook' => 'rules_defaults',
+      'file' => drupal_get_path('module', 'rules') .'/rules.export.inc',
+    ),
+  );
+}
+
+/**
  * Calls the import hook to allow modules to react on the import.
  */
 function rules_import_hook(&$rule) {

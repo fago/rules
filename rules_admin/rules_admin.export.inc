@@ -169,7 +169,7 @@ function rules_admin_form_export($form_state) {
       '#title' => t('Exported rule configurations'),
       '#description' => t('Copy these data and paste them into the import page, to import.'),
       '#rows' => 30,
-      '#default_value' => $form_state['export'],
+      '#default_value' => var_export($form_state['export'], TRUE),
     );
   }
   return $form;
@@ -182,16 +182,7 @@ function rules_admin_form_export_submit($form, &$form_state) {
     $export[$item_type] = array_intersect_key($items, array_filter($item_names));
   }
   if (isset($form_state['values']['export_by_tag']) && $tags_to_export = array_filter($form_state['values']['export_by_tag'])) {
-    // Search all items for the given tag.
-    foreach (rules_get_items() as $item_type => $info) {
-      $items = array_filter(rules_get_configured_items($item_type), 'rules_admin_element_filter');
-      foreach ($items as $name => $item) {
-        $categories = isset($item['categories']) ? $item['categories'] : (isset($item['#categories']) ? $item['#categories'] : array());
-        if (array_intersect($tags_to_export, $categories)) {
-          $export[$item_type][$name] = $item;
-        }
-      }
-    }
+    rules_admin_export_by_category($export, $tags_to_export);
   }
   if ($export = array_filter($export)) {
     $form_state['export'] = rules_export_items($export);
@@ -202,3 +193,18 @@ function rules_admin_form_export_submit($form, &$form_state) {
   $form_state['rebuild'] = TRUE;
 }
 
+/**
+ * Adds in the rule items for the given tags.
+ */
+function rules_admin_export_by_category(&$export, $tags_to_export = array()) {
+  // Search all items for the given tag.
+  foreach (rules_get_items() as $item_type => $info) {
+    $items = array_filter(rules_get_configured_items($item_type), 'rules_admin_element_filter');
+    foreach ($items as $name => $item) {
+      $categories = isset($item['categories']) ? $item['categories'] : (isset($item['#categories']) ? $item['#categories'] : array());
+      if (array_intersect($tags_to_export, $categories)) {
+        $export[$item_type][$name] = $item;
+      }
+    }
+  }
+}
