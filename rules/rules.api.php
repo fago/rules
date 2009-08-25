@@ -256,9 +256,19 @@ function rules_action_callback_help() {
   return t('This help text is going to be displayed during action configuration.');
 }
 
-
-
-
+/**
+ * Features module integration callback.
+ *
+ * It should be placed into the file MODULENAME.rules_forms.inc or into
+ * MODULENAME.rules.inc.
+ *
+ * Allows actions or conditions to add further needed feature components.
+ *
+ * @see hook_rules_action_info()
+ */
+function rules_action_callback_features_export(&$export, &$pipe, $settings) {
+  
+}
 
 
 /**
