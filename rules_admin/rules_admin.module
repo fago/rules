@@ -192,6 +192,7 @@ function rules_admin_menu() {
     'page arguments' => array('rules_admin_form_add_rule_set', 2),
     'access arguments' => array('administer rules'),
     'file' => 'rules_admin.sets.inc',
+    'weight' => 3,
   );
 
   $items[RULES_ADMIN_SET_PATH .'/js'] = array(
