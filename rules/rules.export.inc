@@ -314,8 +314,9 @@ function rules_features_providing_module($hook, $name) {
   if (!isset($map[$hook])) {
     $map[$hook] = array();
     foreach (module_implements('rules_'. $hook ) as $module) {
-      $module_info = array_keys(module_invoke($module, 'rules_'. $hook));
-      $map[$hook] += array_combine($module_info, array_fill(0, count($module_info), $module));
+      if ($info = module_invoke($module, 'rules_'. $hook)) {
+        $map[$hook] += array_combine(array_keys($info), array_fill(0, count($info), $module));
+      }
     }
   }
   return isset($map[$hook][$name]) ? $map[$hook][$name] : FALSE;

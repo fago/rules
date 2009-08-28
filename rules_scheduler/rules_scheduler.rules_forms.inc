@@ -38,5 +38,6 @@ function rules_scheduler_action_features_export(&$export, &$pipe, $settings, $el
   $set_name = $element['#info']['set'];
   if (!isset($export['features']['rules_sets'][$set_name])) {
     $export['features']['rules_sets'][$set_name] = $set_name;
+    rules_features_process_set($set_name, $export, $pipe);
   }
 }
