@@ -181,7 +181,7 @@ function rules_forms_rules_data_type_info() {
       'module' => 'Rules Forms',
     ),
     'form_state' => array(
-      'label' => t('form_state'),
+      'label' => t('form state'),
       'class' => 'rules_data_type',
       'savable' => FALSE,
       'identifiable' => FALSE,
