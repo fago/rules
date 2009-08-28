@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: rules_scheduler.rules.inc:22
-msgid "Schedule @set"
+msgid "Schedule "@set""
 msgstr "スケジュール @set"
 
 #: rules_scheduler.rules.inc:26

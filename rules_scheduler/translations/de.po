@@ -22,8 +22,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: rules_scheduler.rules.inc:22
-msgid "Schedule @set"
-msgstr "Auswertung von @set planen"
+msgid "Schedule "@set""
+msgstr "Plane "@set""
 
 #: rules_scheduler.rules.inc:26
 msgid "Scheduled evaluation date"

@@ -23,7 +23,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: rules_scheduler.rules.inc:22
-msgid "Schedule @set"
+msgid "Schedule "@set""
 msgstr "Schemalägg @set"
 
 #: rules_scheduler.rules.inc:26

@@ -20,7 +20,7 @@ function rules_scheduler_rules_action_info() {
       'set' => $name,
     );
     $item = &$items['rules_action_schedule_set_'. $name];
-    $item['label'] = t('Schedule @set', array('@set' => $set_info['label']));
+    $item['label'] = t('Schedule "@set"', array('@set' => $set_info['label']));
     $item += array('arguments' => array());
     $date_arg = array('task_date' => array(
         'type' => 'date',
@@ -35,9 +35,9 @@ function rules_scheduler_rules_action_info() {
     $item['arguments'] = array_merge($identifier_arg, $item['arguments']);
   }
   
-  // Add action to delete scheduled rule sets
+  // Add action to delete scheduled tasks
   $items['rules_action_delete_scheduled_set'] = array(
-    'label' => t('Delete scheduled rule sets'),
+    'label' => t('Delete scheduled tasks'),
     'module' => 'Rule Scheduler',
     'base' => 'rules_scheduler_action_delete',
     'arguments' => array(

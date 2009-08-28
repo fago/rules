@@ -93,7 +93,7 @@ msgid "Task %label has been deleted."
 msgstr ""
 
 #: rules_scheduler.rules.inc:23
-msgid "Schedule @set"
+msgid "Schedule "@set""
 msgstr ""
 
 #: rules_scheduler.rules.inc:27
@@ -105,7 +105,7 @@ msgid "User provided string to identify the task. Existing tasks for this rule s
 msgstr ""
 
 #: rules_scheduler.rules.inc:40
-msgid "Delete scheduled rule sets"
+msgid "Delete scheduled tasks"
 msgstr ""
 
 #: rules_scheduler.rules.inc:47
