@@ -49,6 +49,7 @@ function rules_action_invoke_set_features_export(&$export, &$pipe, $settings, $e
   $set_name = $element['#info']['set'];
   if (!isset($export['features']['rules_sets'][$set_name])) {
     $export['features']['rules_sets'][$set_name] = $set_name;
+    rules_features_process_set($set_name, $export, $pipe);
   }
 }
 
