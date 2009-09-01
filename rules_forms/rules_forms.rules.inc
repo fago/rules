@@ -214,6 +214,7 @@ function rules_forms_action_disable_element(&$form, $disable) {
   // exsist yet.
   $form['#rules_forms']['#disable'][] = $disable;
   if (empty($form['#after_build']) || !in_array('rules_forms_element_action_after_build', $form['#after_build'])) {
+    $form['#after_build'][] = 'rules_forms_include_after_build';
     $form['#after_build'][] = 'rules_forms_element_action_after_build';
   }
 }

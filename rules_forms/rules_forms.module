@@ -165,3 +165,13 @@ function rules_forms_rules_import(&$rule) {
     }
   }
 }
+
+/**
+ * Form after build handler to include *.rules.inc files that are needed for
+ * other after build handlers. This is necessary because forms get cached and
+ * required includes may not be available anymore.
+ */
+function rules_forms_include_after_build($form, &$form_state) {
+  rules_include('rules');
+  return $form;
+}
