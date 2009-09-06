@@ -30,7 +30,7 @@ function rules_scheduler_rules_action_info() {
     $identifier_arg = array('task_identifier' => array(
         'type' => 'string',
         'label' => t('Identifier'),
-        'description' => t('User provided string to identify the task. Existing tasks for this rule set with the same identifier will be replaced'),
+        'description' => t('User provided string to identify the task. Existing tasks for this rule set with the same identifier will be replaced.'),
       ));
     $item['arguments'] = array_merge($identifier_arg, $item['arguments']);
   }
