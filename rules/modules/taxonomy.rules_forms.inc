@@ -125,10 +125,10 @@ function rules_action_taxonomy_load_vocab_form($settings, &$form, $form_state) {
   );
   $form['settings']['vocabulary']['vocab_text'] = array(
     '#type' => 'textarea',
-    '#title' => t('Select by term id'),
+    '#title' => t('Select by vocabulary id'),
     '#default_value' => !empty($settings['vocabulary']['vocab_text']) ? $settings['vocabulary']['vocab_text'] : '',
     '#disabled' => empty($options),
-    '#description' => t('Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded . If this field is used, the "Select a vocabulary" field will be ignored.'),
+    '#description' => t('Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded. If this field is used, the "Select a vocabulary" field will be ignored.'),
   );
 }
 
