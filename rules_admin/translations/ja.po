@@ -3,20 +3,20 @@
 # Japanese translation of Drupal (general)
 # Copyright PineRay <matsudaterutaka@gmail.com>
 # Generated from files:
-#  rules_admin.export.inc,v 1.1.2.5 2009/04/20 11:26:45 fago
-#  rules_admin.module,v 1.1.2.5 2009/04/19 21:21:31 fago
-#  rules_admin.inc,v 1.1.2.10 2009/04/20 11:45:58 fago
+#  rules_admin.export.inc,v 1.1.2.9 2009/08/25 13:01:03 fago
+#  rules_admin.module,v 1.1.2.7 2009/08/28 19:11:16 fago
+#  rules_admin.inc,v 1.1.2.12 2009/08/19 15:24:41 fago
 #  rules_admin.rule_forms.inc,v 1.1.2.8 2009/04/19 21:21:31 fago
-#  rules_admin.sets.inc,v 1.1.2.8 2009/05/18 12:05:20 fago
-#  rules_admin.render.inc,v 1.1.2.2 2009/04/19 15:03:43 fago
+#  rules_admin.sets.inc,v 1.1.2.9 2009/08/03 16:42:25 fago
+#  rules_admin.render.inc,v 1.1.2.3 2009/08/03 16:42:25 fago
 #  rules_admin.info,v 1.1.2.2 2009/03/30 17:34:26 fago
 #  rules_admin.install,v 1.1.2.4 2009/04/19 18:19:06 fago
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: rules\n"
-"POT-Creation-Date: 2009-06-26 11:51+0900\n"
-"PO-Revision-Date: 2009-06-26 13:34+0900\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-09-18 22:30+0900\n"
+"PO-Revision-Date: 2009-10-08 18:58+0900\n"
 "Last-Translator: PineRay <matsudaterutaka@gmail.com>\n"
 "Language-Team: Japanese <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -24,61 +24,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: rules_admin.export.inc:18
+#: rules_admin.export.inc:20
 msgid "Configuration to import"
 msgstr "設定のインポート"
 
-#: rules_admin.export.inc:19
+#: rules_admin.export.inc:21
 msgid "Just paste your exported configuration here."
-msgstr "エクスポートした設定をここに貼り付けてください。"
+msgstr "エクスポートした設定をここにペーストしてください。"
 
-#: rules_admin.export.inc:23
-#: rules_admin.module:111
+#: rules_admin.export.inc:25
+#: rules_admin.module:112
 msgid "Import"
 msgstr "インポート"
 
-#: rules_admin.export.inc:40
+#: rules_admin.export.inc:42
 msgid "Imported %label."
-msgstr "%label をインポート。"
+msgstr "%labelをインポートしました。"
 
-#: rules_admin.export.inc:46
+#: rules_admin.export.inc:48
 msgid "Import failed."
-msgstr "インポート失敗。"
-
-#: rules_admin.export.inc:110
-msgid "Successfully imported the workflow-ng rule %label."
-msgstr "workflow-ng のルール %label のインポートに成功しました。"
+msgstr "インポートに失敗しました。"
 
 #: rules_admin.export.inc:113
-msgid "Failed importing the workflow-ng rule %label."
-msgstr "workflow-ng のルール %label のインポートに失敗しました。"
+msgid "Successfully imported the workflow-ng rule %label."
+msgstr "workflow-ngのルール %label のインポートに成功しました。"
 
-#: rules_admin.export.inc:132
+#: rules_admin.export.inc:116
+msgid "Failed importing the workflow-ng rule %label."
+msgstr "workflow-ngのルール %label のインポートに失敗しました。"
+
+#: rules_admin.export.inc:136
+#: rules_admin.inc:371
+#: rules_admin.module:52
+msgid "Triggered rules"
+msgstr "トリガのルール"
+
+#: rules_admin.export.inc:142
 msgid "Select the %label to export"
 msgstr "エクスポートする%labelを選択"
 
-#: rules_admin.export.inc:139
+#: rules_admin.export.inc:149
 msgid "There are no %label to be exported."
-msgstr "エクスポートする %label がありません。"
+msgstr "エクスポートする%labelがありません。"
 
-#: rules_admin.export.inc:147
+#: rules_admin.export.inc:157
 msgid "Export by category"
 msgstr "カテゴリー別エクスポート"
 
-#: rules_admin.export.inc:153
-#: rules_admin.module:106
+#: rules_admin.export.inc:163
+#: rules_admin.module:107
 msgid "Export"
 msgstr "エクスポート"
 
-#: rules_admin.export.inc:159
+#: rules_admin.export.inc:169
 msgid "Exported rule configurations"
 msgstr "エクスポートしたルール設定"
 
-#: rules_admin.export.inc:160
+#: rules_admin.export.inc:170
 msgid "Copy these data and paste them into the import page, to import."
-msgstr "これらのデータをインポートするには、コピーしてインポートページに貼り付けてください。"
+msgstr "インポートするには、これらのデータをコピーして、インポートページにペーストしてください。"
 
-#: rules_admin.export.inc:197
+#: rules_admin.export.inc:191
 msgid "Please select the items to export."
 msgstr "エクスポートするアイテムを選択してください。"
 
@@ -86,137 +92,140 @@ msgstr "エクスポートするアイテムを選択してください。"
 msgid "Description"
 msgstr "説明"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 #: rules_admin.rule_forms.inc:112;423;481;679
-#: rules_admin.sets.inc:16;141;276;344
+#: rules_admin.sets.inc:16;141;276;345
 msgid "Label"
 msgstr "ラベル"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 msgid "Set"
 msgstr "セット"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 #: rules_admin.rule_forms.inc:132
 msgid "Event"
 msgstr "イベント"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 #: rules_admin.sets.inc:16
 msgid "Category"
 msgstr "カテゴリ"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 #: rules_admin.sets.inc:16
 msgid "Status"
 msgstr "状態"
 
-#: rules_admin.inc:296
+#: rules_admin.inc:299
 #: rules_admin.sets.inc:16
 msgid "Operations"
 msgstr "操作"
 
-#: rules_admin.inc:307
+#: rules_admin.inc:310
 #: rules_admin.sets.inc:25
 msgid "delete"
 msgstr "削除"
 
-#: rules_admin.inc:310
+#: rules_admin.inc:313
 #: rules_admin.sets.inc:28
 msgid "revert"
 msgstr "戻す"
 
-#: rules_admin.inc:312
+#: rules_admin.inc:315
 msgid "clone"
 msgstr "複製"
 
-#: rules_admin.inc:334
+#: rules_admin.inc:337
 msgid "None"
 msgstr "無し"
 
-#: rules_admin.inc:342
+#: rules_admin.inc:345
 msgid "This rule has been provided by a module, but has been modified."
-msgstr "このルールはモジュールによって提供されていますが、修正されています。"
-
-#: rules_admin.inc:343
-msgid "Modified"
-msgstr "修正済み"
+msgstr "このルールはモジュールによるものですが、変更が加えられています。"
 
 #: rules_admin.inc:346
-msgid "This rule has been provided by a module and can't be customized."
-msgstr "このルールはモジュールによって提供されており、カスタマイズできません。"
+msgid "Modified"
+msgstr "変更済み"
 
-#: rules_admin.inc:347
+#: rules_admin.inc:349
+msgid "This rule has been provided by a module and can't be customized."
+msgstr "このルールはモジュールによるもので、カスタマイズできません。"
+
+#: rules_admin.inc:350
 msgid "Fixed"
 msgstr "固定"
 
-#: rules_admin.inc:350
+#: rules_admin.inc:353
 msgid "A custom defined rule."
 msgstr "カスタム定義ルール。"
 
-#: rules_admin.inc:351
+#: rules_admin.inc:354
 msgid "Custom"
 msgstr "カスタム"
 
-#: rules_admin.inc:353
+#: rules_admin.inc:356
 msgid "This rule has been provided by a module."
-msgstr "モジュールから提供されたルールです。"
+msgstr "このルールはモジュールによるものです。"
 
-#: rules_admin.inc:354
+#: rules_admin.inc:357
 msgid "Default"
 msgstr "デフォルト"
 
-#: rules_admin.inc:363
-#: rules_admin.module:173
+#: rules_admin.inc:366
+#: rules_admin.module:175
 msgid "Rule sets"
 msgstr "ルールセット"
 
-#: rules_admin.inc:368
-#: rules_admin.module:52
-msgid "Triggered rules"
-msgstr "アクションを起こすルール"
+#: rules_admin.render.inc:24
+msgid "ON event %event"
+msgstr "イベント %event 発生時"
 
-#: rules_admin.render.inc:20
-msgid "Conditions"
-msgstr "条件"
+#: rules_admin.render.inc:30
+msgid "IN rule set %ruleset"
+msgstr "ルールセット %ruleset 内"
 
-#: rules_admin.render.inc:26
+#: rules_admin.render.inc:35
+msgid "IF"
+msgstr ""
+
+#: rules_admin.render.inc:40
 msgid "AND"
-msgstr "AND"
+msgstr ""
 
-#: rules_admin.render.inc:28
-msgid "Actions"
-msgstr "アクション"
+#: rules_admin.render.inc:43
+msgid "DO"
+msgstr ""
 
-#: rules_admin.render.inc:34
+#: rules_admin.render.inc:49
 msgid "Add a condition"
 msgstr "条件を追加"
 
-#: rules_admin.render.inc:35
+#: rules_admin.render.inc:50
 msgid "Add an action"
 msgstr "アクションを追加"
 
-#: rules_admin.render.inc:76
+#: rules_admin.render.inc:91
 msgid "Indent this condition by adding a logical operation."
 msgstr "論理演算を追加してこの条件をインデント"
 
-#: rules_admin.render.inc:78;138
+#: rules_admin.render.inc:93;153
 msgid "NOT"
-msgstr "NOT"
+msgstr ""
 
-#: rules_admin.render.inc:118
+#: rules_admin.render.inc:133
 msgid "Empty"
-msgstr "内容なし"
+msgstr "空"
 
-#: rules_admin.render.inc:139
+#: rules_admin.render.inc:154
 msgid "!not%label group"
 msgstr "!not%label グループ"
 
-#: rules_admin.render.inc:140
+#: rules_admin.render.inc:155
 msgid "Add another condition to this group"
 msgstr "このグループに条件を追加"
 
-#: rules_admin.render.inc:141
+#: rules_admin.render.inc:156
 msgid "Edit this condition group"
 msgstr "この条件グループを編集"
 
@@ -230,26 +239,26 @@ msgstr "イベントで絞り込み"
 
 #: rules_admin.rule_forms.inc:32
 msgid "Filter by category"
-msgstr "カテゴリで絞り込み"
+msgstr "カテゴリーで絞り込み"
 
 #: rules_admin.rule_forms.inc:41
 #: rules_admin.sets.inc:118
 msgid "Active rules"
-msgstr "稼働しているルール"
+msgstr "アクティブルール"
 
 #: rules_admin.rule_forms.inc:44
 #: rules_admin.sets.inc:121
 msgid "Inactive rules"
-msgstr "稼働していないルール"
+msgstr "非アクティブルール"
 
 #: rules_admin.rule_forms.inc:48
 #: rules_admin.sets.inc:125
 msgid "Fixed rules"
-msgstr "固定のルール"
+msgstr "固定ルール"
 
 #: rules_admin.rule_forms.inc:67
 msgid "If you install the token module from !href, token replacements will be supported. <a href=\"@hide\">Hide this message.</a>"
-msgstr "!href にあるtokenモジュールをインストールしていれば、トークンを使用した置換を利用できます。<a href=\"@hide\">このメッセージを非表示にする。</a>"
+msgstr "!href にあるtokenモジュールをインストールしていれば、トークンによる置換を利用できます。<a href=\"@hide\">このメッセージを非表示にする。</a>"
 
 #: rules_admin.rule_forms.inc:95
 msgid "The rule %label has been added. You can start adding some conditions or actions now."
@@ -257,7 +266,7 @@ msgstr "ルール %label を追加しました。条件やアクションを追�
 
 #: rules_admin.rule_forms.inc:108
 msgid "Rule settings"
-msgstr "ルール設定"
+msgstr "ルールの設定"
 
 #: rules_admin.rule_forms.inc:114
 msgid "Choose an appropriate label for this rule."
@@ -269,7 +278,7 @@ msgstr "ルールセット"
 
 #: rules_admin.rule_forms.inc:127
 msgid "Select to which rule set this rule should belong."
-msgstr "このルールをどのルールセットに含めるか選択してください。"
+msgstr "このルールが含まれるルールセットを選択してください。"
 
 #: rules_admin.rule_forms.inc:134
 msgid "Select the event on which you want to evaluate this rule."
@@ -286,7 +295,7 @@ msgstr "このルールの特徴を表す言葉を、コンマで区切って入
 
 #: rules_admin.rule_forms.inc:145
 msgid "This rule is active and should be evaluated when the associated event occurs."
-msgstr "このルールは稼働しており、関連付けられたイベントが発生する際に評価されます。"
+msgstr "このルールはアクティブであり、関連付けられたイベントが発生する度に評価されます。"
 
 #: rules_admin.rule_forms.inc:150;434;498;563
 msgid "Weight"
@@ -303,7 +312,7 @@ msgstr "変更を保存"
 
 #: rules_admin.rule_forms.inc:177
 msgid "<em>Warning</em>: This rule has been provided by another module. <br />Be aware that any changes made through this interface might be overwritten once the providing module updates the rule."
-msgstr "<em>注意</em>: このルールは他のモジュールから提供されたものです。<br />提供したモジュールがルールを更新すると、このインターフェースで加えた変更が上書きされることに注意してください。"
+msgstr "<em>注意</em>: このルールは他のモジュールによるものです。<br />提供元のモジュールがルールを更新すると、このインターフェースで加えた変更が上書きされることに注意してください。"
 
 #: rules_admin.rule_forms.inc:182
 msgid "Rule elements"
@@ -323,7 +332,7 @@ msgstr "必要な引数がルールに存在しないため、以下のアクシ
 
 #: rules_admin.rule_forms.inc:283;323
 msgid "Next"
-msgstr "次へ"
+msgstr "次"
 
 #: rules_admin.rule_forms.inc:301
 msgid "Select the condition to add"
@@ -335,7 +344,7 @@ msgstr "必要な引数がルールに存在しないため、以下の条件を
 
 #: rules_admin.rule_forms.inc:425
 msgid "Customize the label for this action."
-msgstr "このアクションの題名を変更。"
+msgstr "このアクションのラベルを入力してください。"
 
 #: rules_admin.rule_forms.inc:431
 msgid "Editing action %label"
@@ -343,7 +352,7 @@ msgstr "アクション %label を編集中"
 
 #: rules_admin.rule_forms.inc:436
 msgid "Adjust the weight to customize the ordering of actions."
-msgstr "重み付けを変更することで、アクションの並び順を調整できます。"
+msgstr "ウェイトを調整してアクションの並び順を変更します。"
 
 #: rules_admin.rule_forms.inc:443;507;571
 #: rules_admin.sets.inc:219
@@ -352,7 +361,7 @@ msgstr "保存"
 
 #: rules_admin.rule_forms.inc:450;514;578;807
 #: rules_admin.sets.inc:62
-#: rules_admin.module:77;156
+#: rules_admin.module:77;158
 msgid "Delete"
 msgstr "削除"
 
@@ -362,7 +371,7 @@ msgstr "アクション %label を保存しました。"
 
 #: rules_admin.rule_forms.inc:483
 msgid "Customize the label for this condition."
-msgstr "この条件の題名を入力してください。"
+msgstr "この条件のラベルを入力してください。"
 
 #: rules_admin.rule_forms.inc:489
 msgid "Editing condition %label"
@@ -378,7 +387,7 @@ msgstr "チェックが有ると、条件がFALSEと評価される場合にTRUE
 
 #: rules_admin.rule_forms.inc:500
 msgid "Adjust the weight to customize the ordering of conditions."
-msgstr "条件の並び順を変更するには、重み付けを調整します。"
+msgstr "ウェイトを調整して条件の並び順を変更します。"
 
 #: rules_admin.rule_forms.inc:540
 msgid "The condition %label has been saved."
@@ -390,7 +399,7 @@ msgstr "条件グループ %label を編集中"
 
 #: rules_admin.rule_forms.inc:551
 msgid "If checked, the operation will be negated. E.g. AND would be handled as NOT AND."
-msgstr "チェックが有ると、オペレーションは否定されます。例えば、AND は NOT AND として扱われます。"
+msgstr "チェックが有ると、オペレーションは否定されます。例えば、AND は NOT AND として扱います。"
 
 #: rules_admin.rule_forms.inc:555
 msgid "Operation"
@@ -398,11 +407,11 @@ msgstr "操作"
 
 #: rules_admin.rule_forms.inc:557
 msgid "The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE."
-msgstr "この条件グループの論理演算。例えば、ANDを選択すると、このグループに含まれるすべての条件がTRUEと評価された場合にのみ、この条件グループはTRUEと評価されます。"
+msgstr "この条件グループの論理演算。例えば、ANDを選択すると、このグループに含まれるすべての条件がTRUEと評価された場合にのみ、この条件グループがTRUEと評価されます。"
 
 #: rules_admin.rule_forms.inc:565
 msgid "Adjust the weight to customize the ordering."
-msgstr "重み付けを変更することで、並び順を調整できます。"
+msgstr "ウェイトを調整して並び順を変更します。"
 
 #: rules_admin.rule_forms.inc:594
 msgid "The condition group %label has been saved."
@@ -415,7 +424,7 @@ msgstr "変数 @label の設定"
 #: rules_admin.rule_forms.inc:685
 #: rules_admin.sets.inc:291
 msgid "Machine readable variable name"
-msgstr "機械で判読可能な変数名"
+msgstr "コンピュータが扱える変数名"
 
 #: rules_admin.rule_forms.inc:686
 #: rules_admin.sets.inc:151
@@ -464,7 +473,7 @@ msgstr "%label を削除しました。"
 
 #: rules_admin.rule_forms.inc:840
 msgid "Alter the settings for the cloned rule."
-msgstr "複製したルールの設定を変更。"
+msgstr "複製したルールの設定を変更してください。"
 
 #: rules_admin.rule_forms.inc:901
 msgid "@group module"
@@ -476,7 +485,7 @@ msgstr "ルールの評価をデバッグ"
 
 #: rules_admin.rule_forms.inc:951
 msgid "When activated, debugging information is shown when rules are evaluated."
-msgstr "有効になっていれば、ルールが評価される際にデバッグ用の情報を表示します。"
+msgstr "有効であれば、ルールが評価される際にデバッグ用の情報を表示します。"
 
 #: rules_admin.rule_forms.inc:955
 msgid "Show fixed rules and rule sets"
@@ -484,7 +493,7 @@ msgstr "固定のルールおよびルールセットを表示"
 
 #: rules_admin.rule_forms.inc:957
 msgid "When activated, fixed items provided by modules are shown in the admin center too."
-msgstr "有効であれば、モジュールによって提供された固定アイテムもまた管理センターに表示されます。"
+msgstr "有効であれば、モジュールによる固定アイテムもまた管理センターに表示します。"
 
 #: rules_admin.rule_forms.inc:961
 msgid "Ignore missing token module"
@@ -492,25 +501,25 @@ msgstr "tokenモジュールが存在しないことを無視"
 
 #: rules_admin.rule_forms.inc:963
 msgid "Rules can use the token module to provide token replacements; if this module is not present rules will complain, unless this setting is checked."
-msgstr "ルールでは、tokenモジュールを使用して、トークンによる置換を行うことができます。もしもこのモジュールが存在しなければ、この設定にチェックを入れない限り、rulesモジュールは警告を発し続けます。"
+msgstr "ルールでは、tokenモジュールを使用して、トークンによる置換を行うことができます。もしもtokenモジュールが存在しなければ、この設定にチェックを入れない限り、rulesモジュールは警告を発し続けます。"
 
 #: rules_admin.rule_forms.inc:269
 msgid "1 action is not configurable"
 msgid_plural "@count actions are not configurable"
-msgstr[0] "1個のアクションは設定できません"
-msgstr[1] "@count個のアクションは設定できません"
+msgstr[0] "1個のアクションが設定できません"
+msgstr[1] "@count個のアクションが設定できません"
 
 #: rules_admin.rule_forms.inc:309
 msgid "1 condition is not configurable"
 msgid_plural "@count conditions are not configurable"
-msgstr[0] "1個の条件は設定できません"
-msgstr[1] "@count個の条件は設定できません"
+msgstr[0] "1個の条件が設定できません"
+msgstr[1] "@count個の条件が設定できません"
 
 #: rules_admin.rule_forms.inc:905
 msgid "Unavailable argument: @arguments"
 msgid_plural "Unavailable arguments: @arguments"
-msgstr[0] "利用不可能な引数: @arguments"
-msgstr[1] "利用不可能な引数: @arguments"
+msgstr[0] "利用できない引数: @arguments"
+msgstr[1] "利用できない引数: @arguments"
 
 #: rules_admin.sets.inc:16
 msgid "Name"
@@ -522,7 +531,7 @@ msgstr "ルールセットがありません。"
 
 #: rules_admin.sets.inc:85
 msgid "Are you sure you want to revert %label?"
-msgstr "%label を本当に元に戻しますか？"
+msgstr "%labelを本当に元に戻しますか？"
 
 #: rules_admin.sets.inc:87
 #: rules_admin.module:86
@@ -531,7 +540,7 @@ msgstr "戻す"
 
 #: rules_admin.sets.inc:94
 msgid "%label has been reverted."
-msgstr "%label を元に戻しました。"
+msgstr "%labelを元に戻しました。"
 
 #: rules_admin.sets.inc:137
 msgid "Rule set settings"
@@ -543,11 +552,11 @@ msgstr "このルールセットにふさわしいラベルを入力してくだ
 
 #: rules_admin.sets.inc:149;346
 msgid "Machine readable name"
-msgstr "機械で判読可能な名前"
+msgstr "コンピュータが扱える名前"
 
 #: rules_admin.sets.inc:160
 msgid "A comma-separated list of terms describing this rule set. Example: funny, bungee jumping."
-msgstr "このルールセットの特徴を表す言葉を、コンマで区切って入力します。例： 変, バンジージャンプ。"
+msgstr "このルールセットの特徴を表す言葉を、コンマで区切って入力します。例: 変, バンジージャンプ。"
 
 #: rules_admin.sets.inc:176
 msgid "The rule set %label has been updated."
@@ -559,15 +568,15 @@ msgstr "引数"
 
 #: rules_admin.sets.inc:198
 msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
-msgstr "ルールセットが実行される際に渡される引数を指定することができます。題名とデータ型、そして英数字と下線(_)だけを含む機械で判読可能な固有の名前を各引数に設定できます。"
+msgstr "ルールセットを実行する際に渡す引数を指定することができます。各引数に対して、ラベルとデータ型、そして英数字と下線(_)だけを含む「コンピュータが扱える」固有の名前を設定することができます。"
 
 #: rules_admin.sets.inc:209
 msgid "More arguments"
-msgstr "引数の追加"
+msgstr "その他の引数"
 
 #: rules_admin.sets.inc:210
 msgid "If the amount of boxes above isn't enough, click here to add more arguments."
-msgstr "ボックスの数が足りなければ、こちらをクリックして引数をさらに追加します。"
+msgstr "上記のボックスにある数が十分でなければ、ここをクリックして引数を追加します。"
 
 #: rules_admin.sets.inc:229;242
 msgid "The name may contain only digits, numbers and underscores."
@@ -575,13 +584,13 @@ msgstr "名前には小文字の英数字と下線(_)だけを含ませること
 
 #: rules_admin.sets.inc:238
 msgid "All fields of an argument are required."
-msgstr "引数に関するフィールドはすべて必須項目です。"
+msgstr "引数のフィールドはすべて必須入力です。"
 
 #: rules_admin.sets.inc:256
 msgid "Each name may be used only once."
 msgstr "名前はそれぞれ別個のものを指定してください。"
 
-#: rules_admin.sets.inc:285;345
+#: rules_admin.sets.inc:285;344
 msgid "Data type"
 msgstr "データ型"
 
@@ -591,13 +600,13 @@ msgstr "ルールセット %label を追加しました。"
 
 #: rules_admin.module:23
 msgid "Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module."
-msgstr "ルールセットはサブルーチンの概念と等しく、アクションからまたは手動でコードやモジュールから実行することができます。"
+msgstr "ルールセットはサブルーチンの概念と同じで、アクションからまたはコードやモジュールから手動で実行することができます。"
 
 #: rules_admin.module:26
 msgid "This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met."
 msgstr "特定のイベントによって引き起こされるルールの概要です。ルールには条件とアクションが含まれており、条件が一致する場合にのみアクションが実行されます。"
 
-#: rules_admin.module:276
+#: rules_admin.module:279
 msgid "administer rules"
 msgstr "ルールの管理"
 
@@ -612,47 +621,55 @@ msgstr "ルールの管理ページへのリンク。"
 
 #: rules_admin.module:53
 msgid "Customize your site by configuring rules that are evaluated on events."
-msgstr "イベントごとに実施されるルールを設定することでサイトをカスタマイズします。"
+msgstr "イベントで実行されるルールを設定してサイトをカスタマイズします。"
 
-#: rules_admin.module:62;182;213
+#: rules_admin.module:62;184;216
 msgid "Overview"
 msgstr "概観"
 
-#: rules_admin.module:67;219
+#: rules_admin.module:67;222
 msgid "Add a new rule"
-msgstr "ルールを新しく追加"
+msgstr "ルールを新規追加"
 
 #: rules_admin.module:97
 msgid "Import / Export"
 msgstr "インポート / エクスポート"
 
-#: rules_admin.module:120
+#: rules_admin.module:98
+msgid "Export your rules as text or import rules."
+msgstr "ルールをテキストでエクスポート、またはルールをインポート。"
+
+#: rules_admin.module:121
 msgid "Settings"
 msgstr "環境設定"
 
-#: rules_admin.module:139
+#: rules_admin.module:122
+msgid "Set display options, show/hide Rules messages."
+msgstr "ルールのメッセージを表示または非表示にするオプションを設定します。"
+
+#: rules_admin.module:141
 msgid "Add"
 msgstr "追加"
 
-#: rules_admin.module:147
+#: rules_admin.module:149
 msgid "Edit"
 msgstr "編集"
 
-#: rules_admin.module:165
+#: rules_admin.module:167
 msgid "Clone rule"
 msgstr "ルールを複製"
 
-#: rules_admin.module:174
+#: rules_admin.module:176
 msgid "Create and manage rule sets."
 msgstr "ルールセットを作成して管理します。"
 
-#: rules_admin.module:187
+#: rules_admin.module:189
 msgid "Add a new rule set"
-msgstr "ルールセットを新しく追加"
+msgstr "ルールセットを新規追加"
 
 #: rules_admin.install:29
 msgid "Example rule: When viewing an unpublished page, publish it."
-msgstr "ルールの例: 未掲載のページを閲覧すれば、そのページを掲載済みにする。"
+msgstr "ルール例: 未掲載のページを閲覧すれば、そのページを掲載済みにする。"
 
 #: rules_admin.install:37
 msgid "Viewed content is published"
@@ -664,15 +681,15 @@ msgstr "閲覧されたコンテンツがページ"
 
 #: rules_admin.install:49
 msgid "Publish viewed content"
-msgstr "閲覧したコンテンツを掲載"
+msgstr "閲覧されたコンテンツを掲載"
 
 #: rules_admin.install:59
 msgid "Example: Empty rule set working with content"
-msgstr "例: コンテンツと組み合わせる空のルール"
+msgstr "例: コンテンツと組み合わせる空のルールセット"
 
 #: rules_admin.info:0
 msgid "Rules Administration UI"
-msgstr "ルール管理インターフェース"
+msgstr ""
 
 #: rules_admin.info:0
 msgid "Provides the administration UI for rules."

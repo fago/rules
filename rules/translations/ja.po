@@ -3,33 +3,34 @@
 # Japanese translation of Drupal (general)
 # Copyright PineRay <matsudaterutaka@gmail.com>
 # Generated from files:
-#  rules.api.php,v 1.1.2.5 2009/06/24 15:47:47 fago
-#  system.rules.inc,v 1.1.2.16 2009/05/18 12:27:06 fago
-#  system.rules_forms.inc,v 1.1.2.10 2009/05/15 13:03:12 fago
-#  node.rules_forms.inc,v 1.1.2.18 2009/05/18 11:40:57 fago
-#  user.rules_forms.inc,v 1.1.2.5 2009/05/15 13:03:12 fago
-#  rules.rules.inc,v 1.1.2.38 2009/06/24 14:36:57 fago
-#  user.rules.inc,v 1.1.2.19 2009/05/18 12:05:20 fago
-#  node.rules.inc,v 1.1.2.37 2009/05/18 12:05:20 fago
+#  rules.api.php,v 1.1.2.9 2009/09/10 11:05:36 fago
+#  system.rules.inc,v 1.1.2.17 2009/07/20 16:22:24 fago
+#  system.rules_forms.inc,v 1.1.2.11 2009/07/31 10:21:43 fago
+#  node.rules_forms.inc,v 1.1.2.20 2009/08/25 17:28:58 fago
+#  user.rules_forms.inc,v 1.1.2.6 2009/07/31 10:21:43 fago
+#  rules.rules.inc,v 1.1.2.41 2009/08/10 15:40:56 fago
+#  user.rules.inc,v 1.1.2.20 2009/07/14 09:16:30 fago
+#  node.rules.inc,v 1.1.2.39 2009/08/25 17:28:58 fago
 #  php.rules.inc,v 1.1.2.11 2009/05/15 13:03:12 fago
-#  path.rules.inc,v 1.1.2.6 2009/05/15 13:03:12 fago
-#  taxonomy.rules.inc,v 1.1.2.9 2009/05/28 10:51:35 fago
-#  rules.variables.inc,v 1.1.2.32 2009/04/30 11:58:30 fago
-#  rules.module,v 1.1.2.62 2009/06/24 15:41:14 fago
+#  path.rules.inc,v 1.1.2.7 2009/08/25 18:16:42 fago
+#  taxonomy.rules.inc,v 1.1.2.12 2009/08/05 17:20:41 fago
+#  rules.export.inc,v 1.1.2.6 2009/08/28 22:05:43 fago
+#  rules.variables.inc,v 1.1.2.33 2009/07/20 16:22:24 fago
+#  rules.module,v 1.1.2.69 2009/08/25 13:01:03 fago
 #  rules.info,v 1.1.2.2 2008/07/10 08:15:04 fago
 #  rules.install,v 1.1.2.24 2009/04/30 09:48:39 fago
-#  comment.rules.inc,v 1.1.2.7 2009/05/18 12:05:20 fago
+#  comment.rules.inc,v 1.1.2.8 2009/08/19 14:58:41 fago
 #  comment.rules_forms.inc,v 1.1.2.3 2009/05/15 13:03:12 fago
-#  path.rules_forms.inc,v 1.1.2.5 2009/05/15 13:03:12 fago
+#  path.rules_forms.inc,v 1.1.2.6 2009/08/25 18:16:42 fago
 #  php.rules_forms.inc,v 1.1.2.8 2009/05/15 13:03:12 fago
-#  rules.rules_forms.inc,v 1.1.2.7 2009/05/15 13:03:12 fago
-#  taxonomy.rules_forms.inc,v 1.1.2.7 2009/05/15 13:03:12 fago
+#  taxonomy.rules_forms.inc,v 1.1.2.10 2009/09/10 10:57:54 fago
+#  rules.rules_forms.inc,v 1.1.2.10 2009/08/29 08:56:30 fago
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: rules\n"
-"POT-Creation-Date: 2009-06-26 11:52+0900\n"
-"PO-Revision-Date: 2009-06-26 14:16+0900\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-09-19 00:28+0900\n"
+"PO-Revision-Date: 2009-10-09 14:06+0900\n"
 "Last-Translator: PineRay <matsudaterutaka@gmail.com>\n"
 "Language-Team: Japanese <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -38,12 +39,12 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: rules.api.php:118
-#: modules/system.rules.inc:46
+#: modules/system.rules.inc:47
 msgid "Send a mail to a user"
-msgstr "ユーザにメール送信"
+msgstr "ユーザーにメールを送信"
 
 #: rules.api.php:120
-#: modules/system.rules.inc:48
+#: modules/system.rules.inc:49
 #: modules/system.rules_forms.inc:83
 msgid "Recipient"
 msgstr "受信者"
@@ -56,154 +57,158 @@ msgstr "コンテンツタイプ"
 #: rules.api.php:215
 #: modules/user.rules_forms.inc:92
 msgid "You have to enter the user name or the user id."
-msgstr "ユーザ名またはユーザIDを入力してください。"
+msgstr "ユーザー名またはユーザーIDを入力してください。"
 
 #: rules.api.php:256
 msgid "This help text is going to be displayed during action configuration."
 msgstr "このヘルプテキストは、アクションの設定中に表示されます。"
 
-#: rules.api.php:280
-#: modules/rules.rules.inc:141
-msgid "Textual comparison"
-msgstr "文字列の比較"
-
-#: rules.api.php:282
+#: rules.api.php:290
 #: modules/rules.rules.inc:143
+msgid "Textual comparison"
+msgstr "テキストの比較"
+
+#: rules.api.php:292
+#: modules/rules.rules.inc:145
 msgid "Text 1"
-msgstr "文字列 1"
+msgstr "テキスト 1"
 
-#: rules.api.php:283
-#: modules/rules.rules.inc:144
-msgid "Text 2"
-msgstr "文字列 2"
-
-#: rules.api.php:285
+#: rules.api.php:293
 #: modules/rules.rules.inc:146
+msgid "Text 2"
+msgstr "テキスト 2"
+
+#: rules.api.php:295
+#: modules/rules.rules.inc:148
 msgid "TRUE is returned, if both texts are equal."
 msgstr "2つのテキストが同じであれば、TRUEを返します。"
 
-#: rules.api.php:343
+#: rules.api.php:353
 #: modules/user.rules.inc:18
 msgid "User account has been created"
-msgstr "ユーザアカウントを作成"
-
-#: rules.api.php:345
-#: modules/user.rules.inc:20
-msgid "registered user"
-msgstr "登録したユーザ"
-
-#: rules.api.php:348
-#: modules/user.rules.inc:23
-msgid "User account details have been updated"
-msgstr "ユーザアカウントの詳細を更新"
-
-#: rules.api.php:350
-#: modules/user.rules.inc:25
-msgid "updated user"
-msgstr "更新されるユーザ"
-
-#: rules.api.php:351
-#: modules/user.rules.inc:26
-msgid "unchanged user"
-msgstr "変更されないユーザ"
+msgstr "ユーザーアカウントを作成"
 
 #: rules.api.php:355
-#: modules/user.rules.inc:30
-msgid "User page has been viewed"
-msgstr "ユーザページが閲覧された"
-
-#: rules.api.php:357
-#: modules/user.rules.inc:32
-msgid "viewed user"
-msgstr "閲覧されるユーザ"
+#: modules/user.rules.inc:20
+msgid "registered user"
+msgstr "登録するユーザー"
 
 #: rules.api.php:358
-#: modules/node.rules.inc:35
-#: modules/user.rules.inc:33
-msgid "Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."
-msgstr "Drupalのページキャッシュが有効になっている場合、キャッシュから引き出されるページについてはこのイベントが実行されないことに注意してください。"
+#: modules/user.rules.inc:23
+msgid "User account details have been updated"
+msgstr "ユーザーアカウントの詳細を更新"
+
+#: rules.api.php:360
+#: modules/user.rules.inc:25
+msgid "updated user"
+msgstr "更新するユーザー"
 
 #: rules.api.php:361
+#: modules/user.rules.inc:26
+msgid "unchanged user"
+msgstr "変更されないユーザー"
+
+#: rules.api.php:365
+#: modules/user.rules.inc:30
+msgid "User page has been viewed"
+msgstr "ユーザーページを閲覧"
+
+#: rules.api.php:367
+#: modules/user.rules.inc:32
+msgid "viewed user"
+msgstr "閲覧されるユーザー"
+
+#: rules.api.php:368
+#: modules/node.rules.inc:34
+#: modules/user.rules.inc:33
+msgid "Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."
+msgstr "Drupalのページキャッシュが有効になっている場合、キャッシュから引き出されるページについてはこのイベントが発生しないことに注意してください。"
+
+#: rules.api.php:371
 #: modules/user.rules.inc:36
 msgid "User has been deleted"
 msgstr "ユーザを削除"
 
-#: rules.api.php:363
+#: rules.api.php:373
 #: modules/user.rules.inc:38
 msgid "deleted user"
-msgstr "削除されるユーザ"
-
-#: rules.api.php:366
-#: modules/user.rules.inc:41
-msgid "User has logged in"
-msgstr "ユーザがログイン"
-
-#: rules.api.php:369
-#: modules/user.rules.inc:44
-msgid "logged in user"
-msgstr "ログインするユーザ"
-
-#: rules.api.php:373
-#: modules/user.rules.inc:48
-msgid "User has logged out"
-msgstr "ユーザがログアウト"
+msgstr "削除されるユーザー"
 
 #: rules.api.php:376
+#: modules/user.rules.inc:41
+msgid "User has logged in"
+msgstr "ユーザーがログイン"
+
+#: rules.api.php:379
+#: modules/user.rules.inc:44
+msgid "logged in user"
+msgstr "ログインするユーザー"
+
+#: rules.api.php:383
+#: modules/user.rules.inc:48
+msgid "User has logged out"
+msgstr "ユーザーがログアウト"
+
+#: rules.api.php:386
 #: modules/user.rules.inc:51
 msgid "logged out user"
-msgstr "ログアウトするユーザ"
+msgstr "ログアウトするユーザー"
 
-#: rules.api.php:429
-#: modules/node.rules.inc:310
-#: modules/node.rules_forms.inc:109
-#: modules/rules.rules.inc:334
+#: rules.api.php:442
+#: modules/node.rules.inc:351;325
+#: modules/node.rules_forms.inc:113
+#: modules/rules.rules.inc:337
 msgid "content"
 msgstr "コンテンツ"
 
-#: rules.api.php:461
+#: rules.api.php:474
 #: modules/php.rules.inc:19
 msgid "PHP Evaluation"
 msgstr "PHPの評価"
 
-#: rules.api.php:529
+#: rules.api.php:542
 msgid "Replacement patterns for @name"
-msgstr "@name の置換パターン"
+msgstr "@nameの置換パターン"
 
-#: rules.api.php:609
-#: modules/node.rules.inc:112;168;176;190
+#: rules.api.php:622
+#: modules/node.rules.inc:111;178;186;200;248
 #: modules/path.rules.inc:58
-#: modules/rules.rules.inc:419
-#: modules/taxonomy.rules.inc:82;96
+#: modules/rules.rules.inc:422
+#: modules/taxonomy.rules.inc:111;125
 msgid "Content"
 msgstr "コンテンツ"
 
+#: rules.export.inc:240
+msgid "Could not load default rules items."
+msgstr "デフォルトのルールアイテムをロードできませんでした。"
+
 #: rules.variables.inc:60
-msgid "Warning: Unable to get variable %name."
-msgstr "注意: 変数 %name を取得できません。"
+msgid "Warning: Unable to get variable \"@name\"."
+msgstr "警告: 変数「@name」を取得できません。"
 
 #: rules.variables.inc:99
-msgid "Warning: Unable to get argument %name."
-msgstr "注意: 引数 %name を取得できません。"
+msgid "Warning: Unable to get argument \"@name\"."
+msgstr "警告: 引数「@name」を取得できません。"
 
 #: rules.variables.inc:158
-msgid "Element %name has not been executed. There are not all execution arguments needed by an input evaluator available."
-msgstr "エレメント %name は実行されませんでした。入力評価機能で必要とされるすべての引数が揃っていません。"
+msgid "Element \"@name\" has not been executed. There are not all execution arguments needed by an input evaluator available."
+msgstr "エレメント「@name」は実行されませんでした。入力評価に必要なすべての引数が揃っていません。"
 
 #: rules.variables.inc:173
-msgid "Element %name has not been executed. There are not all execution arguments available."
-msgstr "エレメント %name は実行されませんでした。すべての引数が揃っていません。"
+msgid "Element \"@name\" has not been executed. There are not all execution arguments available."
+msgstr "エレメント「@name」は実行されませんでした。すべての引数が揃っていません。"
 
 #: rules.variables.inc:203
-msgid "Successfully added the new variable @arg"
-msgstr "新しい変数 @arg の追加に成功しました"
+msgid "Successfully added the new variable \"@arg\""
+msgstr "新しい変数「@arg」の追加に成功しました"
 
 #: rules.variables.inc:206
-msgid "Unknown variable name %var return by action %name."
-msgstr "アクション %name が未知の変数 %var を返しました。"
+msgid "Unknown variable name \"@var\" return by action \"@name\"."
+msgstr "アクション「@name」が未知の変数「@var」を返しました。"
 
 #: rules.variables.inc:319
-msgid "Loaded variable @arg"
-msgstr "変数 @arg をロードしました"
+msgid "Loaded variable \"@arg\""
+msgstr "変数「@arg」をロードしました"
 
 #: rules.variables.inc:355
 msgid "Saved variable @name of type @type."
@@ -213,64 +218,64 @@ msgstr "タイプ @type の変数 @name を保存しました。"
 msgid "Failed saving variable @name of type @type."
 msgstr "タイプ @type の変数 @name の保存に失敗しました。"
 
-#: rules.module:290
-msgid "%label has been invoked."
-msgstr "%label を起動しました。"
+#: rules.module:293
+msgid "\"@label\" has been invoked."
+msgstr "「@label」を起動しました。"
 
-#: rules.module:301
-msgid "Evaluation of %label has been finished."
-msgstr "%label の評価が完了しました。"
+#: rules.module:304
+msgid "Evaluation of \"@label\" has been finished."
+msgstr "「@label」の評価が完了しました。"
 
-#: rules.module:399
-msgid "Not executing the rule %name on rule set %set to prevent recursion."
-msgstr "再帰を防ぐために、ルールセット %set にあるルール %name を実行しません。"
+#: rules.module:402
+msgid "Not executing the rule \"@name\" on rule set \"@set\" to prevent recursion."
+msgstr "再帰を防ぐために、ルールセット「@set」のルール「@name」を実行していません。"
 
-#: rules.module:404
-msgid "Executing the rule %name on rule set %set"
-msgstr "ルールセット %set にあるルール %name を実行しています。"
+#: rules.module:407
+msgid "Executing the rule \"@name\" on rule set \"@set\""
+msgstr "ルールセット「@set」のルール「@name」を実行しています。"
 
-#: rules.module:455
-msgid "Action execution: @name"
-msgstr "アクション実行: @name"
+#: rules.module:458
+msgid "Action execution: \"@name\""
+msgstr "アクション実行: 「@name」"
 
-#: rules.module:480
-msgid "Condition %name evaluated to @bool."
-msgstr "条件 %name の評価は @bool です。"
+#: rules.module:483
+msgid "Condition \"@name\" evaluated to @bool."
+msgstr "条件「@name」の評価は @bool です。"
 
-#: rules.module:523
+#: rules.module:527
 msgid "OR"
-msgstr "OR"
+msgstr ""
 
-#: rules.module:524
+#: rules.module:528
 msgid "AND"
-msgstr "AND"
+msgstr ""
 
-#: rules.module:579
+#: rules.module:583
 msgid "unlabelled"
-msgstr "題名無し"
+msgstr "ラベルなし"
 
-#: rules.module:857
+#: rules.module:861
 #: rules.info:0;0
 msgid "Rules"
 msgstr "ルール"
 
-#: rules.module:862
+#: rules.module:866
 msgid "Rule Sets"
 msgstr "ルールセット"
 
-#: rules.module:876
-msgid "Unable to find %type of name %name with the label %label. Perhaps the according module has been deactivated."
-msgstr "%label という題名で %name という名前の%typeを見つけることができません。おそらく、対応するモジュールが無効になっています。"
+#: rules.module:880
+msgid "Unable to find \"@type\" of name \"@name\" with the label \"@label\". Perhaps the according module has been deactivated."
+msgstr "「@label」というラベルで名前が「@name」の「@type」が見つかりません。おそらく、対応するモジュールが無効になっています。"
 
-#: rules.module:879
-msgid "Unable to find %type of name %name. Perhaps the according module has been deactivated."
-msgstr "%name という名前の%typeを見つけることができません。おそらく、対応するモジュールが無効になっています。"
+#: rules.module:883
+msgid "Unable to find \"@type\" of name \"@name\". Perhaps the according module has been deactivated."
+msgstr "名前が「@name」の「@type」が見つかりません。おそらく、対応するモジュールが無効になっています。"
 
-#: rules.module:892
+#: rules.module:896
 msgid "Show rule configuration"
 msgstr "ルールの設定を表示"
 
-#: rules.module:953
+#: rules.module:957
 msgid "Included @module.rules.inc files."
 msgstr "@module.rules.inc ファイルをインクルードしました。"
 
@@ -296,7 +301,7 @@ msgstr "ルール %label のインポートに失敗しました。"
 
 #: rules.install:164
 msgid "The now separated rules administration UI module has been enabled."
-msgstr "分離されたルール管理インターフェースモジュールが有効になりました。"
+msgstr "別にあるルール管理インターフェースモジュールが有効になりました。"
 
 #: rules.install:243
 msgid "No upgrade information for the element %name found. Aborting."
@@ -304,7 +309,7 @@ msgstr "エレメント %name の更新情報が見つかりませんでした�
 
 #: rules.info:0
 msgid "Lets you define conditionally executed actions based on occurring events."
-msgstr "イベントが発生するにともなって、条件付きで実行されるアクションを定義することができます。"
+msgstr "イベントが発生するにしたがい、条件付きで実行されるアクションを定義することができます。"
 
 #: modules/comment.rules.inc:18
 msgid "After saving a new comment"
@@ -340,7 +345,7 @@ msgstr "閲覧されるコメント"
 
 #: modules/comment.rules.inc:38
 msgid "After publishing a comment"
-msgstr "コメントを掲載済みにした後"
+msgstr "コメントを掲載済みとした後"
 
 #: modules/comment.rules.inc:40
 msgid "published comment"
@@ -348,7 +353,7 @@ msgstr "掲載済みコメント"
 
 #: modules/comment.rules.inc:43
 msgid "After unpublishing a comment"
-msgstr "コメントを未掲載にした後"
+msgstr "コメントを未掲載とした後"
 
 #: modules/comment.rules.inc:45
 msgid "unpublished comment"
@@ -366,19 +371,19 @@ msgstr "コメントするコンテンツ"
 msgid "commented content author"
 msgstr "コメントするコンテンツの投稿者"
 
-#: modules/comment.rules.inc:104
+#: modules/comment.rules.inc:115
 msgid "Load comment by id"
 msgstr "コメントをIDでロード"
 
-#: modules/comment.rules.inc:108
+#: modules/comment.rules.inc:119
 msgid "Comment id"
 msgstr "コメントID"
 
-#: modules/comment.rules.inc:115
+#: modules/comment.rules.inc:126
 msgid "Loaded comment"
 msgstr "ロードしたコメント"
 
-#: modules/comment.rules.inc:137
+#: modules/comment.rules.inc:148
 msgid "comment"
 msgstr "コメント"
 
@@ -386,145 +391,161 @@ msgstr "コメント"
 msgid "Comment with id @id"
 msgstr "ID @id のコメント"
 
-#: modules/node.rules.inc:18
+#: modules/node.rules.inc:17
 msgid "After saving new content"
 msgstr "新しいコンテンツを保存後"
 
-#: modules/node.rules.inc:20
+#: modules/node.rules.inc:19
 msgid "created content"
 msgstr "作成するコンテンツ"
 
-#: modules/node.rules.inc:20;25;30
+#: modules/node.rules.inc:19;24;29
 msgid "content's author"
 msgstr "コンテンツの投稿者"
 
-#: modules/node.rules.inc:23
+#: modules/node.rules.inc:22
 msgid "After updating existing content"
 msgstr "既存のコンテンツを更新後"
 
-#: modules/node.rules.inc:25
+#: modules/node.rules.inc:24
 msgid "updated content"
 msgstr "更新するコンテンツ"
 
-#: modules/node.rules.inc:28
+#: modules/node.rules.inc:27
 msgid "Content is going to be saved"
 msgstr "コンテンツを保存しようとしている"
 
-#: modules/node.rules.inc:30
+#: modules/node.rules.inc:29
 msgid "saved content"
 msgstr "保存するコンテンツ"
 
-#: modules/node.rules.inc:33
+#: modules/node.rules.inc:32
 msgid "Content is going to be viewed"
 msgstr "コンテンツを閲覧しようとしている"
 
-#: modules/node.rules.inc:36
+#: modules/node.rules.inc:35
 msgid "viewed content"
 msgstr "閲覧するコンテンツ"
 
-#: modules/node.rules.inc:36;44
+#: modules/node.rules.inc:35;43
 msgid "content author"
-msgstr "コンテンツ投稿者"
+msgstr "コンテンツの投稿者"
 
-#: modules/node.rules.inc:37
+#: modules/node.rules.inc:36
 msgid "Content is displayed as teaser"
 msgstr "コンテンツをティーザーで表示"
 
-#: modules/node.rules.inc:38
+#: modules/node.rules.inc:37
 msgid "Content is displayed as page"
 msgstr "コンテンツをページで表示"
 
-#: modules/node.rules.inc:42
+#: modules/node.rules.inc:41
 msgid "After deleting content"
 msgstr "コンテンツを削除後"
 
-#: modules/node.rules.inc:44
+#: modules/node.rules.inc:43
 msgid "deleted content"
 msgstr "削除するコンテンツ"
 
-#: modules/node.rules.inc:71
+#: modules/node.rules.inc:70
 msgid "unchanged content"
 msgstr "変更しないコンテンツ"
 
-#: modules/node.rules.inc:76
+#: modules/node.rules.inc:75
 msgid "unchanged content's author"
 msgstr "変更しないコンテンツの投稿者"
 
-#: modules/node.rules.inc:117
+#: modules/node.rules.inc:116
 msgid "Content has type"
 msgstr "コンテンツが指定のタイプ"
 
-#: modules/node.rules.inc:118
+#: modules/node.rules.inc:117
 msgid "Evaluates to TRUE, if the given content has one of the selected content types."
-msgstr "与えられたコンテンツのコンテンツタイプが選択したものに含まれていれば、TRUEと評価します。"
+msgstr "選択したコンテンツタイプの中にコンテンツのものが含まれていれば、TRUEと評価します。"
 
-#: modules/node.rules.inc:121
+#: modules/node.rules.inc:120
 msgid "Content is published"
 msgstr "コンテンツが掲載済み"
 
-#: modules/node.rules.inc:124
+#: modules/node.rules.inc:123
 msgid "Content is sticky"
 msgstr "コンテンツが固定"
 
-#: modules/node.rules.inc:127
+#: modules/node.rules.inc:126
 msgid "Content is promoted to frontpage"
 msgstr "コンテンツが表紙に表示"
 
-#: modules/node.rules.inc:166
+#: modules/node.rules.inc:129
+msgid "Content is new"
+msgstr "コンテンツが新しい"
+
+#: modules/node.rules.inc:130
+msgid "Evaluates to TRUE, if the given content has not been saved yet."
+msgstr "コンテンツがまだ保存されていなければ、TRUEと評価します。"
+
+#: modules/node.rules.inc:176
 msgid "Set the content author"
-msgstr "コンテンツ投稿者を設定"
+msgstr "コンテンツの投稿者を設定"
 
-#: modules/node.rules.inc:169;198
+#: modules/node.rules.inc:179;208
 msgid "User, who is set as author"
-msgstr "投稿者として設定されているユーザ"
+msgstr "投稿者として設定するユーザー"
 
-#: modules/node.rules.inc:174
+#: modules/node.rules.inc:184
 msgid "Load the content author"
 msgstr "コンテンツの投稿者をロード"
 
-#: modules/node.rules.inc:181
+#: modules/node.rules.inc:191
 msgid "Content author"
 msgstr "コンテンツの投稿者"
 
-#: modules/node.rules.inc:188
+#: modules/node.rules.inc:198
 msgid "Set content title"
-msgstr "コンテンツのタイトルをセット"
+msgstr "コンテンツのタイトルを設定"
 
-#: modules/node.rules.inc:191;201
+#: modules/node.rules.inc:201;211
 msgid "Title"
 msgstr "タイトル"
 
-#: modules/node.rules.inc:196
+#: modules/node.rules.inc:206
 msgid "Add new content"
-msgstr "コンテンツを新しく追加"
+msgstr "新しいコンテンツを追加"
 
-#: modules/node.rules.inc:202
+#: modules/node.rules.inc:212
 msgid "The title of the newly created content."
-msgstr "新しく作成したコンテンツの題名。"
+msgstr "新しく作成するコンテンツのタイトル。"
 
-#: modules/node.rules.inc:208
+#: modules/node.rules.inc:218
 msgid "New content"
 msgstr "新しいコンテンツ"
 
-#: modules/node.rules.inc:216
+#: modules/node.rules.inc:226
 msgid "Load content by id"
-msgstr "IDを指定してコンテンツをロード"
+msgstr "IDでコンテンツをロード"
 
-#: modules/node.rules.inc:218
+#: modules/node.rules.inc:228
 msgid "Content ID"
 msgstr "コンテンツID"
 
-#: modules/node.rules.inc:221
+#: modules/node.rules.inc:231
 msgid "Content Revision ID"
 msgstr "コンテンツのリビジョンID"
 
-#: modules/node.rules.inc:222
+#: modules/node.rules.inc:232
 msgid "If you want to load a specific revision, specify it's revision id. Else leave it empty to load the current revision."
-msgstr "特定のリビジョンをロードしたい場合、そのリビジョンIDを指定してください。空欄にすれば最新のリビジョンをロードします。"
+msgstr "特定のリビジョンをロードする場合、そのリビジョンIDを指定してください。空欄であれば最新のリビジョンをロードします。"
 
-#: modules/node.rules.inc:229
+#: modules/node.rules.inc:239
 msgid "Loaded content"
-msgstr "ロードするコメント"
+msgstr "ロードするコンテンツ"
+
+#: modules/node.rules.inc:246
+msgid "Delete content"
+msgstr "削除するコンテンツ"
+
+#: modules/node.rules.inc:325
+msgid "@type: deleted %title."
+msgstr "@type： %title が削除されました。"
 
 #: modules/node.rules_forms.inc:31
 msgid "@node is @type"
@@ -546,41 +567,49 @@ msgstr "@node は固定"
 msgid "@node is promoted to frontpage"
 msgstr "@node は表紙に表示"
 
-#: modules/node.rules_forms.inc:50
+#: modules/node.rules_forms.inc:47
+msgid "@node is new"
+msgstr "@node は新しい"
+
+#: modules/node.rules_forms.inc:54
 msgid "Set the author of @node to @author"
 msgstr "@node の投稿者を @author に設定"
 
-#: modules/node.rules_forms.inc:57
+#: modules/node.rules_forms.inc:61
 msgid "Load the @node author"
 msgstr "@node の投稿者をロード"
 
-#: modules/node.rules_forms.inc:64
+#: modules/node.rules_forms.inc:68
 msgid "@node author"
 msgstr "@node の投稿者"
 
-#: modules/node.rules_forms.inc:71
+#: modules/node.rules_forms.inc:75
 msgid "Set @node's title"
-msgstr "@nodeのタイトルをセット"
+msgstr "@node のタイトルをセット"
 
-#: modules/node.rules_forms.inc:80
+#: modules/node.rules_forms.inc:84
 msgid "Content type to be used"
 msgstr "使用するコンテンツタイプ"
 
-#: modules/node.rules_forms.inc:83
+#: modules/node.rules_forms.inc:87
 msgid "Select a content type that will be created when this action is invoked."
-msgstr "このアクションを起動する際に作成するコンテンツタイプを選択してください。"
+msgstr "このアクションが起動すると作成されるコンテンツのタイプを選択してください。"
 
-#: modules/node.rules_forms.inc:88
+#: modules/node.rules_forms.inc:92
 msgid "Create content only if the given author has access permission to do so"
 msgstr "指定の投稿者が適切なアクセス権限を持っている場合にだけコンテンツを作成します。"
 
-#: modules/node.rules_forms.inc:94
+#: modules/node.rules_forms.inc:98
 msgid "New content of type @type"
 msgstr "タイプ @type の新しいコンテンツ"
 
-#: modules/node.rules_forms.inc:101
+#: modules/node.rules_forms.inc:105
 msgid "Content with id @id"
 msgstr "ID @id のコンテンツ"
+
+#: modules/node.rules_forms.inc:122
+msgid "Delete @node"
+msgstr "@node を削除"
 
 #: modules/path.rules.inc:18
 msgid "Path has alias(es)"
@@ -598,7 +627,7 @@ msgstr "URLエイリアスを作成または削除"
 msgid "Create or delete a content's URL alias"
 msgstr "コンテンツのURLエイリアスを作成または削除"
 
-#: modules/path.rules_forms.inc:16;50
+#: modules/path.rules_forms.inc:16;69
 msgid "Existing system path"
 msgstr "既存のシステムパス"
 
@@ -606,59 +635,75 @@ msgstr "既存のシステムパス"
 msgid "Specify the existing path for which you want to check if an URL alias exists."
 msgstr "URLエイリアスが存在するかチェックする既存のパスを指定してください。"
 
-#: modules/path.rules_forms.inc:29;58
+#: modules/path.rules_forms.inc:26;48;86
+msgid "Language"
+msgstr "言語"
+
+#: modules/path.rules_forms.inc:29
+msgid "Optionally only check for a language specific path alias."
+msgstr "指定した言語のパスエイリアスだけをチェックします (任意)。"
+
+#: modules/path.rules_forms.inc:38;77
 msgid "Path alias"
 msgstr "パスエイリアス"
 
-#: modules/path.rules_forms.inc:32
+#: modules/path.rules_forms.inc:41
 msgid "Specify the path alias which you want to check if it already exists."
 msgstr "すでに存在するかチェックするパスエイリアスを指定してください。"
 
-#: modules/path.rules_forms.inc:38
-msgid "Before checking, replace non ascii characters with"
-msgstr "チェックの前に、ASCII文字ではないものを以下で置換: "
+#: modules/path.rules_forms.inc:51
+msgid "Optionally check for a language specific path alias."
+msgstr "指定した言語のパスエイリアスをチェックします (任意)。"
 
-#: modules/path.rules_forms.inc:42;70
+#: modules/path.rules_forms.inc:56
+msgid "Before checking, replace non ascii characters with"
+msgstr "チェックの前に、ASCII文字でない文字を以下で置換: "
+
+#: modules/path.rules_forms.inc:60;98
 msgid "Leave this textfield empty to disable the replacement of non ascii characters."
 msgstr "このテキストフィールドを空欄にすると、ASCII文字でない文字の置換が無効になります。"
 
-#: modules/path.rules_forms.inc:53
+#: modules/path.rules_forms.inc:72
 msgid "Specify the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2."
 msgstr "エイリアスの元となる既存のパスを入力してください。 例： node/28、forum/1、taxonomy/term/1+2"
 
-#: modules/path.rules_forms.inc:53
+#: modules/path.rules_forms.inc:72
 msgid "Leave it empty to delete URL aliases pointing to the given path alias."
-msgstr "空欄にすると、指定のパスエイリアスに設定されているURLエイリアスが削除されます。"
+msgstr "空欄にすると、指定のパスエイリアスに設定されているURLエイリアスを削除します。"
 
-#: modules/path.rules_forms.inc:61
+#: modules/path.rules_forms.inc:80
 msgid "Specify an alternative path by which this data can be accessed. For example, type \"about\" when writing an about page. Use a relative path and do not add a trailing slash or the URL alias will not work."
 msgstr "このデータにアクセスすることができる代替パスを指定してください。例えば、アバウトページを投稿していれば「about」と入力します。相対パスを使用して、末尾のスラッシュは含めないようにしてください。"
 
-#: modules/path.rules_forms.inc:61
+#: modules/path.rules_forms.inc:80
 msgid "Leave it empty to delete URL aliases pointing to the given system path."
-msgstr "空欄にすると、指定のシステムパスに割り当てられたURLエイリアスを削除します。"
+msgstr "空欄にすると、指定のシステムパスに設定されているURLエイリアスを削除します。"
 
-#: modules/path.rules_forms.inc:66
+#: modules/path.rules_forms.inc:89
+msgid "Optionally make the path alias language specific."
+msgstr "指定した言語のパスエイリアスを作成します (任意)。"
+
+#: modules/path.rules_forms.inc:94
 msgid "Replace non ascii characters with"
-msgstr "ASCII文字列でない文字を以下で置換: "
+msgstr "ASCII文字でない文字を以下で置換: "
 
-#: modules/path.rules_forms.inc:76
+#: modules/path.rules_forms.inc:104
 msgid "You have to enter at least eiter an existing system path or a path alias."
-msgstr "既存のシステムパスかまたはパスエイリアスのいずれかを少なくとも入力してください。"
+msgstr "既存のシステムパスまたはパスエイリアスを少なくともひとつ入力してください。"
 
-#: modules/path.rules_forms.inc:87
+#: modules/path.rules_forms.inc:115
 msgid "Create or delete @node's URL alias"
 msgstr "@node のURLエイリアスを作成または削除"
 
-#: modules/path.rules_forms.inc:91
+#: modules/path.rules_forms.inc:119
 msgid "This action only works if the acting user has %perm1 or %perm2 permsissions. If this does not suit, use the generic \"Create or delete an URL alias\" action together with the existing system path \"node/{ID}\"."
-msgstr "ユーザに %perm1 または %perm2 の権限がある場合にのみ、このアクションは稼働します。それが適当でなければ、一般的な「URLエイリアスを作成または削除」アクションを既存のシステムパス「node/{ID}」と組み合わせて使用してください。"
+msgstr "ユーザに %perm1 または %perm2 の権限がある場合にのみ、このアクションが実行されます。それだと都合が悪ければ、一般的な「URLエイリアスを作成または削除」アクションを既存のシステムパス「node/{ID}」と組み合わせて使用してください。"
 
-#: modules/path.rules_forms.inc:91
+#: modules/path.rules_forms.inc:119
 msgid "create url aliases"
 msgstr "URLエイリアスの作成"
 
-#: modules/path.rules_forms.inc:91
+#: modules/path.rules_forms.inc:119
 msgid "administer url aliases"
 msgstr "URLエイリアスの管理"
 
@@ -672,7 +717,7 @@ msgstr "独自のPHPコードを実行"
 
 #: modules/php.rules_forms.inc:16
 msgid "PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2."
-msgstr "&lt;?php ?&gt; デリミタの中に記述したPHPコードは評価され、その出力結果と差し替えられます。例: &lt;? echo 1+1?&gt; は 2 に置き換えられます。"
+msgstr "&lt;?php ?&gt; デリミタの中に記述したPHPコードは評価され、その出力結果と差し替えられます。例） &lt;? echo 1+1?&gt; は 2 に置き換えられます。"
 
 #: modules/php.rules_forms.inc:17
 msgid "Furthermore you can make use of the following variables:"
@@ -687,6 +732,7 @@ msgid "Type"
 msgstr "タイプ"
 
 #: modules/php.rules_forms.inc:18
+#: modules/taxonomy.rules_forms.inc:102
 msgid "Description"
 msgstr "説明"
 
@@ -704,7 +750,7 @@ msgstr "いいえ"
 
 #: modules/php.rules_forms.inc:44
 msgid "Note that variables are passed by reference, so you can change them."
-msgstr "変数が参照で渡されるので、それらを変更できてしまうことに注意してください。"
+msgstr "変数は参照で渡されるので、それらを変更できてしまうことに注意してください。"
 
 #: modules/php.rules_forms.inc:45
 msgid "If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it."
@@ -712,7 +758,7 @@ msgstr "変更を恒久的なものにしたければ、変数のデータタイ
 
 #: modules/php.rules_forms.inc:45
 msgid "To make use of \"intelligent saving\" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times."
-msgstr "「合理的な保存」を使用しているため、保存する変数の配列を1つだけ返します。例: !code そのため、複数回の修正が加えられていても、変数を保存するのは一度だけです。"
+msgstr "「合理的な保存」を行うため、保存する変数の配列を1つだけ返します。例） !code そのため、複数回の修正が加えられていても、変数を保存するのは一度だけです。"
 
 #: modules/php.rules_forms.inc:56;82
 msgid "PHP Code"
@@ -720,21 +766,21 @@ msgstr "PHPコード"
 
 #: modules/php.rules_forms.inc:58;84
 msgid "The code that should be executed. Don't include &lt;?php ?&gt; delimiters."
-msgstr "実行するコード。&lt;?php ?&gt;の符号を含めないでください。"
+msgstr "実行するコード。&lt;?php ?&gt;のデリミタを含めないでください。"
 
 #: modules/php.rules_forms.inc:84
 msgid "Be sure to always return a boolean value, e.g.: !code"
-msgstr "常に論理値を返すようにしてください。例: !code"
+msgstr "常に論理値を返すようにしてください。例） !code"
 
 #: modules/php.rules_forms.inc:96
 msgid "The code has to always return a boolean value."
 msgstr "コードは常に論理値を返さなければなりません。"
 
-#: modules/rules.rules.inc:20
+#: modules/rules.rules.inc:18
 msgid "string"
 msgstr "文字列"
 
-#: modules/rules.rules.inc:26
+#: modules/rules.rules.inc:25
 msgid "number"
 msgstr "数値"
 
@@ -742,87 +788,87 @@ msgstr "数値"
 msgid "date"
 msgstr "日付"
 
-#: modules/rules.rules.inc:38
+#: modules/rules.rules.inc:39
 msgid "truth value"
 msgstr "真偽値"
 
-#: modules/rules.rules.inc:44
+#: modules/rules.rules.inc:46
 msgid "a fixed value"
 msgstr "固定値"
 
-#: modules/rules.rules.inc:89
-msgid "Format: %format or other values known by the PHP !strtotime function like \"+1 day\". "
-msgstr "書式: %format または「+1 day」のようなPHPの !strtotime 関数で用いられる値。 "
+#: modules/rules.rules.inc:91
+msgid "Format: %format or other values in GMT known by the PHP !strtotime function like \"+1 day\". "
+msgstr "書式: %format または「+1 day」といったPHPの !strtotime 関数で用いる値。 "
 
-#: modules/rules.rules.inc:90
+#: modules/rules.rules.inc:92
 msgid "You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. "
-msgstr "また、タイムスタンプをGMTで入力することもできます。例: !code をPHPの入力評価機能と組み合わせて使用し、評価日時以降の特定の日時を指定します。"
+msgstr "また、タイムスタンプをGMTで入力することもできます。例） !code をPHPの入力評価と組み合わせて使用し、評価日時以降の特定の日時を指定します。"
 
-#: modules/rules.rules.inc:110
+#: modules/rules.rules.inc:112
 msgid "The argument %label is no valid date."
 msgstr "引数 %label は適切な日付ではありません。"
 
-#: modules/rules.rules.inc:124
+#: modules/rules.rules.inc:126
 msgid "Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator."
-msgstr "TRUEを意味する 1 またはFALSEを意味する 0 を入力するか、あるいは入力評価機能を利用します。"
-
-#: modules/rules.rules.inc:150
-msgid "Numeric comparison"
-msgstr "数字の比較"
+msgstr "TRUEを意味する 1 またはFALSEを意味する 0 を入力するか、あるいは入力評価を利用します。"
 
 #: modules/rules.rules.inc:152
-msgid "Number 1"
-msgstr "数字 1"
+msgid "Numeric comparison"
+msgstr "数値の比較"
 
-#: modules/rules.rules.inc:153
-msgid "Number 2"
-msgstr "数字 2"
+#: modules/rules.rules.inc:154
+msgid "Number 1"
+msgstr "数値 1"
 
 #: modules/rules.rules.inc:155
-msgid "Select greater than, less than or equal to."
-msgstr "2つの数字の大小を比較します。"
+msgid "Number 2"
+msgstr "数値 2"
 
-#: modules/rules.rules.inc:159
+#: modules/rules.rules.inc:157
+msgid "Select greater than, less than or equal to."
+msgstr "数値の比較方法を選択してください。"
+
+#: modules/rules.rules.inc:161
 msgid "Check a truth value"
 msgstr "真偽値をチェック"
 
-#: modules/rules.rules.inc:161
+#: modules/rules.rules.inc:163
 msgid "Truth value"
 msgstr "真偽値"
 
-#: modules/rules.rules.inc:225
+#: modules/rules.rules.inc:228
 msgid "Add a new @type variable"
 msgstr "@type 変数を新しく追加"
 
-#: modules/rules.rules.inc:233
+#: modules/rules.rules.inc:236
 msgid "Added @type"
 msgstr "@type を追加"
 
-#: modules/rules.rules.inc:245
+#: modules/rules.rules.inc:248
 msgid "Save a @type"
 msgstr "@typeを保存"
 
-#: modules/rules.rules.inc:273
+#: modules/rules.rules.inc:276
 msgid "The configured rule set %set doesn't exist any more."
 msgstr "ルールセット %set は存在しません。"
 
-#: modules/rules.rules.inc:334
+#: modules/rules.rules.inc:337
 msgid "post"
 msgstr "投稿"
 
-#: modules/rules.rules.inc:375
+#: modules/rules.rules.inc:378
 msgid "Permanently apply changes"
 msgstr "変更を確定して適用"
 
-#: modules/rules.rules.inc:376
+#: modules/rules.rules.inc:379
 msgid "If checked, changes to the argument are saved automatically."
-msgstr "チェックがあれば、引数の変更を自動的に保存します。"
+msgstr "チェックがあれば、引数に加えた変更を自動的に保存します。"
 
-#: modules/rules.rules.inc:428
+#: modules/rules.rules.inc:431
 msgid "Comment"
 msgstr "コメント"
 
-#: modules/rules.rules.inc:437
+#: modules/rules.rules.inc:440
 #: modules/user.rules.inc:98
 msgid "User"
 msgstr "ユーザ"
@@ -835,91 +881,99 @@ msgstr "比較する2つの文字列"
 msgid "Evaluate the second text as a regular expression."
 msgstr "2つ目の文字列を正規表現として評価。"
 
-#: modules/rules.rules_forms.inc:34
+#: modules/rules.rules_forms.inc:22
+msgid "If enabled, the matching pattern will be interpreted as a <a href=\"@regex-wikipedia\">regex</a>.  Tip: <a href=\"@RegExr\">RegExr: Online Regular Expression Testing Tool</a> is helpful for learning, writing, and testing Regular Expressions."
+msgstr "このオプションが有効であれば、マッチングパターンを<a href=\"@regex-wikipedia\">正規表現</a>として解釈します。TIP） 正規表現の習得および記述、テストに<a href=\"@RegExr\">RegExr: オンラインの正規表現テストツール</a>が役立ちます。"
+
+#: modules/rules.rules_forms.inc:35
 msgid "Operation"
 msgstr "操作"
 
-#: modules/rules.rules_forms.inc:35
+#: modules/rules.rules_forms.inc:36
 msgid "Greater than"
 msgstr "大なり記号（&gt;）"
 
-#: modules/rules.rules_forms.inc:35
+#: modules/rules.rules_forms.inc:36
 msgid "Equal to"
-msgstr "等しい"
+msgstr "次に等しい"
 
-#: modules/rules.rules_forms.inc:35
+#: modules/rules.rules_forms.inc:36
 msgid "Less than"
 msgstr "小なり記号（&lt;）"
 
-#: modules/rules.rules_forms.inc:41
+#: modules/rules.rules_forms.inc:42
 msgid "Check a <a href=\"http://en.wikipedia.org/wiki/Logical_value\">truth value</a>, i.e. TRUE or FALSE."
-msgstr "<a href=\"http://en.wikipedia.org/wiki/Logical_value\">真偽値</a>をチェック。例: TRUE または FALSE."
+msgstr "<a href=\"http://en.wikipedia.org/wiki/Logical_value\">真偽値</a>をチェック。例） TRUE または FALSE."
 
-#: modules/rules.rules_forms.inc:50
+#: modules/rules.rules_forms.inc:63
 msgid "Force immediate saving."
 msgstr "即時保存を強制"
 
-#: modules/rules.rules_forms.inc:51
+#: modules/rules.rules_forms.inc:64
 msgid "If enabled, intelligent saving is bypassed to ensure immediate saving."
-msgstr "このオプションが有効であれば、自動的に即時保存がなされます。"
+msgstr "このオプションが有効であれば、即座に合理的な保存が行われます。"
 
-#: modules/rules.rules_forms.inc:58
+#: modules/rules.rules_forms.inc:71
 msgid "Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does."
-msgstr "通常、アクションによってなされた変更の保存に注意を払う必要はありません。しかしながら、アクションが変更を保存しない場合に、保存を強制することができます。"
+msgstr "通常、アクションによってなされた変更の保存に注意を払う必要はありません。しかしながら、変更を保存するアクションがない場合に、保存を強制することができます。"
 
-#: modules/rules.rules_forms.inc:58
+#: modules/rules.rules_forms.inc:71
 msgid "Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes."
-msgstr "さらに、複数のアクションが変更を保存しようとしているとしても、一度だけ保存を行うといった、合理的な保存がなされることに注意してください。"
+msgstr "さらに、複数のアクションが変更を保存しようとしても、一度だけ保存を行う合理的な保存がなされることに注意してください。"
 
 #: modules/system.rules.inc:18
 msgid "User is going to view a page"
-msgstr "ユーザがページを閲覧しようとしている"
+msgstr "ユーザーがページを閲覧しようとしている"
 
-#: modules/system.rules.inc:23
+#: modules/system.rules.inc:21
+msgid "Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."
+msgstr "テーマシステムを初期化する可能性のあるアクションがあることに注意してください。初期化してしまうと、どんなモジュールでも従来のテーマを変更できなくなります。"
+
+#: modules/system.rules.inc:24
 msgid "Cron maintenance tasks are performed"
 msgstr "Cronのタスクが実行された"
 
-#: modules/system.rules.inc:36
+#: modules/system.rules.inc:37
 msgid "Show a configurable message on the site"
-msgstr "設定可能なメッセージをサイトに表示"
+msgstr "メッセージをサイトに表示"
 
-#: modules/system.rules.inc:41
+#: modules/system.rules.inc:42
 msgid "Set breadcrumb"
 msgstr "パンくずを設定"
 
-#: modules/system.rules.inc:54
+#: modules/system.rules.inc:55
 msgid "Send a mail to an arbitrary mail address"
 msgstr "アドレス指定でメール送信"
 
-#: modules/system.rules.inc:59
+#: modules/system.rules.inc:60
 msgid "Send a mail to all users of a role"
 msgstr "ロールの全ユーザにメール送信"
 
-#: modules/system.rules.inc:64
+#: modules/system.rules.inc:65
 msgid "Page redirect"
-msgstr "ページ遷移"
+msgstr "ページリダイレクト"
 
-#: modules/system.rules.inc:67
+#: modules/system.rules.inc:68
 msgid "Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after \"?\" and (optional) anchor after \"#\"."
 msgstr "リダイレクト先のDrupalパスまたはパスエイリアス、もしくは外部のURLを入力します。「?」の後にクエリを入力したり、「#」の後にアンカーを入力することもできます。"
 
-#: modules/system.rules.inc:70
+#: modules/system.rules.inc:71
 msgid "Log to watchdog"
-msgstr "watchdogにログを記録"
+msgstr "Watchdogにログ記録"
 
-#: modules/system.rules.inc:88
+#: modules/system.rules.inc:89
 msgid "Home"
 msgstr "ホーム"
 
-#: modules/system.rules.inc:116;163
+#: modules/system.rules.inc:117;164
 msgid "rules"
 msgstr "ルール"
 
-#: modules/system.rules.inc:116
+#: modules/system.rules.inc:117
 msgid "Successfully sent email to %recipient"
 msgstr "%recipient へのメール送信に成功しました。"
 
-#: modules/system.rules.inc:163
+#: modules/system.rules.inc:164
 msgid "Successfully sent email to the role(s) %roles."
 msgstr "ロール %roles へのメール送信に成功しました。"
 
@@ -937,11 +991,11 @@ msgstr "エラーメッセージとして表示"
 
 #: modules/system.rules_forms.inc:38
 msgid "Titles"
-msgstr "題名"
+msgstr "タイトル"
 
 #: modules/system.rules_forms.inc:40
 msgid "A list of titles for the breadcrumb links, one on each line."
-msgstr "パンくずのリンクに用いる題名のリストを、ひとつずつ改行して記入します。"
+msgstr "パンくずリンクに使用するタイトルのリストを、1行につきひとつ記入します。"
 
 #: modules/system.rules_forms.inc:45
 msgid "Paths"
@@ -949,15 +1003,15 @@ msgstr "パス"
 
 #: modules/system.rules_forms.inc:47
 msgid "A list of Drupal paths for the breadcrumb links, one on each line."
-msgstr "パンくずのリンクに用いるDrupal内部パスのリストを、ひとつずつ改行して記入します。"
+msgstr "パンくずリンクに使用するDrupalパスのリストを、1行につきひとつ記入します。"
 
 #: modules/system.rules_forms.inc:59
 msgid "Sender"
-msgstr "送信者"
+msgstr "差出人"
 
 #: modules/system.rules_forms.inc:61
 msgid "The mail's from address. Leave it empty to use the site-wide configured address."
-msgstr "メールの差出人アドレス。空欄にすると、サイトのメールアドレスを使用します。"
+msgstr "メールを送る側のメールアドレス。空欄にすると、サイトのメールアドレスを使用します。"
 
 #: modules/system.rules_forms.inc:65
 msgid "Subject"
@@ -977,15 +1031,15 @@ msgstr "メールの受取人アドレス。「,」(コンマ)で区切って複
 
 #: modules/system.rules_forms.inc:101
 msgid "Recipient roles"
-msgstr "受信者ロール"
+msgstr "受取人のロール"
 
 #: modules/system.rules_forms.inc:102
 msgid "WARNING: This may cause problems if there are too many users of these roles on your site, as your server may not be able to handle all the mail requests all at once."
-msgstr "警告: これらのロールに数多くのユーザが含まれている場合、すべてのメールリクエストをいちどに処理するのをサーバが拒否するといった問題が生じる可能性があります。"
+msgstr "警告: これらのロールに数多くのユーザーが含まれている場合、すべてのメールリクエストをサーバが一度に処理しきれないといった問題が生じるかもしれません。"
 
 #: modules/system.rules_forms.inc:106
 msgid "Select the roles whose users should receive this email."
-msgstr "このメールを受け取るユーザロールを選択してください。"
+msgstr "このメールを受け取るユーザーのロールを選択してください。"
 
 #: modules/system.rules_forms.inc:127
 msgid "To"
@@ -993,11 +1047,11 @@ msgstr "宛先"
 
 #: modules/system.rules_forms.inc:149
 msgid "Force redirecting to the given path, even if a destination parameter is given"
-msgstr "移動先のパラメータが与えられていても、指定したパスへのリダイレクトを強制"
+msgstr "移動先のパラメーターが与えられていても、指定したパスへのリダイレクトを強制"
 
 #: modules/system.rules_forms.inc:150
 msgid "Per default drupal doesn't redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url"
-msgstr "デフォルトでは、移動先のパラメータが設定されていれば、指定のパスにリダイレクトされず、かわりにその設定された移動先にリダイレクトします。多くの場合、移動先のパラメータはURLに付け加える形で設定されます。例: !example_url"
+msgstr "デフォルトでは、移動先のパラメーターが設定されていれば、指定のパスにリダイレクトされず、かわりにその設定された移動先にリダイレクトします。多くの場合、移動先のパラメーターはURLに付加する形で設定されています。例) !example_url"
 
 #: modules/system.rules_forms.inc:156
 msgid "Immediately issue the page redirect"
@@ -1005,7 +1059,7 @@ msgstr "即時ページリダイレクト"
 
 #: modules/system.rules_forms.inc:157
 msgid "Use this with <em>caution</em>! If checked, the path redirect is issued immediately, so the normal execution flow is interrupted."
-msgstr "<em>注意書き</em>を添えるようにしてください! このオプションが有効であれば、即座にページリダイレクトが行われるので、通常の処理フローが中断されます。"
+msgstr "<em>十分に注意して</em>使用してください！ このオプションが有効であれば、即座にページリダイレクトが行われるので、通常の処理フローが中断されます。"
 
 #: modules/system.rules_forms.inc:169
 msgid "Severity"
@@ -1017,11 +1071,11 @@ msgstr "カテゴリ"
 
 #: modules/system.rules_forms.inc:178
 msgid "The category to which this message belongs."
-msgstr "このメッセージが属するカテゴリ。"
+msgstr "このメッセージのカテゴリー。"
 
 #: modules/system.rules_forms.inc:185
 msgid "The message to log."
-msgstr "ログに記録するメッセージ"
+msgstr "ログに記録するメッセージ。"
 
 #: modules/system.rules_forms.inc:190
 msgid "Link (optional)"
@@ -1029,7 +1083,7 @@ msgstr "リンク (任意)"
 
 #: modules/system.rules_forms.inc:192
 msgid "A link to associate with the message."
-msgstr "メッセージと結び付けるリンク。"
+msgstr "メッセージと関連付けるリンク。"
 
 #: modules/taxonomy.rules.inc:18
 msgid "After saving a new term"
@@ -1055,55 +1109,63 @@ msgstr "未変更のターム"
 msgid "Load a term"
 msgstr "タームをロード"
 
-#: modules/taxonomy.rules.inc:70;86;100
+#: modules/taxonomy.rules.inc:70;88;100;115;129
 msgid "Taxonomy term"
 msgstr "タクソノミーターム"
 
 #: modules/taxonomy.rules.inc:74
 msgid "Loading a taxonomy term will allow you to act on this term, for example you will be able to assign this term to a content."
-msgstr "タクソノミータームをロードすると、このタームに対して作用することができます。例えば、このタームをコンテンツに割り当てることができます。"
+msgstr "タームをロードすると、そのタームを操作することができます。例えば、そのタームをコンテンツに割り当てることができます。"
 
 #: modules/taxonomy.rules.inc:78
-msgid "Assign a term to content"
-msgstr "タームをコンテンツに割り当て"
+msgid "Add a new term to vocabulary"
+msgstr "ボキャブラリーに新しいタームを追加"
 
-#: modules/taxonomy.rules.inc:92
-msgid "Remove a term from content"
-msgstr "コンテンツからタームを取り外す"
+#: modules/taxonomy.rules.inc:82;140;152
+msgid "Taxonomy vocabulary"
+msgstr "タクソノミーボキャブラリー"
+
+#: modules/taxonomy.rules.inc:96
+msgid "Delete a term"
+msgstr "タームを削除"
 
 #: modules/taxonomy.rules.inc:107
+msgid "Assign a term to content"
+msgstr "コンテンツにタームを追加"
+
+#: modules/taxonomy.rules.inc:121
+msgid "Remove a term from content"
+msgstr "コンテンツからタームを削除"
+
+#: modules/taxonomy.rules.inc:136
 msgid "Load a vocabulary"
-msgstr "ボキャブラリをロード"
+msgstr "ボキャブラリーをロード"
 
-#: modules/taxonomy.rules.inc:111;123
-msgid "Taxonomy vocabulary"
-msgstr "タクソノミーボキャブラリ"
-
-#: modules/taxonomy.rules.inc:115
+#: modules/taxonomy.rules.inc:144
 msgid "Loading a taxonomy vocabulary will allow you to act on this vocabulary."
-msgstr "ボキャブラリをロードすると、そのボキャブラリを操作することができます。"
+msgstr "ボキャブラリーをロードすると、そのボキャブラリーを操作することができます。"
 
-#: modules/taxonomy.rules.inc:119
+#: modules/taxonomy.rules.inc:148
 msgid "Add a new vocabulary"
-msgstr "新しいボキャブラリを追加"
+msgstr "新しいボキャブラリーを追加"
 
-#: modules/taxonomy.rules.inc:183
+#: modules/taxonomy.rules.inc:233
 msgid "taxonomy term"
 msgstr "タクソノミーターム"
 
-#: modules/taxonomy.rules.inc:190
+#: modules/taxonomy.rules.inc:241
 msgid "taxonomy vocabulary"
-msgstr "タクソノミーボキャブラリ"
+msgstr "タクソノミーボキャブラリー"
 
 #: modules/taxonomy.rules_forms.inc:25
 msgid "Vocabulary"
-msgstr "ボキャブラリ"
+msgstr "ボキャブラリー"
 
-#: modules/taxonomy.rules_forms.inc:27;92
+#: modules/taxonomy.rules_forms.inc:27;122
 msgid "Select the vocabulary."
-msgstr "ボキャブラリを選択してください。"
+msgstr "ボキャブラリーを選択してください。"
 
-#: modules/taxonomy.rules_forms.inc:27;92
+#: modules/taxonomy.rules_forms.inc:27;122
 msgid "There are no existing vocabularies, you should <a href=\"@add-url\">add</a> one."
 msgstr "既存のボキャブラリはありません。<a href=\"@add-url\">追加</a>してください。"
 
@@ -1112,149 +1174,169 @@ msgid "Continue"
 msgstr "継続"
 
 #: modules/taxonomy.rules_forms.inc:50
-msgid "!vocab's terms"
-msgstr "!vocabのターム"
+msgid "Select a term"
+msgstr "タームを選択"
 
 #: modules/taxonomy.rules_forms.inc:51
 msgid "There are no terms in the vocabulary, you should <a href=\"@add-url\">add</a> one."
 msgstr "ボキャブラリにタームがありません。<a href=\"@add-url\">追加</a>してください。"
 
 #: modules/taxonomy.rules_forms.inc:51
-msgid "Select an existing term or manually enter the name of the term that should be added or removed from the content."
-msgstr "コンテンツに追加したり削除するタームを、既存のタームから選択するか、またはタームの名前を手作業で入力してください。"
+msgid "Select an existing term from vocabulary !vocab or manually enter the name of the term that should be added or removed from the content."
+msgstr "コンテンツに追加したり削除するタームを、ボキャブラリー !vocab から既存のタームを選択するか、またはタームの名前を手作業で入力してください。"
 
-#: modules/taxonomy.rules_forms.inc:57;98
+#: modules/taxonomy.rules_forms.inc:57
 msgid "Select by term id"
 msgstr "タームIDで選択"
 
 #: modules/taxonomy.rules_forms.inc:60
 msgid "Optional: enter the term id (<em>not the term name</em>) that should be loaded . If this field is used \"Select a term\" field will be ignored."
-msgstr "任意: ロードするタームのID (<em>ターム名ではなく</em>) を入力してください。このフィールドを使用していると、「タームを選択」フィールドは無視されます。"
+msgstr "任意: ロードするタームのID (<em>ターム名ではなく</em>) を入力してください。このフィールドに入力があれば、「タームを選択」フィールドは無視されます。"
 
 #: modules/taxonomy.rules_forms.inc:75
 msgid "- None selected -"
 msgstr "- 選択されていません -"
 
-#: modules/taxonomy.rules_forms.inc:84
-msgid "Vocabulary selection"
-msgstr "ボキャブラリの選択"
+#: modules/taxonomy.rules_forms.inc:88
+msgid "Term Identification"
+msgstr "タームの識別"
 
-#: modules/taxonomy.rules_forms.inc:89
-msgid "Select a vocabulary"
-msgstr "ボキャブラリを選択"
+#: modules/taxonomy.rules_forms.inc:93
+msgid "Term name"
+msgstr "タームの名称"
 
-#: modules/taxonomy.rules_forms.inc:101
-msgid "Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded . If this field is used, the \"Select a vocabulary\" field will be ignored."
-msgstr "任意: ロードするボキャブラリID(<em>ボキャブラリ名ではなく</em>)を入力します。このフィールドに入力があると、「ボキャブラリを選択」フィールドは無視されます。"
+#: modules/taxonomy.rules_forms.inc:96
+msgid "The name of this term."
+msgstr "このタームの名称を入力してください。<br />例えば、このタームが「スポーツ」というボキャブラリに含まれる場合は「野球」や「サッカー」、「動物」ならば「イヌ」や「ネコ」、「フルーツ」ならば「リンゴ」や「バナナ」といったように、含まれるボキャブラリに関連したものを指定するのが一般的です。"
+
+#: modules/taxonomy.rules_forms.inc:104
+msgid "A description of the term. To be displayed on taxonomy/term pages and RSS feeds."
+msgstr "このタームについての説明を記入してください。 これはタクソノミーやタームのページ、RSSフィードで表示されます。"
 
 #: modules/taxonomy.rules_forms.inc:114
+msgid "Vocabulary selection"
+msgstr "ボキャブラリーの選択"
+
+#: modules/taxonomy.rules_forms.inc:119
+msgid "Select a vocabulary"
+msgstr "ボキャブラリーを選択"
+
+#: modules/taxonomy.rules_forms.inc:128
+msgid "Select by vocabulary id"
+msgstr "ボキャブラリーIDで選択"
+
+#: modules/taxonomy.rules_forms.inc:131
+msgid "Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded. If this field is used, the \"Select a vocabulary\" field will be ignored."
+msgstr "任意: ロードするボキャブラリーのID(<em>ボキャブラリー名ではなく</em>)を入力します。このフィールドに入力があれば、「ボキャブラリーを選択」フィールドは無視されます。"
+
+#: modules/taxonomy.rules_forms.inc:144
 msgid "Vocabulary settings"
-msgstr "ボキャブラリの設定"
+msgstr "ボキャブラリーの設定"
 
 #: modules/user.rules.inc:61
 msgid "acting user"
-msgstr "活動中のユーザ"
+msgstr "活動中のユーザー"
 
 #: modules/user.rules.inc:87
 msgid "Compare two users"
-msgstr "2人のユーザを比較"
+msgstr "2人のユーザーを比較"
 
 #: modules/user.rules.inc:89
 msgid "User account 1"
-msgstr "ユーザアカウント 1"
+msgstr "ユーザーアカウント 1"
 
 #: modules/user.rules.inc:90
 msgid "User account 2"
-msgstr "ユーザアカウント 2"
+msgstr "ユーザーアカウント 2"
 
 #: modules/user.rules.inc:92
 msgid "Evaluates to TRUE, if both given user accounts are the same."
-msgstr "2つのユーザアカウントが同じであれば、TRUEと評価します。"
+msgstr "指定したユーザーアカウントが同じであれば、TRUEと評価します。"
 
 #: modules/user.rules.inc:96
 msgid "User has role(s)"
-msgstr "ユーザがロールを持っているか"
+msgstr "ユーザーがロールを保有"
 
 #: modules/user.rules.inc:100
 msgid "Whether the user has the selected role(s)."
-msgstr "選択したロールにユーザが含まれているかどうか。"
+msgstr "ユーザーが選択したロールを保有しているかどうか。"
 
 #: modules/user.rules.inc:145
 msgid "Add user role"
-msgstr "ユーザロールを追加"
+msgstr "ユーザーロールを追加"
 
 #: modules/user.rules.inc:147;154
 msgid "User whos roles should be changed"
-msgstr "ロールを変更すべきユーザ"
+msgstr "ロールを変更するユーザー"
 
 #: modules/user.rules.inc:152
 msgid "Remove user role"
-msgstr "ユーザロールを削除"
+msgstr "ユーザーロールを削除"
 
 #: modules/user.rules.inc:159
 msgid "Load a user account"
-msgstr "ユーザアカウントをロード"
+msgstr "ユーザーアカウントをロード"
 
 #: modules/user.rules.inc:161
 msgid "Loaded user"
-msgstr "ロードするユーザ"
+msgstr "ロードするユーザー"
 
 #: modules/user.rules.inc:163
 msgid "Enter an id or a name of the user to load."
-msgstr "ロードするユーザの名前またはIDを入力してください。"
+msgstr "ロードするユーザーの名前またはIDを入力してください。"
 
-#: modules/user.rules.inc:167
+#: modules/user.rules.inc:168
 msgid "Create a user"
-msgstr "ユーザを作成"
-
-#: modules/user.rules.inc:169
-#: modules/user.rules_forms.inc:75
-msgid "User name"
-msgstr "ユーザ名"
+msgstr "ユーザーを作成"
 
 #: modules/user.rules.inc:170
-msgid "User's E-mail"
-msgstr "ユーザのメールアドレス"
+#: modules/user.rules_forms.inc:75
+msgid "User name"
+msgstr "ユーザー名"
 
-#: modules/user.rules.inc:173
-msgid "New user"
-msgstr "新しいユーザ"
+#: modules/user.rules.inc:171
+msgid "User's E-mail"
+msgstr "ユーザーメールアドレス"
 
 #: modules/user.rules.inc:174
+msgid "New user"
+msgstr "新しいユーザー"
+
+#: modules/user.rules.inc:175
 msgid "New user's password"
-msgstr "新しいユーザのパスワード"
+msgstr "新しいユーザーのパスワード"
 
-#: modules/user.rules.inc:235
+#: modules/user.rules.inc:236
 msgid "No appropriate user name. No user has been created."
-msgstr "無効なユーザ名です。ユーザは作成されませんでした。"
+msgstr "無効なユーザー名です。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:238
+#: modules/user.rules.inc:239
 msgid "The name %name has been denied access. No user has been created."
-msgstr "ユーザ名 %name はアクセスを拒否されています。ユーザは作成されませんでした。"
+msgstr "ユーザー名 %name はアクセスを拒否されています。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:241
+#: modules/user.rules.inc:242
 msgid "User !name already exists. No user has been created."
-msgstr "ユーザ !name はすでに存在します。ユーザは作成されませんでした。"
+msgstr "ユーザー !name はすでに存在します。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:245
+#: modules/user.rules.inc:246
 msgid "No appropriate mail address. No user has been created."
-msgstr "無効なメールアドレスです。ユーザは作成されませんでした。"
+msgstr "無効なメールアドレスです。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:248
+#: modules/user.rules.inc:249
 msgid "The e-mail address %email has been denied access. No user has been created."
-msgstr "メールアドレス %email はアクセスを拒否されています。ユーザは作成されませんでした。"
+msgstr "メールアドレス %email はアクセスを拒否されています。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:251
+#: modules/user.rules.inc:252
 msgid "The e-mail address %email is already registered. No user has been created."
-msgstr "メールアドレス %email はすでに登録されています。ユーザは作成されませんでした。"
+msgstr "メールアドレス %email はすでに登録されています。ユーザーは作成されませんでした。"
 
-#: modules/user.rules.inc:265
+#: modules/user.rules.inc:266
 msgid "user"
 msgstr "ユーザ"
 
-#: modules/user.rules.inc:297
+#: modules/user.rules.inc:298
 msgid "Block a user"
-msgstr "ユーザをブロック"
+msgstr "ユーザーをブロック"
 
 #: modules/user.rules_forms.inc:19
 msgid "Match against any or all of the selected roles"
@@ -1270,7 +1352,7 @@ msgstr "すべて"
 
 #: modules/user.rules_forms.inc:21
 msgid "If matching against all selected roles the user must have <em>all</em> the roles checked in the list above."
-msgstr "選択したロールのすべてに一致させる場合、ユーザは上記のリストでチェックを入れた<em>すべて</em>のロールを持っていなければなりません。"
+msgstr "選択したロールのすべてに一致させる場合、ユーザーは上記のリストでチェックを入れた<em>すべて</em>のロールを保有していなければなりません。"
 
 #: modules/user.rules_forms.inc:64
 msgid "Select role(s)"
@@ -1282,9 +1364,9 @@ msgstr "ロードするユーザの名前。"
 
 #: modules/user.rules_forms.inc:84
 msgid "User id"
-msgstr "ユーザID"
+msgstr "ユーザーID"
 
 #: modules/user.rules_forms.inc:86
 msgid "Id of the user to be loaded."
-msgstr "ロードするユーザのID。"
+msgstr "ロードするユーザーのID。"
 

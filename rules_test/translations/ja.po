@@ -6,12 +6,11 @@
 #  rules_test.rules_defaults.inc,v 1.1.2.14 2009/04/19 15:03:43 fago
 #  rules_test.info,v 1.1.2.3 2008/07/23 15:42:06 fago
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: rules\n"
-"POT-Creation-Date: 2009-06-26 11:51+0900\n"
-"PO-Revision-Date: 2009-06-26 11:51+0900\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-09-18 18:37+0900\n"
+"PO-Revision-Date: 2009-10-08 13:24+0900\n"
 "Last-Translator: PineRay <matsudaterutaka@gmail.com>\n"
 "Language-Team: Japanese <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -29,7 +28,7 @@ msgstr "アクションごとに引数を変更するテスト"
 
 #: rules_test.rules_defaults.inc:62
 msgid "Test changing arguments per action - check"
-msgstr "アクションごとに引数を変更するテスト - チェック"
+msgstr "アクションごとに引数を変更してテストし、チェック"
 
 #: rules_test.rules_defaults.inc:106
 msgid "Test adding a new variable"
@@ -37,7 +36,7 @@ msgstr "新しい変数を追加するテスト"
 
 #: rules_test.info:0
 msgid "Rules Simpletest"
-msgstr "ルール簡易テスト"
+msgstr ""
 
 #: rules_test.info:0
 msgid "Tests the functionality of the rule engine"
