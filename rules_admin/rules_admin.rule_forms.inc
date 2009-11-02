@@ -404,7 +404,7 @@ function rules_admin_form_unpack_storage($form, &$form_state) {
  *
  * @param $id The id of the the element where the condition / action is to be added
  */
-function rules_admin_form_edit(&$form_state, &$proxy, $element) {
+function rules_admin_form_edit(&$form_state, $proxy, $element) {
   if (!isset($form_state['element'])) {
     //initial step!
     $form_state += array('element' => $element, 'step' => 1);
