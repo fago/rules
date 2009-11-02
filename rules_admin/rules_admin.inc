@@ -372,6 +372,7 @@ function rules_admin_fix_breadcrumb($rule, $name) {
   }
   if (arg(5)) {
     // Also add a crumb to the rule itself.
+    array_unshift($crumbs, l(t('Rules'), RULES_ADMIN_PATH));
     $crumbs[] = l($rule['#label'], RULES_ADMIN_RULE_PATH .'/'. $name);
   }
   rules_admin_add_crumbs($crumbs);
