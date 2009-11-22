@@ -1,0 +1,3098 @@
+# $Id$
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright 2009 NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  rules.api.php,v 1.1.2.9 2009/09/10 11:05:36 fago
+#  system.rules.inc,v 1.1.2.17 2009/07/20 16:22:24 fago
+#  system.rules_forms.inc,v 1.1.2.11 2009/07/31 10:21:43 fago
+#  node.rules_forms.inc,v 1.1.2.20 2009/08/25 17:28:58 fago
+#  user.rules_forms.inc,v 1.1.2.6 2009/07/31 10:21:43 fago
+#  rules.rules.inc,v 1.1.2.41 2009/08/10 15:40:56 fago
+#  user.rules.inc,v 1.1.2.20 2009/07/14 09:16:30 fago
+#  node.rules.inc,v 1.1.2.39 2009/08/25 17:28:58 fago
+#  php.rules.inc,v 1.1.2.11 2009/05/15 13:03:12 fago
+#  path.rules.inc,v 1.1.2.7 2009/08/25 18:16:42 fago
+#  taxonomy.rules.inc,v 1.1.2.12 2009/08/05 17:20:41 fago
+#  rules.export.inc,v 1.1.2.6 2009/08/28 22:05:43 fago
+#  rules.variables.inc,v 1.1.2.33 2009/07/20 16:22:24 fago
+#  rules.module,v 1.1.2.69 2009/08/25 13:01:03 fago
+#  rules_admin.render.inc,v 1.1.2.3 2009/08/03 16:42:25 fago
+#  rules.info,v 1.1.2.2 2008/07/10 08:15:04 fago
+#  rules_admin.inc,v 1.1.2.13 2009/11/02 11:34:33 fago
+#  rules_admin.module,v 1.1.2.7 2009/08/28 19:11:16 fago
+#  rules_admin.info,v 1.1.2.2 2009/03/30 17:34:26 fago
+#  rules_forms.info,v 1.1.2.1 2009/07/30 18:53:40 fago
+#  rules_scheduler.info,v 1.1.2.1 2008/08/14 11:29:48 fago
+#  rules_test.info,v 1.1.2.3 2008/07/23 15:42:06 fago
+#  rules.install,v 1.1.2.24 2009/04/30 09:48:39 fago
+#  rules_scheduler.install,v 1.1.2.6 2009/07/13 13:34:27 fago
+#  comment.rules.inc,v 1.1.2.8 2009/08/19 14:58:41 fago
+#  comment.rules_forms.inc,v 1.1.2.3 2009/05/15 13:03:12 fago
+#  path.rules_forms.inc,v 1.1.2.6 2009/08/25 18:16:42 fago
+#  php.rules_forms.inc,v 1.1.2.8 2009/05/15 13:03:12 fago
+#  taxonomy.rules_forms.inc,v 1.1.2.10 2009/09/10 10:57:54 fago
+#  rules.rules_forms.inc,v 1.1.2.10 2009/08/29 08:56:30 fago
+#  rules_admin.rule_forms.inc,v 1.1.2.9 2009/11/02 13:34:46 fago
+#  rules_forms.rules.inc,v 1.1.2.7 2009/09/01 20:32:56 klausi
+#  rules_forms.rules_forms.inc,v 1.1.2.3 2009/08/14 09:52:51 klausi
+#  rules_admin.sets.inc,v 1.1.2.9 2009/08/03 16:42:25 fago
+#  rules_admin.export.inc,v 1.1.2.9 2009/08/25 13:01:03 fago
+#  rules_scheduler.rules.inc,v 1.1.2.7 2009/09/06 16:24:13 klausi
+#  rules_scheduler.admin.inc,v 1.1.2.1 2009/07/13 13:34:27 fago
+#  rules_forms.admin.inc,v 1.1.2.2 2009/08/14 09:52:51 klausi
+#  rules_admin.install,v 1.1.2.4 2009/04/19 18:19:06 fago
+#  rules_forms.module,v 1.1.2.5 2009/09/01 20:32:56 klausi
+#  rules_scheduler.views.inc,v 1.1.2.1 2009/07/13 13:34:27 fago
+#  rules_scheduler.rules_forms.inc,v 1.1.2.4 2009/08/28 22:05:43 fago
+#  rules_scheduler.module,v 1.1.2.5 2009/07/13 13:34:27 fago
+#  rules_test.rules_defaults.inc,v 1.1.2.14 2009/04/19 15:03:43 fago
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2009-11-22 00:57+0100\n"
+"PO-Revision-Date: 2009-11-22 01:03+0100\n"
+"Last-Translator: Thomas Zahreddin <tz@it-arts.org>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: rules/rules.api.php:118
+#: rules/modules/system.rules.inc:47
+#, fuzzy
+msgid "Send a mail to a user"
+msgstr "Eine E-Mail an einen Benutzer senden"
+
+#: rules/rules.api.php:120
+#: rules/modules/system.rules.inc:49
+#: rules/modules/system.rules_forms.inc:83
+#, fuzzy
+msgid "Recipient"
+msgstr "Empfänger"
+
+#: rules/rules.api.php:188
+#: rules/modules/node.rules_forms.inc:18
+#, fuzzy
+msgid "Content types"
+msgstr "Inhaltstypen"
+
+#: rules/rules.api.php:215
+#: rules/modules/user.rules_forms.inc:92
+#, fuzzy
+msgid "You have to enter the user name or the user id."
+msgstr "Es muss der Benutzername oder die Benutzer-ID eingegeben werden."
+
+#: rules/rules.api.php:256
+msgid "This help text is going to be displayed during action configuration."
+msgstr ""
+
+#: rules/rules.api.php:290
+#: rules/modules/rules.rules.inc:143
+#, fuzzy
+msgid "Textual comparison"
+msgstr "Text-Vergleich"
+
+#: rules/rules.api.php:292
+#: rules/modules/rules.rules.inc:145
+#, fuzzy
+msgid "Text 1"
+msgstr "Text 1"
+
+#: rules/rules.api.php:293
+#: rules/modules/rules.rules.inc:146
+#, fuzzy
+msgid "Text 2"
+msgstr "Text 2"
+
+#: rules/rules.api.php:295
+#: rules/modules/rules.rules.inc:148
+#, fuzzy
+msgid "TRUE is returned, if both texts are equal."
+msgstr "Es wird WAHR zurückgegeben, wenn beide Texte gleich sind."
+
+#: rules/rules.api.php:353
+#: rules/modules/user.rules.inc:18
+#, fuzzy
+msgid "User account has been created"
+msgstr "Benutzer wurde erstellt"
+
+#: rules/rules.api.php:355
+#: rules/modules/user.rules.inc:20
+#, fuzzy
+msgid "registered user"
+msgstr "registrierter Benutzer"
+
+#: rules/rules.api.php:358
+#: rules/modules/user.rules.inc:23
+#, fuzzy
+msgid "User account details have been updated"
+msgstr "Details eines Benutzerkontos wurden aktualisiert"
+
+#: rules/rules.api.php:360
+#: rules/modules/user.rules.inc:25
+#, fuzzy
+msgid "updated user"
+msgstr "aktualisierter Benutzer"
+
+#: rules/rules.api.php:361
+#: rules/modules/user.rules.inc:26
+#, fuzzy
+msgid "unchanged user"
+msgstr "unveränderter Benutzer"
+
+#: rules/rules.api.php:365
+#: rules/modules/user.rules.inc:30
+#, fuzzy
+msgid "User page has been viewed"
+msgstr "Benutzerseite wurde aufgerufen"
+
+#: rules/rules.api.php:367
+#: rules/modules/user.rules.inc:32
+#, fuzzy
+msgid "viewed user"
+msgstr "angezeigter Benutzer"
+
+#: rules/rules.api.php:368
+#: rules/modules/node.rules.inc:34
+#: rules/modules/user.rules.inc:33
+#, fuzzy
+msgid "Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."
+msgstr "Beachten Sie, dass dieses Ereignis bei aktiviertem Cache von Drupal nicht erzeugt wird für Seiten, die aus dem Cache aufgerufen werden."
+
+#: rules/rules.api.php:371
+#: rules/modules/user.rules.inc:36
+#, fuzzy
+msgid "User has been deleted"
+msgstr "Benutzer wurde gelöscht"
+
+#: rules/rules.api.php:373
+#: rules/modules/user.rules.inc:38
+#, fuzzy
+msgid "deleted user"
+msgstr "gelöschter Benutzer"
+
+#: rules/rules.api.php:376
+#: rules/modules/user.rules.inc:41
+#, fuzzy
+msgid "User has logged in"
+msgstr "Benutzer hat sich angemeldet"
+
+#: rules/rules.api.php:379
+#: rules/modules/user.rules.inc:44
+#, fuzzy
+msgid "logged in user"
+msgstr "angemeldeter Benutzer"
+
+#: rules/rules.api.php:383
+#: rules/modules/user.rules.inc:48
+#, fuzzy
+msgid "User has logged out"
+msgstr "Benutzer hat sich abgemeldet"
+
+#: rules/rules.api.php:386
+#: rules/modules/user.rules.inc:51
+#, fuzzy
+msgid "logged out user"
+msgstr "abgemeldeter Benutzer"
+
+#: rules/rules.api.php:442
+#: rules/modules/node.rules.inc:351;325
+#: rules/modules/node.rules_forms.inc:113
+#: rules/modules/rules.rules.inc:337
+#, fuzzy
+msgid "content"
+msgstr "Inhalt"
+
+#: rules/rules.api.php:474
+#: rules/modules/php.rules.inc:19
+#, fuzzy
+msgid "PHP Evaluation"
+msgstr "PHP-Auswertung"
+
+#: rules/rules.api.php:542
+#, fuzzy
+msgid "Replacement patterns for @name"
+msgstr "Ersetzungsmuster für @name"
+
+#: rules/rules.api.php:622
+#: rules/modules/node.rules.inc:111;178;186;200;248
+#: rules/modules/path.rules.inc:58
+#: rules/modules/rules.rules.inc:422
+#: rules/modules/taxonomy.rules.inc:111;125
+#, fuzzy
+msgid "Content"
+msgstr "Inhalt"
+
+#: rules/rules.export.inc:240
+msgid "Could not load default rules items."
+msgstr ""
+
+#: rules/rules.variables.inc:60
+#, fuzzy
+msgid "Warning: Unable to get variable \"@name\"."
+msgstr "Warnung: Variable %name konnte nicht ermittelt werden"
+
+#: rules/rules.variables.inc:99
+#, fuzzy
+msgid "Warning: Unable to get argument \"@name\"."
+msgstr "Warnung: Variable %name konnte nicht ermittelt werden"
+
+#: rules/rules.variables.inc:158
+#, fuzzy
+msgid "Element \"@name\" has not been executed. There are not all execution arguments needed by an input evaluator available."
+msgstr "Element %name wurde nicht ausgeführt. Es sind nicht alle Argumente für die Ausführung verfügbar, die von einer Eingabe-Prüfung benötigt werden."
+
+#: rules/rules.variables.inc:173
+#, fuzzy
+msgid "Element \"@name\" has not been executed. There are not all execution arguments available."
+msgstr "Element %name wurde nicht ausgeführt. Es sind nicht alle Argumente für die Ausführung verfügbar."
+
+#: rules/rules.variables.inc:203
+#, fuzzy
+msgid "Successfully added the new variable \"@arg\""
+msgstr "Neue Variable @arg erfolgreich hinzugefügt"
+
+#: rules/rules.variables.inc:206
+#, fuzzy
+msgid "Unknown variable name \"@var\" return by action \"@name\"."
+msgstr "Unbekannter Variablen-Name %var zurückgegeben durch Aktion %name."
+
+#: rules/rules.variables.inc:319
+#, fuzzy
+msgid "Loaded variable \"@arg\""
+msgstr "Variable @arg geladen"
+
+#: rules/rules.variables.inc:355
+#, fuzzy
+msgid "Saved variable @name of type @type."
+msgstr "Variable @name vom Typ @type gespeichert."
+
+#: rules/rules.variables.inc:361
+#, fuzzy
+msgid "Failed saving variable @name of type @type."
+msgstr "Speichern der Variable @name vom Typ @type fehlgeschlagen."
+
+#: rules/rules.module:293
+#, fuzzy
+msgid "\"@label\" has been invoked."
+msgstr "%label wurde aufgerufen."
+
+#: rules/rules.module:304
+#, fuzzy
+msgid "Evaluation of \"@label\" has been finished."
+msgstr "Auswertung von %label abgeschlossen."
+
+#: rules/rules.module:402
+#, fuzzy
+msgid "Not executing the rule \"@name\" on rule set \"@set\" to prevent recursion."
+msgstr "Regel %name vom Regel-Set %set nicht ausgeführt, um Rekursion zu vermeiden."
+
+#: rules/rules.module:407
+#, fuzzy
+msgid "Executing the rule \"@name\" on rule set \"@set\""
+msgstr "Regel %name vom Regel-Set %set wird ausgeführt"
+
+#: rules/rules.module:458
+#, fuzzy
+msgid "Action execution: \"@name\""
+msgstr "Aktion @name wird ausgeführt"
+
+#: rules/rules.module:483
+#, fuzzy
+msgid "Condition \"@name\" evaluated to @bool."
+msgstr "Bedingung %name ausgewertet auf @bool."
+
+#: rules/rules.module:527
+#, fuzzy
+msgid "OR"
+msgstr "ODER"
+
+#: rules/rules.module:528
+#: rules_admin/rules_admin.render.inc:40
+#, fuzzy
+msgid "AND"
+msgstr "UND"
+
+#: rules/rules.module:583
+#, fuzzy
+msgid "unlabelled"
+msgstr "ohne Bezeichnung"
+
+#: rules/rules.module:861
+#: rules/rules.info:0;0
+#: rules_admin/rules_admin.inc:375
+#: rules_admin/rules_admin.module:36
+#: rules_admin/rules_admin.info:0
+#: rules_forms/rules_forms.info:0
+#: rules_scheduler/rules_scheduler.info:0
+#: rules_test/rules_test.info:0
+#, fuzzy
+msgid "Rules"
+msgstr "Regeln"
+
+#: rules/rules.module:866
+#, fuzzy
+msgid "Rule Sets"
+msgstr "Regel-Sets"
+
+#: rules/rules.module:880
+#, fuzzy
+msgid "Unable to find \"@type\" of name \"@name\" with the label \"@label\". Perhaps the according module has been deactivated."
+msgstr "Kann %type mit Namen %name und der Bezeichnung %label nicht finden. Möglicherweise wurde das zugehörige Modul deaktiviert."
+
+#: rules/rules.module:883
+#, fuzzy
+msgid "Unable to find \"@type\" of name \"@name\". Perhaps the according module has been deactivated."
+msgstr "Kann %type mit Namen %name nicht finden. Möglicherweise wurd das zugehörige Modul deaktiviert."
+
+#: rules/rules.module:896
+#, fuzzy
+msgid "Show rule configuration"
+msgstr "Regel-Konfiguration anzeigen"
+
+#: rules/rules.module:957
+msgid "Included @module.rules.inc files."
+msgstr ""
+
+#: rules/rules.install:50
+#, fuzzy
+msgid "The name of the item."
+msgstr "Der Name dieses Objekts"
+
+#: rules/rules.install:57
+#: rules_scheduler/rules_scheduler.install:54
+#, fuzzy
+msgid "The whole, serialized item configuration."
+msgstr "Die gesamte angeordnete Element-Konfiguration"
+
+#: rules/rules.install:65
+#, fuzzy
+msgid "Cache table for the rules engine to store configured items."
+msgstr "Cache-Tabelle, in der die Regel-Engine konfigurierte Elemente speichert."
+
+#: rules/rules.install:88
+#, fuzzy
+msgid "Successfully imported rule %label."
+msgstr "Regel %label erfolgreich importiert."
+
+#: rules/rules.install:93
+#, fuzzy
+msgid "Failed importing the rule %label."
+msgstr "Die Regel %label konnte nicht importiert werden."
+
+#: rules/rules.install:164
+msgid "The now separated rules administration UI module has been enabled."
+msgstr ""
+
+#: rules/rules.install:243
+#, fuzzy
+msgid "No upgrade information for the element %name found. Aborting."
+msgstr "Keine Aktualisierungsinformationen für das Element %name gefunden. Abbruch."
+
+#: rules/rules.info:0
+#, fuzzy
+msgid "Lets you define conditionally executed actions based on occurring events."
+msgstr "Erlaubt das bedingte Ausführen von Aktionen bei auftretenden Ereignissen."
+
+#: rules/modules/comment.rules.inc:18
+#, fuzzy
+msgid "After saving a new comment"
+msgstr "Nach dem Speichern eines neuen Kommentars"
+
+#: rules/modules/comment.rules.inc:20
+#, fuzzy
+msgid "created comment"
+msgstr "Kommentar erstellt"
+
+#: rules/modules/comment.rules.inc:23
+#, fuzzy
+msgid "After saving an updated comment"
+msgstr "Nach dem Speichern eines aktualisierten Kommentars"
+
+#: rules/modules/comment.rules.inc:25
+#, fuzzy
+msgid "updated comment"
+msgstr "aktualisierter Kommentar"
+
+#: rules/modules/comment.rules.inc:28
+#, fuzzy
+msgid "After deleting a comment"
+msgstr "Nach dem Löschen eines Kommentars"
+
+#: rules/modules/comment.rules.inc:30
+#, fuzzy
+msgid "deleted comment"
+msgstr "gelöschter Kommentar"
+
+#: rules/modules/comment.rules.inc:33
+#, fuzzy
+msgid "Comment is being viewed"
+msgstr "Kommentar wird angezeigt"
+
+#: rules/modules/comment.rules.inc:35
+#, fuzzy
+msgid "viewed comment"
+msgstr "angezeigter Inhalt"
+
+#: rules/modules/comment.rules.inc:38
+#, fuzzy
+msgid "After publishing a comment"
+msgstr "Nach dem Veröffentlichen eines Kommentars"
+
+#: rules/modules/comment.rules.inc:40
+#, fuzzy
+msgid "published comment"
+msgstr "veröffentlichter Kommentar"
+
+#: rules/modules/comment.rules.inc:43
+#, fuzzy
+msgid "After unpublishing a comment"
+msgstr "Nach der Rücknahme der Veröffentlichung eines Kommentars"
+
+#: rules/modules/comment.rules.inc:45
+#, fuzzy
+msgid "unpublished comment"
+msgstr "unveröffentlichter Kommentar"
+
+#: rules/modules/comment.rules.inc:61
+#, fuzzy
+msgid "author"
+msgstr "Autor"
+
+#: rules/modules/comment.rules.inc:66
+#, fuzzy
+msgid "commented content"
+msgstr "kommentierter Inhalt"
+
+#: rules/modules/comment.rules.inc:71
+#, fuzzy
+msgid "commented content author"
+msgstr "Autor des kommentierten Inhalts"
+
+#: rules/modules/comment.rules.inc:115
+#, fuzzy
+msgid "Load comment by id"
+msgstr "Kommentar nach ID laden"
+
+#: rules/modules/comment.rules.inc:119
+#, fuzzy
+msgid "Comment id"
+msgstr "Kommentar-ID"
+
+#: rules/modules/comment.rules.inc:126
+#, fuzzy
+msgid "Loaded comment"
+msgstr "Geladener Kommentar"
+
+#: rules/modules/comment.rules.inc:148
+#, fuzzy
+msgid "comment"
+msgstr "Kommentar"
+
+#: rules/modules/comment.rules_forms.inc:17
+#, fuzzy
+msgid "Comment with id @id"
+msgstr "Kommentar mit der ID @id"
+
+#: rules/modules/node.rules.inc:17
+#, fuzzy
+msgid "After saving new content"
+msgstr "Nach dem Speichern von neuem Inhalt"
+
+#: rules/modules/node.rules.inc:19
+#, fuzzy
+msgid "created content"
+msgstr "Inhalt erstellt"
+
+#: rules/modules/node.rules.inc:19;24;29
+#, fuzzy
+msgid "content's author"
+msgstr "Autor des Inhalts"
+
+#: rules/modules/node.rules.inc:22
+#, fuzzy
+msgid "After updating existing content"
+msgstr "Nach dem Aktualisieren bestehenden Inhalts"
+
+#: rules/modules/node.rules.inc:24
+#, fuzzy
+msgid "updated content"
+msgstr "Inhalt aktualisiert"
+
+#: rules/modules/node.rules.inc:27
+#, fuzzy
+msgid "Content is going to be saved"
+msgstr "Inhalt soll gespeichert werden"
+
+#: rules/modules/node.rules.inc:29
+#, fuzzy
+msgid "saved content"
+msgstr "gespeicherter Inhalt"
+
+#: rules/modules/node.rules.inc:32
+#, fuzzy
+msgid "Content is going to be viewed"
+msgstr "Inhalt soll angezeigt werden"
+
+#: rules/modules/node.rules.inc:35
+#, fuzzy
+msgid "viewed content"
+msgstr "angezeigter Inhalt"
+
+#: rules/modules/node.rules.inc:35;43
+#, fuzzy
+msgid "content author"
+msgstr "Autor des Inhalts"
+
+#: rules/modules/node.rules.inc:36
+#, fuzzy
+msgid "Content is displayed as teaser"
+msgstr "Inhalt wird als Anriss angezeigt"
+
+#: rules/modules/node.rules.inc:37
+#, fuzzy
+msgid "Content is displayed as page"
+msgstr "Inhalt wird als Seite angezeigt"
+
+#: rules/modules/node.rules.inc:41
+#, fuzzy
+msgid "After deleting content"
+msgstr "Nach dem Löschen von Inhalt"
+
+#: rules/modules/node.rules.inc:43
+#, fuzzy
+msgid "deleted content"
+msgstr "gelöschter Inhalt"
+
+#: rules/modules/node.rules.inc:70
+#, fuzzy
+msgid "unchanged content"
+msgstr "unveränderter Inhalt"
+
+#: rules/modules/node.rules.inc:75
+#, fuzzy
+msgid "unchanged content's author"
+msgstr "Autor von unverändertem Inhalt"
+
+#: rules/modules/node.rules.inc:116
+#, fuzzy
+msgid "Content has type"
+msgstr "Inhalt hat den Typ"
+
+#: rules/modules/node.rules.inc:117
+#, fuzzy
+msgid "Evaluates to TRUE, if the given content has one of the selected content types."
+msgstr "Gibt WAHR zurück, wenn ein bestimmter Inhalt einer der ausgewählten Inhaltstypen ist."
+
+#: rules/modules/node.rules.inc:120
+#, fuzzy
+msgid "Content is published"
+msgstr "Inhalt ist veröffentlicht"
+
+#: rules/modules/node.rules.inc:123
+#, fuzzy
+msgid "Content is sticky"
+msgstr "Inhalt ist oben in Listen"
+
+#: rules/modules/node.rules.inc:126
+#, fuzzy
+msgid "Content is promoted to frontpage"
+msgstr "Inhalt wird auf der Startseite angezeigt"
+
+#: rules/modules/node.rules.inc:129
+#, fuzzy
+msgid "Content is new"
+msgstr "Neuer benutzerdefinierter Inhalt"
+
+#: rules/modules/node.rules.inc:130
+msgid "Evaluates to TRUE, if the given content has not been saved yet."
+msgstr ""
+
+#: rules/modules/node.rules.inc:176
+#, fuzzy
+msgid "Set the content author"
+msgstr "Autor des Inhalts einstellen"
+
+#: rules/modules/node.rules.inc:179;208
+#, fuzzy
+msgid "User, who is set as author"
+msgstr "Benutzer, der als Autor eingestellt ist"
+
+#: rules/modules/node.rules.inc:184
+#, fuzzy
+msgid "Load the content author"
+msgstr "Autor des Inhalts laden"
+
+#: rules/modules/node.rules.inc:191
+#, fuzzy
+msgid "Content author"
+msgstr "Autor des Inhalts"
+
+#: rules/modules/node.rules.inc:198
+#, fuzzy
+msgid "Set content title"
+msgstr "Titel des Inhalts einstellen"
+
+#: rules/modules/node.rules.inc:201;211
+#, fuzzy
+msgid "Title"
+msgstr "Titel"
+
+#: rules/modules/node.rules.inc:206
+#, fuzzy
+msgid "Add new content"
+msgstr "Neuen Inhalt hinzufügen"
+
+#: rules/modules/node.rules.inc:212
+#, fuzzy
+msgid "The title of the newly created content."
+msgstr "Der Titel des neu erstellten Inhalts"
+
+#: rules/modules/node.rules.inc:218
+#, fuzzy
+msgid "New content"
+msgstr "Neuer Inhalt"
+
+#: rules/modules/node.rules.inc:226
+#, fuzzy
+msgid "Load content by id"
+msgstr "Inhalt laden nach ID"
+
+#: rules/modules/node.rules.inc:228
+#, fuzzy
+msgid "Content ID"
+msgstr "Inhalts-ID"
+
+#: rules/modules/node.rules.inc:231
+#, fuzzy
+msgid "Content Revision ID"
+msgstr "Inhalts-Revisions-ID"
+
+#: rules/modules/node.rules.inc:232
+#, fuzzy
+msgid "If you want to load a specific revision, specify it's revision id. Else leave it empty to load the current revision."
+msgstr "Wenn einen bestimmte Revision geladen werden soll, muss die Revisions-ID angegeben werden. Ansonsten leer lassen, um die aktuelle Revision zu laden."
+
+#: rules/modules/node.rules.inc:239
+#, fuzzy
+msgid "Loaded content"
+msgstr "Geladener Inhalt"
+
+#: rules/modules/node.rules.inc:246
+#, fuzzy
+msgid "Delete content"
+msgstr "Inhaltstyp löschen"
+
+#: rules/modules/node.rules.inc:325
+#, fuzzy
+msgid "@type: deleted %title."
+msgstr "@type: %title wurde gelöscht."
+
+#: rules/modules/node.rules_forms.inc:31
+#, fuzzy
+msgid "@node is @type"
+msgstr "@node hat den Typ @type"
+
+#: rules/modules/node.rules_forms.inc:31
+#, fuzzy
+msgid "or"
+msgstr "oder"
+
+#: rules/modules/node.rules_forms.inc:35
+#, fuzzy
+msgid "@node is published"
+msgstr "@node ist veröffentlicht"
+
+#: rules/modules/node.rules_forms.inc:39
+#, fuzzy
+msgid "@node is sticky"
+msgstr "@node ist oben in Listen"
+
+#: rules/modules/node.rules_forms.inc:43
+#, fuzzy
+msgid "@node is promoted to frontpage"
+msgstr "@node wird auf der Startseite angezeigt"
+
+#: rules/modules/node.rules_forms.inc:47
+#, fuzzy
+msgid "@node is new"
+msgstr "Node schützen"
+
+#: rules/modules/node.rules_forms.inc:54
+#, fuzzy
+msgid "Set the author of @node to @author"
+msgstr "@author als Autor von @node festlegen."
+
+#: rules/modules/node.rules_forms.inc:61
+#, fuzzy
+msgid "Load the @node author"
+msgstr "Autor von @node laden"
+
+#: rules/modules/node.rules_forms.inc:68
+#, fuzzy
+msgid "@node author"
+msgstr "Autor von @node"
+
+#: rules/modules/node.rules_forms.inc:75
+#, fuzzy
+msgid "Set @node's title"
+msgstr "Referenzierter Beitragstitel."
+
+#: rules/modules/node.rules_forms.inc:84
+#, fuzzy
+msgid "Content type to be used"
+msgstr "Inhaltstyp, der verwendet werden soll"
+
+#: rules/modules/node.rules_forms.inc:87
+#, fuzzy
+msgid "Select a content type that will be created when this action is invoked."
+msgstr "Inhaltstyp, der erstellt wird, wenn diese Aktion aufgerufen wird."
+
+#: rules/modules/node.rules_forms.inc:92
+#, fuzzy
+msgid "Create content only if the given author has access permission to do so"
+msgstr "Inhalt nur erstellen, wenn der angegebene Autor das Recht dafür hat"
+
+#: rules/modules/node.rules_forms.inc:98
+#, fuzzy
+msgid "New content of type @type"
+msgstr "Neuer Inhalt vom Typ @type"
+
+#: rules/modules/node.rules_forms.inc:105
+#, fuzzy
+msgid "Content with id @id"
+msgstr "Inhalt mit der ID @id"
+
+#: rules/modules/node.rules_forms.inc:122
+#, fuzzy
+msgid "Delete @node"
+msgstr "Node: Löschen Verweis"
+
+#: rules/modules/path.rules.inc:18
+#, fuzzy
+msgid "Path has alias(es)"
+msgstr "Pfad hat Alias(se)"
+
+#: rules/modules/path.rules.inc:23
+#, fuzzy
+msgid "URL alias exists"
+msgstr "URL-Alias existiert"
+
+#: rules/modules/path.rules.inc:51
+#, fuzzy
+msgid "Create or delete an URL alias"
+msgstr "Einen URL-Alias erstellen oder löschen"
+
+#: rules/modules/path.rules.inc:56
+#, fuzzy
+msgid "Create or delete a content's URL alias"
+msgstr "Den URL-Alias von Inhalt erstellen oder löschen"
+
+#: rules/modules/path.rules_forms.inc:16;69
+#, fuzzy
+msgid "Existing system path"
+msgstr "Vorhandener Systempfad"
+
+#: rules/modules/path.rules_forms.inc:19
+#, fuzzy
+msgid "Specify the existing path for which you want to check if an URL alias exists."
+msgstr "Es muss ein bestehender Pfad angegeben werden, der darauf überprüft werden soll, ob ein URL-Alias existiert."
+
+#: rules/modules/path.rules_forms.inc:26;48;86
+#, fuzzy
+msgid "Language"
+msgstr "Sprog"
+
+#: rules/modules/path.rules_forms.inc:29
+msgid "Optionally only check for a language specific path alias."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:38;77
+#, fuzzy
+msgid "Path alias"
+msgstr "Pfadalias"
+
+#: rules/modules/path.rules_forms.inc:41
+#, fuzzy
+msgid "Specify the path alias which you want to check if it already exists."
+msgstr "Angabe des Pfad-Alias, für den geprüft werden soll, ob er schon existiert."
+
+#: rules/modules/path.rules_forms.inc:51
+msgid "Optionally check for a language specific path alias."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:56
+#, fuzzy
+msgid "Before checking, replace non ascii characters with"
+msgstr "Vor der Prüfung ACSII-Zeichen ersetzen durch"
+
+#: rules/modules/path.rules_forms.inc:60;98
+#, fuzzy
+msgid "Leave this textfield empty to disable the replacement of non ascii characters."
+msgstr "Dieses Textfeld leerlassen, um das Ersetzen von Nicht-ASCII-Zeichen zu deaktivieren.­"
+
+#: rules/modules/path.rules_forms.inc:72
+#, fuzzy
+msgid "Specify the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2."
+msgstr "Der vorhandene Pfad, der umbenannt werden soll. Beispiele: node/28, forum/1, taxonomy/term/1+2."
+
+#: rules/modules/path.rules_forms.inc:72
+#, fuzzy
+msgid "Leave it empty to delete URL aliases pointing to the given path alias."
+msgstr "Leer lassen, um URL-Aliasse zu löschen, die auf den angegebenen Pfad-Alias zeigen."
+
+#: rules/modules/path.rules_forms.inc:80
+#, fuzzy
+msgid "Specify an alternative path by which this data can be accessed. For example, type \"about\" when writing an about page. Use a relative path and do not add a trailing slash or the URL alias will not work."
+msgstr "Angabe eines alternativen Pfads, über den auf diese Daten zugegriffen werden kann. Es kann z.B. „Impressum“ eingegeben werden, wenn über ein Impressum geschrieben wird. Es muss ein relativer Pfad ohne führenden Schrägstrich angegeben werden., sonst funktionert der URL-Alias nicht."
+
+#: rules/modules/path.rules_forms.inc:80
+#, fuzzy
+msgid "Leave it empty to delete URL aliases pointing to the given system path."
+msgstr "Leer lassen, um auf den angegebenen Pfad zeigende URL-Aliasse zu löschen."
+
+#: rules/modules/path.rules_forms.inc:89
+msgid "Optionally make the path alias language specific."
+msgstr ""
+
+#: rules/modules/path.rules_forms.inc:94
+#, fuzzy
+msgid "Replace non ascii characters with"
+msgstr "Nicht-ASCII-Zeichen ersetzen durch"
+
+#: rules/modules/path.rules_forms.inc:104
+#, fuzzy
+msgid "You have to enter at least eiter an existing system path or a path alias."
+msgstr "Es muss mindestens ein bestehender Systempfad oder ein Pfad-Alias angegeben werden."
+
+#: rules/modules/path.rules_forms.inc:115
+#, fuzzy
+msgid "Create or delete @node's URL alias"
+msgstr "URL-Alias für Beitrag @node erstellen oder löschen"
+
+#: rules/modules/path.rules_forms.inc:119
+#, fuzzy
+msgid "This action only works if the acting user has %perm1 or %perm2 permsissions. If this does not suit, use the generic \"Create or delete an URL alias\" action together with the existing system path \"node/{ID}\"."
+msgstr "Diese Aktion funktioniert nur, wenn der handelnde Benutzer die Berechtigung %perm1 oder %perm2 hat. Wenn das nicht passt, sollte die generische Aktion „Einen URL-Alias erstellen oder löschen“ zusammen mit dem bestehenden Systempfad „node/{ID}“ verwendet werden."
+
+#: rules/modules/path.rules_forms.inc:119
+#, fuzzy
+msgid "create url aliases"
+msgstr "URL-Aliase erstellen"
+
+#: rules/modules/path.rules_forms.inc:119
+#, fuzzy
+msgid "administer url aliases"
+msgstr "URL-Aliase verwalten"
+
+#: rules/modules/php.rules.inc:68
+#, fuzzy
+msgid "PHP is not evaluated as there are not all necessary variables available."
+msgstr "PHP wird nicht ausgewertet, da nicht alle nötigen Variablen verfügbar sind."
+
+#: rules/modules/php.rules.inc:116;139
+#, fuzzy
+msgid "Execute custom PHP code"
+msgstr "Benutzerdefinierten PHP-Code ausführen"
+
+#: rules/modules/php.rules_forms.inc:16
+#, fuzzy
+msgid "PHP code inside of &lt;?php ?&gt; delimiters will be evaluated and replaced by its output. E.g. &lt;? echo 1+1?&gt; will be replaced by 2."
+msgstr "PHP-Code innerhalb der Begrenzer &lt;?php ?&gt wird ausgewertet und durch seine Ausgabe ersetzt. &lt;? echo 1+1?&gt; wird zum Beispiel durch ‚2‘ ersetzt."
+
+#: rules/modules/php.rules_forms.inc:17
+#, fuzzy
+msgid "Furthermore you can make use of the following variables:"
+msgstr "Außerdem können folgende Variablen verwendet werden:"
+
+#: rules/modules/php.rules_forms.inc:18
+#, fuzzy
+msgid "Variable"
+msgstr "Variable"
+
+#: rules/modules/php.rules_forms.inc:18
+#, fuzzy
+msgid "Type"
+msgstr "Type"
+
+#: rules/modules/php.rules_forms.inc:18
+#: rules/modules/taxonomy.rules_forms.inc:102
+#: rules_admin/rules_admin.inc:37
+#, fuzzy
+msgid "Description"
+msgstr "Beschreibung"
+
+#: rules/modules/php.rules_forms.inc:21
+#, fuzzy
+msgid "Intelligent saving"
+msgstr "Intelligentes Speichern"
+
+#: rules/modules/php.rules_forms.inc:33
+#, fuzzy
+msgid "Yes"
+msgstr "Ja"
+
+#: rules/modules/php.rules_forms.inc:36
+#, fuzzy
+msgid "No"
+msgstr "Nein"
+
+#: rules/modules/php.rules_forms.inc:44
+#, fuzzy
+msgid "Note that variables are passed by reference, so you can change them."
+msgstr "Zu beachten ist, dass Variablen von der Referenz übergeben werden, daher können sie gändert werden."
+
+#: rules/modules/php.rules_forms.inc:45
+#, fuzzy
+msgid "If you want to make the changes permanent, you can let rules intelligently save the changes when the variable's data type supports it."
+msgstr "Wenn die Änderungen dauerhaft erfolgen sollen, können Regeln intelligent die Änderungen speichern, wenn der Datentyp der Variablen dies unterstützt. Um „intelligentes Speichern“ zu verwenden, muss ein Array zu speichernder Variablen zurückgegeben werden. Dadurch werden Variablen nur einmal gespeichert, selbst wenn sie mehrfach geändert werden."
+
+#: rules/modules/php.rules_forms.inc:45
+#, fuzzy
+msgid "To make use of \"intelligent saving\" just return an array of variables to save, e.g.: !code So variables are saved only once, even if modified multiple times."
+msgstr "Um „intelligentes Speichern“ zu verwenden muss einfach ein Array zu speichernder Variablen zurückgegeben werden, z.B. !code. Dadurch werden Variablen nur einmal gespeichert, selbst wenn sie mehrfach geändert werden."
+
+#: rules/modules/php.rules_forms.inc:56;82
+#, fuzzy
+msgid "PHP Code"
+msgstr "PHP-Code"
+
+#: rules/modules/php.rules_forms.inc:58;84
+#, fuzzy
+msgid "The code that should be executed. Don't include &lt;?php ?&gt; delimiters."
+msgstr "Der auszuführende Code ohne die Begrenzungen &lt;?php ?&gt."
+
+#: rules/modules/php.rules_forms.inc:84
+#, fuzzy
+msgid "Be sure to always return a boolean value, e.g.: !code"
+msgstr "Es muss sichergestellt werden, dass immer nur ein boolescher Wert zurückgegeben wird, z.B. !code."
+
+#: rules/modules/php.rules_forms.inc:96
+#, fuzzy
+msgid "The code has to always return a boolean value."
+msgstr "Der Code muss immer einen booleschen Wert zurückgeben."
+
+#: rules/modules/rules.rules.inc:18
+#, fuzzy
+msgid "string"
+msgstr "Text"
+
+#: rules/modules/rules.rules.inc:25
+#, fuzzy
+msgid "number"
+msgstr "Zahl"
+
+#: rules/modules/rules.rules.inc:32
+#, fuzzy
+msgid "date"
+msgstr "date"
+
+#: rules/modules/rules.rules.inc:39
+#, fuzzy
+msgid "truth value"
+msgstr "Wahrheits-Wert"
+
+#: rules/modules/rules.rules.inc:46
+#, fuzzy
+msgid "a fixed value"
+msgstr "Ein fester Wert"
+
+#: rules/modules/rules.rules.inc:91
+msgid "Format: %format or other values in GMT known by the PHP !strtotime function like \"+1 day\". "
+msgstr ""
+
+#: rules/modules/rules.rules.inc:92
+#, fuzzy
+msgid "You may also enter a timestamp in GMT. E.g. use !code together with the PHP input evalutor to specify a date one day after the evaluation time. "
+msgstr "Es kann auch ein Zeitstempel in GMT eingegeben werden. !code kann z.B. zusammen mit dem PHP-Eingabe-Auswerter verwendet werden, um ein Datum einen Tag nach der Auswertungszeit anzugeben."
+
+#: rules/modules/rules.rules.inc:112
+#, fuzzy
+msgid "The argument %label is no valid date."
+msgstr "Das Argument %label ist kein gültiges Datum."
+
+#: rules/modules/rules.rules.inc:126
+#, fuzzy
+msgid "Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator."
+msgstr "Einfach 1 für WAHR eingeben oder 0 für FALSCH oder einen Eingabe-Auswerter einsetzen."
+
+#: rules/modules/rules.rules.inc:152
+#, fuzzy
+msgid "Numeric comparison"
+msgstr "Numerischer Vergleich"
+
+#: rules/modules/rules.rules.inc:154
+#, fuzzy
+msgid "Number 1"
+msgstr "Zahl 1"
+
+#: rules/modules/rules.rules.inc:155
+#, fuzzy
+msgid "Number 2"
+msgstr "Zahl 2"
+
+#: rules/modules/rules.rules.inc:157
+#, fuzzy
+msgid "Select greater than, less than or equal to."
+msgstr "Es muss größer als, kleiner als oder gleich ausgewählt werden."
+
+#: rules/modules/rules.rules.inc:161
+#, fuzzy
+msgid "Check a truth value"
+msgstr "Einen Wahrheits-Wert prüfen"
+
+#: rules/modules/rules.rules.inc:163
+#, fuzzy
+msgid "Truth value"
+msgstr "Wahrheits-Wert"
+
+#: rules/modules/rules.rules.inc:228
+#, fuzzy
+msgid "Add a new @type variable"
+msgstr "Neue Variable @name hinzufügen"
+
+#: rules/modules/rules.rules.inc:236
+#, fuzzy
+msgid "Added @type"
+msgstr "@type hinzugefügt"
+
+#: rules/modules/rules.rules.inc:248
+#, fuzzy
+msgid "Save a @type"
+msgstr "@type speichern"
+
+#: rules/modules/rules.rules.inc:276
+msgid "The configured rule set %set doesn't exist any more."
+msgstr ""
+
+#: rules/modules/rules.rules.inc:337
+#, fuzzy
+msgid "post"
+msgstr "Beitrag"
+
+#: rules/modules/rules.rules.inc:378
+#, fuzzy
+msgid "Permanently apply changes"
+msgstr "Änderungen dauerhaft übernehmen."
+
+#: rules/modules/rules.rules.inc:379
+#, fuzzy
+msgid "If checked, changes to the argument are saved automatically."
+msgstr "Wenn aktiviert werden Änderungen am Argument automatisch gespeichert."
+
+#: rules/modules/rules.rules.inc:431
+#, fuzzy
+msgid "Comment"
+msgstr "Kommentar"
+
+#: rules/modules/rules.rules.inc:440
+#: rules/modules/user.rules.inc:98
+#, fuzzy
+msgid "User"
+msgstr "Benutzer"
+
+#: rules/modules/rules.rules_forms.inc:16
+#, fuzzy
+msgid "Two texts to compare"
+msgstr "Zwei zu vergleichende Texte"
+
+#: rules/modules/rules.rules_forms.inc:20
+#, fuzzy
+msgid "Evaluate the second text as a regular expression."
+msgstr "Den zweiten Text als regulären Ausdruck auswerten."
+
+#: rules/modules/rules.rules_forms.inc:22
+msgid "If enabled, the matching pattern will be interpreted as a <a href=\"@regex-wikipedia\">regex</a>.  Tip: <a href=\"@RegExr\">RegExr: Online Regular Expression Testing Tool</a> is helpful for learning, writing, and testing Regular Expressions."
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:35
+#: rules_admin/rules_admin.rule_forms.inc:555
+#, fuzzy
+msgid "Operation"
+msgstr "Operation"
+
+#: rules/modules/rules.rules_forms.inc:36
+#, fuzzy
+msgid "Greater than"
+msgstr "Mehr als"
+
+#: rules/modules/rules.rules_forms.inc:36
+#, fuzzy
+msgid "Equal to"
+msgstr "Gleich"
+
+#: rules/modules/rules.rules_forms.inc:36
+#, fuzzy
+msgid "Less than"
+msgstr "Weniger als"
+
+#: rules/modules/rules.rules_forms.inc:42
+msgid "Check a <a href=\"http://en.wikipedia.org/wiki/Logical_value\">truth value</a>, i.e. TRUE or FALSE."
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:63
+#, fuzzy
+msgid "Force immediate saving."
+msgstr "Erzwinge Speichern der Datei(en)"
+
+#: rules/modules/rules.rules_forms.inc:64
+msgid "If enabled, intelligent saving is bypassed to ensure immediate saving."
+msgstr ""
+
+#: rules/modules/rules.rules_forms.inc:71
+#, fuzzy
+msgid "Usually you need not care about saving changes done by actions. However this action allows you to force saving changes, if no action does."
+msgstr "Normalerweise muss man sich nicht um das Speichern von Änderungen kümmern, die von Aktionen vorgenommen wurden. Diese Aktion jedoch erlaubt das Speichern von Änderungen zu erzwingen, wenn es keine Aktion tut."
+
+#: rules/modules/rules.rules_forms.inc:71
+#, fuzzy
+msgid "Furthermore note that changes are saved intelligently, which means that changes are saved only once, even if multiple actions request saving changes."
+msgstr "Zu beachten ist außerdem, dass Änderungen intelligent gespeichert werden, was bedeutet, dass Änderungen nur einmal gespeichert werden, selbst wenn mehrere Aktionen das Speichern von Änderungen anfordern."
+
+#: rules/modules/system.rules.inc:18
+#, fuzzy
+msgid "User is going to view a page"
+msgstr "Benutzer will eine Seite anzeigen"
+
+#: rules/modules/system.rules.inc:21
+msgid "Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."
+msgstr ""
+
+#: rules/modules/system.rules.inc:24
+#, fuzzy
+msgid "Cron maintenance tasks are performed"
+msgstr "Cron-Wartungsaufgaben werden durchgeführt"
+
+#: rules/modules/system.rules.inc:37
+#, fuzzy
+msgid "Show a configurable message on the site"
+msgstr "Anzeige einer anpassbaren Nachricht auf der Website"
+
+#: rules/modules/system.rules.inc:42
+#, fuzzy
+msgid "Set breadcrumb"
+msgstr "Pfadnavigation Einstellungen"
+
+#: rules/modules/system.rules.inc:55
+#, fuzzy
+msgid "Send a mail to an arbitrary mail address"
+msgstr "Eine E-Mail an eine beliebige E-Mail-Adresse senden"
+
+#: rules/modules/system.rules.inc:60
+#, fuzzy
+msgid "Send a mail to all users of a role"
+msgstr "Eine E-Mail an alle Benutzer mit einer bestimmten Rolle senden"
+
+#: rules/modules/system.rules.inc:65
+#, fuzzy
+msgid "Page redirect"
+msgstr "Seiten-Weiterleitung"
+
+#: rules/modules/system.rules.inc:68
+#: rules_forms/rules_forms.rules.inc:64
+msgid "Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after \"?\" and (optional) anchor after \"#\"."
+msgstr ""
+
+#: rules/modules/system.rules.inc:71
+#, fuzzy
+msgid "Log to watchdog"
+msgstr "Im Wächter protokollieren"
+
+#: rules/modules/system.rules.inc:89
+#, fuzzy
+msgid "Home"
+msgstr "Startseite"
+
+#: rules/modules/system.rules.inc:117;164
+#, fuzzy
+msgid "rules"
+msgstr "Regeln"
+
+#: rules/modules/system.rules.inc:117
+#, fuzzy
+msgid "Successfully sent email to %recipient"
+msgstr "E-Mail erfolgreich an %recipient versandt"
+
+#: rules/modules/system.rules.inc:164
+#, fuzzy
+msgid "Successfully sent email to the role(s) %roles."
+msgstr "E-Mail erfolgreich an die Rolle(n) %roles versandt."
+
+#: rules/modules/system.rules_forms.inc:20;71;183
+#: rules_forms/rules_forms.rules.inc:140
+#, fuzzy
+msgid "Message"
+msgstr "Nachricht"
+
+#: rules/modules/system.rules_forms.inc:22
+#, fuzzy
+msgid "The message that should be displayed."
+msgstr "Die Nachricht, die angezeigt werden soll."
+
+#: rules/modules/system.rules_forms.inc:26
+#, fuzzy
+msgid "Display as error message"
+msgstr "Als Fehlermeldung anzeigen"
+
+#: rules/modules/system.rules_forms.inc:38
+#, fuzzy
+msgid "Titles"
+msgstr "Titel"
+
+#: rules/modules/system.rules_forms.inc:40
+msgid "A list of titles for the breadcrumb links, one on each line."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:45
+#, fuzzy
+msgid "Paths"
+msgstr "Pfade"
+
+#: rules/modules/system.rules_forms.inc:47
+msgid "A list of Drupal paths for the breadcrumb links, one on each line."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:59
+#, fuzzy
+msgid "Sender"
+msgstr "Absender"
+
+#: rules/modules/system.rules_forms.inc:61
+#, fuzzy
+msgid "The mail's from address. Leave it empty to use the site-wide configured address."
+msgstr "Die Absenderadresse der E-Mail. Wenn sie leergelassen wird, wird die für die Website konfigurierte Adresse verwendet."
+
+#: rules/modules/system.rules_forms.inc:65
+#, fuzzy
+msgid "Subject"
+msgstr "Betreff"
+
+#: rules/modules/system.rules_forms.inc:67
+#, fuzzy
+msgid "The mail's subject."
+msgstr "Betreff der E-Mail."
+
+#: rules/modules/system.rules_forms.inc:73
+#, fuzzy
+msgid "The mail's message body."
+msgstr "Textkörper der E-Mail."
+
+#: rules/modules/system.rules_forms.inc:85
+#, fuzzy
+msgid "The mail's recipient address. You may separate multiple addresses with ','."
+msgstr "Die Adresse des E-Mail-Empfängers. Mehrere Adressen können mit Kommata getrennt werden."
+
+#: rules/modules/system.rules_forms.inc:101
+#, fuzzy
+msgid "Recipient roles"
+msgstr "Empfänger-Rolle(n)"
+
+#: rules/modules/system.rules_forms.inc:102
+#, fuzzy
+msgid "WARNING: This may cause problems if there are too many users of these roles on your site, as your server may not be able to handle all the mail requests all at once."
+msgstr "ACHTUNG: Es kann Probleme geben, wenn es in dieser Website zuviele Benutzer mit dieser Rolle gibt, da der Server möglicherweise nicht in der Lage ist, alle E-Mail-Anforderungen auf einmal zu bearbeiten."
+
+#: rules/modules/system.rules_forms.inc:106
+#, fuzzy
+msgid "Select the roles whose users should receive this email."
+msgstr "Es müssen die Rollen ausgewählt werden, deren Benutzer diese E-Mail erhalten sollen."
+
+#: rules/modules/system.rules_forms.inc:127
+#: rules_forms/rules_forms.rules_forms.inc:19
+#, fuzzy
+msgid "To"
+msgstr "An"
+
+#: rules/modules/system.rules_forms.inc:149
+#, fuzzy
+msgid "Force redirecting to the given path, even if a destination parameter is given"
+msgstr "Erzwingt die Weiterleitung an einen bestimmten Pfad, selbst wenn ein Ziel-Parameter übergeben wird"
+
+#: rules/modules/system.rules_forms.inc:150
+#, fuzzy
+msgid "Per default drupal doesn't redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url"
+msgstr "Standardmäßig leitet Drupal nicht auf den angegebenen Pfad weiter, wenn ein Ziel-Parameter eingestellt ist. Stattdessen erfolgt die Weiterleitung zum angegebenen Ziel-Parameter. Meistens wird der Zielparamter durch Anhängen an die URL eingestellt, z.B. !example_url"
+
+#: rules/modules/system.rules_forms.inc:156
+#, fuzzy
+msgid "Immediately issue the page redirect"
+msgstr "Hauptseite auf die lokalisierte Version umleiten"
+
+#: rules/modules/system.rules_forms.inc:157
+msgid "Use this with <em>caution</em>! If checked, the path redirect is issued immediately, so the normal execution flow is interrupted."
+msgstr ""
+
+#: rules/modules/system.rules_forms.inc:169
+#, fuzzy
+msgid "Severity"
+msgstr "Schweregrad"
+
+#: rules/modules/system.rules_forms.inc:176
+#: rules_admin/rules_admin.inc:299
+#: rules_admin/rules_admin.sets.inc:16
+#, fuzzy
+msgid "Category"
+msgstr "Kategorie"
+
+#: rules/modules/system.rules_forms.inc:178
+#, fuzzy
+msgid "The category to which this message belongs."
+msgstr "DIe Kategorie, zu der diese Nachricht gehört."
+
+#: rules/modules/system.rules_forms.inc:185
+#, fuzzy
+msgid "The message to log."
+msgstr "Die zu protokollierende Nachricht."
+
+#: rules/modules/system.rules_forms.inc:190
+#, fuzzy
+msgid "Link (optional)"
+msgstr "Verweis (optional)"
+
+#: rules/modules/system.rules_forms.inc:192
+#, fuzzy
+msgid "A link to associate with the message."
+msgstr "Ein Verweis zur Verbindung mit der Nachricht."
+
+#: rules/modules/taxonomy.rules.inc:18
+#, fuzzy
+msgid "After saving a new term"
+msgstr "Nach dem Speichern eines neuen Begriffs"
+
+#: rules/modules/taxonomy.rules.inc:20
+#, fuzzy
+msgid "created term"
+msgstr "erstellter Begriff"
+
+#: rules/modules/taxonomy.rules.inc:23
+#, fuzzy
+msgid "After updating a term"
+msgstr "Nach dem Aktualisieren eines Begriffs"
+
+#: rules/modules/taxonomy.rules.inc:25
+#, fuzzy
+msgid "updated term"
+msgstr "aktualisierter Begriff"
+
+#: rules/modules/taxonomy.rules.inc:44
+#, fuzzy
+msgid "unchanged term"
+msgstr "unveränderter Begriff"
+
+#: rules/modules/taxonomy.rules.inc:66
+#, fuzzy
+msgid "Load a term"
+msgstr "Einen Begriff laden"
+
+#: rules/modules/taxonomy.rules.inc:70;88;100;115;129
+#, fuzzy
+msgid "Taxonomy term"
+msgstr "Taxonomie-Begriff"
+
+#: rules/modules/taxonomy.rules.inc:74
+#, fuzzy
+msgid "Loading a taxonomy term will allow you to act on this term, for example you will be able to assign this term to a content."
+msgstr "Das Laden eines Taxonomie-Begriffs ermöglicht, mit diesem Begriff umzugehen, zum Beispiel einem Inhalt diesen Begriff hinzuzufügen."
+
+#: rules/modules/taxonomy.rules.inc:78
+#, fuzzy
+msgid "Add a new term to vocabulary"
+msgstr "Ein Formular zum Hinzufügen eines neuen Kommentars."
+
+#: rules/modules/taxonomy.rules.inc:82;140;152
+#, fuzzy
+msgid "Taxonomy vocabulary"
+msgstr "Taxonomie-Vokabular"
+
+#: rules/modules/taxonomy.rules.inc:96
+#, fuzzy
+msgid "Delete a term"
+msgstr "Ausgewählte Zahlungsbedingungen löschen"
+
+#: rules/modules/taxonomy.rules.inc:107
+#, fuzzy
+msgid "Assign a term to content"
+msgstr "Inhalt einen Begriff zuweisen"
+
+#: rules/modules/taxonomy.rules.inc:121
+#, fuzzy
+msgid "Remove a term from content"
+msgstr "Vom Inhalt einen Begriff entfernen"
+
+#: rules/modules/taxonomy.rules.inc:136
+#, fuzzy
+msgid "Load a vocabulary"
+msgstr "Vokabular laden"
+
+#: rules/modules/taxonomy.rules.inc:144
+#, fuzzy
+msgid "Loading a taxonomy vocabulary will allow you to act on this vocabulary."
+msgstr "Das Laden eines Taxonomie-Vokabulars ermöglicht es, dieses Vokabular zu behandeln."
+
+#: rules/modules/taxonomy.rules.inc:148
+#, fuzzy
+msgid "Add a new vocabulary"
+msgstr "Neues Vokabular hinzufügen"
+
+#: rules/modules/taxonomy.rules.inc:233
+#, fuzzy
+msgid "taxonomy term"
+msgstr "Taxonomie-Begriff"
+
+#: rules/modules/taxonomy.rules.inc:241
+#, fuzzy
+msgid "taxonomy vocabulary"
+msgstr "Taxonomie-Vokabular"
+
+#: rules/modules/taxonomy.rules_forms.inc:25
+#, fuzzy
+msgid "Vocabulary"
+msgstr "Vokabular"
+
+#: rules/modules/taxonomy.rules_forms.inc:27;122
+#, fuzzy
+msgid "Select the vocabulary."
+msgstr "Das Vokabular auswählen."
+
+#: rules/modules/taxonomy.rules_forms.inc:27;122
+#, fuzzy
+msgid "There are no existing vocabularies, you should <a href=\"@add-url\">add</a> one."
+msgstr "Es existieren keine Vokabulare, Sie sollten eines <a href=\"!taxonomy-add-vocabulary\">hinzufügen</a>"
+
+#: rules/modules/taxonomy.rules_forms.inc:39
+#, fuzzy
+msgid "Continue"
+msgstr "Weiter"
+
+#: rules/modules/taxonomy.rules_forms.inc:50
+#, fuzzy
+msgid "Select a term"
+msgstr "Begriff nach ID auswählen"
+
+#: rules/modules/taxonomy.rules_forms.inc:51
+msgid "There are no terms in the vocabulary, you should <a href=\"@add-url\">add</a> one."
+msgstr ""
+
+#: rules/modules/taxonomy.rules_forms.inc:51
+msgid "Select an existing term from vocabulary !vocab or manually enter the name of the term that should be added or removed from the content."
+msgstr ""
+
+#: rules/modules/taxonomy.rules_forms.inc:57
+#, fuzzy
+msgid "Select by term id"
+msgstr "Begriff nach ID auswählen"
+
+#: rules/modules/taxonomy.rules_forms.inc:60
+#, fuzzy
+msgid "Optional: enter the term id (<em>not the term name</em>) that should be loaded . If this field is used \"Select a term\" field will be ignored."
+msgstr "Optional: Eingabe einer ID (<em>nicht des Begriffsnamens</em>) der geladen werden soll. Wenn dieses Feld verwendet wird, wird das Feld „Begriff auswählen“ ignoriert"
+
+#: rules/modules/taxonomy.rules_forms.inc:75
+#, fuzzy
+msgid "- None selected -"
+msgstr "- Keine ausgewählt -"
+
+#: rules/modules/taxonomy.rules_forms.inc:88
+#, fuzzy
+msgid "Term Identification"
+msgstr "Taxonomie-Begriff"
+
+#: rules/modules/taxonomy.rules_forms.inc:93
+#, fuzzy
+msgid "Term name"
+msgstr "Begriffsname"
+
+#: rules/modules/taxonomy.rules_forms.inc:96
+#, fuzzy
+msgid "The name of this term."
+msgstr "Der Name dieses Begriffs."
+
+#: rules/modules/taxonomy.rules_forms.inc:104
+#, fuzzy
+msgid "A description of the term. To be displayed on taxonomy/term pages and RSS feeds."
+msgstr "Eine Beschreibung des Begriffes. Diese wird auf Taxonomie-/Begriffseiten und im RSS-Newsfeed angezeigt."
+
+#: rules/modules/taxonomy.rules_forms.inc:114
+#, fuzzy
+msgid "Vocabulary selection"
+msgstr "Vokabular-Auswahl"
+
+#: rules/modules/taxonomy.rules_forms.inc:119
+#, fuzzy
+msgid "Select a vocabulary"
+msgstr "Ein Vokabular auswählen."
+
+#: rules/modules/taxonomy.rules_forms.inc:128
+#, fuzzy
+msgid "Select by vocabulary id"
+msgstr "Begriff nach ID auswählen"
+
+#: rules/modules/taxonomy.rules_forms.inc:131
+#, fuzzy
+msgid "Optional: Enter the vocabulary id (<em>not the vocabulary name</em>) that should be loaded. If this field is used, the \"Select a vocabulary\" field will be ignored."
+msgstr "Optional: Eingabe einer ID (<em>nicht den Vokabular-Namen</em>) der geladen werden soll. Wenn dieses Feld verwendet wird, wird das Feld „Vokabular auswählen“ ignoriert"
+
+#: rules/modules/taxonomy.rules_forms.inc:144
+#, fuzzy
+msgid "Vocabulary settings"
+msgstr "Vokabular-Einstellungen"
+
+#: rules/modules/user.rules.inc:61
+#, fuzzy
+msgid "acting user"
+msgstr "handelnder Benutzer"
+
+#: rules/modules/user.rules.inc:87
+#, fuzzy
+msgid "Compare two users"
+msgstr "Zwei Benutzer vergleichen"
+
+#: rules/modules/user.rules.inc:89
+#, fuzzy
+msgid "User account 1"
+msgstr "Benutzerkonto 1"
+
+#: rules/modules/user.rules.inc:90
+#, fuzzy
+msgid "User account 2"
+msgstr "Benutzerkonto 2"
+
+#: rules/modules/user.rules.inc:92
+#, fuzzy
+msgid "Evaluates to TRUE, if both given user accounts are the same."
+msgstr "Gibt WAHR zurück, wenn beide Benutzerkonten identisch sind."
+
+#: rules/modules/user.rules.inc:96
+#, fuzzy
+msgid "User has role(s)"
+msgstr "Benutzer besitzt Rolle(n)"
+
+#: rules/modules/user.rules.inc:100
+#, fuzzy
+msgid "Whether the user has the selected role(s)."
+msgstr "Ob der Benutzer die ausgewählte(n) Rolle(n) besitzt."
+
+#: rules/modules/user.rules.inc:145
+#, fuzzy
+msgid "Add user role"
+msgstr "Benutzerrolle hinzufügen"
+
+#: rules/modules/user.rules.inc:147;154
+#, fuzzy
+msgid "User whos roles should be changed"
+msgstr "Benutzer, dessen Rollen geändert werden sollen"
+
+#: rules/modules/user.rules.inc:152
+#, fuzzy
+msgid "Remove user role"
+msgstr "Benutzerrolle entfernen"
+
+#: rules/modules/user.rules.inc:159
+#, fuzzy
+msgid "Load a user account"
+msgstr "Benutzerkonto laden"
+
+#: rules/modules/user.rules.inc:161
+#, fuzzy
+msgid "Loaded user"
+msgstr "Geladener Benutzer"
+
+#: rules/modules/user.rules.inc:163
+#, fuzzy
+msgid "Enter an id or a name of the user to load."
+msgstr "Geben Sie eine ID oder einen Namen an, den Benutzer laden"
+
+#: rules/modules/user.rules.inc:168
+#, fuzzy
+msgid "Create a user"
+msgstr "Benutzer erstellen"
+
+#: rules/modules/user.rules.inc:170
+#: rules/modules/user.rules_forms.inc:75
+#, fuzzy
+msgid "User name"
+msgstr "Benutzername"
+
+#: rules/modules/user.rules.inc:171
+#, fuzzy
+msgid "User's E-mail"
+msgstr "E-Mail des Benutzers"
+
+#: rules/modules/user.rules.inc:174
+#, fuzzy
+msgid "New user"
+msgstr "Neuer Benutzer"
+
+#: rules/modules/user.rules.inc:175
+#, fuzzy
+msgid "New user's password"
+msgstr "Passwort des neuen Benutzers"
+
+#: rules/modules/user.rules.inc:236
+#, fuzzy
+msgid "No appropriate user name. No user has been created."
+msgstr "Kein geeigneter Benutzername. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:239
+#, fuzzy
+msgid "The name %name has been denied access. No user has been created."
+msgstr "Dem Namen %name wurde der Zugriff verweigert. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:242
+#, fuzzy
+msgid "User !name already exists. No user has been created."
+msgstr "Benutzer !name existiert bereits. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:246
+#, fuzzy
+msgid "No appropriate mail address. No user has been created."
+msgstr "Keine geeignete E-Mail-Adresse. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:249
+#, fuzzy
+msgid "The e-mail address %email has been denied access. No user has been created."
+msgstr "Der E-Mail-Adresse %email wurde der Zugriff verweigert. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:252
+#, fuzzy
+msgid "The e-mail address %email is already registered. No user has been created."
+msgstr "Die E-Mail-Adresse %email ist bereits registriert. Es wurde kein Benutzer erstellt."
+
+#: rules/modules/user.rules.inc:266
+#, fuzzy
+msgid "user"
+msgstr "Benutzer"
+
+#: rules/modules/user.rules.inc:298
+#, fuzzy
+msgid "Block a user"
+msgstr "Einen Benutzer sperren"
+
+#: rules/modules/user.rules_forms.inc:19
+#, fuzzy
+msgid "Match against any or all of the selected roles"
+msgstr "Übereinstimmung mit einer oder allen der ausgewählten Rollen"
+
+#: rules/modules/user.rules_forms.inc:20
+#, fuzzy
+msgid "any"
+msgstr "irgendeine"
+
+#: rules/modules/user.rules_forms.inc:20
+#, fuzzy
+msgid "all"
+msgstr "alle"
+
+#: rules/modules/user.rules_forms.inc:21
+#, fuzzy
+msgid "If matching against all selected roles the user must have <em>all</em> the roles checked in the list above."
+msgstr "Beim Abgleich gegen ausgewählte Rollen muss der Benutzer <em>alle</em> oben in der Liste angekreutzten Rollen haben."
+
+#: rules/modules/user.rules_forms.inc:64
+#, fuzzy
+msgid "Select role(s)"
+msgstr "Rolle(n) auswählen"
+
+#: rules/modules/user.rules_forms.inc:80
+#, fuzzy
+msgid "Name of the user to be loaded."
+msgstr "Name des zu ladenden Benutzers."
+
+#: rules/modules/user.rules_forms.inc:84
+#, fuzzy
+msgid "User id"
+msgstr "Benutzer-ID"
+
+#: rules/modules/user.rules_forms.inc:86
+#, fuzzy
+msgid "Id of the user to be loaded."
+msgstr "ID des zu ladenden Benutzers."
+
+#: rules_admin/rules_admin.export.inc:20
+#, fuzzy
+msgid "Configuration to import"
+msgstr "Zu importierende Konfiguration"
+
+#: rules_admin/rules_admin.export.inc:21
+#, fuzzy
+msgid "Just paste your exported configuration here."
+msgstr "Hier kann eine exportierte Konfiguration eingefügt werden."
+
+#: rules_admin/rules_admin.export.inc:25
+#: rules_admin/rules_admin.module:112
+#, fuzzy
+msgid "Import"
+msgstr "Import"
+
+#: rules_admin/rules_admin.export.inc:42
+#, fuzzy
+msgid "Imported %label."
+msgstr "%label importiert."
+
+#: rules_admin/rules_admin.export.inc:48
+#, fuzzy
+msgid "Import failed."
+msgstr "Import fehlgeschlagen."
+
+#: rules_admin/rules_admin.export.inc:113
+#, fuzzy
+msgid "Successfully imported the workflow-ng rule %label."
+msgstr "Die Regel %label von workflow-ng wurde erfolgreich importiert."
+
+#: rules_admin/rules_admin.export.inc:116
+#, fuzzy
+msgid "Failed importing the workflow-ng rule %label."
+msgstr "Die Regel %label von workflow-ng konnte nicht importiert werden."
+
+#: rules_admin/rules_admin.export.inc:136
+#: rules_admin/rules_admin.inc:371
+#: rules_admin/rules_admin.module:52
+#, fuzzy
+msgid "Triggered rules"
+msgstr "Zugriffsregeln"
+
+#: rules_admin/rules_admin.export.inc:142
+#, fuzzy
+msgid "Select the %label to export"
+msgstr "%label zum Export auswählen"
+
+#: rules_admin/rules_admin.export.inc:149
+msgid "There are no %label to be exported."
+msgstr ""
+
+#: rules_admin/rules_admin.export.inc:157
+#, fuzzy
+msgid "Export by category"
+msgstr "Nach Kategorie filtern"
+
+#: rules_admin/rules_admin.export.inc:163
+#: rules_admin/rules_admin.module:107
+#, fuzzy
+msgid "Export"
+msgstr "Exportieren"
+
+#: rules_admin/rules_admin.export.inc:169
+#, fuzzy
+msgid "Exported rule configurations"
+msgstr "Regel-Konfigurationen exportiert"
+
+#: rules_admin/rules_admin.export.inc:170
+#, fuzzy
+msgid "Copy these data and paste them into the import page, to import."
+msgstr "Kopieren Sie diese Daten und fügen Sie diese zum Importieren in die Import-Seite ein."
+
+#: rules_admin/rules_admin.export.inc:191
+#, fuzzy
+msgid "Please select the items to export."
+msgstr "Es müssen die zu exportierenden Elemente ausgewählt werden."
+
+#: rules_admin/rules_admin.inc:299
+#: rules_admin/rules_admin.rule_forms.inc:112;423;481;679
+#: rules_admin/rules_admin.sets.inc:16;141;276;345
+#, fuzzy
+msgid "Label"
+msgstr "Bezeichner"
+
+#: rules_admin/rules_admin.inc:299
+#, fuzzy
+msgid "Set"
+msgstr "Setze"
+
+#: rules_admin/rules_admin.inc:299
+#: rules_admin/rules_admin.rule_forms.inc:132
+#, fuzzy
+msgid "Event"
+msgstr "Ereignis/Inhalt"
+
+#: rules_admin/rules_admin.inc:299
+#: rules_admin/rules_admin.sets.inc:16
+#, fuzzy
+msgid "Status"
+msgstr "Status"
+
+#: rules_admin/rules_admin.inc:299
+#: rules_admin/rules_admin.sets.inc:16
+#, fuzzy
+msgid "Operations"
+msgstr "Handlinger"
+
+#: rules_admin/rules_admin.inc:310
+#: rules_admin/rules_admin.sets.inc:25
+#, fuzzy
+msgid "delete"
+msgstr "Löschen"
+
+#: rules_admin/rules_admin.inc:313
+#: rules_admin/rules_admin.sets.inc:28
+#, fuzzy
+msgid "revert"
+msgstr "zurücksetzen"
+
+#: rules_admin/rules_admin.inc:315
+#, fuzzy
+msgid "clone"
+msgstr "Duplizieren"
+
+#: rules_admin/rules_admin.inc:337
+#, fuzzy
+msgid "None"
+msgstr "Kein"
+
+#: rules_admin/rules_admin.inc:345
+#, fuzzy
+msgid "This rule has been provided by a module, but has been modified."
+msgstr "Diese Regel wurde von einem Modul bereitgestellt, wurde aber verändert."
+
+#: rules_admin/rules_admin.inc:346
+#, fuzzy
+msgid "Modified"
+msgstr "Verändert"
+
+#: rules_admin/rules_admin.inc:349
+#, fuzzy
+msgid "This rule has been provided by a module and can't be customized."
+msgstr "Diese Regel wurde von einem Modul bereitgestellt und kann nicht angepasst werden."
+
+#: rules_admin/rules_admin.inc:350
+#, fuzzy
+msgid "Fixed"
+msgstr "Statisch"
+
+#: rules_admin/rules_admin.inc:353
+#, fuzzy
+msgid "A custom defined rule."
+msgstr "Eine benutzerdefinierte Regel"
+
+#: rules_admin/rules_admin.inc:354
+#, fuzzy
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: rules_admin/rules_admin.inc:356
+#, fuzzy
+msgid "This rule has been provided by a module."
+msgstr "Diese Regel wurde von einem Modul bereitgestellt."
+
+#: rules_admin/rules_admin.inc:357
+#, fuzzy
+msgid "Default"
+msgstr "Standard"
+
+#: rules_admin/rules_admin.inc:366
+#: rules_admin/rules_admin.module:175
+#, fuzzy
+msgid "Rule sets"
+msgstr "Regel-Sets"
+
+#: rules_admin/rules_admin.render.inc:24
+#, fuzzy
+msgid "ON event %event"
+msgstr "Ereignis-Erinnerung: !event"
+
+#: rules_admin/rules_admin.render.inc:30
+#, fuzzy
+msgid "IN rule set %ruleset"
+msgstr "Neues Regel-Set hinzufügen"
+
+#: rules_admin/rules_admin.render.inc:35
+#, fuzzy
+msgid "IF"
+msgstr "@a @b @F ist falsch (%If).\n"
+
+#: rules_admin/rules_admin.render.inc:43
+#, fuzzy
+msgid "DO"
+msgstr "Nichts machen."
+
+#: rules_admin/rules_admin.render.inc:49
+#, fuzzy
+msgid "Add a condition"
+msgstr "Eine Bedingung hinzufügen"
+
+#: rules_admin/rules_admin.render.inc:50
+#, fuzzy
+msgid "Add an action"
+msgstr "Eine Aktion hinzufügen"
+
+#: rules_admin/rules_admin.render.inc:91
+#, fuzzy
+msgid "Indent this condition by adding a logical operation."
+msgstr "Rücken Sie diese Bedingung ein, indem Sie eine logische Operation hinzufügen."
+
+#: rules_admin/rules_admin.render.inc:93;153
+#, fuzzy
+msgid "NOT"
+msgstr "NICHT"
+
+#: rules_admin/rules_admin.render.inc:133
+#, fuzzy
+msgid "Empty"
+msgstr "Leer"
+
+#: rules_admin/rules_admin.render.inc:154
+#, fuzzy
+msgid "!not%label group"
+msgstr "!not Gruppe %label"
+
+#: rules_admin/rules_admin.render.inc:155
+#, fuzzy
+msgid "Add another condition to this group"
+msgstr "Dieser Gruppe eine weitere Bedingung hinzufügen"
+
+#: rules_admin/rules_admin.render.inc:156
+#, fuzzy
+msgid "Edit this condition group"
+msgstr "Diese Bedingungsgruppe bearbeiten"
+
+#: rules_admin/rules_admin.rule_forms.inc:20;36
+#, fuzzy
+msgid "Filter"
+msgstr "Filter"
+
+#: rules_admin/rules_admin.rule_forms.inc:26
+#, fuzzy
+msgid "Filter by event"
+msgstr "Nach Ereignis filtern"
+
+#: rules_admin/rules_admin.rule_forms.inc:32
+#, fuzzy
+msgid "Filter by category"
+msgstr "Nach Kategorie filtern"
+
+#: rules_admin/rules_admin.rule_forms.inc:41
+#: rules_admin/rules_admin.sets.inc:118
+#, fuzzy
+msgid "Active rules"
+msgstr "Aktive Regeln"
+
+#: rules_admin/rules_admin.rule_forms.inc:44
+#: rules_admin/rules_admin.sets.inc:121
+#, fuzzy
+msgid "Inactive rules"
+msgstr "Inaktive Regeln"
+
+#: rules_admin/rules_admin.rule_forms.inc:48
+#: rules_admin/rules_admin.sets.inc:125
+#, fuzzy
+msgid "Fixed rules"
+msgstr "Fixierte Regeln"
+
+#: rules_admin/rules_admin.rule_forms.inc:67
+#, fuzzy
+msgid "If you install the token module from !href, token replacements will be supported. <a href=\"@hide\">Hide this message.</a>"
+msgstr "Wenn das Token-Modul von !href installiert wird, werden Ersetzungen von Token unterstützt. <a href=\"@hide\">Diese Nachricht nicht mehr anzeigen.</a>"
+
+#: rules_admin/rules_admin.rule_forms.inc:95
+msgid "The rule %label has been added. You can start adding some conditions or actions now."
+msgstr ""
+
+#: rules_admin/rules_admin.rule_forms.inc:108
+#, fuzzy
+msgid "Rule settings"
+msgstr "Regel-Einstellungen"
+
+#: rules_admin/rules_admin.rule_forms.inc:114
+#, fuzzy
+msgid "Choose an appropriate label for this rule."
+msgstr "Wählen Sie eine passende Bezeichnung für diese Regel"
+
+#: rules_admin/rules_admin.rule_forms.inc:125
+#: rules_scheduler/rules_scheduler.rules.inc:51
+#, fuzzy
+msgid "Rule set"
+msgstr "Regel-Set"
+
+#: rules_admin/rules_admin.rule_forms.inc:127
+#, fuzzy
+msgid "Select to which rule set this rule should belong."
+msgstr "Wählen Sie aus, zu welchem Regel-Set diese Regel gehören soll."
+
+#: rules_admin/rules_admin.rule_forms.inc:134
+#, fuzzy
+msgid "Select the event on which you want to evaluate this rule."
+msgstr "Wählen Sie das Ereignis aus, gegen das Sie die Regel auswerten möchten."
+
+#: rules_admin/rules_admin.rule_forms.inc:139
+#: rules_admin/rules_admin.sets.inc:158
+#, fuzzy
+msgid "Categories"
+msgstr "Kategorien"
+
+#: rules_admin/rules_admin.rule_forms.inc:141
+#, fuzzy
+msgid "A comma-separated list of terms describing this rule. Example: funny, bungee jumping."
+msgstr "Eine Liste von Begriffen, durch Kommas getrennt, die den Inhalt beschreibt."
+
+#: rules_admin/rules_admin.rule_forms.inc:145
+#, fuzzy
+msgid "This rule is active and should be evaluated when the associated event occurs."
+msgstr "Diese Regel ist aktiv und soll ausgewertet werden, wenn das zugehörige Ereignis stattfindet."
+
+#: rules_admin/rules_admin.rule_forms.inc:150;434;498;563
+#, fuzzy
+msgid "Weight"
+msgstr "Gewichtung"
+
+#: rules_admin/rules_admin.rule_forms.inc:152
+msgid "Adjust the weight to customize the evaluation order of rules."
+msgstr ""
+
+#: rules_admin/rules_admin.rule_forms.inc:155
+#: rules_admin/rules_admin.sets.inc:163
+#, fuzzy
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: rules_admin/rules_admin.rule_forms.inc:177
+msgid "<em>Warning</em>: This rule has been provided by another module. <br />Be aware that any changes made through this interface might be overwritten once the providing module updates the rule."
+msgstr ""
+
+#: rules_admin/rules_admin.rule_forms.inc:182
+#, fuzzy
+msgid "Rule elements"
+msgstr "Regel-Elemente"
+
+#: rules_admin/rules_admin.rule_forms.inc:203
+#, fuzzy
+msgid "The rule %label has been updated."
+msgstr "Die Regel %label wurde aktualisiert"
+
+#: rules_admin/rules_admin.rule_forms.inc:261
+#, fuzzy
+msgid "Select an action to add"
+msgstr "Wählen Sie eine Aktion, die hinzugefügt werden soll"
+
+#: rules_admin/rules_admin.rule_forms.inc:270
+#, fuzzy
+msgid "The following actions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these actions, you must first add some action that adds variables of this kind, or have an event that passes the required variables."
+msgstr "Die folgenden Aktionen sind in diesem Kontext nicht verfügbar, da sie Argumente benötigen, die in dieser Regel nicht existieren. Wenn eine dieser Aktionen verwendet werden soll, muss zuerst eine Aktion hinzugefügt werden, die diese Variablen hinzufügen, oder ein Ereignis existieren, die die erforderlichen Regeln bereitstellt."
+
+#: rules_admin/rules_admin.rule_forms.inc:283;323
+#, fuzzy
+msgid "Next"
+msgstr "Weiter"
+
+#: rules_admin/rules_admin.rule_forms.inc:301
+#, fuzzy
+msgid "Select the condition to add"
+msgstr "Wählen Sie eine Bedingung, die hinzugefügt werden soll"
+
+#: rules_admin/rules_admin.rule_forms.inc:310
+#, fuzzy
+msgid "The following conditions aren't available in this context because they require arguments that don't exist in your rule. If you want to use any of these conditions, you must first add some action that adds variables of this kind in a previous rule, or have an event that passes the required variables."
+msgstr "Die folgenden Bedingungen sind in diesem Kontext nicht verfügbar, da sie Argumente benötigen, die in dieser Regel nicht existieren. Wenn eine dieser Bedinungen verwendet werden soll, muss zuerst eine Aktion hinzugefügt werden, die solche Variablen in einer vorherigen Regel hinzufügt, oder ein Ereignis, das die erforderlichen Variablen bereitstellt."
+
+#: rules_admin/rules_admin.rule_forms.inc:425
+#, fuzzy
+msgid "Customize the label for this action."
+msgstr "Bezeichnung für diese Aktion anpassen."
+
+#: rules_admin/rules_admin.rule_forms.inc:431
+#, fuzzy
+msgid "Editing action %label"
+msgstr "Aktion %label bearbeiten"
+
+#: rules_admin/rules_admin.rule_forms.inc:436
+#, fuzzy
+msgid "Adjust the weight to customize the ordering of actions."
+msgstr "Passen Sie die Gewichtung an, um die Reihenfolge der Aktionen anzupassen."
+
+#: rules_admin/rules_admin.rule_forms.inc:443;507;571
+#: rules_admin/rules_admin.sets.inc:219
+#, fuzzy
+msgid "Save"
+msgstr "Speichern"
+
+#: rules_admin/rules_admin.rule_forms.inc:450;514;578;807
+#: rules_admin/rules_admin.sets.inc:62
+#: rules_admin/rules_admin.module:77;158
+#: rules_scheduler/rules_scheduler.admin.inc:88;151
+#, fuzzy
+msgid "Delete"
+msgstr "Löschen"
+
+#: rules_admin/rules_admin.rule_forms.inc:472
+#, fuzzy
+msgid "The action %label has been saved."
+msgstr "Die Aktion %label wurde gespeichert."
+
+#: rules_admin/rules_admin.rule_forms.inc:483
+#, fuzzy
+msgid "Customize the label for this condition."
+msgstr "Anpassen der Bezeichnung für diese Bedingung."
+
+#: rules_admin/rules_admin.rule_forms.inc:489
+#, fuzzy
+msgid "Editing condition %label"
+msgstr "Bedingung %label bearbeiten"
+
+#: rules_admin/rules_admin.rule_forms.inc:492;549
+#, fuzzy
+msgid "Negate"
+msgstr "Umkehren"
+
+#: rules_admin/rules_admin.rule_forms.inc:494
+#, fuzzy
+msgid "If checked, the condition returns TRUE, if it evaluates to FALSE."
+msgstr "Wenn aktiviert, liefert die Bedingung WAHR zurück, wenn sie auf FALSCH ausgewertet wird."
+
+#: rules_admin/rules_admin.rule_forms.inc:500
+#, fuzzy
+msgid "Adjust the weight to customize the ordering of conditions."
+msgstr "Passen Sie die Gewichtung an, um die Reihenfolge der Bedingungen anzupassen."
+
+#: rules_admin/rules_admin.rule_forms.inc:540
+#, fuzzy
+msgid "The condition %label has been saved."
+msgstr "Die Bedingung %label wurde gespeichert."
+
+#: rules_admin/rules_admin.rule_forms.inc:547
+#, fuzzy
+msgid "Editing condition group %label"
+msgstr "Bedingungsgruppe %label bearbeiten"
+
+#: rules_admin/rules_admin.rule_forms.inc:551
+#, fuzzy
+msgid "If checked, the operation will be negated. E.g. AND would be handled as NOT AND."
+msgstr "Wenn aktiviert, wird die Operation umgekehrt. Logisches UND bird z.B. ans NICHT UND behandelt."
+
+#: rules_admin/rules_admin.rule_forms.inc:557
+#, fuzzy
+msgid "The logical operation of this condition group. E.g. if you select AND, this condition group will only evaluate to TRUE if all conditions of this group evaluate to TRUE."
+msgstr "Die logische Operation dieser Bedingungsgruppe. Wenn Sie z.B. UND wählen wird diese Bedinungsgruppe nur WAHR liefern, wenn alls Bedingungen der Gruppe WAHR zurückgeben."
+
+#: rules_admin/rules_admin.rule_forms.inc:565
+#, fuzzy
+msgid "Adjust the weight to customize the ordering."
+msgstr "Passen Sie die Gewichtung an, um die Reihenfolge anzupassen."
+
+#: rules_admin/rules_admin.rule_forms.inc:594
+#, fuzzy
+msgid "The condition group %label has been saved."
+msgstr "Die Bedinungsgruppe %label wurde gespeichert."
+
+#: rules_admin/rules_admin.rule_forms.inc:672
+#, fuzzy
+msgid "Variable @label settings"
+msgstr "Einstellungen für Variable @label"
+
+#: rules_admin/rules_admin.rule_forms.inc:685
+#: rules_admin/rules_admin.sets.inc:291
+#, fuzzy
+msgid "Machine readable variable name"
+msgstr "Maschinenlesbarer Variablen-Name"
+
+#: rules_admin/rules_admin.rule_forms.inc:686
+#: rules_admin/rules_admin.sets.inc:151
+#, fuzzy
+msgid "Specify a unique name containing only alphanumeric characters, and underscores."
+msgstr "Geben Sie einen eindeutigen Namen an, der nur aus alphanumerischen Zeichen und Unterstrichen besteht."
+
+#: rules_admin/rules_admin.rule_forms.inc:706
+#, fuzzy
+msgid "A variable with this name does already exist. Please choose another name."
+msgstr "Eine Variable mit diesem Namen besteht bereits. Ein anderer Name muss gewählt werden."
+
+#: rules_admin/rules_admin.rule_forms.inc:709
+#, fuzzy
+msgid "The name contains not allowed characters."
+msgstr "Der Name beinhaltet unerlaubte Zeichen."
+
+#: rules_admin/rules_admin.rule_forms.inc:768
+#, fuzzy
+msgid "Arguments configuration"
+msgstr "Argument-Konfiguration"
+
+#: rules_admin/rules_admin.rule_forms.inc:802
+#, fuzzy
+msgid "Are you sure you want to delete the logical operation %label?"
+msgstr "Sind Sie sicher, dass Sie die logische Operation %label löschen möchten?"
+
+#: rules_admin/rules_admin.rule_forms.inc:805
+#: rules_admin/rules_admin.sets.inc:60
+#, fuzzy
+msgid "Are you sure you want to delete %label?"
+msgstr "Sind Sie sicher, dass Sie %label löschen möchten?"
+
+#: rules_admin/rules_admin.rule_forms.inc:807
+#: rules_admin/rules_admin.sets.inc:62;87
+#, fuzzy
+msgid "This action cannot be undone."
+msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
+
+#: rules_admin/rules_admin.rule_forms.inc:807
+#: rules_admin/rules_admin.sets.inc:62;87
+#: rules_forms/rules_forms.admin.inc:106
+#: rules_scheduler/rules_scheduler.admin.inc:151
+#, fuzzy
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: rules_admin/rules_admin.rule_forms.inc:816
+#, fuzzy
+msgid "The logical operation %label has been deleted."
+msgstr "Die logische Operation %label wurde gelöscht."
+
+#: rules_admin/rules_admin.rule_forms.inc:821
+#: rules_admin/rules_admin.sets.inc:69
+#, fuzzy
+msgid "%label has been deleted."
+msgstr "%label wurde gelöscht."
+
+#: rules_admin/rules_admin.rule_forms.inc:840
+#, fuzzy
+msgid "Alter the settings for the cloned rule."
+msgstr "Ändern Sie die Einstellungen für die geklonte Regel."
+
+#: rules_admin/rules_admin.rule_forms.inc:901
+#, fuzzy
+msgid "@group module"
+msgstr "@group-Modul"
+
+#: rules_admin/rules_admin.rule_forms.inc:949
+#, fuzzy
+msgid "Debug rule evaluation"
+msgstr "Regelauswertung debuggen"
+
+#: rules_admin/rules_admin.rule_forms.inc:951
+#, fuzzy
+msgid "When activated, debugging information is shown when rules are evaluated."
+msgstr "Wenn aktiviert, werden Debugging-Informationen angezeigt, wenn Regeln ausgewertet werden."
+
+#: rules_admin/rules_admin.rule_forms.inc:955
+#, fuzzy
+msgid "Show fixed rules and rule sets"
+msgstr "Fixierte Regeln und Regel-Sets anzeigen"
+
+#: rules_admin/rules_admin.rule_forms.inc:957
+#, fuzzy
+msgid "When activated, fixed items provided by modules are shown in the admin center too."
+msgstr "Wenn aktiviert, werden fixierte Elemente, die von anderen Modulen bereitgestellt werden, auch im Verwaltungsbereich angezeigt."
+
+#: rules_admin/rules_admin.rule_forms.inc:961
+#, fuzzy
+msgid "Ignore missing token module"
+msgstr "Fehlendes Token-Modul ignorieren"
+
+#: rules_admin/rules_admin.rule_forms.inc:963
+#, fuzzy
+msgid "Rules can use the token module to provide token replacements; if this module is not present rules will complain, unless this setting is checked."
+msgstr "Regeln können das Token-Modul verwenden, um Ersetzungen von Tokens zu unterstützen; wenn das Modul nicht aktiviert ist, meldet ‚Regeln‘ dies solange diese Einstellung aktiv ist."
+
+#: rules_admin/rules_admin.rule_forms.inc:269
+#, fuzzy
+msgid "1 action is not configurable"
+msgid_plural "@count actions are not configurable"
+msgstr[0] "1 Aktion ist nicht konfigurierbar"
+msgstr[1] ""
+
+#: rules_admin/rules_admin.rule_forms.inc:309
+#, fuzzy
+msgid "1 condition is not configurable"
+msgid_plural "@count conditions are not configurable"
+msgstr[0] "1 Bedingung ist nicht konfigurierbar"
+msgstr[1] ""
+
+#: rules_admin/rules_admin.rule_forms.inc:905
+#, fuzzy
+msgid "Unavailable argument: @arguments"
+msgid_plural "Unavailable arguments: @arguments"
+msgstr[0] "Nicht verfügbares Argument: @arguments"
+msgstr[1] ""
+
+#: rules_admin/rules_admin.sets.inc:16
+#, fuzzy
+msgid "Name"
+msgstr "Name"
+
+#: rules_admin/rules_admin.sets.inc:42
+#, fuzzy
+msgid "There are no rule sets."
+msgstr "Es gibt keine Regel-Sets."
+
+#: rules_admin/rules_admin.sets.inc:85
+#, fuzzy
+msgid "Are you sure you want to revert %label?"
+msgstr "Soll %label wirklich umgekehrt werden?"
+
+#: rules_admin/rules_admin.sets.inc:87
+#: rules_admin/rules_admin.module:86
+#, fuzzy
+msgid "Revert"
+msgstr "Zurücksetzen"
+
+#: rules_admin/rules_admin.sets.inc:94
+#, fuzzy
+msgid "%label has been reverted."
+msgstr "%label wurde umgekehrt."
+
+#: rules_admin/rules_admin.sets.inc:137
+#, fuzzy
+msgid "Rule set settings"
+msgstr "Regel-Set-Einstellungen"
+
+#: rules_admin/rules_admin.sets.inc:143
+#, fuzzy
+msgid "Choose an appropriate label for this rule set."
+msgstr "Wählen Sie eine passende Bezeichnung für dieses Regel-Set"
+
+#: rules_admin/rules_admin.sets.inc:149;346
+#, fuzzy
+msgid "Machine readable name"
+msgstr "Maschinenlesbarer Name"
+
+#: rules_admin/rules_admin.sets.inc:160
+#, fuzzy
+msgid "A comma-separated list of terms describing this rule set. Example: funny, bungee jumping."
+msgstr "Eine Liste von Begriffen, durch Kommas getrennt, die den Inhalt beschreibt."
+
+#: rules_admin/rules_admin.sets.inc:176
+#, fuzzy
+msgid "The rule set %label has been updated."
+msgstr "Das Regel-Set %label wurde aktualisiert."
+
+#: rules_admin/rules_admin.sets.inc:192
+#, fuzzy
+msgid "Arguments"
+msgstr "Argumente"
+
+#: rules_admin/rules_admin.sets.inc:198
+#, fuzzy
+msgid "You may specify some arguments, which have to be passed to the rule set when it is invoked. For each argument you have to specify a certain data type, a label and a unique machine readable name containing only alphanumeric characters, and underscores."
+msgstr "Es können Argumente angegeben werden, die beim Aufruf an das Regel-Set übergeben werden. Für jedes Argument muss eine Bezeichnung, ein bestimmter Datentyp und ein eindeutiger maschinenlesbarer Name (der nur alphanumerische Zeichen und Unterstriche enthält) angegeben werden."
+
+#: rules_admin/rules_admin.sets.inc:209
+#, fuzzy
+msgid "More arguments"
+msgstr "Weitere Argumente"
+
+#: rules_admin/rules_admin.sets.inc:210
+#, fuzzy
+msgid "If the amount of boxes above isn't enough, click here to add more arguments."
+msgstr "Wenn oben nicht genug KÄSTCHEN sind, kann hier geklickt werden um weitere Argumente hinzuzufügen."
+
+#: rules_admin/rules_admin.sets.inc:229;242
+#, fuzzy
+msgid "The name may contain only digits, numbers and underscores."
+msgstr "Der Name darf nur Buchstaben, Ziffern und Unterstriche enthalten."
+
+#: rules_admin/rules_admin.sets.inc:238
+#, fuzzy
+msgid "All fields of an argument are required."
+msgstr "Alle Felder eines Arguments sind erforderlich."
+
+#: rules_admin/rules_admin.sets.inc:256
+#, fuzzy
+msgid "Each name may be used only once."
+msgstr "Jeder Name darf nur einmal verwendet werden."
+
+#: rules_admin/rules_admin.sets.inc:285;344
+#, fuzzy
+msgid "Data type"
+msgstr "Datentyp"
+
+#: rules_admin/rules_admin.sets.inc:381
+#, fuzzy
+msgid "The rule set %label has been added."
+msgstr "Das Regel-Set %label wurde hinzugefügt."
+
+#: rules_admin/rules_admin.module:23
+#, fuzzy
+msgid "Rule sets are similar in concept to subroutines and can be invoked by actions or manually by code or another module."
+msgstr "Regel-Sets sind vom Konzept her ähnlich wie Unterprogramme und können durch Aktionen, manuell durch Code oder durch ein anderes Modul aufgerufen werden."
+
+#: rules_admin/rules_admin.module:26
+#, fuzzy
+msgid "This is an overview about rules that are triggered by a certain event. A rule may contain conditions and actions, which are executed only when the conditions are met."
+msgstr "Dies ist eine Übersicht über Regeln, die von einem bestimmten Ereignis angestossen werden. Eine Regel kann Bedingungen und Aktionen enthalten, die nur ausgeführt werden, wenn die Bedingungen erfüllt sind."
+
+#: rules_admin/rules_admin.module:279
+#, fuzzy
+msgid "administer rules"
+msgstr "Regeln verwalten"
+
+#: rules_admin/rules_admin.module:37
+#, fuzzy
+msgid "Rules administration links."
+msgstr "Links für die Verwaltung der Regeln"
+
+#: rules_admin/rules_admin.module:53
+#, fuzzy
+msgid "Customize your site by configuring rules that are evaluated on events."
+msgstr "Passen Sie Ihre Website an, indem Sie Regeln konfigurieren, die bei Ereignissen ausgewertet werden."
+
+#: rules_admin/rules_admin.module:62;184;216
+#, fuzzy
+msgid "Overview"
+msgstr "Übersicht"
+
+#: rules_admin/rules_admin.module:67;222
+#, fuzzy
+msgid "Add a new rule"
+msgstr "Neue Regel hinzufügen"
+
+#: rules_admin/rules_admin.module:97
+#, fuzzy
+msgid "Import / Export"
+msgstr "Import / Export"
+
+#: rules_admin/rules_admin.module:98
+msgid "Export your rules as text or import rules."
+msgstr ""
+
+#: rules_admin/rules_admin.module:121
+#, fuzzy
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: rules_admin/rules_admin.module:122
+msgid "Set display options, show/hide Rules messages."
+msgstr ""
+
+#: rules_admin/rules_admin.module:141
+#, fuzzy
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: rules_admin/rules_admin.module:149
+#, fuzzy
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: rules_admin/rules_admin.module:167
+#, fuzzy
+msgid "Clone rule"
+msgstr "Regel klonen"
+
+#: rules_admin/rules_admin.module:176
+#, fuzzy
+msgid "Create and manage rule sets."
+msgstr "Regel-Sets erstellen und verwalten."
+
+#: rules_admin/rules_admin.module:189
+#, fuzzy
+msgid "Add a new rule set"
+msgstr "Neues Regel-Set hinzufügen"
+
+#: rules_admin/rules_admin.install:29
+msgid "Example rule: When viewing an unpublished page, publish it."
+msgstr ""
+
+#: rules_admin/rules_admin.install:37
+#, fuzzy
+msgid "Viewed content is published"
+msgstr "Inhalt soll angezeigt werden"
+
+#: rules_admin/rules_admin.install:43
+#, fuzzy
+msgid "Viewed content is Page"
+msgstr "Inhalt wird als Seite angezeigt"
+
+#: rules_admin/rules_admin.install:49
+#, fuzzy
+msgid "Publish viewed content"
+msgstr "  veröffentliche *alle* Inhalte"
+
+#: rules_admin/rules_admin.install:59
+msgid "Example: Empty rule set working with content"
+msgstr ""
+
+#: rules_admin/rules_admin.info:0
+#, fuzzy
+msgid "Rules Administration UI"
+msgstr "Links für die Verwaltung der Regeln"
+
+#: rules_admin/rules_admin.info:0
+msgid "Provides the administration UI for rules."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:17
+msgid "Enable event activation messages on forms"
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:19
+msgid "If checked, there will be a message on each form containing a link to activate events for the form. Only visible for your currently logged in user account."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:23
+#, fuzzy
+msgid "Display form element IDs"
+msgstr "Formularelementschlüssel und -reihenfolgen anzeigen"
+
+#: rules_forms/rules_forms.admin.inc:25
+msgid "If checked, the identifier of every single form element will be displayed on event-activated forms. Only visible for your currently logged in user account."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:29
+#, fuzzy
+msgid "Save settings"
+msgstr "Einstellungen speichern"
+
+#: rules_forms/rules_forms.admin.inc:36
+msgid "Forms where events are activated"
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:38
+msgid "Forms that currently invoke events. Select forms to deactivate events on them."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:42
+#, fuzzy
+msgid "Deactivate events"
+msgstr " - Events Feed"
+
+#: rules_forms/rules_forms.admin.inc:58
+#, fuzzy
+msgid "The settings have been saved."
+msgstr "Die Einstellungen wurden gespeichert."
+
+#: rules_forms/rules_forms.admin.inc:71
+#, fuzzy
+msgid "The event settings have been saved."
+msgstr "Die Einstellungen wurden gespeichert."
+
+#: rules_forms/rules_forms.admin.inc:80
+msgid "Events for %form_id have already been activated."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:93
+#, fuzzy
+msgid "Custom form label"
+msgstr "Bezeichner für ein individuelles Vorschaubild"
+
+#: rules_forms/rules_forms.admin.inc:96
+msgid "Enter a custom label to better recognize the form in the administration user interface."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:104
+#, fuzzy
+msgid "Are you sure you want to activate events for %form?"
+msgstr "CAPTCHA für die form_id %form_id wirklich löschen?"
+
+#: rules_forms/rules_forms.admin.inc:105
+msgid "Once the activation is confirmed, events on this form can be used to trigger rules."
+msgstr ""
+
+#: rules_forms/rules_forms.admin.inc:106
+#, fuzzy
+msgid "Activate"
+msgstr "aktivieren"
+
+#: rules_forms/rules_forms.admin.inc:116
+#, fuzzy
+msgid "%form has been activated."
+msgstr "LDAP-Konfiguration %name wurde aktiviert."
+
+#: rules_forms/rules_forms.rules.inc:21
+#, fuzzy
+msgid "@form is being built"
+msgstr "Newsletter %newsletter wird gesendet"
+
+#: rules_forms/rules_forms.rules.inc:26
+#, fuzzy
+msgid "@form is submitted"
+msgstr "Verfasst von !a am @b."
+
+#: rules_forms/rules_forms.rules.inc:31
+#, fuzzy
+msgid "@form is being validated"
+msgstr "Newsletter %newsletter wird gesendet"
+
+#: rules_forms/rules_forms.rules.inc:44;58;69;81;93;110;132;149;368
+#, fuzzy
+msgid "Form"
+msgstr "Formular"
+
+#: rules_forms/rules_forms.rules.inc:45;369
+#, fuzzy
+msgid "Form state"
+msgstr "Status hinzufÃ¼gen"
+
+#: rules_forms/rules_forms.rules.inc:46
+#, fuzzy
+msgid "Form ID"
+msgstr "Formular ID"
+
+#: rules_forms/rules_forms.rules.inc:56
+msgid "Set the redirect target of the form"
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:59
+#, fuzzy
+msgid "Path"
+msgstr "Pfad"
+
+#: rules_forms/rules_forms.rules.inc:60
+#, fuzzy
+msgid "Query"
+msgstr "Abfrage"
+
+#: rules_forms/rules_forms.rules.inc:61
+#, fuzzy
+msgid "Fragment"
+msgstr "Dokumentenfragment"
+
+#: rules_forms/rules_forms.rules.inc:67
+#, fuzzy
+msgid "Hide an element of the form"
+msgstr "Formularfelder verbergen"
+
+#: rules_forms/rules_forms.rules.inc:72;84;96;113;135;152;372
+#, fuzzy
+msgid "Form element ID"
+msgstr "Ungültige form_id"
+
+#: rules_forms/rules_forms.rules.inc:73
+msgid "The element that should not appear."
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:79
+#, fuzzy
+msgid "Disable an element of the form"
+msgstr "Anzeige von Daten bei deaktiviertem Formular"
+
+#: rules_forms/rules_forms.rules.inc:85
+#, fuzzy
+msgid "The element that should be disabled."
+msgstr "Die Nachricht, die verschickt werden soll."
+
+#: rules_forms/rules_forms.rules.inc:91
+msgid "Adjust weight of an element in the form"
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:97
+#, fuzzy
+msgid "The element that should be adjusted."
+msgstr "Die Nachricht, die verschickt werden soll."
+
+#: rules_forms/rules_forms.rules.inc:101
+#, fuzzy
+msgid "Element weight"
+msgstr "Karteireitergewichtung"
+
+#: rules_forms/rules_forms.rules.inc:102
+msgid "Low numbers make the element bubble up, high numbers sink it down."
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:108
+msgid "Insert HTML prefix/suffix code"
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:114;373
+msgid "ID of the form element to be targeted."
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:118
+#, fuzzy
+msgid "Prefixed HTML"
+msgstr "HTML-Filter"
+
+#: rules_forms/rules_forms.rules.inc:119
+#, fuzzy
+msgid "HTML inserted before."
+msgstr "HTML Code, welcher vor dem Link eingebaut werden soll"
+
+#: rules_forms/rules_forms.rules.inc:123
+#, fuzzy
+msgid "Suffixed HTML"
+msgstr "HTML-Filter"
+
+#: rules_forms/rules_forms.rules.inc:124
+#, fuzzy
+msgid "HTML inserted after."
+msgstr "HTML Code, welcher nach dem Link eingebaut werden soll"
+
+#: rules_forms/rules_forms.rules.inc:130
+#: rules_forms/rules_forms.rules_forms.inc:146
+#, fuzzy
+msgid "Set a form error"
+msgstr "FEHLER: Kann Audiokanäle nicht setzen\n"
+
+#: rules_forms/rules_forms.rules.inc:136
+#, fuzzy
+msgid "The element that should be marked."
+msgstr "Die Nachricht, die verschickt werden soll."
+
+#: rules_forms/rules_forms.rules.inc:141
+#, fuzzy
+msgid "The message that should be displayed to the user."
+msgstr "Wie die Nodes dem Benutzer angezeigt werden."
+
+#: rules_forms/rules_forms.rules.inc:147
+msgid "Set the default value of a form element"
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:153
+#, fuzzy
+msgid "The element that should be targeted."
+msgstr "Die Nachricht, die verschickt werden soll."
+
+#: rules_forms/rules_forms.rules.inc:157
+#, fuzzy
+msgid "Default value"
+msgstr "Standardwert"
+
+#: rules_forms/rules_forms.rules.inc:158
+msgid "The value(s) that will be displayed as default. If the form element allows multiple values, enter one value per line."
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:167
+msgid "Examples on the \"Create Story\" form: \"title\" for the title field or \"body_field[body]\" for the body field."
+msgstr ""
+
+#: rules_forms/rules_forms.rules.inc:176
+#, fuzzy
+msgid "form"
+msgstr "Formular"
+
+#: rules_forms/rules_forms.rules.inc:184
+#, fuzzy
+msgid "form state"
+msgstr "Status hinzufÃ¼gen"
+
+#: rules_forms/rules_forms.rules.inc:366
+#, fuzzy
+msgid "Form element has value"
+msgstr "Die Wertformel weist einen Syntax-Fehler auf."
+
+#: rules_forms/rules_forms.rules.inc:377
+#, fuzzy
+msgid "Value(s)"
+msgstr "Wert"
+
+#: rules_forms/rules_forms.rules.inc:378
+msgid "Value(s) assigned to the form element. If the form element allows multiple values, enter one value per line."
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:56
+msgid "ID of the form element to be targeted. Leave empty to apply prefix/suffix code to the whole form."
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:82
+msgid "You have to specify at least the prefix or suffix field."
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:98
+#, fuzzy
+msgid "Adjust weight of form element '@element' to @weight"
+msgstr "Passen Sie die Gewichtung an, um die Reihenfolge anzupassen."
+
+#: rules_forms/rules_forms.rules_forms.inc:105
+#, fuzzy
+msgid "Hide form element '@element'"
+msgstr "Formularfelder verbergen"
+
+#: rules_forms/rules_forms.rules_forms.inc:112
+#, fuzzy
+msgid "Disable form element '@element'"
+msgstr "Anzeige von Daten bei deaktiviertem Formular"
+
+#: rules_forms/rules_forms.rules_forms.inc:126
+msgid "Set form redirect target to '@redirect'"
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:134
+msgid "Insert HTML prefix/suffix code on form"
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:137
+msgid "Insert HTML prefix/suffix code on '@element'"
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:148
+msgid "Set form error on element '@element'"
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:155
+msgid "Set default value on form element '@element'"
+msgstr ""
+
+#: rules_forms/rules_forms.rules_forms.inc:162
+#, fuzzy
+msgid "Form element '@element' value check"
+msgstr "Das Element »%s« fehlt - überprüfen Sie Ihren Installation von GStreamer."
+
+#: rules_forms/rules_forms.module:19
+msgid "Settings and overview of form events."
+msgstr ""
+
+#: rules_forms/rules_forms.module:65
+#, fuzzy
+msgid "Activate events for "
+msgstr "Linie für zusammengefasste Ereignisse"
+
+#: rules_forms/rules_forms.module:107
+msgid "Hidden element ID: %elem"
+msgstr ""
+
+#: rules_forms/rules_forms.module:110
+#, fuzzy
+msgid "Element ID: %elem"
+msgstr "(@provider ID: !value)"
+
+#: rules_forms/rules_forms.module:115
+msgid "Container element ID: %elem"
+msgstr ""
+
+#: rules_forms/rules_forms.module:29
+#, fuzzy
+msgid "Form events"
+msgstr " - Events Feed"
+
+#: rules_forms/rules_forms.module:30
+msgid "Configure Rules forms events."
+msgstr ""
+
+#: rules_forms/rules_forms.module:39
+#, fuzzy
+msgid "Activate events for a form"
+msgstr "Arbeitsablauf-Formular anzeigen für:"
+
+#: rules_forms/rules_forms.info:0
+#, fuzzy
+msgid "Rules Forms support"
+msgstr "GD !format Unterstüzung"
+
+#: rules_forms/rules_forms.info:0
+msgid "Provides events, conditions and actions for rule-based form customization."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:23
+msgid "To display scheduled tasks you have to install the <a href=\"http://drupal.org/project/views\">Views</a> module."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:33
+msgid "Manual scheduling of rule sets without arguments"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:39
+msgid "There are currently no rule sets without arguments available."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:43;81
+#: rules_scheduler/includes/rules_scheduler.views.inc:56
+#, fuzzy
+msgid "Rule set name"
+msgstr "Der Name des zeitgesteuerten Regel-Sets."
+
+#: rules_scheduler/rules_scheduler.admin.inc:49
+#: rules_scheduler/rules_scheduler.rules.inc:32;46
+#, fuzzy
+msgid "Identifier"
+msgstr "Bezeichner"
+
+#: rules_scheduler/rules_scheduler.admin.inc:51
+#: rules_scheduler/rules_scheduler.rules.inc:33
+msgid "User provided string to identify the task. Existing tasks for this rule set with the same identifier will be replaced."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:57
+#, fuzzy
+msgid "Schedule"
+msgstr "Zeitplan"
+
+#: rules_scheduler/rules_scheduler.admin.inc:72
+msgid "Delete tasks by rule set name"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:77
+msgid "There are currently no scheduled tasks available to delete."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:114
+msgid "The rule set %name has been scheduled on %date (GMT)."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:123
+msgid "All tasks associated with %ruleset have been deleted."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:136
+#, fuzzy
+msgid "Are you sure you want to delete task %tid?"
+msgstr "Sind Sie sich sicher, dass Sie die Aktion %title lÃ¶schen wollen?"
+
+#: rules_scheduler/rules_scheduler.admin.inc:138
+msgid "This task refers to the custom identifier %id and rule set %ruleset, it will be executed on %date. The delete action cannot be undone."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:145
+msgid "This task refers to the rule set %ruleset and will be executed on %date. The delete action cannot be undone."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.admin.inc:159
+#, fuzzy
+msgid "Task %label has been deleted."
+msgstr "Die logische Operation %label wurde gelöscht."
+
+#: rules_scheduler/rules_scheduler.rules.inc:23
+#, fuzzy
+msgid "Schedule \"@set\""
+msgstr "@set zeitplanen"
+
+#: rules_scheduler/rules_scheduler.rules.inc:27
+#, fuzzy
+msgid "Scheduled evaluation date"
+msgstr "Datum der zeitgesteuerten Auswertung"
+
+#: rules_scheduler/rules_scheduler.rules.inc:40
+#, fuzzy
+msgid "Delete scheduled tasks"
+msgstr "Ausgewählte terminierte Buchung löschen"
+
+#: rules_scheduler/rules_scheduler.rules.inc:47
+msgid "All tasks that are annotated with this user provided identifier will be deleted."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:52
+msgid "All tasks that execute this rule set will be deleted."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:82
+#, fuzzy
+msgid "The evaluation of the rule set is going to be scheduled by cron. So make sure you have configured cron correctly by checking your site's !status."
+msgstr "Die Auswertung des Regel-Sets erfolgt zeitgesteuert durch Cron. Es sollte daher der !status der Website geprüft werden, ob Cron korrekt konfiguriert ist"
+
+#: rules_scheduler/rules_scheduler.rules.inc:82
+#, fuzzy
+msgid "Also note that the scheduling time accuracy depends on your configured cron interval."
+msgstr "Zu beachten ist, dass die Genauigkeit der Zeitsteuerung vom konfigurierten Cron-Intervall abhängt."
+
+#: rules_scheduler/rules_scheduler.rules.inc:108
+msgid "This action allows you to cancel scheduled tasks that are waiting for future execution."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules.inc:108
+msgid "They can be addressed by an identifier or by the rule set name, if both are specified only tasks fulfilling both requirements will be deleted."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.rules_forms.inc:30
+#, fuzzy
+msgid "You have to specify at least one field."
+msgstr "Sie sollten wenigstens eine MRL zum Anhängen angeben!.\n"
+
+#: rules_scheduler/rules_scheduler.module:112
+msgid "Packing arguments for scheduling the rule set %set failed."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.module:41
+#, fuzzy
+msgid "Scheduling"
+msgstr "Veröffentlichungsoptionen"
+
+#: rules_scheduler/rules_scheduler.module:48
+#, fuzzy
+msgid "Delete a scheduled task"
+msgstr "Die ID der zeitgesteuerten Aufgabe."
+
+#: rules_scheduler/rules_scheduler.install:30
+#, fuzzy
+msgid "Stores a schedule for rule sets."
+msgstr "Speichert einen Zeitplan für Regel-Sets."
+
+#: rules_scheduler/rules_scheduler.install:36
+#, fuzzy
+msgid "The scheduled task's id."
+msgstr "Die ID der zeitgesteuerten Aufgabe."
+
+#: rules_scheduler/rules_scheduler.install:43
+#, fuzzy
+msgid "The scheduled rule set's name."
+msgstr "Der Name des zeitgesteuerten Regel-Sets."
+
+#: rules_scheduler/rules_scheduler.install:48
+#, fuzzy
+msgid "When the task is to be scheduled."
+msgstr "Wann die Aufgabe zeitgesteuert ausgeführt werden soll."
+
+#: rules_scheduler/rules_scheduler.install:61;79
+msgid "The user defined string identifying this task."
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.install:83
+msgid "Notice: concrete scheduling dates have to be specified in GMT now, so be aware to add out your local timezone!"
+msgstr ""
+
+#: rules_scheduler/rules_scheduler.info:0
+#, fuzzy
+msgid "Rules Scheduler"
+msgstr "Regel-Zeitplaner"
+
+#: rules_scheduler/rules_scheduler.info:0
+#, fuzzy
+msgid "Schedule the execution of rule sets."
+msgstr "Führt Regel-Sets zeitgesteuert aus."
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:37
+#, fuzzy
+msgid "Scheduled rule sets"
+msgstr "Führt Regel-Sets zeitgesteuert aus."
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:38
+msgid "Scheduled rules that are executed based on time and cron"
+msgstr ""
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:43
+#, fuzzy
+msgid "Tid"
+msgstr "[tid]"
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:44
+msgid "The internal ID of the scheduled rule set"
+msgstr ""
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:57
+#, fuzzy
+msgid "The name of the rule set"
+msgstr "Der Name des zeitgesteuerten Regel-Sets."
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:69
+#, fuzzy
+msgid "Scheduled date"
+msgstr "Datum der zeitgesteuerten Auswertung"
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:70
+#, fuzzy
+msgid "Scheduled date and time stamp"
+msgstr "Die Datums und Zeit-Option ist %s."
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:83
+#, fuzzy
+msgid "User provided identifier"
+msgstr "Die ID des aktuellen Benutzers."
+
+#: rules_scheduler/includes/rules_scheduler.views.inc:84
+msgid "ID to recognize this specific scheduled task"
+msgstr ""
+
+#: rules_test/rules_test.rules_defaults.inc:19
+msgid "Test altering arguments by reference"
+msgstr ""
+
+#: rules_test/rules_test.rules_defaults.inc:44;84
+#, fuzzy
+msgid "Test changing arguments per action"
+msgstr "Das Ändern eines Arguments durch eine Aktion testen"
+
+#: rules_test/rules_test.rules_defaults.inc:62
+msgid "Test changing arguments per action - check"
+msgstr ""
+
+#: rules_test/rules_test.rules_defaults.inc:106
+#, fuzzy
+msgid "Test adding a new variable"
+msgstr "Das hinzufügen einer neuen Variable testen"
+
+#: rules_test/rules_test.info:0
+#, fuzzy
+msgid "Rules Simpletest"
+msgstr "Zugriffsregeln"
+
+#: rules_test/rules_test.info:0
+#, fuzzy
+msgid "Tests the functionality of the rule engine"
+msgstr "Testet die Funktionalität der Regel-Engine"
+
