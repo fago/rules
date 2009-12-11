@@ -319,16 +319,17 @@ function rules_forms_action_set_element(&$form, $element, $value) {
   $lines = explode("\r\n", $value);
   // Check if the form element is a CCK field
   if (array_key_exists('#field_name', $form_element)) {
+    $default_value_key = $form_element['#columns'][0];
     // Check if multiple default values are allowed
     if (isset($form_element['#default_value'][0])) {
       // Unset old default values
       $form_element['#default_value'] = array();
       foreach ($lines as $i => $line) {
-        $form_element['#default_value'][$i]['value'] = $line;
+        $form_element['#default_value'][$i][$default_value_key] = $line;
       }
     }
     else {
-      $form_element['#default_value']['value'] = $value;
+      $form_element['#default_value'][$default_value_key] = $value;
     }
   }
   else {
