@@ -10,8 +10,6 @@
 
 /**
  * Implements hook_rules_file_info() on behalf of the node module.
- * This is invoked by rules_rules_file_info(). Usually it would have to be
- * node_rules_file_info().
  */
 function rules_node_file_info() {
   return array('modules/node.eval');
@@ -19,8 +17,6 @@ function rules_node_file_info() {
 
 /**
  * Implements hook_rules_data_info() on behalf of the node module.
- * This is invoked by rules_rules_data_info(). Usually it would have to be
- * node_rules_data_info().
  */
 function rules_node_data_info() {
   return array(
@@ -34,8 +30,6 @@ function rules_node_data_info() {
 
 /**
  * Implements hook_rules_event_info() on behalf of the node module.
- * This is invoked by rules_rules_event_info(). Usually it would have to be
- * node_rules_event_info().
  */
 function rules_node_event_info() {
   $items = array(
@@ -94,8 +88,6 @@ function rules_events_node_variables($node_label, $update = FALSE) {
 
 /**
  * Implements hook_rules_condition_info() on behalf of the node module.
- * This is invoked by rules_rules_condition_info(). Usually it would have to be
- * node_rules_condition_info().
  */
 function rules_node_condition_info() {
   $items = array();
@@ -131,8 +123,6 @@ function rules_node_condition_info() {
 
 /**
  * Implements hook_rules_action_info() on behalf of the node module.
- * This is invoked by rules_rules_action_info(). Usually it would have to be
- * node_rules_action_info().
  */
 function rules_node_action_info() {
   return array(

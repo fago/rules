@@ -16,7 +16,7 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test');
+    parent::setUp('rules', 'rules_test', 'entity_metadata');
     RulesLog::logger()->clear();
   }
 
@@ -220,6 +220,24 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual($conditions[0]->weight, -1, 'Condition sorted correctly.');
     $this->assertEqual($conditions[1]->weight, 0, 'Condition sorted correctly.');
     $this->assertEqual($conditions[2]->weight, 10, 'Condition sorted correctly.');
+  }
+
+  /**
+   * Tests using data selectors.
+   */
+  function testDataSelectors() {
+    $body[LANGUAGE_NONE][0] = array('value' => '<b>The body & nothing.</b>');
+    $node = $this->drupalCreateNode(array('body' => $body, 'type' => 'page', 'summary' => ''));
+
+    $rule = rule();
+    $rule->action('rules_action_load_node')
+         ->action('rules_action_drupal_message', array('message:select' => 'node_loaded:body'))
+         ->execute($node->nid);
+
+    RulesLog::logger()->checkLog();
+    $msg = drupal_get_messages();
+    $wrapper = entity_metadata_wrapper('node', $node);
+    $this->assertEqual($msg['status'][0], $wrapper->body->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
   }
 
   function testRuleBuilding() {

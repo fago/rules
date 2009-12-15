@@ -246,10 +246,16 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       'variables' => array(),
       'all variables' => array(),
       'executed' => $this,
+
+      // Maps metadata wrappers to variables, needed to save changes. Note that
+      // we use an ArrayObject to ensure a unique array per execution state.
+      'wrapper map' => new ArrayObject(),
+
       // Keep the ids of blocked rules due to recursion prevention. Note that
       // we use an ArrayObject to ensure a unique array per execution state.
       'blocked' => isset($this->state) ? $this->state['blocked'] : new ArrayObject(),
-      // If this is a recursive execution, keep the previous state.
+
+      // If this is a recursive execution, save the previous state for later.
       'stack' => isset($this->state) ? $this->state : NULL,
     );
     $args = $this->getPassedArguments($args);
@@ -261,6 +267,22 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       $this->addVariable($name, $args[$name], $info, $this->state);
     }
     return $this->state;
+  }
+
+  /**
+   * Run cleanup operations after execution. Takes care of saving changed vars
+   * and makes sure the garbage collector can destruct them.
+   */
+  protected function cleanUp() {
+    if (isset($this->state) && $this->state['executed'] === $this) {
+      // Make changes permanent.
+      $vars = (array)$this->state['wrapper map'] + $this->state['all variables'];
+      foreach ($vars as $var) {
+        $var->saveChanges(TRUE, $this->state)->destroy();
+      }
+    }
+    // For recursive invocations pop the state from the stack, else set NULL.
+    $this->state = $this->state['stack'];
   }
 
   /**
@@ -297,21 +319,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       $variable = $data;
     }
     $state['variables'][$name] = $variable;
-  }
-
-  /**
-   * Run cleanup operations after execution. Takes care of saving changed vars
-   * and makes sure the garbage collector can destruct them.
-   */
-  protected function cleanUp() {
-    if (isset($this->state) && $this->state['executed'] === $this) {
-      foreach ($this->state['all variables'] as $var) {
-        $var->saveChanges(TRUE, $this->state);
-        $var->destroy();
-      }
-    }
-    // For recursive invocations pop the state from the stack, else set NULL.
-    $this->state = $this->state['stack'];
   }
 
   /**
@@ -486,7 +493,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     foreach ($this->info['parameter'] as $name => $info) {
       if (isset($this->settings[$name . ':select'])) {
         $parts = explode(':', $this->settings[$name . ':select'], 2);
-        $vars[$parts[0]] = $info;
+        $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
       }
       elseif (!isset($this->settings[$name]) && empty($info[$name]['optional'])) {
         $vars[$name] = $info;
@@ -553,7 +560,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         $args[$name] = $vars[$this->settings[$name . ':select']];
       }
       elseif (isset($this->settings[$name . ':select'])) {
-        $args[$name] = $this->getSelectedVariable($this->settings[$name . ':select'], $vars);
+        $args[$name] = $this->getSelectedVariable($this->settings[$name . ':select'], $info, $state);
       }
       elseif (isset($this->settings[$name])) {
         $args[$name] = $this->settings[$name];
@@ -567,6 +574,12 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       else {
         $args[$name] = !empty($info['default value']) ? $info['default value'] : NULL;
       }
+      // Support passing already sanitized values.
+      if ($info['type'] == 'text' && !empty($info['sanitized'])) {
+        //TODO: support a method for getting sanitized values of text wrappers,
+        // so tokens can make use of it.
+        $args[$name] = check_plain((string)$args[$name]);
+      }
     }
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
@@ -575,10 +588,19 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     return $args;
   }
 
-  protected function getSelectedVariable($select, array $variables) {
-
-    // TODO: Strip of part behind : get the variable and apply the data selector.
-    throw new RulesException('Needed variable "@var" is missing.', array('@var' => $select));
+  protected function getSelectedVariable($selector, &$info, array $state) {
+    try {
+      $wrapper = rules_get_metadata_wrapper($selector, $state);
+      $options = array('decode' => TRUE);
+      if ($info['type'] == 'text' && !empty($info['sanitized'])) {
+        $options = array('sanitize' => TRUE);
+        unset($info['sanitized']);
+      }
+      return $wrapper->value($options);
+    }
+    catch (EntityMetadataException $e) {
+      throw new RulesException('Unable to apply data selector "' . check_plain($selector) . '".');
+    }
   }
 
   public function __sleep() {

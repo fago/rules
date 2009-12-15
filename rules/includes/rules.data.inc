@@ -72,7 +72,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
 
   protected $hook = 'data_info';
 
-  protected $data = NULL;
+  protected $data = NULL, $wrapper = NULL;
   protected $name;
   protected $info = array();
 
@@ -146,8 +146,26 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
   /**
    * Gets the information about this data type.
    */
-  public function getInfo() {
+  public function info() {
     return $this->info;
+  }
+
+  /**
+   * Returns the entity metadata wrapper for this data type, useful for deriving
+   * properties of an entity.
+   *
+   * @return EntityMetadataWrapper
+   */
+  public function properties(array $state = NULL) {
+    if (!isset($this->wrapper)) {
+      $data = &$this->get($state);
+      $this->wrapper = entity_metadata_wrapper($this->info['type'], $data);
+      // Register this as the variable for the wrapper in the state's map.
+      if (!empty($state['wrapper map'])) {
+        $state['wrapper map'][spl_object_hash($this->wrapper)] = $this;
+      }
+    }
+    return $this->wrapper;
   }
 
   /**
@@ -192,6 +210,9 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    */
   public function update($data, $permanent = FALSE) {
     $this->data = $data;
+    if (isset($this->wrapper)) {
+      $this->wrapper->set($data);
+    }
     if ($permanent) {
       $this->saveChanges(FALSE);
     }
