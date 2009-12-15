@@ -1,0 +1,556 @@
+<?php
+// $Id$
+
+/**
+ * @file Rules Testing Module - File containing test cases.
+ */
+
+class RulesTestCase extends DrupalWebTestCase {
+
+  static function getInfo() {
+    return array(
+      'name' => 'Rules Core tests',
+      'description' => 'Test using the rules API to create and evaluate rules.',
+      'group' => 'Rules',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('rules', 'rules_test');
+    RulesLog::logger()->clear();
+  }
+
+  protected function createTestRule() {
+    $rule = rule();
+    $rule->condition('rules_test_condition_true')
+         ->condition('rules_test_condition_true')
+         ->condition(rules_or()
+           ->condition(rules_condition('rules_test_condition_true')->negate())
+           ->condition('rules_test_condition_false')
+           ->condition(rules_and()
+             ->condition('rules_test_condition_false')
+             ->condition('rules_test_condition_true')
+             ->negate()
+           )
+         );
+    $rule->action('rules_test_action');
+    return $rule;
+  }
+
+  /**
+   * Tests creating a rule and iterating over the rule elements.
+   */
+  function testRuleCreation() {
+    $rule = $this->createTestRule();
+    $rule->execute();
+    $log = RulesLog::logger()->get();
+    $last = array_pop($log);
+    $this->assertEqual($last[0], 'action called', 'Action called');
+
+    // Make sure condition and action iterators are working.
+    $it = new RecursiveIteratorIterator($rule->conditions(), RecursiveIteratorIterator::SELF_FIRST);
+    $this->assertEqual(iterator_count($it), 8, 'Iterated over all conditions and condition containers');
+    $it = new RecursiveIteratorIterator($rule->conditions());
+    $this->assertEqual(iterator_count($it), 6, 'Iterated over all conditions');
+    $this->assertEqual(iterator_count($rule->actions()), 1, 'Iterated over all actions');
+
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test setting up an action with some action_info and serializing and
+   * executing it.
+   */
+  function testActionSetup() {
+    $action = rules_action('rules_node_publish_action');
+    // Try skipping setup on wakeup.
+    $action->setSkipSetUp(TRUE);
+    $s = serialize($action);
+    $action2 = unserialize($s);
+    $node = (object)array('status' => 0, 'type' => 'page');
+    $node->title[LANGUAGE_NONE][0]['value'] = 'test';
+
+    $action2->execute($node);
+    $this->assertEqual($node->status, 1, 'Action executed correctly');
+
+    $this->assertTrue(in_array('node', array_keys($action2->getParameterInfo())), 'Parameter info returned.');
+
+    $node->status = 0;
+    $action2->execute(array('node' => $node));
+    $this->assertEqual($node->status, 1, 'Action executed correctly');
+
+    // Test calling an extended + overriden method.
+    $this->assertEqual($action2->help(), 'custom', 'Using custom help callback.');
+
+    // Inspect the cache
+    //$this->pass(serialize(rules_get_cache()));
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test executing with wrong arguments.
+   */
+  function testActionExecutionFails() {
+    $action = rules_action('rules_node_publish_action');
+    try {
+      $action->execute();
+      $this->fail("Execution hasn't created an exception.");
+    }
+    catch (RulesException $e) {
+      $this->pass("RulesException was thrown: ". $e);
+    }
+  }
+
+  /**
+   * Test setting up a rule and mapping variables.
+   */
+  function testVariableMapping() {
+    $rule = rule();
+    $rule->condition(rules_condition('rules_condition_content_is_published')->negate())
+         ->condition('rules_condition_content_is_type', array('type' => array('page', 'story')))
+         ->action('rules_node_publish_action', array('node:select' => 'node_unchanged'));
+
+    $this->assertTrue(in_array('node', array_keys($rule->getParameterInfo())), 'Parameter info contains node.');
+    $this->assertTrue(in_array('node_unchanged', array_keys($rule->getParameterInfo())), 'Parameter info contains node_unchanged.');
+
+    $node1 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
+    $node2 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
+    $rule->execute($node1, $node2);
+    $this->assertEqual($node2->status, 1, 'Action executed correctly on node2.');
+    $this->assertEqual($node1->status, 0, 'Action not executed on node1.');
+
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Tests CRUD functionality.
+   */
+  function testRulesCRUD() {
+    $rule = $this->createTestRule();
+    $rule->save();
+
+    $this->assertEqual(TRUE, $rule->active, 'Rule is active.');
+    $this->assertEqual(0, $rule->weight, 'Rule weight is zero.');
+
+    $rule2 = array_pop(entity_load('rules_config', array($rule->id)));
+    $this->assertEqual($rule->id, $rule2->id, 'Rule created and loaded');
+    $this->assertEqual(get_class($rule2), get_class($rule), 'Class properly instantiated.');
+    $rule2->execute();
+    //Update.
+    $rule2->save();
+
+    // Make sure all rule elements are still here.
+    $it = new RecursiveIteratorIterator($rule2->conditions(), RecursiveIteratorIterator::SELF_FIRST);
+    $this->assertEqual(iterator_count($it), 8, 'Iterated over all conditions and condition containers');
+    $it = new RecursiveIteratorIterator($rule2->conditions());
+    $this->assertEqual(iterator_count($it), 6, 'Iterated over all conditions');
+    $this->assertEqual(iterator_count($rule2->actions()), 1, 'Iterated over all actions');
+
+    //Delete.
+    $rule2->delete();
+    $this->assertEqual(entity_load('rules_config', array($rule->id)), array(), 'Deleted.');
+  }
+
+  /**
+   * Test saving a parameter.
+   */
+  function testActionSaving() {
+    $action = rules_action('rules_node_publish_action_save');
+    $node = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
+    $action->execute(array('node' => $node));
+
+    $this->assertEqual($node->status, 1, 'Action executed correctly on node.');
+    // Sync node_load cache with node_save
+    entity_get_controller('node')->resetCache();
+
+    $node = node_load($node->nid);
+    $this->assertEqual($node->status, 1, 'Node has been saved.');
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test adding a variable and optional parameters.
+   */
+  function testVariableAdding() {
+    $node = $this->drupalCreateNode();
+    $rule = rule();
+    $rule->action('rules_action_load_node')
+         ->action('rules_action_delete_node', array('node:select' => 'node_loaded'))
+         ->execute($node->nid);
+
+    $this->assertEqual(FALSE, node_load($node->nid), 'Variable added and skipped optional parameter.');
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test adding a variable with a custom variable name.
+   */
+  function testVariableAddingCustom() {
+    $node = $this->drupalCreateNode();
+    $rule = rule();
+    $rule->action('rules_action_load_node', array('node_loaded:var' => 'node'))
+         ->action('rules_action_delete_node')
+         ->execute($node->nid);
+
+    $this->assertEqual(FALSE, node_load($node->nid), 'Variable with custom name added.');
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test passing arguments by reference to an action.
+   */
+  function testPassingByReference() {
+    $data = array('foo' => 'bar');
+    $args = array('arg' => &$data);
+    rules_action('rules_action_test_reference')->execute($args);
+    $this->assertTrue($data['changed'], 'Parameter has been passed by reference');
+  }
+
+  /**
+   * Test sorting rule elements.
+   */
+  function testSorting() {
+    $rule = $this->createTestRule();
+    $conditions = $rule->conditions();
+    $conditions[0]->weight = 10;
+    $conditions[2]->weight = -1;
+    // For testing use a deep sort, even if not necessary here.
+    $rule->sortChildren(TRUE);
+    $conditions = $rule->conditions();
+    $this->assertEqual($conditions[0]->weight, -1, 'Condition sorted correctly.');
+    $this->assertEqual($conditions[1]->weight, 0, 'Condition sorted correctly.');
+    $this->assertEqual($conditions[2]->weight, 10, 'Condition sorted correctly.');
+  }
+
+  function testRuleBuilding() {
+
+    /*
+    $rule = rules_build("
+      RULE 'Label'
+        REQUIRES
+           token, php, rdf, node
+        ON
+           node_update
+           node_insert
+        IF
+           OR
+              node_content_type ( node: [node], type: page )
+              rules_comare_text ( [rdf:node.author.name], text )
+           NOT node_content_type ( node: node_old, type: page )
+        DO
+           node_publish_action( node )
+           system_message( 'bla' )
+    ")->execute();
+
+    */
+
+  }
+
+}
+
+function rules_test_condition_true($settings, $element) {
+  if (!$element instanceof RulesCondition) {
+    throw new Exception('Rules element has not been passed to condition.');
+  }
+  rules_log('condition true called');
+  return TRUE;
+}
+
+function rules_test_condition_false() {
+  rules_log('condition false called');
+  return FALSE;
+}
+
+function rules_test_action() {
+  rules_log('action called');
+}
+
+/**
+ * Test rules data wrappers.
+ */
+class RulesTestDataWrappersCase extends DrupalWebTestCase {
+
+  static function getInfo() {
+    return array(
+      'name' => 'Rules Data Wrapper tests',
+      'description' => 'Tests rules data wrappers.',
+      'group' => 'Rules',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('rules', 'rules_test');
+    // Make sure we don't ran over issues with the node_load static cache.
+    entity_get_controller('node')->resetCache();
+  }
+
+  /**
+   * Tests serializing and lazyloading data wrappers.
+   */
+  function testDataWrapperSerializing() {
+    $node = $this->drupalCreateNode();
+    $wrapper = new RulesNodeDataWrapper($node, array(
+      'type' => 'node',
+    ));
+    $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
+    // Test serializing and make sure only the node id is stored.
+    $this->assertTrue(strpos(serialize($wrapper), $node->title[LANGUAGE_NONE][0]['value']) === FALSE, 'Node has been correctly serialized.');
+    // Be sure our instance is still loaded (in contrast to the serialized instance).
+    $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
+    $this->assertEqual(unserialize(serialize($wrapper))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+
+    $wrapper2 = unserialize(serialize($wrapper));
+    $this->assertFalse($wrapper2->isLoaded(), 'Data is not loaded.');
+    // Test serializing the unloaded wrapper
+    $this->assertEqual(unserialize(serialize($wrapper2))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+
+    // Test loading a not more existing node.
+    $s = serialize($wrapper2);
+    node_delete($node->nid);
+    $this->assertFalse(node_load($node->nid), 'Node deleted.');
+    try {
+      unserialize($s)->get();
+      $this->fail("Loading hasn't created an exception.");
+    }
+    catch (RulesException $e) {
+      $this->pass("RulesException was thrown: ". $e);
+    }
+  }
+
+  /**
+   * Tests saving data wrappers.
+   */
+  function testDataWrapperSaving() {
+    $node = $this->drupalCreateNode();
+    $wrapper = new RulesNodeDataWrapper($node, array(
+      'type' => 'node',
+    ));
+    $node->title[LANGUAGE_NONE][0]['value'] = 'test';
+    $wrapper->update($node)->saveChanges();
+    $this->assertFalse($this->drupalGetNodeByTitle('test'), 'Changes have not been saved.');
+    $wrapper->update($node, TRUE)->saveChanges();
+    $this->assertTrue($this->drupalGetNodeByTitle('test'), 'Changes have been saved.');
+
+    // Test skipping saving.
+    $wrapper = new RulesNodeDataWrapper($node, array(
+      'type' => 'node',
+      'skip save' => TRUE,
+    ));
+    $node->title[LANGUAGE_NONE][0]['value'] = 'test2';
+    $wrapper->update($node, TRUE)->saveChanges();
+    $this->assertFalse($this->drupalGetNodeByTitle('test2'), 'Changes have not been saved.');
+  }
+
+
+  /**
+   * Tests using faces extenders to build a data wrapper.
+   */
+  function testDataWrapperFaces() {
+    $node = $this->drupalCreateNode();
+    // Create the test data wrapper as specified in rules_test_rules_data_info().
+    $wrapper = new RulesDataWrapper($node->nid, array(
+      'type' => 'test',
+      'loaded' => FALSE,
+    ));
+    $this->assertTrue($wrapper->isIdentifiable(), 'Wrapper is identifiable.');
+    // Test loading with the extended load method.
+    $this->assertEqual($node->title[LANGUAGE_NONE][0]['value'], $wrapper->get()->title[LANGUAGE_NONE][0]['value'], 'Loaded using an extended method.');
+    try {
+      $wrapper->update($node, TRUE)->saveChanges();
+      $this->fail('Custom save method has not been invoked.');
+    }
+    catch (RulesException $e) {
+      $this->pass($e);
+    }
+    // Try serializing
+    $this->assertEqual(unserialize(serialize($wrapper))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+  }
+}
+
+
+/**
+ * Test triggering rules.
+ */
+class RulesTriggerTestCase extends DrupalWebTestCase {
+
+  static function getInfo() {
+    return array(
+      'name' => 'Reaction Rules',
+      'description' => 'Tests triggering reactive rules.',
+      'group' => 'Rules',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('rules', 'rules_test');
+    RulesLog::logger()->clear();
+  }
+
+  protected function createTestRule($action = TRUE, $event = 'node_presave') {
+    $rule = rules_reaction_rule();
+    $rule->event($event)
+         ->condition(rules_condition('rules_condition_content_is_published')->negate())
+         ->condition('rules_condition_content_is_type', array('type' => array('page', 'story')));
+    if ($action) {
+      $rule->action('rules_action_delete_node');
+    }
+    return $rule;
+  }
+
+  /**
+   * Tests CRUD for reaction rules - making sure the events are stored properly.
+   */
+  function testReactiveRuleCreation() {
+    $rule = $this->createTestRule();
+    $rule->save();
+    $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
+    $this->assertEqual($result->fetchField(), 'node_presave', 'Associated event has been saved.');
+    // Try updating.
+    $events =& $rule->events();
+    unset($events[0]);
+    $events[] = 'node_insert';
+    $events[] = 'node_update';
+    $rule->active = FALSE;
+    $rule->save();
+    $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
+    $this->assertEqual($result->fetchCol(), array_values($events), 'Updated associated events.');
+    // Try deleting.
+    $rule->delete();
+    $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
+    $this->assertEqual($result->fetchField(), FALSE, 'Deleted associated events.');
+  }
+
+  /**
+   * Tests creating and triggering a basic reaction rule.
+   */
+  function testBasicReactionRule() {
+    $node = $this->drupalCreateNode(array('type' => 'page'));
+    $rule = $this->createTestRule();
+    $rule->save();
+    // Force immediate cache clearing so we can test the rule *now*.
+    rules_clear_cache(TRUE);
+    // Test the basics of the event set work right.
+    $event = rules_get_cache('event_node_presave');
+    $this->assertEqual(array_keys($event->getParameterInfo()), array('node'), 'EventSet returns correct parameter info.');
+    $this->assertEqual(array_keys($event->getProvidedVarInfo()), array('node', 'node_unchanged', 'user'), 'EventSet returns correct info about provided vars.');
+
+    // Trigger the rule by updating the node.
+    $nid = $node->nid;
+    $node->status = 0;
+    node_save($node);
+
+    RulesLog::logger()->checkLog();
+    $this->assertFalse(node_load($nid), 'Rule successfully triggered and executed');
+    //debug(RulesLog::logger()->render());
+  }
+
+  /**
+   * Test a rule using a handler to load a variable.
+   */
+  function testVariableHandler() {
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    $rule = $this->createTestRule(FALSE, 'node_update');
+    $rule->action('rules_node_publish_action_save', array('node:select' => 'node_unchanged'));
+    // Test without recursion prevention to make sure recursive invocations
+    // work right too. This rule won't ran in an infinite loop anyway.
+    $rule->recursion = TRUE;
+
+    $rule->save();
+    rules_clear_cache(TRUE);
+
+    $node->status = 0;
+    $node->sticky = 1;
+    node_save($node);
+
+    RulesLog::logger()->checkLog();
+    entity_get_controller('node')->resetCache();
+    $node = node_load($node->nid);
+
+    $this->assertFalse($node->sticky, 'Parameter has been loaded and saved.');
+    $this->assertTrue($node->status, 'Action has been executed.');
+
+    // Ensure the rule was evaluated a second time making the condition TRUE.
+    $text = 'The condition "rules_condition_content_is_published" evaluated to TRUE';
+    $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
+    //debug(RulesLog::logger()->render());
+  }
+
+  /**
+   * Test catching exceptions of handlers not being able to load.
+   */
+  function testVariableHandlerException() {
+    $rule = $this->createTestRule(FALSE, 'node_presave');
+    $rule->action('rules_node_publish_action_save', array('node:select' => 'node_unchanged'));
+    $rule->save();
+    rules_clear_cache(TRUE);
+
+    // On insert it's not possible to get the unchanged node during presave.
+    // @vid: temporary fix. TODO: remove.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0, 'vid' => NULL));
+
+    //debug(RulesLog::logger()->render());
+    try {
+      RulesLog::logger()->checkLog();
+      $this->fail("Exception for not being able to load not thrown.");
+    }
+    catch (Exception $e) {
+      $this->pass("Exception for not being able to load thrown.");
+    }
+  }
+
+  /**
+   * Tests preventing recursive rule invocations by creating a rule that reacts
+   * on node-update and generates a node update that would trigger it itself.
+   */
+  function testRecursionPrevention() {
+    $rule = $this->createTestRule(FALSE, 'node_update');
+    $rule->action('rules_node_make_sticky_action');
+    $rule->save();
+    rules_clear_cache(TRUE);
+
+    // Now trigger the rule.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    node_save($node);
+
+    $text = 'Not evaluating the rule "unlabelled" to prevent recursion.';
+    $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
+    //debug(RulesLog::logger()->render());
+  }
+
+  /**
+   * Ensure the recursion prevention still allows to let the rule trigger again
+   * during evaluation of the same event set, if the event isn't caused by the
+   * rule itself - thus we won't run in an infinte loop.
+   */
+  function testRecursionOnDifferentArguments() {
+    // Create rule1 - which might recurse.
+    $rule = $this->createTestRule(FALSE, 'node_update');
+    $rule->action('rules_node_make_sticky_action');
+    $rule->label = 'rule 1';
+    $rule->save();
+
+    // Create rule2 - which triggers rule1 on another node.
+    $node2 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    $rule2 = $this->createTestRule(FALSE, 'node_update');
+    $rule2->action('rules_action_load_node', array('nid' => $node2->nid))
+          ->action('rules_node_make_sticky_action', array('node:select' => 'node_loaded'));
+    $rule2->label = 'rule 2';
+    $rule2->save();
+
+    rules_clear_cache(TRUE);
+
+    // Now trigger both rules by generating the event.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    node_save($node);
+
+    //debug(RulesLog::logger()->render());
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, 'Evaluating rule "rule 1"');
+    $pos = ($pos !== FALSE) ? strpos($text, 'Evaluating rule "rule 2"', $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, 'Saved variable node_loaded of type node.', $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, 'Evaluating rule "rule 1"', $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, 'Not evaluating the rule "rule 2" to prevent recursion', $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, 'Rule1 was triggered on the event caused by Rule2.');
+  }
+
+}
