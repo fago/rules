@@ -241,6 +241,52 @@ function &rules_unwrap_data(array $data, $state = NULL, $load = TRUE) {
 }
 
 /**
+ * Returns an entity metadata wrapper as specified in the selector.
+ *
+ * @param $selector
+ *   The selector string, e.g. "node:author:mail".
+ * @param $state
+ *   The rules evaluation state.
+ * @return EntityMetadataWrapper
+ */
+function rules_get_metadata_wrapper($selector, $state) {
+  $parts = explode(':', $selector, 2);
+  $vars = &$state['variables'];
+  // A valid selector must refer to an existing var and has at least 2 parts.
+  if (!isset($vars[$parts[0]]) || !($vars[$parts[0]] instanceof RulesDataWrapper) || count($parts) < 2) {
+    throw new RulesException('Variable "@var" is missing or cannot be used for selecting data.', array('@var' => $parts[0]));
+  }
+  $wrapper = $vars[$parts[0]]->properties($state);
+  foreach (explode(':', $parts[1]) as $name) {
+    $wrapper = $wrapper->$name;
+  }
+  return $wrapper;
+}
+
+/**
+ * Makes the changes to a metadata wrapper permanent by retrieving a proper
+ * rules data wrapper.
+ */
+function rules_metadata_wrapper_save_changes($wrapper, array $state) {
+  $info = $wrapper->info();
+  if (isset($state['wrapper map'][spl_object_hash($wrapper)]) && $var = $state['wrapper map'][spl_object_hash($wrapper)]) {
+    $var->update($wrapper->value(), TRUE);
+  }
+  // This property has no variable yet, so create one.
+  elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
+    if ($var->isSavable()) {
+      $var->update($wrapper->value(), TRUE);
+      $state['wrapper map'][spl_object_hash($wrapper)] = $var;
+    }
+    // Else the data is identifiable, but not savable. Nothing we can do.
+  }
+  // The property isn't identifiable, so let's save the parent entity.
+  elseif (isset($info['parent'])) {
+    rules_metadata_wrapper_save_changes($info['parent'], $state);
+  }
+}
+
+/**
  * Creates a new instance of a the given rules plugin.
  *
  * @return RulesPlugin
@@ -469,4 +515,17 @@ function rules_filter_array($array, $key, $value) {
     }
   }
   return $return;
+}
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ *
+ * We need to use the alter hook here, so we can make sure we are the first
+ * prepross handler called. So drupal messages aren't consumed before the
+ * redirect is initiated.
+ *
+ * @see _rules_action_drupal_goto_handler()
+ */
+function rules_theme_registry_alter(&$items) {
+  array_unshift($items['page']['preprocess functions'], '_rules_action_drupal_goto_handler');
 }

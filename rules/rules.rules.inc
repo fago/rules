@@ -17,7 +17,7 @@ foreach (rules_core_modules() as $module) {
  * Defines a list of core module on whose behalf we provide module integration.
  */
 function rules_core_modules() {
-  return array('node');
+  return array('node', 'system');
 }
 
 /**
@@ -27,7 +27,7 @@ function rules_rules_file_info() {
   $items = array();
   foreach (rules_core_modules() as $module) {
     if (function_exists($function = "rules_{$module}_file_info")) {
-      $items += $function();
+      $items = array_merge($items, $function());
       // Automatically add "$module.rules_forms.inc" for each module.
       $items[] = $module . '.rules_forms';
     }

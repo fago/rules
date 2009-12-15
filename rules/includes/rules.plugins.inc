@@ -28,6 +28,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $this->addVariable($var_name, $data, $this->info['provides'][$name], $state);
         }
+        // TODO: If it was a data selector, apply it again and save changes for the wrapper.
       }
     }
     // Save paramaters as defined in the parameter info.

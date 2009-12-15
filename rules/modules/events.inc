@@ -71,5 +71,17 @@ function rules_events_parameter_global_user() {
 }
 
 /**
+ * Invoke system events.
+ */
+function rules_init() {
+  rules_invoke_event('init');
+}
+
+function rules_cron() {
+  rules_invoke_event('cron');
+}
+
+
+/**
  * @}
  */
