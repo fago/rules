@@ -1,0 +1,191 @@
+<?php
+// $Id$
+
+/**
+ * @file rules integration for the node module
+ *
+ * @addtogroup rules
+ * @{
+ */
+
+/**
+ * Implements hook_rules_file_info() on behalf of the node module.
+ * This is invoked by rules_rules_file_info(). Usually it would have to be
+ * node_rules_file_info().
+ */
+function rules_node_file_info() {
+  return array('modules/node.eval');
+}
+
+/**
+ * Implements hook_rules_data_info() on behalf of the node module.
+ * This is invoked by rules_rules_data_info(). Usually it would have to be
+ * node_rules_data_info().
+ */
+function rules_node_data_info() {
+  return array(
+    'node' => array(
+      'label' => t('content'),
+      'class' => 'RulesNodeDataWrapper',
+      'group' => t('Node'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_rules_event_info() on behalf of the node module.
+ * This is invoked by rules_rules_event_info(). Usually it would have to be
+ * node_rules_event_info().
+ */
+function rules_node_event_info() {
+  $items = array(
+    'node_insert' => array(
+      'label' => t('After saving new content'),
+      'group' => t('Node'),
+      'provides' => rules_events_node_variables(t('created content')),
+    ),
+    'node_update' => array(
+      'label' => t('After updating existing content'),
+      'group' => t('Node'),
+      'provides' => rules_events_node_variables(t('updated content'), TRUE),
+    ),
+    'node_presave' => array(
+      'label' => t('Content is going to be saved'),
+      'group' => t('Node'),
+      'provides' => rules_events_node_variables(t('saved content'), TRUE),
+    ),
+    'node_view' => array(
+      'label' => t('Content is going to be viewed'),
+      'group' => t('Node'),
+      'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
+      'provides' => rules_events_node_variables(t('viewed content')) + array(
+        'build_mode' => array('type' => 'string', 'label' => t('view mode')),
+      ),
+    ),
+    'node_delete' => array(
+      'label' => t('After deleting content'),
+      'group' => t('Node'),
+      'provides' => rules_events_node_variables(t('deleted content')),
+    ),
+  );
+  // Specify that on presave the node is saved anyway.
+  $items['node_presave']['provides']['node']['skip save'] = TRUE;
+  return $items;
+}
+
+/**
+ * Returns some parameter suitable for using it with a node
+ */
+function rules_events_node_variables($node_label, $update = FALSE) {
+  $args = array(
+    'node' => array('type' => 'node', 'label' => $node_label),
+  );
+  if ($update) {
+    $args += array(
+      'node_unchanged' => array(
+        'type' => 'node',
+        'label' => t('unchanged content'),
+        'handler' => 'rules_events_node_var_unchanged',
+      ),
+    );
+  }
+  return $args + rules_events_global_user_parameter();
+}
+
+/**
+ * Implements hook_rules_condition_info() on behalf of the node module.
+ * This is invoked by rules_rules_condition_info(). Usually it would have to be
+ * node_rules_condition_info().
+ */
+function rules_node_condition_info() {
+  $items = array();
+  $defaults = array(
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
+    ),
+    'group' => t('Node'),
+  );
+  $items['rules_condition_content_is_type'] = array(
+    'label' => t('Content has type'),
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
+      'type' => array('type' => 'list<string>', 'label' => t('Content types')),
+    ),
+    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+  ) + $defaults;
+  $items['rules_condition_content_is_published'] = $defaults + array(
+    'label' => t('Content is published'),
+  );
+  $items['rules_condition_content_is_sticky'] = $defaults + array(
+    'label' => t('Content is sticky'),
+  );
+  $items['rules_condition_content_is_promoted'] = $defaults + array(
+    'label' => t('Content is promoted to frontpage'),
+  );
+  $items['rules_condition_content_is_new'] = $defaults + array(
+    'label' => t('Content is new'),
+    'help' => t('Evaluates to TRUE, if the given content has not been saved yet.'),
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_rules_action_info() on behalf of the node module.
+ * This is invoked by rules_rules_action_info(). Usually it would have to be
+ * node_rules_action_info().
+ */
+function rules_node_action_info() {
+  return array(
+    'rules_action_add_node' => array(
+      'label' => t('Add new content'),
+      'parameter' => array(
+        'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
+        'title' => array(
+          'type' => 'string',
+          'label' => t('Title'),
+          'description' => t('The title of the newly created content.'),
+        ),
+      ),
+      'provides' => array(
+        'node_added' => array(
+          'type' => 'node',
+          'label' => t('New content'),
+          'save' => TRUE,
+          'label callback' => 'rules_action_add_node_variable_label',
+        ),
+      ),
+      'group' => t('Node'),
+    ),
+    'rules_action_load_node' => array(
+      'label' => t('Fetch content by id'),
+      'parameter' => array(
+        'nid' => array('type' => 'number', 'label' => t('Content ID')),
+        'vid' => array(
+          'type' => 'number',
+          'label' => t('Content Revision ID'),
+          'description' => t("If you want to fetch a specific revision, specify it's revision id. Else leave it empty to fetch the currently active revision."),
+          'optional' => TRUE,
+        ),
+      ),
+      'provides' => array(
+        'node_loaded' => array(
+          'type' => 'node',
+          'label' => t('Loaded content'),
+          'label callback' => 'rules_action_load_node_variable_label',
+        ),
+      ),
+      'group' => t('Node'),
+    ),
+    'rules_action_delete_node' => array(
+      'label' => t('Delete content'),
+      'parameter' => array(
+        'node' => array('type' => 'node', 'label' => t('Content')),
+      ),
+      'group' => t('Node'),
+    ),
+  );
+}
+
+/**
+ * @}
+ */

@@ -1,0 +1,19 @@
+-------------------------------
+Some notes for Rules Developers
+-------------------------------
+
+Terminology & Overview
+-----------------------
+  * Rules plugins extend the "rules language". Thus conditions and actions are
+    implemented with a plugin, but also loops or ORs are plugins. Each plugin is
+    declared to be used in the condition or the action part - specified by the
+    interface.
+  * The action and condition plugin are a so called "AbstractPlugin" which means
+    they have to be implemented by modules to be actually usable. This is not
+    the case for loops or ORs.
+  * Thus any rule element is an instance of a RulesPlugin. 
+  * A rules configuration consists of multiple rule elements while one is the
+    parent, which may be a 'rule' but also any other plugin.
+  * Each rules configuration may be persistently saved to the db using the
+    entity CRUD API. Using the API on contained rule elements is working too and
+    results in the whole configuration being updated.
