@@ -248,13 +248,14 @@ function &rules_unwrap_data(array $data, $state = NULL, $load = TRUE) {
  * @param $state
  *   The rules evaluation state.
  * @return EntityMetadataWrapper
+ *   The wrapper or if the selector couldn't be applied: FALSE.
  */
 function rules_get_metadata_wrapper($selector, $state) {
   $parts = explode(':', $selector, 2);
   $vars = &$state['variables'];
   // A valid selector must refer to an existing var and has at least 2 parts.
   if (!isset($vars[$parts[0]]) || !($vars[$parts[0]] instanceof RulesDataWrapper) || count($parts) < 2) {
-    throw new RulesException('Variable "@var" is missing or cannot be used for selecting data.', array('@var' => $parts[0]));
+    return FALSE;
   }
   $wrapper = $vars[$parts[0]]->properties($state);
   foreach (explode(':', $parts[1]) as $name) {
@@ -267,10 +268,10 @@ function rules_get_metadata_wrapper($selector, $state) {
  * Makes the changes to a metadata wrapper permanent by retrieving a proper
  * rules data wrapper.
  */
-function rules_metadata_wrapper_save_changes($wrapper, array $state) {
+function rules_metadata_wrapper_save_changes($wrapper, array $state, $immediate = FALSE) {
   $info = $wrapper->info();
   if (isset($state['wrapper map'][spl_object_hash($wrapper)]) && $var = $state['wrapper map'][spl_object_hash($wrapper)]) {
-    $var->update($wrapper->value(), TRUE);
+    $var->update($wrapper->value())->saveChanges($immediate, $state);
   }
   // This property has no variable yet, so create one.
   elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {

@@ -16,6 +16,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
   protected function executeCallback(array $args, array &$state = array()) {
     rules_log('Executing the action "@name".', array('@name' => $this->name));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
+    $wrappers = array();
 
     if (is_array($return)) {
       foreach ($return as $name => $data) {
@@ -23,19 +24,26 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         if (isset($args[$name]) && $args[$name] instanceof RulesDataWrapper) {
           $args[$name]->update($data);
         }
+        elseif (isset($this->settings[$name . ':select']) && $wrapper = rules_get_metadata_wrapper($this->settings[$name . ':select'])) {
+          $wrappers[$name] = $wrapper->set($data);
+        }
         // Add provided variables.
         elseif (!isset($state['variables'][$name]) && isset($this->info['provides'][$name])) {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $this->addVariable($var_name, $data, $this->info['provides'][$name], $state);
         }
-        // TODO: If it was a data selector, apply it again and save changes for the wrapper.
       }
     }
     // Save paramaters as defined in the parameter info.
     if ($return !== FALSE) {
       foreach ($this->info['parameter'] as $name => $info) {
-        if (!empty($info['save']) && $args[$name] instanceof RulesDataWrapper) {
-          $args[$name]->saveChanges(FALSE, $state);
+        if (!empty($info['save'])) {
+          if ($args[$name] instanceof RulesDataWrapper) {
+            $args[$name]->saveChanges(FALSE, $state);
+          }
+          elseif (isset($wrappers[$name]) || ($wrappers[$name] = rules_get_metadata_wrapper($this->settings[$name . ':select']))) {
+            rules_metadata_wrapper_save_changes($wrappers[$name], $state);
+          }
         }
       }
     }
