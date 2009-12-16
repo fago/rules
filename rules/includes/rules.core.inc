@@ -589,8 +589,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   protected function getSelectedVariable($selector, &$info, array $state) {
-    try {
-      $wrapper = rules_get_metadata_wrapper($selector, $state);
+    if ($wrapper = rules_get_metadata_wrapper($selector, $state)) {
       $options = array('decode' => TRUE);
       if ($info['type'] == 'text' && !empty($info['sanitized'])) {
         $options = array('sanitize' => TRUE);
@@ -598,9 +597,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       }
       return $wrapper->value($options);
     }
-    catch (EntityMetadataException $e) {
-      throw new RulesException('Unable to apply data selector "' . check_plain($selector) . '".');
-    }
+    throw new RulesException('Unable to apply data selector "' . check_plain($selector) . '".');
   }
 
   public function __sleep() {
