@@ -257,7 +257,7 @@ function rules_get_metadata_wrapper($selector, $state) {
   if (!isset($vars[$parts[0]]) || !($vars[$parts[0]] instanceof RulesDataWrapper) || count($parts) < 2) {
     return FALSE;
   }
-  $wrapper = $vars[$parts[0]]->properties($state);
+  $wrapper = $vars[$parts[0]]->metadataWrapper($state);
   foreach (explode(':', $parts[1]) as $name) {
     $wrapper = $wrapper->$name;
   }
@@ -267,23 +267,29 @@ function rules_get_metadata_wrapper($selector, $state) {
 /**
  * Makes the changes to a metadata wrapper permanent by retrieving a proper
  * rules data wrapper.
+ *
+ * @param $wrapper
+ *   The wrapper that has been set, thus its parent will be saved.
  */
 function rules_metadata_wrapper_save_changes($wrapper, array $state, $immediate = FALSE) {
   $info = $wrapper->info();
-  if (isset($state['wrapper map'][spl_object_hash($wrapper)]) && $var = $state['wrapper map'][spl_object_hash($wrapper)]) {
-    $var->update($wrapper->value())->saveChanges($immediate, $state);
-  }
-  // This property has no variable yet, so create one.
-  elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
-    if ($var->isSavable()) {
-      $var->update($wrapper->value(), TRUE);
-      $state['wrapper map'][spl_object_hash($wrapper)] = $var;
+  // We always need to save the parent entity.
+  if (isset($info['parent']) && $wrapper = $info['parent']) {
+    if ($var = $state['wrapper map']->getVariable($wrapper)) {
+      $var->update($wrapper)->saveChanges($immediate, $state);
     }
-    // Else the data is identifiable, but not savable. Nothing we can do.
-  }
-  // The property isn't identifiable, so let's save the parent entity.
-  elseif (isset($info['parent'])) {
-    rules_metadata_wrapper_save_changes($info['parent'], $state);
+    // This property has no variable yet, so create one.
+    elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
+      if ($var->isSavable()) {
+        $var->saveChanges($immediate, $state);
+        $state['wrapper map']->add($wrapper, $var);
+      }
+      // Else the data is identifiable, but not savable. Nothing we can do.
+    }
+    else {
+      // Data was not identifiable, so try saving the parent.
+      rules_metadata_wrapper_save_changes($wrapper, $state, $immediate);
+    }
   }
 }
 

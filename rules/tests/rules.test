@@ -238,6 +238,25 @@ class RulesTestCase extends DrupalWebTestCase {
     $msg = drupal_get_messages();
     $wrapper = entity_metadata_wrapper('node', $node);
     $this->assertEqual($msg['status'][0], $wrapper->body->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
+
+    // Get a "reference" on the same object as returned by node_load().
+    $node = node_load($node->nid);
+    $rule = rule();
+    $rule->action('rules_action_load_node')
+         ->action('rules_action_set', array('selector' => 'node_loaded:title', 'value' => 'Test title'))
+         // Use two actions and make sure the node get saved only once.
+         ->action('rules_action_set', array('selector' => 'node_loaded:title', 'value' => 'Test title2'))
+         ->execute($node->nid);
+
+    $wrapper = entity_metadata_wrapper('node', $node);
+    $this->assertEqual('Test title2', $wrapper->title->value(), 'Data has been modified and saved.');
+
+    RulesLog::logger()->checkLog();
+    $text = RulesLog::logger()->render();
+    if ($pos1 = strpos($text, 'Saved variable node_loaded of type node.')) {
+      $pos2 = strpos($text, 'Saved variable node_loaded of type node.', $pos1 + 1);
+    }
+    $this->assertTrue($pos1 && $pos2 === FALSE, 'Data has been saved only once.');
   }
 
   function testRuleBuilding() {

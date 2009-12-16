@@ -10,6 +10,6 @@ files[] = includes/rules.data.inc
 files[] = includes/rules.plugins.inc
 files[] = rules.module
 files[] = rules.rules.inc
-files[] = modules/data.inc
+files[] = modules/data.eval.inc
 files[] = modules/events.inc
 dependencies[] = entity_metadata

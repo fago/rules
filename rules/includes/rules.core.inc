@@ -247,9 +247,8 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       'all variables' => array(),
       'executed' => $this,
 
-      // Maps metadata wrappers to variables, needed to save changes. Note that
-      // we use an ArrayObject to ensure a unique array per execution state.
-      'wrapper map' => new ArrayObject(),
+      // Maps metadata wrappers to variables, needed to save changes.
+      'wrapper map' => new RulesWrapperMap(),
 
       // Keep the ids of blocked rules due to recursion prevention. Note that
       // we use an ArrayObject to ensure a unique array per execution state.
@@ -276,7 +275,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   protected function cleanUp() {
     if (isset($this->state) && $this->state['executed'] === $this) {
       // Make changes permanent.
-      $vars = (array)$this->state['wrapper map'] + $this->state['all variables'];
+      $vars = array_merge($this->state['wrapper map']->variables(), $this->state['all variables']);
       foreach ($vars as $var) {
         $var->saveChanges(TRUE, $this->state)->destroy();
       }
@@ -1116,3 +1115,45 @@ class RulesException extends Exception {
   }
 }
 
+/**
+ * A small class mapping entity metadata wrappers to variables. We need this
+ * map for being able to apply intelligent saving to this data.
+ */
+class RulesWrapperMap {
+
+  protected $map = array();
+
+  public function add(EntityMetadataWrapper $wrapper, RulesDataWrapper $var) {
+    if ($id = $wrapper->getIdentifier()) {
+      // Usually we map by the data's id, as when the wrapper's data has been
+      // changed (e.g. node:author) then we need a new variable.
+      $this->map[$id] = $var;
+    }
+    elseif ($var->isSavable()) {
+      // Data being savable but having no ID can only be in a wrapper, if
+      // directly derived from a variable. In that case we create a new data
+      // item, which will be always associatd with that variable.
+      $this->map[spl_object_hash($wrapper)] = $var;
+    }
+  }
+
+  /**
+   * Gets the variable for a wrapper.
+   */
+  public function getVariable(EntityMetadataWrapper $wrapper) {
+    if (isset($this->map[spl_object_hash($wrapper)])) {
+      return $this->map[spl_object_hash($wrapper)];
+    }
+    elseif (($id = $wrapper->getIdentifier()) && isset($this->map[$id])) {
+      return $this->map[$id];
+    }
+    return FALSE;
+  }
+
+  /**
+   * Get all variables contained in the map.
+   */
+  public function variables() {
+    return $this->map;
+  }
+}

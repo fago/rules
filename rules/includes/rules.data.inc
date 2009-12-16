@@ -156,13 +156,13 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    *
    * @return EntityMetadataWrapper
    */
-  public function properties(array $state = NULL) {
+  public function metadataWrapper(array $state = NULL) {
     if (!isset($this->wrapper)) {
       $data = &$this->get($state);
       $this->wrapper = entity_metadata_wrapper($this->info['type'], $data);
       // Register this as the variable for the wrapper in the state's map.
       if (!empty($state['wrapper map'])) {
-        $state['wrapper map'][spl_object_hash($this->wrapper)] = $this;
+        $state['wrapper map']->add($this->wrapper, $this);
       }
     }
     return $this->wrapper;
@@ -204,19 +204,17 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    * Updates the data.
    *
    * @param $data
-   *   The updated data.
+   *   The data with which to update or its EntityMetadataWrapper.
    * @param $permanent
    *   If TRUE, save the data later on. Only applicable for savable data types.
    */
   public function update($data, $permanent = FALSE) {
-    $this->data = $data;
-    if (isset($this->wrapper)) {
+    $this->data = $data instanceof EntityMetadataWrapper ? $data->value() : $data;
+    if (isset($this->wrapper) && $this->wrapper != $data) {
+      // Sync with the metadata wrapper, so that selectors get the fresh data.
       $this->wrapper->set($data);
     }
-    if ($permanent) {
-      $this->saveChanges(FALSE);
-    }
-    return $this;
+    return $permanent ? $this->saveChanges(FALSE) : $this;
   }
 
   /**
