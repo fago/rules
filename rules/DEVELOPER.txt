@@ -1,6 +1,6 @@
--------------------------------
-Some notes for Rules Developers
--------------------------------
+---------------------------------------------------
+Some notes for developers working on the rules code
+---------------------------------------------------
 
 Terminology & Overview
 -----------------------
