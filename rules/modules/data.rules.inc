@@ -35,10 +35,11 @@ function rules_data_action_info() {
     'rules_action_set' => array(
       'label' => t('Modify data'),
       'parameter' => array(
-        'selector' => array(
-          'type' => 'text',
-          'label' => t('Data selector'),
+        'data' => array(
+          'type' => '*',
+          'label' => t('Data to modify'),
           'description' => t('Specify the data to be modified using a data selector, e.g. "node:author:name".'),
+          'save' => TRUE,
          ),
         'value' => array(
           'type' => '*',

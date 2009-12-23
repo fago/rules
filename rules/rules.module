@@ -278,7 +278,7 @@ function rules_metadata_wrapper_save_changes($wrapper, array $state, $immediate 
     if ($var = $state['wrapper map']->getVariable($wrapper)) {
       $var->update($wrapper)->saveChanges($immediate, $state);
     }
-    // This property has no variable yet, so create one.
+    // This data wrapper has no variable associated yet, so create one.
     elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
       if ($var->isSavable()) {
         $var->saveChanges($immediate, $state);

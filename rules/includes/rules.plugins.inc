@@ -13,6 +13,9 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
 
   protected $itemName = 'action';
 
+  /**
+   * Execute the callback and update/save data as specified by the action.
+   */
   protected function executeCallback(array $args, array &$state = array()) {
     rules_log('Executing the action "@name".', array('@name' => $this->name));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
@@ -24,8 +27,14 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         if (isset($args[$name]) && $args[$name] instanceof RulesDataWrapper) {
           $args[$name]->update($data);
         }
-        elseif (isset($this->settings[$name . ':select']) && $wrapper = rules_get_metadata_wrapper($this->settings[$name . ':select'])) {
-          $wrappers[$name] = $wrapper->set($data);
+        elseif (isset($this->settings[$name . ':select']) && $wrapper = rules_get_metadata_wrapper($this->settings[$name . ':select'], $state)) {
+          try {
+            // Update the data value and keep the wrapper object for saving.
+            $wrappers[$name] = $wrapper->set($data);
+          }
+          catch (EntityMetadataWrapperException $e) {
+            throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $this->settings[$name . ':select']));
+          }
         }
         // Add provided variables.
         elseif (!isset($state['variables'][$name]) && isset($this->info['provides'][$name])) {
@@ -41,7 +50,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           if ($args[$name] instanceof RulesDataWrapper) {
             $args[$name]->saveChanges(FALSE, $state);
           }
-          elseif (isset($wrappers[$name]) || ($wrappers[$name] = rules_get_metadata_wrapper($this->settings[$name . ':select']))) {
+          elseif (isset($wrappers[$name]) || ($wrappers[$name] = rules_get_metadata_wrapper($this->settings[$name . ':select'], $state))) {
             rules_metadata_wrapper_save_changes($wrappers[$name], $state);
           }
         }

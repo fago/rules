@@ -95,16 +95,7 @@ class RulesUserDataWrapper extends RulesDataWrapper implements RulesDataSavableI
 /**
  * Action: Modify data.
  */
-function rules_action_set($selector, $value, $settings, $element, $state) {
-  try {
-    $wrapper = rules_get_metadata_wrapper($selector, $state);
-    if (!$wrapper) {
-      throw new RulesException('Unable to apply the data selector "@selector"', array('@selector' => $selector));
-    }
-    $wrapper->set($value);
-    rules_metadata_wrapper_save_changes($wrapper, $state);
-  }
-  catch (EntityMetadataWrapperException $e) {
-    throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage());
-  }
+function rules_action_set($data, $value) {
+  // Rules will use the data wrapper to update the value and if possible, save.
+  return array('data' => $value);
 }

@@ -243,9 +243,9 @@ class RulesTestCase extends DrupalWebTestCase {
     $node = node_load($node->nid);
     $rule = rule();
     $rule->action('rules_action_load_node')
-         ->action('rules_action_set', array('selector' => 'node_loaded:title', 'value' => 'Test title'))
+         ->action('rules_action_set', array('data:select' => 'node_loaded:title', 'value' => 'Test title'))
          // Use two actions and make sure the node get saved only once.
-         ->action('rules_action_set', array('selector' => 'node_loaded:title', 'value' => 'Test title2'))
+         ->action('rules_action_set', array('data:select' => 'node_loaded:title', 'value' => 'Test title2'))
          ->execute($node->nid);
 
     $wrapper = entity_metadata_wrapper('node', $node);
