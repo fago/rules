@@ -186,16 +186,16 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Returns info about parameters need for executing the plugin.
+   * Returns info about parameters needed for executing the plugin.
    */
-  public function getParameterInfo() {
+  public function parameterInfo() {
     return array();
   }
 
   /**
-   * Use key 'provides'.
+   * Returns info about variables provided for later evaluated elements.
    */
-  public function getProvidedVarInfo() {
+  public function providesVariables() {
     return array();
   }
 
@@ -222,12 +222,12 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    *   An array of passed arguments keyed by their names.
    */
   protected function getPassedArguments(array $args) {
-    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->getParameterInfo()) === array()) {
+    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->parameterInfo()) === array()) {
       // The caller passed an array of arguments, so let's use that
       return $args[0];
     }
     $vars = array();
-    foreach (array_keys($this->getParameterInfo()) as $i => $name) {
+    foreach (array_keys($this->parameterInfo()) as $i => $name) {
       if (isset($args[$i])) {
         $vars[$name] = $args[$i];
       }
@@ -258,7 +258,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       'stack' => isset($this->state) ? $this->state : NULL,
     );
     $args = $this->getPassedArguments($args);
-    foreach ($this->availableVariables() as $name => $info) {
+    foreach ($this->stateVariables() as $name => $info) {
       if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional'])) {
         throw new RulesException('Argument ' . check_plain($name) . ' is missing.');
       }
@@ -285,21 +285,33 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Returns the array of info about available variables for this element.
+   * Returns info about variables available to be used as arguments for this
+   * element.
    */
-  protected function availableVariables() {
-    $vars = $this->getParameterInfo();
+  public function availableVariables() {
+    $vars = array();
     if (isset($this->parent) && (empty($this->state) || $this->state['executed'] !== $this)) {
-      $vars += $this->parent->availableVariables();
+      $vars += $this->parent->stateVariables();
       // Add in variables provided by siblings executed before us.
       foreach ($this->parent->children as $child) {
         if ($child === $this) {
           break;
         }
-        $vars += $child->getProvidedVarInfo();
+        $vars += $child->providesVariables();
       }
     }
     return $vars;
+  }
+
+  /**
+   * Returns info about variables available in the execution state for this
+   * or any children elements.
+   */
+  protected function stateVariables() {
+    if (!isset($this->parent) || (!empty($this->state) && $this->state['executed'] === $this)) {
+      return $this->parameterInfo();
+    }
+    return $this->availableVariables();
   }
 
   /**
@@ -486,7 +498,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
   }
 
-  public function getParameterInfo() {
+  public function parameterInfo() {
     $vars = array();
     // Assemble info about variables that are needed for executing.
     foreach ($this->info['parameter'] as $name => $info) {
@@ -504,7 +516,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   /**
    * Returns info about provided variables by this plugin.
    */
-  public function getProvidedVarInfo() {
+  public function providesVariables() {
     $provides = array();
     foreach ($this->info['provides'] as $name => $info) {
       if (isset($this->settings[$name . ':var'])) {
@@ -839,14 +851,22 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return new RulesRecursiveElementIterator($this->children);
   }
 
-  public function getParameterInfo() {
+  public function parameterInfo() {
     $vars = array();
     $provided = array();
     foreach ($this->children as $key => $child) {
-      $vars += array_diff_key($child->getParameterInfo(), $provided);
-      $provided += $child->getProvidedVarInfo();
+      $vars += array_diff_key($child->parameterInfo(), $provided);
+      $provided += $child->providesVariables();
     }
     return $vars;
+  }
+
+  public function providesVariables() {
+    $provided = array();
+    foreach ($this->children as $key => $child) {
+      $provided += $child->providesVariables();
+    }
+    return $provided;
   }
 
   /**
@@ -938,14 +958,6 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
     foreach ($this->children as $action) {
       $action->evaluate($state);
     }
-  }
-
-  public function getProvidedVarInfo() {
-    $provided = array();
-    foreach ($this->children as $key => $child) {
-      $provided += $child->getProvidedVarInfo();
-    }
-    return $provided;
   }
 }
 

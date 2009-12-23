@@ -58,7 +58,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   protected $itemName = 'condition';
   protected $negate = FALSE;
 
-  public function getProvidedVarInfo() {
+  public function providesVariables() {
     return array();
   }
 
@@ -161,9 +161,9 @@ class Rule extends RulesActionContainer {
     }
   }
 
-  public function getParameterInfo() {
-    $vars = isset($this->conditions) ? $this->conditions->getParameterInfo() : array();
-    return $vars + parent::getParameterInfo();
+  public function parameterInfo() {
+    $vars = isset($this->conditions) ? $this->conditions->parameterInfo() : array();
+    return $vars + parent::parameterInfo();
   }
 
 }
@@ -198,7 +198,7 @@ class RulesReactionRule extends Rule implements TriggerableInterface {
     parent::evaluate($state);
   }
 
-  public function getProvidedVarInfo() {
+  public function providesVariables() {
     return array();
   }
 }
@@ -269,15 +269,17 @@ class RulesEventSet extends RulesActionContainer {
     drupal_set_message(RulesLog::logger()->render());
   }
 
-  public function getParameterInfo() {
+  public function parameterInfo() {
     return rules_filter_array($this->info['provides'], 'handler', FALSE);
   }
 
-  public function getProvidedVarInfo() {
-    return $this->info['provides'];
+  public function providesVariables() {
+    // We don't provide variables for later evaluated elements, but for any
+    // children elements, see stateVariables().
+    return array();
   }
 
-  protected function availableVariables() {
+  protected function stateVariables() {
     return $this->info['provides'];
   }
 
