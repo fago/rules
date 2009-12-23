@@ -73,7 +73,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $action2->execute($node);
     $this->assertEqual($node->status, 1, 'Action executed correctly');
 
-    $this->assertTrue(in_array('node', array_keys($action2->getParameterInfo())), 'Parameter info returned.');
+    $this->assertTrue(in_array('node', array_keys($action2->parameterInfo())), 'Parameter info returned.');
 
     $node->status = 0;
     $action2->execute(array('node' => $node));
@@ -110,8 +110,8 @@ class RulesTestCase extends DrupalWebTestCase {
          ->condition('rules_condition_content_is_type', array('type' => array('page', 'story')))
          ->action('rules_node_publish_action', array('node:select' => 'node_unchanged'));
 
-    $this->assertTrue(in_array('node', array_keys($rule->getParameterInfo())), 'Parameter info contains node.');
-    $this->assertTrue(in_array('node_unchanged', array_keys($rule->getParameterInfo())), 'Parameter info contains node_unchanged.');
+    $this->assertTrue(in_array('node', array_keys($rule->parameterInfo())), 'Parameter info contains node.');
+    $this->assertTrue(in_array('node_unchanged', array_keys($rule->parameterInfo())), 'Parameter info contains node_unchanged.');
 
     $node1 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
     $node2 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
@@ -468,8 +468,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     rules_clear_cache(TRUE);
     // Test the basics of the event set work right.
     $event = rules_get_cache('event_node_presave');
-    $this->assertEqual(array_keys($event->getParameterInfo()), array('node'), 'EventSet returns correct parameter info.');
-    $this->assertEqual(array_keys($event->getProvidedVarInfo()), array('node', 'node_unchanged', 'user'), 'EventSet returns correct info about provided vars.');
+    $this->assertEqual(array_keys($event->parameterInfo()), array('node'), 'EventSet returns correct parameter info.');
 
     // Trigger the rule by updating the node.
     $nid = $node->nid;
