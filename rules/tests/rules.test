@@ -259,6 +259,30 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertTrue($pos1 && $pos2 === FALSE, 'Data has been saved only once.');
   }
 
+  /**
+   * Tests making use of rule sets.
+   */
+  function testRuleSets() {
+    $set = rules_rule_set('rules_test_set_1', array('variables' => array(
+      'node' => array('type' => 'node', 'label' => 'node'),
+    )));
+    $set->rule(rule()->action('rules_action_drupal_message', array('message:select' => 'node:title')))
+        ->rule(rule()->condition('rules_condition_content_is_published')
+                     ->action('rules_action_drupal_message', array('message' => 'Node is published.'))
+               );
+    $set->save();
+    rules_clear_cache(TRUE);
+
+    $title[LANGUAGE_NONE][0] = array('value' => 'The title.');
+    $node = $this->drupalCreateNode(array('title' => $title, 'status' => 1));
+    // Execute.
+    rules_invoke_rule_set('rules_test_set_1', $node);
+
+    $msg = drupal_get_messages();
+    $this->assertEqual($msg['status'][0], 'The title.', 'First rule evaluated.');
+    $this->assertEqual($msg['status'][1], 'Node is published.', 'Second rule evaluated.');
+  }
+
   function testRuleBuilding() {
 
     /*

@@ -27,7 +27,7 @@ class RulesEntityController extends EntityCRUDController {
       foreach (array_keys($schema['fields']) as $field) {
         $entity->$field = $record->$field;
       }
-      unset($entity->data);
+      unset($entity->data, $entity->plugin);
       $entities[$entity->id] = $entity;
     }
     $queried_entities = $entities;
@@ -361,7 +361,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
    */
-  public function save($name = '', $module = NULL) {
+  public function save($name = NULL, $module = NULL) {
     if (isset($this->parent)) {
       $this->parent->sortChildren();
       return $this->parent->save($name, $module);
@@ -372,6 +372,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
           $this->$property = $$property;
         }
       }
+      $this->plugin = $this->itemName;
       $this->data = $this;
       $this->invoke('presave');
       if (isset($this->id)) {
@@ -458,7 +459,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
  */
 abstract class RulesAbstractPlugin extends RulesPlugin {
 
-  protected $name;
+  protected $elementName;
   protected $info = array('parameter' => array(), 'provides' => array());
   public $settings = array();
 
@@ -469,7 +470,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    *   Further information provided about the plugin. Optional.
    */
   function __construct($name = NULL, $settings = array(), $parent = NULL) {
-    $this->name = $name;
+    $this->elementName = $name;
     $this->settings = $settings;
     $this->parent = $parent;
     $this->setUp();
@@ -477,8 +478,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   protected function setUp() {
     parent::setUp();
-    if (isset($this->cache[$this->itemName . '_info'][$this->name])) {
-      $this->info = $this->cache[$this->itemName . '_info'][$this->name];
+    if (isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
+      $this->info = $this->cache[$this->itemName . '_info'][$this->elementName];
       // Add in per-plugin implementation callbacks if any.
       if (!empty($this->info['faces_cache'])) {
         foreach ($this->info['faces_cache'] as $face => $data) {
@@ -492,9 +493,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         }
       }
     }
-    elseif (function_exists($this->name)) {
+    elseif (function_exists($this->elementName)) {
       // We don't have any info, so just add the name as execution callback.
-      $this->override(array('execute' => $this->name));
+      $this->override(array('execute' => $this->elementName));
     }
   }
 
@@ -612,18 +613,18 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function __sleep() {
-    return parent::__sleep() + drupal_map_assoc(array('name', 'settings'));
+    return parent::__sleep() + drupal_map_assoc(array('elementName', 'settings'));
   }
 
   public function getPluginName() {
-    return $this->itemName ." ". $this->name;
+    return $this->itemName ." ". $this->elementName;
   }
 
   /**
    * Gets the name of the configured action or condition.
    */
-  public function getName() {
-    return $this->name;
+  public function getElementName() {
+    return $this->elementName;
   }
 
   /**
@@ -904,7 +905,6 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * containers have to return a boolean.
    */
   public function execute() {
-    $this->forceSetUp();
     $return = $this->evaluate($this->setUpState(func_get_args()));
     $this->cleanUp();
     return $return;
