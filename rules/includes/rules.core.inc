@@ -175,7 +175,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    */
   public function execute() {}
 
-  protected function evaluate(array $state) {}
+  protected function evaluate(array &$state) {}
 
 
   protected static function compare(RulesPlugin $a, RulesPlugin $b) {
@@ -905,7 +905,8 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * containers have to return a boolean.
    */
   public function execute() {
-    $return = $this->evaluate($this->setUpState(func_get_args()));
+    $state = $this->setUpState(func_get_args());
+    $return = $this->evaluate($state);
     $this->cleanUp();
     return $return;
   }
@@ -1011,12 +1012,6 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
     $this->negate = $negate;
     return $this;
   }
-
-  /**
-   * Condition containers usually can't add new variables to evaluation $state,
-   * so take a copy of $state.
-   */
-  protected function evaluate(array $state) {}
 
   public function __sleep() {
     return parent::__sleep() + array('negate' => 'negate');
