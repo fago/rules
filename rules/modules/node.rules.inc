@@ -36,34 +36,34 @@ function rules_node_event_info() {
     'node_insert' => array(
       'label' => t('After saving new content'),
       'group' => t('Node'),
-      'provides' => rules_events_node_variables(t('created content')),
+      'variables' => rules_events_node_variables(t('created content')),
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
       'group' => t('Node'),
-      'provides' => rules_events_node_variables(t('updated content'), TRUE),
+      'variables' => rules_events_node_variables(t('updated content'), TRUE),
     ),
     'node_presave' => array(
       'label' => t('Content is going to be saved'),
       'group' => t('Node'),
-      'provides' => rules_events_node_variables(t('saved content'), TRUE),
+      'variables' => rules_events_node_variables(t('saved content'), TRUE),
     ),
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
       'group' => t('Node'),
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
-      'provides' => rules_events_node_variables(t('viewed content')) + array(
+      'variables' => rules_events_node_variables(t('viewed content')) + array(
         'build_mode' => array('type' => 'string', 'label' => t('view mode')),
       ),
     ),
     'node_delete' => array(
       'label' => t('After deleting content'),
       'group' => t('Node'),
-      'provides' => rules_events_node_variables(t('deleted content')),
+      'variables' => rules_events_node_variables(t('deleted content')),
     ),
   );
   // Specify that on presave the node is saved anyway.
-  $items['node_presave']['provides']['node']['skip save'] = TRUE;
+  $items['node_presave']['variables']['node']['skip save'] = TRUE;
   return $items;
 }
 

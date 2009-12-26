@@ -23,13 +23,13 @@ function rules_system_event_info() {
     'init' => array(
       'label' => t('User is going to view a page'),
       'group' => t('System'),
-      'provides' => rules_events_global_user_parameter(),
+      'variables' => rules_events_global_user_parameter(),
       'help' => t("Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."),
     ),
     'cron' => array(
       'label' => t('Cron maintenance tasks are performed'),
       'group' => t('System'),
-      'provides' => rules_events_global_user_parameter(),
+      'variables' => rules_events_global_user_parameter(),
     ),
   );
 }

@@ -843,6 +843,11 @@ class RulesRecursiveElementIterator extends ArrayIterator implements RecursiveIt
 abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggregate {
 
   protected $children = array();
+  protected $info = array();
+
+  public function __construct(array $info = array()) {
+    $this->info = $info;
+  }
 
   /**
    * Allow access to the children through the iterator.
@@ -851,7 +856,15 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return new RulesRecursiveElementIterator($this->children);
   }
 
+  /**
+   * If the variables have been specified in the info array, this determines the
+   * parameter to be passed - else just the parameters as need by the children
+   * are required.
+   */
   public function parameterInfo() {
+    if (isset($this->info['variables'])) {
+      return rules_filter_array($this->info['variables'], 'handler', FALSE);
+    }
     $vars = array();
     $provided = array();
     foreach ($this->children as $key => $child) {
@@ -867,6 +880,13 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       $provided += $child->providesVariables();
     }
     return $provided;
+  }
+
+  protected function stateVariables() {
+    if (!isset($this->parent) || (!empty($this->state) && $this->state['executed'] === $this)) {
+      return isset($this->info['variables']) ? $this->info['variables'] : $this->parameterInfo();
+    }
+    return $this->availableVariables();
   }
 
   /**
@@ -912,7 +932,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function __sleep() {
-    return parent::__sleep() + array('children' => 'children');
+    return parent::__sleep() + array('children' => 'children', 'info' => 'info');
   }
 
   /**

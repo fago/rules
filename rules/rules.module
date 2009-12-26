@@ -49,31 +49,48 @@ function rules_condition($name, $settings = array()) {
 }
 
 /**
+ * Creates a new rule.
+ *
+ * @param $info
+ *   An optional array that may contain the following keys:
+ *    - variables: An array of info about variables that are available to the
+ *      children elements. Variables without a 'handler' to load need to be
+ *      passed as argument when executiong the rule.
  * @return Rule
  */
-function rule() {
-  return rules_plugin_factory('rule');
+function rule($info = array()) {
+  return rules_plugin_factory('rule', $info);
 }
 
 /**
+ * Creates a new reaction rule.
+ *
  * @return RulesReactionRule
  */
 function rules_reaction_rule() {
-  return rules_plugin_factory('reaction_rule');
+  return rules_plugin_factory('reaction_rule', array());
 }
 
 /**
+ * Creates a logical OR condition container.
+ *
+ * @param $info
+ *   An optional array as for rule().
  * @return RulesOr
  */
-function rules_or() {
-  return rules_plugin_factory('or');
+function rules_or($info = array()) {
+  return rules_plugin_factory('or', $info);
 }
 
 /**
+ * Creates a logical AND condition container.
+ *
+ * @param $info
+ *   An optional array as for rule().
  * @return RulesAnd
  */
-function rules_and() {
-  return rules_plugin_factory('and');
+function rules_and($info = array()) {
+  return rules_plugin_factory('and', $info);
 }
 
 /**
