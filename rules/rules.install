@@ -48,6 +48,12 @@ function rules_schema() {
         'default' => 'rules',
         'description' => 'The module that provides the configuration.',
       ),
+     'plugin' => array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'The name of the plugin of this configuration.',
+      ),
      'status' => array(
         'type' => 'varchar',
         'length' => 7,

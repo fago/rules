@@ -94,6 +94,19 @@ function rules_and($info = array()) {
 }
 
 /**
+ * Creates a rule set.
+ *
+ * @param $name
+ *   The unique name of the rule set.
+ * @param $info
+ *   An optional array as for rule().
+ * @return RulesRuleSet
+ */
+function rules_rule_set($name = NULL, $info = array()) {
+  return rules_plugin_factory('rule_set', $name, $info);
+}
+
+/**
  * Log a message to the rules logger.
  *
  * @param $msg
@@ -354,7 +367,7 @@ function rules_rules_plugin_info() {
       'class' => 'Rule',
       'embeddable' => TRUE,
       'extenders' => array (
-        //Interfaces => array( class => className / methods => array of Methods )
+        //Interfaces => array( class => className / methods => array of Methods)
       ),
       'overrides' => array(
         //array of overrides each being an array ('methods' => .., 'file' => ..)
@@ -368,12 +381,11 @@ function rules_rules_plugin_info() {
       'class' => 'RulesEventSet',
       'embeddable' => FALSE,
     ),
-
-  //  'rule_set' => array(
-      //TODO
-      //'class' => '..',
-  //    'embeddable' => FALSE,
-  //  ),
+    'rule_set' => array(
+      'class' => 'RulesRuleSet',
+      // Rule sets don't get embedded - we use a separate action to execute it.
+      'embeddable' => FALSE,
+    ),
   );
 }
 
@@ -514,6 +526,22 @@ function rules_invoke_event() {
   // statically cache anything.
   if (!isset($conf['rules_empty_sets'][$name]) && $event = rules_get_cache('event_' . $name)) {
     call_user_func_array(array($event, 'execute'), $args);
+  }
+}
+
+/**
+ * Invokes a rule set.
+ *
+ * @param $set_name
+ *   The set's name.
+ * @param $args
+ *   Pass further parameters as required for the invoked rule set.
+ */
+function rules_invoke_rule_set() {
+  $args = func_get_args();
+  $name = array_shift($args);
+  if ($set = rules_get_cache('set_' . $name)) {
+    return call_user_func_array(array($set, 'execute'), $args);
   }
 }
 

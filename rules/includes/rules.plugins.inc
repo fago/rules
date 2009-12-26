@@ -17,7 +17,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
    * Execute the callback and update/save data as specified by the action.
    */
   protected function executeCallback(array $args, array &$state = array()) {
-    rules_log('Executing the action "@name".', array('@name' => $this->name));
+    rules_log('Executing the action "@name".', array('@name' => $this->elementName));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
     $wrappers = array();
 
@@ -78,7 +78,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
 
   protected function executeCallback(array $args, array &$state = array()) {
     $return = (bool)$this->__call('execute', rules_unwrap_data($args, $state));
-    rules_log('The condition "@name" evaluated to @bool', array('@name' => $this->name, '@bool' => $return ? 'TRUE' : 'FALSE'));
+    rules_log('The condition "@name" evaluated to @bool', array('@name' => $this->elementName, '@bool' => $return ? 'TRUE' : 'FALSE'));
     return $this->negate ? !$return : $return;
   }
 
@@ -251,12 +251,12 @@ class RulesOr extends RulesConditionContainer {
 }
 
 /**
- * This class is used for caching the rules to be evaluated per event.
+ * A set of rules to execute upon defined variables.
  */
-class RulesEventSet extends RulesActionContainer {
+class RulesRuleSet extends RulesActionContainer {
 
-  protected $itemName = 'event_set';
-  protected $name;
+  protected $itemName = 'rule_set';
+  public $name;
 
   public function __construct($name = NULL, $info = array()) {
     $this->name = $name;
@@ -266,6 +266,40 @@ class RulesEventSet extends RulesActionContainer {
   public function __sleep() {
     return parent::__sleep() + array('name' => 'name');
   }
+
+  /**
+   * @return RulesRuleSet
+   */
+  public function rule($rule) {
+    return $this->action($rule);
+  }
+
+  public function execute() {
+    $label = isset($this->info['label']) ? $this->info['label'] : $this->name;
+    rules_log('Evaluating rule set "@label".', array('@label' => $label), RulesLog::INFO, TRUE);
+    $this->evaluate($this->setUpState(func_get_args()));
+    $this->cleanUp();
+    rules_log('Finished evaluation of rule set "@label".', array('@label' => $label), RulesLog::INFO, FALSE);
+  }
+
+  public function rebuildCache(&$cache) {
+    // Just move each rule-set into the cache.
+    $sets = rules_config_load(FALSE, array('plugin' => 'rule_set'));
+
+    foreach ($sets as $id => $rule_set) {
+      $rule_set->setSkipSetup();
+      cache_set('set_' . $rule_set->name, $rule_set, 'cache_rules');
+      $rule_set->destroy();
+    }
+  }
+}
+
+/**
+ * This class is used for caching the rules to be evaluated per event.
+ */
+class RulesEventSet extends RulesRuleSet {
+
+  protected $itemName = 'event_set';
 
   public function execute() {
     rules_log('Reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, TRUE);
@@ -297,7 +331,7 @@ class RulesEventSet extends RulesActionContainer {
 
       if ($ids) {
         foreach (rules_config_load($ids) as $rule) {
-          $event->action($rule);
+          $event->rule($rule);
         }
         $event->setSkipSetup();
         cache_set('event_' . $name, $event, 'cache_rules');
@@ -313,6 +347,3 @@ class RulesEventSet extends RulesActionContainer {
     variable_set('rules_empty_sets', array_flip($empty));
   }
 }
-
-
-
