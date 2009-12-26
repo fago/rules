@@ -132,7 +132,8 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual(TRUE, $rule->active, 'Rule is active.');
     $this->assertEqual(0, $rule->weight, 'Rule weight is zero.');
 
-    $rule2 = array_pop(entity_load('rules_config', array($rule->id)));
+    $results = entity_load('rules_config', array($rule->id));
+    $rule2 = array_pop($results);
     $this->assertEqual($rule->id, $rule2->id, 'Rule created and loaded');
     $this->assertEqual(get_class($rule2), get_class($rule), 'Class properly instantiated.');
     $rule2->execute();

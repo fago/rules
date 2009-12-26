@@ -195,7 +195,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       $id = $this->data;
       // First unset the reference on the data, so we prevent changing it.
       unset($this->data);
-      $this->data = &$this->load($id);
+      $this->data = $this->load($id);
     }
     return $this->data;
   }

@@ -203,8 +203,9 @@ class RulesReactionRule extends Rule implements TriggerableInterface {
   /**
    * Reaction rules can't add variables to the parent scope, so copy $state.
    */
-  protected function evaluate(array $state) {
-    parent::evaluate($state);
+  protected function evaluate(array &$state) {
+    $copy = $state;
+    parent::evaluate($copy);
   }
 
   public function providesVariables() {
@@ -219,7 +220,7 @@ class RulesAnd extends RulesConditionContainer {
 
   protected $itemName = 'and';
 
-  protected function evaluate(array $state) {
+  protected function evaluate(array &$state) {
     foreach ($this->children as $condition) {
       if (!$condition->evaluate($state)) {
         rules_log('AND evaluated to FALSE.');
@@ -238,7 +239,7 @@ class RulesOr extends RulesConditionContainer {
 
   protected $itemName = 'or';
 
-  protected function evaluate(array $state) {
+  protected function evaluate(array &$state) {
     foreach ($this->children as $condition) {
       if ($condition->evaluate($state)) {
         rules_log('OR evaluated to TRUE.');
@@ -277,12 +278,14 @@ class RulesRuleSet extends RulesActionContainer {
   public function execute() {
     $label = isset($this->info['label']) ? $this->info['label'] : $this->name;
     rules_log('Evaluating rule set "@label".', array('@label' => $label), RulesLog::INFO, TRUE);
-    $this->evaluate($this->setUpState(func_get_args()));
+    $state = $this->setUpState(func_get_args());
+    $this->evaluate($state);
     $this->cleanUp();
     rules_log('Finished evaluation of rule set "@label".', array('@label' => $label), RulesLog::INFO, FALSE);
   }
 
-  public function rebuildCache(&$cache) {
+  public function rebuildCache(&$itemInfo, &$cache) {
+    parent::rebuildCache($itemInfo, $cache);
     // Just move each rule-set into the cache.
     $sets = rules_config_load(FALSE, array('plugin' => 'rule_set'));
 
@@ -303,7 +306,8 @@ class RulesEventSet extends RulesRuleSet {
 
   public function execute() {
     rules_log('Reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, TRUE);
-    $this->evaluate($this->setUpState(func_get_args()));
+    $state = $this->setUpState(func_get_args());
+    $this->evaluate($state);
     $this->cleanUp();
     rules_log('Finished reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, FALSE);
     // TODO: improve that to show the log for admins or log to watchdog.
@@ -311,7 +315,8 @@ class RulesEventSet extends RulesRuleSet {
     drupal_set_message(RulesLog::logger()->render());
   }
 
-  public function rebuildCache(&$cache) {
+  public function rebuildCache(&$itemInfo, &$cache) {
+    parent::rebuildCache($itemInfo, $cache);
     // Set up the per-event cache.
     $events = rules_fetch_data('event_info');
     $empty = array();
