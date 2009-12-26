@@ -178,7 +178,7 @@ class Rule extends RulesActionContainer {
 }
 
 /**
- * This class is used for caching the rules to be evaluated per event.
+ * Represents rules getting triggered by events.
  */
 class RulesReactionRule extends Rule implements TriggerableInterface {
 
@@ -257,7 +257,6 @@ class RulesEventSet extends RulesActionContainer {
 
   protected $itemName = 'event_set';
   protected $name;
-  protected $info = array();
 
   public function __construct($name = NULL, $info = array()) {
     $this->name = $name;
@@ -265,7 +264,7 @@ class RulesEventSet extends RulesActionContainer {
   }
 
   public function __sleep() {
-    return parent::__sleep() + drupal_map_assoc(array('name', 'info'));
+    return parent::__sleep() + array('name' => 'name');
   }
 
   public function execute() {
@@ -278,20 +277,6 @@ class RulesEventSet extends RulesActionContainer {
     drupal_set_message(RulesLog::logger()->render());
   }
 
-  public function parameterInfo() {
-    return rules_filter_array($this->info['provides'], 'handler', FALSE);
-  }
-
-  public function providesVariables() {
-    // We don't provide variables for later evaluated elements, but for any
-    // children elements, see stateVariables().
-    return array();
-  }
-
-  protected function stateVariables() {
-    return $this->info['provides'];
-  }
-
   public function rebuildCache(&$cache) {
     // Set up the per-event cache.
     $events = rules_fetch_data('event_info');
@@ -299,7 +284,7 @@ class RulesEventSet extends RulesActionContainer {
 
     foreach ($events as $name => $info) {
       $info += array(
-        'provides' => isset($info['arguments']) ? $info['arguments'] : array(),
+        'variables' => isset($info['arguments']) ? $info['arguments'] : array(),
       );
       // Unset stuff useless for execution.
       unset($info['arguments'], $info['help']);
@@ -327,7 +312,6 @@ class RulesEventSet extends RulesActionContainer {
     // See rules_get_event_set().
     variable_set('rules_empty_sets', array_flip($empty));
   }
-
 }
 
 
