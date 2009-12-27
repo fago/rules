@@ -32,7 +32,7 @@ function rules_data_data_info() {
  */
 function rules_data_action_info() {
   return array(
-    'rules_action_set' => array(
+    'rules_action_data_set' => array(
       'label' => t('Modify data'),
       'parameter' => array(
         'data' => array(
@@ -52,7 +52,38 @@ function rules_data_action_info() {
   );
 }
 
-
+/**
+ * Implements hook_rules_condition_info() on behalf of the pseudo data module.
+ * @see rules_core_modules()
+ */
+function rules_data_condition_info() {
+  return array(
+    'rules_condition_data_is' => array(
+      'label' => t('Data comparison'),
+      'parameter' => array(
+        'data' => array(
+          'type' => '*',
+          'label' => t('Data to compare'),
+          'description' => t('Specify the data to be compared using a data selector, e.g. "node:author:name".'),
+          'save' => TRUE,
+         ),
+        'value' => array(
+          'type' => '*',
+          'label' => t('Data value'),
+          'description' => t('The value to compare the data with.'),
+        ),
+        'op' => array(
+          'type' => 'text',
+          'label' => t('Operator'),
+          'description' => t('The comparisio'),
+          'optional' => TRUE,
+          'default value' => '==',
+        ),
+      ),
+      'group' => t('Data'),
+    ),
+  );
+}
 
 /**
  * @}

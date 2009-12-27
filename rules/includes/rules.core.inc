@@ -361,7 +361,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
    */
-  public function save($name = NULL, $module = NULL) {
+  public function save($name = NULL, $module = 'rules') {
     if (isset($this->parent)) {
       $this->parent->sortChildren();
       return $this->parent->save($name, $module);

@@ -95,7 +95,22 @@ class RulesUserDataWrapper extends RulesDataWrapper implements RulesDataSavableI
 /**
  * Action: Modify data.
  */
-function rules_action_set($data, $value) {
+function rules_action_data_set($data, $value) {
   // Rules will use the data wrapper to update the value and if possible, save.
   return array('data' => $value);
+}
+
+/**
+ * Condition: Compare data
+ */
+function rules_condition_data_is($data, $value, $op = '==') {
+  switch ($op) {
+    default:
+    case '==':
+      return $data == $value;
+    case '<=':
+      return $data <= $value;
+    case '>=':
+      return $data >= $value;
+  }
 }

@@ -96,14 +96,12 @@ function rules_and($info = array()) {
 /**
  * Creates a rule set.
  *
- * @param $name
- *   The unique name of the rule set.
  * @param $info
  *   An optional array as for rule().
  * @return RulesRuleSet
  */
-function rules_rule_set($name = NULL, $info = array()) {
-  return rules_plugin_factory('rule_set', $name, $info);
+function rules_rule_set($info = array()) {
+  return rules_plugin_factory('rule_set', $info);
 }
 
 /**
@@ -439,8 +437,19 @@ function rules_hook_info() {
  * @return
  *   An array of rule configurations indexed by their ids.
  */
-function rules_config_load($ids = array(), $conditions = array()) {
+function rules_config_load_multiple($ids = array(), $conditions = array()) {
   return entity_get_controller('rules_config')->load($ids, $conditions);
+}
+
+/**
+ * Loads a single rule configuration from the database.
+ *
+ * @see rules_config_load_multiple()
+ */
+function rules_config_load($conditions = array()) {
+  $id = !empty($conditions['id']) ? $conditions['id'] : FALSE;
+  $configs = entity_get_controller('rules_config')->load($id, $conditions);
+  return $configs ? reset($configs) : FALSE;
 }
 
 /**
