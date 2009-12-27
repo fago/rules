@@ -32,7 +32,7 @@ function rules_data_data_info() {
  */
 function rules_data_action_info() {
   return array(
-    'rules_action_data_set' => array(
+    'data_set' => array(
       'label' => t('Modify data'),
       'parameter' => array(
         'data' => array(
@@ -48,6 +48,7 @@ function rules_data_action_info() {
         ),
       ),
       'group' => t('Data'),
+      'callbacks' => array('execute' => 'rules_action_data_set'),
     ),
   );
 }
@@ -58,7 +59,7 @@ function rules_data_action_info() {
  */
 function rules_data_condition_info() {
   return array(
-    'rules_condition_data_is' => array(
+    'data_is' => array(
       'label' => t('Data comparison'),
       'parameter' => array(
         'data' => array(
@@ -75,12 +76,13 @@ function rules_data_condition_info() {
         'op' => array(
           'type' => 'text',
           'label' => t('Operator'),
-          'description' => t('The comparisio'),
+          'description' => t('The comparison operator.'),
           'optional' => TRUE,
           'default value' => '==',
         ),
       ),
       'group' => t('Data'),
+      'callbacks' => array('execute' => 'rules_condition_data_is'),
     ),
   );
 }

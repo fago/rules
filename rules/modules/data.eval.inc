@@ -112,5 +112,7 @@ function rules_condition_data_is($data, $value, $op = '==') {
       return $data <= $value;
     case '>=':
       return $data >= $value;
+    case 'IN':
+      return is_array($value) && in_array($data, $value);
   }
 }

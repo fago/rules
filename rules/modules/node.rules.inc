@@ -126,8 +126,9 @@ function rules_node_condition_info() {
  */
 function rules_node_action_info() {
   return array(
-    'rules_action_add_node' => array(
-      'label' => t('Add new content'),
+    //TODO: replace by data creation action.
+    'node_create' => array(
+      'label' => t('Create new content'),
       'parameter' => array(
         'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
         'title' => array(
@@ -145,7 +146,10 @@ function rules_node_action_info() {
         ),
       ),
       'group' => t('Node'),
+      'callbacks' => array('execute' => 'rules_action_node_create'),
     ),
+    //TODO: replace by action "fetch node" using node argument and direct input form
+    // or a general "Fetch data" action.
     'rules_action_load_node' => array(
       'label' => t('Fetch content by id'),
       'parameter' => array(
@@ -166,6 +170,7 @@ function rules_node_action_info() {
       ),
       'group' => t('Node'),
     ),
+    // TODO: Replace by a generic delete data action.
     'rules_action_delete_node' => array(
       'label' => t('Delete content'),
       'parameter' => array(
