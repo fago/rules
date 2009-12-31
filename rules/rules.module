@@ -239,8 +239,8 @@ function rules_clear_cache($immediate = FALSE) {
  */
 function rules_wrap_data(&$data, $info) {
   $cache = rules_get_cache();
-  $class = isset($cache['data_info'][$info['type']]['class']) ? $cache['data_info'][$info['type']]['class'] : FALSE;
-  return $class ? new $class($data, $info) : FALSE;
+  $cache['data_info'][$info['type']] += array('class' => isset($info['handler']) ? 'RulesDataWrapper' : FALSE);
+  return ($class = $cache['data_info'][$info['type']]['class']) ? new $class($data, $info) : FALSE;
 }
 
 /**
