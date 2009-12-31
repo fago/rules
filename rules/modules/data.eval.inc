@@ -103,10 +103,10 @@ function rules_action_data_set($data, $value) {
 /**
  * Condition: Compare data
  */
-function rules_condition_data_is($data, $value, $op = '==') {
+function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
     default:
-    case '==':
+    case '=':
       return $data == $value;
     case '<=':
       return $data <= $value;

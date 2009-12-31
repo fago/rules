@@ -10,41 +10,6 @@
  */
 
 /**
- * Condition: Check for selected content types
- */
-function rules_condition_content_is_type($node, $type) {
-  return in_array($node->type, $type);
-}
-
-/**
- * Condition: Check if the node is published
- */
-function rules_condition_content_is_published($node, $settings) {
-  return $node->status == 1;
-}
-
-/**
- * Condition: Check if the node is sticky
- */
-function rules_condition_content_is_sticky($node, $settings) {
-  return $node->sticky == 1;
-}
-
-/**
- * Condition: Check if the node is promoted to the frontpage
- */
-function rules_condition_content_is_promoted($node, $settings) {
-  return $node->promote == 1;
-}
-
-/**
- * Condition: Check if the node is new
- */
-function rules_condition_content_is_new($node, $settings = array()) {
-  return empty($node->nid) || !empty($node->is_new);
-}
-
-/**
  * Action "Create a node"
  */
 function rules_action_node_create($author, $title, $settings) {

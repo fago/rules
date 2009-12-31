@@ -68,17 +68,17 @@ function rules_data_condition_info() {
           'description' => t('Specify the data to be compared using a data selector, e.g. "node:author:name".'),
           'save' => TRUE,
          ),
-        'value' => array(
-          'type' => '*',
-          'label' => t('Data value'),
-          'description' => t('The value to compare the data with.'),
-        ),
         'op' => array(
           'type' => 'text',
           'label' => t('Operator'),
           'description' => t('The comparison operator.'),
           'optional' => TRUE,
-          'default value' => '==',
+          'default value' => '=',
+        ),
+        'value' => array(
+          'type' => '*',
+          'label' => t('Data value'),
+          'description' => t('The value to compare the data with.'),
         ),
       ),
       'group' => t('Data'),

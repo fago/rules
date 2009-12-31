@@ -26,3 +26,17 @@ function rules_test_custom_help() {
 function rules_action_test_reference(&$data) {
   $data['changed'] = TRUE;
 }
+
+/**
+ * Condition: Check for selected content types
+ */
+function rules_condition_content_is_type($node, $type) {
+  return in_array($node->type, $type);
+}
+
+/**
+ * Condition: Check if the node is published
+ */
+function rules_condition_content_is_published($node, $settings) {
+  return $node->status == 1;
+}

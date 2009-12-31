@@ -233,7 +233,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $rule = rule();
     $rule->action('rules_action_load_node')
-         ->action('rules_action_drupal_message', array('message:select' => 'node_loaded:body'))
+         ->action('drupal_message', array('message:select' => 'node_loaded:body'))
          ->execute($node->nid);
 
     RulesLog::logger()->checkLog();
@@ -268,9 +268,9 @@ class RulesTestCase extends DrupalWebTestCase {
     $set = rules_rule_set(array('variables' => array(
       'node' => array('type' => 'node', 'label' => 'node'),
     )));
-    $set->rule(rule()->action('rules_action_drupal_message', array('message:select' => 'node:title')))
+    $set->rule(rule()->action('drupal_message', array('message:select' => 'node:title')))
         ->rule(rule()->condition('rules_condition_content_is_published')
-                     ->action('rules_action_drupal_message', array('message' => 'Node is published.'))
+                     ->action('drupal_message', array('message' => 'Node is published.'))
                );
     $set->save('rules_test_set_1');
     rules_clear_cache(TRUE);
@@ -457,15 +457,15 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test');
+    parent::setUp('rules', 'rules_test', 'entity_metadata');
     RulesLog::logger()->clear();
   }
 
   protected function createTestRule($action = TRUE, $event = 'node_presave') {
     $rule = rules_reaction_rule();
     $rule->event($event)
-         ->condition(rules_condition('rules_condition_content_is_published')->negate())
-         ->condition('rules_condition_content_is_type', array('type' => array('page', 'story')));
+         ->condition(rules_condition('data_is', array('data:select' => 'node:status', 'value' => TRUE))->negate())
+         ->condition('data_is', array('data:select' => 'node:type', 'op' => 'IN', 'value' => array('page', 'story')));
     if ($action) {
       $rule->action('rules_action_delete_node');
     }
@@ -528,6 +528,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     // Test without recursion prevention to make sure recursive invocations
     // work right too. This rule won't ran in an infinite loop anyway.
     $rule->recursion = TRUE;
+    $rule->label = 'rule 1';
 
     $rule->save();
     rules_clear_cache(TRUE);
@@ -543,9 +544,11 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $this->assertFalse($node->sticky, 'Parameter has been loaded and saved.');
     $this->assertTrue($node->status, 'Action has been executed.');
 
-    // Ensure the rule was evaluated a second time making the condition TRUE.
-    $text = 'The condition "rules_condition_content_is_published" evaluated to TRUE';
-    $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
+    // Ensure the rule was evaluated a second time
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, 'Evaluating rule "rule 1"');
+    $pos = ($pos !== FALSE) ? strpos($text, 'Evaluating rule "rule 1"', $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, "Recursion prevented.");
     //debug(RulesLog::logger()->render());
   }
 
