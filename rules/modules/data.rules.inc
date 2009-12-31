@@ -22,7 +22,38 @@ function rules_data_file_info() {
  */
 function rules_data_data_info() {
   return array(
-
+    'text' => array(
+      'label' => t('text'),
+      'class' => 'RulesTextWrapper',
+    ),
+   'decimal' => array(
+      'label' => t('decimal'),
+      'class' => 'RulesDecimalWrapper',
+    ),
+   'integer' => array(
+      'label' => t('integer'),
+      'class' => 'RulesIntegerWrapper',
+    ),
+   'date' => array(
+      'label' => t('date'),
+      'class' => 'RulesDateWrapper',
+    ),
+   'duration' => array(
+      'label' => t('duration'),
+      'class' => 'RulesDurationWrapper',
+    ),
+   'boolean' => array(
+      'label' => t('truth value'),
+      'class' => 'RulesBooleanWrapper',
+    ),
+   'uri' => array(
+      'label' => t('URI'),
+      'class' => 'RulesURIWrapper',
+    ),
+   'entity' => array(
+      'label' => t('any entity'),
+      'class' => 'RulesEntityWrapper',
+    ),
   );
 }
 
