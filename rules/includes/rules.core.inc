@@ -136,6 +136,21 @@ abstract class RulesExtendable extends FacesExtendable {
       unset($itemInfo['extenders'], $itemInfo['overrides']);
     }
   }
+
+  /**
+   * Returns whether the a RuleExtendable supports the given interface.
+   *
+   * @param $itemInfo
+   *   The info about the item as specified in the hook.
+   * @param $interface
+   *   The interface to check for.
+   * @return
+   *   Whether it supports the given interface.
+   */
+  public static function itemFacesAs($itemInfo, $interface) {
+    $reflection = new ReflectionClass($itemInfo['class']);
+    return ($reflection->implementsInterface($interface) || isset($itemInfo['faces_cache'][2][$interface]));
+  }
 }
 
 /**
