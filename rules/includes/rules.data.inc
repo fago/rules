@@ -70,6 +70,40 @@ interface RulesDataInputFormInterface {
  */
 class RulesDataWrapper extends RulesExtendable implements Serializable {
 
+  /**
+   * Returns whether the type match. They match if type1 is compatible to type2.
+   *
+   * @param $type1
+   *   The name of the type to check for whether it is compatible to type2.
+   * @param $type2
+   *   The type expression to check for.
+   * @return
+   *   Whether the types match.
+   */
+  public static function typesMatch($type1, $type2) {
+    if ($type2 == '*' || $type2 == 'unknown' || $type1 == $type2) {
+      return TRUE;
+    }
+    // Multiple types may be specified using an array.
+    $types = (array)$type2;
+    if (in_array($type1, $types)) {
+      return TRUE;
+    }
+    // Use wrapper classes to check for sub-types.
+    $cache = rules_get_cache();
+    if (!empty($cache['data_info'][$type1]['class']) && $class = $cache['data_info'][$type1]['class']) {
+      foreach ($types as $type) {
+        if (!empty($cache['data_info'][$type]['class']) && is_subclass_of($class, $cache['data_info'][$type]['class'])) {
+          return TRUE;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+
+
+
   protected $hook = 'data_info';
 
   protected $data = NULL, $wrapper = NULL;
