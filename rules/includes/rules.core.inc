@@ -224,14 +224,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Identifies requirements as needed for features.
-   * TODO: Move this out of here --> features integration.
-   */
-  public function getRequirements() {
-
-  }
-
-  /**
    * Gets the arguments passed to the plugin.
    *
    * @return
@@ -359,13 +351,14 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   /**
    * Get required modules.
    */
-  public function getDependencies() {
-    //TODO: add integrity check for dependencies.
+  public function dependencies() {
+    return array();
   }
 
   /**
    * Makes sure the plugin is configured right, e.g. all needed variables
    * are available in the plugin's scope and dependent modules are enabled.
+   * //TODO: add integrity check for dependencies.
    */
   public function integrityCheck() {
     // Check whether any identified needed parameters match the *specified* parameterInfo.
@@ -535,6 +528,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     parent::integrityCheck();
     // Also validate the concrete plugin's settings.
     $this->validate();
+  }
+
+  public function dependencies() {
+    //TODO: add used input evaluator modules
+    return isset($this->info['module']) ? array($this->info['module']) : array();
   }
 
   public function parameterInfo() {
@@ -897,9 +895,17 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     if (isset($this->info['variables']) && isset($this->parent)) {
       throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()));
     }
-    foreach ($this->children() as $child) {
+    foreach ($this->children as $child) {
       $child->integrityCheck();
     }
+  }
+
+  public function dependencies() {
+    $args = array();
+    foreach ($this->children as $child) {
+      $args[] = $child->dependencies();
+    }
+    return !empty($args) ? call_user_func_array('array_merge', $args) : array();
   }
 
   /**

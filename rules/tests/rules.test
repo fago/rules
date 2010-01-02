@@ -58,6 +58,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $last = array_pop($log);
     $last = array_pop($log);
     $this->assertEqual($last[0], 'action called', 'Action called');
+    RulesLog::logger()->checkLog();
 
     // Make sure condition and action iterators are working.
     $it = new RecursiveIteratorIterator($rule->conditions(), RecursiveIteratorIterator::SELF_FIRST);
@@ -66,7 +67,9 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual(iterator_count($it), 6, 'Iterated over all conditions');
     $this->assertEqual(iterator_count($rule->actions()), 1, 'Iterated over all actions');
 
-    RulesLog::logger()->checkLog();
+    // Test getting dependencies and the integrity check.
+    $rule->integrityCheck();
+    $this->assertTrue($rule->dependencies() === array(), 'Dependencies correctly returned.');
   }
 
   /**
