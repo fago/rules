@@ -482,12 +482,19 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    *   The plugin implementation's name.
    * @param $info
    *   Further information provided about the plugin. Optional.
+   * @throws RulesException
+   *   If validation of the passed settings fails RulesExceptions are thrown.
    */
   function __construct($name = NULL, $settings = array(), $parent = NULL) {
     $this->elementName = $name;
     $this->settings = $settings;
     $this->parent = $parent;
     $this->setUp();
+    // When instantiated for building up the cache, bypass settings validation.
+    if (isset($name)) {
+      $this->validate();
+      $this->process();
+    }
   }
 
   protected function setUp() {
@@ -715,10 +722,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $file = $reflector->getFileName();
     $path = drupal_get_path('module', $info['module']);
     if (strpos($file, '.inc') && strpos($file, $path) !== FALSE) {
+      // Extract the filename without the trailing .inc.
       $start = strpos($file, $path) + strlen($path) + 1;
-      // Also cut of ".inc".
-      $out = substr($file, $start, strlen($file) - $start - 4);
-      return $out;
+      return substr($file, $start, strlen($file) - $start - 4);
     }
   }
 }
@@ -729,35 +735,22 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 interface RulesPluginUiInterface {
 
   public function form();
-  public function validate();
-  public function submit();
+  public function form_validate();
+  public function form_submit();
   public function render();
   public function help();
 
   /**
    * Checks whether the user has access to configure this plugin.
    */
-  public function checkAccess();
-
-  //Extendable by a hook?
-  public function getOperations();
-
-
-}
-
-/**
- * Plugin UI Interface for Container Plugins.
- */
-interface RulesContainerPluginUiInterface extends RulesPluginUiInterface {
+  public function access();
 
   /**
-   * Get all defined variables for any children.
+   * Returns ui operations for this plugin.
+   * //TODO: allow modules to specify them in the plugin_info hook.
    */
-  public function getDefinedVars();
-
+  public function operations();
 }
-
-
 
 /**
  * Provides the interface used for implementing an abstract plugin by using
@@ -766,16 +759,21 @@ interface RulesContainerPluginUiInterface extends RulesPluginUiInterface {
 interface RulesPluginImplInterface extends RulesPluginUiInterface {
 
   public function execute();
+
   /**
    * Validates $settings independent from a form submission.
+   *
+   * @throws RulesException
+   *   In case of validation errors, RulesExceptions are thrown.
    */
-  public function validateSettings();
+  public function validate();
 
   /**
-   * Processes $settings independent from a form submission.
+   * Processes $settings independent from a form submission. Only successfully
+   * validated settings are processed, so it can be also used to prepare
+   * execution dependent on the settings.
    */
-  public function processSettings();
-
+  public function process();
 }
 
 /**
@@ -788,17 +786,20 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
     throw new RulesException($this->object->getPluginName() .": Execution implementation is missing.");
   }
 
-  public function validateSettings() {}
-  public function processSettings() {}
+  public function validate() {
+    //TODO: Make sure used variables are available.
+    //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
+  }
+
+  public function process() {}
   public function form() {}
-  public function validate() {}
-  public function submit() {}
-  public function checkAccess() {}
-  public function getOperations() {}
+  public function form_validate() {}
+  public function form_submit() {}
+  public function access() {}
+  public function operations() {}
   public function render() {}
   public function help() {}
 }
-
 
 /**
  * Interface for objects that can be used as action.
@@ -814,15 +815,16 @@ interface RulesActionInterface {
  * Interface for objects that can be used as condition.
  */
 interface RulesConditionInterface {
+
   /**
    * @return Boolean.
    */
   public function execute();
+
   /**
    * Negate the result.
    */
   public function negate($negate = TRUE);
-
 }
 
 interface TriggerableInterface {
