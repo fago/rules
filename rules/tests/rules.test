@@ -259,6 +259,15 @@ class RulesTestCase extends DrupalWebTestCase {
       $pos2 = strpos($text, 'Saved variable node_loaded of type node.', $pos1 + 1);
     }
     $this->assertTrue($pos1 && $pos2 === FALSE, 'Data has been saved only once.');
+
+    // Test validation.
+    try {
+      rules_action('data_set', array('data' => 'no-selector', 'value' => ''));
+      $this->fail("Validation hasn't created an exception.");
+    }
+    catch (RulesException $e) {
+      $this->pass("Validation error correctly detected: ". $e);
+    }
   }
 
   /**
