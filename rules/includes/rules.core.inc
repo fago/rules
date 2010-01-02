@@ -568,8 +568,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function execute() {
-    $replacements = array('@label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '@plugin' => $this->itemName);
-    rules_log('Executing @plugin "@label".', $replacements, RulesLog::INFO, TRUE);
+    $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
+    rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $state = array();
     $this->forceSetUp();
     $args = func_get_args();
@@ -581,7 +581,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     $return = $this->executeCallback($args, $state);
     $this->cleanUp();
-    rules_log('Finished executing of @plugin "@label".', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 
@@ -599,7 +599,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     catch (RulesException $e) {
       rules_log($e->msg, $e->args, RulesLog::WARN);
-      rules_log('Unable to execute @name.', array('@name' => $this->getPluginName()));
+      rules_log('Unable to execute %name.', array('%name' => $this->getPluginName()));
     }
   }
 
@@ -953,12 +953,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * containers have to return a boolean.
    */
   public function execute() {
-    $replacements = array('@label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '@plugin' => $this->itemName);
-    rules_log('Executing @plugin "@label".', $replacements, RulesLog::INFO, TRUE);
+    $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
+    rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
     $return = $this->evaluate($state);
     $this->cleanUp();
-    rules_log('Finished executing of @plugin "@label".', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 

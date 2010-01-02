@@ -17,7 +17,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
    * Execute the callback and update/save data as specified by the action.
    */
   protected function executeCallback(array $args, array &$state = array()) {
-    rules_log('Executing the action "@name".', array('@name' => $this->elementName));
+    rules_log('Executing the action "%name".', array('%name' => $this->elementName));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
     $wrappers = array();
 
@@ -78,7 +78,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
 
   protected function executeCallback(array $args, array &$state = array()) {
     $return = (bool)$this->__call('execute', rules_unwrap_data($args, $state));
-    rules_log('The condition "@name" evaluated to @bool', array('@name' => $this->elementName, '@bool' => $return ? 'TRUE' : 'FALSE'));
+    rules_log('The condition "%name" evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'));
     return $this->negate ? !$return : $return;
   }
 
@@ -154,9 +154,9 @@ class Rule extends RulesActionContainer {
 
   protected function evaluate(array &$state) {
     if (!empty($this->id) && isset($state['blocked'][$this->id])) {
-      return rules_log('Not evaluating the rule "@label" to prevent recursion.', array('@label' => $this->label), RulesLog::INFO);
+      return rules_log('Not evaluating the rule %label to prevent recursion.', array('%label' => $this->label), RulesLog::INFO);
     }
-    rules_log('Evaluating rule "@label".', array('@label' => $this->label));
+    rules_log('Evaluating rule %label.', array('%label' => $this->label));
     if (empty($this->conditions) || $this->conditions->evaluate($state)) {
       // Block the rule to prevent recursion, if not allowed.
       if (!$this->recursion && $this->id) {
@@ -290,11 +290,11 @@ class RulesEventSet extends RulesRuleSet {
   protected $itemName = 'event set';
 
   public function execute() {
-    rules_log('Reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, TRUE);
+    rules_log('Reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
     $this->evaluate($state);
     $this->cleanUp();
-    rules_log('Finished reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, FALSE);
+    rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
     // TODO: improve that to show the log for admins or log to watchdog.
     RulesLog::logger()->checkLog();
     drupal_set_message(RulesLog::logger()->render());
