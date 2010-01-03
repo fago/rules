@@ -71,6 +71,18 @@ interface RulesDataInputFormInterface {
 class RulesDataWrapper extends RulesExtendable implements Serializable {
 
   /**
+   * Defines the available parameter for the given type.
+   *
+   * @param $type
+   *   The entity type.
+   * @return
+   *   An array keyed by parameter with the paremtrized type's label as values.
+   */
+  public static function availableParameter($type) {
+    return array();
+  }
+
+  /**
    * Returns whether the type match. They match if type1 is compatible to type2.
    *
    * @param $type1
@@ -101,13 +113,26 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     return FALSE;
   }
 
-
+  /**
+   * Splits up the given type of the form "type<parameter>" into the type and
+   * the parameter.
+   *
+   * @return
+   *   An array where the first entry is the type without the parameter and the
+   *   second is the parameter, or FALSE if there is none.
+   */
+  public static function typeExtractParameter($type) {
+    if (($pos = strpos($type, '<')) && $type[strlen($type)-1] == '>') {
+      return array(substr($type, 0, $pos), substr($type, $pos + 1, -1));
+    }
+    return array($type, FALSE);
+  }
 
 
   protected $hook = 'data_info';
 
   protected $data = NULL, $wrapper = NULL;
-  protected $name;
+  protected $name, $type = 'unknown', $parameter;
   protected $info = array();
 
   /**
@@ -133,8 +158,9 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       'handler' => FALSE,
       'loaded' => empty($info['handler']),
     );
+    list($this->type, $this->parameter) = self::typeExtractParameter($this->info['type']);
     if (!isset($this->itemName)) {
-      $this->itemName = $this->info['type'];
+      $this->itemName = $this->type;
     }
     $this->setUp();
   }
@@ -193,7 +219,8 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
   public function metadataWrapper(array $state = NULL) {
     if (!isset($this->wrapper)) {
       $data = &$this->get($state);
-      $this->wrapper = entity_metadata_wrapper($this->info['type'], $data);
+      // By default we treat the type parameter as bundle.
+      $this->wrapper = entity_metadata_wrapper($this->type, $data, $this->parameter ? array('bundle' => $this->parameter) : array());
       // Register this as the variable for the wrapper in the state's map.
       if (!empty($state['wrapper map'])) {
         $state['wrapper map']->add($this->wrapper, $this);
@@ -309,4 +336,3 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
   }
 
 }
-

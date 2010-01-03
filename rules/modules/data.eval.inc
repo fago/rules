@@ -102,6 +102,18 @@ class RulesURIWrapper extends RulesTextWrapper {
  */
 class RulesEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface {
 
+  /**
+   * Returns the available parameter for entities, which are the known bundles.
+   */
+  public static function availableParameter($type) {
+    if (($info = entity_get_info($type)) && !empty($info['bundles'])) {
+      foreach ($info['bundles'] as $name => $bundle_info) {
+        $return[$name] = $bundle_info['label'];
+      }
+    }
+    return isset($return) ? $return : array();
+  }
+
   protected $itemName = 'entity';
 
   /**
