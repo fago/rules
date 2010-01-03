@@ -32,7 +32,7 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   protected function createTestRule() {
-    $rule = rule();
+    $rule = rule(array());
     $rule->condition('rules_test_condition_true')
          ->condition('rules_test_condition_true')
          ->condition(rules_or()
@@ -120,13 +120,13 @@ class RulesTestCase extends DrupalWebTestCase {
    * Test setting up a rule and mapping variables.
    */
   function testVariableMapping() {
-    $rule = rule();
+    $rule = rule(array(
+      'node' => array('type' => 'node'),
+      'node_unchanged' => array('type' => 'node'),
+    ));
     $rule->condition(rules_condition('rules_condition_content_is_published')->negate())
          ->condition('rules_condition_content_is_type', array('type' => array('page', 'story')))
          ->action('rules_node_publish_action', array('node:select' => 'node_unchanged'));
-
-    $this->assertTrue(in_array('node', array_keys($rule->parameterInfo())), 'Parameter info contains node.');
-    $this->assertTrue(in_array('node_unchanged', array_keys($rule->parameterInfo())), 'Parameter info contains node_unchanged.');
 
     $node1 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
     $node2 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
@@ -189,7 +189,7 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testVariableAdding() {
     $node = $this->drupalCreateNode();
-    $rule = rule();
+    $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node')
          ->action('rules_action_delete_node', array('node:select' => 'node_loaded'))
          ->execute($node->nid);
@@ -203,7 +203,7 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testVariableAddingCustom() {
     $node = $this->drupalCreateNode();
-    $rule = rule();
+    $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node', array('node_loaded:var' => 'node'))
          ->action('rules_action_delete_node')
          ->execute($node->nid);
@@ -245,7 +245,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $body[LANGUAGE_NONE][0] = array('value' => '<b>The body & nothing.</b>');
     $node = $this->drupalCreateNode(array('body' => $body, 'type' => 'page', 'summary' => ''));
 
-    $rule = rule();
+    $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node')
          ->action('drupal_message', array('message:select' => 'node_loaded:body'))
          ->execute($node->nid);
@@ -257,7 +257,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     // Get a "reference" on the same object as returned by node_load().
     $node = node_load($node->nid);
-    $rule = rule();
+    $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node')
          ->action('data_set', array('data:select' => 'node_loaded:title', 'value' => 'Test title'))
          // Use two actions and make sure the node get saved only once.
@@ -277,7 +277,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     // Test validation.
     try {
-      rules_action('data_set', array('data' => 'no-selector', 'value' => ''));
+      rules_action('data_set', array('data' => 'no-selector', 'value' => ''))->validate();
       $this->fail("Validation hasn't created an exception.");
     }
     catch (RulesException $e) {
@@ -289,9 +289,9 @@ class RulesTestCase extends DrupalWebTestCase {
    * Tests making use of rule sets.
    */
   function testRuleSets() {
-    $set = rules_rule_set(array('variables' => array(
+    $set = rules_rule_set(array(
       'node' => array('type' => 'node', 'label' => 'node'),
-    )));
+    ));
     $set->rule(rule()->action('drupal_message', array('message:select' => 'node:title')))
         ->rule(rule()->condition('rules_condition_content_is_published')
                      ->action('drupal_message', array('message' => 'Node is published.'))
@@ -309,9 +309,9 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual($msg['status'][1], 'Node is published.', 'Second rule evaluated.');
 
     // Test a condition set.
-    $set = rules_or(array('variables' => array(
+    $set = rules_or(array(
       'node' => array('type' => 'node', 'label' => 'node'),
-    )));
+    ));
     $set->condition('data_is', array('data:select' => 'node:author:name', 'value' => 'notthename'))
         ->condition('data_is', array('data:select' => 'node:nid', 'value' => $node->nid))
         ->save('test', 'rules_test');

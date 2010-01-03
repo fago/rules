@@ -51,15 +51,16 @@ function rules_condition($name, $settings = array()) {
 /**
  * Creates a new rule.
  *
- * @param $info
- *   An optional array that may contain the following keys:
- *    - variables: An array of info about variables that are available to the
- *      children elements. Variables without a 'handler' to load need to be
- *      passed as argument when executiong the rule.
+ * @param $variables
+ *   The array of variables available for the element's children. For an
+ *   executable element this is required. Variables without a 'handler' to load
+ *   need to be passed as argument when executed.
+ *   If NULL is passed the element can't be executed directly, but it can be
+ *   embedded where suitable in configurations.
  * @return Rule
  */
-function rule($info = array()) {
-  return rules_plugin_factory('rule', $info);
+function rule($variables = NULL) {
+  return rules_plugin_factory('rule', $variables);
 }
 
 /**
@@ -68,40 +69,40 @@ function rule($info = array()) {
  * @return RulesReactionRule
  */
 function rules_reaction_rule() {
-  return rules_plugin_factory('reaction rule', array());
+  return rules_plugin_factory('reaction rule');
 }
 
 /**
  * Creates a logical OR condition container.
  *
- * @param $info
+ * @param $variables
  *   An optional array as for rule().
  * @return RulesOr
  */
-function rules_or($info = array()) {
-  return rules_plugin_factory('or', $info);
+function rules_or($variables = NULL) {
+  return rules_plugin_factory('or', $variables);
 }
 
 /**
  * Creates a logical AND condition container.
  *
- * @param $info
+ * @param $variables
  *   An optional array as for rule().
  * @return RulesAnd
  */
-function rules_and($info = array()) {
-  return rules_plugin_factory('and', $info);
+function rules_and($variables = NULL) {
+  return rules_plugin_factory('and', $variables);
 }
 
 /**
  * Creates a rule set.
  *
- * @param $info
- *   An optional array as for rule().
+ * @param $variables
+ *   An array as for rule().
  * @return RulesRuleSet
  */
-function rules_rule_set($info = array()) {
-  return rules_plugin_factory('rule set', $info);
+function rules_rule_set($variables) {
+  return rules_plugin_factory('rule set', $variables);
 }
 
 /**
@@ -582,6 +583,23 @@ function rules_filter_array($array, $key, $value) {
     }
   }
   return $return;
+}
+
+/**
+ * Merges the $update array into $array making sure no values of $array not
+ * appearing in $update are lost.
+ *
+ * @return
+ *   The updated array.
+ */
+function rules_update_array(array $array, array $update) {
+  $update += $array;
+  foreach (array_intersect_key($array, $update) as $key => $data) {
+    if (is_array($update[$key]) && is_array($data)) {
+      $update[$key] = rules_update_array($data, $update[$key]);
+    }
+  }
+  return $update;
 }
 
 /**

@@ -112,6 +112,7 @@ class Rule extends RulesActionContainer {
   public function conditions() {
     if (!isset($this->conditions)) {
       $this->conditions = rules_and();
+      $this->conditions->setParent($this);
     }
     return $this->conditions->getIterator();
   }
@@ -140,6 +141,7 @@ class Rule extends RulesActionContainer {
   public function condition($name, $settings = array()) {
     if (!isset($this->conditions)) {
       $this->conditions = rules_and();
+      $this->conditions->setParent($this);
     }
     $this->conditions->condition($name, $settings);
     return $this;
@@ -170,11 +172,11 @@ class Rule extends RulesActionContainer {
     }
   }
 
-  public function parameterInfo() {
-    $vars = isset($this->conditions) ? $this->conditions->parameterInfo() : array();
-    return $vars + parent::parameterInfo();
+  public function integrityCheck() {
+    parent::integrityCheck();
+    $this->conditions();
+    $this->conditions->integrityCheck();
   }
-
 }
 
 /**
@@ -211,6 +213,21 @@ class RulesReactionRule extends Rule implements TriggerableInterface {
   public function providesVariables() {
     return array();
   }
+
+  //TODO: Return as for the events suiting.
+  /* TODO: There is no event info cache yet.
+  public function stateVariables() {
+    $cache = rules_get_cache();
+    foreach ($this->events as $event) {
+      if (!isset($vars)) {
+        $vars = $cache['event_info'][$event]['variables'];
+      }
+      else {
+        $vars = array_intersect_key($vars, $cache['event_info'][$event]['variables']);
+      }
+    }
+    return isset($vars) ? $vars : array();
+  }*/
 }
 
 /**
@@ -258,10 +275,6 @@ class RulesRuleSet extends RulesActionContainer {
 
   protected $itemName = 'rule set';
 
-  public function __construct($info = array()) {
-    $this->info = $info;
-  }
-
   /**
    * @return RulesRuleSet
    */
@@ -289,6 +302,10 @@ class RulesEventSet extends RulesRuleSet {
 
   protected $itemName = 'event set';
 
+  public function __construct($info = array()) {
+    $this->info = $info;
+  }
+
   public function execute() {
     rules_log('Reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
@@ -310,8 +327,6 @@ class RulesEventSet extends RulesRuleSet {
       $info += array(
         'variables' => isset($info['arguments']) ? $info['arguments'] : array(),
       );
-      // Unset stuff useless for execution.
-      unset($info['arguments'], $info['help']);
 
       $event = new RulesEventSet($info);
       $event->name = $name;
