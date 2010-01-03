@@ -464,6 +464,23 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
     // Try serializing
     $this->assertEqual(unserialize(serialize($wrapper))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
   }
+
+  /**
+   * Test type matching
+   */
+  function testTypeMatching() {
+    $this->assertTrue(RulesDataWrapper::typesMatch('node', 'entity'), 'Types match.');
+    $this->assertFalse(RulesDataWrapper::typesMatch('entity', 'node'), 'Types don\'t match.');
+
+    $this->assertTrue(RulesDataWrapper::typesMatch('node<page>', 'node'), 'Types match.');
+    $this->assertTrue(RulesDataWrapper::typesMatch('node<page>', 'entity'), 'Types match.');
+    $this->assertTrue(RulesDataWrapper::typesMatch('list<node>', 'list'), 'Types match.');
+    $this->assertFalse(RulesDataWrapper::typesMatch('node', 'node<page>'), 'Types don\'t match.');
+
+    // Test that a type matches its grand-parent type (text > decimal > integer)
+    $this->assertTrue(RulesDataWrapper::typesMatch('integer', 'text'), 'Types match.');
+    $this->assertFalse(RulesDataWrapper::typesMatch('text', 'integer'), 'Types don\'t match.');
+  }
 }
 
 

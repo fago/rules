@@ -69,8 +69,9 @@ function rules_test_rules_action_info() {
     'rules_node_make_sticky_action' => array(
       'label' => t('Blabla'),
       'parameter' => array(
+        // Test passing args of type 'node' to for 'node<page>'.
         'node' => array(
-          'type' => 'node',
+          'type' => 'node<page>',
           'label' => t('Content'),
           'save' => TRUE,
         ),
