@@ -38,7 +38,7 @@ function rules_schema() {
         'type' => 'varchar',
         'length' => '255',
         'not null' => TRUE,
-        'default' => '',
+        'default' => 'unnamed',
         'description' => 'The name of the configuration.',
       ),
      'module' => array(

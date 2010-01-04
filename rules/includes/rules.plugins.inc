@@ -182,7 +182,7 @@ class Rule extends RulesActionContainer {
  */
 class RulesReactionRule extends Rule implements TriggerableInterface {
 
-  protected $itemName = 'reaction_rule';
+  protected $itemName = 'reaction rule';
   protected $events = array();
 
   /**
@@ -256,15 +256,10 @@ class RulesOr extends RulesConditionContainer {
  */
 class RulesRuleSet extends RulesActionContainer {
 
-  protected $itemName = 'rule_set';
-  public $name = 'unnamed';
+  protected $itemName = 'rule set';
 
   public function __construct($info = array()) {
     $this->info = $info;
-  }
-
-  public function __sleep() {
-    return parent::__sleep() + array('name' => 'name');
   }
 
   /**
@@ -274,19 +269,10 @@ class RulesRuleSet extends RulesActionContainer {
     return $this->action($rule);
   }
 
-  public function execute() {
-    $label = isset($this->info['label']) ? $this->info['label'] : $this->name;
-    rules_log('Evaluating rule set "@label".', array('@label' => $label), RulesLog::INFO, TRUE);
-    $state = $this->setUpState(func_get_args());
-    $this->evaluate($state);
-    $this->cleanUp();
-    rules_log('Finished evaluation of rule set "@label".', array('@label' => $label), RulesLog::INFO, FALSE);
-  }
-
   public function rebuildCache(&$itemInfo, &$cache) {
     parent::rebuildCache($itemInfo, $cache);
     // Just move each rule-set into the cache.
-    $sets = rules_config_load_multiple(FALSE, array('plugin' => 'rule_set'));
+    $sets = rules_config_load_multiple(FALSE, array('plugin' => 'rule set'));
 
     foreach ($sets as $id => $rule_set) {
       $rule_set->setSkipSetup();
@@ -301,7 +287,7 @@ class RulesRuleSet extends RulesActionContainer {
  */
 class RulesEventSet extends RulesRuleSet {
 
-  protected $itemName = 'event_set';
+  protected $itemName = 'event set';
 
   public function execute() {
     rules_log('Reacting on event "@label".', array('@label' => $this->info['label']), RulesLog::INFO, TRUE);
@@ -327,7 +313,8 @@ class RulesEventSet extends RulesRuleSet {
       // Unset stuff useless for execution.
       unset($info['arguments'], $info['help']);
 
-      $event = new RulesEventSet($name, $info);
+      $event = new RulesEventSet($info);
+      $event->name = $name;
       // Add all rules associated with this event
       $ids = db_query("SELECT c.id FROM {rules_config} c " .
         "INNER JOIN {rules_trigger} t ON c.id = t.id AND t.event = :event", array(':event' => $name))

@@ -152,6 +152,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    */
   public $id = NULL;
   public $weight = 0;
+  public $name = 'unnamed';
 
   /**
    * The parent element, if any.
@@ -361,17 +362,14 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
    */
-  public function save($name = NULL, $module = 'rules') {
+  public function save($name = 'unnamed', $module = 'rules') {
     if (isset($this->parent)) {
       $this->parent->sortChildren();
       return $this->parent->save($name, $module);
     }
     else {
-      foreach (array('name', 'module') as $property) {
-        if (isset($$property)) {
-          $this->$property = $$property;
-        }
-      }
+      $this->name = $name;
+      $this->module = $module;
       $this->plugin = $this->itemName;
       $this->data = $this;
       $this->invoke('presave');
@@ -390,8 +388,9 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   function __sleep() {
-    // Keep the id as we need it for the recursion prevention.
-    return drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight'));
+    $array = ($this->name != 'unnamed') ? array('name' => 'name') : array();
+    // Keep the id always as we need it for the recursion prevention.
+    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight'));
   }
 
   /**
@@ -529,6 +528,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function execute() {
+    $replacements = array('@label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '@plugin' => $this->itemName);
+    rules_log('Executing @plugin "@label".', $replacements, RulesLog::INFO, TRUE);
     $state = array();
     $this->forceSetUp();
     $args = func_get_args();
@@ -540,6 +541,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     $return = $this->executeCallback($args, $state);
     $this->cleanUp();
+    rules_log('Finished executing of @plugin "@label".', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 
@@ -905,9 +907,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * containers have to return a boolean.
    */
   public function execute() {
+    $replacements = array('@label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '@plugin' => $this->itemName);
+    rules_log('Executing @plugin "@label".', $replacements, RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
     $return = $this->evaluate($state);
     $this->cleanUp();
+    rules_log('Finished executing of @plugin "@label".', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 

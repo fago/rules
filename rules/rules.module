@@ -68,7 +68,7 @@ function rule($info = array()) {
  * @return RulesReactionRule
  */
 function rules_reaction_rule() {
-  return rules_plugin_factory('reaction_rule', array());
+  return rules_plugin_factory('reaction rule', array());
 }
 
 /**
@@ -101,7 +101,7 @@ function rules_and($info = array()) {
  * @return RulesRuleSet
  */
 function rules_rule_set($info = array()) {
-  return rules_plugin_factory('rule_set', $info);
+  return rules_plugin_factory('rule set', $info);
 }
 
 /**
@@ -371,15 +371,15 @@ function rules_rules_plugin_info() {
         //array of overrides each being an array ('methods' => .., 'file' => ..)
       ),
     ),
-    'reaction_rule' => array(
+    'reaction rule' => array(
       'class' => 'RulesReactionRule',
       'embeddable' => FALSE,
     ),
-    'event_set' => array(
+    'event set' => array(
       'class' => 'RulesEventSet',
       'embeddable' => FALSE,
     ),
-    'rule_set' => array(
+    'rule set' => array(
       'class' => 'RulesRuleSet',
       // Rule sets don't get embedded - we use a separate action to execute it.
       'embeddable' => FALSE,

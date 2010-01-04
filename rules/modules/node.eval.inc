@@ -45,9 +45,9 @@ function rules_condition_content_is_new($node, $settings = array()) {
 }
 
 /**
- * Action "Add a node"
+ * Action "Create a node"
  */
-function rules_action_add_node($author, $title, $settings) {
+function rules_action_node_create($author, $title, $settings) {
   if (!$settings['node_access'] || node_access('create', $settings['type'], $author)) {
     module_load_include('inc', 'node', 'node.pages');
 
