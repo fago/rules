@@ -79,7 +79,10 @@ function rules_data_action_info() {
         ),
       ),
       'group' => t('Data'),
-      'callbacks' => array('execute' => 'rules_action_data_set'),
+      'callbacks' => array(
+        'execute' => 'rules_action_data_set',
+        'validate' => 'rules_data_parameter_validation',
+      ),
     ),
   );
 }
@@ -113,7 +116,10 @@ function rules_data_condition_info() {
         ),
       ),
       'group' => t('Data'),
-      'callbacks' => array('execute' => 'rules_condition_data_is'),
+      'callbacks' => array(
+        'execute' => 'rules_condition_data_is',
+        'validate' => 'rules_data_parameter_validation',
+      ),
     ),
   );
 }

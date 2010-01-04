@@ -34,6 +34,20 @@ function rules_condition_data_is($data, $op, $value) {
   }
 }
 
+/**
+ * Ensures the 'data' argument is a data wrapper.
+ */
+function rules_data_parameter_validation(RulesAbstractPlugin $element) {
+  if (!isset($element->settings['data:select'])) {
+    throw new RulesException('The data argument has to be specified using data selectors.');
+  }
+  elseif ($element->getElementName() == 'data_set' && count(explode(':', $element->settings['data:select'], 2)) != 2) {
+    // Modifying rules variables itself doesn't make any sense.
+    throw new RulesException('Variables may not be changed, only their properties can be modified.');
+  }
+}
+
+
 class RulesTextWrapper extends RulesDataWrapper {
   // TODO: input form
   // TODO: use input evaluator in input form
