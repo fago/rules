@@ -1188,13 +1188,23 @@ class RulesException extends Exception {
 
   function __construct($msg, $args = array()) {
     $this->msg = $msg;
-    //TODO: fix: somehow always $this->message is output when it's thrown.
-    $this->message = $msg;
     $this->args = $args;
+    unset($this->message);
+  }
+
+  /**
+   * The getMessage() method cannot be overriden, so this is the only
+   * possibility to override its output.
+   */
+  public function __get($name) {
+    if ($name == 'message') {
+      return $this->__toString();
+    }
+    return parent::$name;
   }
 
   public function __toString() {
-    return t($this->message, $this->args);
+    return t($this->msg, $this->args);
   }
 }
 
