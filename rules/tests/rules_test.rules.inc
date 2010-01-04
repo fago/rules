@@ -71,7 +71,7 @@ function rules_test_rules_action_info() {
       'parameter' => array(
         // Test passing args of type 'node' to for 'node<page>'.
         'node' => array(
-          'type' => 'node<page>',
+          'type' => 'node',
           'label' => t('Content'),
           'save' => TRUE,
         ),

@@ -47,6 +47,22 @@ function rules_data_parameter_validation(RulesAbstractPlugin $element) {
   }
 }
 
+/**
+ * If we check the bundle property of a variable, add an assertion so that later
+ * evaluated elements can make use of this information.
+ */
+function rules_data_is_process_settings(RulesAbstractPlugin $element) {
+  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
+    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
+      $type = $vars[$parts[0]]['type'];
+      $info = entity_get_info();
+      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
+        // Assert that the object is of bundle $value.
+        $element->settings['#info']['asserts'][$parts[0]] = $value;
+      }
+    }
+  }
+}
 
 class RulesTextWrapper extends RulesDataWrapper {
   // TODO: input form

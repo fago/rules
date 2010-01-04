@@ -119,9 +119,9 @@ function rules_node_action_info() {
     'rules_action_load_node' => array(
       'label' => t('Fetch content by id'),
       'parameter' => array(
-        'nid' => array('type' => 'number', 'label' => t('Content ID')),
+        'nid' => array('type' => 'integer', 'label' => t('Content ID')),
         'vid' => array(
-          'type' => 'number',
+          'type' => 'integer',
           'label' => t('Content Revision ID'),
           'description' => t("If you want to fetch a specific revision, specify it's revision id. Else leave it empty to fetch the currently active revision."),
           'optional' => TRUE,

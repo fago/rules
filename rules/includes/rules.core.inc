@@ -182,8 +182,14 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    */
   protected $state = NULL;
 
-  public function setParent($parent) {
-    $this->parent = $parent;
+  protected function setParent($parent) {
+    if (!isset($this->parent)) {
+      $this->parent = $parent;
+      if (isset($parent->info['variables'])) {
+        // Variable information is now available, so check integrity now.
+        $this->integrityCheck();
+      }
+    }
   }
 
   /**
@@ -489,16 +495,10 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    * @throws RulesException
    *   If validation of the passed settings fails RulesExceptions are thrown.
    */
-  function __construct($name = NULL, $settings = array(), $parent = NULL) {
+  function __construct($name = NULL, $settings = array()) {
     $this->elementName = $name;
-    $this->settings = $settings;
-    $this->parent = $parent;
+    $this->settings = $settings + array('#_needs_processing' => TRUE);
     $this->setUp();
-    // When instantiated for building up the cache, bypass settings validation.
-    if (isset($name)) {
-      $this->integrityCheck();
-      $this->process();
-    }
   }
 
   protected function setUp() {
@@ -522,12 +522,30 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // We don't have any info, so just add the name as execution callback.
       $this->override(array('execute' => $this->elementName));
     }
+    if (isset($settings['#info'])) {
+      $this->info = rules_update_array($this->info, $settings['#info']);
+    }
   }
 
   public function integrityCheck() {
     parent::integrityCheck();
-    // Also validate the concrete plugin's settings.
-    $this->validate();
+    // Also validate and process the concrete plugin's settings.
+    $this->processSettings();
+  }
+
+  protected function processSettings() {
+    // Process if not done yet.
+    if (!empty($this->settings['#_needs_processing'])) {
+      $this->validate();
+      $this->process();
+      unset($this->settings['#_needs_processing']);
+    }
+  }
+
+  protected function setParent($parent) {
+    if (!isset($this->parent)) {
+      $this->parent = $parent;
+    }
   }
 
   public function dependencies() {
@@ -543,7 +561,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         $parts = explode(':', $this->settings[$name . ':select'], 2);
         $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
       }
-      elseif (!isset($this->settings[$name]) && empty($info[$name]['optional'])) {
+      elseif (!isset($this->settings[$name]) && empty($info['optional'])) {
         $vars[$name] = $info;
       }
     }
@@ -569,6 +587,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $state = array();
     $this->forceSetUp();
+    $this->processSettings();
     $args = func_get_args();
     // If there is no parameter info, just pass through the passed arguments.
     // That way we support executing actions without any info at all.
@@ -880,8 +899,10 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   protected $children = array();
   protected $info = array();
 
-  public function __construct(array $info = array()) {
-    $this->info = $info;
+  public function __construct($variables = NULL) {
+    if (isset($variables)) {
+      $this->info['variables'] = $variables;
+    }
   }
 
   /**
@@ -908,22 +929,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return !empty($args) ? call_user_func_array('array_merge', $args) : array();
   }
 
-  /**
-   * If the variables have been specified in the info array, this determines the
-   * parameter to be passed - else just the parameters as need by the children
-   * are required.
-   */
   public function parameterInfo() {
     if (isset($this->info['variables'])) {
       return rules_filter_array($this->info['variables'], 'handler', FALSE);
     }
-    $vars = array();
-    $provided = array();
-    foreach ($this->children as $key => $child) {
-      $vars += array_diff_key($child->parameterInfo(), $provided);
-      $provided += $child->providesVariables();
-    }
-    return $vars;
+    throw new RulesException('%plugin: Unable to execute container without specified variables.', array('%plugin' => $this->getPluginName()));
   }
 
   public function providesVariables() {
@@ -936,12 +946,10 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
   protected function stateVariables() {
     if (!isset($this->parent) || (!empty($this->state) && $this->state['executed'] === $this)) {
-      return isset($this->info['variables']) ? $this->info['variables'] : $this->parameterInfo();
+      return isset($this->info['variables']) ? $this->info['variables'] : array();
     }
     return $this->availableVariables();
   }
-
-
 
   /**
    * Sets skipSetup to the given value for this plugin and all its children.

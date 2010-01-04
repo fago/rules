@@ -122,6 +122,7 @@ function rules_data_condition_info() {
       'callbacks' => array(
         'execute' => 'rules_condition_data_is',
         'validate' => 'rules_data_parameter_validation',
+        'process' => 'rules_data_is_process_settings',
       ),
     ),
   );
