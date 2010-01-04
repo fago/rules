@@ -257,10 +257,9 @@ class RulesOr extends RulesConditionContainer {
 class RulesRuleSet extends RulesActionContainer {
 
   protected $itemName = 'rule_set';
-  public $name;
+  public $name = 'unnamed';
 
-  public function __construct($name = NULL, $info = array()) {
-    $this->name = $name;
+  public function __construct($info = array()) {
     $this->info = $info;
   }
 
@@ -287,7 +286,7 @@ class RulesRuleSet extends RulesActionContainer {
   public function rebuildCache(&$itemInfo, &$cache) {
     parent::rebuildCache($itemInfo, $cache);
     // Just move each rule-set into the cache.
-    $sets = rules_config_load(FALSE, array('plugin' => 'rule_set'));
+    $sets = rules_config_load_multiple(FALSE, array('plugin' => 'rule_set'));
 
     foreach ($sets as $id => $rule_set) {
       $rule_set->setSkipSetup();
@@ -335,7 +334,7 @@ class RulesEventSet extends RulesRuleSet {
         ->fetchCol();
 
       if ($ids) {
-        foreach (rules_config_load($ids) as $rule) {
+        foreach (rules_config_load_multiple($ids) as $rule) {
           $event->rule($rule);
         }
         $event->setSkipSetup();
