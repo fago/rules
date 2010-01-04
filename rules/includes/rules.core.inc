@@ -375,8 +375,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
         if (!isset($vars[$name])) {
           throw new RulesException('%plugin: There is no variable for the parameter %name available.', array('%plugin' => $this->getPluginName(), '%name' => $name));
         }
-        //TODO: Use proper type matching.
-        elseif ($vars[$name]['type'] != $info['type']) {
+        elseif (!RulesDataWrapper::typesMatch($vars[$name]['type'], $info['type'])) {
           throw new RulesException("%plugin: The data type of the variable %name does not match the parameter's requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name));
         }
       }
