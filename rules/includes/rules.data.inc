@@ -231,7 +231,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     // Save now!
     elseif ($this->info['save'] && !$this->info['skip save'] && $this->isSavable()) {
       if (isset($this->name)) {
-        rules_log('Saved variable @name of type @type.', array('@name' => $this->name, '@type' => $this->info['type']));
+        rules_log('Saved variable %name of type %type.', array('%name' => $this->name, '%type' => $this->info['type']));
       }
       if (isset($state['blocked']) && !empty($this->blocked)) {
         // Add the set of blocked elements for the recursion prevention.
