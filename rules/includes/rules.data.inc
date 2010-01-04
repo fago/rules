@@ -37,16 +37,16 @@ interface RulesDataSavableInterface extends RulesDataIdentifiableInterface {
 }
 
 /**
- * Interface for any data that can be specified by a direct input form.
+ * Interface for any data that can be specified by an input form.
  */
-interface RulesDataDirectInputFormInterface {
+interface RulesDataInputFormInterface {
 
   public function useEvalInput();
 
   /**
    * Gets an input form for creating an instance of your data type.
    */
-  public function getDirectInputForm($variable_info, $value, &$form_state);
+  public function getInputForm($variable_info, $value, &$form_state);
 
   /**
    * Process or check the value of your data type. E.g. the number data type
