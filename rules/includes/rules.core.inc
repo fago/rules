@@ -182,11 +182,11 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    */
   protected $state = NULL;
 
-  protected function setParent($parent) {
+  protected function setParent(RulesContainerPlugin $parent) {
     if (!isset($this->parent)) {
       $this->parent = $parent;
-      if (isset($parent->info['variables'])) {
-        // Variable information is now available, so check integrity now.
+      if ($parent->stateVariables()) {
+        // If variables are available, check integrity now.
         $this->integrityCheck();
       }
     }
