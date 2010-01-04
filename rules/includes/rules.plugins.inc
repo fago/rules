@@ -214,20 +214,23 @@ class RulesReactionRule extends Rule implements TriggerableInterface {
     return array();
   }
 
-  //TODO: Return as for the events suiting.
-  /* TODO: There is no event info cache yet.
   public function stateVariables() {
-    $cache = rules_get_cache();
+    if (isset($this->parent)) {
+      // Return the event variables provided by the event set, once cached.
+      return $this->parent->stateVariables();
+    }
+    //TODO: Once we have event_info caching make use of it.
+    $event_info = rules_fetch_data('event_info');
     foreach ($this->events as $event) {
       if (!isset($vars)) {
-        $vars = $cache['event_info'][$event]['variables'];
+        $vars = $event_info[$event]['variables'];
       }
       else {
-        $vars = array_intersect_key($vars, $cache['event_info'][$event]['variables']);
+        $vars = array_intersect_key($vars, $event_info[$event]['variables']);
       }
     }
     return isset($vars) ? $vars : array();
-  }*/
+  }
 }
 
 /**
