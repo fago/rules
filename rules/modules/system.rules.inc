@@ -39,7 +39,7 @@ function rules_system_event_info() {
  */
 function rules_system_action_info() {
   return array(
-    'rules_action_drupal_message' => array(
+    'drupal_message' => array(
       'label' => t('Show a configurable message on the site'),
       'group' => t('System'),
       'parameter' => array(
@@ -55,13 +55,15 @@ function rules_system_action_info() {
           'default value' => FALSE,
         ),
       ),
+      'callbacks' => array('execute' => 'rules_action_drupal_message'),
     ),
-    'rules_action_drupal_goto' => array(
+    'redirect' => array(
       'label' => t('Page redirect'),
       'group' => t('System'),
       'parameter' => array(
         'url' => array('type' => 'uri', 'label' => t('URL')),
       ),
+      'callbacks' => array('execute' => 'rules_action_drupal_goto'),
       'help' => t('Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".'),
     ),
   );

@@ -87,41 +87,6 @@ function rules_events_node_variables($node_label, $update = FALSE) {
 }
 
 /**
- * Implements hook_rules_condition_info() on behalf of the node module.
- */
-function rules_node_condition_info() {
-  $items = array();
-  $defaults = array(
-    'parameter' => array(
-      'node' => array('type' => 'node', 'label' => t('Content')),
-    ),
-    'group' => t('Node'),
-  );
-  $items['rules_condition_content_is_type'] = array(
-    'label' => t('Content has type'),
-    'parameter' => array(
-      'node' => array('type' => 'node', 'label' => t('Content')),
-      'type' => array('type' => 'list<string>', 'label' => t('Content types')),
-    ),
-    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
-  ) + $defaults;
-  $items['rules_condition_content_is_published'] = $defaults + array(
-    'label' => t('Content is published'),
-  );
-  $items['rules_condition_content_is_sticky'] = $defaults + array(
-    'label' => t('Content is sticky'),
-  );
-  $items['rules_condition_content_is_promoted'] = $defaults + array(
-    'label' => t('Content is promoted to frontpage'),
-  );
-  $items['rules_condition_content_is_new'] = $defaults + array(
-    'label' => t('Content is new'),
-    'help' => t('Evaluates to TRUE, if the given content has not been saved yet.'),
-  );
-  return $items;
-}
-
-/**
  * Implements hook_rules_action_info() on behalf of the node module.
  */
 function rules_node_action_info() {

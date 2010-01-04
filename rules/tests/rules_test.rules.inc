@@ -14,6 +14,32 @@ function rules_test_rules_file_info() {
 }
 
 /**
+ * Implements hook_rules_condition_info().
+ */
+function rules_test_rules_condition_info() {
+  $items = array();
+  $defaults = array(
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
+    ),
+    'group' => t('Node'),
+  );
+  $items['rules_condition_content_is_type'] = array(
+    'label' => t('Content has type'),
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
+      'type' => array('type' => 'list<string>', 'label' => t('Content types')),
+    ),
+    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+  ) + $defaults;
+  $items['rules_condition_content_is_published'] = $defaults + array(
+    'label' => t('Content is published'),
+  );
+  return $items;
+}
+
+
+/**
  * Implements hook_rules_action_info().
  */
 function rules_test_rules_action_info() {
