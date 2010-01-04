@@ -522,8 +522,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // We don't have any info, so just add the name as execution callback.
       $this->override(array('execute' => $this->elementName));
     }
-    if (isset($settings['#info'])) {
-      $this->info = rules_update_array($this->info, $settings['#info']);
+    if (isset($this->settings['#info'])) {
+      $this->info = rules_update_array($this->info, $this->settings['#info']);
     }
   }
 
@@ -539,12 +539,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $this->validate();
       $this->process();
       unset($this->settings['#_needs_processing']);
-    }
-  }
-
-  protected function setParent($parent) {
-    if (!isset($this->parent)) {
-      $this->parent = $parent;
     }
   }
 

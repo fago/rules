@@ -321,6 +321,31 @@ class RulesTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 
+  /**
+   * Test customizing action info and make sure integrity is checked.
+   */
+  function testInfoAdaption() {
+    $settings['#info']['parameter']['node']['type'] = 'node<page>';
+    $action = rules_action('rules_node_make_sticky_action', $settings);
+    $info = $action->parameterinfo();
+    $this->assertEqual($info['node']['type'], 'node<page>', 'Info adapted.');
+
+    try {
+      $rule = rule(array('node' => array('type' => 'node')));
+      // Customize action info using the settings.
+      $rule->condition('data_is', array('data:select' => 'node:type', 'value' => 'page'))
+           ->action($action);
+      // Adding the action should issue an integrity check which has to fail
+      // because the 'node' variable doesn't match the node<page> type.
+      $this->fail('Integrity check has not thrown an exception.');
+    }
+    catch (RulesException $e) {
+      $this->pass('Integrity check has thrown exception: ' . $e->getMessage());
+    }
+    //$node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+    //$rule->execute($node);
+  }
+
   function testRuleBuilding() {
 
     /*
