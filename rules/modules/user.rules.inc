@@ -23,6 +23,7 @@ function rules_user_data_info() {
     'user' => array(
       'label' => t('content'),
       'class' => 'RulesUserDataWrapper',
+      'parent' => 'entity',
     ),
   );
 }

@@ -23,6 +23,7 @@ function rules_node_data_info() {
     'node' => array(
       'label' => t('content'),
       'class' => 'RulesNodeDataWrapper',
+      'parent' => 'entity',
       'group' => t('Node'),
     ),
   );

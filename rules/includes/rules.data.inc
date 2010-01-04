@@ -97,20 +97,32 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       return TRUE;
     }
     // Multiple types may be specified using an array.
-    $types = (array)$type2;
+    $types = is_array($type2) ? $type2 : array($type2);
     if (in_array($type1, $types)) {
       return TRUE;
     }
-    // Use wrapper classes to check for sub-types.
-    $cache = rules_get_cache();
-    if (!empty($cache['data_info'][$type1]['class']) && $class = $cache['data_info'][$type1]['class']) {
-      foreach ($types as $type) {
-        if (!empty($cache['data_info'][$type]['class']) && is_subclass_of($class, $cache['data_info'][$type]['class'])) {
-          return TRUE;
-        }
+    // In case $type1 is parametrized, try again with the unparametrized type.
+    if ((list($type, $parameter) = self::typeExtractParameter($type1)) && $parameter) {
+      return self::typesMatch($type, $type2);
+    }
+    // Check for sub-type relationships.
+    $cache = &rules_get_cache();
+    self::typeCalcAncestors($cache, $type1);
+
+    // If one of the types is an ancestor return TRUE.
+    return (bool)array_intersect_key($cache['data_info'][$type1]['ancestors'], array_flip($types));
+  }
+
+  protected static function typeCalcAncestors(&$cache, $type) {
+    if (!isset($cache['data_info'][$type]['ancestors'])) {
+      $cache['data_info'][$type]['ancestors'] = array();
+      if (isset($cache['data_info'][$type]['parent']) && $parent = $cache['data_info'][$type]['parent']) {
+        $cache['data_info'][$type]['ancestors'][$parent] = TRUE;
+        self::typeCalcAncestors($cache, $parent);
+        // Add all parent ancestors to our own ancestors.
+        $cache['data_info'][$type]['ancestors'] += $cache['data_info'][$parent]['ancestors'];
       }
     }
-    return FALSE;
   }
 
   /**
