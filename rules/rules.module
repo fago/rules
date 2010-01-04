@@ -275,59 +275,6 @@ function &rules_unwrap_data(array $data, $state = NULL, $load = TRUE) {
 }
 
 /**
- * Returns an entity metadata wrapper as specified in the selector.
- *
- * @param $selector
- *   The selector string, e.g. "node:author:mail".
- * @param $state
- *   The rules evaluation state.
- * @return EntityMetadataWrapper
- *   The wrapper or if the selector couldn't be applied: FALSE.
- */
-function rules_get_metadata_wrapper($selector, $state) {
-  $parts = explode(':', $selector, 2);
-  $vars = &$state['variables'];
-  // A valid selector must refer to an existing var and has at least 2 parts.
-  if (!isset($vars[$parts[0]]) || !($vars[$parts[0]] instanceof RulesDataWrapper) || count($parts) < 2) {
-    return FALSE;
-  }
-  $wrapper = $vars[$parts[0]]->metadataWrapper($state);
-  foreach (explode(':', $parts[1]) as $name) {
-    $wrapper = $wrapper->$name;
-  }
-  return $wrapper;
-}
-
-/**
- * Makes the changes to a metadata wrapper permanent by retrieving a proper
- * rules data wrapper.
- *
- * @param $wrapper
- *   The wrapper that has been set, thus its parent will be saved.
- */
-function rules_metadata_wrapper_save_changes($wrapper, array $state, $immediate = FALSE) {
-  $info = $wrapper->info();
-  // We always need to save the parent entity.
-  if (isset($info['parent']) && $wrapper = $info['parent']) {
-    if ($var = $state['wrapper map']->getVariable($wrapper)) {
-      $var->update($wrapper)->saveChanges($immediate, $state);
-    }
-    // This data wrapper has no variable associated yet, so create one.
-    elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
-      if ($var->isSavable()) {
-        $var->saveChanges($immediate, $state);
-        $state['wrapper map']->add($wrapper, $var);
-      }
-      // Else the data is identifiable, but not savable. Nothing we can do.
-    }
-    else {
-      // Data was not identifiable, so try saving the parent.
-      rules_metadata_wrapper_save_changes($wrapper, $state, $immediate);
-    }
-  }
-}
-
-/**
  * Creates a new instance of a the given rules plugin.
  *
  * @return RulesPlugin

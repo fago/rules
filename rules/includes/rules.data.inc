@@ -140,6 +140,37 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     return array($type, FALSE);
   }
 
+  /**
+   * Makes the changes to a metadata wrapper permanent by retrieving the proper
+   * rules data wrapper and using it to save changes.
+   *
+   * @param $wrapper
+   *   The wrapper that has been set, thus its parent will be saved.
+   */
+  public static function metadataWrapperSaveChanges($wrapper, array $state, $immediate = FALSE) {
+    $info = $wrapper->info();
+    // We always need to save the parent entity.
+    if (isset($info['parent']) && $wrapper = $info['parent']) {
+      if ($var = $state['wrapper map']->getVariable($wrapper)) {
+        $var->update($wrapper)->saveChanges($immediate, $state);
+      }
+      // This data wrapper has no variable associated yet, so create one.
+      elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
+        if ($var->isSavable()) {
+          $var->saveChanges($immediate, $state);
+          $state['wrapper map']->add($wrapper, $var);
+        }
+        // Else the data is identifiable, but not savable. Nothing we can do.
+      }
+      else {
+        // Data was not identifiable, so try saving the parent.
+        self::metadataWrapperSaveChanges($wrapper, $state, $immediate);
+      }
+    }
+  }
+
+
+
 
   protected $hook = 'data_info';
 

@@ -380,6 +380,80 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
+   * Returns the argument as configured in $settings for the parameter $name
+   * described with $info.
+   */
+  protected function getArgument($name, $info, $settings, $state) {
+    $vars = &$state['variables'];
+    if (isset($settings[$name . ':select']) && isset($vars[$settings[$name . ':select']])) {
+      $arg = $vars[$settings[$name . ':select']];
+    }
+    elseif (isset($settings[$name . ':select'])) {
+      $arg = $this->getSelectedVariable($settings[$name . ':select'], $info, $state);
+    }
+    elseif (isset($settings[$name])) {
+      $arg = $settings[$name];
+    }
+    elseif (isset($vars[$name])) {
+      $arg = $vars[$name];
+    }
+    elseif (empty($info['optional'])) {
+      throw new RulesException('Required parameter ' . check_plain($name) . ' is missing.');
+    }
+    else {
+      $arg = !empty($info['default value']) ? $info['default value'] : NULL;
+    }
+    // Support passing already sanitized values.
+    if ($info['type'] == 'text' && !empty($info['sanitized'])) {
+      //TODO: support a method for getting sanitized values of text wrappers,
+      // so tokens can make use of it.
+      return check_plain((string)$arg);
+    }
+    return $arg;
+  }
+
+  protected function getSelectedVariable($selector, &$info, array $state) {
+    if ($wrapper = $this->applyDataSelector($selector, $state)) {
+      $options = array('decode' => TRUE);
+      if ($info['type'] == 'text' && !empty($info['sanitized'])) {
+        $options = array('sanitize' => TRUE);
+        unset($info['sanitized']);
+      }
+      return $wrapper->value($options);
+    }
+    throw new RulesException('Unable to apply data selector "' . check_plain($selector) . '".');
+  }
+
+  /**
+   * Returns an entity metadata wrapper as specified in the selector.
+   *
+   * @param $selector
+   *   The selector string, e.g. "node:author:mail".
+   * @param $state
+   *   Optionally, the rules evaluation state. Only if the state is given the
+   *   wrapper will actually wrap data.
+   * @return EntityMetadataWrapper
+   *   The wrapper or if the selector couldn't be applied: FALSE.
+   */
+  protected function applyDataSelector($selector, $state = NULL) {
+    $parts = explode(':', $selector, 2);
+    // Use the evaluation state to get the wrapper.
+    if (isset($state) && ($vars = &$state['variables']) && isset($vars[$parts[0]]) && ($vars[$parts[0]] instanceof RulesDataWrapper)) {
+      $wrapper = $vars[$parts[0]]->metadataWrapper($state);
+    }
+    // If there is no evaluation state yet, so make use the variable info.
+    elseif (!isset($state) && ($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
+      $wrapper = entity_metadata_wrapper($vars[$parts[0]]['type']);
+    }
+    if (isset($wrapper) && count($parts) > 1) {
+      foreach (explode(':', $parts[1]) as $name) {
+        $wrapper = $wrapper->$name;
+      }
+    }
+    return isset($wrapper) ? $wrapper : FALSE;
+  }
+
+  /**
    * Implements the EntityCRUDInterface.
    *
    * Saves the configuration to the database, regardless whether this is invoked
@@ -617,51 +691,15 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    * Gets the right arguments for executing this.
    */
   protected function getExecutionArguments(array $state) {
-    $vars = &$state['variables'];
     $args = array();
     foreach ($this->info['parameter'] as $name => $info) {
-      if (isset($this->settings[$name . ':select']) && isset($vars[$this->settings[$name . ':select']])) {
-        $args[$name] = $vars[$this->settings[$name . ':select']];
-      }
-      elseif (isset($this->settings[$name . ':select'])) {
-        $args[$name] = $this->getSelectedVariable($this->settings[$name . ':select'], $info, $state);
-      }
-      elseif (isset($this->settings[$name])) {
-        $args[$name] = $this->settings[$name];
-      }
-      elseif (isset($vars[$name])) {
-        $args[$name] = $vars[$name];
-      }
-      elseif (empty($info['optional'])) {
-        throw new RulesException('Required parameter ' . check_plain($name) . ' is missing.');
-      }
-      else {
-        $args[$name] = !empty($info['default value']) ? $info['default value'] : NULL;
-      }
-      // Support passing already sanitized values.
-      if ($info['type'] == 'text' && !empty($info['sanitized'])) {
-        //TODO: support a method for getting sanitized values of text wrappers,
-        // so tokens can make use of it.
-        $args[$name] = check_plain((string)$args[$name]);
-      }
+      $args[$name] = $this->getArgument($name, $info, $this->settings, $state);
     }
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
     $args[] = $this;
     $args[] = &$state;
     return $args;
-  }
-
-  protected function getSelectedVariable($selector, &$info, array $state) {
-    if ($wrapper = rules_get_metadata_wrapper($selector, $state)) {
-      $options = array('decode' => TRUE);
-      if ($info['type'] == 'text' && !empty($info['sanitized'])) {
-        $options = array('sanitize' => TRUE);
-        unset($info['sanitized']);
-      }
-      return $wrapper->value($options);
-    }
-    throw new RulesException('Unable to apply data selector "' . check_plain($selector) . '".');
   }
 
   public function __sleep() {
