@@ -360,7 +360,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Get required modules.
    */
   public function getDependencies() {
-
+    //TODO: add integrity check for dependencies.
   }
 
   /**
@@ -369,6 +369,18 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    */
   public function integrityCheck() {
     // Check whether any identified needed parameters match the *specified* parameterInfo.
+    if (isset($this->parent)) {
+      $vars = $this->availableVariables();
+      foreach ($this->parameterInfo() as $name => $info) {
+        if (!isset($vars[$name])) {
+          throw new RulesException('%plugin: There is no variable for the parameter %name available.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+        }
+        //TODO: Use proper type matching.
+        elseif ($vars[$name]['type'] != $info['type']) {
+          throw new RulesException("%plugin: The data type of the variable %name does not match the parameter's requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name));
+        }
+      }
+    }
   }
 
   /**
@@ -492,7 +504,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $this->setUp();
     // When instantiated for building up the cache, bypass settings validation.
     if (isset($name)) {
-      $this->validate();
+      $this->integrityCheck();
       $this->process();
     }
   }
@@ -518,6 +530,12 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // We don't have any info, so just add the name as execution callback.
       $this->override(array('execute' => $this->elementName));
     }
+  }
+
+  public function integrityCheck() {
+    parent::integrityCheck();
+    // Also validate the concrete plugin's settings.
+    $this->validate();
   }
 
   public function parameterInfo() {
@@ -876,6 +894,15 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return new RulesRecursiveElementIterator($this->children);
   }
 
+  public function integrityCheck() {
+    if (isset($this->info['variables']) && isset($this->parent)) {
+      throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()));
+    }
+    foreach ($this->children() as $child) {
+      $child->integrityCheck();
+    }
+  }
+
   /**
    * If the variables have been specified in the info array, this determines the
    * parameter to be passed - else just the parameters as need by the children
@@ -908,6 +935,8 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     }
     return $this->availableVariables();
   }
+
+
 
   /**
    * Sets skipSetup to the given value for this plugin and all its children.
