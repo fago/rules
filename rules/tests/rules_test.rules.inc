@@ -95,7 +95,6 @@ function rules_test_rules_data_info() {
     'test' => array(
       'label' => t('content'),
       'class' => 'RulesDataWrapper',
-      'module' => 'Node',
       'extenders' => array(
         'RulesDataSavableInterface' => array('class' => 'RulesNodeDataWrapperExtender'),
       ),
@@ -119,6 +118,26 @@ class RulesNodeDataWrapperExtender extends RulesNodeDataWrapper implements Faces
     $this->data = &$object->data;
     $this->info = &$object->info;
     parent::setUp();
+  }
+
+  /**
+   * We have to overwrite the Node load method as the datawrapper type 'test'
+   * is used as entity type else, which won't work.
+   */
+  public function load($id) {
+    $node = node_load($id);
+    if (empty($node)) {
+      throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => 'node'));
+    }
+    return $node;
+  }
+
+  public function getIdentifier() {
+    $node = $this->get();
+    if (!isset($node->nid)) {
+      throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst('node')));
+    }
+    return $node->nid;
   }
 }
 

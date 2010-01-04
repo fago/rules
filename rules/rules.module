@@ -238,9 +238,14 @@ function rules_clear_cache($immediate = FALSE) {
  * @see hook_rules_data_info()
  */
 function rules_wrap_data(&$data, $info) {
-  $cache = rules_get_cache();
-  $cache['data_info'][$info['type']] += array('class' => isset($info['handler']) ? 'RulesDataWrapper' : FALSE);
-  return ($class = $cache['data_info'][$info['type']]['class']) ? new $class($data, $info) : FALSE;
+  if (($cache = rules_get_cache()) && isset($cache['data_info'][$info['type']])) {
+    //TODO: Make wrapping of not identifiable data wrappers optional.
+    $cache['data_info'][$info['type']] += array('class' => isset($info['handler']) ? 'RulesDataWrapper' : FALSE);
+    if ($class = $cache['data_info'][$info['type']]['class']) {
+      return new $class($data, $info);
+    }
+  }
+  return FALSE;
 }
 
 /**
