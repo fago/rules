@@ -52,11 +52,10 @@ function rules_condition($name, $settings = array()) {
  * Creates a new rule.
  *
  * @param $variables
- *   The array of variables available for the element's children. For an
- *   executable element this is required. Variables without a 'handler' to load
- *   need to be passed as argument when executed.
- *   If NULL is passed the element can't be executed directly, but it can be
- *   embedded where suitable in configurations.
+ *   The array of variables to setup in the evaluation state, making them
+ *   available for the configuraion elements. Variables without a specified
+ *   'handler' need to be passed as argument when executed.
+ *   Only instances with no variables can be embedded in configurations.
  * @return Rule
  */
 function rule($variables = NULL) {

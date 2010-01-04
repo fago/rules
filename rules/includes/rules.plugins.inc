@@ -95,7 +95,6 @@ class Rule extends RulesActionContainer {
 
   protected $conditions = NULL;
   protected $itemName = 'rule';
-  protected $isEvaluated = 0;
 
   /**
    * Whether this rule may fire recursive. For safety, this defaults to FALSE.
@@ -173,9 +172,9 @@ class Rule extends RulesActionContainer {
   }
 
   public function integrityCheck() {
-    parent::integrityCheck();
     $this->conditions();
     $this->conditions->integrityCheck();
+    return parent::integrityCheck();
   }
 }
 
