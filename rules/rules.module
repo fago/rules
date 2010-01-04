@@ -239,9 +239,10 @@ function rules_clear_cache($immediate = FALSE) {
  */
 function rules_wrap_data(&$data, $info) {
   if (($cache = rules_get_cache()) && isset($cache['data_info'][$info['type']])) {
-    //TODO: Make wrapping of not identifiable data wrappers optional.
-    $cache['data_info'][$info['type']] += array('class' => isset($info['handler']) ? 'RulesDataWrapper' : FALSE);
-    if ($class = $cache['data_info'][$info['type']]['class']) {
+    $cache['data_info'][$info['type']] += array('class' => 'RulesDataWrapper');
+    // Make sure identifiable data and data loaded through handlers is wrapped.
+    $wrap = isset($info['handler']) || RulesExtendable::itemFacesAs($cache['data_info'][$info['type']], 'RulesDataIdentifiableInterface') || RulesExtendable::itemFacesAs($cache['data_info'][$info['type']], 'RulesDataSavableInterface');
+    if ($wrap && ($class = $cache['data_info'][$info['type']]['class'])) {
       return new $class($data, $info);
     }
   }
