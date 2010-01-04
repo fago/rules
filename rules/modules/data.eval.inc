@@ -114,6 +114,40 @@ class RulesURIWrapper extends RulesTextWrapper {
 }
 
 /**
+ * Wraps lists, which in the end are numerically indexed arrays.
+ */
+class RulesListWrapper extends RulesDataWrapper {
+
+  protected $itemName = 'list';
+
+  public static function availableParameter($type) {
+    $cache = rules_get_cache();
+    foreach ($cache['data_info'] as $name => $info) {
+      $return[$name] = t('list of @item-type items', array('@item-type' => $info['label']));
+    }
+    return isset($return) ? $return : array();
+  }
+
+  /**
+   * Override to pass a parametrized type as the metadata wrapper can handle it.
+   *
+   * @return EntityMetadataWrapper
+   */
+  public function metadataWrapper(array $state = NULL) {
+    if (!isset($this->wrapper)) {
+      $data = &$this->get($state);
+      $type = $this->parameter ? $type . '<' . $this->parameter . '>' : $type;
+      $this->wrapper = entity_metadata_wrapper($type, $data);
+      // Register this as the variable for the wrapper in the state's map.
+      if (!empty($state['wrapper map'])) {
+        $state['wrapper map']->add($this->wrapper, $this);
+      }
+    }
+    return $this->wrapper;
+  }
+}
+
+/**
  * Defines a generic wrapper for all core entities.
  */
 class RulesEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface {
