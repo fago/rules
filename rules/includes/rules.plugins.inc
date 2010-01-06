@@ -270,14 +270,12 @@ class RulesOr extends RulesConditionContainer {
   }
 }
 
-
 /**
  * A loop element.
  */
 class RulesLoop extends RulesActionContainer {
 
   protected $itemName = 'loop';
-
   protected $parameter = array(
     'list' => array(
       'type' => 'list',
@@ -285,9 +283,8 @@ class RulesLoop extends RulesActionContainer {
     ),
   );
 
-  public function __construct($info = array(), $variables = NULL) {
-    //TODO: Make it possible for outside code to alter the stored $info.
-    $this->info = $info + array(
+  public function __construct($settings = array(), $variables = NULL) {
+    $this->settings = $settings + array(
       'item:var' => 'list-item',
       'item:label' => t('Current list item'),
     );
@@ -311,27 +308,27 @@ class RulesLoop extends RulesActionContainer {
   }
 
   protected function listItemType() {
-    if (!isset($this->info['item:type'])) {
-      if ($wrapper = $this->applyDataSelector($this->info['list:select'])) {
+    if (!isset($this->settings['item:type'])) {
+      if ($wrapper = $this->applyDataSelector($this->settings['list:select'])) {
         $type = $wrapper->type();
         $item_type = entity_metadata_list_extract_type($type);
       }
-      $this->info['item:type'] = !empty($item_type) ? $item_type : 'unknown';
+      $this->settings['item:type'] = !empty($item_type) ? $item_type : 'unknown';
     }
-    return $this->info['item:type'];
+    return $this->settings['item:type'];
   }
 
   protected function listItemInfo() {
     return array(
       'type' => $this->listItemType(),
-      'label' => $this->info['item:label'],
+      'label' => $this->settings['item:label'],
     );
   }
 
   protected function evaluate(array &$state) {
-    $list = $this->getArgument('list', $this->parameter['list'], $this->info, $state);
+    $list = $this->getArgument('list', $this->parameter['list'], $state);
     $item_info = $this->listItemInfo();
-    $name = $this->info['item:var'];
+    $name = $this->settings['item:var'];
     $previous_var = isset($state['variables'][$name]) ? $state['variables'][$name] : NULL;
     // Loop over the list and evaluate the children for each list item.
     foreach ($list as $list_item) {
@@ -342,7 +339,7 @@ class RulesLoop extends RulesActionContainer {
   }
 
   protected function stateVariables() {
-    return array($this->info['item:var'] => $this->listItemInfo()) + $this->availableVariables();
+    return array($this->settings['item:var'] => $this->listItemInfo()) + $this->availableVariables();
   }
 }
 

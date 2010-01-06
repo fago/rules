@@ -170,6 +170,11 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   public $name = 'unnamed';
 
   /**
+   * An array of settings for this element.
+   */
+  public $settings = array();
+
+  /**
    * The parent element, if any.
    * @var RulesContainerPlugin
    */
@@ -376,19 +381,19 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Returns the argument as configured in $settings for the parameter $name
-   * described with $info.
+   * Returns the argument as configured in the element settings for the
+   * parameter $name described with $info.
    */
-  protected function getArgument($name, $info, $settings, $state) {
+  protected function getArgument($name, $info, $state) {
     $vars = &$state['variables'];
-    if (isset($settings[$name . ':select']) && isset($vars[$settings[$name . ':select']])) {
-      $arg = $vars[$settings[$name . ':select']];
+    if (isset($this->settings[$name . ':select']) && isset($vars[$this->settings[$name . ':select']])) {
+      $arg = $vars[$this->settings[$name . ':select']];
     }
-    elseif (isset($settings[$name . ':select'])) {
-      $arg = $this->getSelectedVariable($settings[$name . ':select'], $info, $state);
+    elseif (isset($this->settings[$name . ':select'])) {
+      $arg = $this->getSelectedVariable($this->settings[$name . ':select'], $info, $state);
     }
-    elseif (isset($settings[$name])) {
-      $arg = $settings[$name];
+    elseif (isset($this->settings[$name])) {
+      $arg = $this->settings[$name];
     }
     elseif (isset($vars[$name])) {
       $arg = $vars[$name];
@@ -483,7 +488,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   function __sleep() {
     $array = ($this->name != 'unnamed') ? array('name' => 'name') : array();
     // Keep the id always as we need it for the recursion prevention.
-    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight'));
+    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight', 'settings'));
   }
 
   /**
@@ -553,7 +558,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   protected $elementName;
   protected $info = array('parameter' => array(), 'provides' => array());
-  public $settings = array();
 
   /**
    * @param $name
@@ -689,7 +693,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   protected function getExecutionArguments(array $state) {
     $args = array();
     foreach ($this->info['parameter'] as $name => $info) {
-      $args[$name] = $this->getArgument($name, $info, $this->settings, $state);
+      $args[$name] = $this->getArgument($name, $info, $state);
     }
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
@@ -699,7 +703,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function __sleep() {
-    return parent::__sleep() + drupal_map_assoc(array('elementName', 'settings'));
+    return parent::__sleep() + array('elementName' => 'elementName');
   }
 
   public function getPluginName() {
