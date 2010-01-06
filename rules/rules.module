@@ -94,6 +94,22 @@ function rules_and($variables = NULL) {
 }
 
 /**
+ * Creates a loop.
+ *
+ * @param $info
+ *   Info about the loop containing
+ *     'list:select': The data selector for the list to loop over.
+ *     'item:var': Optionally a name for the list item variable.
+ *     'item:label': Optionally a lebel for the list item variable.
+ * @param $variables
+ *   An optional array as for rule().
+ * @return RulesLoop
+ */
+function rules_loop($info = array(), $variables = NULL) {
+  return rules_plugin_factory('loop', $info, $variables);
+}
+
+/**
  * Creates a rule set.
  *
  * @param $variables
@@ -323,6 +339,9 @@ function rules_rules_plugin_info() {
       'overrides' => array(
         //array of overrides each being an array ('methods' => .., 'file' => ..)
       ),
+    ),
+    'loop' => array(
+      'class' => 'RulesLoop'
     ),
     'reaction rule' => array(
       'class' => 'RulesReactionRule',
