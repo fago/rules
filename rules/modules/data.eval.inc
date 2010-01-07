@@ -58,7 +58,7 @@ function rules_data_is_process_settings(RulesAbstractPlugin $element) {
       $info = entity_get_info();
       if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
         // Assert that the object is of bundle $value.
-        $element->settings['#info']['asserts'][$parts[0]] = $value;
+        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
       }
     }
   }
