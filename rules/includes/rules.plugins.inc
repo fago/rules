@@ -295,16 +295,14 @@ class RulesLoop extends RulesActionContainer {
 
   public function parameterInfo() {
     $info = $this->parameter;
-    //TODO: remove t() properties from parameter info and make another option
-    //getting it translated right.
     $info['list']['label'] = t('The list to loop over');
-    return parent::parameterInfo() + $info;
+    return $info;
   }
 
   public function integrityCheck() {
     parent::integrityCheck();
-    //TODO
-    //$this->checkVarName($this->info['item:var']);
+    $this->checkParameterSettings();
+    $this->checkVarName($this->info['item:var']);
   }
 
   protected function listItemType() {

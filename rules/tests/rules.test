@@ -350,6 +350,9 @@ class RulesTestCase extends DrupalWebTestCase {
     //$rule->execute($node);
   }
 
+  /**
+   * Test using loops.
+   */
   function testLoops() {
     $node1 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
     $node2 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
@@ -595,7 +598,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     rules_clear_cache(TRUE);
     // Test the basics of the event set work right.
     $event = rules_get_cache('event_node_presave');
-    $this->assertEqual(array_keys($event->parameterInfo()), array('node'), 'EventSet returns correct parameter info.');
+    $this->assertEqual(array_keys($event->argumentInfo()), array('node'), 'EventSet returns correct argument info.');
 
     // Trigger the rule by updating the node.
     $nid = $node->nid;

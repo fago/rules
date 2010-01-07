@@ -7,6 +7,7 @@
  */
 
 //TODO: add schedule routine that works like executing, but takes a $date as first argument.
+//TODO: Make variables() info methods optionally return properly translated strings.
 
 /**
  * Make sure loaded rule configs are instantiated right.
@@ -175,6 +176,11 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   public $settings = array();
 
   /**
+   * Info about this element. Usage depends on the plugin.
+   */
+  protected $info = array();
+
+  /**
    * The parent element, if any.
    * @var RulesContainerPlugin
    */
@@ -209,17 +215,46 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Returns info about parameters needed for executing the plugin.
+   * Returns info about parameters needed by the plugin. Note that not
+   * necessarily all parameter need to be passed as argument when executing
+   * as parameters might be already configured in the element's settings.
+   *
+   * @see self::argumentInfo()
    */
   public function parameterInfo() {
-    return array();
+    return isset($this->info['parameter']) ? $this->info['parameter'] : array();
+  }
+
+  /**
+   * Returns info about expected arguments when executing the plugin.
+   */
+  public function argumentInfo() {
+    // We have to filter out parameters that are already configured.
+    foreach ($this->parameterInfo() as $name => $info) {
+      if (isset($this->settings[$name . ':select'])) {
+        $parts = explode(':', $this->settings[$name . ':select'], 2);
+        $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
+      }
+      elseif (!isset($this->settings[$name]) && empty($info['optional'])) {
+        $vars[$name] = $info;
+      }
+    }
+    return isset($vars) ? $vars : array();
   }
 
   /**
    * Returns info about variables provided for later evaluated elements.
    */
   public function providesVariables() {
-    return array();
+    if (isset($this->info['provides'])) {
+      foreach ($this->info['provides'] as $name => $info) {
+        if (isset($this->settings[$name . ':var'])) {
+          $name = $this->settings[$name . ':var'];
+        }
+        $provides[$name] = $info;
+      }
+    }
+    return isset($provides) ? $provides : array();
   }
 
   /**
@@ -237,12 +272,12 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    *   An array of passed arguments keyed by their names.
    */
   protected function getPassedArguments(array $args) {
-    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->parameterInfo()) === array()) {
+    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->argumentInfo()) === array()) {
       // The caller passed an array of arguments, so let's use that
       return $args[0];
     }
     $vars = array();
-    foreach (array_keys($this->parameterInfo()) as $i => $name) {
+    foreach (array_keys($this->argumentInfo()) as $i => $name) {
       if (isset($args[$i])) {
         $vars[$name] = $args[$i];
       }
@@ -287,7 +322,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Returns info about all variables that have to be setup in the state.
    */
   protected function setUpVariables() {
-    return $this->parameterInfo();
+    return $this->argumentInfo();
   }
 
   /**
@@ -360,24 +395,44 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
 
   /**
    * Makes sure the plugin is configured right, e.g. all needed variables
-   * are available in the plugin's scope and dependent modules are enabled.
+   * are available in the element's scope and dependent modules are enabled.
    * //TODO: add integrity check for dependencies.
    * @return RulesPlugin
    */
   public function integrityCheck() {
-    // Check whether any identified needed parameters match the *specified* parameterInfo.
-    if (isset($this->parent)) {
-      $vars = $this->availableVariables();
-      foreach ($this->parameterInfo() as $name => $info) {
-        if (!isset($vars[$name])) {
-          throw new RulesException('%plugin: There is no variable for the parameter %name available.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+    $this->checkParameterSettings();
+    return $this;
+  }
+
+  protected function checkVarName($name) {
+    if (!eregi('^[0-9a-z_\-]*$', $name)) {
+      throw new RulesException('%plugin: The variable name @name contains not allowed characters.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+    }
+  }
+
+  /**
+   * Checks whether parameters are correctly configured.
+   */
+  protected function checkParameterSettings() {
+    $vars = $this->availableVariables();
+    foreach ($this->parameterInfo() as $name => $info) {
+      if (isset($this->settings[$name . ':select']) || isset($vars[$name])) {
+        $select = isset($vars[$name]) ? $name : $this->settings[$name . ':select'];
+        $parts = explode(':', $select, 2);
+        if (!isset($vars[$parts[0]])) {
+          throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $select));
         }
-        elseif (!RulesDataWrapper::typesMatch($vars[$name]['type'], $info['type'])) {
-          throw new RulesException("%plugin: The data type of the variable %name does not match the parameter's requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name));
+        // If we have enough metadata, check whether the types match.
+        if ($wrapper = $this->applyDataSelector($select)) {
+          if (!RulesDataWrapper::typesMatch($wrapper->type(), $info['type'])) {
+            throw new RulesException("%plugin: The data type returned by the selector %select does not match the parameter's requirement.", array('%plugin' => $this->getPluginName(), '%select' => $select));
+          }
         }
       }
+      elseif (isset($this->parent) && !isset($this->settings[$name]) && empty($info['optional'])) {
+        throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+      }
     }
-    return $this;
   }
 
   /**
@@ -446,12 +501,17 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
     elseif (!isset($state) && ($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
       $wrapper = entity_metadata_wrapper($vars[$parts[0]]['type']);
     }
-    if (isset($wrapper) && count($parts) > 1) {
-      foreach (explode(':', $parts[1]) as $name) {
-        $wrapper = $wrapper->$name;
+    try {
+      if (isset($wrapper) && count($parts) > 1) {
+        foreach (explode(':', $parts[1]) as $name) {
+          $wrapper = $wrapper->$name;
+        }
       }
+      return $wrapper;
     }
-    return isset($wrapper) ? $wrapper : FALSE;
+    // In case of an exception or we were unable to get a wrapper, return FALSE.
+    catch (EntityMetadataWrapperException $e) { }
+    return FALSE;
   }
 
   /**
@@ -601,7 +661,14 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   public function integrityCheck() {
     parent::integrityCheck();
+    // Check variable names to be valid.
+    foreach ($this->info['provides'] as $name => $info) {
+      if (isset($this->settings[$name . ':var'])) {
+        $this->checkVarName($this->settings[$name . ':var']);
+      }
+    }
     // Also validate and process the concrete plugin's settings.
+    $this->validate();
     $this->processSettings();
     return $this;
   }
@@ -609,7 +676,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   protected function processSettings() {
     // Process if not done yet.
     if (!empty($this->settings['#_needs_processing'])) {
-      $this->validate();
       $this->process();
       unset($this->settings['#_needs_processing']);
     }
@@ -618,35 +684,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function dependencies() {
     //TODO: add used input evaluator modules
     return isset($this->info['module']) ? array($this->info['module']) : array();
-  }
-
-  public function parameterInfo() {
-    $vars = array();
-    // Assemble info about variables that are needed for executing.
-    foreach ($this->info['parameter'] as $name => $info) {
-      if (isset($this->settings[$name . ':select'])) {
-        $parts = explode(':', $this->settings[$name . ':select'], 2);
-        $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
-      }
-      elseif (!isset($this->settings[$name]) && empty($info['optional'])) {
-        $vars[$name] = $info;
-      }
-    }
-    return $vars;
-  }
-
-  /**
-   * Returns info about provided variables by this plugin.
-   */
-  public function providesVariables() {
-    $provides = array();
-    foreach ($this->info['provides'] as $name => $info) {
-      if (isset($this->settings[$name . ':var'])) {
-        $name = $this->settings[$name . ':var'];
-      }
-      $provides[$name] = $info;
-    }
-    return $provides;
   }
 
   public function execute() {
@@ -929,7 +966,6 @@ class RulesRecursiveElementIterator extends ArrayIterator implements RecursiveIt
 abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggregate {
 
   protected $children = array();
-  protected $info = array();
 
   public function __construct($variables = array()) {
     if (!empty($variables)) {
@@ -965,7 +1001,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return !empty($args) ? call_user_func_array('array_merge', $args) : array();
   }
 
-  public function parameterInfo() {
+  public function argumentInfo() {
     if (isset($this->info['variables'])) {
       return rules_filter_array($this->info['variables'], 'handler', FALSE);
     }
