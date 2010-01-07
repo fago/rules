@@ -350,6 +350,25 @@ class RulesTestCase extends DrupalWebTestCase {
     //$rule->execute($node);
   }
 
+  function testLoops() {
+    $node1 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+    $node2 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+    $node3 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+
+    $loop = rules_loop(array('list:select' => 'list', 'item:var' => 'node'), array(
+      'list' => array(
+        'type' => 'list<node>',
+        'label' => 'A list of nodes',
+      )
+    ));
+    $loop->action('data_set', array('data:select' => 'node:sticky', 'value' => TRUE));
+    $loop->execute(array($node1, $node2, $node3));
+    $text = RulesLog::logger()->render();
+    $save_msg = RulesTestCase::t('Saved variable %node of type %node.', array('node', 'node'));
+    $this->assertTrue(substr_count($text, $save_msg) == 3, 'List item variables have been saved.');
+    RulesLog::logger()->checkLog();
+  }
+
   function testRuleBuilding() {
 
     /*

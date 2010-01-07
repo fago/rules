@@ -268,7 +268,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       'stack' => isset($this->state) ? $this->state : NULL,
     );
     $args = $this->getPassedArguments($args);
-    foreach ($this->stateVariables() as $name => $info) {
+    foreach ($this->setUpVariables() as $name => $info) {
       if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional'])) {
         throw new RulesException('Argument ' . check_plain($name) . ' is missing.');
       }
@@ -276,6 +276,13 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       $this->addVariable($name, $args[$name], $info, $this->state);
     }
     return $this->state;
+  }
+
+  /**
+   * Returns info about all variables that have to be setup in the state.
+   */
+  protected function setUpVariables() {
+    return $this->parameterInfo();
   }
 
   /**
@@ -311,17 +318,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
       }
     }
     return $vars;
-  }
-
-  /**
-   * Returns info about variables available in the execution state for this
-   * or any children elements.
-   */
-  protected function stateVariables() {
-    if (!isset($this->parent) || (!empty($this->state) && $this->state['executed'] === $this)) {
-      return $this->parameterInfo();
-    }
-    return $this->availableVariables();
   }
 
   /**
@@ -980,11 +976,23 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return $provided;
   }
 
-  protected function stateVariables() {
+  public function availableVariables() {
     if (!isset($this->parent) || (!empty($this->state) && $this->state['executed'] === $this)) {
       return isset($this->info['variables']) ? $this->info['variables'] : array();
     }
+    return parent::availableVariables();
+  }
+
+  /**
+   * Returns info about variables available in the evaluation state for any
+   * children elements.
+   */
+  protected function stateVariables() {
     return $this->availableVariables();
+  }
+
+  protected function setUpVariables() {
+    return isset($this->info['variables']) ? $this->info['variables'] : array();
   }
 
   /**

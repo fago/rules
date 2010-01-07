@@ -278,63 +278,73 @@ class RulesLoop extends RulesActionContainer {
 
   protected $itemName = 'loop';
 
+  protected $parameter = array(
+    'list' => array(
+      'type' => 'list',
+      'restriction' => 'selector',
+    ),
+  );
+
   public function __construct($info = array(), $variables = NULL) {
     //TODO: Make it possible for outside code to alter the stored $info.
-    $this->info = $info;
+    $this->info = $info + array(
+      'item:var' => 'list-item',
+      'item:label' => t('Current list item'),
+    );
     if (!empty($variables)) {
       $this->info['variables'] = $variables;
     }
-    $this->info['parameter'] = array(
-      'list' => array(
-        'type' => 'list',
-        'label' => t('The list to loop over'),
-        'restriction' => 'selector',
-      ),
-      'var-name' => array(
-        'type' => 'text',
-        'label' => t('List item variable name'),
-        'restriction' => 'input',
-      ),
-    );
   }
 
   public function parameterInfo() {
-    return parent::parameterInfo() + $this->info['parameter'];
+    $info = $this->parameter;
+    //TODO: remove t() properties from parameter info and make another option
+    //getting it translated right.
+    $info['list']['label'] = t('The list to loop over');
+    return parent::parameterInfo() + $info;
   }
 
   public function integrityCheck() {
     parent::integrityCheck();
-    //TODO: Check config.
+    //TODO
+    //$this->checkVarName($this->info['item:var']);
   }
 
   protected function listItemType() {
-    if (!isset($this->info['item type'])) {
-      $this->info['item type'] = $this->applyDataSelector($this->info['list:select'])->type();
+    if (!isset($this->info['item:type'])) {
+      if ($wrapper = $this->applyDataSelector($this->info['list:select'])) {
+        $type = $wrapper->type();
+        $item_type = entity_metadata_list_extract_type($type);
+      }
+      $this->info['item:type'] = !empty($item_type) ? $item_type : 'unknown';
     }
-    return $this->info['item type'];
+    return $this->info['item:type'];
   }
 
-  protected function evaluate(array &$state) {
-    $list = $this->getArgument('list', $this->info['parameter']['list'], $this->info, $state);
-    foreach ($list as $list_item) {
-      //TODO: care for list item variable in state
-      parent::evaluate($state);
-    }
-  }
-
-  protected function stateVariables() {
-    $name = $this->info['var-name'];
-    return parent::stateVariables() + array(
-      $name => array(
-        'type' => $this->listItemType(),
-        'label' => t('Current list item'),
-      ),
+  protected function listItemInfo() {
+    return array(
+      'type' => $this->listItemType(),
+      'label' => $this->info['item:label'],
     );
   }
 
+  protected function evaluate(array &$state) {
+    $list = $this->getArgument('list', $this->parameter['list'], $this->info, $state);
+    $item_info = $this->listItemInfo();
+    $name = $this->info['item:var'];
+    $previous_var = isset($state['variables'][$name]) ? $state['variables'][$name] : NULL;
+    // Loop over the list and evaluate the children for each list item.
+    foreach ($list as $list_item) {
+      $this->addVariable($name, $list_item, $item_info, $state);
+      parent::evaluate($state);
+    }
+    $state['variables'][$name] = $previous_var;
+  }
+
+  protected function stateVariables() {
+    return array($this->info['item:var'] => $this->listItemInfo()) + $this->availableVariables();
+  }
 }
-
-
 
 
 /**
