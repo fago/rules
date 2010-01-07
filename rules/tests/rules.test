@@ -32,7 +32,7 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   protected function createTestRule() {
-    $rule = rule(array());
+    $rule = rule();
     $rule->condition('rules_test_condition_true')
          ->condition('rules_test_condition_true')
          ->condition(rules_or()
@@ -53,6 +53,7 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testRuleCreation() {
     $rule = $this->createTestRule();
+    $rule->integrityCheck();
     $rule->execute();
     $log = RulesLog::logger()->get();
     $last = array_pop($log);
@@ -91,6 +92,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertTrue(in_array('node', array_keys($action2->parameterInfo())), 'Parameter info returned.');
 
     $node->status = 0;
+    $action2->integrityCheck();
     $action2->execute(array('node' => $node));
     $this->assertEqual($node->status, 1, 'Action executed correctly');
 
@@ -130,6 +132,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $node1 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
     $node2 = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
+    $rule->integrityCheck();
     $rule->execute($node1, $node2);
     $this->assertEqual($node2->status, 1, 'Action executed correctly on node2.');
     $this->assertEqual($node1->status, 0, 'Action not executed on node1.');
@@ -142,7 +145,7 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testRulesCRUD() {
     $rule = $this->createTestRule();
-    $rule->save();
+    $rule->integrityCheck()->save();
 
     $this->assertEqual(TRUE, $rule->active, 'Rule is active.');
     $this->assertEqual(0, $rule->weight, 'Rule weight is zero.');
@@ -296,7 +299,7 @@ class RulesTestCase extends DrupalWebTestCase {
         ->rule(rule()->condition('rules_condition_content_is_published')
                      ->action('drupal_message', array('message' => 'Node is published.'))
                );
-    $set->save('rules_test_set_1');
+    $set->integrityCheck()->save('rules_test_set_1');
     rules_clear_cache(TRUE);
 
     $title[LANGUAGE_NONE][0] = array('value' => 'The title.');
@@ -314,6 +317,7 @@ class RulesTestCase extends DrupalWebTestCase {
     ));
     $set->condition('data_is', array('data:select' => 'node:author:name', 'value' => 'notthename'))
         ->condition('data_is', array('data:select' => 'node:nid', 'value' => $node->nid))
+        ->integrityCheck()
         ->save('test', 'rules_test');
     // Load and execute condition set.
     $set = rules_config_load(array('name' => 'test', 'module' => 'rules_test'));
@@ -335,8 +339,8 @@ class RulesTestCase extends DrupalWebTestCase {
       // Customize action info using the settings.
       $rule->condition('data_is', array('data:select' => 'node:type', 'value' => 'page'))
            ->action($action);
-      // Adding the action should issue an integrity check which has to fail
-      // because the 'node' variable doesn't match the node<page> type.
+      // Fails due to the 'node' variable not matching the node<page> type.
+      $rule->integrityCheck();
       $this->fail('Integrity check has not thrown an exception.');
     }
     catch (RulesException $e) {
@@ -552,7 +556,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $events[] = 'node_insert';
     $events[] = 'node_update';
     $rule->active = FALSE;
-    $rule->save();
+    $rule->integrityCheck()->save();
     $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
     $this->assertEqual($result->fetchCol(), array_values($events), 'Updated associated events.');
     // Try deleting.
@@ -567,7 +571,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   function testBasicReactionRule() {
     $node = $this->drupalCreateNode(array('type' => 'page'));
     $rule = $this->createTestRule();
-    $rule->save();
+    $rule->integrityCheck()->save();
     // Force immediate cache clearing so we can test the rule *now*.
     rules_clear_cache(TRUE);
     // Test the basics of the event set work right.
@@ -595,8 +599,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     // work right too. This rule won't ran in an infinite loop anyway.
     $rule->recursion = TRUE;
     $rule->label = 'rule 1';
-
-    $rule->save();
+    $rule->integrityCheck()->save();
     rules_clear_cache(TRUE);
 
     $node->status = 0;
@@ -625,7 +628,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   function testVariableHandlerException() {
     $rule = $this->createTestRule(FALSE, 'node_presave');
     $rule->action('rules_node_publish_action_save', array('node:select' => 'node_unchanged'));
-    $rule->save();
+    $rule->integrityCheck()->save();
     rules_clear_cache(TRUE);
 
     // On insert it's not possible to get the unchanged node during presave.
@@ -649,7 +652,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   function testRecursionPrevention() {
     $rule = $this->createTestRule(FALSE, 'node_update');
     $rule->action('rules_node_make_sticky_action');
-    $rule->save();
+    $rule->integrityCheck()->save();
     rules_clear_cache(TRUE);
 
     // Now trigger the rule.
@@ -671,7 +674,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $rule = $this->createTestRule(FALSE, 'node_update');
     $rule->action('rules_node_make_sticky_action');
     $rule->label = 'rule 1';
-    $rule->save();
+    $rule->integrityCheck()->save();
 
     // Create rule2 - which triggers rule1 on another node.
     $node2 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));

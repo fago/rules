@@ -185,10 +185,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   protected function setParent(RulesContainerPlugin $parent) {
     if (!isset($this->parent)) {
       $this->parent = $parent;
-      if ($parent->stateVariables()) {
-        // If variables are available, check integrity now.
-        $this->integrityCheck();
-      }
     }
   }
 
@@ -365,6 +361,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
    * Makes sure the plugin is configured right, e.g. all needed variables
    * are available in the plugin's scope and dependent modules are enabled.
    * //TODO: add integrity check for dependencies.
+   * @return RulesPlugin
    */
   public function integrityCheck() {
     // Check whether any identified needed parameters match the *specified* parameterInfo.
@@ -379,6 +376,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
         }
       }
     }
+    return $this;
   }
 
   /**
@@ -531,6 +529,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     parent::integrityCheck();
     // Also validate and process the concrete plugin's settings.
     $this->processSettings();
+    return $this;
   }
 
   protected function processSettings() {
@@ -603,6 +602,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   protected function evaluate(array &$state) {
     $this->forceSetUp();
+    $this->processSettings();
     try {
       // Get vars as needed for execute and call it.
       return $this->executeCallback($this->getExecutionArguments($state), $state);
@@ -893,8 +893,8 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   protected $children = array();
   protected $info = array();
 
-  public function __construct($variables = NULL) {
-    if (isset($variables)) {
+  public function __construct($variables = array()) {
+    if (!empty($variables)) {
       $this->info['variables'] = $variables;
     }
   }
@@ -906,13 +906,17 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return new RulesRecursiveElementIterator($this->children);
   }
 
+  /**
+   * @return RulesContainerPlugin
+   */
   public function integrityCheck() {
-    if (isset($this->info['variables']) && isset($this->parent)) {
+    if (!empty($this->info['variables']) && isset($this->parent)) {
       throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()));
     }
     foreach ($this->children as $child) {
       $child->integrityCheck();
     }
+    return $this;
   }
 
   public function dependencies() {
@@ -927,7 +931,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     if (isset($this->info['variables'])) {
       return rules_filter_array($this->info['variables'], 'handler', FALSE);
     }
-    throw new RulesException('%plugin: Unable to execute container without specified variables.', array('%plugin' => $this->getPluginName()));
+    return array();
   }
 
   public function providesVariables() {
