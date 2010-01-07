@@ -27,7 +27,7 @@ function rules_data_data_info() {
       'class' => 'RulesTextWrapper',
     ),
    'decimal' => array(
-      'label' => t('decimal'),
+      'label' => t('decimal number'),
       'class' => 'RulesDecimalWrapper',
       'parent' => 'text',
     ),
@@ -52,6 +52,10 @@ function rules_data_data_info() {
       'label' => t('URI'),
       'class' => 'RulesURIWrapper',
       'parent' => 'text',
+    ),
+   'list' => array(
+      'label' => t('list'),
+      'class' => 'RulesListWrapper',
     ),
    'entity' => array(
       'label' => t('any entity'),
