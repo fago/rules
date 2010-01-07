@@ -27,7 +27,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         if (isset($args[$name]) && $args[$name] instanceof RulesDataWrapper) {
           $args[$name]->update($data);
         }
-        elseif (isset($this->settings[$name . ':select']) && $wrapper = rules_get_metadata_wrapper($this->settings[$name . ':select'], $state)) {
+        elseif (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'], $state)) {
           try {
             // Update the data value and keep the wrapper object for saving.
             $wrappers[$name] = $wrapper->set($data);
@@ -50,8 +50,8 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           if ($args[$name] instanceof RulesDataWrapper) {
             $args[$name]->saveChanges(FALSE, $state);
           }
-          elseif (isset($wrappers[$name]) || ($wrappers[$name] = rules_get_metadata_wrapper($this->settings[$name . ':select'], $state))) {
-            rules_metadata_wrapper_save_changes($wrappers[$name], $state);
+          elseif (isset($wrappers[$name]) || ($wrappers[$name] = $this->applyDataSelector($this->settings[$name . ':select'], $state))) {
+            RulesDataWrapper::metadataWrapperSaveChanges($wrappers[$name], $state);
           }
         }
       }
@@ -269,6 +269,73 @@ class RulesOr extends RulesConditionContainer {
     return $this->negate;
   }
 }
+
+
+/**
+ * A loop element.
+ */
+class RulesLoop extends RulesActionContainer {
+
+  protected $itemName = 'loop';
+
+  public function __construct($info = array(), $variables = NULL) {
+    //TODO: Make it possible for outside code to alter the stored $info.
+    $this->info = $info;
+    if (!empty($variables)) {
+      $this->info['variables'] = $variables;
+    }
+    $this->info['parameter'] = array(
+      'list' => array(
+        'type' => 'list',
+        'label' => t('The list to loop over'),
+        'restriction' => 'selector',
+      ),
+      'var-name' => array(
+        'type' => 'text',
+        'label' => t('List item variable name'),
+        'restriction' => 'input',
+      ),
+    );
+  }
+
+  public function parameterInfo() {
+    return parent::parameterInfo() + $this->info['parameter'];
+  }
+
+  public function integrityCheck() {
+    parent::integrityCheck();
+    //TODO: Check config.
+  }
+
+  protected function listItemType() {
+    if (!isset($this->info['item type'])) {
+      $this->info['item type'] = $this->applyDataSelector($this->info['list:select'])->type();
+    }
+    return $this->info['item type'];
+  }
+
+  protected function evaluate(array &$state) {
+    $list = $this->getArgument('list', $this->info['parameter']['list'], $this->info, $state);
+    foreach ($list as $list_item) {
+      //TODO: care for list item variable in state
+      parent::evaluate($state);
+    }
+  }
+
+  protected function stateVariables() {
+    $name = $this->info['var-name'];
+    return parent::stateVariables() + array(
+      $name => array(
+        'type' => $this->listItemType(),
+        'label' => t('Current list item'),
+      ),
+    );
+  }
+
+}
+
+
+
 
 /**
  * A set of rules to execute upon defined variables.
