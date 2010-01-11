@@ -368,12 +368,17 @@ function rules_entity_info() {
       'label' => t('Rule configuration'),
       'controller class' => 'RulesEntityController',
       'base table' => 'rules_config',
-      'fieldable' => FALSE,
+      'fieldable' => TRUE,
       'object keys' => array(
         'id' => 'id',
-        'bundle' => FALSE,
+        'name' => 'name',
+        'bundle' => 'name',
       ),
       'bundles' => array(),
+      'exportable' => TRUE,
+      'export' => array(
+        'default hook' => 'default_rules_configuration',
+      ),
     ),
   );
 }
@@ -387,9 +392,11 @@ function rules_hook_info() {
       'group' => 'rules',
     );
   }
+  $hooks['default_rules_configuration'] = array(
+    'group' => 'rules_defaults',
+  );
   return $hooks;
 }
-
 
 /**
  * Load rule configurations from the database.
@@ -401,16 +408,16 @@ function rules_hook_info() {
  * @see hook_entity_info()
  * @see RulesEntityController
  *
- * @param $ids
- *   An array of entity IDs, or FALSE to load all entities.
+ * @param $names
+ *   An array of rules configuration names or FALSE to load all.
  * @param $conditions
  *   An array of conditions in the form 'field' => $value.
  *
  * @return
  *   An array of rule configurations indexed by their ids.
  */
-function rules_config_load_multiple($ids = array(), $conditions = array()) {
-  return entity_get_controller('rules_config')->load($ids, $conditions);
+function rules_config_load_multiple($names = array(), $conditions = array()) {
+  return entity_get_controller('rules_config')->load($names, $conditions);
 }
 
 /**
@@ -418,9 +425,8 @@ function rules_config_load_multiple($ids = array(), $conditions = array()) {
  *
  * @see rules_config_load_multiple()
  */
-function rules_config_load($conditions = array()) {
-  $id = !empty($conditions['id']) ? $conditions['id'] : FALSE;
-  $configs = entity_get_controller('rules_config')->load($id, $conditions);
+function rules_config_load($name) {
+  $configs = entity_get_controller('rules_config')->load(array($name));
   return $configs ? reset($configs) : FALSE;
 }
 
@@ -429,11 +435,11 @@ function rules_config_load($conditions = array()) {
  */
 function rules_query_rules_config_load_multiple_alter(QueryAlterableInterface $query) {
   // Support using 'event' => $name as condition.
-  $conditions = $query->conditions();
+  $conditions =& $query->conditions();
   foreach ($conditions as &$condition) {
     if ($condition['field'] == 'base.event') {
-      $query->join('rules_trigger', 'trigger', "base.id = trigger.id");
-      $condition['field'] = 'trigger.event';
+      $query->join('rules_trigger', 'tr', "base.id = tr.id");
+      $condition['field'] = 'tr.event';
     }
   }
 }
@@ -454,7 +460,7 @@ function rules_config_delete(array $ids) {
  */
 function rules_rules_config_insert($rule_config) {
   // If it's an reactive rule write entries in trigger table.
-  if ($rule_config instanceof TriggerableInterface) {
+  if ($rule_config instanceof RulesTriggerableInterface) {
     foreach ($rule_config->events() as $event) {
       db_insert('rules_trigger')
         ->fields(array(
@@ -470,7 +476,7 @@ function rules_rules_config_insert($rule_config) {
  * Implement hook_rules_config_update().
  */
 function rules_rules_config_update($rule_config) {
-  if ($rule_config instanceof TriggerableInterface) {
+  if ($rule_config instanceof RulesTriggerableInterface) {
     rules_rules_config_delete($rule_config);
     rules_rules_config_insert($rule_config);
   }
@@ -480,7 +486,7 @@ function rules_rules_config_update($rule_config) {
  * Implement hook_rules_config_delete().
  */
 function rules_rules_config_delete($rule_config) {
-  if ($rule_config instanceof TriggerableInterface) {
+  if ($rule_config instanceof RulesTriggerableInterface) {
     db_delete('rules_trigger')
       ->condition('id', $rule_config->id)
       ->execute();

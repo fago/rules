@@ -181,7 +181,7 @@ class Rule extends RulesActionContainer {
 /**
  * Represents rules getting triggered by events.
  */
-class RulesReactionRule extends Rule implements TriggerableInterface {
+class RulesReactionRule extends Rule implements RulesTriggerableInterface {
 
   protected $itemName = 'reaction rule';
   protected $events = array();
@@ -401,16 +401,11 @@ class RulesEventSet extends RulesRuleSet {
       $info += array(
         'variables' => isset($info['arguments']) ? $info['arguments'] : array(),
       );
-
-      $event = new RulesEventSet($info);
-      $event->name = $name;
-      // Add all rules associated with this event
-      $ids = db_query("SELECT c.id FROM {rules_config} c " .
-        "INNER JOIN {rules_trigger} t ON c.id = t.id AND t.event = :event", array(':event' => $name))
-        ->fetchCol();
-
-      if ($ids) {
-        foreach (rules_config_load_multiple($ids) as $rule) {
+      // Add all rules associated with this event to an EventSet for caching.
+      if ($rules = rules_config_load_multiple(FALSE, array('event' => $name))) {
+        $event = new RulesEventSet($info);
+        $event->name = $name;
+        foreach ($rules as $rule) {
           $event->rule($rule);
         }
         $event->setSkipSetup();
