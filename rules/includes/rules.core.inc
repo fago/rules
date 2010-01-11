@@ -12,7 +12,7 @@
 /**
  * Make sure loaded rule configs are instantiated right.
  */
-class RulesEntityController extends EntityCRUDController {
+class RulesEntityController extends EntityAPIController {
 
   /**
    * Overriden.
@@ -157,11 +157,11 @@ abstract class RulesExtendable extends FacesExtendable {
 /**
  * Base class for rules plugins.
  *
- * We implement the EntityCRUDInterface ourself as we cannot inherit from
+ * We implement the EntityAPIInterface ourself as we cannot inherit from
  * EntityDB too. Any CRUD related actions performed on contained plugins are
  * applied and the real db-entity is saved.
  */
-abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterface {
+abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface {
 
   /**
    * If this is a configuration saved to the db, the id of it.
@@ -515,7 +515,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Implements the EntityCRUDInterface.
+   * Implement the EntityAPIInterface.
    *
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
@@ -552,7 +552,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Implements the EntityCRUDInterface.
+   * Implement the EntityAPIInterface.
    *
    * If invoked on a rules configuration it is deleted from database. If
    * invoked on a contained rule element, it's removed from the configuration.
@@ -577,28 +577,35 @@ abstract class RulesPlugin extends RulesExtendable implements EntityCRUDInterfac
   }
 
   /**
-   * Implement EntityCRUDInterface.
+   * Implement EntityAPIInterface.
    */
-  public function identifier() {
+  public function internalIdentifier() {
     return isset($this->id) ? $this->id : NULL;
   }
 
   /**
-   * Implement EntityCRUDInterface.
+   * Implement EntityAPIInterface.
+   */
+  public function identifier() {
+    return isset($this->name) ? $this->name : NULL;
+  }
+
+  /**
+   * Implement EntityAPIInterface.
    */
   public function entityInfo() {
     return entity_get_info('rules_config');
   }
 
   /**
-   * Implement EntityCRUDInterface.
+   * Implement EntityAPIInterface.
    */
   public function entityType() {
     return 'rules_config';
   }
 
   /**
-   * Implement EntityCRUDInterface.
+   * Implement EntityAPIInterface.
    */
   public function invoke($hook) {
     $info = $this->entityInfo();
