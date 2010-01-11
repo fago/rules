@@ -551,5 +551,28 @@ function hook_rules_config_delete($config) {
 }
 
 /**
+ * Define default rules configurations.
+ *
+ * This hook is invoked when rules configurations are loaded. The implementation
+ * should be placed into the file MODULENAME.rules_defaults.inc, which gets
+ * automatically included when the hook is invoked.
+ */
+function hook_default_rules_configuration() {
+  //TODO: example
+}
+
+/**
+ * Alter default rules configurations.
+ *
+ * The implementation should be placed into the file
+ * MODULENAME.rules_defaults.inc, which gets automatically included when the
+ * hook is invoked.
+ */
+function hook_default_rules_configuration_alter(&$configs) {
+  // Add custom condition.
+  $configs['foo']->condition('bar');
+}
+
+/**
  * @}
  */

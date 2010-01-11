@@ -29,10 +29,50 @@ class RulesEntityController extends EntityAPIController {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
-      $entities[$entity->id] = $entity;
+      $entities[$entity->name] = $entity;
     }
     $queried_entities = $entities;
     parent::attachLoad($queried_entities);
+  }
+
+  /**
+   * Override to add the providing module and make sure the name is set.
+   * @see EntityAPIController#getDefaults($ids, $conditions)
+   */
+  protected function getDefaults($ids, $conditions = array()) {
+    if (!isset($this->defaultEntities)) {
+      $this->defaultEntities = array();
+      $hook = $this->entityInfo['export']['default hook'];
+      foreach (module_implements($hook) as $module) {
+        $function = $module . '_' . $hook;
+        foreach ($function() as $name => $entity) {
+          $entity->name = $name;
+          $entity->module = $module;
+          $entity->status |= ENTITY_IN_CODE;
+          $this->defaultEntities[$name] = $entity;
+        }
+      }
+      drupal_alter($hook, $this->defaultEntities);
+    }
+    $entities = $ids ? array_intersect_key($this->defaultEntities, array_flip($ids)) : $this->defaultEntities;
+    return $this->applyConditions($entities, $conditions);
+  }
+
+  /**
+   * Override to support having an event as condition.
+   * @see EntityAPIController#applyConditions($entities, $conditions)
+   * @see rules_query_rules_config_load_multiple_alter()
+   */
+  protected function applyConditions($entities, $conditions) {
+    if (isset($conditions['event'])) {
+      foreach ($entities as $key => $entity) {
+        if (!($entity instanceof RulesTriggerableInterface) || !in_array($conditions['event'], $entity->events())) {
+          unset($entities[$key]);
+        }
+      }
+      unset($conditions['event']);
+    }
+    return parent::applyConditions($entities, $conditions);
   }
 }
 
@@ -168,7 +208,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
    */
   public $id = NULL;
   public $weight = 0;
-  public $name = 'unnamed';
+  public $name = NULL;
 
   /**
    * An array of settings for this element.
@@ -520,17 +560,24 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
    */
-  public function save($name = 'unnamed', $module = 'rules') {
+  public function save($name = NULL, $module = 'rules') {
     if (isset($this->parent)) {
       $this->parent->sortChildren();
       return $this->parent->save($name, $module);
     }
     else {
-      $this->name = $name;
-      $this->module = $module;
       $this->plugin = $this->itemName;
-      $this->data = $this;
+      $this->name = isset($name) ? $name : $this->name;
+      $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
+      if (!isset($this->name)) {
+        // Find a unique name for this configuration.
+        $this->name = $this->module . '_';
+        for ($i = 0; $i < 8; $i++) {
+          $this->name .= chr(mt_rand(32, 126));
+        }
+      }
       $this->invoke('presave');
+      $this->data = $this;
       if (isset($this->id)) {
         $return = drupal_write_record('rules_config', $this, 'id');
         $this->invoke('update');
@@ -546,7 +593,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
   }
 
   function __sleep() {
-    $array = ($this->name != 'unnamed') ? array('name' => 'name') : array();
+    $array = (isset($this->name)) ? array('name' => 'name') : array();
     // Keep the id always as we need it for the recursion prevention.
     return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight', 'settings'));
   }
@@ -937,7 +984,7 @@ interface RulesConditionInterface {
   public function negate($negate = TRUE);
 }
 
-interface TriggerableInterface {
+interface RulesTriggerableInterface {
 
   /**
    * Returns a reference on the array of event names associated with this
@@ -948,7 +995,7 @@ interface TriggerableInterface {
   /**
    * Adds the specified event.
    *
-   * @return TriggerableInterface
+   * @return RulesTriggerableInterface
    */
   public function event($event);
 }

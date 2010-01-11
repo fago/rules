@@ -32,13 +32,12 @@ function rules_schema() {
       'id' => array(
         'type' => 'serial',
         'not null' => TRUE,
-        'description' => 'The primary identifier for any configuration.',
+        'description' => 'The internal identifier for any configuration.',
       ),
       'name' => array(
         'type' => 'varchar',
         'length' => '255',
         'not null' => TRUE,
-        'default' => 'unnamed',
         'description' => 'The name of the configuration.',
       ),
      'module' => array(
@@ -53,13 +52,6 @@ function rules_schema() {
         'length' => 127,
         'not null' => TRUE,
         'description' => 'The name of the plugin of this configuration.',
-      ),
-     'status' => array(
-        'type' => 'varchar',
-        'length' => 7,
-        'not null' => TRUE,
-        'default' => 'custom',
-        'description' => 'The module that provides the configuration.',
       ),
       'active' => array(
         'description' => 'Boolean indicating whether the configuration is active. Usage depends on how the using module makes use of it.',
@@ -83,6 +75,9 @@ function rules_schema() {
       ),
     ),
     'primary key' => array('id'),
+    'unique keys' => array(
+      'name' => array('name'),
+    ),
   );
   $schema['rules_trigger'] = array(
     'fields' => array(
