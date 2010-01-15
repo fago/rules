@@ -5,4 +5,5 @@ package = Testing
 version = VERSION
 core = 7.x
 files[] = rules_test.rules.inc
+files[] = rules_test.rules_defaults.inc
 hidden = TRUE
