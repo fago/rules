@@ -721,4 +721,22 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $this->assertTrue($pos !== FALSE, 'Rule1 was triggered on the event caused by Rule2.');
   }
 
+  /**
+   * Tests the provided default rule 'rules_test_default_1'.
+   */
+  function testDefaultRule() {
+    // Create a node that triggers the rule.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    // Clear messages.
+    drupal_get_messages();
+    // Let event node_update occur.
+    node_save($node);
+
+    $msg = drupal_get_messages();
+    $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
+
+    $rule = rules_config_load('rules_test_default_1');
+    $this->assertTrue($rule->status & ENTITY_IN_CODE && !($rule->status & ENTITY_IN_DB), 'Default rule can be loaded and has the right status.');
+  }
+
 }

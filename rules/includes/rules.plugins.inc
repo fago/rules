@@ -388,7 +388,7 @@ class RulesEventSet extends RulesRuleSet {
     rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
     // TODO: improve that to show the log for admins or log to watchdog.
     RulesLog::logger()->checkLog();
-    drupal_set_message(RulesLog::logger()->render());
+    //drupal_set_message(RulesLog::logger()->render());
   }
 
   public function rebuildCache(&$itemInfo, &$cache) {
