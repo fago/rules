@@ -84,7 +84,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $s = serialize($action);
     $action2 = unserialize($s);
     $node = (object)array('status' => 0, 'type' => 'page');
-    $node->title[LANGUAGE_NONE][0]['value'] = 'test';
+    $node->title = 'test';
 
     $action2->execute($node);
     $this->assertEqual($node->status, 1, 'Action executed correctly');
@@ -302,8 +302,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $set->integrityCheck()->save('rules_test_set_1');
     rules_clear_cache(TRUE);
 
-    $title[LANGUAGE_NONE][0] = array('value' => 'The title.');
-    $node = $this->drupalCreateNode(array('title' => $title, 'status' => 1));
+    $node = $this->drupalCreateNode(array('title' => 'The title.', 'status' => 1));
     // Execute.
     rules_invoke_rule_set('rules_test_set_1', $node);
 
@@ -444,15 +443,15 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
     ));
     $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
     // Test serializing and make sure only the node id is stored.
-    $this->assertTrue(strpos(serialize($wrapper), $node->title[LANGUAGE_NONE][0]['value']) === FALSE, 'Node has been correctly serialized.');
+    $this->assertTrue(strpos(serialize($wrapper), $node->title) === FALSE, 'Node has been correctly serialized.');
     // Be sure our instance is still loaded (in contrast to the serialized instance).
     $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
-    $this->assertEqual(unserialize(serialize($wrapper))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+    $this->assertEqual(unserialize(serialize($wrapper))->get()->title, $node->title, 'Serializing works right.');
 
     $wrapper2 = unserialize(serialize($wrapper));
     $this->assertFalse($wrapper2->isLoaded(), 'Data is not loaded.');
     // Test serializing the unloaded wrapper
-    $this->assertEqual(unserialize(serialize($wrapper2))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+    $this->assertEqual(unserialize(serialize($wrapper2))->get()->title, $node->title, 'Serializing works right.');
 
     // Test loading a not more existing node.
     $s = serialize($wrapper2);
@@ -475,7 +474,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
     $wrapper = new RulesNodeDataWrapper($node, array(
       'type' => 'node',
     ));
-    $node->title[LANGUAGE_NONE][0]['value'] = 'test';
+    $node->title = 'test';
     $wrapper->update($node)->saveChanges();
     $this->assertFalse($this->drupalGetNodeByTitle('test'), 'Changes have not been saved.');
     $wrapper->update($node, TRUE)->saveChanges();
@@ -486,7 +485,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
       'type' => 'node',
       'skip save' => TRUE,
     ));
-    $node->title[LANGUAGE_NONE][0]['value'] = 'test2';
+    $node->title = 'test2';
     $wrapper->update($node, TRUE)->saveChanges();
     $this->assertFalse($this->drupalGetNodeByTitle('test2'), 'Changes have not been saved.');
   }
@@ -504,7 +503,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
     ));
     $this->assertTrue($wrapper->isIdentifiable(), 'Wrapper is identifiable.');
     // Test loading with the extended load method.
-    $this->assertEqual($node->title[LANGUAGE_NONE][0]['value'], $wrapper->get()->title[LANGUAGE_NONE][0]['value'], 'Loaded using an extended method.');
+    $this->assertEqual($node->title, $wrapper->get()->title, 'Loaded using an extended method.');
     try {
       $wrapper->update($node, TRUE)->saveChanges();
       $this->fail('Custom save method has not been invoked.');
@@ -513,7 +512,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
       $this->pass($e);
     }
     // Try serializing
-    $this->assertEqual(unserialize(serialize($wrapper))->get()->title[LANGUAGE_NONE][0]['value'], $node->title[LANGUAGE_NONE][0]['value'], 'Serializing works right.');
+    $this->assertEqual(unserialize(serialize($wrapper))->get()->title, $node->title, 'Serializing works right.');
   }
 
   /**
