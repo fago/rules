@@ -1366,6 +1366,7 @@ class RulesWrapperMap {
     if ($id = $wrapper->getIdentifier()) {
       // Usually we map by the data's id, as when the wrapper's data has been
       // changed (e.g. node:author) then we need a new variable.
+      $id = $wrapper->type() . ':' . $id;
       $this->map[$id] = $var;
     }
     elseif ($var->isSavable()) {
@@ -1383,7 +1384,7 @@ class RulesWrapperMap {
     if (isset($this->map[spl_object_hash($wrapper)])) {
       return $this->map[spl_object_hash($wrapper)];
     }
-    elseif (($id = $wrapper->getIdentifier()) && isset($this->map[$id])) {
+    elseif (($id = $wrapper->getIdentifier()) && ($id = $wrapper->type() . ':' . $id) && isset($this->map[$id])) {
       return $this->map[$id];
     }
     return FALSE;
