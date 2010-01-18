@@ -56,6 +56,9 @@
  *   - help: A help text to assist the user during action configuration.
  *     Optional. As an alternative one can implement
  *     rules_action_callback_help().
+ *   - 'access callback': An optional callback, which has to return whether the
+ *     currently logged in user is allowed to configure this action. See
+ *     rules_node_integration_access() for an example callback.
  *  Each 'parameter' array may contain the following properties:
  *   - label: The label of the parameter. Start capitalized. Required.
  *   - type: The rules data type of the parameter, which is to be passed to the
@@ -203,6 +206,10 @@ function hook_rules_condition_info() {
  *   - group: A group for this element, used for grouping the events in the
  *     interface. Should start with a capital letter and be translated.
  *     Required.
+ *   - 'access callback': An callback, which has to return whether the
+ *     currently logged in user is allowed to configure rules for this event.
+ *     Access should be only granted, if the user at least may access all the
+ *     variables provided by the event. Optional.
  *   - help: A help text for rules reaction on this event.
  *   - variables: An array describing all variables that are available for
  *     elements reaction on this event. Optional. Each variable has to be

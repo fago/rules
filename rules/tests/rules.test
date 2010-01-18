@@ -383,9 +383,9 @@ class RulesTestCase extends DrupalWebTestCase {
            node_insert
         IF
            OR
-              node_content_type ( node: [node], type: page )
-              rules_comare_text ( [rdf:node.author.name], text )
-           NOT node_content_type ( node: node_old, type: page )
+             node_content_type ( node: [node], type: page )
+             rules_comare_text ( [rdf:node.author.name], text )
+             NOT node_content_type ( node: node_old, type: page )
         DO
            node_publish_action( node )
            system_message( 'bla' )

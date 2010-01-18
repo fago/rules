@@ -434,6 +434,14 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
   }
 
   /**
+   * Whether the currently logged in user has access to configure (or to change)
+   * this configuration.
+   */
+  public function access() {
+    return TRUE;
+  }
+
+  /**
    * Makes sure the plugin is configured right, e.g. all needed variables
    * are available in the element's scope and dependent modules are enabled.
    * //TODO: add integrity check for dependencies.
@@ -793,6 +801,21 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     return $args;
   }
 
+  public function access() {
+    if (!empty($this->info['access callback']) && !call_user_func($this->info['access callback'], $this->itemName, $this->elementName)) {
+      return FALSE;
+    }
+    foreach ($this->info['parameter'] as $name => $info) {
+      if (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
+        if ($wrapper->access('view') === FALSE) {
+          return FALSE;
+        }
+        //TODO: Check input evaluator access.
+      }
+    }
+    return TRUE;
+  }
+
   public function __sleep() {
     return parent::__sleep() + array('elementName' => 'elementName');
   }
@@ -1111,6 +1134,15 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     $this->cleanUp();
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
+  }
+
+  public function access() {
+    foreach ($this->children as $key => $child) {
+      if (!$child->access()) {
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   /**

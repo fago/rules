@@ -176,6 +176,11 @@ class Rule extends RulesActionContainer {
     $this->conditions->integrityCheck();
     return parent::integrityCheck();
   }
+
+  public function access() {
+    $this->conditions();
+    return $this->conditions->access() && parent::access();
+  }
 }
 
 /**
@@ -207,6 +212,16 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   protected function evaluate(array &$state) {
     $copy = $state;
     parent::evaluate($copy);
+  }
+
+  public function access() {
+    $event_info = rules_fetch_data('event_info');
+    foreach ($this->events as $event) {
+      if (!empty($event_info[$event]['access callback']) && !call_user_func($event_info[$event]['access callback'], 'event', $event)) {
+        return FALSE;
+      }
+    }
+    return parent::access();
   }
 
   public function providesVariables() {
