@@ -371,6 +371,17 @@ class RulesTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 
+  /**
+   * Test access checks.
+   */
+  function testAccessCheck() {
+    $rule = rule();
+    // Try to set a property which is provided by the test module and is not
+    // accessible, so the access check has to return FALSE.
+    $rule->action('data_set', array('data:select' => 'no-access-user', 'value' => 'foo'));
+    $this->assertTrue($rule->access() === FALSE, 'Access check is working.');
+  }
+
   function testRuleBuilding() {
 
     /*

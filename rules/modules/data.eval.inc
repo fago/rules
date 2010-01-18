@@ -18,6 +18,18 @@ function rules_action_data_set($data, $value) {
 }
 
 /**
+ * Customize access check.
+ */
+function rules_action_data_set_access_check(RulesAbstractPlugin $element) {
+  if (!RulesAbstractPluginDefaults::access($element)) {
+    return FALSE;
+  }
+  if (isset($element->settings['data:select']) && $wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
+    return $wrapper->access('edit');
+  }
+}
+
+/**
  * Condition: Compare data
  */
 function rules_condition_data_is($data, $op, $value) {

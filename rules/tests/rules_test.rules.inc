@@ -112,13 +112,10 @@ function rules_test_rules_data_info() {
 /**
  * Turns the RulesNodeDataWrapper into a extender for testing.
  */
-class RulesNodeDataWrapperExtender extends RulesNodeDataWrapper implements FacesExtenderInterface {
+class RulesNodeDataWrapperExtender extends FacesExtender {
 
-  public function __construct(FacesExtendableInterface $object) {
-    // Pass through info + date so that the NodeDataWrapper is working right.
-    $this->data = &$object->data;
-    $this->info = &$object->info;
-    parent::setUp();
+  public function implementsFaces() {
+    return array('RulesDataSavableInterface');
   }
 
   /**
@@ -133,12 +130,16 @@ class RulesNodeDataWrapperExtender extends RulesNodeDataWrapper implements Faces
     return $node;
   }
 
-  public function getIdentifier() {
-    $node = $this->get();
+  public function getIdentifier(RulesDataWrapper $element) {
+    $node = $element->get();
     if (!isset($node->nid)) {
       throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst('node')));
     }
     return $node->nid;
+  }
+
+  public function save() {
+    throw new Exception('Method should be overridden by rules_test_custom_node_save.');
   }
 }
 

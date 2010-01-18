@@ -12,4 +12,5 @@ files[] = rules.module
 files[] = rules.rules.inc
 files[] = modules/data.eval.inc
 files[] = modules/events.inc
+files[] = ui/ui.core.inc
 dependencies[] = entity_metadata
