@@ -21,15 +21,15 @@ function rules_system_file_info() {
 function rules_system_event_info() {
   return array(
     'init' => array(
-      'label' => t('User is going to view a page'),
+      'label' => t('Drupal is initializing'),
       'group' => t('System'),
-      'variables' => rules_events_global_user_parameter(),
       'help' => t("Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."),
+      'access callback' => 'rules_system_integration_access',
     ),
     'cron' => array(
       'label' => t('Cron maintenance tasks are performed'),
       'group' => t('System'),
-      'variables' => rules_events_global_user_parameter(),
+      'access callback' => 'rules_system_integration_access',
     ),
   );
 }
@@ -56,6 +56,7 @@ function rules_system_action_info() {
         ),
       ),
       'callbacks' => array('execute' => 'rules_action_drupal_message'),
+      'access callback' => 'rules_system_integration_access',
     ),
     'redirect' => array(
       'label' => t('Page redirect'),
@@ -65,6 +66,7 @@ function rules_system_action_info() {
       ),
       'callbacks' => array('execute' => 'rules_action_drupal_goto'),
       'help' => t('Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".'),
+      'access callback' => 'rules_system_integration_access',
     ),
   );
 }

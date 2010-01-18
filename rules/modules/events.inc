@@ -22,8 +22,8 @@ function rules_node_view($node, $build_mode) {
 function rules_node_presave($node) {
   $nodes = &drupal_static('rules_node_unchanged', array());
   if (!empty($node->nid)) {
-    // Make sure node_load() has statically cached the unchanged object, so we
-    // can still retrieve after update. See rules_events_node_var_unchanged().
+    // Save the unchanged object now so that we can make use of it later on.
+    // See rules_events_node_var_unchanged().
     array_push($nodes, clone node_load($node->nid));
   }
   rules_invoke_event('node_presave', $node);
@@ -58,18 +58,6 @@ function rules_events_node_var_unchanged($node) {
   return array_pop($nodes);
 }
 
-
-/**
- * Handler for loading the acting user variable, which is always the global
- * user.
- *
- * @see rules_events_global_user_parameter()
- */
-function rules_events_parameter_global_user() {
-  global $user;
-  return user_load(array('uid' => $user->uid));
-}
-
 /**
  * Invoke system events.
  */
@@ -81,6 +69,23 @@ function rules_cron() {
   rules_invoke_event('cron');
 }
 
+/**
+ * Node integration access callback.
+ */
+function rules_node_integration_access($type, $name) {
+  if ($type == 'event' || $type == 'condition') {
+    return entity_metadata_node_access('view', 'node');
+  }
+  // For actions one needs the bypass node access permission.
+  return user_access('bypass node access');
+}
+
+/**
+ * System integration access callback.
+ */
+function rules_system_integration_access($type, $name) {
+  return user_access('administer site configuration');
+}
 
 /**
  * @}
