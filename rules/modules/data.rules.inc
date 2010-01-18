@@ -89,6 +89,7 @@ function rules_data_action_info() {
       'callbacks' => array(
         'execute' => 'rules_action_data_set',
         'validate' => 'rules_data_parameter_validation',
+        'access' => 'rules_action_data_set_access_check',
       ),
     ),
   );

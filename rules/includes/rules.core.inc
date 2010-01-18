@@ -374,7 +374,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       // Make changes permanent.
       $vars = array_merge($this->state['wrapper map']->variables(), $this->state['all variables']);
       foreach ($vars as $var) {
-        $var->saveChanges(TRUE, $this->state)->destroy();
+        $var->saveChanges(TRUE, $this->state);
       }
     }
     // For recursive invocations pop the state from the stack, else set NULL.
@@ -480,6 +480,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       elseif (isset($this->parent) && !isset($this->settings[$name]) && empty($info['optional'])) {
         throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name));
       }
+      //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
     }
   }
 
@@ -555,7 +556,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
           $wrapper = $wrapper->$name;
         }
       }
-      return $wrapper;
+      return isset($wrapper) ? $wrapper : FALSE;
     }
     // In case of an exception or we were unable to get a wrapper, return FALSE.
     catch (EntityMetadataWrapperException $e) { }
@@ -669,6 +670,14 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
     }
     module_invoke_all('rules_config_' . $hook, $this);
   }
+
+  /**
+   * Remove circular object references so the PHP garbage collector does its
+   * work.
+   */
+  public function destroy() {
+    unset($this->parent);
+  }
 }
 
 
@@ -719,6 +728,10 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     if (isset($this->settings['#info'])) {
       $this->info = rules_update_array($this->info, $this->settings['#info']);
     }
+  }
+
+  public function access() {
+    return $this->__call('access');
   }
 
   public function integrityCheck() {
@@ -799,21 +812,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $args[] = $this;
     $args[] = &$state;
     return $args;
-  }
-
-  public function access() {
-    if (!empty($this->info['access callback']) && !call_user_func($this->info['access callback'], $this->itemName, $this->elementName)) {
-      return FALSE;
-    }
-    foreach ($this->info['parameter'] as $name => $info) {
-      if (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
-        if ($wrapper->access('view') === FALSE) {
-          return FALSE;
-        }
-        //TODO: Check input evaluator access.
-      }
-    }
-    return TRUE;
   }
 
   public function __sleep() {
@@ -907,78 +905,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       return substr($file, $start, strlen($file) - $start - 4);
     }
   }
-}
-
-/**
- * Plugin UI Interface.
- */
-interface RulesPluginUiInterface {
-
-  public function form();
-  public function form_validate();
-  public function form_submit();
-  public function render();
-  public function help();
-
-  /**
-   * Checks whether the user has access to configure this plugin.
-   */
-  public function access();
-
-  /**
-   * Returns ui operations for this plugin.
-   * //TODO: allow modules to specify them in the plugin_info hook.
-   */
-  public function operations();
-}
-
-/**
- * Provides the interface used for implementing an abstract plugin by using
- * the Faces extension mechanism.
- */
-interface RulesPluginImplInterface extends RulesPluginUiInterface {
-
-  public function execute();
-
-  /**
-   * Validates $settings independent from a form submission.
-   *
-   * @throws RulesException
-   *   In case of validation errors, RulesExceptions are thrown.
-   */
-  public function validate();
-
-  /**
-   * Processes $settings independent from a form submission. Only successfully
-   * validated settings are processed, so it can be also used to prepare
-   * execution dependent on the settings.
-   */
-  public function process();
-}
-
-/**
- * Class providing default implementations for the concrete plugin if not
- * overriden by the implementation.
- */
-class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
-
-  public function execute() {
-    throw new RulesException($this->object->getPluginName() .": Execution implementation is missing.");
-  }
-
-  public function validate() {
-    //TODO: Make sure used variables are available.
-    //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
-  }
-
-  public function process() {}
-  public function form() {}
-  public function form_validate() {}
-  public function form_submit() {}
-  public function access() {}
-  public function operations() {}
-  public function render() {}
-  public function help() {}
 }
 
 /**
@@ -1143,6 +1069,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       }
     }
     return TRUE;
+  }
+
+  public function destroy() {
+    foreach ($this->children as $key => $child) {
+      $child->destroy();
+    }
   }
 
   /**

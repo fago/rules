@@ -181,6 +181,13 @@ class Rule extends RulesActionContainer {
     $this->conditions();
     return $this->conditions->access() && parent::access();
   }
+
+  public function destroy() {
+    if (isset($this->conditions)) {
+      $this->conditions->destroy();
+    }
+    parent::destroy();
+  }
 }
 
 /**

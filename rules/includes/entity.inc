@@ -28,7 +28,7 @@ if (!defined('ENTITY_IN_DB')) {
   define('ENTITY_FIXED', 0x04);
 }
 
-if (!interface_exists('EntityAPIControllerInterface')) {
+if (!interface_exists('EntityAPIControllerInterface', FALSE)) {
   /**
    * Interface for EntityControllers compatible with the entity API.
    */
