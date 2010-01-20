@@ -87,6 +87,24 @@ interface RulesDataCreatableInterface {
 }
 
 /**
+ * Customize access permissions per data type. It's suggested to implement it
+ * as soon as one of the above interfaces is implemented.
+ */
+interface RulesDataAccessInterface {
+
+  /**
+   * Allows implementing access restrictions per data type.
+   *
+   * @param $op
+   *   One of 'view', 'create', 'update' and 'delete.
+   * @return
+   *   Whether the current user has access to this operation for all data of
+   *   this type.
+   */
+  public function access($op);
+}
+
+/**
  * Combines the above interfaces to a CRUD Interface.
  */
 interface RulesDataCRUDInterface extends RulesDataSavableInterface, RulesDataDeletableInterface, RulesDataCreatableInterface {
@@ -208,7 +226,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    *   The wrapper that has been set, thus its parent will be saved.
    */
   public static function metadataWrapperSaveChanges($wrapper, array $state, $immediate = FALSE) {
-    $info = $wrapper->info();
+    $info = $wrapper->info() + array('type' => $wrapper->type());
     if ($var = $state['wrapper map']->getVariable($wrapper)) {
       $var->update($wrapper)->saveChanges($immediate, $state);
     }
@@ -440,5 +458,4 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     $this->type = $this->itemName;
     parent::__wakeup();
   }
-
 }

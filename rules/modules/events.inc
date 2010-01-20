@@ -69,6 +69,7 @@ function rules_cron() {
   rules_invoke_event('cron');
 }
 
+
 /**
  * Node integration access callback.
  */
