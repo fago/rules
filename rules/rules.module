@@ -261,7 +261,7 @@ function rules_wrap_data(&$data = NULL, $info) {
   elseif (($cache = rules_get_cache()) && isset($cache['data_info'][$info['type']])) {
     $cache['data_info'][$info['type']] += array('class' => 'RulesDataWrapper');
     // Make sure identifiable data and data loaded through handlers is wrapped.
-    $wrap = isset($info['handler']) || RulesDataWrapper::typeIsIdentifiable($info['type']);
+    $wrap = isset($info['handler']) || RulesExtendable::itemFacesAs($cache['data_info'][$info['type']], 'RulesDataIdentifiableInterface');
     if ($wrap && ($class = $cache['data_info'][$info['type']]['class'])) {
       return new $class($data, $info);
     }
@@ -568,13 +568,15 @@ function rules_filter_array($array, $key, $value) {
  *   The updated array.
  */
 function rules_update_array(array $array, array $update) {
-  $update += $array;
-  foreach (array_intersect_key($array, $update) as $key => $data) {
-    if (is_array($update[$key]) && is_array($data)) {
-      $update[$key] = rules_update_array($data, $update[$key]);
+  foreach ($update as $key => $data) {
+    if (isset($array[$key]) && is_array($array[$key]) && is_array($data)) {
+      $array[$key] = rules_update_array($array[$key], $data);
+    }
+    else {
+      $array[$key] = $data;
     }
   }
-  return $update;
+  return $array;
 }
 
 /**

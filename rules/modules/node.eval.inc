@@ -27,19 +27,7 @@ function rules_action_node_create($author, $title, $settings) {
   }
 }
 
-/**
- * Loads a node
- */
-function rules_action_load_node($nid, $vid = NULL) {
-  return array('node_loaded' => node_load($nid, $vid ? $vid : NULL));
-}
 
-/**
- * Action "Delete a node".
- */
-function rules_action_delete_node($node) {
-
-}
 
 /**
  * @}

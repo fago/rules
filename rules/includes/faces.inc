@@ -209,6 +209,7 @@ abstract class FacesExtendable extends FacesRoot implements FacesExtendableInter
         throw new FacesExtendableException("The class " . check_plain($className) . " doesn't implement the interface " . check_plain($interface) . ".");
       }
       $this->faces[$interface] = $interface;
+      $this->faces += class_implements($interface);
       $face_methods = get_class_methods($interface);
       $this->addIncludes($face_methods, $includes);
       foreach ($face_methods as $method) {
@@ -226,6 +227,7 @@ abstract class FacesExtendable extends FacesRoot implements FacesExtendableInter
       throw new FacesExtendableException("Missing methods for implementing the interface " . check_plain($interface) . ".");
     }
     $this->faces[$interface] = $interface;
+    $this->faces += class_implements($interface);
     $this->addIncludes($face_methods, $includes);
     foreach ($face_methods as $method) {
       $this->facesMethods[$method] = array(0 => $callbacks[$method]);

@@ -24,15 +24,14 @@ interface RulesDataIdentifiableInterface {
    *
    * @return
    *   The identifier of the data. When the data is serialized only the id will
-   *   be saved, upon wakeup the identifiers is passed to load(). If you return
-   *   an array, it will be treated as an array of arguments for load() on
-   *   wakeup.
+   *   be saved, upon wakeup the identifier is passed to load().
    */
   public function getIdentifier();
 
   /**
    * Describes the parameter needed for loading. Describe the data as needed for
-   * load() and returned by getIdentifier().
+   * load() and returned by getIdentifier(), whereas multiple arguments are
+   * passed as an array.
    *
    * @return
    *   An array describing the parameters of the load method. Use the same
@@ -230,18 +229,6 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     }
   }
 
-  public static function typeIsIdentifiable($type) {
-    $cache = rules_get_cache();
-    foreach (array('RulesDataIdentifiableInterface', 'RulesDataSavableInterface', 'RulesDataCRUDInterface') as $interface) {
-      if (RulesExtendable::itemFacesAs($cache['data_info'][$type], $interface)) {
-        return TRUE;
-      }
-    }
-    return FALSE;
-  }
-
-
-
 
 
   protected $hook = 'data_info';
@@ -274,9 +261,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       'loaded' => empty($info['handler']),
     );
     list($this->type, $this->parameter) = self::typeExtractParameter($this->info['type']);
-    if (!isset($this->itemName)) {
-      $this->itemName = $this->type;
-    }
+    $this->itemName = $this->type;
     $this->setUp();
   }
 
@@ -308,7 +293,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    * Returns whether this data is identifiable
    */
   public function isIdentifiable() {
-    return $this->facesAs('RulesDataIdentifiableInterface') || $this->facesAs('RulesDataSavableInterface');
+    return $this->facesAs('RulesDataIdentifiableInterface');
   }
 
   /**
@@ -371,11 +356,9 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       $ids = $this->data;
       // First unset the reference on the data, so we prevent changing it.
       unset($this->data);
-      if (!is_array($ids)) {
-        $this->data = $this->load($ids);
-      }
-      else {
-        $this->data = call_user_func_array(array($this, 'load'), $ids);
+      $this->data = $this->load($ids);
+      if (isset($this->name)) {
+        rules_log('Loaded variable %name of type %type.', array('%name' => $this->name, '%type' => $this->type));
       }
     }
     return $this->data;
@@ -412,7 +395,7 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     // Save now!
     elseif ($this->info['save'] && !$this->info['skip save'] && $this->isSavable()) {
       if (isset($this->name)) {
-        rules_log('Saved variable %name of type %type.', array('%name' => $this->name, '%type' => $this->info['type']));
+        rules_log('Saved variable %name of type %type.', array('%name' => $this->name, '%type' => $this->type));
       }
       if (isset($state['blocked']) && !empty($this->blocked)) {
         // Add the set of blocked elements for the recursion prevention.
@@ -444,14 +427,15 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       $info['loaded'] = FALSE;
       $info['handler'] = FALSE;
     }
-    return serialize(array($data, $info, $this->skipSetUp, $this->itemName));
+    return serialize(array($data, $info, $this->skipSetUp, $this->itemName, $this->parameter));
   }
 
   /**
    * Implementation of the Serializable Interface.
    */
   public function unserialize($serialized) {
-    list($this->data, $this->info, $this->skipSetUp, $this->itemName) = unserialize($serialized);
+    list($this->data, $this->info, $this->skipSetUp, $this->itemName, $this->parameter) = unserialize($serialized);
+    $this->type = $this->itemName;
     parent::__wakeup();
   }
 

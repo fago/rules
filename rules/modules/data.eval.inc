@@ -39,8 +39,6 @@ function rules_action_data_fetch($type) {
   $ids = array_slice($args, 1, count($args)-5);
   // If it's a single id, remove the array.
   $ids = count($ids) == 1 ? reset($ids) : $ids;
-  debug($ids, 'ids to load for '. $type);
-  debug($args, '', TRUE);
   // Create a data wrapper, so the actually data is lazy loaded once needed.
   $data = rules_wrap_data($ids, array('type' => $type, 'loaded' => FALSE));
   return array('data' => $data);
@@ -56,7 +54,7 @@ function rules_action_data_fetch_validate() {
 function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
   $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
   // Add the data type's needed parameter for loading to the parameter info.
-  $element->settings['#info']['parameter'] = $data->loadParameter();
+  $element->alterInfo(array('parameter' => $data->loadParameter()));
 }
 
 /**
@@ -214,11 +212,11 @@ class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdenti
    * Implements RulesDataIdentifiableInterface.
    */
   function getIdentifier() {
-    $info = entity_get_info($this->info['type']);
+    $info = entity_get_info($this->type);
     $name_key = isset($info['object keys']['name']) ? $info['object keys']['name'] : $info['object keys']['id'];
     $entity = $this->get();
     if (!isset($entity->$name_key)) {
-      throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst($this->info['type'])));
+      throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst($this->type)));
     }
     return $entity->$name_key;
   }
@@ -226,20 +224,21 @@ class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdenti
   /**
    * Implements RulesDataIdentifiableInterface.
    */
-  function load($id, $revision = NULL) {
-    if (isset($revision)) {
-      $info = entity_get_info($this->info['type']);
-      $conditions = array($info['object keys']['revision'] => $revision);
+  function load($ids) {
+    if (isset($ids[1])) {
+      $info = entity_get_info($this->type);
+      $conditions = array($info['object keys']['revision'] => $ids[1]);
     }
-    $result = entity_load($this->info['type'], array($id), isset($conditions) ? $conditions : array());
+    $id = is_array($ids) ? reset($ids) : $ids;
+    $result = entity_load($this->type, array($id), isset($conditions) ? $conditions : array());
     if (empty($result[$id])) {
-      throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => $this->info['type']));
+      throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => $this->type));
     }
     return $result[$id];
   }
 
   function loadParameter() {
-    $info = entity_get_info($this->info['type']);
+    $info = entity_get_info($this->type);
     $type = isset($info['object keys']['name']) ? 'text' : 'integer';
     $return = array('id' => array('type' => $type, 'label' => t('Identifier')));
     if (isset($info['object keys']['revision'])) {
@@ -263,16 +262,15 @@ class RulesDataEntityExtender extends RulesDataWrapper implements FacesExtenderI
   }
 
   function save($object) {
-    debug('saving object of type ', $object->info['type']);
-    entity_metadata_save($object->info['type'], $object->get());
+    entity_metadata_entity_save($object->type, $object->get());
   }
 
   function delete($object) {
-    entity_metadata_delete($object->info['type'], $object->getIdentifier());
+    entity_metadata_entity_delete($object->type, $object->getIdentifier());
   }
 
   function create($values = array(), $object) {
-    $object->data = entity_metadata_create($object->info['type'], $values);
+    $object->data = entity_metadata_entity_create($object->type, $values);
   }
 
   function creationParameter($object) {
