@@ -778,6 +778,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule = rule();
     $rule->action('data_fetch', array('type' => 'node', 'id' => $node->nid, 'data_fetched:var' => 'node'));
     $rule->action('data_save', array('data:select' => 'node', 'immediate' => TRUE));
+    $rule->action('data_delete', array('data:select' => 'node'));
     $rule->execute();
     debug(RulesLog::logger()->render());
   }

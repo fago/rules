@@ -187,6 +187,29 @@ function rules_data_action_info() {
       ),
     );
   }
+  // Get an array of types that are deletable.
+  foreach ($cache['data_info'] as $type => $info) {
+    if (RulesExtendable::itemFacesAs($info, 'RulesDataDeletableInterface')) {
+      $types[] = $type;
+    }
+  }
+  if (!empty($types)) {
+    $return['data_delete'] = array(
+      'label' => t('Delete data'),
+      'parameter' => array(
+        'data' => array(
+          'type' => $types,
+          'label' => t('Data to delete'),
+          'description' => t('The data, which should be deleted permanently.'),
+         ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_delete',
+      'callbacks' => array(
+        'validate' => 'rules_data_parameter_validation',
+      ),
+    );
+  }
   return $return;
 }
 
