@@ -1265,15 +1265,13 @@ class RulesLog {
   /**
    * Renders the log of one event invocation.
    */
-  protected function renderHelper(&$line = 0, $startTime = NULL) {
-    if (!isset($startTime)) {
-      $startTime = isset($this->log[$line][3]) ? $this->log[$line][3] : 0;
-    }
+  protected function renderHelper(&$line = 0) {
+    $startTime = isset($this->log[$line][3]) ? $this->log[$line][3] : 0;
     $output = array();
     while ($line < count($this->log)) {
       if ($output && !empty($this->log[$line][4])) {
         // The next entry stems from another evaluated set, add in its log messages here
-        $output[] = $this->renderHelper($line, $startTime);
+        $output[] = $this->renderHelper($line);
       }
       else {
         $formatted_diff = round(($this->log[$line][3] - $startTime) * 1000, 3) .' ms';
