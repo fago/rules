@@ -66,7 +66,7 @@ interface RulesDataDeletableInterface {
 /**
  * Interface for any data that can be created.
  */
-interface RulesDataCreatableInterface extends RulesDataIdentifiableInterface{
+interface RulesDataCreatableInterface {
 
   /**
    * Creates a new instance of the wrapped data type.
@@ -132,10 +132,10 @@ interface RulesDataInputFormInterface {
 class RulesDataWrapper extends RulesExtendable implements Serializable {
 
   /**
-   * Defines the available type parameter for this data type.
+   * Defines the available type parameter for a data type.
    *
    * @param $type
-   *   The entity type.
+   *   The actual type for which to get the type parameter.
    * @return
    *   An array keyed by parameter with the paremtrized type's label as values.
    */
@@ -229,6 +229,17 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
       }
     }
   }
+
+  public static function typeIsIdentifiable($type) {
+    $cache = rules_get_cache();
+    foreach (array('RulesDataIdentifiableInterface', 'RulesDataSavableInterface', 'RulesDataCRUDInterface') as $interface) {
+      if (RulesExtendable::itemFacesAs($cache['data_info'][$type], $interface)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
 
 
 
@@ -357,10 +368,15 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     }
     elseif (!$this->info['loaded'] && isset($this->data) && $this->isIdentifiable()) {
       $this->info['loaded'] = TRUE;
-      $id = $this->data;
+      $ids = $this->data;
       // First unset the reference on the data, so we prevent changing it.
       unset($this->data);
-      $this->data = $this->load($id);
+      if (!is_array($ids)) {
+        $this->data = $this->load($ids);
+      }
+      else {
+        $this->data = call_user_func_array(array($this, 'load'), $ids);
+      }
     }
     return $this->data;
   }

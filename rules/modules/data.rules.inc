@@ -55,7 +55,7 @@ function rules_data_data_info() {
     ),
    'list' => array(
       'label' => t('list'),
-      'class' => 'RulesListWrapper',
+      'class' => 'RulesDataListWrapper',
     ),
    'entity' => array(
       'label' => t('any entity'),
@@ -65,15 +65,17 @@ function rules_data_data_info() {
       'label' => t('content'),
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
-      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+      'extenders' => array(
+        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
+      ),
     ),
     'user' => array(
       'label' => t('user'),
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
       'extenders' => array(
-        'RulesDataSavableInterface' => 'RulesDataEntityExtender',
-        'RulesDataCreatableInterface' => 'RulesDataEntityExtender',
+        'RulesDataSavableInterface' => array('class' => 'RulesDataEntityExtender'),
+        'RulesDataCreatableInterface' => array('class' => 'RulesDataEntityExtender'),
       ),
     ),
     'file' => array(
@@ -81,27 +83,33 @@ function rules_data_data_info() {
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
       'extenders' => array(
-        'RulesDataSavableInterface' => 'RulesDataEntityExtender',
-        'RulesDataDeletableInterface' => 'RulesDataEntityExtender',
+        'RulesDataSavableInterface' => array('class' => 'RulesDataEntityExtender'),
+        'RulesDataDeletableInterface' => array('class' => 'RulesDataEntityExtender'),
       ),
     ),
     'comment' => array(
       'label' => t('taxonony vocabulary'),
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
-      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+      'extenders' => array(
+        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
+      ),
     ),
     'taxonomy_term' => array(
       'label' => t('taxonony term'),
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
-      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+      'extenders' => array(
+        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
+      ),
     ),
     'taxonomy_vocabulary' => array(
       'label' => t('taxonony vocabulary'),
       'class' => 'RulesDataEntityWrapper',
       'parent' => 'entity',
-      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+      'extenders' => array(
+        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
+      ),
     ),
   );
 }
@@ -128,11 +136,26 @@ function rules_data_action_info() {
         ),
       ),
       'group' => t('Data'),
+      'base' => 'rules_action_data_set',
       'callbacks' => array(
-        'execute' => 'rules_action_data_set',
         'validate' => 'rules_data_parameter_validation',
-        'access' => 'rules_action_data_set_access_check',
       ),
+    ),
+    'data_fetch' => array(
+      'label' => t('Fetch data'),
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Data type'),
+          'description' => t('Specify the type of the data that should be fetched.'),
+         ),
+         // Further needed parameter depends on the type.
+      ),
+      'provides' => array(
+        'data' => array('type' => 'unknown', 'label' => t('Fetched data')),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_fetch',
     ),
   );
 }
@@ -166,10 +189,9 @@ function rules_data_condition_info() {
         ),
       ),
       'group' => t('Data'),
+      'base' => 'rules_condition_data_is',
       'callbacks' => array(
-        'execute' => 'rules_condition_data_is',
         'validate' => 'rules_data_parameter_validation',
-        'process' => 'rules_data_is_process_settings',
       ),
     ),
   );
