@@ -736,6 +736,13 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
    * Tests the provided default rule 'rules_test_default_1'.
    */
   function testDefaultRule() {
+    $rule = rules_config_load('rules_test_default_1');
+    $this->assertTrue($rule->status & ENTITY_IN_CODE && !($rule->status & ENTITY_IN_DB), 'Default rule can be loaded and has the right status.');
+    // Enable.
+    $rule->active = TRUE;
+    $rule->save();
+    rules_clear_cache(TRUE);
+
     // Create a node that triggers the rule.
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     // Clear messages.
@@ -745,9 +752,6 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
 
     $msg = drupal_get_messages();
     $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
-
-    $rule = rules_config_load('rules_test_default_1');
-    $this->assertTrue($rule->status & ENTITY_IN_CODE && !($rule->status & ENTITY_IN_DB), 'Default rule can be loaded and has the right status.');
   }
 }
 

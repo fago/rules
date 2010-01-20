@@ -424,7 +424,7 @@ class RulesEventSet extends RulesRuleSet {
         'variables' => isset($info['arguments']) ? $info['arguments'] : array(),
       );
       // Add all rules associated with this event to an EventSet for caching.
-      if ($rules = rules_config_load_multiple(FALSE, array('event' => $name))) {
+      if ($rules = rules_config_load_multiple(FALSE, array('event' => $name, 'active' => TRUE))) {
         $event = new RulesEventSet($info);
         $event->name = $name;
         foreach ($rules as $rule) {

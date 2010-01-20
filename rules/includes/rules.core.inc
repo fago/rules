@@ -408,7 +408,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       // variables added during the whole evaluation. So we can access them
       // after execution and cleanup.
       $state['executed']->state['all variables'][] = $variable;
-      debug('added var'. $name);
     }
     else {
       // If there is no wrapper class, just pass through the data.
