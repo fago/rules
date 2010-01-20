@@ -8,7 +8,6 @@
 module_load_include('inc', 'rules', 'modules/events');
 spl_autoload_register('rules_autoload');
 
-
 /**
  * Autoload API includes. Note that the code registry autoload is used only
  * by the providing API module.
