@@ -89,5 +89,49 @@ function rules_system_integration_access($type, $name) {
 }
 
 /**
+ * Data actions access callback.
+ * Returns TRUE if at least one type is available for configuring the action.
+ */
+function rules_data_action_access($type, $name) {
+  if ($name == 'data_fetch' || $name == 'data_create') {
+    $types = array_keys(rules_data_action_type_options($type, $name));
+    $op = $name == 'data_create' ? 'create' : 'view';
+  }
+  elseif ($name == 'data_save' || $name == 'data_delete') {
+    $cache = rules_get_cache();
+    $types = $cache['action_info'][$name]['parameter']['data']['type'];
+    $op = $name == 'data_save' ? 'save' : 'delete';
+  }
+  foreach ($types as $key => $type) {
+    $data = rules_wrap_data($data = NULL, array('type' => $type));
+    if ($data->facesAs('RulesDataAccessInterface') && !$data->access($op)) {
+      unset($types[$key]);
+    }
+  }
+  return !empty($types);
+}
+
+/**
+ * Options list callback for data actions.
+ *
+ * @param $type
+ *   The element type, e.g. 'action' or 'condition.
+ * @param $name
+ *   The name of the element to return options for.
+ */
+function rules_data_action_type_options($type, $name) {
+  $cache = rules_get_cache();
+  $interface = $name == 'data_fetch' ? 'RulesDataIdentifiableInterface' : 'RulesDataCreatableInterface';
+  // Get an array of types that are savable.
+  foreach ($cache['data_info'] as $type => $info) {
+    if (RulesExtendable::itemFacesAs($info, $interface)) {
+      $types[$type] = $info['label'];
+    }
+  }
+  return $types;
+}
+
+
+/**
  * @}
  */

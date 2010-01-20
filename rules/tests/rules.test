@@ -805,6 +805,19 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     //debug(RulesLog::logger()->render());
   }
 
+  /**
+   * Just make sure the access callback run without errors.
+   */
+  function testAccessCallbacks() {
+    $cache = rules_get_cache();
+    foreach (array('action', 'condition', 'event') as $type) {
+      foreach (rules_fetch_data($type . '_info') as $name => $info) {
+        if (isset($info['access callback'])) {
+          $info['access callback']($type, $name);
+        }
+      }
+    }
+  }
 
 
 

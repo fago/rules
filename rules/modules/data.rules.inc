@@ -140,21 +140,14 @@ function rules_data_action_info() {
     ),
   );
 
-  $cache = rules_get_cache();
-  // Get an array of types that are savable.
-  foreach ($cache['data_info'] as $type => $info) {
-    if (RulesExtendable::itemFacesAs($info, 'RulesDataIdentifiableInterface')) {
-      $types[] = $type;
-    }
-  }
-  if (!empty($types)) {
+  if (rules_data_action_type_options('action', 'data_fetch')) {
     $return['data_fetch'] = array(
       'label' => t('Fetch data'),
       'parameter' => array(
         'type' => array(
           'type' => 'text',
           'label' => t('Data type'),
-          'options list' => $types,
+          'options list' => 'rules_data_action_type_options',
           'description' => t('Specify the type of the data that should be fetched.'),
          ),
          // Further needed parameter depends on the type.
@@ -163,25 +156,20 @@ function rules_data_action_info() {
         'data_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
       ),
       'group' => t('Data'),
+      'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_data_fetch',
       'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
     );
   }
 
-  // Get an array of types that are creatable.
-  foreach ($cache['data_info'] as $type => $info) {
-    if (RulesExtendable::itemFacesAs($info, 'RulesDataCreatableInterface')) {
-      $types[] = $type;
-    }
-  }
-  if (!empty($types)) {
+  if (rules_data_action_type_options('action', 'data_create')) {
     $return['data_create'] = array(
       'label' => t('Create new data'),
       'parameter' => array(
         'type' => array(
           'type' => 'text',
           'label' => t('Data type'),
-          'options list' => $types,
+          'options list' => 'rules_data_action_type_options',
           'description' => t('Specify the type of the data that should be created.'),
          ),
          // Further needed parameter depends on the type.
@@ -194,12 +182,14 @@ function rules_data_action_info() {
         ),
       ),
       'group' => t('Data'),
+      'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_data_create',
       'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
     );
   }
 
   // Get an array of types that are savable.
+  $cache = rules_get_cache();
   foreach ($cache['data_info'] as $type => $info) {
     if (RulesExtendable::itemFacesAs($info, 'RulesDataSavableInterface')) {
       $types[] = $type;
@@ -224,6 +214,7 @@ function rules_data_action_info() {
          )
       ),
       'group' => t('Data'),
+      'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_data_save',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
@@ -249,6 +240,7 @@ function rules_data_action_info() {
          ),
       ),
       'group' => t('Data'),
+      'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_data_delete',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
