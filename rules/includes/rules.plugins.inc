@@ -40,6 +40,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         elseif (!isset($state['variables'][$name]) && isset($this->info['provides'][$name])) {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $this->addVariable($var_name, $data, $this->info['provides'][$name], $state);
+          rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']));
         }
       }
     }

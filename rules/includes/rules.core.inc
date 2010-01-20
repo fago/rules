@@ -372,7 +372,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       // Make changes permanent.
       $vars = array_merge($this->state['wrapper map']->variables(), $this->state['all variables']);
       foreach ($vars as $var) {
-        $var->saveChanges(TRUE, $this->state);
+        $var->saveChanges(NULL, $this->state);
       }
     }
     // For recursive invocations pop the state from the stack, else set NULL.
