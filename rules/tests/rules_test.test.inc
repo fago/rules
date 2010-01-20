@@ -40,3 +40,17 @@ function rules_condition_content_is_type($node, $type) {
 function rules_condition_content_is_published($node, $settings) {
   return $node->status == 1;
 }
+
+/**
+ * Loads a node
+ */
+function rules_action_load_node($nid, $vid = NULL) {
+  return array('node_loaded' => node_load($nid, $vid ? $vid : NULL));
+}
+
+/**
+ * Action "Delete a node".
+ */
+function rules_action_delete_node($node) {
+  node_delete($node->nid);
+}

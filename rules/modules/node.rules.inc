@@ -108,36 +108,7 @@ function rules_node_action_info() {
     ),
     //TODO: replace by action "fetch node" using node argument and direct input form
     // or a general "Fetch data" action.
-    'rules_action_load_node' => array(
-      'label' => t('Fetch content by id'),
-      'parameter' => array(
-        'nid' => array('type' => 'integer', 'label' => t('Content ID')),
-        'vid' => array(
-          'type' => 'integer',
-          'label' => t('Content Revision ID'),
-          'description' => t("If you want to fetch a specific revision, specify it's revision id. Else leave it empty to fetch the currently active revision."),
-          'optional' => TRUE,
-        ),
-      ),
-      'provides' => array(
-        'node_loaded' => array(
-          'type' => 'node',
-          'label' => t('Loaded content'),
-          'label callback' => 'rules_action_load_node_variable_label',
-        ),
-      ),
-      'group' => t('Node'),
-      'access callback' => 'entity_metadata_node_access',
-    ),
-    // TODO: Replace by a generic delete data action.
-    'rules_action_delete_node' => array(
-      'label' => t('Delete content'),
-      'parameter' => array(
-        'node' => array('type' => 'node', 'label' => t('Content')),
-      ),
-      'group' => t('Node'),
-      'access callback' => 'entity_metadata_node_access',
-    ),
+
   );
 }
 

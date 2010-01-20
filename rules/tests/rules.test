@@ -776,7 +776,6 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->action('drupal_message', array('message:select' => 'node:title'));
     $rule->execute();
     debug(RulesLog::logger()->render());
-    debug(rules_get_cache());
   }
 
 

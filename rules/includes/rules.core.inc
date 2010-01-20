@@ -188,9 +188,8 @@ abstract class RulesExtendable extends FacesExtendable {
    * @return
    *   Whether it supports the given interface.
    */
-  public static function itemFacesAs($itemInfo, $interface) {
-    $reflection = new ReflectionClass($itemInfo['class']);
-    return ($reflection->implementsInterface($interface) || isset($itemInfo['faces_cache'][2][$interface]));
+  public static function itemFacesAs(&$itemInfo, $interface) {
+    return class_implements($itemInfo['class']) || isset($itemInfo['faces_cache'][2][$interface]);
   }
 }
 
@@ -409,6 +408,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       // variables added during the whole evaluation. So we can access them
       // after execution and cleanup.
       $state['executed']->state['all variables'][] = $variable;
+      debug('added var'. $name);
     }
     else {
       // If there is no wrapper class, just pass through the data.
@@ -729,6 +729,17 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
   }
 
+  /**
+   * Allows altering the element information depending on the configuration.
+   *
+   * @param $info
+   *   An array of info, only containing the changes to the usual info array.
+   */
+  public function alterInfo($info) {
+    $this->settings['#info'] = $info;
+    $this->info = rules_update_array($this->info, $this->settings['#info']);
+  }
+
   public function access() {
     return $this->__call('access');
   }
@@ -844,7 +855,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         'provides' => isset($info['new variables']) ? $info['new variables'] : array(),
         'base' => $name,
         'callbacks' => array(),
-        'files' => array(),
       );
       unset($info['arguments'], $info['new variables']);
       $info['callbacks'] += array('execute' => $info['base']);
