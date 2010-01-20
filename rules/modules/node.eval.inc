@@ -38,7 +38,7 @@ function rules_action_load_node($nid, $vid = NULL) {
  * Action "Delete a node".
  */
 function rules_action_delete_node($node) {
-  node_delete($node->nid);
+
 }
 
 /**

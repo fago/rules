@@ -37,6 +37,42 @@ interface RulesDataSavableInterface extends RulesDataIdentifiableInterface {
 }
 
 /**
+ * Interface for any data that can be deleted.
+ */
+interface RulesDataDeletableInterface {
+
+  /**
+   * Permanently deletes the data.
+   */
+  public function delete();
+}
+
+/**
+ * Interface for any data that can be created.
+ */
+interface RulesDataCreatableInterface extends RulesDataIdentifiableInterface{
+
+  /**
+   * Creates a new instance of the wrapped data type.
+   *
+   * @param $values
+   *   An array of values for properties to set. If there is entity metadata
+   *   that marks some properties as required, then they have to be passed.
+   */
+  public function create($values = array());
+}
+
+/**
+ * Combines the above interfaces to a CRUD Interface.
+ */
+interface RulesDataCRUDInterface extends RulesDataSavableInterface, RulesDataDeletableInterface, RulesDataCreatableInterface {
+
+}
+
+
+
+
+/**
  * Interface for any data that can be specified by an input form.
  */
 interface RulesDataInputFormInterface {

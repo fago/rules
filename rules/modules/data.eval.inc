@@ -202,17 +202,21 @@ class RulesEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiab
 }
 
 /**
- * Defines the node data wrapper.
+ * Defines a data wrapper for entities implementing full CRUD on top of the
+ * entity metadata API.
  */
-class RulesNodeDataWrapper extends RulesEntityWrapper implements RulesDataSavableInterface {
+class RulesEntityCRUDWrapper extends RulesEntityWrapper implements RulesDataCRUDInterface {
 
-  protected $itemName = 'node';
-
-  /**
-   * Implements RulesDataSavableInterface.
-   */
   function save() {
-    node_save($this->get());
+    entity_metadata_save($this->info['type'], $this->get());
+  }
+
+  function delete() {
+    entity_metadata_delete($this->info['type'], $this->getIdentifier());
+  }
+
+  function create($values = array()) {
+    $this->data = entity_metadata_create($this->info['type'], $values);
   }
 }
 
