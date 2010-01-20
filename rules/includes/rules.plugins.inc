@@ -17,7 +17,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
    * Execute the callback and update/save data as specified by the action.
    */
   protected function executeCallback(array $args, array &$state = array()) {
-    rules_log('Executing the action "%name".', array('%name' => $this->elementName));
+    rules_log('Evaluating the action %name.', array('%name' => $this->elementName));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
     $wrappers = array();
 
@@ -41,6 +41,9 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $this->addVariable($var_name, $data, $this->info['provides'][$name], $state);
           rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']));
+          if (!empty($this->info['provides'][$name]['save']) && $state['variables'][$var_name] instanceof RulesDataWrapper) {
+            $state['variables'][$var_name]->saveChanges(FALSE, $state);
+          }
         }
       }
     }
@@ -79,7 +82,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
 
   protected function executeCallback(array $args, array &$state = array()) {
     $return = (bool)$this->__call('execute', rules_unwrap_data($args, $state));
-    rules_log('The condition "%name" evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'));
+    rules_log('The condition %name evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'));
     return $this->negate ? !$return : $return;
   }
 

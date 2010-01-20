@@ -45,8 +45,13 @@ function rules_action_data_set_access(RulesAbstractPlugin $element) {
 function rules_action_data_fetch($type) {
   $args = func_get_args();
   // Get the arguments for the loadParameter().
-  // After the defined parameters, 4 additonals are added, which we remove.
-  $ids = array_slice($args, 1, count($args)-5);
+  // Settings is always the forth last parameter that is passed.
+  $settings = $args[count($args)-4];
+  $ids = array();
+  foreach (array_keys($settings['#info']['parameter']) as $i => $name) {
+    // Remove the parameter name prefix 'param_'.
+    $ids[substr($name, 6)] = $args[$i+1];
+  }
   // If it's a single id, remove the array.
   $ids = count($ids) == 1 ? reset($ids) : $ids;
   // Create a data wrapper, so the actually data is lazy loaded once needed.
@@ -54,17 +59,19 @@ function rules_action_data_fetch($type) {
   return array('data_fetched' => $data);
 }
 
-function rules_action_data_fetch_validate() {
-  $cache = rules_get_cache();
-  if (!isset($element->settings['type']) || !isset($cache['data_info'][$element->settings['type']]) || !RulesExtendable::itemFacesAs($cache['data_info'][$element->settings['type']], 'RulesDataIdentifiableInterface')) {
-    throw new RulesException('Invalid or not identifiable data type specified.');
+function rules_action_data_fetch_validate($element) {
+  if (!isset($element->settings['type'])) {
+    throw new RulesException('Invalid type specified.');
   }
 }
 
 function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
   $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
   // Add the data type's needed parameter for loading to the parameter info.
-  $info['parameter'] = $data->loadParameter();
+  foreach ($data->loadParameter() as $name => $param_info) {
+    // Prefix parameter names to avoid name clashes with existing parameters.
+    $info['parameter']['param_' . $name] = $param_info;
+  }
   $info['provides']['data_fetched']['type'] = $element->settings['type'];
   $element->alterInfo($info);
 }
@@ -96,6 +103,39 @@ function rules_action_data_delete($data, $settings, $state, $element) {
   }
 }
 
+/**
+ * Action: Create data
+ */
+function rules_action_data_create($type) {
+  $args = func_get_args();
+  // Settings is always the forth last parameter that is passed.
+  $settings = $args[count($args)-4];
+  $values = array();
+  foreach (array_keys($settings['#info']['parameter']) as $i => $name) {
+    // Remove the parameter name prefix 'param_'.
+    $values[substr($name, 6)] = $args[$i+1];
+  }
+  $data = rules_wrap_data($data = NULL, array('type' => $type));
+  $data->create($values);
+  return array('data_created' => $data);
+}
+
+function rules_action_data_create_validate($element) {
+  if (!isset($element->settings['type'])) {
+    throw new RulesException('Invalid type specified.');
+  }
+}
+
+function rules_action_data_create_process(RulesAbstractPlugin $element) {
+  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
+  // Add the data type's needed parameter for loading to the parameter info.
+  foreach ($data->creationParameter() as $name => $param_info) {
+    // Prefix parameter names to avoid name clashes with existing parameters.
+    $info['parameter']['param_' . $name] = $param_info;
+  }
+  $info['provides']['data_created']['type'] = $element->settings['type'];
+  $element->alterInfo($info);
+}
 
 
 
@@ -319,6 +359,7 @@ class RulesDataEntityExtender extends RulesDataWrapper implements FacesExtenderI
     $return = array();
     foreach ($object->metadataWrapper() as $name => $info) {
       if (!empty($info['required'])) {
+        $info += array('type' => 'text');
         $return[$name] = array('type' => $info['type'], 'label' => $info['label']);
       }
     }
