@@ -132,7 +132,7 @@ class RulesListWrapper extends RulesDataWrapper {
 
   protected $itemName = 'list';
 
-  public static function availableParameter($type) {
+  public static function availableTypeParameter($type) {
     $cache = rules_get_cache();
     foreach ($cache['data_info'] as $name => $info) {
       $return[$name] = t('list of @item-type items', array('@item-type' => $info['label']));
@@ -162,12 +162,12 @@ class RulesListWrapper extends RulesDataWrapper {
 /**
  * Defines a generic wrapper for all core entities.
  */
-class RulesEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface {
+class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface {
 
   /**
    * Returns the available parameter for entities, which are the known bundles.
    */
-  public static function availableParameter($type) {
+  public static function availableTypeParameter($type) {
     if (($info = entity_get_info($type)) && !empty($info['bundles'])) {
       foreach ($info['bundles'] as $name => $bundle_info) {
         $return[$name] = $bundle_info['label'];
@@ -182,63 +182,73 @@ class RulesEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiab
    * Implements RulesDataIdentifiableInterface.
    */
   function getIdentifier() {
-    list($id, $vid, $bundle) = entity_extract_ids($this->info['type'], $this->get());
-    if (!isset($id)) {
+    $info = entity_get_info($this->info['type']);
+    $name_key = isset($info['object keys']['name']) ? $info['object keys']['name'] : $info['object keys']['id'];
+    $entity = $this->get();
+    if (!isset($entity->$name_key)) {
       throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst($this->info['type'])));
     }
-    return $id;
+    return $entity->$name_key;
   }
 
   /**
    * Implements RulesDataIdentifiableInterface.
    */
-  function load($id) {
-    $result = entity_load($this->info['type'], array($id));
+  function load($id, $revision = NULL) {
+    if (isset($revision)) {
+      $info = entity_get_info($this->info['type']);
+      $conditions = array($info['object keys']['revision'] => $revision);
+    }
+    $result = entity_load($this->info['type'], array($id), isset($conditions) ? $conditions : array());
     if (empty($result[$id])) {
       throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => $this->info['type']));
     }
     return $result[$id];
   }
-}
 
-/**
- * Defines a data wrapper for entities implementing full CRUD on top of the
- * entity metadata API.
- */
-class RulesEntityCRUDWrapper extends RulesEntityWrapper implements RulesDataCRUDInterface {
-
-  function save() {
-    entity_metadata_save($this->info['type'], $this->get());
-  }
-
-  function delete() {
-    entity_metadata_delete($this->info['type'], $this->getIdentifier());
-  }
-
-  function create($values = array()) {
-    $this->data = entity_metadata_create($this->info['type'], $values);
+  function loadParameter() {
+    $info = entity_get_info($this->info['type']);
+    $type = isset($info['object keys']['name']) ? 'text' : 'integer';
+    $return = array('id' => array('type' => $type, 'label' => t('Identifier')));
+    if (isset($info['object keys']['revision'])) {
+      $return += array('revision_id' => array(
+        'type' => 'integer',
+        'label' => t('Revision identifier'),
+        'optional' => TRUE,
+      ));
+    }
+    return $return;
   }
 }
 
 /**
- * Defines the user account data wrapper.
+ * Extends entities to be savable, creatable and deletable.
  */
-class RulesUserDataWrapper extends RulesEntityWrapper implements RulesDataSavableInterface {
+class RulesDataEntityExtender extends RulesDataWrapper implements FacesExtenderInterface {
 
-  protected $itemName = 'user';
+  function implementsFaces() {
+    return array('RulesDataSavableInterface', 'RulesDataDeletableInterface', 'RulesDataCreatableInterface', 'RulesDataCRUDInterface');
+  }
 
-  /**
-   * Implements RulesDataSavableInterface.
-   */
-  function save() {
-    // Automatically save all field API and regular user fields.
-    $table = drupal_get_schema('users');
-    $user_fields = $table['fields'];
-    $account = $this->get();
-    list($id, $vid, $bundle) = entity_extract_ids('user', $account);
-    $instances = field_info_instances('user', $bundle);
-    // Extract the values of all valid keys into $edit.
-    $edit = array_intersect_key((array)$account, $user_fields + $instances);
-    user_save($account, $edit);
+  function save($object) {
+    entity_metadata_save($object->info['type'], $object->get());
+  }
+
+  function delete($object) {
+    entity_metadata_delete($object->info['type'], $object->getIdentifier());
+  }
+
+  function create($values = array(), $object) {
+    $object->data = entity_metadata_create($object->info['type'], $values);
+  }
+
+  function creationParameter($object) {
+    $return = array();
+    foreach ($object->metadataWrapper() as $name => $info) {
+      if (!empty($info['required'])) {
+        $return[$name] = array('type' => $info['type'], 'label' => $info['label']);
+      }
+    }
+    return $return;
   }
 }
