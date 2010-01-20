@@ -68,6 +68,10 @@
  *     be used when all types should be allowed. Required.
  *   - description: If necessary, a further description of the parameter.
  *     Optional.
+ *   - options list: Optionally, a callback that returns an array of possible
+ *     values for this parameter. The callback has to return an array as used
+ *     by hook_options_list(). For an example implementation see
+ *     rules_data_action_type_options().
  *   - save: If this is set to TRUE, the parameter will be saved by rules when
  *     the rules evaluation ends. This is only supported for savable data
  *     types. If the action returns FALSE, saving is skipped.
@@ -88,10 +92,12 @@
  *  The module has to provide an implementation for each action, being a
  *  function named as specified in the 'base' key or for the execution callback.
  *  All other possible callbacks are optional.
- *  Supported callbacky by rules are defined and documented in the
+ *  Supported action callbacks by rules are defined and documented in the
  *  RulesPluginImplInterface. However any module may extend the action plugin
  *  based upon a defined interface using hook_rules_plugin_info(). All methods
  *  defined in those interfaces can be overridden by the action implementation.
+ *  The callback implementations for those interfaces may reside in any file
+ *  specified in hook_rules_file_info().
  *
  *  @see hook_rules_file_info()
  *  @see rules_action_execution_callback()
@@ -121,10 +127,11 @@ function hook_rules_action_info() {
  * All files specified in that hook will be included when rules looks for
  * existing callbacks for any plugin. Rules remembers which callback is found in
  * which file and automatically includes the right file before it is executing
- * the callback. The file yourmodule.rules.inc is added by default and need not
- * be specified here.
+ * a plugin method callback. The file yourmodule.rules.inc is added by default
+ * and need not be specified here.
  * This allows you to add new include files only containing functions serving as
- * rules callbacks in any file without having to care about file inclusion.
+ * plugin method callbacks in any file without having to care about file
+ * inclusion.
  *
  * @return
  *   An array of file names without the file ending which defaults to '.inc'.
