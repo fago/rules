@@ -139,6 +139,7 @@ function rules_data_action_info() {
       'validate' => 'rules_data_parameter_validation',
     ),
   );
+
   $cache = rules_get_cache();
   // Get an array of types that are savable.
   foreach ($cache['data_info'] as $type => $info) {
@@ -163,8 +164,41 @@ function rules_data_action_info() {
       ),
       'group' => t('Data'),
       'base' => 'rules_action_data_fetch',
+      'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
     );
   }
+
+  // Get an array of types that are creatable.
+  foreach ($cache['data_info'] as $type => $info) {
+    if (RulesExtendable::itemFacesAs($info, 'RulesDataCreatableInterface')) {
+      $types[] = $type;
+    }
+  }
+  if (!empty($types)) {
+    $return['data_create'] = array(
+      'label' => t('Create new data'),
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Data type'),
+          'options list' => $types,
+          'description' => t('Specify the type of the data that should be created.'),
+         ),
+         // Further needed parameter depends on the type.
+      ),
+      'provides' => array(
+        'data_created' => array(
+          'type' => 'unknown',
+          'label' => t('Created data'),
+          'save' => TRUE,
+        ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_create',
+      'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
+    );
+  }
+
   // Get an array of types that are savable.
   foreach ($cache['data_info'] as $type => $info) {
     if (RulesExtendable::itemFacesAs($info, 'RulesDataSavableInterface')) {
@@ -193,9 +227,11 @@ function rules_data_action_info() {
       'base' => 'rules_action_data_save',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
+        'access' => 'rules_action_data_savedelete_access',
       ),
     );
   }
+
   // Get an array of types that are deletable.
   foreach ($cache['data_info'] as $type => $info) {
     if (RulesExtendable::itemFacesAs($info, 'RulesDataDeletableInterface')) {
@@ -216,40 +252,113 @@ function rules_data_action_info() {
       'base' => 'rules_action_data_delete',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
+        'access' => 'rules_action_data_savedelete_access',
       ),
-    );
-  }
-  // Get an array of types that are creatable.
-  foreach ($cache['data_info'] as $type => $info) {
-    if (RulesExtendable::itemFacesAs($info, 'RulesDataCreatableInterface')) {
-      $types[] = $type;
-    }
-  }
-  if (!empty($types)) {
-    $return['data_create'] = array(
-      'label' => t('Create new data'),
-      'parameter' => array(
-        'type' => array(
-          'type' => 'text',
-          'label' => t('Data type'),
-          'options list' => $types,
-          'description' => t('Specify the type of the data that should be created.'),
-         ),
-         // Further needed parameter depends on the type.
-      ),
-      'provides' => array(
-        'data_created' => array(
-          'type' => 'unknown',
-          'label' => t('Created data'),
-          'save' => TRUE,
-        ),
-      ),
-      'group' => t('Data'),
-      'base' => 'rules_action_data_create',
     );
   }
   return $return;
 }
+
+/**
+ * Customize access check for data set action.
+ */
+function rules_action_data_set_access(RulesAbstractPlugin $element) {
+  if (!RulesAbstractPluginDefaults::access($element)) {
+    return FALSE;
+  }
+  if (isset($element->settings['data:select']) && $wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
+    return $wrapper->access('edit');
+  }
+}
+
+/**
+ * Custom access callback for data create and fetch action.
+ */
+function rules_action_data_createfetch_access(RulesAbstractPlugin $element) {
+  if (!RulesAbstractPluginDefaults::access($element)) {
+    return FALSE;
+  }
+  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
+  $op = $element->getElementName() == 'data_create' ? 'create' : 'view';
+  return !$data->facesAs('RulesDataAccessInterface') || $data->access($op);
+}
+
+/**
+ * Custom validate callback for data fetch action.
+ */
+function rules_action_data_fetch_validate($element) {
+  if (!isset($element->settings['type'])) {
+    throw new RulesException('Invalid type specified.');
+  }
+}
+
+/**
+ * Custom process callback for data fetch action.
+ */
+function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
+  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
+  // Add the data type's needed parameter for loading to the parameter info.
+  foreach ($data->loadParameter() as $name => $param_info) {
+    // Prefix parameter names to avoid name clashes with existing parameters.
+    $info['parameter']['param_' . $name] = $param_info;
+  }
+  $info['provides']['data_fetched']['type'] = $element->settings['type'];
+  $element->alterInfo($info);
+}
+
+/**
+ * Custom validate callback for data create action.
+ */
+function rules_action_data_create_validate($element) {
+  if (!isset($element->settings['type'])) {
+    throw new RulesException('Invalid type specified.');
+  }
+}
+
+/**
+ * Custom process callback for data create action.
+ */
+function rules_action_data_create_process(RulesAbstractPlugin $element) {
+  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
+  // Add the data type's needed parameter for loading to the parameter info.
+  foreach ($data->creationParameter() as $name => $param_info) {
+    // Prefix parameter names to avoid name clashes with existing parameters.
+    $info['parameter']['param_' . $name] = $param_info;
+  }
+  $info['provides']['data_created']['type'] = $element->settings['type'];
+  $element->alterInfo($info);
+}
+
+/**
+ * Custom access callback for data save and delete action.
+ */
+function rules_action_data_savedelete_access(RulesAbstractPlugin $element) {
+  if (!RulesAbstractPluginDefaults::access($element)) {
+    return FALSE;
+  }
+  if ($wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
+    $data = rules_wrap_data($data = NULL, array('type' => $wrapper->type()));
+    if ($data instanceof RulesDataWrapper) {
+      $op = $element->getElementName() == 'data_save' ? 'save' : 'delete';
+      return !$data->facesAs('RulesDataAccessInterface') || $data->access($op);
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Custom validation callback ensuring the 'data' argument is a data wrapper.
+ */
+function rules_data_parameter_validation(RulesAbstractPlugin $element) {
+  if (!isset($element->settings['data:select'])) {
+    throw new RulesException('The data argument has to be specified using data selectors.');
+  }
+  elseif ($element->getElementName() == 'data_set' && count(explode(':', $element->settings['data:select'], 2)) != 2) {
+    // Modifying rules variables itself doesn't make any sense.
+    throw new RulesException('Variables may not be changed, only their properties can be modified.');
+  }
+}
+
 
 /**
  * Implements hook_rules_condition_info() on behalf of the pseudo data module.
@@ -287,6 +396,26 @@ function rules_data_condition_info() {
     ),
   );
 }
+
+/**
+ * Custom process callback for the data_is condition.
+ *
+ * If we check the bundle property of a variable, add an assertion so that later
+ * evaluated elements can make use of this information.
+ */
+function rules_condition_data_is_process(RulesAbstractPlugin $element) {
+  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
+    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
+      $type = $vars[$parts[0]]['type'];
+      $info = entity_get_info();
+      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
+        // Assert that the object is of bundle $value.
+        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
+      }
+    }
+  }
+}
+
 
 /**
  * @}

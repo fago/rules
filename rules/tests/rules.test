@@ -9,7 +9,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
   static function getInfo() {
     return array(
-      'name' => 'Rules Core tests',
+      'name' => 'Rules Engine tests',
       'description' => 'Test using the rules API to create and evaluate rules.',
       'group' => 'Rules',
     );
@@ -781,6 +781,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
       'param_title' => 'foo',
       'param_author' => $GLOBALS['user'],
     ));
+    $action->access();
     $action->execute();
     $text = RulesLog::logger()->render();
     $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %node', array('data_created', 'node')));
@@ -792,6 +793,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->action('data_fetch', array('type' => 'node', 'param_id' => $node->nid, 'data_fetched:var' => 'node'));
     $rule->action('data_save', array('data:select' => 'node', 'immediate' => TRUE));
     $rule->action('data_delete', array('data:select' => 'node'));
+    $rule->access();
     $rule->integrityCheck()->execute();
 
     $text = RulesLog::logger()->render();

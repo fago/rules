@@ -28,18 +28,6 @@ function rules_action_data_set($data, $value, $settings, $state, $element) {
 }
 
 /**
- * Customize access check.
- */
-function rules_action_data_set_access(RulesAbstractPlugin $element) {
-  if (!RulesAbstractPluginDefaults::access($element)) {
-    return FALSE;
-  }
-  if (isset($element->settings['data:select']) && $wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
-    return $wrapper->access('edit');
-  }
-}
-
-/**
  * Action: Fetch data
  */
 function rules_action_data_fetch($type) {
@@ -59,21 +47,21 @@ function rules_action_data_fetch($type) {
   return array('data_fetched' => $data);
 }
 
-function rules_action_data_fetch_validate($element) {
-  if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.');
+/**
+ * Action: Create data
+ */
+function rules_action_data_create($type) {
+  $args = func_get_args();
+  // Settings is always the forth last parameter that is passed.
+  $settings = $args[count($args)-4];
+  $values = array();
+  foreach (array_keys($settings['#info']['parameter']) as $i => $name) {
+    // Remove the parameter name prefix 'param_'.
+    $values[substr($name, 6)] = $args[$i+1];
   }
-}
-
-function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
-  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
-  // Add the data type's needed parameter for loading to the parameter info.
-  foreach ($data->loadParameter() as $name => $param_info) {
-    // Prefix parameter names to avoid name clashes with existing parameters.
-    $info['parameter']['param_' . $name] = $param_info;
-  }
-  $info['provides']['data_fetched']['type'] = $element->settings['type'];
-  $element->alterInfo($info);
+  $data = rules_wrap_data($data = NULL, array('type' => $type));
+  $data->create($values);
+  return array('data_created' => $data);
 }
 
 /**
@@ -99,45 +87,9 @@ function rules_action_data_delete($data, $settings, $state, $element) {
   }
   else {
     // Create a new rules data wrapper just for deletion.
-    rules_wrap_data($data, $wrapper->info())->delete();
+    rules_wrap_data($data, array('type' => $wrapper->type()))->delete();
   }
 }
-
-/**
- * Action: Create data
- */
-function rules_action_data_create($type) {
-  $args = func_get_args();
-  // Settings is always the forth last parameter that is passed.
-  $settings = $args[count($args)-4];
-  $values = array();
-  foreach (array_keys($settings['#info']['parameter']) as $i => $name) {
-    // Remove the parameter name prefix 'param_'.
-    $values[substr($name, 6)] = $args[$i+1];
-  }
-  $data = rules_wrap_data($data = NULL, array('type' => $type));
-  $data->create($values);
-  return array('data_created' => $data);
-}
-
-function rules_action_data_create_validate($element) {
-  if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.');
-  }
-}
-
-function rules_action_data_create_process(RulesAbstractPlugin $element) {
-  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
-  // Add the data type's needed parameter for loading to the parameter info.
-  foreach ($data->creationParameter() as $name => $param_info) {
-    // Prefix parameter names to avoid name clashes with existing parameters.
-    $info['parameter']['param_' . $name] = $param_info;
-  }
-  $info['provides']['data_created']['type'] = $element->settings['type'];
-  $element->alterInfo($info);
-}
-
-
 
 /**
  * Condition: Compare data
@@ -155,37 +107,6 @@ function rules_condition_data_is($data, $op, $value) {
       return is_array($value) && in_array($data, $value);
   }
 }
-
-/**
- * If we check the bundle property of a variable, add an assertion so that later
- * evaluated elements can make use of this information.
- */
-function rules_condition_data_is_process(RulesAbstractPlugin $element) {
-  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
-    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
-      $type = $vars[$parts[0]]['type'];
-      $info = entity_get_info();
-      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
-        // Assert that the object is of bundle $value.
-        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
-      }
-    }
-  }
-}
-
-/**
- * Ensures the 'data' argument is a data wrapper.
- */
-function rules_data_parameter_validation(RulesAbstractPlugin $element) {
-  if (!isset($element->settings['data:select'])) {
-    throw new RulesException('The data argument has to be specified using data selectors.');
-  }
-  elseif ($element->getElementName() == 'data_set' && count(explode(':', $element->settings['data:select'], 2)) != 2) {
-    // Modifying rules variables itself doesn't make any sense.
-    throw new RulesException('Variables may not be changed, only their properties can be modified.');
-  }
-}
-
 
 
 class RulesTextWrapper extends RulesDataWrapper {
@@ -274,7 +195,7 @@ class RulesDataListWrapper extends RulesDataWrapper {
 /**
  * Defines a generic wrapper for all core entities.
  */
-class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface {
+class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdentifiableInterface, RulesDataAccessInterface {
 
   /**
    * Returns the available parameter for entities, which are the known bundles.
@@ -331,6 +252,14 @@ class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdenti
       ));
     }
     return $return;
+  }
+
+  /**
+   * Implements RulesDataAccessInterface.
+   * Incorporate access permissions defined by the entity metadata module.
+   */
+  function access($op) {
+    return entity_metadata_entity_access($op, $this->type);
   }
 }
 

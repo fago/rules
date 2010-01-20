@@ -24,19 +24,19 @@ function rules_node_event_info() {
       'label' => t('After saving new content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('created content')),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('updated content'), TRUE),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     'node_presave' => array(
       'label' => t('Content is going to be saved'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('saved content'), TRUE),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
@@ -45,13 +45,13 @@ function rules_node_event_info() {
       'variables' => rules_events_node_variables(t('viewed content')) + array(
         'build_mode' => array('type' => 'string', 'label' => t('view mode')),
       ),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     'node_delete' => array(
       'label' => t('After deleting content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('deleted content')),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
   );
   // Specify that on presave the node is saved anyway.
@@ -104,7 +104,7 @@ function rules_node_action_info() {
       ),
       'group' => t('Node'),
       'callbacks' => array('execute' => 'rules_action_node_create'),
-      'access callback' => 'entity_metadata_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     //TODO: replace by action "fetch node" using node argument and direct input form
     // or a general "Fetch data" action.
