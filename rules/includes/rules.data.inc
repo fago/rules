@@ -20,9 +20,25 @@ interface RulesDataIdentifiableInterface {
   public function load($identifier);
 
   /**
-   * Gets the identifier of this data, which can be of every php data type.
+   * Gets the identifier of this data.
+   *
+   * @return
+   *   The identifier of the data. When the data is serialized only the id will
+   *   be saved, upon wakeup the identifiers is passed to load(). If you return
+   *   an array, it will be treated as an array of arguments for load() on
+   *   wakeup.
    */
   public function getIdentifier();
+
+  /**
+   * Describes the parameter needed for loading. Describe the data as needed for
+   * load() and returned by getIdentifier().
+   *
+   * @return
+   *   An array describing the parameters of the load method. Use the same
+   *   array structure as known for action parameters.
+   */
+  public function loadParameter();
 }
 
 /**
@@ -60,6 +76,15 @@ interface RulesDataCreatableInterface extends RulesDataIdentifiableInterface{
    *   that marks some properties as required, then they have to be passed.
    */
   public function create($values = array());
+
+  /**
+   * Describes the values needed for creating.
+   *
+   * @return
+   *   An array describing the entries of the $values parameter of the create()
+   *   method. Use the same array structure as known for action parameters.
+   */
+  public function creationParameter();
 }
 
 /**
@@ -107,14 +132,14 @@ interface RulesDataInputFormInterface {
 class RulesDataWrapper extends RulesExtendable implements Serializable {
 
   /**
-   * Defines the available parameter for the given type.
+   * Defines the available type parameter for this data type.
    *
    * @param $type
    *   The entity type.
    * @return
    *   An array keyed by parameter with the paremtrized type's label as values.
    */
-  public static function availableParameter($type) {
+  public static function availableTypeParameter($type) {
     return array();
   }
 

@@ -59,7 +59,49 @@ function rules_data_data_info() {
     ),
    'entity' => array(
       'label' => t('any entity'),
-      'class' => 'RulesEntityWrapper',
+      'class' => 'RulesDataEntityWrapper',
+    ),
+    'node' => array(
+      'label' => t('content'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+    ),
+    'user' => array(
+      'label' => t('user'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array(
+        'RulesDataSavableInterface' => 'RulesDataEntityExtender',
+        'RulesDataCreatableInterface' => 'RulesDataEntityExtender',
+      ),
+    ),
+    'file' => array(
+      'label' => t('user'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array(
+        'RulesDataSavableInterface' => 'RulesDataEntityExtender',
+        'RulesDataDeletableInterface' => 'RulesDataEntityExtender',
+      ),
+    ),
+    'comment' => array(
+      'label' => t('taxonony vocabulary'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+    ),
+    'taxonomy_term' => array(
+      'label' => t('taxonony term'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
+    ),
+    'taxonomy_vocabulary' => array(
+      'label' => t('taxonony vocabulary'),
+      'class' => 'RulesDataEntityWrapper',
+      'parent' => 'entity',
+      'extenders' => array('RulesDataCRUDInterface' => 'RulesDataEntityExtender'),
     ),
   );
 }

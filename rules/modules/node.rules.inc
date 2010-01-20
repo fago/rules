@@ -16,20 +16,6 @@ function rules_node_file_info() {
 }
 
 /**
- * Implements hook_rules_data_info() on behalf of the node module.
- */
-function rules_node_data_info() {
-  return array(
-    'node' => array(
-      'label' => t('content'),
-      'class' => 'RulesNodeDataWrapper',
-      'parent' => 'entity',
-      'group' => t('Node'),
-    ),
-  );
-}
-
-/**
  * Implements hook_rules_event_info() on behalf of the node module.
  */
 function rules_node_event_info() {
