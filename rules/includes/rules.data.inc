@@ -344,16 +344,16 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
     // TODO: If there is an input value first of apply input eval + process it
     // to get the data ==> Support input evaluation.
     if (!$this->info['loaded'] && $this->info['handler'] && function_exists($this->info['handler'])) {
-      $this->info['loaded'] = TRUE;
       $args = isset($state) ? rules_unwrap_data($state['variables'], $state, FALSE) : array();
       $this->data = call_user_func_array($this->info['handler'], $args);
+      $this->info['loaded'] = TRUE;
     }
     elseif (!$this->info['loaded'] && isset($this->data) && $this->isIdentifiable()) {
-      $this->info['loaded'] = TRUE;
-      $ids = $this->data;
-      // First unset the reference on the data, so we prevent changing it.
+      $return = $this->load($this->data);
+      // First unset the data, so we prevent changing a referenced variable.
       unset($this->data);
-      $this->data = $this->load($ids);
+      $this->data = $return;
+      $this->info['loaded'] = TRUE;
       if (isset($this->name)) {
         rules_log('Loaded variable %name of type %type.', array('%name' => $this->name, '%type' => $this->type));
       }

@@ -81,6 +81,23 @@ function rules_action_data_save($data, $immediate = FALSE, $settings, $state, $e
   }
 }
 
+/**
+ * Action: Delete data
+ */
+function rules_action_data_delete($data, $settings, $state, $element) {
+  // Usually rules cares for saving, however it won't happen immediately.
+  $wrapper = $element->call('applyDataSelector', array($settings['data:select'], $state));
+  if ($var = $state['wrapper map']->getVariable($wrapper)) {
+    $var->delete();
+  }
+  else {
+    // Create a new rules data wrapper just for deletion.
+    rules_wrap_data($data, $wrapper->info())->delete();
+  }
+}
+
+
+
 
 /**
  * Condition: Compare data
