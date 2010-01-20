@@ -12,9 +12,19 @@
 /**
  * Action: Modify data.
  */
-function rules_action_data_set($data, $value) {
-  // Rules will use the data wrapper to update the value and if possible, save.
-  return array('data' => $value);
+function rules_action_data_set($data, $value, $settings, $state, $element) {
+  $wrapper = $element->call('applyDataSelector', array($settings['data:select'], $state));
+  try {
+    // Update the value first then save changes, if possible.
+    $wrapper->set($value);
+  }
+  catch (EntityMetadataWrapperException $e) {
+    throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $settings['data:select']));
+  }
+  $info = $wrapper->info();
+  // We always have to save the changes in the parent entity. E.g. when the node
+  // author is changed, we don't want to save the author but the node.
+  RulesDataWrapper::metadataWrapperSaveChanges($info['parent'], $state);
 }
 
 /**
@@ -41,12 +51,12 @@ function rules_action_data_fetch($type) {
   $ids = count($ids) == 1 ? reset($ids) : $ids;
   // Create a data wrapper, so the actually data is lazy loaded once needed.
   $data = rules_wrap_data($ids, array('type' => $type, 'loaded' => FALSE));
-  return array('data' => $data);
+  return array('data_fetched' => $data);
 }
 
 function rules_action_data_fetch_validate() {
   $cache = rules_get_cache();
-  if (!isset($element->settings['type']) || !isset($cache['data_info'][$element->settings['type']]) || !RulesDataWrapper::typeIsIdentifiable($element->settings['type'])) {
+  if (!isset($element->settings['type']) || !isset($cache['data_info'][$element->settings['type']]) || !RulesExtendable::itemFacesAs($cache['data_info'][$element->settings['type']], 'RulesDataIdentifiableInterface')) {
     throw new RulesException('Invalid or not identifiable data type specified.');
   }
 }
@@ -54,8 +64,23 @@ function rules_action_data_fetch_validate() {
 function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
   $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
   // Add the data type's needed parameter for loading to the parameter info.
-  $element->alterInfo(array('parameter' => $data->loadParameter()));
+  $info['parameter'] = $data->loadParameter();
+  $info['provides']['data_fetched']['type'] = $element->settings['type'];
+  $element->alterInfo($info);
 }
+
+/**
+ * Action: Save data
+ */
+function rules_action_data_save($data, $immediate = FALSE, $settings, $state, $element) {
+  // Usually rules cares for saving, however it won't happen immediately.
+  if ($immediate && $wrapper = $element->call('applyDataSelector', array($settings['data:select'], $state))) {
+    RulesDataWrapper::metadataWrapperSaveChanges($wrapper, $state, $immediate);
+    // We have already saved, so don't do it again.
+    return FALSE;
+  }
+}
+
 
 /**
  * Condition: Compare data

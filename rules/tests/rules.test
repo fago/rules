@@ -486,7 +486,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
       'type' => 'node',
     ));
     $node->title = 'test';
-    $wrapper->update($node)->saveChanges();
+    $wrapper->update($node);
     $this->assertFalse($this->drupalGetNodeByTitle('test'), 'Changes have not been saved.');
     $wrapper->update($node, TRUE)->saveChanges();
     $this->assertTrue($this->drupalGetNodeByTitle('test'), 'Changes have been saved.');
@@ -776,8 +776,8 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   function testCRUDActions() {
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     $rule = rule();
-    $rule->action('data_fetch', array('type' => 'node', 'id' => $node->nid, 'data:var' => 'node'));
-    $rule->action('drupal_message', array('message:select' => 'node:title'));
+    $rule->action('data_fetch', array('type' => 'node', 'id' => $node->nid, 'data_fetched:var' => 'node'));
+    $rule->action('data_save', array('data:select' => 'node', 'immediate' => TRUE));
     $rule->execute();
     debug(RulesLog::logger()->render());
   }

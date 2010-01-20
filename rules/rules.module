@@ -201,7 +201,7 @@ function &rules_get_cache($cid = 'data') {
  */
 function _rules_rebuild_cache(&$cache = array()) {
   $cache = array();
-  foreach(array('plugin_info', 'data_info') as $hook) {
+  foreach(array('data_info', 'plugin_info') as $hook) {
     $cache[$hook] = rules_fetch_data($hook);
     foreach ($cache[$hook] as $name => &$info) {
       // Let the items add something to the cache.

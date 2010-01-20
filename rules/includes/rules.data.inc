@@ -209,23 +209,20 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    */
   public static function metadataWrapperSaveChanges($wrapper, array $state, $immediate = FALSE) {
     $info = $wrapper->info();
-    // We always need to save the parent entity.
-    if (isset($info['parent']) && $wrapper = $info['parent']) {
-      if ($var = $state['wrapper map']->getVariable($wrapper)) {
-        $var->update($wrapper)->saveChanges($immediate, $state);
+    if ($var = $state['wrapper map']->getVariable($wrapper)) {
+      $var->update($wrapper)->saveChanges($immediate, $state);
+    }
+    // This data wrapper has no variable associated yet, so create one.
+    elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
+      if ($var->isSavable()) {
+        $var->saveChanges($immediate, $state);
+        $state['wrapper map']->add($wrapper, $var);
       }
-      // This data wrapper has no variable associated yet, so create one.
-      elseif (($var = rules_wrap_data($wrapper->value(), $info)) && $var->isIdentifiable()) {
-        if ($var->isSavable()) {
-          $var->saveChanges($immediate, $state);
-          $state['wrapper map']->add($wrapper, $var);
-        }
-        // Else the data is identifiable, but not savable. Nothing we can do.
-      }
-      else {
-        // Data was not identifiable, so try saving the parent.
-        self::metadataWrapperSaveChanges($wrapper, $state, $immediate);
-      }
+      // Else the data is identifiable, but not savable. Nothing we can do.
+    }
+    elseif (isset($info['parent'])) {
+      // Data was not identifiable, so try saving the parent.
+      self::metadataWrapperSaveChanges($info['parent'], $state, $immediate);
     }
   }
 
@@ -383,17 +380,22 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
 
   /**
    * Apply permanent changes provided this data type is savable.
+   *
+   * @param $immediate
+   *   Pass FALSE to postpone saving to alter on. Then invoke it later with
+   *   set to NULL, so the data is saved only if it has been previously marked
+   *   to save it later. If TRUE is passed, it's immediately saved.
    */
-  public function saveChanges($immediate = TRUE, $state = array()) {
+  public function saveChanges($immediate = NULL, $state = array()) {
     // Remember to save later on.
-    if (!$immediate && !$this->info['skip save']) {
+    if ($immediate === FALSE && !$this->info['skip save']) {
       $this->info['save'] = TRUE;
       if (isset($state['blocked'])) {
         $this->blocked += $state['blocked']->getArrayCopy();
       }
     }
     // Save now!
-    elseif ($this->info['save'] && !$this->info['skip save'] && $this->isSavable()) {
+    elseif (($immediate || $this->info['save']) && !$this->info['skip save'] && $this->isSavable()) {
       if (isset($this->name)) {
         rules_log('Saved variable %name of type %type.', array('%name' => $this->name, '%type' => $this->type));
       }
