@@ -774,13 +774,33 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   function testCRUDActions() {
+    // Test creation.
+    $action = rules_action('data_create', array(
+      'type' => 'node',
+      'param_type' => 'page',
+      'param_title' => 'foo',
+      'param_author' => $GLOBALS['user'],
+    ));
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %node', array('data_created', 'node')));
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved variable %data_created of type %node.', array('data_created', 'node')), $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, 'Data has been created and saved.');
+
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     $rule = rule();
-    $rule->action('data_fetch', array('type' => 'node', 'id' => $node->nid, 'data_fetched:var' => 'node'));
+    $rule->action('data_fetch', array('type' => 'node', 'param_id' => $node->nid, 'data_fetched:var' => 'node'));
     $rule->action('data_save', array('data:select' => 'node', 'immediate' => TRUE));
     $rule->action('data_delete', array('data:select' => 'node'));
-    $rule->execute();
-    debug(RulesLog::logger()->render());
+    $rule->integrityCheck()->execute();
+
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Evaluating the action %data_fetch.', array('data_fetch')));
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Added the provided variable %node of type %node', array('node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved variable %node of type %node.', array('node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating the action %data_delete.', array('data_delete')), $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, 'Data has been fetched, saved and deleted.');
+    //debug(RulesLog::logger()->render());
   }
 
 

@@ -139,23 +139,32 @@ function rules_data_action_info() {
       'validate' => 'rules_data_parameter_validation',
     ),
   );
-  $return['data_fetch'] = array(
-    'label' => t('Fetch data'),
-    'parameter' => array(
-      'type' => array(
-        'type' => 'text',
-        'label' => t('Data type'),
-        'description' => t('Specify the type of the data that should be fetched.'),
-       ),
-       // Further needed parameter depends on the type.
-    ),
-    'provides' => array(
-      'data_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
-    ),
-    'group' => t('Data'),
-    'base' => 'rules_action_data_fetch',
-  );
   $cache = rules_get_cache();
+  // Get an array of types that are savable.
+  foreach ($cache['data_info'] as $type => $info) {
+    if (RulesExtendable::itemFacesAs($info, 'RulesDataIdentifiableInterface')) {
+      $types[] = $type;
+    }
+  }
+  if (!empty($types)) {
+    $return['data_fetch'] = array(
+      'label' => t('Fetch data'),
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Data type'),
+          'options list' => $types,
+          'description' => t('Specify the type of the data that should be fetched.'),
+         ),
+         // Further needed parameter depends on the type.
+      ),
+      'provides' => array(
+        'data_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_fetch',
+    );
+  }
   // Get an array of types that are savable.
   foreach ($cache['data_info'] as $type => $info) {
     if (RulesExtendable::itemFacesAs($info, 'RulesDataSavableInterface')) {
@@ -208,6 +217,35 @@ function rules_data_action_info() {
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
       ),
+    );
+  }
+  // Get an array of types that are creatable.
+  foreach ($cache['data_info'] as $type => $info) {
+    if (RulesExtendable::itemFacesAs($info, 'RulesDataCreatableInterface')) {
+      $types[] = $type;
+    }
+  }
+  if (!empty($types)) {
+    $return['data_create'] = array(
+      'label' => t('Create new data'),
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Data type'),
+          'options list' => $types,
+          'description' => t('Specify the type of the data that should be created.'),
+         ),
+         // Further needed parameter depends on the type.
+      ),
+      'provides' => array(
+        'data_created' => array(
+          'type' => 'unknown',
+          'label' => t('Created data'),
+          'save' => TRUE,
+        ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_create',
     );
   }
   return $return;
