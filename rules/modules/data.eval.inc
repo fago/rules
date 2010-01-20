@@ -20,13 +20,43 @@ function rules_action_data_set($data, $value) {
 /**
  * Customize access check.
  */
-function rules_action_data_set_access_check(RulesAbstractPlugin $element) {
+function rules_action_data_set_access(RulesAbstractPlugin $element) {
   if (!RulesAbstractPluginDefaults::access($element)) {
     return FALSE;
   }
   if (isset($element->settings['data:select']) && $wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
     return $wrapper->access('edit');
   }
+}
+
+/**
+ * Action: Fetch data
+ */
+function rules_action_data_fetch($type) {
+  $args = func_get_args();
+  // Get the arguments for the loadParameter().
+  // After the defined parameters, 4 additonals are added, which we remove.
+  $ids = array_slice($args, 1, count($args)-5);
+  // If it's a single id, remove the array.
+  $ids = count($ids) == 1 ? reset($ids) : $ids;
+  debug($ids, 'ids to load for '. $type);
+  debug($args, '', TRUE);
+  // Create a data wrapper, so the actually data is lazy loaded once needed.
+  $data = rules_wrap_data($ids, array('type' => $type, 'loaded' => FALSE));
+  return array('data' => $data);
+}
+
+function rules_action_data_fetch_validate() {
+  $cache = rules_get_cache();
+  if (!isset($element->settings['type']) || !isset($cache['data_info'][$element->settings['type']]) || !RulesDataWrapper::typeIsIdentifiable($element->settings['type'])) {
+    throw new RulesException('Invalid or not identifiable data type specified.');
+  }
+}
+
+function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
+  $data = rules_wrap_data($data = NULL, array('type' => $element->settings['type']));
+  // Add the data type's needed parameter for loading to the parameter info.
+  $element->settings['#info']['parameter'] = $data->loadParameter();
 }
 
 /**
@@ -47,6 +77,23 @@ function rules_condition_data_is($data, $op, $value) {
 }
 
 /**
+ * If we check the bundle property of a variable, add an assertion so that later
+ * evaluated elements can make use of this information.
+ */
+function rules_condition_data_is_process(RulesAbstractPlugin $element) {
+  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
+    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
+      $type = $vars[$parts[0]]['type'];
+      $info = entity_get_info();
+      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
+        // Assert that the object is of bundle $value.
+        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
+      }
+    }
+  }
+}
+
+/**
  * Ensures the 'data' argument is a data wrapper.
  */
 function rules_data_parameter_validation(RulesAbstractPlugin $element) {
@@ -59,22 +106,7 @@ function rules_data_parameter_validation(RulesAbstractPlugin $element) {
   }
 }
 
-/**
- * If we check the bundle property of a variable, add an assertion so that later
- * evaluated elements can make use of this information.
- */
-function rules_data_is_process_settings(RulesAbstractPlugin $element) {
-  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
-    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
-      $type = $vars[$parts[0]]['type'];
-      $info = entity_get_info();
-      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
-        // Assert that the object is of bundle $value.
-        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
-      }
-    }
-  }
-}
+
 
 class RulesTextWrapper extends RulesDataWrapper {
   // TODO: input form
@@ -128,11 +160,11 @@ class RulesURIWrapper extends RulesTextWrapper {
 /**
  * Wraps lists, which in the end are numerically indexed arrays.
  */
-class RulesListWrapper extends RulesDataWrapper {
+class RulesDataListWrapper extends RulesDataWrapper {
 
   protected $itemName = 'list';
 
-  public static function availableTypeParameter($type) {
+  public static function availableTypeParameter($type = 'list') {
     $cache = rules_get_cache();
     foreach ($cache['data_info'] as $name => $info) {
       $return[$name] = t('list of @item-type items', array('@item-type' => $info['label']));
@@ -231,6 +263,7 @@ class RulesDataEntityExtender extends RulesDataWrapper implements FacesExtenderI
   }
 
   function save($object) {
+    debug('saving object of type ', $object->info['type']);
     entity_metadata_save($object->info['type'], $object->get());
   }
 

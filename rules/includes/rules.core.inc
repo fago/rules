@@ -246,7 +246,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
 
   protected function evaluate(array &$state) {}
 
-
   protected static function compare(RulesPlugin $a, RulesPlugin $b) {
     if ($a->weight == $b->weight) {
       return 0;
@@ -809,7 +808,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
-    $args[] = $this;
     $args[] = &$state;
     return $args;
   }

@@ -110,6 +110,22 @@ function rules_test_rules_data_info() {
 }
 
 /**
+ * Defines the node data wrapper used by the wrapper tests.
+ */
+class RulesNodeDataWrapper extends RulesDataEntityWrapper implements RulesDataSavableInterface {
+
+  protected $itemName = 'node';
+
+  /**
+   * Implements RulesDataSavableInterface.
+   */
+  function save() {
+    node_save($this->get());
+  }
+}
+
+
+/**
  * Turns the RulesNodeDataWrapper into a extender for testing.
  */
 class RulesNodeDataWrapperExtender extends FacesExtender {
