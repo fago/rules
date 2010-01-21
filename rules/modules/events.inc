@@ -15,8 +15,8 @@
  * If http://drupal.org/node/651240 gets in, we can simplify that.
  */
 
-function rules_node_view($node, $build_mode) {
-  rules_invoke_event('node_view', $node, $build_mode);
+function rules_node_view($node, $view_mode) {
+  rules_invoke_event('node_view', $node, $view_mode);
 }
 
 function rules_node_presave($node) {
@@ -59,8 +59,143 @@ function rules_events_node_var_unchanged($node) {
 }
 
 /**
- * Invoke system events.
+ * Invoke user events.
  */
+
+function rules_user_view($account, $view_mode) {
+  rules_invoke_event('user_view', $account, $view_mode);
+}
+
+function rules_user_presave(&$edit, $account, $category) {
+  if ($category == 'account') {
+    $accounts = &drupal_static('rules_user_unchanged', array());
+    if (!empty($account->uid)) {
+      // Save the unchanged object now so that we can make use of it later on.
+      // See rules_events_node_var_unchanged().
+      array_push($accounts, clone user_load($account->uid));
+    }
+    rules_invoke_event('user_presave', $account);
+  }
+}
+
+function rules_user_insert(&$edit, $account, $category) {
+  if ($category == 'account') {
+    rules_invoke_event('user_insert', $account);
+  }
+}
+
+function rules_user_update(&$edit, $account, $category) {
+  if ($category == 'account') {
+    rules_invoke_event('user_update', $account);
+    // Pop the unchanged user so recursive invocations work right.
+    $accounts = &drupal_static('rules_user_unchanged', array());
+    array_pop($accounts);
+  }
+}
+
+function rules_user_cancel(&$edit, $account, $method) {
+  rules_invoke_event('user_delete', $account, $method);
+}
+
+function rules_user_login(&$edit, $account) {
+  rules_invoke_event('user_login', $account);
+}
+
+function rules_user_logout(&$edit, $account) {
+  rules_invoke_event('user_logout', $account);
+}
+
+/**
+ * Gets the account object, that doesn't contain the changes.
+ */
+function rules_events_account_var_unchanged($account) {
+  if (empty($account->uid)) {
+    throw new RulesException("Can't load the unchanged account variable as there is none yet.");
+  }
+  // Use read-only so actually don't change the array.
+  $accounts = drupal_static('rules_node_unchanged', array());
+  return array_pop($accounts);
+}
+
+
+/**
+ * Comment events.
+ */
+
+function rules_comment_view($comment) {
+  rules_invoke_event('comment_view', $comment);
+}
+
+function rules_comment_presave($comment) {
+  $comments = &drupal_static('rules_comment_unchanged', array());
+  if (!empty($comment->cid)) {
+    // Save the unchanged object now so that we can make use of it later on.
+    // See rules_events_comment_var_unchanged().
+    array_push($comments, clone comment_load($comment->cid));
+  }
+  rules_invoke_event('comment_presave', $comment);
+}
+
+function rules_comment_update($comment) {
+  rules_invoke_event('comment_update', $comment);
+  // Pop the unchanged comment so recursive invocations work right.
+  $comments = &drupal_static('rules_comment_unchanged', array());
+  array_pop($comments);
+}
+
+function rules_comment_insert($comment) {
+  rules_invoke_event('comment_insert', $comment);
+}
+
+function rules_comment_delete($comment) {
+  rules_invoke_event('comment_delete', $comment);
+}
+
+/**
+ * Gets the comment object, that doesn't contain the changes.
+ */
+function rules_events_comment_var_unchanged($comment) {
+  if (empty($comment->cid)) {
+    throw new RulesException("Can't load the unchanged comment variable as there is none yet.");
+  }
+  // Use read-only so actually don't change the array.
+  $comments = drupal_static('rules_comment_unchanged', array());
+  return array_pop($comments);
+}
+
+
+/**
+ * Taxonomy events.
+ */
+
+function rules_taxonomy_term_update($taxonomy_term) {
+  rules_invoke_event('taxonomy_term_update', $taxonomy_term);
+}
+
+function rules_taxonomy_term_insert($taxonomy_term) {
+  rules_invoke_event('taxonomy_term_insert', $taxonomy_term);
+}
+
+function rules_taxonomy_term_delete($taxonomy_term) {
+  rules_invoke_event('taxonomy_term_delete', $taxonomy_term);
+}
+
+function rules_taxonomy_vocabulary_update($taxonomy_vocabulary) {
+  rules_invoke_event('taxonomy_vocabulary_update', $taxonomy_vocabulary);
+}
+
+function rules_taxonomy_vocabulary_insert($taxonomy_vocabulary) {
+  rules_invoke_event('taxonomy_vocabulary_insert', $taxonomy_vocabulary);
+}
+
+function rules_taxonomy_vocabulary_delete($taxonomy_vocabulary) {
+  rules_invoke_event('taxonomy_vocabulary_delete', $taxonomy_vocabulary);
+}
+
+/**
+ * System events.
+ */
+
 function rules_init() {
   rules_invoke_event('init');
 }
@@ -77,8 +212,6 @@ function rules_node_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
     return entity_metadata_node_access('view', 'node');
   }
-  // For actions one needs the bypass node access permission.
-  return user_access('bypass node access');
 }
 
 /**
@@ -129,6 +262,20 @@ function rules_data_action_type_options($type, $name) {
     }
   }
   return $types;
+}
+
+/**
+ * Gets all view modes of an entity for an entity_view event.
+ */
+function rules_get_entity_view_modes($type, $name) {
+  if ($type == 'event') {
+    $entity_type = substr($name, 0, -5);
+    $info = entity_get_info($entity_type);
+    foreach ($info['view modes'] as $mode => $mode_info) {
+      $modes[$mode] = $mode_info['label'];
+    }
+    return $modes;
+  }
 }
 
 

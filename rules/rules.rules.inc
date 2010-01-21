@@ -20,7 +20,7 @@ foreach (rules_core_modules() as $module) {
  * rules data integration.
  */
 function rules_core_modules() {
-  return array('data', 'node', 'system', 'user');
+  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user');
 }
 
 /**

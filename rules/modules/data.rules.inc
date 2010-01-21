@@ -87,30 +87,6 @@ function rules_data_data_info() {
         'RulesDataDeletableInterface' => array('class' => 'RulesDataEntityExtender'),
       ),
     ),
-    'comment' => array(
-      'label' => t('taxonony vocabulary'),
-      'class' => 'RulesDataEntityWrapper',
-      'parent' => 'entity',
-      'extenders' => array(
-        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
-      ),
-    ),
-    'taxonomy_term' => array(
-      'label' => t('taxonony term'),
-      'class' => 'RulesDataEntityWrapper',
-      'parent' => 'entity',
-      'extenders' => array(
-        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
-      ),
-    ),
-    'taxonomy_vocabulary' => array(
-      'label' => t('taxonony vocabulary'),
-      'class' => 'RulesDataEntityWrapper',
-      'parent' => 'entity',
-      'extenders' => array(
-        'RulesDataCRUDInterface' => array('class' => 'RulesDataEntityExtender')
-      ),
-    ),
   );
 }
 
