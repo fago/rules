@@ -246,7 +246,9 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
     }
     //TODO: Once we have event_info caching make use of it.
     $event_info = rules_fetch_data('event_info');
-    foreach ($this->events as $event) {
+    $events = array_intersect($this->events, array_keys($event_info));
+    foreach ($events as $event) {
+      $event_info[$event] += array('variables' => array());
       if (!isset($vars)) {
         $vars = $event_info[$event]['variables'];
       }

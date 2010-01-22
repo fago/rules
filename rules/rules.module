@@ -5,7 +5,6 @@
  * @file Rules engine module
  */
 
-module_load_include('inc', 'rules', 'modules/events');
 spl_autoload_register('rules_autoload');
 
 /**
@@ -19,6 +18,14 @@ function rules_autoload($class) {
   if (stripos($class, 'entity') === 0) {
     module_load_include('inc', 'rules', 'includes/entity');
   }
+}
+
+/**
+ * Implements hook_init().
+ */
+function rules_init() {
+  module_load_include('inc', 'rules', 'modules/events');
+  rules_invoke_event('init');
 }
 
 /**
@@ -245,25 +252,27 @@ function rules_clear_cache($immediate = FALSE) {
  *   If available, the actual data, else NULL.
  * @param $info
  *   An array of info about this data.
- *
+ * @param $form
+ *   Usually data is only wrapped if really needed. If set to TRUE, wrapping the
+ *   data is forced, so primitive data types are also wrapped.
  * @return RulesDataWrapper
  *   The specified RulesDataWrapper or FALSE if no class was specified for this
  *   type.
  *
  * @see hook_rules_data_info()
  */
-function rules_wrap_data(&$data = NULL, $info) {
+function rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
   // If the data is already wrapped, use the existing wrapper.
   if ($data instanceof RulesDataWrapper) {
     return $data;
   }
-  elseif (($cache = rules_get_cache()) && isset($cache['data_info'][$info['type']])) {
-    $cache['data_info'][$info['type']] += array('class' => 'RulesDataWrapper');
-    // Make sure identifiable data and data loaded through handlers is wrapped.
-    $wrap = isset($info['handler']) || RulesExtendable::itemFacesAs($cache['data_info'][$info['type']], 'RulesDataIdentifiableInterface');
-    if ($wrap && ($class = $cache['data_info'][$info['type']]['class'])) {
-      return new $class($data, $info);
-    }
+  $cache = rules_get_cache();
+  list($type, $param) = RulesDataWrapper::typeExtractParameter($info['type']);
+  $cache['data_info'] += array($type => array());
+  $cache['data_info'][$type] += array('class' => 'RulesDataWrapper');
+  // Make sure identifiable data and data loaded through handlers is wrapped.
+  if ($force || isset($info['handler']) || RulesExtendable::itemFacesAs($cache['data_info'][$type], 'RulesDataIdentifiableInterface')) {
+    return new $cache['data_info'][$type]['class']($data, $info);
   }
   return FALSE;
 }

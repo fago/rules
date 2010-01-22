@@ -181,12 +181,8 @@ class RulesDataListWrapper extends RulesDataWrapper {
   public function metadataWrapper(array $state = NULL) {
     if (!isset($this->wrapper)) {
       $data = &$this->get($state);
-      $type = $this->parameter ? $type . '<' . $this->parameter . '>' : $type;
+      $type = $this->parameter ? 'list' . '<' . $this->parameter . '>' : $this->type;
       $this->wrapper = entity_metadata_wrapper($type, $data);
-      // Register this as the variable for the wrapper in the state's map.
-      if (!empty($state['wrapper map'])) {
-        $state['wrapper map']->add($this->wrapper, $this);
-      }
     }
     return $this->wrapper;
   }
