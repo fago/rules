@@ -189,7 +189,7 @@ abstract class RulesExtendable extends FacesExtendable {
    *   Whether it supports the given interface.
    */
   public static function itemFacesAs(&$itemInfo, $interface) {
-    return class_implements($itemInfo['class']) || isset($itemInfo['faces_cache'][2][$interface]);
+    return in_array($interface, class_implements($itemInfo['class'])) || isset($itemInfo['faces_cache'][2][$interface]);
   }
 }
 
@@ -546,7 +546,9 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
     }
     // If there is no evaluation state yet, so make use the variable info.
     elseif (!isset($state) && ($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
-      $wrapper = entity_metadata_wrapper($vars[$parts[0]]['type']);
+      if ($data = rules_wrap_data($data = NULL, $vars[$parts[0]], TRUE)) {
+        $wrapper = $data->metadataWrapper();
+      }
     }
     try {
       if (isset($wrapper) && count($parts) > 1) {
@@ -1332,7 +1334,7 @@ class RulesWrapperMap {
   protected $map = array();
 
   public function add(EntityMetadataWrapper $wrapper, RulesDataWrapper $var) {
-    if ($id = $wrapper->getIdentifier()) {
+    if ($wrapper instanceof EntityWrapper && ($id = $wrapper->getIdentifier())) {
       // Usually we map by the data's id, as when the wrapper's data has been
       // changed (e.g. node:author) then we need a new variable.
       $id = $wrapper->type() . ':' . $id;
