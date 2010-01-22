@@ -9,13 +9,6 @@
  */
 
 /**
- * Implements hook_rules_file_info() on behalf of the node module.
- */
-function rules_node_file_info() {
-  return array('modules/node.eval');
-}
-
-/**
  * Implements hook_rules_event_info() on behalf of the node module.
  */
 function rules_node_event_info() {
@@ -83,37 +76,12 @@ function rules_events_node_variables($node_label, $update = FALSE) {
 }
 
 /**
- * Implements hook_rules_action_info() on behalf of the node module.
+ * Node integration access callback.
  */
-function rules_node_action_info() {
-  return array(
-    //TODO: replace by data creation action.
-    'node_create' => array(
-      'label' => t('Create new content'),
-      'parameter' => array(
-        'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
-        'title' => array(
-          'type' => 'string',
-          'label' => t('Title'),
-          'description' => t('The title of the newly created content.'),
-        ),
-      ),
-      'provides' => array(
-        'node_added' => array(
-          'type' => 'node',
-          'label' => t('New content'),
-          'save' => TRUE,
-          'label callback' => 'rules_action_add_node_variable_label',
-        ),
-      ),
-      'group' => t('Node'),
-      'callbacks' => array('execute' => 'rules_action_node_create'),
-      'access callback' => 'rules_node_integration_access',
-    ),
-    //TODO: replace by action "fetch node" using node argument and direct input form
-    // or a general "Fetch data" action.
-
-  );
+function rules_node_integration_access($type, $name) {
+  if ($type == 'event' || $type == 'condition') {
+    return entity_metadata_node_access('view', 'node');
+  }
 }
 
 /**
