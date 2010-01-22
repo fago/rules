@@ -31,8 +31,54 @@ function rules_system_event_info() {
       'group' => t('System'),
       'access callback' => 'rules_system_integration_access',
     ),
+    'watchdog' => array(
+      'label' => t('System log entry is created'),
+      'variables' => array(
+        'log_entry' => array(
+          'type' => 'log_entry',
+          'label' => t('Log entry'),
+          'entity info' => _rules_system_watchdog_log_entry_info(),
+        ),
+      ),
+      'group' => t('System'),
+      'access callback' => 'rules_system_integration_access',
+    ),
   );
 }
+
+/**
+ * Defines entity info for watchdog log entries, used by the log entry data
+ * type to provide an useful metadata wrapper.
+ */
+function _rules_system_watchdog_log_entry_info() {
+  $info['properties'] = array(
+    'type' => array(
+      'type' => 'text',
+      'label' => t('The category to which this message belongs'),
+    ),
+    'message' => array(
+      'type' => 'text',
+      'label' => ('Log message'),
+      'getter callback' => array('RulesDataLogEntryWrapper', 'getMessage'),
+      'sanitized' => TRUE,
+    ),
+    'severity' => array(
+      'type' => 'integer',
+      'label' => t('Severity'),
+      'options list' => 'watchdog_severity_levels',
+    ),
+    'request_uri' => array(
+      'type' => 'uri',
+      'label' => t('Request uri'),
+    ),
+    'link' => array(
+      'type' => 'text',
+      'label' => t('An associated, HTML formatted link'),
+    ),
+  );
+  return $info;
+}
+
 
 /**
  * Implements hook_rules_action_info() on behalf of the system module.

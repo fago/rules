@@ -161,7 +161,7 @@ class RulesURIWrapper extends RulesTextWrapper {
 /**
  * Wraps lists, which in the end are numerically indexed arrays.
  */
-class RulesDataListWrapper extends RulesDataWrapper {
+class RulesDataListWrapper extends RulesDataWrapper implements RulesDataMetadataWrapperInterface {
 
   protected $itemName = 'list';
 
@@ -256,6 +256,22 @@ class RulesDataEntityWrapper extends RulesDataWrapper implements RulesDataIdenti
    */
   function access($op) {
     return entity_metadata_entity_access($op, $this->type);
+  }
+
+  /**
+   * Implements RulesDataMetadataWrapperInterface.
+   */
+  public function metadataWrapper(array $state = NULL) {
+    if (!isset($this->wrapper)) {
+      $data = &$this->get($state);
+      // We treat the type parameter as bundle.
+      $this->wrapper = entity_metadata_wrapper($this->type, $data, $this->parameter ? array('bundle' => $this->parameter) : array());
+      // Register this as the variable for the wrapper in the state's map.
+      if (!empty($state['wrapper map'])) {
+        $state['wrapper map']->add($this->wrapper, $this);
+      }
+    }
+    return $this->wrapper;
   }
 }
 

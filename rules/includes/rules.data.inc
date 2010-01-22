@@ -6,9 +6,26 @@
  */
 
 /**
+ * Interface for data having properties. If this interfaces is implemented,
+ * rules makes use of the returned metadata wrapper for getting and setting
+ * properties.
+ */
+interface RulesDataMetadataWrapperInterface {
+
+  /**
+   * Returns the entity metadata wrapper for this data type, useful for deriving
+   * properties of an entity.
+   *
+   * @return EntityMetadataWrapper
+   */
+  public function metadataWrapper(array $state = NULL);
+}
+
+
+/**
  * Interface for any identifiable data.
  */
-interface RulesDataIdentifiableInterface {
+interface RulesDataIdentifiableInterface extends RulesDataMetadataWrapperInterface {
 
   /**
    * Loads the data identified with an identifier as returned by getIdentifier().
@@ -323,25 +340,6 @@ class RulesDataWrapper extends RulesExtendable implements Serializable {
    */
   public function info() {
     return $this->info;
-  }
-
-  /**
-   * Returns the entity metadata wrapper for this data type, useful for deriving
-   * properties of an entity.
-   *
-   * @return EntityMetadataWrapper
-   */
-  public function metadataWrapper(array $state = NULL) {
-    if (!isset($this->wrapper)) {
-      $data = &$this->get($state);
-      // By default we treat the type parameter as bundle.
-      $this->wrapper = entity_metadata_wrapper($this->type, $data, $this->parameter ? array('bundle' => $this->parameter) : array());
-      // Register this as the variable for the wrapper in the state's map.
-      if (!empty($state['wrapper map'])) {
-        $state['wrapper map']->add($this->wrapper, $this);
-      }
-    }
-    return $this->wrapper;
   }
 
   /**
