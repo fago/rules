@@ -87,6 +87,10 @@ function rules_data_data_info() {
         'RulesDataDeletableInterface' => array('class' => 'RulesDataEntityExtender'),
       ),
     ),
+    'log_entry' => array(
+      'label' => t('system log entry'),
+      'class' => 'RulesDataLogEntryWrapper',
+    ),
   );
 }
 

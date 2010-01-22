@@ -176,14 +176,14 @@ class Rule extends RulesActionContainer {
   }
 
   public function integrityCheck() {
-    $this->conditions();
-    $this->conditions->integrityCheck();
+    if (isset($this->conditions)) {
+      $this->conditions->integrityCheck();
+    }
     return parent::integrityCheck();
   }
 
   public function access() {
-    $this->conditions();
-    return $this->conditions->access() && parent::access();
+    return (!isset($this->conditions) || $this->conditions->access()) && parent::access();
   }
 
   public function destroy() {
@@ -352,12 +352,12 @@ class RulesLoop extends RulesActionContainer {
   }
 
   protected function evaluate(array &$state) {
-    $list = $this->getArgument('list', $this->parameter['list'], $state);
+    $list_var = $this->getArgument('list', $this->parameter['list'], $state);
     $item_info = $this->listItemInfo();
     $name = $this->settings['item:var'];
     $previous_var = isset($state['variables'][$name]) ? $state['variables'][$name] : NULL;
     // Loop over the list and evaluate the children for each list item.
-    foreach ($list as $list_item) {
+    foreach ($list_var->get($state) as $list_item) {
       $this->addVariable($name, $list_item, $item_info, $state);
       parent::evaluate($state);
     }

@@ -193,15 +193,16 @@ function rules_taxonomy_vocabulary_delete($taxonomy_vocabulary) {
 }
 
 /**
- * System events.
+ * System events. Note that rules_init() is the main module file is used to
+ * invoke the init event.
  */
-
-function rules_init() {
-  rules_invoke_event('init');
-}
 
 function rules_cron() {
   rules_invoke_event('cron');
+}
+
+function rules_watchdog($log_entry) {
+  rules_invoke_event('watchdog', $log_entry);
 }
 
 /**
