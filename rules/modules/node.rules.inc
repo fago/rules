@@ -33,17 +33,21 @@ function rules_node_event_info() {
       'access callback' => 'rules_node_integration_access',
     ),
     'node_presave' => array(
-      'label' => t('Content is going to be saved'),
+      'label' => t('Before saving content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('saved content'), TRUE),
       'access callback' => 'rules_node_integration_access',
     ),
     'node_view' => array(
-      'label' => t('Content is going to be viewed'),
+      'label' => t('Content is viewed'),
       'group' => t('Node'),
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
       'variables' => rules_events_node_variables(t('viewed content')) + array(
-        'build_mode' => array('type' => 'string', 'label' => t('view mode')),
+        'view_mode' => array(
+          'type' => 'text',
+          'label' => t('view mode'),
+          'options list' => 'rules_get_entity_view_modes',
+        ),
       ),
       'access callback' => 'rules_node_integration_access',
     ),
