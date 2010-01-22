@@ -72,5 +72,12 @@ function rules_system_action_info() {
 }
 
 /**
+ * System integration access callback.
+ */
+function rules_system_integration_access($type, $name) {
+  return user_access('administer site configuration');
+}
+
+/**
  * @}
  */

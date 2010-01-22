@@ -204,23 +204,6 @@ function rules_cron() {
   rules_invoke_event('cron');
 }
 
-
-/**
- * Node integration access callback.
- */
-function rules_node_integration_access($type, $name) {
-  if ($type == 'event' || $type == 'condition') {
-    return entity_metadata_node_access('view', 'node');
-  }
-}
-
-/**
- * System integration access callback.
- */
-function rules_system_integration_access($type, $name) {
-  return user_access('administer site configuration');
-}
-
 /**
  * Data actions access callback.
  * Returns TRUE if at least one type is available for configuring the action.
