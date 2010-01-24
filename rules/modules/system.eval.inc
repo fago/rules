@@ -91,18 +91,18 @@ class RulesDataLogEntryWrapper extends RulesDataWrapper implements RulesDataMeta
     if (!isset($this->wrapper)) {
       $data = &$this->get($state);
       // The info has to contain 'entity info' which we pass through.
-      $info = array('entity info' => $this->info['entity info']);
+      $info = array('data info' => $this->info['data info']);
       $this->wrapper = entity_metadata_wrapper($this->type, $data, $info);
     }
     return $this->wrapper;
   }
+}
 
-  /**
-   * Getter callback for the message property.
-   */
-  public function getMessage($log_entry) {
-    return t($log_entry['message'], $log_entry['variables']);
-  }
+/**
+ * Getter callback for the log entry message property.
+ */
+function rules_system_log_get_message($log_entry) {
+  return t($log_entry['message'], $log_entry['variables']);
 }
 
 /**

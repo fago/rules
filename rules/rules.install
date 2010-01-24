@@ -10,7 +10,7 @@
  * Implementation of hook_install().
  */
 function rules_install() {
-  drupal_load('module', 'rules');
+  module_load_include('inc', 'rules', 'modules/events');
   // Set the modules' weight to 20, see
   // http://drupal.org/node/445084#comment-1533280 for the reasoning.
   db_query("UPDATE {system} SET weight = 20 WHERE name = 'rules'");

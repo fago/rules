@@ -250,13 +250,13 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node')
-         ->action('drupal_message', array('message:select' => 'node_loaded:body'))
+         ->action('drupal_message', array('message:select' => 'node_loaded:body:value'))
          ->execute($node->nid);
 
     RulesLog::logger()->checkLog();
     $msg = drupal_get_messages();
     $wrapper = entity_metadata_wrapper('node', $node);
-    $this->assertEqual($msg['status'][0], $wrapper->body->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
+    $this->assertEqual($msg['status'][0], $wrapper->body->value->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
 
     // Get a "reference" on the same object as returned by node_load().
     $node = node_load($node->nid);
