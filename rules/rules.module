@@ -4,7 +4,6 @@
 /**
  * @file Rules engine module
  */
-
 spl_autoload_register('rules_autoload');
 
 /**

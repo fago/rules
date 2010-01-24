@@ -37,7 +37,7 @@ function rules_system_event_info() {
         'log_entry' => array(
           'type' => 'log_entry',
           'label' => t('Log entry'),
-          'entity info' => _rules_system_watchdog_log_entry_info(),
+          'data info' => _rules_system_watchdog_log_entry_info(),
         ),
       ),
       'group' => t('System'),
@@ -59,7 +59,7 @@ function _rules_system_watchdog_log_entry_info() {
     'message' => array(
       'type' => 'text',
       'label' => ('Log message'),
-      'getter callback' => array('RulesDataLogEntryWrapper', 'getMessage'),
+      'getter callback' => 'rules_system_log_get_message',
       'sanitized' => TRUE,
     ),
     'severity' => array(
