@@ -228,6 +228,51 @@ function rules_data_action_info() {
       ),
     );
   }
+  $return['list_add'] = array(
+    'label' => t('Add list item'),
+    'parameter' => array(
+      'list' => array(
+        'type' => 'list',
+        'label' => t('List'),
+        'description' => t('The data list, to which an item is to be added.'),
+       ),
+      'item' => array(
+        'type' => 'unknown',
+        'label' => t('Item to add'),
+       ),
+       'pos' => array(
+         'type' => 'text',
+         'label' => t('Insert position'),
+         'optional' => TRUE,
+         'default value' => 'end',
+         'options list' => 'rules_action_data_list_add_positions',
+       ),
+    ),
+    'group' => t('Data'),
+    'base' => 'rules_action_data_list_add',
+    'callbacks' => array(
+      'validate' => 'rules_data_validate_list_item_type',
+    ),
+  );
+  $return['list_remove'] = array(
+    'label' => t('Remove a list item'),
+    'parameter' => array(
+      'list' => array(
+        'type' => 'list',
+        'label' => t('List'),
+        'description' => t('The data list for which an item is to be removed.'),
+       ),
+      'item' => array(
+        'type' => 'unknown',
+        'label' => t('Item to remove'),
+       ),
+    ),
+    'group' => t('Data'),
+    'base' => 'rules_action_data_list_remove',
+    'callbacks' => array(
+      'validate' => 'rules_data_validate_list_item_type',
+    ),
+  );
   return $return;
 }
 
@@ -331,6 +376,28 @@ function rules_data_parameter_validation(RulesAbstractPlugin $element) {
   }
 }
 
+/**
+ * Validation callback to ensure the list item matches to the list.
+ */
+function rules_data_validate_list_item_type(RulesAbstractPlugin $element) {
+  $type = $this->getArgumentType('list');
+  $item_type = $type ? entity_metadata_list_extract_type($type) : FALSE;
+  if ($item_type2 && $item_type1 = $this->getArgumentType('item')) {
+    if (!RulesDataWrapper::typesMatch($item_type1, $item_type2)) {
+      throw new RulesException('The item specified is of an invalid type.');
+    }
+  }
+}
+
+/**
+ * Options list callback for possible insertion positions.
+ */
+function rules_action_data_list_add_positions() {
+  return array(
+    'end' => t('Append the item to the end.'),
+    'start' => t('Prepend the item to the front.'),
+  );
+}
 
 /**
  * Implements hook_rules_condition_info() on behalf of the pseudo data module.

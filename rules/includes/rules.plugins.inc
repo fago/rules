@@ -335,11 +335,8 @@ class RulesLoop extends RulesActionContainer {
 
   protected function listItemType() {
     if (!isset($this->settings['item:type'])) {
-      if ($wrapper = $this->applyDataSelector($this->settings['list:select'])) {
-        $type = $wrapper->type();
-        $item_type = entity_metadata_list_extract_type($type);
-      }
-      $this->settings['item:type'] = !empty($item_type) ? $item_type : 'unknown';
+      $type = $this->getArgumentType('list');
+      $this->settings['item:type'] = $type ? entity_metadata_list_extract_type($type) : 'unknown';
     }
     return $this->settings['item:type'];
   }
