@@ -855,4 +855,46 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertEqual($list, array('bar', 'foo', 'foo2'), 'List items removed and added.');
   }
 
+  function testTaxonomyIntegration() {
+    $term = entity_metadata_entity_create('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vid' => 1,
+    ));
+    $term2 = clone $term;
+    taxonomy_term_save($term);
+    taxonomy_term_save($term2);
+
+    $tags[LANGUAGE_NONE][0]['tid'] = $term->tid;
+    $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article', 'taxonomy_tags' => $tags));
+
+    // Test assigning and remove a term from an article.
+    $rule = rule(array('node' => array('type' => 'node<article>')));
+    $term_wrapped = rules_wrap_data($term->tid, array('type' => 'taxonomy_term', 'loaded' => FALSE));
+    $term_wrapped2 = rules_wrap_data($term2->tid, array('type' => 'taxonomy_term', 'loaded' => FALSE));
+    $rule->action('list_add', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped2));
+    $rule->action('list_remove', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped));
+    $rule->execute($node);
+    RulesLog::logger()->checkLog();
+    $this->assertEqual(array_values($node->taxonomy_tags[LANGUAGE_NONE]), array(0 => array('tid' => $term2->tid)), 'Term removed and added from a node.');
+  }
+
+  function testUserIntegration() {
+    // Test adding a user role.
+    $rid = $this->drupalCreateRole(array('administer nodes'), 'foo');
+    $user = $this->drupalCreateUser();
+
+    // Test assigning a role.
+    $rule = rule(array('user' => array('type' => 'user')));
+    $rule->action('list_add', array('list:select' => 'user:roles', 'item' => $rid));
+    $rule->execute($user);
+    $this->assertTrue(isset($user->roles[$rid]), 'Role assigned to user.');
+
+    // Test removing a role.
+    $rule = rule(array('user' => array('type' => 'user')));
+    $rule->action('list_remove', array('list:select' => 'user:roles', 'item' => $rid));
+    $rule->execute($user);
+    $this->assertTrue(!isset($user->roles[$rid]), 'Role removed from user.');
+    RulesLog::logger()->checkLog();
+  }
+
 }
