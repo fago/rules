@@ -566,6 +566,30 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
   }
 
   /**
+   * Returns the type of the configured argument.
+   *
+   * @return
+   *   The determined type. If it's not known NULL is returned.
+   */
+  protected function getArgumentType($name) {
+    $vars = $this->availableVariables();
+    if (isset($this->settings[$name . ':select']) && isset($vars[$this->settings[$name . ':select']])) {
+      return $vars[$this->settings[$name . ':select']]['type'];
+    }
+    elseif (isset($this->settings[$name . ':select'])) {
+      if ($wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
+        return $wrapper->type;
+      }
+    }
+    elseif (isset($this->settings[$name . ':type'])) {
+      return $this->settings[$name . ':type'];
+    }
+    elseif (!isset($this->settings[$name]) && isset($vars[$name])) {
+      return $vars[$name]['type'];
+    }
+  }
+
+  /**
    * Implement the EntityAPIInterface.
    *
    * Saves the configuration to the database, regardless whether this is invoked

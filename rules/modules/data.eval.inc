@@ -92,6 +92,32 @@ function rules_action_data_delete($data, $settings, $state, $element) {
 }
 
 /**
+ * Action: Add a list item
+ */
+function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
+  switch ($pos) {
+    case 'start':
+      array_unshift($list, $item);
+      break;
+
+    default:
+      $list[] = $item;
+      break;
+  }
+  return array('list' => $list);
+}
+
+/**
+ * Action: Remove a list item
+ */
+function rules_action_data_list_remove($list, $item) {
+  foreach (array_keys($list, $item) as $key) {
+    unset($list[$key]);
+  }
+  return array('list' => $list);
+}
+
+/**
  * Condition: Compare data
  */
 function rules_condition_data_is($data, $op, $value) {
