@@ -831,7 +831,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       return $this->executeCallback($this->getExecutionArguments($state), $state);
     }
     catch (RulesException $e) {
-      rules_log($e->msg, $e->args, RulesLog::WARN);
+      rules_log($e->msg, $e->args, $e->severity);
       rules_log('Unable to execute %name.', array('%name' => $this->getPluginName()));
     }
   }
@@ -1327,11 +1327,12 @@ class RulesLog {
 
 class RulesException extends Exception {
 
-  public $msg, $args;
+  public $msg, $args, $severity;
 
-  function __construct($msg, $args = array()) {
+  function __construct($msg, $args = array(), $severity = RulesLog::WARN) {
     $this->msg = $msg;
     $this->args = $args;
+    $this->severity = $severity;
     unset($this->message);
   }
 
