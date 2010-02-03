@@ -335,6 +335,9 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       'all variables' => array(),
       'executed' => $this,
 
+      // Holds wrappers for the current arguments when executing a plugin.
+      'execution arguments' => array(),
+
       // Maps metadata wrappers to variables, needed to save changes.
       'wrapper map' => new RulesWrapperMap(),
 
@@ -487,13 +490,13 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
    * Returns the argument as configured in the element settings for the
    * parameter $name described with $info.
    */
-  protected function getArgument($name, $info, $state) {
+  protected function getArgument($name, $info, &$state) {
     $vars = &$state['variables'];
     if (isset($this->settings[$name . ':select']) && isset($vars[$this->settings[$name . ':select']])) {
       $arg = $vars[$this->settings[$name . ':select']];
     }
     elseif (isset($this->settings[$name . ':select'])) {
-      $arg = $this->getSelectedVariable($this->settings[$name . ':select'], $info, $state);
+      $arg = $this->getSelectedVariable($this->settings[$name . ':select'], $name, $info, $state);
     }
     elseif (isset($this->settings[$name])) {
       $arg = $this->settings[$name];
@@ -516,8 +519,10 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
     return $arg;
   }
 
-  protected function getSelectedVariable($selector, &$info, array $state) {
+  protected function getSelectedVariable($selector, $name, &$info, array &$state) {
     if ($wrapper = $this->applyDataSelector($selector, $state)) {
+      // Make the wrapper available for later or action implementations.
+      $state['execution arguments'][$name] = $wrapper;
       $options = array('decode' => TRUE);
       if ($info['type'] == 'text' && !empty($info['sanitized'])) {
         $options = array('sanitize' => TRUE);
@@ -840,7 +845,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   /**
    * Gets the right arguments for executing this.
    */
-  protected function getExecutionArguments(array $state) {
+  protected function getExecutionArguments(array &$state) {
+    $state['execution arguments'] = array();
     $args = array();
     foreach ($this->info['parameter'] as $name => $info) {
       $args[$name] = $this->getArgument($name, $info, $state);
@@ -848,8 +854,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
     $args[] = &$state;
-    // Make the current execution arguments available in the state too.
-    $state['execution arguments'] =& $args;
+    // Make the variables for the arguments available in the state too.
+    $state['execution arguments'] += $args;
     return $args;
   }
 
