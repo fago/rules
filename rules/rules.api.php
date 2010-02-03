@@ -78,6 +78,8 @@
  *   - optional: May be set to TRUE, when the parameter isn't required.
  *   - 'default value': The value to pass to the action, in case the parameter
  *     is optional and there is no specified value. Optional.
+ *   - restriction: Restrict how the argument for this parameter may be
+ *     provided. Supported values are 'selector' and 'input'. Optional.
  *  Each 'provides' array may contain the following properties:
  *   - label: The label of the variable. Start capitalized. Required.
  *   - type: The rules data type of the variable. All types declared in
