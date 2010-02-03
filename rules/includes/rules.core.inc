@@ -374,6 +374,7 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       foreach ($vars as $var) {
         $var->saveChanges(NULL, $this->state);
       }
+      unset($this->state['execution arguments']);
     }
     // For recursive invocations pop the state from the stack, else set NULL.
     $this->state = $this->state['stack'];
@@ -847,6 +848,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // Append the settings, $this and the execution state.
     $args[] = $this->settings;
     $args[] = &$state;
+    // Make the current execution arguments available in the state too.
+    $state['execution arguments'] =& $args;
     return $args;
   }
 
