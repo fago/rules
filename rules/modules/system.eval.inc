@@ -90,7 +90,7 @@ class RulesDataLogEntryWrapper extends RulesDataWrapper implements RulesDataMeta
   public function metadataWrapper(array $state = NULL) {
     if (!isset($this->wrapper)) {
       $data = &$this->get($state);
-      // The info has to contain 'entity info' which we pass through.
+      // The info has to contain 'data info' which we pass through.
       $info = array('data info' => $this->info['data info']);
       $this->wrapper = entity_metadata_wrapper($this->type, $data, $info);
     }
