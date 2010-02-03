@@ -19,18 +19,21 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
   protected function executeCallback(array $args, array &$state = array()) {
     rules_log('Evaluating the action %name.', array('%name' => $this->elementName));
     $return = $this->__call('execute', rules_unwrap_data($args, $state));
-    $wrappers = array();
 
     if (is_array($return)) {
+      // $args contains the variable wrapper or directly the argument value, but
+      // $wrappers contains also any used EntityMetadataWrapper.
+      $wrappers = $state['execution arguments'];
+
       foreach ($return as $name => $data) {
         // Update data variables.
         if (isset($args[$name]) && $args[$name] instanceof RulesDataWrapper) {
           $args[$name]->update($data);
         }
-        elseif (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'], $state)) {
+        elseif (isset($this->settings[$name . ':select']) && $wrappers[$name] instanceof EntityMetadataWrapper) {
           try {
-            // Update the data value and keep the wrapper object for saving.
-            $wrappers[$name] = $wrapper->set($data);
+            // Update the data value using the wrapper.
+            $wrappers[$name]->set($data);
           }
           catch (EntityMetadataWrapperException $e) {
             throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $this->settings[$name . ':select']));
@@ -54,7 +57,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           if ($args[$name] instanceof RulesDataWrapper) {
             $args[$name]->saveChanges(FALSE, $state);
           }
-          elseif (isset($wrappers[$name]) || ($wrappers[$name] = $this->applyDataSelector($this->settings[$name . ':select'], $state))) {
+          elseif (isset($wrappers[$name]) && $wrappers[$name] instanceof EntityMetadataWrapper) {
             RulesDataWrapper::metadataWrapperSaveChanges($wrappers[$name], $state);
           }
         }
