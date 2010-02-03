@@ -106,6 +106,7 @@ function rules_data_action_info() {
         'type' => '*',
         'label' => t('Data to modify'),
         'description' => t('Specify the data to be modified using a data selector, e.g. "node:author:name".'),
+        'restriction' => 'selector',
        ),
       'value' => array(
         'type' => '*',
@@ -129,6 +130,7 @@ function rules_data_action_info() {
           'label' => t('Data type'),
           'options list' => 'rules_data_action_type_options',
           'description' => t('Specify the type of the data that should be fetched.'),
+          'restriction' => 'input',
          ),
          // Further needed parameter depends on the type.
       ),
@@ -151,6 +153,7 @@ function rules_data_action_info() {
           'label' => t('Data type'),
           'options list' => 'rules_data_action_type_options',
           'description' => t('Specify the type of the data that should be created.'),
+          'restriction' => 'input',
          ),
          // Further needed parameter depends on the type.
       ),
@@ -184,6 +187,7 @@ function rules_data_action_info() {
           'label' => t('Data to save'),
           'description' => t('The data, which should be saved permanently.'),
           'save' => TRUE,
+          'restriction' => 'selector',
          ),
          'immediate' => array(
            'type' => 'boolean',
@@ -217,6 +221,7 @@ function rules_data_action_info() {
           'type' => $types,
           'label' => t('Data to delete'),
           'description' => t('The data, which should be deleted permanently.'),
+          'restriction' => 'selector',
          ),
       ),
       'group' => t('Data'),
@@ -235,6 +240,7 @@ function rules_data_action_info() {
         'type' => 'list',
         'label' => t('List'),
         'description' => t('The data list, to which an item is to be added.'),
+        'restriction' => 'selector',
        ),
       'item' => array(
         'type' => 'unknown',
@@ -261,6 +267,7 @@ function rules_data_action_info() {
         'type' => 'list',
         'label' => t('List'),
         'description' => t('The data list for which an item is to be removed.'),
+        'restriction' => 'selector',
        ),
       'item' => array(
         'type' => 'unknown',
