@@ -11,7 +11,7 @@
 /**
  * Implementation of hook_rules_event_info().
  */
-function rules_taxonomy_term_event_info() {
+function rules_taxonomy_event_info() {
   return array(
     'taxonomy_term_insert' => array(
       'label' => t('After saving a new term'),
