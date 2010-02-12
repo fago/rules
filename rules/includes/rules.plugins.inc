@@ -261,6 +261,10 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
     }
     return isset($vars) ? $vars : array();
   }
+
+  public function __sleep() {
+    return parent::__sleep() + drupal_map_assoc(array('events'));
+  }
 }
 
 /**
