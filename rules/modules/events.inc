@@ -21,7 +21,7 @@ function rules_node_view($node, $view_mode) {
 
 function rules_node_presave($node) {
   $nodes = &drupal_static('rules_node_unchanged', array());
-  if (!empty($node->nid)) {
+  if (empty($node->is_new) && !empty($node->nid)) {
     // Save the unchanged object now so that we can make use of it later on.
     // See rules_events_node_var_unchanged().
     array_push($nodes, clone node_load($node->nid));
@@ -69,7 +69,7 @@ function rules_user_view($account, $view_mode) {
 function rules_user_presave(&$edit, $account, $category) {
   if ($category == 'account') {
     $accounts = &drupal_static('rules_user_unchanged', array());
-    if (!empty($account->uid)) {
+    if (empty($account->is_new) && !empty($account->uid)) {
       // Save the unchanged object now so that we can make use of it later on.
       // See rules_events_node_var_unchanged().
       array_push($accounts, clone user_load($account->uid));
