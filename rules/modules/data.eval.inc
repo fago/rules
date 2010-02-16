@@ -321,7 +321,7 @@ class RulesDataEntityExtender extends RulesDataWrapper implements FacesExtenderI
   }
 
   function create($values = array(), $object) {
-    $object->data = entity_metadata_entity_create($object->type, $values);
+    $object->data = entity_metadata_entity_create($object->type, $values)->value();
   }
 
   function creationParameter($object) {
