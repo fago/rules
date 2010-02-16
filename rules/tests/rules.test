@@ -478,7 +478,7 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
       $this->fail("Loading hasn't created an exception.");
     }
     catch (RulesException $e) {
-      $this->pass("RulesException was thrown: ". $e);
+      $this->pass("RulesException was thrown: ". $e->getMessage());
     }
   }
 
@@ -859,7 +859,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $term = entity_metadata_entity_create('taxonomy_term', array(
       'name' => $this->randomName(),
       'vid' => 1,
-    ));
+    ))->value();
     $term2 = clone $term;
     taxonomy_term_save($term);
     taxonomy_term_save($term2);
