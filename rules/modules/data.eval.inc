@@ -31,7 +31,7 @@ function rules_action_data_set($data, $value, $settings, $state, $element) {
 /**
  * Action: Fetch data
  */
-function rules_action_data_fetch($type, $id, $revision) {
+function rules_action_entity_fetch($type, $id, $revision) {
   $info = entity_get_info($type);
 
   // Support the revision parameter, if applicable.
@@ -42,13 +42,13 @@ function rules_action_data_fetch($type, $id, $revision) {
   if (!$entity) {
     throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => $type));
   }
-  return array('data_fetched' => $entity);
+  return array('entity_fetched' => $entity);
 }
 
 /**
  * Action: Create data
  */
-function rules_action_data_create($type) {
+function rules_action_entity_create($type) {
   $args = func_get_args();
   // Settings is always the forth last parameter that is passed.
   $settings = $args[count($args)-4];
@@ -58,13 +58,13 @@ function rules_action_data_create($type) {
     $values[substr($name, 6)] = $args[$i+1];
   }
   $data = entity_metadata_entity_create($type, $values)->value();
-  return array('data_created' => $data);
+  return array('entity_created' => $data);
 }
 
 /**
  * Action: Save data
  */
-function rules_action_data_save($data, $immediate = FALSE, $settings, $state, $element) {
+function rules_action_entity_save($data, $immediate = FALSE, $settings, $state, $element) {
   $wrapper = $state->currentArguments['data'];
   $state->saveChanges($settings['data:select'], $wrapper, $immediate);
 }
@@ -72,7 +72,7 @@ function rules_action_data_save($data, $immediate = FALSE, $settings, $state, $e
 /**
  * Action: Delete data
  */
-function rules_action_data_delete($data, $settings, $state, $element) {
+function rules_action_entity_delete($data, $settings, $state, $element) {
   $wrapper = $state->currentArguments['data'];
   $wrapper->delete();
 }

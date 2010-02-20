@@ -211,14 +211,14 @@ function rules_watchdog($log_entry) {
  * Returns TRUE if at least one type is available for configuring the action.
  */
 function rules_data_action_access($type, $name) {
-  if ($name == 'data_fetch' || $name == 'data_create') {
+  if ($name == 'entity_fetch' || $name == 'entity_create') {
     $types = array_keys(rules_data_action_type_options($type, $name));
-    $op = $name == 'data_create' ? 'create' : 'view';
+    $op = $name == 'entity_create' ? 'create' : 'view';
   }
-  elseif ($name == 'data_save' || $name == 'data_delete') {
+  elseif ($name == 'entity_save' || $name == 'entity_delete') {
     $cache = rules_get_cache();
     $types = $cache['action_info'][$name]['parameter']['data']['type'];
-    $op = $name == 'data_save' ? 'save' : 'delete';
+    $op = $name == 'entity_save' ? 'save' : 'delete';
   }
   foreach ($types as $key => $type) {
     if (!entity_metadata_entity_access($op, $type)) {

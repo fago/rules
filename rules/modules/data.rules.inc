@@ -99,9 +99,9 @@ function rules_data_action_info() {
     ),
   );
 
-  if (rules_data_action_type_options('action', 'data_fetch')) {
-    $return['data_fetch'] = array(
-      'label' => t('Fetch data'),
+  if (rules_data_action_type_options('action', 'entity_fetch')) {
+    $return['entity_fetch'] = array(
+      'label' => t('Fetch entity'),
       'parameter' => array(
         'type' => array(
           'type' => 'text',
@@ -113,18 +113,18 @@ function rules_data_action_info() {
          'id' => array('type' => 'unknown', 'label' => t('Identifier')),
       ),
       'provides' => array(
-        'data_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
+        'entity_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
-      'base' => 'rules_action_data_fetch',
-      'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
+      'base' => 'rules_action_entity_fetch',
+      'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
     );
   }
 
-  if (rules_data_action_type_options('action', 'data_create')) {
-    $return['data_create'] = array(
-      'label' => t('Create new data'),
+  if (rules_data_action_type_options('action', 'entity_create')) {
+    $return['entity_create'] = array(
+      'label' => t('Create a new entity'),
       'parameter' => array(
         'type' => array(
           'type' => 'text',
@@ -136,7 +136,7 @@ function rules_data_action_info() {
          // Further needed parameter depends on the type.
       ),
       'provides' => array(
-        'data_created' => array(
+        'entity_created' => array(
           'type' => 'unknown',
           'label' => t('Created data'),
           'save' => TRUE,
@@ -144,15 +144,15 @@ function rules_data_action_info() {
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
-      'base' => 'rules_action_data_create',
-      'callbacks' => array('access' => 'rules_action_data_createfetch_access'),
+      'base' => 'rules_action_entity_create',
+      'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
     );
   }
 
   // Get an array of types that are savable.
   if ($types = array_keys(rules_entity_type_options('save callback'))) {
-    $return['data_save'] = array(
-      'label' => t('Save data'),
+    $return['entity_save'] = array(
+      'label' => t('Save entity'),
       'parameter' => array(
         'data' => array(
           'type' => $types,
@@ -170,18 +170,18 @@ function rules_data_action_info() {
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
-      'base' => 'rules_action_data_save',
+      'base' => 'rules_action_entity_save',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
-        'access' => 'rules_action_data_savedelete_access',
+        'access' => 'rules_action_entity_savedelete_access',
       ),
     );
   }
 
   // Get an array of types that are deletable.
   if ($types = array_keys(rules_entity_type_options('deletion callback'))) {
-    $return['data_delete'] = array(
-      'label' => t('Delete data'),
+    $return['entity_delete'] = array(
+      'label' => t('Delete entity'),
       'parameter' => array(
         'data' => array(
           'type' => $types,
@@ -192,10 +192,10 @@ function rules_data_action_info() {
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
-      'base' => 'rules_action_data_delete',
+      'base' => 'rules_action_entity_delete',
       'callbacks' => array(
         'validate' => 'rules_data_parameter_validation',
-        'access' => 'rules_action_data_savedelete_access',
+        'access' => 'rules_action_entity_savedelete_access',
       ),
     );
   }
@@ -264,18 +264,18 @@ function rules_action_data_set_access(RulesAbstractPlugin $element) {
 /**
  * Custom access callback for data create and fetch action.
  */
-function rules_action_data_createfetch_access(RulesAbstractPlugin $element) {
+function rules_action_entity_createfetch_access(RulesAbstractPlugin $element) {
   if (!RulesAbstractPluginDefaults::access($element)) {
     return FALSE;
   }
-  $op = $element->getElementName() == 'data_create' ? 'create' : 'view';
+  $op = $element->getElementName() == 'entity_create' ? 'create' : 'view';
   return entity_metadata_entity_access($op, $element->settings['type']);
 }
 
 /**
  * Custom validate callback for data fetch action.
  */
-function rules_action_data_fetch_validate($element) {
+function rules_action_entity_fetch_validate($element) {
   if (!isset($element->settings['type'])) {
     throw new RulesException('Invalid type specified.');
   }
@@ -284,7 +284,7 @@ function rules_action_data_fetch_validate($element) {
 /**
  * Custom process callback for data fetch action.
  */
-function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
+function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
   $info = entity_get_info($element->settings['type']);
 
   // Fix the type of the identifier.
@@ -298,14 +298,14 @@ function rules_action_data_fetch_process(RulesAbstractPlugin $element) {
       'optional' => TRUE,
     );
   }
-  $element_info['provides']['data_fetched']['type'] = $element->settings['type'];
+  $element_info['provides']['entity_fetched']['type'] = $element->settings['type'];
   $element->alterInfo($element_info);
 }
 
 /**
  * Custom validate callback for data create action.
  */
-function rules_action_data_create_validate($element) {
+function rules_action_entity_create_validate($element) {
   if (!isset($element->settings['type'])) {
     throw new RulesException('Invalid type specified.');
   }
@@ -314,7 +314,7 @@ function rules_action_data_create_validate($element) {
 /**
  * Custom process callback for data create action.
  */
-function rules_action_data_create_process(RulesAbstractPlugin $element) {
+function rules_action_entity_create_process(RulesAbstractPlugin $element) {
   $wrapper = entity_metadata_wrapper($element->settings['type']);
   // Add the data type's needed parameter for loading to the parameter info.
   foreach ($wrapper as $name => $info) {
@@ -324,19 +324,19 @@ function rules_action_data_create_process(RulesAbstractPlugin $element) {
       $element_info['parameter']['param_' . $name] = array('type' => $info['type'], 'label' => $info['label']);
     }
   }
-  $element_info['provides']['data_created']['type'] = $element->settings['type'];
+  $element_info['provides']['entity_created']['type'] = $element->settings['type'];
   $element->alterInfo($element_info);
 }
 
 /**
  * Custom access callback for data save and delete action.
  */
-function rules_action_data_savedelete_access(RulesAbstractPlugin $element) {
+function rules_action_entity_savedelete_access(RulesAbstractPlugin $element) {
   if (!RulesAbstractPluginDefaults::access($element)) {
     return FALSE;
   }
   if ($wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
-    $op = $element->getElementName() == 'data_save' ? 'save' : 'delete';
+    $op = $element->getElementName() == 'entity_save' ? 'save' : 'delete';
     return $wrapper instanceof EntityDrupalWrapper && $wrapper->entityAccess($op);
   }
   return FALSE;
@@ -364,7 +364,7 @@ function rules_data_parameter_validation(RulesAbstractPlugin $element) {
  *   The name of the element to return options for.
  */
 function rules_data_action_type_options($type, $name) {
-  $key = $name == 'data_fetch' ? 'base table' : 'creation callback';
+  $key = $name == 'entity_fetch' ? 'base table' : 'creation callback';
   return rules_entity_type_options($key);
 }
 
