@@ -80,25 +80,6 @@ function _rules_action_drupal_goto_handler($variables) {
 }
 
 /**
- * Wraps system log entries of hook_watchdog().
- */
-class RulesDataLogEntryWrapper extends RulesDataWrapper implements RulesDataMetadataWrapperInterface {
-
-  /**
-   * Specify metadata for the log entry and return a metadata wrapper.
-   */
-  public function metadataWrapper(array $state = NULL) {
-    if (!isset($this->wrapper)) {
-      $data = &$this->get($state);
-      // The info has to contain 'data info' which we pass through.
-      $info = array('data info' => $this->info['data info']);
-      $this->wrapper = entity_metadata_wrapper($this->type, $data, $info);
-    }
-    return $this->wrapper;
-  }
-}
-
-/**
  * Getter callback for the log entry message property.
  */
 function rules_system_log_get_message($log_entry) {

@@ -23,8 +23,9 @@ function rules_test_custom_help() {
 /**
  * Action callback
  */
-function rules_action_test_reference(&$data) {
+function rules_action_test_reference($data) {
   $data['changed'] = TRUE;
+  return array('arg' => $data);
 }
 
 /**

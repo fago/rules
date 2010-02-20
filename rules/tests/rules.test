@@ -272,7 +272,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     RulesLog::logger()->checkLog();
     $text = RulesLog::logger()->render();
-    $msg = RulesTestCase::t('Saved variable %node_loaded of type %node.', array('node_loaded', 'node'));
+    $msg = RulesTestCase::t('Saved %node_loaded of type %node.', array('node_loaded', 'node'));
     if ($pos1 = strpos($text, $msg)) {
       $pos2 = strpos($text, $msg, $pos1 + 1);
     }
@@ -328,17 +328,17 @@ class RulesTestCase extends DrupalWebTestCase {
    * Test customizing action info and make sure integrity is checked.
    */
   function testInfoAdaption() {
-    $settings['#info']['parameter']['node']['type'] = 'node<page>';
+    $settings['#info']['parameter']['node']['bundles'] = array('page');
     $action = rules_action('rules_node_make_sticky_action', $settings);
     $info = $action->parameterinfo();
-    $this->assertEqual($info['node']['type'], 'node<page>', 'Info adapted.');
+    $this->assertEqual($info['node']['bundles'], array('page'), 'Info adapted.');
 
     try {
       $rule = rule(array('node' => array('type' => 'node')));
       // Customize action info using the settings.
       $rule->condition('data_is', array('data:select' => 'node:type', 'value' => 'page'))
            ->action($action);
-      // Fails due to the 'node' variable not matching the node<page> type.
+      // Fails due to the 'node' variable not matching the node-page type.
       $rule->integrityCheck();
       $this->fail('Integrity check has not thrown an exception.');
     }
@@ -369,9 +369,9 @@ class RulesTestCase extends DrupalWebTestCase {
     // Test using a list with data selectors, just output the last nodes type.
     $rule->action('drupal_message', array('message:select' => 'list:2:type'));
 
-    $rule->execute(array($node1, $node2, $node3));
+    $rule->execute(array($node1->nid, $node2->nid, $node3->nid));
     $text = RulesLog::logger()->render();
-    $save_msg = RulesTestCase::t('Saved variable %node of type %node.', array('node', 'node'));
+    $save_msg = RulesTestCase::t('Saved %node of type %node.', array('node', 'node'));
     $this->assertTrue(substr_count($text, $save_msg) == 3, 'List item variables have been saved.');
     RulesLog::logger()->checkLog();
   }
@@ -433,12 +433,12 @@ function rules_test_action() {
 /**
  * Test rules data wrappers.
  */
-class RulesTestDataWrappersCase extends DrupalWebTestCase {
+class RulesTestDataCase extends DrupalWebTestCase {
 
   static function getInfo() {
     return array(
-      'name' => 'Rules Data Wrapper tests',
-      'description' => 'Tests rules data wrappers.',
+      'name' => 'Rules Data tests',
+      'description' => 'Tests rules data saving and type matching.',
       'group' => 'Rules',
     );
   }
@@ -450,102 +450,58 @@ class RulesTestDataWrappersCase extends DrupalWebTestCase {
   }
 
   /**
-   * Tests serializing and lazyloading data wrappers.
+   * Tests intelligently saving data.
    */
-  function testDataWrapperSerializing() {
+  function testDataSaving() {
     $node = $this->drupalCreateNode();
-    $wrapper = new RulesNodeDataWrapper($node, array(
-      'type' => 'node',
-    ));
-    $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
-    // Test serializing and make sure only the node id is stored.
-    $this->assertTrue(strpos(serialize($wrapper), $node->title) === FALSE, 'Node has been correctly serialized.');
-    // Be sure our instance is still loaded (in contrast to the serialized instance).
-    $this->assertTrue($wrapper->isLoaded(), 'Data is loaded.');
-    $this->assertEqual(unserialize(serialize($wrapper))->get()->title, $node->title, 'Serializing works right.');
-
-    $wrapper2 = unserialize(serialize($wrapper));
-    $this->assertFalse($wrapper2->isLoaded(), 'Data is not loaded.');
-    // Test serializing the unloaded wrapper
-    $this->assertEqual(unserialize(serialize($wrapper2))->get()->title, $node->title, 'Serializing works right.');
-
-    // Test loading a not more existing node.
-    $s = serialize($wrapper2);
-    node_delete($node->nid);
-    $this->assertFalse(node_load($node->nid), 'Node deleted.');
-    try {
-      unserialize($s)->get();
-      $this->fail("Loading hasn't created an exception.");
-    }
-    catch (RulesException $e) {
-      $this->pass("RulesException was thrown: ". $e->getMessage());
-    }
-  }
-
-  /**
-   * Tests saving data wrappers.
-   */
-  function testDataWrapperSaving() {
-    $node = $this->drupalCreateNode();
-    $wrapper = new RulesNodeDataWrapper($node, array(
-      'type' => 'node',
-    ));
+    $state = new RulesState(rule());
+    $state->addVariable('node', $node, array('type' => 'node'));
+    $wrapper = $state->get('node');
     $node->title = 'test';
-    $wrapper->update($node);
+    $wrapper->set($node);
+    $state->saveChanges('node', $wrapper, FALSE);
+
     $this->assertFalse($this->drupalGetNodeByTitle('test'), 'Changes have not been saved.');
-    $wrapper->update($node, TRUE)->saveChanges();
+    $state->saveChanges('node', $wrapper, TRUE);
     $this->assertTrue($this->drupalGetNodeByTitle('test'), 'Changes have been saved.');
 
     // Test skipping saving.
-    $wrapper = new RulesNodeDataWrapper($node, array(
+    $state->addVariable('node2', $node, array(
       'type' => 'node',
       'skip save' => TRUE,
     ));
+    $wrapper = $state->get('node2');
     $node->title = 'test2';
-    $wrapper->update($node, TRUE)->saveChanges();
+    $wrapper->set($node);
+    $state->saveChanges('node2', $wrapper, TRUE);
     $this->assertFalse($this->drupalGetNodeByTitle('test2'), 'Changes have not been saved.');
-  }
 
-
-  /**
-   * Tests using faces extenders to build a data wrapper.
-   */
-  function testDataWrapperFaces() {
-    $node = $this->drupalCreateNode();
-    // Create the test data wrapper as specified in rules_test_rules_data_info().
-    $wrapper = new RulesDataWrapper($node->nid, array(
-      'type' => 'test',
-      'loaded' => FALSE,
-    ));
-    $this->assertTrue($wrapper->isIdentifiable(), 'Wrapper is identifiable.');
-    // Test loading with the extended load method.
-    $this->assertEqual($node->title, $wrapper->get()->title, 'Loaded using an extended method.');
-    try {
-      $wrapper->update($node, TRUE)->saveChanges();
-      $this->fail('Custom save method has not been invoked.');
-    }
-    catch (RulesException $e) {
-      $this->pass($e);
-    }
-    // Try serializing
-    $this->assertEqual(unserialize(serialize($wrapper))->get()->title, $node->title, 'Serializing works right.');
+    // Try saving a non-entity wrapper, which should result in saving the
+    // parent entity containing the property.
+    $wrapper = $state->get('node');
+    $wrapper->title->set('test3');
+    $state->saveChanges('node:title', $wrapper, TRUE);
+    $this->assertTrue($this->drupalGetNodeByTitle('test3'), 'Parent entity has been saved.');
   }
 
   /**
    * Test type matching
    */
   function testTypeMatching() {
-    $this->assertTrue(RulesDataWrapper::typesMatch('node', 'entity'), 'Types match.');
-    $this->assertFalse(RulesDataWrapper::typesMatch('entity', 'node'), 'Types don\'t match.');
+    $entity = array('type' => 'entity');
+    $node = array('type' => 'node');
+    $this->assertTrue(RulesData::typesMatch($node, $entity), 'Types match.');
+    $this->assertFalse(RulesData::typesMatch($entity, $node), 'Types don\'t match.');
 
-    $this->assertTrue(RulesDataWrapper::typesMatch('node<page>', 'node'), 'Types match.');
-    $this->assertTrue(RulesDataWrapper::typesMatch('node<page>', 'entity'), 'Types match.');
-    $this->assertTrue(RulesDataWrapper::typesMatch('list<node>', 'list'), 'Types match.');
-    $this->assertFalse(RulesDataWrapper::typesMatch('node', 'node<page>'), 'Types don\'t match.');
+    $this->assertTrue(RulesData::typesMatch($node + array('bundle' => 'page'), $node), 'Types match.');
+    $this->assertTrue(RulesData::typesMatch($node + array('bundle' => 'page'), $entity), 'Types match.');
+    $this->assertTrue(RulesData::typesMatch(array('type' => 'list<node>'), array('type' => 'list')), 'Types match.');
+    $this->assertTrue(RulesData::typesMatch($node + array('bundle' => 'page'), $node + array('bundles' => array('page', 'story'))), 'Types match.');
+    $this->assertFalse(RulesData::typesMatch($node, $node + array('bundles' => array('page', 'story'))), 'Types don\'t match.');
 
     // Test that a type matches its grand-parent type (text > decimal > integer)
-    $this->assertTrue(RulesDataWrapper::typesMatch('integer', 'text'), 'Types match.');
-    $this->assertFalse(RulesDataWrapper::typesMatch('text', 'integer'), 'Types don\'t match.');
+    $this->assertTrue(RulesData::typesMatch(array('type' => 'integer'), array('type' => 'text')), 'Types match.');
+    $this->assertFalse(RulesData::typesMatch(array('type' => 'text'), array('type' => 'integer')), 'Types don\'t match.');
   }
 }
 
@@ -731,7 +687,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $text = RulesLog::logger()->render();
     $pos = strpos($text, RulesTestCase::t('Evaluating rule %rule 1', array('rule 1')));
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 2', array('rule 2')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved variable %node_loaded of type %node.', array('node_loaded', 'node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node_loaded of type %node.', array('node_loaded', 'node')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 1', array('rule 1')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Not evaluating the rule %rule 2 to prevent recursion', array('rule 2')), $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, 'Rule1 was triggered on the event caused by Rule2.');
@@ -790,12 +746,12 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $action->execute();
     $text = RulesLog::logger()->render();
     $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %node', array('data_created', 'node')));
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved variable %data_created of type %node.', array('data_created', 'node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %data_created of type %node.', array('data_created', 'node')), $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, 'Data has been created and saved.');
 
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     $rule = rule();
-    $rule->action('data_fetch', array('type' => 'node', 'param_id' => $node->nid, 'data_fetched:var' => 'node'));
+    $rule->action('data_fetch', array('type' => 'node', 'id' => $node->nid, 'data_fetched:var' => 'node'));
     $rule->action('data_save', array('data:select' => 'node', 'immediate' => TRUE));
     $rule->action('data_delete', array('data:select' => 'node'));
     $rule->access();
@@ -804,7 +760,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $text = RulesLog::logger()->render();
     $pos = strpos($text, RulesTestCase::t('Evaluating the action %data_fetch.', array('data_fetch')));
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Added the provided variable %node of type %node', array('node')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved variable %node of type %node.', array('node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node of type %node.', array('node')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating the action %data_delete.', array('data_delete')), $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, 'Data has been fetched, saved and deleted.');
     //debug(RulesLog::logger()->render());
@@ -853,6 +809,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->execute(array('list' => &$list));
     RulesLog::logger()->checkLog();
     $this->assertEqual($list, array('bar', 'foo', 'foo2'), 'List items removed and added.');
+    //debug(RulesLog::logger()->render());
   }
 
   function testTaxonomyIntegration() {
@@ -868,9 +825,9 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article', 'taxonomy_tags' => $tags));
 
     // Test assigning and remove a term from an article.
-    $rule = rule(array('node' => array('type' => 'node<article>')));
-    $term_wrapped = rules_wrap_data($term->tid, array('type' => 'taxonomy_term', 'loaded' => FALSE));
-    $term_wrapped2 = rules_wrap_data($term2->tid, array('type' => 'taxonomy_term', 'loaded' => FALSE));
+    $rule = rule(array('node' => array('type' => 'node', 'bundle' => 'article')));
+    $term_wrapped = rules_wrap_data($term->tid, array('type' => 'taxonomy_term'));
+    $term_wrapped2 = rules_wrap_data($term2->tid, array('type' => 'taxonomy_term'));
     $rule->action('list_add', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped2));
     $rule->action('list_remove', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped));
     $rule->execute($node);
