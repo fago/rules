@@ -37,11 +37,24 @@ function rules_system_event_info() {
         'log_entry' => array(
           'type' => 'log_entry',
           'label' => t('Log entry'),
-          'data info' => _rules_system_watchdog_log_entry_info(),
         ),
       ),
       'group' => t('System'),
       'access callback' => 'rules_system_integration_access',
+    ),
+  );
+}
+
+/**
+ * Implements hook_rules_data_info() on behalf of the system module.
+ * @see rules_core_modules()
+ */
+function rules_system_data_info() {
+  return array(
+    'log_entry' => array(
+      'label' => t('system log entry'),
+      'wrap' => TRUE,
+      'data info' => _rules_system_watchdog_log_entry_info(),
     ),
   );
 }
@@ -92,7 +105,7 @@ function rules_system_action_info() {
         'message' => array(
           'type' => 'text',
           'label' => t('Message'),
-          'sanitized' => TRUE,
+          'sanitize' => TRUE,
         ),
         'error' => array(
           'type' => 'boolean',

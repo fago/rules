@@ -69,7 +69,6 @@ function rules_test_rules_action_info() {
     'rules_node_make_sticky_action' => array(
       'label' => t('Blabla'),
       'parameter' => array(
-        // Test passing args of type 'node' to for 'node<page>'.
         'node' => array(
           'type' => 'node',
           'label' => t('Content'),
@@ -139,75 +138,3 @@ function rules_test_rules_action_info() {
     ),
   );
 }
-
-/**
- * Implements hook_rules_data_info()
- */
-function rules_test_rules_data_info() {
-  return array(
-    'test' => array(
-      'label' => t('content'),
-      'class' => 'RulesDataWrapper',
-      'extenders' => array(
-        'RulesDataSavableInterface' => array('class' => 'RulesNodeDataWrapperExtender'),
-      ),
-      'overrides' => array(
-        array(
-          'methods' => array('save' => 'rules_test_custom_node_save'),
-          'file' => array('module' => 'rules_test', 'name' => 'rules_test.test'),
-        ),
-      ),
-    ),
-  );
-}
-
-/**
- * Defines the node data wrapper used by the wrapper tests.
- */
-class RulesNodeDataWrapper extends RulesDataEntityWrapper implements RulesDataSavableInterface {
-
-  protected $itemName = 'node';
-
-  /**
-   * Implements RulesDataSavableInterface.
-   */
-  function save() {
-    node_save($this->get());
-  }
-}
-
-
-/**
- * Turns the RulesNodeDataWrapper into a extender for testing.
- */
-class RulesNodeDataWrapperExtender extends FacesExtender {
-
-  public function implementsFaces() {
-    return array('RulesDataSavableInterface');
-  }
-
-  /**
-   * We have to overwrite the Node load method as the datawrapper type 'test'
-   * is used as entity type else, which won't work.
-   */
-  public function load($id) {
-    $node = node_load($id);
-    if (empty($node)) {
-      throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => 'node'));
-    }
-    return $node;
-  }
-
-  public function getIdentifier(RulesDataWrapper $element) {
-    $node = $element->get();
-    if (!isset($node->nid)) {
-      throw new RulesException('@entity is unsaved, thus there is no identifier yet.', array('@entity' => drupal_ucfirst('node')));
-    }
-    return $node->nid;
-  }
-
-  public function save() {
-    throw new Exception('Method should be overridden by rules_test_custom_node_save.');
-  }
-}
-

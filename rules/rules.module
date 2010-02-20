@@ -209,11 +209,11 @@ function _rules_rebuild_cache(&$cache = array()) {
   $cache = array();
   foreach(array('data_info', 'plugin_info') as $hook) {
     $cache[$hook] = rules_fetch_data($hook);
-    foreach ($cache[$hook] as $name => &$info) {
-      // Let the items add something to the cache.
-      $item = new $info['class']();
-      $item->rebuildCache($info, $cache);
-    }
+  }
+  foreach ($cache['plugin_info'] as $name => &$info) {
+    // Let the items add something to the cache.
+    $item = new $info['class']();
+    $item->rebuildCache($info, $cache);
   }
   cache_set('data', $cache, 'cache_rules');
 }
@@ -245,35 +245,36 @@ function rules_clear_cache($immediate = FALSE) {
 
 
 /**
- * Creates a rules data wrapper for the given data.
+ * Wraps the given data.
  *
  * @param $data
  *   If available, the actual data, else NULL.
  * @param $info
  *   An array of info about this data.
- * @param $form
+ * @param $force
  *   Usually data is only wrapped if really needed. If set to TRUE, wrapping the
  *   data is forced, so primitive data types are also wrapped.
- * @return RulesDataWrapper
- *   The specified RulesDataWrapper or FALSE if no class was specified for this
- *   type.
+ * @return EntityMetadataWrapper
+ *   An EntityMetadataWrapper or the unwrapped data.
  *
  * @see hook_rules_data_info()
  */
-function rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
+function &rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
   // If the data is already wrapped, use the existing wrapper.
-  if ($data instanceof RulesDataWrapper) {
+  if ($data instanceof EntityMetadataWrapper) {
     return $data;
   }
+  $type = entity_metadata_list_extract_type($info['type']) ? 'list' : $info['type'];
   $cache = rules_get_cache();
-  list($type, $param) = RulesDataWrapper::typeExtractParameter($info['type']);
-  $cache['data_info'] += array($type => array());
-  $cache['data_info'][$type] += array('class' => 'RulesDataWrapper');
-  // Make sure identifiable data and data loaded through handlers is wrapped.
-  if ($force || isset($info['handler']) || RulesExtendable::itemFacesAs($cache['data_info'][$type], 'RulesDataMetadataWrapperInterface')) {
-    return new $cache['data_info'][$type]['class']($data, $info);
+  if (isset($cache['data_info'][$type]['data info'])) {
+    $info['data info'] = $cache['data_info'][$type]['data info'];
   }
-  return FALSE;
+  if (!empty($cache['data_info'][$type]['wrap']) || $force) {
+    unset($info['handler']);
+    $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
+    return $wrapper;
+  }
+  return $data;
 }
 
 /**
@@ -281,21 +282,19 @@ function rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
  *
  * @param $data
  *   An array of wrapped data.
- * @param $state
- *   An optional execution state that is passed through the wrapper.
- * @param $load
- *   If set to FALSE, remove any unloaded data.
+ * @param $info
+ *   Optionally an array of info about how to unwrap the data. Keyed as $data.
  * @return
- *   An array containing unwrapped data or the passed through $data.
+ *   An array containing unwrapped or passed through data.
  */
-function &rules_unwrap_data(array $data, $state = NULL, $load = TRUE) {
+function rules_unwrap_data(array $data, $info = array()) {
+  //TODO: support a method for getting sanitized values of text wrappers,
+  // so tokens can make use of it.
   foreach ($data as $key => $entry) {
     // If it's a wrapper, unwrap.
-    if ($entry instanceof RulesDataWrapper && ($load || $entry->isLoaded())) {
-      $data[$key] = &$entry->get($state);
-    }
-    elseif ($entry instanceof RulesDataWrapper && !$load) {
-      unset($data[$key]);
+    if ($entry instanceof EntityMetadataWrapper) {
+      $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
+      $data[$key] = $entry->value($options);
     }
   }
   return $data;

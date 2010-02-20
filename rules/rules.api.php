@@ -63,9 +63,13 @@
  *   - label: The label of the parameter. Start capitalized. Required.
  *   - type: The rules data type of the parameter, which is to be passed to the
  *     action. All types declared in hook_rules_data_info() may be specified, as
- *     well as an array of possible types. Types may be parametrized e.g. the
- *     types node<page> or list<integer> are valid. The special keyword '*' can
- *     be used when all types should be allowed. Required.
+ *     well as an array of possible types. Also lists and lists of a given type
+ *     can be specified by using the notating list<integer> as introduced by
+ *     the entity metadata module. The special keyword '*' can be used when all
+ *     types should be allowed. Required.
+ *   - bundles: Optionally, an array of bundle names. When the specified type is
+ *     set to a single entity type, this may be used to restrict the allowed
+ *     bundles.
  *   - description: If necessary, a further description of the parameter.
  *     Optional.
  *   - options list: Optionally, a callback that returns an array of possible
@@ -80,6 +84,8 @@
  *     is optional and there is no specified value. Optional.
  *   - restriction: Restrict how the argument for this parameter may be
  *     provided. Supported values are 'selector' and 'input'. Optional.
+ *   - sanitize: Allows parameters of type 'text' to demand an already sanitized
+ *     argument. Optionally.
  *  Each 'provides' array may contain the following properties:
  *   - label: The label of the variable. Start capitalized. Required.
  *   - type: The rules data type of the variable. All types declared in
@@ -279,19 +285,25 @@ function hook_rules_event_info() {
  * This hook is required in order to add a new rules data type. It should be
  * placed into the file MODULENAME.rules.inc, which gets automatically included
  * when the hook is invoked.
+ * Rules builds upon the entity metadata module, thus to improve the support of
+ * your data in rules, make it an entity if possible and provide metadata about
+ * its properties and CRUD functions by integrating with the entity metadata
+ * module.
  * For a list of data types defined by rules see rules_data_data_info().
+ *
  *
  * @return
  *   An array of information about the module's provided data types. The array
  *   contains a sub-array for each data type, with the data type name as the key.
  *   Possible attributes for each sub-array are:
  *   - label: The label of the data type. Start uncapitalized. Required.
- *   - class: A class used for wrapping the data. Optionally for primitive
- *     data types only. The class has to extend the RulesDataWrapper and may
- *     implement the interfaces RulesDataIdentifiableInterface,
- *     RulesDataSavableInterface, RulesDataInputFormInterface as well as
- *     others. Interfaces may also be implemented using extendable object faces,
- *     see the 'extenders' key below.
+ *   - wrap: If set to TRUE, the data is wrapped internally using wrappers
+ *     provided by the entity metadata module. This is required for entities and
+ *     data structures to support the application of data selectors or
+ *     intelligent saving.
+ *   - data info: May be used for data structures being no entities to support
+ *     data selectors via an entity metadata wrapper. Specify an array as
+ *     expected by entity_metadata_wrapper(). Optionally.
  *   - parent: Optionally a parent type may be set to specify a sub-type
  *     relationship, which will be only used for checking compatible types. E.g.
  *     the 'entity' data type is parent of the 'node' data type, thus a node may
@@ -305,34 +317,8 @@ function hook_rules_event_info() {
  *     Optional.
  *   - hidden: Whether the data type should be hidden from the UI. Optional
  *    (defaults to FALSE).
- *   - extenders: This allows one to specify faces extenders, which may be used
- *     to dynamically implement interfaces. Optional. All extenders specified
- *     here are setup automatically by rules once the object is created. To
- *     specify set this to an array, where the keys are the implemented
- *     interfaces pointing to another array with the keys:
- *     - class: The class of the extender, implementing the FacesExtender
- *       and the specified interface. Either 'class' or 'methods' has to exist.
- *     - methods: An array of callbacks that implement the methods of the
- *       interface where the method names are the keys and the callback names
- *       the values. There has to be a callback for each defined method.
- *     - file: An optional array describing the file to include when a method
- *       of the interface is invoked. The array entries known are 'type',
- *       'module', and 'name' matching the parameters of module_load_include().
- *       Only 'module' is required as 'type' defaults to 'inc' and 'name' to
- *       NULL.
- *   - overrides: An optional array, which may be used to specify callbacks to
- *     override specific methods. For that the following keys are supported:
- *     - methods: As in the extenders array, but you may specify as many methods
- *       here as you like.
- *     - file: Optionally an array specifying a file to include for a method.
- *       For each method appearing in methods a file may be specified by using
- *       the method name as key and another array as value, which describes the
- *       file to include - looking like the file array supported by 'extenders'.
  *
- *  @see class RulesDataWrapper
- *  @see RulesDataIdentifiableInterface
- *  @see RulesDataSavableInterface
- *  @see RulesDataInputFormInterface
+ *  @see entity_metadata_wrapper()
  *  @see hook_rules_data_info_alter()
  *  @see rules_data_data_info()
  */
@@ -340,7 +326,6 @@ function hook_rules_data_info() {
   return array(
     'node' => array(
       'label' => t('content'),
-      'class' => 'RulesNodeDataWrapper',
       'parent' => 'entity',
       'group' => t('Node'),
     ),
