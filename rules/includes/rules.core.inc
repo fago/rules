@@ -701,6 +701,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function access() {
+    $this->processSettings();
     return $this->__call('access');
   }
 
