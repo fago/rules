@@ -771,7 +771,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule = rule();
     $rule->action('entity_query', array('type' => 'node', 'property' => 'title', 'value' => 'foo'))
          ->action('data_set', array('data:select' => 'entity_fetched:0:title', 'value' => 'bar'));
-    //$rule->access();
+    $rule->access();
     $rule->integrityCheck();
     $rule->execute();
 
