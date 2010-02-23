@@ -766,6 +766,22 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     //debug(RulesLog::logger()->render());
   }
 
+  function testDataQueryAction() {
+    $node = $this->drupalCreateNode(array('type' => 'page', 'title' => 'foo'));
+    $rule = rule();
+    $rule->action('entity_query', array('type' => 'node', 'property' => 'title', 'value' => 'foo'))
+         ->action('data_set', array('data:select' => 'entity_fetched:0:title', 'value' => 'bar'));
+    //$rule->access();
+    $rule->integrityCheck();
+    $rule->execute();
+
+    RulesLog::logger()->checkLog();
+    //debug(RulesLog::logger()->render());
+
+    $node = node_load($node->nid);
+    $this->assertEqual('bar', $node->title, 'Fetched a node by title and modified it.');
+  }
+
   /**
    * Just make sure the access callback run without errors.
    */

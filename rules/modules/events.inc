@@ -211,7 +211,7 @@ function rules_watchdog($log_entry) {
  * Returns TRUE if at least one type is available for configuring the action.
  */
 function rules_data_action_access($type, $name) {
-  if ($name == 'entity_fetch' || $name == 'entity_create') {
+  if ($name == 'entity_fetch' || $name == 'entity_create' || $name == 'entity_query') {
     $types = array_keys(rules_data_action_type_options($type, $name));
     $op = $name == 'entity_create' ? 'create' : 'view';
   }
