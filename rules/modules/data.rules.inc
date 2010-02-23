@@ -101,7 +101,7 @@ function rules_data_action_info() {
 
   if (rules_data_action_type_options('action', 'entity_fetch')) {
     $return['entity_fetch'] = array(
-      'label' => t('Fetch entity'),
+      'label' => t('Fetch entity by id'),
       'parameter' => array(
         'type' => array(
           'type' => 'text',
@@ -113,12 +113,48 @@ function rules_data_action_info() {
          'id' => array('type' => 'unknown', 'label' => t('Identifier')),
       ),
       'provides' => array(
-        'entity_fetched' => array('type' => 'unknown', 'label' => t('Fetched data')),
+        'entity_fetched' => array('type' => 'unknown', 'label' => t('Fetched entity')),
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_fetch',
       'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
+    );
+    $return['entity_query'] = array(
+      'label' => t('Fetch entity by property'),
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Data type'),
+          'options list' => 'rules_data_action_type_options',
+          'description' => t('Specify the type of the data that should be fetched.'),
+          'restriction' => 'input',
+         ),
+        'property' => array(
+          'type' => 'text',
+          'label' => t('Property'),
+          'description' => t('The property by which the data is to be selected.'),
+          'restriction' => 'input',
+         ),
+        'value' => array(
+          'type' => 'unknown',
+          'label' => t('Value'),
+          'description' => t('The property value of the data to be fetched.'),
+         ),
+         'limit' => array(
+           'type' => 'integer',
+           'label' => t('Limit result count'),
+           'description' => t('Limit the maximum number of fetched data items.'),
+           'optional' => TRUE,
+           'default value' => '10',
+         ),
+      ),
+      'provides' => array(
+        'entity_fetched' => array('type' => 'list', 'label' => t('Fetched entity')),
+      ),
+      'group' => t('Data'),
+      'access callback' => 'rules_data_action_access',
+      'base' => 'rules_action_entity_query',
     );
   }
 
@@ -300,6 +336,41 @@ function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
   }
   $element_info['provides']['entity_fetched']['type'] = $element->settings['type'];
   $element->alterInfo($element_info);
+}
+
+/**
+ * Custom validate callback for data query action.
+ */
+function rules_action_entity_query_validate($element) {
+  if (!isset($element->settings['type'])) {
+    throw new RulesException('Invalid type specified.');
+  }
+  if (!isset($element->settings['property'])) {
+    throw new RulesException('Invalid property specified.');
+  }
+}
+
+/**
+ * Custom access callback for the data query action.
+ */
+function rules_action_entity_query_access(RulesAbstractPlugin $element) {
+  if (!rules_action_entity_createfetch_access($element)) {
+    return FALSE;
+  }
+  $properties = entity_metadata_get_properties($element->settings['type']);
+  if (isset($properties[$element->settings['property']]['access callback'])) {
+    return call_user_func($properties[$element->settings['property']]['access callback'], 'view', $element->settings['property'], $element->settings['type'], NULL, NULL);
+  }
+  return TRUE;
+}
+
+/**
+ * Custom callback to process the data query action.
+ */
+function rules_action_entity_query_process(RulesAbstractPlugin $element) {
+  $info['parameter']['value']['type'] = $element->settings['type'];
+  $info['provides']['entity_fetched']['type'] = 'list<' . $element->settings['type'] . '>';
+  $element->alterInfo($info);
 }
 
 /**

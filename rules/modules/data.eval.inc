@@ -29,7 +29,7 @@ function rules_action_data_set($data, $value, $settings, $state, $element) {
 }
 
 /**
- * Action: Fetch data
+ * Action: Fetch data.
  */
 function rules_action_entity_fetch($type, $id, $revision) {
   $info = entity_get_info($type);
@@ -46,7 +46,15 @@ function rules_action_entity_fetch($type, $id, $revision) {
 }
 
 /**
- * Action: Create data
+ * Action: Query entities.
+ */
+function rules_action_entity_query($type, $property, $value, $limit) {
+  $return = entity_metadata_entity_query($type, $property, $value, $limit);
+  return array('entity_fetched' => array_values($return));
+}
+
+/**
+ * Action: Create entities.
  */
 function rules_action_entity_create($type) {
   $args = func_get_args();
@@ -62,7 +70,7 @@ function rules_action_entity_create($type) {
 }
 
 /**
- * Action: Save data
+ * Action: Save entities.
  */
 function rules_action_entity_save($data, $immediate = FALSE, $settings, $state, $element) {
   $wrapper = $state->currentArguments['data'];
@@ -70,7 +78,7 @@ function rules_action_entity_save($data, $immediate = FALSE, $settings, $state, 
 }
 
 /**
- * Action: Delete data
+ * Action: Delete entities.
  */
 function rules_action_entity_delete($data, $settings, $state, $element) {
   $wrapper = $state->currentArguments['data'];
