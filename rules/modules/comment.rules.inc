@@ -90,19 +90,5 @@ function rules_comment_integration_access($type, $name) {
 }
 
 /**
- * Implements hook_rules_data_info() on behalf of the comment module.
- * @see rules_core_modules()
- */
-function rules_comment_data_info() {
-  return array(
-    'comment' => array(
-      'label' => t('comment'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
-  );
-}
-
-/**
  * @}
  */

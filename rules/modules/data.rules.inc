@@ -21,7 +21,7 @@ function rules_data_file_info() {
  * @see rules_core_modules()
  */
 function rules_data_data_info() {
-  return array(
+  $return = array(
     'text' => array(
       'label' => t('text'),
     ),
@@ -53,23 +53,16 @@ function rules_data_data_info() {
     ),
    'entity' => array(
       'label' => t('any entity'),
-    ),
-    'node' => array(
-      'label' => t('content'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
-    'user' => array(
-      'label' => t('user'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
-    'file' => array(
-      'label' => t('user'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
+    )
   );
+  foreach (entity_get_info() as $type => $info) {
+    $return[$type] = array(
+      'label' => $info['label'],
+      'parent' => 'entity',
+      'wrap' => TRUE,
+    );
+  }
+  return $return;
 }
 
 /**
