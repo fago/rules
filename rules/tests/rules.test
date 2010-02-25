@@ -616,26 +616,20 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test catching exceptions of handlers not being able to load.
+   * Test aborting silently when handlers are not able to load.
    */
-  function testVariableHandlerException() {
+  function testVariableHandlerFailing() {
     $rule = $this->createTestRule(FALSE, 'node_presave');
     $rule->action('rules_node_publish_action_save', array('node:select' => 'node_unchanged'));
     $rule->integrityCheck()->save();
     rules_clear_cache(TRUE);
 
     // On insert it's not possible to get the unchanged node during presave.
-    // @vid: temporary fix. TODO: remove.
-    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0, 'vid' => NULL));
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
 
     //debug(RulesLog::logger()->render());
-    try {
-      RulesLog::logger()->checkLog();
-      $this->fail("Exception for not being able to load not thrown.");
-    }
-    catch (Exception $e) {
-      $this->pass("Exception for not being able to load thrown.");
-    }
+    $text = RulesTestCase::t('Unable to load variable %node_unchanged, aborting.', array('node_unchanged'));
+    $this->assertTrue(strpos(RulesLog::logger()->render(), $text) !== FALSE, "Aborted evaluation.");
   }
 
   /**
