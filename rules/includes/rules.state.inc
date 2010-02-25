@@ -165,6 +165,9 @@ class RulesState extends FacesRoot {
         $data = call_user_func_array($this->info[$name]['handler'], rules_unwrap_data($this->variables));
         $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
         $this->info[$name]['handler'] = FALSE;
+        if (!isset($data)) {
+          throw new RulesException('Unable to load variable %name, aborting.', array('%name' => $name), RulesLog::INFO);
+        }
       }
       $this->variables += array($name => NULL);
     }

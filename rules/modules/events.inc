@@ -48,10 +48,9 @@ function rules_node_delete($node) {
  */
 function rules_events_node_var_unchanged($node) {
   $unchanged = drupal_static('rules_node_unchanged');
-  if (!isset($node->nid) || !isset($unchanged[$node->nid])) {
-    throw new RulesException("Unable to load the unchanged node variable.");
+  if (isset($node->nid) && isset($unchanged[$node->nid])) {
+    return $unchanged[$node->nid];
   }
-  return $unchanged[$node->nid];
 }
 
 /**
@@ -102,10 +101,9 @@ function rules_user_logout(&$edit, $account) {
  */
 function rules_events_account_var_unchanged($account) {
   $unchanged = drupal_static('rules_user_unchanged', array());
-  if (!isset($account->uid) || !isset($unchanged[$account->uid])) {
-    throw new RulesException("Unable to load the unchanged user variable.");
+  if (isset($account->uid) && isset($unchanged[$account->uid])) {
+    return $unchanged[$account->uid];
   }
-  return $unchanged[$account->uid];
 }
 
 
@@ -144,10 +142,9 @@ function rules_comment_delete($comment) {
  */
 function rules_events_comment_var_unchanged($comment) {
   $unchanged = drupal_static('rules_comment_unchanged');
-  if (!isset($comment->cid) || !isset($unchanged[$comment->cid])) {
-    throw new RulesException("Unable to load the unchanged comment variable.");
+  if (isset($comment->cid) && isset($unchanged[$comment->cid])) {
+    return $unchanged[$comment->cid];
   }
-  return $unchanged[$comment->cid];
 }
 
 

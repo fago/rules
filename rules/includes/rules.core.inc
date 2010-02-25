@@ -742,6 +742,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // That way we support executing actions without any info at all.
     if ($this->info['parameter']) {
       $state = $this->setUpState($args);
+      //TODO: use evaluation?
       $args = $this->getExecutionArguments($state);
     }
     else {
