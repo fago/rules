@@ -83,24 +83,5 @@ function rules_taxonomy_vocabulary_integration_access($type, $name) {
 }
 
 /**
- * Implements hook_rules_data_info() on behalf of the taxonomy module.
- * @see rules_core_modules()
- */
-function rules_taxonomy_data_info() {
-  return array(
-    'taxonomy_term' => array(
-      'label' => t('taxonomy term'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
-    'taxonomy_vocabulary' => array(
-      'label' => t('taxonomy vocabulary'),
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    ),
-  );
-}
-
-/**
  * @}
  */
