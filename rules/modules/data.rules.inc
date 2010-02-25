@@ -513,7 +513,7 @@ function rules_data_condition_info() {
  * evaluated elements can make use of this information.
  */
 function rules_condition_data_is_process(RulesAbstractPlugin $element) {
-  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && !is_array($element->settings['value'])) {
+  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && isset($element->settings['value']) && !is_array($element->settings['value'])) {
     if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
       $type = $vars[$parts[0]]['type'];
       $info = entity_get_info();
