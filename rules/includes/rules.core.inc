@@ -748,6 +748,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     else {
       $state = new RulesState($this);
     }
+    module_invoke_all('rules_config_execute', $this);
     $return = $this->executeCallback($args, $state);
     $state->cleanUp($this);
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
@@ -1029,6 +1030,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
     rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
+    module_invoke_all('rules_config_execute', $this);
     $return = $this->evaluate($state);
     $state->cleanUp($this);
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
