@@ -552,6 +552,19 @@ function hook_rules_config_delete($config) {
 }
 
 /**
+ * Respond to rules configuration execution.
+ *
+ * This hook is invoked right before the rules configuration is executed.
+ *
+ * @param RulesPlugin $config
+ *   The rules configuration that is being executed.
+ */
+function hook_rules_config_execute($config) {
+
+}
+
+
+/**
  * Define default rules configurations.
  *
  * This hook is invoked when rules configurations are loaded. The implementation

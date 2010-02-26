@@ -409,6 +409,7 @@ class RulesEventSet extends RulesRuleSet {
   public function execute() {
     rules_log('Reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
+    module_invoke_all('rules_config_execute', $this);
     $this->evaluate($state);
     $state->cleanUp($this);
     rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
