@@ -324,6 +324,17 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
   }
 
   /**
+   * Gets variables to return once the configuration has been executed.
+   */
+  protected function returnVariables(RulesState $state, $result = NULL) {
+    $var_info = $this->providesVariables();
+    foreach ($var_info as $name => $info) {
+      $vars[$name] = $this->getArgument($name, $info, $state);
+    }
+    return isset($vars) ? array_values(rules_unwrap_data($vars, $var_info)) : array();
+  }
+
+  /**
    * Sets up the execution state for the given arguments.
    *
    * The state will be passed around by copy to all evaluated rule elements,
@@ -742,14 +753,15 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // That way we support executing actions without any info at all.
     if ($this->info['parameter']) {
       $state = $this->setUpState($args);
-      //TODO: use evaluation?
-      $args = $this->getExecutionArguments($state);
+      module_invoke_all('rules_config_execute', $this);
+      $this->evaluate($state);
+      $return = $this->returnVariables($state);
     }
     else {
       $state = new RulesState($this);
+      module_invoke_all('rules_config_execute', $this);
+      $return = $this->executeCallback($args, $state);
     }
-    module_invoke_all('rules_config_execute', $this);
-    $return = $this->executeCallback($args, $state);
     $state->cleanUp($this);
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
@@ -985,14 +997,6 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return array();
   }
 
-  public function providesVariables() {
-    $provided = array();
-    foreach ($this->children as $key => $child) {
-      $provided += $child->providesVariables();
-    }
-    return $provided;
-  }
-
   public function availableVariables() {
     if (!isset($this->parent) || !empty($this->state)) {
       return isset($this->info['variables']) ? $this->info['variables'] : array();
@@ -1023,15 +1027,16 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   /**
-   * Note: Action container can never return something, but condition
-   * containers have to return a boolean.
+   * Condition containers just return a boolean while action containers return
+   * the configured provided variables as an array of variables.
    */
   public function execute() {
     $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
     rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $state = $this->setUpState(func_get_args());
     module_invoke_all('rules_config_execute', $this);
-    $return = $this->evaluate($state);
+    $result = $this->evaluate($state);
+    $return = $this->returnVariables($state, $result);
     $state->cleanUp($this);
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
@@ -1099,6 +1104,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
  */
 abstract class RulesActionContainer extends RulesContainerPlugin implements RulesActionInterface {
 
+  public function __construct($variables = array(), $providesVars = array()) {
+    $this->info['variables'] = $variables;
+    $this->info['provides'] = $providesVars;
+    $this->info = array_filter($this->info);
+  }
+
   /**
    * Add an action. Pass either an instance of the RulesActionInterface
    * or the arguments as needed by rules_action().
@@ -1156,6 +1167,13 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
 
   public function __sleep() {
     return parent::__sleep() + array('negate' => 'negate');
+  }
+
+  /**
+   * Just return the condition container's result.
+   */
+  protected function returnVariables(RulesState $state, $result = NULL) {
+    return $result;
   }
 }
 

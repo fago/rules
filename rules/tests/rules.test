@@ -387,6 +387,25 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertTrue($rule->access() === FALSE, 'Access check is working.');
   }
 
+  /**
+   * Test returning provided variables.
+   */
+  function testReturningVariables() {
+    $node = $this->drupalCreateNode();
+    $action = rules_action('entity_fetch', array('type' => 'node', 'id' => $node->nid));
+    list($node2) = $action->execute();
+    $this->assertTrue($node2->nid == $node->nid, 'Action returned a variable.');
+
+    $set = rules_rule_set(array(), array(
+      'node' => array('type' => 'node', 'label' => 'node'),
+    ));
+    $set->rule(rule()->action('entity_fetch', array('type' => 'node', 'id' => $node->nid, 'entity_fetched:var' => 'node')));
+    $set->integrityCheck()->save('rules_test_set_1');
+
+    list($node2) = $set->execute();
+    $this->assertTrue($node2->nid == $node->nid, 'Rule set returned a variable.');
+  }
+
   function testRuleBuilding() {
 
     /*
@@ -708,6 +727,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $msg = drupal_get_messages();
     $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
   }
+
 }
 
 /**
