@@ -48,6 +48,7 @@ class RulesEntityController extends EntityAPIController {
         foreach ($function() as $name => $entity) {
           $entity->name = $name;
           $entity->module = $module;
+          $entity->plugin = $entity->property('itemName');
           $entity->status |= ENTITY_IN_CODE;
           $this->defaultEntities[$name] = $entity;
         }
@@ -200,7 +201,7 @@ abstract class RulesExtendable extends FacesExtendable {
  * EntityDB too. Any CRUD related actions performed on contained plugins are
  * applied and the real db-entity is saved.
  */
-abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface {
+abstract class RulesPlugin extends RulesExtendable {
 
   /**
    * If this is a configuration saved to the db, the id of it.
@@ -555,16 +556,8 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
           $this->name .= chr(mt_rand(32, 126));
         }
       }
-      $this->invoke('presave');
       $this->data = $this;
-      if (isset($this->id)) {
-        $return = drupal_write_record('rules_config', $this, 'id');
-        $this->invoke('update');
-      }
-      else {
-        $return = drupal_write_record('rules_config', $this);
-        $this->invoke('insert');
-      }
+      $return = entity_get_controller('rules_config')->save($this);
       unset($this->data);
       rules_clear_cache();
       return $return;
@@ -578,8 +571,6 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
   }
 
   /**
-   * Implement the EntityAPIInterface.
-   *
    * If invoked on a rules configuration it is deleted from database. If
    * invoked on a contained rule element, it's removed from the configuration.
    */
@@ -593,39 +584,26 @@ abstract class RulesPlugin extends RulesExtendable implements EntityAPIInterface
       }
     }
     elseif (isset($this->id)) {
-      db_delete('rules_config')
-        ->condition('id', $this->id)
-        ->execute();
-      $this->invoke('delete');
-      entity_get_controller('rules_config')->resetCache();
+      entity_get_controller('rules_config')->delete(array($this->name));
       rules_clear_cache();
     }
   }
 
-  /**
-   * Implement EntityAPIInterface.
-   */
   public function internalIdentifier() {
     return isset($this->id) ? $this->id : NULL;
   }
 
   /**
-   * Implement EntityAPIInterface.
+   * Returns the config name.
    */
   public function identifier() {
     return isset($this->name) ? $this->name : NULL;
   }
 
-  /**
-   * Implement EntityAPIInterface.
-   */
   public function entityInfo() {
     return entity_get_info('rules_config');
   }
 
-  /**
-   * Implement EntityAPIInterface.
-   */
   public function entityType() {
     return 'rules_config';
   }
