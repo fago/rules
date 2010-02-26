@@ -8,7 +8,7 @@
 /**
  * The rules evaluation state.
  */
-class RulesState extends FacesRoot {
+class RulesState {
 
   /**
    * The known variables.

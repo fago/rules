@@ -95,171 +95,171 @@ if (!interface_exists('FacesExtendableInterface', FALSE)) {
 
 }
 
-
-
-/**
- * Provides a common ancestor that makes it possible for extenders to access
- * protected object properties and methods of the extendable object.
- */
-abstract class FacesRoot {
-
+if (!class_exists('FacesExtender', FALSE)) {
   /**
-   * Returns any property.
+   * A common base class for FacesExtenders. Extenders may access protected
+   * methods and properties of the extendable using the property() and call()
+   * methods.
    */
-  protected function &property($name) {
-    return $this->$name;
-  }
-
-  /**
-   * Invokes any method.
-   *
-   * This also allows to pass arguments by reference, so it may be used to
-   * pass arguments by reference to dynamically extended methods.
-   *
-   * @param $name
-   *   The method name.
-   * @param $arguments
-   *   An array of arguments to pass to the method.
-   */
-  public function call($name, array $args = array()) {
-    if (method_exists($this, $name)) {
-      return call_user_func_array(array($this, $name), $args);
-    }
-    return $this->__call($name, $args);
-  }
+  abstract class FacesExtender implements FacesExtenderInterface {}
 }
 
-/**
- * A common base class for FacesExtenders. Extenders may access protected
- * methods and properties of the extendable using the property() and call()
- * methods.
- */
-abstract class FacesExtender extends FacesRoot implements FacesExtenderInterface {}
 
-
-/**
- * Class providing an implementation of FacesExtendableInterface.
- */
-abstract class FacesExtendable extends FacesRoot implements FacesExtendableInterface {
-
-  protected $facesMethods = array();
-  protected $faces = array();
-  protected $facesIncludes = array();
-  static protected $facesIncluded = array();
+if (!class_exists('FacesExtendable', FALSE)) {
 
   /**
-   * Wraps calls to module_load_include() to prevent multiple inclusions.
-   *
-   * @see module_load_include()
+   * Class providing an implementation of FacesExtendableInterface.
    */
-  protected static function load_include($args) {
-    $args += array('type' => 'inc', 'module' => '', 'name' => NULL);
-    $key = implode(':', $args);
-    if (!isset(self::$facesIncluded[$key])) {
-      self::$facesIncluded[$key] = TRUE;
-      module_load_include($args['type'], $args['module'], $args['name']);
-    }
-  }
+  abstract class FacesExtendable implements FacesExtendableInterface {
 
-  /**
-   * Magic method: Invoke the dynamically implemented methods.
-   */
-  function __call($name, $arguments = array()) {
+    protected $facesMethods = array();
+    protected $faces = array();
+    protected $facesIncludes = array();
+    static protected $facesIncluded = array();
 
-    if (isset($this->facesMethods[$name])) {
-      $method = $this->facesMethods[$name];
-      // Include code, if necessary.
-      if (isset($this->facesIncludes[$name])) {
-        self::load_include($this->facesIncludes[$name]);
-        $this->facesIncludes[$name] = NULL;
+    /**
+     * Wraps calls to module_load_include() to prevent multiple inclusions.
+     *
+     * @see module_load_include()
+     */
+    protected static function load_include($args) {
+      $args += array('type' => 'inc', 'module' => '', 'name' => NULL);
+      $key = implode(':', $args);
+      if (!isset(self::$facesIncluded[$key])) {
+        self::$facesIncluded[$key] = TRUE;
+        module_load_include($args['type'], $args['module'], $args['name']);
       }
-      // We always pass the object reference and the name of the invoked method.
-      array_push($arguments, $this);
-      array_push($arguments, $name);
-      // Invoke the callback or extender class.
-      $callback = isset($method[0]) ? $method[0] : array($method[1], $name);
-      return call_user_func_array($callback, $arguments);
     }
-    $class = check_plain(get_class($this));
-    throw new FacesExtendableException("There is no method $name for this instance of the class $class.");
-  }
 
-  /**
-   * Implements FacesExtendableInterface.
-   */
-  public function facesAs($interface = NULL) {
-    if (!isset($interface)) {
-      return array_values($this->faces);
+    /**
+     * Magic method: Invoke the dynamically implemented methods.
+     */
+    function __call($name, $arguments = array()) {
+
+      if (isset($this->facesMethods[$name])) {
+        $method = $this->facesMethods[$name];
+        // Include code, if necessary.
+        if (isset($this->facesIncludes[$name])) {
+          self::load_include($this->facesIncludes[$name]);
+          $this->facesIncludes[$name] = NULL;
+        }
+        // We always pass the object reference and the name of the invoked method.
+        array_push($arguments, $this);
+        array_push($arguments, $name);
+        // Invoke the callback or extender class.
+        $callback = isset($method[0]) ? $method[0] : array($method[1], $name);
+        return call_user_func_array($callback, $arguments);
+      }
+      $class = check_plain(get_class($this));
+      throw new FacesExtendableException("There is no method $name for this instance of the class $class.");
     }
-    return in_array($interface, $this->faces) || $this instanceof $interface;
-  }
 
-  /**
-   * Implements FacesExtendableInterface.
-   */
-  public function extendByClass($interface, $className, array $includes = array()) {
-    if (!in_array('FacesExtenderInterface', class_implements($className))) {
-      throw new FacesExtendableException("The class " . check_plain($className) . " doesn't implement the FacesExtenderInterface.");
+    /**
+     * Implements FacesExtendableInterface.
+     */
+    public function facesAs($interface = NULL) {
+      if (!isset($interface)) {
+        return array_values($this->faces);
+      }
+      return in_array($interface, $this->faces) || $this instanceof $interface;
     }
-    $faces = call_user_func(array($className, 'implementsFaces'));
-    $interfaces = is_array($interface) ? $interface : array($interface);
 
-    foreach ($interfaces as $interface) {
-      if (!in_array($interface, $faces)) {
-        throw new FacesExtendableException("The class " . check_plain($className) . " doesn't implement the interface " . check_plain($interface) . ".");
+    /**
+     * Implements FacesExtendableInterface.
+     */
+    public function extendByClass($interface, $className, array $includes = array()) {
+      if (!in_array('FacesExtenderInterface', class_implements($className))) {
+        throw new FacesExtendableException("The class " . check_plain($className) . " doesn't implement the FacesExtenderInterface.");
+      }
+      $faces = call_user_func(array($className, 'implementsFaces'));
+      $interfaces = is_array($interface) ? $interface : array($interface);
+
+      foreach ($interfaces as $interface) {
+        if (!in_array($interface, $faces)) {
+          throw new FacesExtendableException("The class " . check_plain($className) . " doesn't implement the interface " . check_plain($interface) . ".");
+        }
+        $this->faces[$interface] = $interface;
+        $this->faces += class_implements($interface);
+        $face_methods = get_class_methods($interface);
+        $this->addIncludes($face_methods, $includes);
+        foreach ($face_methods as $method) {
+          $this->facesMethods[$method] = array(1 => $className);
+        }
+      }
+    }
+
+    /**
+     * Implements FacesExtendableInterface.
+     */
+    public function extend($interface, array $callbacks = array(), array $includes = array()) {
+      $face_methods = get_class_methods($interface);
+      if (array_diff($face_methods, array_keys($callbacks))) {
+        throw new FacesExtendableException("Missing methods for implementing the interface " . check_plain($interface) . ".");
       }
       $this->faces[$interface] = $interface;
       $this->faces += class_implements($interface);
-      $face_methods = get_class_methods($interface);
       $this->addIncludes($face_methods, $includes);
       foreach ($face_methods as $method) {
-        $this->facesMethods[$method] = array(1 => $className);
+        $this->facesMethods[$method] = array(0 => $callbacks[$method]);
       }
     }
-  }
 
-  /**
-   * Implements FacesExtendableInterface.
-   */
-  public function extend($interface, array $callbacks = array(), array $includes = array()) {
-    $face_methods = get_class_methods($interface);
-    if (array_diff($face_methods, array_keys($callbacks))) {
-      throw new FacesExtendableException("Missing methods for implementing the interface " . check_plain($interface) . ".");
+    /**
+     * Implements FacesExtendableInterface.
+     */
+    public function override(array $callbacks = array(), array $includes = array()) {
+      if (array_diff_key($callbacks, $this->facesMethods)) {
+        throw new FacesExtendableException("A not implemented method is to be overridden.");
+      }
+      $this->addIncludes(array_keys($callbacks), $includes);
+      foreach ($callbacks as $method => $callback) {
+        $this->facesMethods[$method] = array(0 => $callback);
+      }
     }
-    $this->faces[$interface] = $interface;
-    $this->faces += class_implements($interface);
-    $this->addIncludes($face_methods, $includes);
-    foreach ($face_methods as $method) {
-      $this->facesMethods[$method] = array(0 => $callbacks[$method]);
-    }
-  }
 
-  /**
-   * Implements FacesExtendableInterface.
-   */
-  public function override(array $callbacks = array(), array $includes = array()) {
-    if (array_diff_key($callbacks, $this->facesMethods)) {
-      throw new FacesExtendableException("A not implemented method is to be overridden.");
+    /**
+     * Adds in include files for the given methods while removing any old files.
+     * If a single include file is described, it's added for all methods.
+     */
+    protected function addIncludes($methods, $includes) {
+      $includes = isset($includes['module']) && is_string($includes['module']) ? array_fill_keys($methods, $includes) : $includes;
+      $this->facesIncludes = $includes + array_diff_key($this->facesIncludes, array_flip($methods));
     }
-    $this->addIncludes(array_keys($callbacks), $includes);
-    foreach ($callbacks as $method => $callback) {
-      $this->facesMethods[$method] = array(0 => $callback);
+
+    /**
+     * Only serialize what is really necessary.
+     */
+    public function __sleep() {
+      return array('facesMethods', 'faces', 'facesIncludes');
     }
-  }
 
-  /**
-   * Adds in include files for the given methods while removing any old files.
-   * If a single include file is described, it's added for all methods.
-   */
-  protected function addIncludes($methods, $includes) {
-    $includes = isset($includes['module']) && is_string($includes['module']) ? array_fill_keys($methods, $includes) : $includes;
-    $this->facesIncludes = $includes + array_diff_key($this->facesIncludes, array_flip($methods));
-  }
+    /**
+     * Makes protected properties accessible.
+     */
+    public function &property($name) {
+      $var = NULL;
+      if (isset($this->$name)) {
+        return $this->$name;
+      }
+      return $var;
+    }
 
-  /**
-   * Only serialize what is really necessary.
-   */
-  public function __sleep() {
-    return array('facesMethods', 'faces', 'facesIncludes');
+    /**
+     * Invokes any method.
+     *
+     * This also allows to pass arguments by reference, so it may be used to
+     * pass arguments by reference to dynamically extended methods.
+     *
+     * @param $name
+     *   The method name.
+     * @param $arguments
+     *   An array of arguments to pass to the method.
+     */
+    public function call($name, array $args = array()) {
+      if (method_exists($this, $name)) {
+        return call_user_func_array(array($this, $name), $args);
+      }
+      return $this->__call($name, $args);
+    }
   }
 }
