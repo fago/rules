@@ -450,7 +450,7 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     elseif (isset($this->settings[$name . ':select'])) {
       if (!($wrapper = $this->applyDataSelector($this->settings[$name . ':select'], $state))) {
-        throw new RulesException('Unable to apply data selector %selector.', array('%selector' => $selector));
+        throw new RulesException('Unable to apply data selector %selector.', array('%selector' => $this->settings[$name . ':select']));
       }
       $arg = $wrapper;
     }
@@ -624,7 +624,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * work.
    */
   public function destroy() {
-    unset($this->parent);
+    $this->parent = NULL;
   }
 }
 
