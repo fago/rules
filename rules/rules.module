@@ -121,8 +121,8 @@ function rules_loop($info = array(), $variables = NULL) {
  *   An array as for rule().
  * @return RulesRuleSet
  */
-function rules_rule_set($variables) {
-  return rules_plugin_factory('rule set', $variables);
+function rules_rule_set($variables, $provides = array()) {
+  return rules_plugin_factory('rule set', $variables, $provides);
 }
 
 /**

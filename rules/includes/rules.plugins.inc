@@ -89,6 +89,13 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   public function __sleep() {
     return parent::__sleep() + array('negate' => 'negate');
   }
+
+  /**
+   * Just return the boolean result.
+   */
+  protected function returnVariables(RulesState $state, $result = NULL) {
+    return $result;
+  }
 }
 
 /**
