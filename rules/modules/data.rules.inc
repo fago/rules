@@ -381,7 +381,8 @@ function rules_action_entity_create_validate($element) {
 function rules_action_entity_create_process(RulesAbstractPlugin $element) {
   $wrapper = entity_metadata_wrapper($element->settings['type']);
   // Add the data type's needed parameter for loading to the parameter info.
-  foreach ($wrapper as $name => $info) {
+  foreach ($wrapper as $name => $child) {
+    $info = $child->info();
     if (!empty($info['required'])) {
       $info += array('type' => 'text');
       // Prefix parameter names to avoid name clashes with existing parameters.
