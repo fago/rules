@@ -14,6 +14,13 @@
  */
 class RulesEntityController extends EntityAPIController {
 
+  public function load($ids = array(), $conditions = array()) {
+    // Bugfix: Make sure the cache is built before we start loading as the
+    // controller is currently not able to deal with recursive loads.
+    rules_get_cache();
+    return parent::load($ids, $conditions);
+  }
+
   /**
    * Overriden.
    * @see DrupalDefaultEntityController#attachLoad()
