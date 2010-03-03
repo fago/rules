@@ -171,7 +171,7 @@ if (!class_exists('EntityAPIController', FALSE)) {
           $this->ids = array_keys(array_diff_key($passed_ids, $entities));
         }
       }
-      if (!empty($this->entityInfo['exportable'])) {
+      if (!empty($this->entityInfo['exportable']) && ($this->ids !== array() || !$passed_ids)) {
         // Add default entities defined in code.
         $entities += $this->getDefaults($this->ids, $this->conditions);
       }
