@@ -233,10 +233,19 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   protected $state = NULL;
 
-  protected function setParent(RulesContainerPlugin $parent) {
-    if (!isset($this->parent)) {
-      $this->parent = $parent;
+  /**
+   * Sets a new parent element.
+   */
+  public function setParent(RulesContainerPlugin $parent) {
+    if ($this->parent == $parent) {
+      return;
     }
+    if (isset($this->parent) && ($key = array_search($this, $this->parent->children)) !== FALSE) {
+      // Remove element from any previous parent.
+      unset($this->parent->children[$key]);
+    }
+    $this->parent = $parent;
+    $parent->children[] = $this;
   }
 
   /**
@@ -1098,7 +1107,6 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
   public function action($name, $settings = array()) {
     $action = (is_object($name) && $name instanceof RulesActionInterface) ? $name : rules_action($name, $settings);
     $action->setParent($this);
-    $this->children[] = $action;
     return $this;
   }
 
@@ -1129,7 +1137,6 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
   public function condition($name, $settings = array()) {
     $condition = (is_object($name) && $name instanceof RulesConditionInterface) ? $name : rules_condition($name, $settings);
     $condition->setParent($this);
-    $this->children[] = $condition;
     return $this;
   }
 

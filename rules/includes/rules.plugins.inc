@@ -122,7 +122,8 @@ class Rule extends RulesActionContainer {
   public function conditions() {
     if (!isset($this->conditions)) {
       $this->conditions = rules_and();
-      $this->conditions->setParent($this);
+      // Don't use setParent() to avoid having it added to the children.
+      $this->conditions->parent = $this;
     }
     return $this->conditions->getIterator();
   }
@@ -149,10 +150,7 @@ class Rule extends RulesActionContainer {
    *   Returns $this to support chained usage.
    */
   public function condition($name, $settings = array()) {
-    if (!isset($this->conditions)) {
-      $this->conditions = rules_and();
-      $this->conditions->setParent($this);
-    }
+    $this->conditions();
     $this->conditions->condition($name, $settings);
     return $this;
   }
