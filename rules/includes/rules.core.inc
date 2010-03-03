@@ -356,7 +356,7 @@ abstract class RulesPlugin extends RulesExtendable {
 
     foreach ($this->setUpVariables() as $name => $info) {
       if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional'])) {
-        throw new RulesException('Argument ' . check_plain($name) . ' is missing.');
+        throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
       }
       $args += array($name => NULL);
       $this->state->addVariable($name, $args[$name], $info);
@@ -426,7 +426,7 @@ abstract class RulesPlugin extends RulesExtendable {
 
   protected function checkVarName($name) {
     if (!eregi('^[0-9a-z_\-]*$', $name)) {
-      throw new RulesException('%plugin: The variable name @name contains not allowed characters.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+      throw new RulesException('%plugin: The variable name @name contains not allowed characters.', array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
     }
   }
 
@@ -439,11 +439,11 @@ abstract class RulesPlugin extends RulesExtendable {
       if ($arg_info = $this->getArgumentInfo($name)) {
         // If we have enough metadata, check whether the types match.
         if (!RulesData::typesMatch($arg_info, $info)) {
-          throw new RulesException("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name));
+          throw new RulesException("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
         }
       }
       elseif (isset($this->parent) && !isset($this->settings[$name]) && empty($info['optional'])) {
-        throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name));
+        throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
       }
       //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
     }
@@ -459,7 +459,7 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     elseif (isset($this->settings[$name . ':select'])) {
       if (!($wrapper = $this->applyDataSelector($this->settings[$name . ':select'], $state))) {
-        throw new RulesException('Unable to apply data selector %selector.', array('%selector' => $this->settings[$name . ':select']));
+        throw new RulesException('Unable to apply data selector %selector.', array('%selector' => $this->settings[$name . ':select']), $this);
       }
       $arg = $wrapper;
     }
@@ -470,7 +470,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $arg = $var;
     }
     elseif (empty($info['optional'])) {
-      throw new RulesException('Required parameter ' . check_plain($name) . ' is missing.');
+      throw new RulesException('Required parameter ' . check_plain($name) . ' is missing.', $this);
     }
     else {
       $arg = !empty($info['default value']) ? $info['default value'] : NULL;
@@ -533,7 +533,7 @@ abstract class RulesPlugin extends RulesExtendable {
       if ($wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
         return $wrapper->info();
       }
-      throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $this->settings[$name . ':select']));
+      throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $this->settings[$name . ':select']), $this);
     }
     elseif (isset($this->settings[$name . ':type'])) {
       return array('type' => $this->settings[$name . ':type']);
@@ -961,7 +961,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    */
   public function integrityCheck() {
     if (!empty($this->info['variables']) && isset($this->parent)) {
-      throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()));
+      throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()), $this);
     }
     foreach ($this->children as $child) {
       $child->integrityCheck();
@@ -1270,9 +1270,20 @@ class RulesLog {
 
 class RulesException extends Exception {
 
-  public $msg, $args, $severity;
+  public $msg, $args, $severity, $element;
 
-  function __construct($msg, $args = array(), $severity = RulesLog::WARN) {
+  /**
+   * @param $msg
+   *   The exception message containing placeholder as t().
+   * @param $args
+   *   Replacement arguments such as for t().
+   * @param $element
+   *   The element of a configuration causing the exception.
+   * @param $severity
+   *   The RulesLog severity. Defaults to RulesLog::WARN.
+   */
+  function __construct($msg, $args = array(), $element = NULL, $severity = RulesLog::WARN) {
+    $this->element = $element;
     $this->msg = $msg;
     $this->args = $args;
     $this->severity = $severity;
