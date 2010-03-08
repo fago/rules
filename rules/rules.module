@@ -1054,7 +1054,10 @@ function rules_features_api() {
 /**
  * Calls the import hook to allow modules to react on the import.
  */
-function rules_import_hook(&$rule) {
-  module_invoke_all('rules_import', $rule);
+function rules_import_hook($rule) {
+  foreach (module_implements('rules_import') as $module) {
+    $function = $module . '_rules_import';
+    $function($rule);
+  }
   return $rule;
 }
