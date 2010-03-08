@@ -1023,6 +1023,35 @@ function rules_rule_format_upgrade($rule) {
 }
 
 /**
+ * Implementation of hook_token_list()
+ *
+ * We expose some simple types to token so that our simple rules variables can
+ * also be used by others when doing token replacement, this is actually more
+ * useful than the rules variables in themselves.
+ */
+function rules_token_list($type = 'all') {
+  if ($type == 'string' || $type == 'all') {
+    $tokens['string']['string']          = t("The string, passed through check_plain");
+    $tokens['string']['string-raw']      = t("The string, raw and unfiltered");
+    return $tokens;
+  }
+}
+
+/**
+ * Implementation of hook_token_values().
+ *
+ * @see rules_token_list().
+ */
+function rules_token_values($type, $object = NULL, $options = array()) {
+  if ($type == 'string') {
+    $string = $object;
+    $tokens['string']      = check_plain($string);
+    $tokens['string-raw']  = $string;
+    return $tokens;
+  }
+}
+
+/**
  * Convert a time string to a GMT (UTC) unix timestamp
  */
 function rules_gmstrtotime($time) {

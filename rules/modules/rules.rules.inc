@@ -19,7 +19,7 @@ function rules_rules_data_type_info() {
       'class' => 'rules_data_type_string',
       'identifiable' => FALSE,
       'eval input' => TRUE,
-      'token type' => FALSE,
+      'token type' => 'string',
     ),
     'number' => array(
       'label' => t('number'),
