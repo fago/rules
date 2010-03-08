@@ -148,7 +148,7 @@ function rules_forms_after_build($form, &$form_state) {
  * Implementation of hook_rules_import().
  * We need to activate the form event of the imported rule.
  */
-function rules_forms_rules_import(&$rule) {
+function rules_forms_rules_import($rule) {
   $event = $rule['#set'];
   // Check if it is a form-event-triggered rule
   if (preg_match('/^event_(.)+_form_(built|submit|validate)$/', $event)) {
