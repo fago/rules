@@ -20,3 +20,4 @@ files[] = modules/taxonomy.rules.inc
 files[] = modules/user.rules.inc
 files[] = ui/ui.core.inc
 dependencies[] = entity_metadata
+dependencies[] = entity
