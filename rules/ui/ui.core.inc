@@ -111,29 +111,25 @@ interface RulesPluginImplInterface extends RulesPluginUiInterface {
  *
  * @see RulesPluginImplInterface
  */
-class RulesAbstractPluginDefaults extends FacesExtender {
+class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
 
-  public function implementsFaces() {
-    return array('RulesPluginImplInterface');
+  public function execute() {
+    throw new RulesException($this->object->getPluginName() .": Execution implementation is missing.");
   }
 
-  public function execute($element) {
-    throw new RulesException($element->getPluginName() .": Execution implementation is missing.");
-  }
+  public function validate() {}
+  public function process() {}
+  public function form(&$form, &$form_state, $options = array()) {}
+  public function form_validate(&$form, &$form_state) {}
+  public function form_submit(&$form, &$form_state) {}
 
-  public function validate($element) {}
-  public function process($element) {}
-  public function form($element) {}
-  public function form_validate($element) {}
-  public function form_submit($element) {}
-
-  public function access($element) {
-    $info = $element->property('info');
-    if (!empty($info['access callback']) && !call_user_func($info['access callback'], $element->property('itemName'), $element->getElementName())) {
+  public function access() {
+    $info = $this->object->property('info');
+    if (!empty($info['access callback']) && !call_user_func($info['access callback'], $this->property('itemName'), $this->object->getElementName())) {
       return FALSE;
     }
     foreach ($info['parameter'] as $name => $info) {
-      if (isset($element->settings[$name . ':select']) && $wrapper = $element->call('applyDataSelector', array($element->settings[$name . ':select']))) {
+      if (isset($this->object->settings[$name . ':select']) && $wrapper = $this->call('applyDataSelector', array($this->object->settings[$name . ':select']))) {
         if ($wrapper->access('view') === FALSE) {
           return FALSE;
         }
@@ -143,7 +139,7 @@ class RulesAbstractPluginDefaults extends FacesExtender {
     return TRUE;
   }
 
-  public function operations($element) {}
-  public function buildContent($element) {}
-  public function help($element) {}
+  public function operations() {}
+  public function buildContent() {}
+  public function help() {}
 }

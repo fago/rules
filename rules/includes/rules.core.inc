@@ -14,18 +14,11 @@
  */
 class RulesEntityController extends EntityAPIController {
 
-  public function load($ids = array(), $conditions = array()) {
-    // Bugfix: Make sure the cache is built before we start loading as the
-    // controller is currently not able to deal with recursive loads.
-    rules_get_cache();
-    return parent::load($ids, $conditions);
-  }
-
   /**
    * Overriden.
    * @see DrupalDefaultEntityController#attachLoad()
    */
-  protected function attachLoad(&$queried_entities) {
+  protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
     $schema = drupal_get_schema($this->entityInfo['base table']);
     // Retrieve stdClass records and turn them in rules objects stored in 'data'
     $entities = array();
@@ -39,7 +32,7 @@ class RulesEntityController extends EntityAPIController {
       $entities[$entity->name] = $entity;
     }
     $queried_entities = $entities;
-    parent::attachLoad($queried_entities);
+    parent::attachLoad($queried_entities, $revision_id);
   }
 
   /**
@@ -625,21 +618,11 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Implement EntityAPIInterface.
-   */
-  public function invoke($hook) {
-    $info = $this->entityInfo();
-    if (!empty($info['fieldable']) && function_exists($function = 'field_attach_' . $hook)) {
-      $function('rules_config', $this);
-    }
-    module_invoke_all('rules_config_' . $hook, $this);
-  }
-
-  /**
    * Remove circular object references so the PHP garbage collector does its
    * work.
    */
   public function destroy() {
+    parent::destroy();
     $this->parent = NULL;
   }
 }
@@ -1049,6 +1032,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     foreach ($this->children as $key => $child) {
       $child->destroy();
     }
+    parent::destroy();
   }
 
   /**
