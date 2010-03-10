@@ -470,7 +470,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $arg = $var;
     }
     elseif (empty($info['optional'])) {
-      throw new RulesException('Required parameter ' . check_plain($name) . ' is missing.', $this);
+      throw new RulesException('Required parameter %name is missing.', array('%name' => $name), $this);
     }
     else {
       $arg = !empty($info['default value']) ? $info['default value'] : NULL;
