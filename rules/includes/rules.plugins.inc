@@ -316,6 +316,7 @@ class RulesLoop extends RulesActionContainer {
   );
 
   public function __construct($settings = array(), $variables = NULL) {
+    $this->setUp();
     $this->settings = $settings + array(
       'item:var' => 'list-item',
       'item:label' => t('Current list item'),
@@ -395,7 +396,8 @@ class RulesRuleSet extends RulesActionContainer {
     foreach ($sets as $id => $rule_set) {
       $rule_set->setSkipSetup();
       cache_set('set_' . $rule_set->name, $rule_set, 'cache_rules');
-      $rule_set->destroy();
+      // Set it back in case someone gets the object from cache.
+      $rule_set->setSkipSetup(FALSE);
     }
   }
 }
@@ -408,6 +410,7 @@ class RulesEventSet extends RulesRuleSet {
   protected $itemName = 'event set';
 
   public function __construct($info = array()) {
+    $this->setup();
     $this->info = $info;
   }
 
@@ -443,7 +446,6 @@ class RulesEventSet extends RulesRuleSet {
         $event->setSkipSetup();
         cache_set('event_' . $name, $event, 'cache_rules');
         $event->destroy();
-        //TODO: make sure GC can destroy the object.
       }
       else {
         $empty[] = $name;
