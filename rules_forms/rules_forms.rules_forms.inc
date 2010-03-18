@@ -65,6 +65,7 @@ function rules_forms_action_prefix_suffix_html_form($settings, &$form) {
  */
 function rules_forms_action_set_error_form($settings, &$form) {
   $form['settings']['element']['#required'] = FALSE;
+  $form['settings']['message']['#type'] = 'textarea';
 }
 
 /**
