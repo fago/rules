@@ -118,7 +118,7 @@ function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
     default:
     case '==':
-      return $data == $value;
+      return $data == $value || is_array($value) && in_array($data, $value);
     case '<':
       return $data < $value;
     case '>':
