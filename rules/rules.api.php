@@ -84,8 +84,9 @@
  *     is optional and there is no specified value. Optional.
  *   - restriction: Restrict how the argument for this parameter may be
  *     provided. Supported values are 'selector' and 'input'. Optional.
- *   - sanitize: Allows parameters of type 'text' to demand an already sanitized
- *     argument. Optionally.
+ *   - sanitize: Optionally. Allows parameters of type 'text' to demand an
+ *     already sanitized argument. If enabled, any user specified value won't be
+ *     sanitized itself, but replacements applied by input evaluators are.
  *  Each 'provides' array may contain the following properties:
  *   - label: The label of the variable. Start capitalized. Required.
  *   - type: The rules data type of the variable. All types declared in
@@ -344,6 +345,12 @@ function hook_rules_data_info() {
  *   key. Possible attributes for each sub-array are:
  *   - label: A label for the plugin. Start capitalized. Required.
  *   - class: The implementation class. Has to extend the RulesPlugin class.
+ *   - embeddable: A container class in which elements of those plugin may be
+ *     embedded or FALSE to disallow embedding. Common classes that are used
+ *     here are RulesConditionContainer and RulesActionContainer.
+ *   - component: If set to TRUE, the rules admin UI will list elements of those
+ *     plugin in the components UI and allows the creation of new components
+ *     based upon this plugin. Optional.
  *   - extenders: This allows one to specify faces extenders, which may be used
  *     to dynamically implement interfaces. Optional. All extenders specified
  *     here are setup automatically by rules once the object is created. To
@@ -375,13 +382,17 @@ function hook_rules_plugin_info() {
   return array(
     'or' => array(
       'class' => 'RulesOr',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
     ),
     'and' => array(
       'class' => 'RulesAnd',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
     ),
     'rule' => array(
       'class' => 'Rule',
-      'embeddable' => TRUE,
+      'embeddable' => 'RulesRuleSet',
       'extenders' => array (
       // Interfaces => array( class => className / methods => array of Methods).
       ),

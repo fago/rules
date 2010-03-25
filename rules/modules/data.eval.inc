@@ -117,14 +117,14 @@ function rules_action_data_list_remove($list, $item) {
 function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
     default:
-    case '=':
+    case '==':
       return $data == $value;
-    case '<=':
-      return $data <= $value;
-    case '>=':
-      return $data >= $value;
-    case 'IN':
-      return is_array($value) && in_array($data, $value);
+    case '<':
+      return $data < $value;
+    case '>':
+      return $data > $value;
+    case 'contains':
+      return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
   }
 }
 

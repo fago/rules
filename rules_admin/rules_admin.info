@@ -1,0 +1,9 @@
+; $Id$
+name = Rules UI
+description = Administrative interface for managing rules.
+package = Rules
+version = VERSION
+core = 7.x
+files[] = rules_admin.module
+files[] = rules_admin.inc
+dependencies[] = rules

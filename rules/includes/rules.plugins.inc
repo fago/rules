@@ -111,7 +111,7 @@ class Rule extends RulesActionContainer {
    * Whether this rule may fire recursive. For safety, this defaults to FALSE.
    */
   public $recursion = FALSE;
-  public $label = 'unlabelled';
+  public $label = 'unlabeled';
 
   /**
    * Get an iterator over all contained conditions. Note that this iterator also
@@ -139,7 +139,7 @@ class Rule extends RulesActionContainer {
    * @return RulesRecursiveElementIterator
    */
   public function actions() {
-    return $this->getIterator();
+    return parent::getIterator();
   }
 
   /**
@@ -192,6 +192,13 @@ class Rule extends RulesActionContainer {
     }
     parent::destroy();
   }
+
+  public function getIterator() {
+    $this->conditions();
+    $array = array_merge(array($this->conditions), $this->children);
+    return new RulesRecursiveElementIterator($array);
+  }
+
 }
 
 /**
@@ -207,6 +214,20 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
    */
   public function &events() {
     return $this->events;
+  }
+
+  /**
+   * Removes an event from the rule configuration.
+   *
+   * @param $event
+   *   The name of the event to remove.
+   * @return RulesReactionRule
+   */
+  public function removeEvent($event) {
+    if (($id = array_search($event, $this->events)) !== FALSE) {
+      unset($this->events[$id]);
+    }
+    return $this;
   }
 
   /**
@@ -281,6 +302,10 @@ class RulesAnd extends RulesConditionContainer {
     rules_log('AND evaluated to TRUE.');
     return !$this->negate;
   }
+
+  public function label() {
+    return $this->negate ? t('NOT AND') : t('AND');
+  }
 }
 
 /**
@@ -300,6 +325,10 @@ class RulesOr extends RulesConditionContainer {
     rules_log('OR evaluated to FALSE.');
     return $this->negate;
   }
+
+  public function label() {
+    return $this->negate ? t('NOT OR') : t('OR');
+  }
 }
 
 /**
@@ -317,7 +346,7 @@ class RulesLoop extends RulesActionContainer {
 
   public function __construct($settings = array(), $variables = NULL) {
     $this->setUp();
-    $this->settings = $settings + array(
+    $this->settings = (array)$settings + array(
       'item:var' => 'list-item',
       'item:label' => t('Current list item'),
     );
@@ -334,7 +363,6 @@ class RulesLoop extends RulesActionContainer {
 
   public function integrityCheck() {
     parent::integrityCheck();
-    $this->checkParameterSettings();
     $this->checkVarName($this->info['item:var']);
   }
 
@@ -357,7 +385,9 @@ class RulesLoop extends RulesActionContainer {
     $list_var = $this->getArgument('list', $this->parameter['list'], $state);
     $item_info = $this->listItemInfo();
     $name = $this->settings['item:var'];
-    rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
+    if (isset($this->settings['list:select'])) {
+      rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
+    }
 
     // Loop over the list and evaluate the children for each list item.
     foreach ($list_var as $key => $item_value) {
@@ -370,6 +400,10 @@ class RulesLoop extends RulesActionContainer {
 
   protected function stateVariables() {
     return array($this->settings['item:var'] => $this->listItemInfo()) + $this->availableVariables();
+  }
+
+  public function label() {
+    return t('Loop');
   }
 }
 
@@ -421,9 +455,9 @@ class RulesEventSet extends RulesRuleSet {
     $this->evaluate($state);
     $state->cleanUp($this);
     rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
-    // TODO: improve that to show the log for admins or log to watchdog.
+    // TODO: improve that to show the log for admins or log to watchdog
+    // in case of errors.
     RulesLog::logger()->checkLog();
-    //drupal_set_message(RulesLog::logger()->render());
   }
 
   public function rebuildCache(&$itemInfo, &$cache) {

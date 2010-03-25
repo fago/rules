@@ -1,0 +1,69 @@
+<?php
+// $Id$
+
+/**
+ * @file Rules Admin UI
+ */
+
+define('RULES_ADMIN_REACION_PATH', RULES_UI_PATH . '/reaction');
+define('RULES_ADMIN_COMPONENT_PATH', RULES_UI_PATH . '/components');
+
+/**
+ * Implementation of hook_menu()
+ */
+function rules_admin_menu() {
+  $items = array();
+  $items[RULES_UI_PATH] = array(
+    'title' => 'Rules',
+    'position' => 'right',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_reaction_overview'),
+    'description' => 'Manage reaction rules and rule components.',
+    'access arguments' => array('administer rules'),
+    'file' => 'rules_admin.inc',
+  );
+  $items[RULES_ADMIN_REACION_PATH] = array(
+    'title' => 'Reaction rules',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -1,
+  );
+  $items[RULES_ADMIN_REACION_PATH . '/add'] = array(
+    'title' => 'Add a new reaction rule',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_add_reaction_rule'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'rules_admin.inc',
+    'weight' => 0,
+  );
+  $items[RULES_ADMIN_COMPONENT_PATH] = array(
+    'title' => 'Components',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_components_overview'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules_admin.inc',
+    'weight' => 0,
+  );
+  $items[RULES_ADMIN_COMPONENT_PATH . '/add'] = array(
+    'title' => 'Add a new component',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_components_overview'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'rules_admin.inc',
+    'weight' => 0,
+  );
+  $items[RULES_UI_PATH .'/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_settings'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules_admin.inc',
+    'weight' => 1,
+  );
+  return $items;
+}
+
+

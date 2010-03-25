@@ -11,6 +11,8 @@
  */
 foreach (rules_core_modules() as $module) {
   module_load_include('inc', 'rules', "modules/$module.rules");
+  //TODO: Temporary hack. Force include to be included.
+  module_load_include('inc', 'rules', 'modules/events');
 }
 
 /**
@@ -20,7 +22,7 @@ foreach (rules_core_modules() as $module) {
  * rules data integration.
  */
 function rules_core_modules() {
-  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user');
+  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user', 'php');
 }
 
 /**
@@ -84,6 +86,32 @@ function rules_rules_data_info() {
   $items = array();
   foreach (rules_core_modules() as $module) {
     if (function_exists($function = "rules_{$module}_data_info")) {
+      $items += $function();
+    }
+  }
+  return $items;
+}
+
+/**
+ * Implements hook_rules_evaluator_info().
+ */
+function rules_rules_evaluator_info() {
+  $items = array();
+  foreach (rules_core_modules() as $module) {
+    if (function_exists($function = "rules_{$module}_evaluator_info")) {
+      $items += $function();
+    }
+  }
+  return $items;
+}
+
+/**
+ * Implements hook_rules_data_processor_info().
+ */
+function rules_rules_data_processor_info() {
+  $items = array();
+  foreach (rules_core_modules() as $module) {
+    if (function_exists($function = "rules_{$module}_data_processor_info")) {
       $items += $function();
     }
   }

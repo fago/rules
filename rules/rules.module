@@ -2,6 +2,14 @@
 // $Id$
 
 /**
+ * @file Rules engine module
+ */
+
+define('RULES_UI_PATH', 'admin/config/workflow/rules');
+define('RULES_UI_RULE_PATH', RULES_UI_PATH . '/rules');
+
+
+/**
  * Implements hook_init().
  */
 function rules_init() {
@@ -83,8 +91,8 @@ function rules_and($variables = NULL) {
 /**
  * Creates a loop.
  *
- * @param $info
- *   Info about the loop containing
+ * @param $settings
+ *   The loop settings, containing
  *     'list:select': The data selector for the list to loop over.
  *     'item:var': Optionally a name for the list item variable.
  *     'item:label': Optionally a lebel for the list item variable.
@@ -92,8 +100,8 @@ function rules_and($variables = NULL) {
  *   An optional array as for rule().
  * @return RulesLoop
  */
-function rules_loop($info = array(), $variables = NULL) {
-  return rules_plugin_factory('loop', $info, $variables);
+function rules_loop($settings = array(), $variables = NULL) {
+  return rules_plugin_factory('loop', $settings, $variables);
 }
 
 /**
@@ -189,6 +197,7 @@ function &rules_get_cache($cid = 'data') {
  */
 function _rules_rebuild_cache(&$cache = array()) {
   $cache = array();
+
   foreach(array('data_info', 'plugin_info') as $hook) {
     $cache[$hook] = rules_fetch_data($hook);
   }
@@ -270,8 +279,6 @@ function &rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
  *   An array containing unwrapped or passed through data.
  */
 function rules_unwrap_data(array $data, $info = array()) {
-  //TODO: support a method for getting sanitized values of text wrappers,
-  // so tokens can make use of it.
   foreach ($data as $key => $entry) {
     // If it's a wrapper, unwrap.
     if ($entry instanceof EntityMetadataWrapper) {
@@ -301,43 +308,74 @@ function rules_rules_plugin_info() {
   return array(
     'condition' => array(
       'class' => 'RulesCondition',
+      'embeddable' => 'RulesConditionContainer',
       'extenders' => array (
         'RulesPluginImplInterface' => array(
           'class' => 'RulesAbstractPluginDefaults',
-          //'file' => '',
+        ),
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesAbstractPluginUI',
         ),
       ),
     ),
     'action' => array(
       'class' => 'RulesAction',
+      'embeddable' => 'RulesActionContainer',
       'extenders' => array (
         'RulesPluginImplInterface' => array(
           'class' => 'RulesAbstractPluginDefaults',
+        ),
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesAbstractPluginUI',
         ),
       ),
     ),
     'or' => array(
       'class' => 'RulesOr',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesConditionContainerUI',
+        ),
+      ),
     ),
     'and' => array(
       'class' => 'RulesAnd',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesConditionContainerUI',
+        ),
+      ),
     ),
     'rule' => array(
       'class' => 'Rule',
-      'embeddable' => TRUE,
-      'extenders' => array (
-        //Interfaces => array( class => className / methods => array of Methods)
-      ),
-      'overrides' => array(
-        //array of overrides each being an array ('methods' => .., 'file' => ..)
+      'embeddable' => 'RulesRuleSet',
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesRuleUI',
+        ),
       ),
     ),
     'loop' => array(
-      'class' => 'RulesLoop'
+      'class' => 'RulesLoop',
+      'embeddable' => 'RulesActionContainer',
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesActionContainerUI',
+        ),
+      ),
     ),
     'reaction rule' => array(
       'class' => 'RulesReactionRule',
       'embeddable' => FALSE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesReactionRuleUI',
+        ),
+      ),
     ),
     'event set' => array(
       'class' => 'RulesEventSet',
@@ -345,8 +383,14 @@ function rules_rules_plugin_info() {
     ),
     'rule set' => array(
       'class' => 'RulesRuleSet',
-      // Rule sets don't get embedded - we use a separate action to execute it.
+      'component' => TRUE,
+      // Rule sets don't get embedded - we use a separate action to execute.
       'embeddable' => FALSE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesRuleSetUI',
+        ),
+      ),
     ),
   );
 }
@@ -379,12 +423,18 @@ function rules_entity_info() {
  * Implementation of hook_hook_info().
  */
 function rules_hook_info() {
-  foreach(array('plugin_info', 'data_info', 'condition_info', 'action_info', 'event_info', 'file_info') as $hook) {
+  foreach(array('plugin_info', 'data_info', 'condition_info', 'action_info', 'event_info', 'file_info', 'evaluator_info', 'data_processor_info') as $hook) {
     $hooks['rules_' . $hook] = array(
+      'group' => 'rules',
+    );
+    $hooks['rules_' . $hook . '_alter'] = array(
       'group' => 'rules',
     );
   }
   $hooks['default_rules_configuration'] = array(
+    'group' => 'rules_defaults',
+  );
+  $hooks['default_rules_configuration_alter'] = array(
     'group' => 'rules_defaults',
   );
   return $hooks;
@@ -568,7 +618,25 @@ function rules_update_array(array $array, array $update) {
 }
 
 /**
- * Implementation of hook_theme_registry_alter().
+ * Extracts the property with the given name.
+ *
+ * @param $arrays
+ *   An array of arrays from which a property is to be extracted.
+ * @param $key
+ *   The name of the property to extract.
+ *
+ * @return An array of extracted properties, keyed as in $arrays-
+ */
+function rules_extract_property($arrays, $key) {
+  $data = array();
+  foreach ($elements as $name => $info) {
+    $data[$name] = $info[$key];
+  }
+  return $data;
+}
+
+/**
+ * Implements hook_theme_registry_alter().
  *
  * We need to use the alter hook here, so we can make sure we are the first
  * prepross handler called. So drupal messages aren't consumed before the
@@ -578,4 +646,182 @@ function rules_update_array(array $array, array $update) {
  */
 function rules_theme_registry_alter(&$items) {
   array_unshift($items['page']['preprocess functions'], '_rules_action_drupal_goto_handler');
+}
+
+/**
+ * Implements hook_theme().
+ */
+function rules_theme() {
+  return array(
+    'rules_rule' => array(
+      'render element' => 'form',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_element_view' => array(
+      'render element' => 'form',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_elements' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function rules_permission() {
+  return array(
+    'administer rules' => array(
+      'title' => t('Administer rule configurations'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ * Provides some callbacks used by the embeddable UI.
+ */
+function rules_menu() {
+  $items[RULES_UI_RULE_PATH . '/%rules_config'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Editing @plugin "@label"', 5),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_form_edit_rules_config', 5),
+    'access arguments' => array('administer rules'),
+    'description' => 'Manage reaction rules and rule components.',
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/add'] = array(
+    'title' => 'Add an element',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_add_element', 5, 7, 8),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/add/event'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Addin events to @plugin "@label"', 5),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_add_event', 5),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(5),
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/edit/%rules_element'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Editing @plugin "@label"', 7),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_edit_element', 5, 7),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(5),
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/delete/%rules_element'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Editing @plugin "@label"', 7),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_delete_element', 5, 7),
+    'access arguments' => array('administer rules'),
+    'load arguments' => array(5),
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/delete'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Editing @plugin "@label"', 5),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_form_delete_rules_config', 5),
+    'access arguments' => array('administer rules'),
+    'description' => 'Manage reaction rules and rule components.',
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  $items[RULES_UI_RULE_PATH . '/%rules_config/event/remove'] = array(
+    //@todo: improve title.
+    'title' => 'Remove event',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_remove_event', 5, 8),
+    'access arguments' => array('administer rules'),
+    'description' => 'Remove an event from a reaction rule.',
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
+  return $items;
+}
+
+/**
+ * Callback for loading rules configuration elements.
+ */
+function rules_element_load($element_id, $config_name) {
+  $config = rules_config_load($config_name);
+  return RulesPluginUI::getChildElementById($config, $element_id);
+}
+
+/**
+ * Callback for getting the title as configured.
+ */
+function rules_get_title($text, $element) {
+  return t($text, array('@label' => $element->label(), '@plugin' => $element->plugin()));
+}
+
+/**
+ * Implements hook_page_build() to add the rules debug log to the page bottom.
+ */
+function rules_page_build(&$page) {
+  if (variable_get('rules_debug', FALSE)) {
+    $region = 'help';
+
+    if (isset($_SESSION['rules_debug'])) {
+      foreach ($_SESSION['rules_debug'] as $log) {
+        $page[$region]['rules_debug'][] = array(
+          '#markup' => $log,
+        );
+      }
+      unset($_SESSION['rules_debug']);
+    }
+    $logger = RulesLog::logger();
+    if ($log = $logger->render()) {
+      $page[$region]['rules_debug'][] = array(
+        '#markup' => $log,
+      );
+      $logger->clear();
+    }
+    if (!empty($page[$region]['rules_debug'])) {
+      $page[$region]['rules_debug']['#attached'] = array(
+        'css' => array(drupal_get_path('module', 'rules') . '/ui/rules.ui.css'),
+      );
+      $page[$region]['rules_debug']['heading'] = array(
+        '#markup' => '<h3>' . t('Rules evaluation log') . '</h3>',
+        '#weight' => -1
+      );
+      $page[$region]['rules_debug'] += array(
+        '#prefix' => '<div class="rules-debug-log">',
+        '#suffix' => '</div>',
+        '#weight' => 5
+      );
+    }
+  }
+}
+
+/**
+ * Implements hook_exit().
+ */
+function rules_exit() {
+  if (variable_get('rules_debug', FALSE) && $log = RulesLog::logger()->render()) {
+    // Keep the log in the session so we can show it on the next page.
+    $_SESSION['rules_debug'][] = $log;
+  }
+}
+
+/**
+ * General form submit handler, that rebuilds the form
+ */
+function rules_form_submit_rebuild($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
 }
