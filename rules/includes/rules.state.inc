@@ -236,6 +236,32 @@ class RulesState {
     $this->blocked = $previously_blocked;
     unset($this->save[$selector]);
   }
+
+  /**
+   * Returns an entity metadata wrapper as specified in the selector.
+   *
+   * @param $selector
+   *   The selector string, e.g. "node:author:mail".
+   * @return EntityMetadataWrapper
+   *   The wrapper for the given selector or FALSE if the selector couldn't be
+   *   applied.
+   */
+  public function applyDataSelector($selector) {
+    $parts = explode(':', $selector, 2);
+    $wrapper = $this->get($parts[0]);
+    if ($wrapper && $wrapper instanceof EntityMetadataWrapper && count($parts) > 1) {
+      try {
+        foreach (explode(':', $parts[1]) as $name) {
+          $wrapper = $wrapper->get($name);
+        }
+      }
+      // In case of an exception or we were unable to get a wrapper, return FALSE.
+      catch (EntityMetadataWrapperException $e) {
+        return FALSE;
+      }
+    }
+    return isset($wrapper) && $wrapper instanceof EntityMetadataWrapper ? $wrapper : FALSE;
+  }
 }
 
 /**

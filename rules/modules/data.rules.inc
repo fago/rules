@@ -24,28 +24,35 @@ function rules_data_data_info() {
   $return = array(
     'text' => array(
       'label' => t('text'),
+      'ui class' => 'RulesDataUIText',
     ),
    'decimal' => array(
       'label' => t('decimal number'),
       'parent' => 'text',
+      'ui class' => 'RulesDataUIText',
     ),
    'integer' => array(
       'label' => t('integer'),
       'class' => 'RulesIntegerWrapper',
       'parent' => 'decimal',
+      'ui class' => 'RulesDataUIText',
     ),
    'date' => array(
       'label' => t('date'),
+      'ui class' => 'RulesDataUIText',
     ),
    'duration' => array(
       'label' => t('duration'),
+      'ui class' => 'RulesDataUIText',
     ),
    'boolean' => array(
       'label' => t('truth value'),
+      'ui class' => 'RulesDataUIBoolean',
     ),
    'uri' => array(
       'label' => t('URI'),
       'parent' => 'text',
+      'ui class' => 'RulesDataUIText',
     ),
    'list' => array(
       'label' => t('list'),
@@ -56,11 +63,13 @@ function rules_data_data_info() {
     )
   );
   foreach (entity_get_info() as $type => $info) {
-    $return[$type] = array(
-      'label' => $info['label'],
-      'parent' => 'entity',
-      'wrap' => TRUE,
-    );
+    if (!empty($info['label'])) {
+      $return[$type] = array(
+        'label' => $info['label'],
+        'parent' => 'entity',
+        'wrap' => TRUE,
+      );
+    }
   }
   return $return;
 }
@@ -282,11 +291,37 @@ function rules_data_action_info() {
  * Customize access check for data set action.
  */
 function rules_action_data_set_access(RulesAbstractPlugin $element) {
-  if (!$element->extender('RulesAbstractPluginDefaults')->access()) {
-    return FALSE;
-  }
-  if (isset($element->settings['data:select']) && $wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
+  if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     return $wrapper instanceof EntityMetadataWrapper && $wrapper->access('edit');
+  }
+}
+
+/**
+ * Form alter callback for the data_set action.
+ */
+function rules_action_data_set_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
+  if (!isset($form_state['rules_element_step'])) {
+    unset($form['parameter']['value']);
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Continue'),
+      '#limit_validation_errors' => array('parameter', 'data'),
+      '#submit' => array('rules_form_submit_rebuild'),
+    );
+    $form_state['rules_element_step'] = 'data_value';
+    // Clear the parameter mode for the value parameter, so its gets the proper
+    // default value based upon the type of the the selected data on rebuild.
+    unset($form_state['parameter_mode']['value']);
+  }
+}
+
+/**
+ * Process callback for the data_set action.
+ */
+function rules_action_data_set_process(RulesAbstractPlugin $element) {
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element->alterInfo($element_info);
   }
 }
 
@@ -294,9 +329,6 @@ function rules_action_data_set_access(RulesAbstractPlugin $element) {
  * Custom access callback for data create and fetch action.
  */
 function rules_action_entity_createfetch_access(RulesAbstractPlugin $element) {
-  if (!$element->extender('RulesAbstractPluginDefaults')->access()) {
-    return FALSE;
-  }
   $op = $element->getElementName() == 'entity_create' ? 'create' : 'view';
   return entity_metadata_entity_access($op, $element->settings['type']);
 }
@@ -397,10 +429,7 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
  * Custom access callback for data save and delete action.
  */
 function rules_action_entity_savedelete_access(RulesAbstractPlugin $element) {
-  if (!$element->extender('RulesAbstractPluginDefaults')->access()) {
-    return FALSE;
-  }
-  if ($wrapper = $element->call('applyDataSelector', array($element->settings['data:select']))) {
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $op = $element->getElementName() == 'entity_save' ? 'save' : 'delete';
     return $wrapper instanceof EntityDrupalWrapper && $wrapper->entityAccess($op);
   }
@@ -490,7 +519,9 @@ function rules_data_condition_info() {
           'label' => t('Operator'),
           'description' => t('The comparison operator.'),
           'optional' => TRUE,
-          'default value' => '=',
+          'default value' => '==',
+          'options list' => 'rules_condition_data_is_operator_options',
+          'restriction' => 'input',
         ),
         'value' => array(
           'type' => '*',
@@ -514,6 +545,11 @@ function rules_data_condition_info() {
  * evaluated elements can make use of this information.
  */
 function rules_condition_data_is_process(RulesAbstractPlugin $element) {
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element->alterInfo($element_info);
+  }
+  // Assert the bundle of entities, if its compared.
   if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && isset($element->settings['value']) && !is_array($element->settings['value'])) {
     if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
       $type = $vars[$parts[0]]['type'];
@@ -525,6 +561,47 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
     }
   }
 }
+
+/**
+ * Form alter callback for the condition data_is.
+ * Use multiple steps to configure the condition as the
+ */
+function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
+  if (!isset($form_state['rules_element_step'])) {
+    unset($form['parameter']['op'], $form['parameter']['value']);
+    $form_state['rules_element_step'] = 'data_value';
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Continue'),
+      '#limit_validation_errors' => array('parameter', 'data'),
+      '#submit' => array('rules_form_submit_rebuild'),
+    );
+    // Clear the parameter mode for the value parameter, so its gets the proper
+    // default value based upon the type of the the selected data on rebuild.
+    unset($form_state['parameter_mode']['value']);
+  }
+}
+
+/**
+ * Provides configuration help for the data_is condition.
+ */
+function rules_condition_data_is_help() {
+  return array('#markup' => t('Currently you have to know which data selectors are available. Helpful not? ;)'));
+}
+
+/**
+ * Options list callback for condition data_is.
+ */
+function rules_condition_data_is_operator_options() {
+  return array(
+    '==' => t('equals'),
+    '<' => t('is lower than'),
+    '>' => t('is greather than'),
+    'contains' => t('contains'),
+  );
+}
+
+
 
 /**
  * @}

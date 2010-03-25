@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+.rules-container-plugin ul.action-links .delete a, .rules-container-plugin ul.action-links .edit a {
+	background: none;
+	padding-left: 0px;
+}
+
+.rules-container-plugin ul.action-links a {
+  line-height: 1em;
+}
+
+.rules-container-plugin ul.action-links {
+	margin: 0px;
+}
+
+div ul.rules-operations-add {
+	margin: 0px;
+	margin-bottom: 2em;
+}
+
+.rules_hidden {
+  Display: none;
+}
+
+.rules-debug-log {
+	background-color: #EEEEEE;
+	border: 1px solid #CCCCCC;
+	font-color: #333333;
+	padding: 5px;
+	margin: 2em;
+}

@@ -230,7 +230,7 @@ function rules_get_entity_view_modes($type, $name) {
  * Getter callback for the log entry message property.
  */
 function rules_system_log_get_message($log_entry) {
-  return t($log_entry['message'], $log_entry['variables']);
+  return t($log_entry['message'], (array)$log_entry['variables']);
 }
 
 /**

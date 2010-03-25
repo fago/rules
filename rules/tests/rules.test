@@ -353,6 +353,19 @@ class RulesTestCase extends DrupalWebTestCase {
    * Test using loops.
    */
   function testLoops() {
+    // Test passing the list parameter as argument to ensure that is working
+    // generally for plugin container too.
+    $loop = rules_loop();
+    $loop->action('drupal_message', array('message' => 'test'));
+    $arg_info = $loop->argumentInfo();
+    $this->assert($arg_info['list']['type'] == 'list', 'Argument info contains list.');
+    $loop->execute(array(1, 2));
+
+    // Ensure the action has been executed twice, once for each list item.
+    $msg = drupal_get_messages();
+    $this->assert($msg['status'][0] == 'test' && $msg['status'][1], 'Loop has been properly executed');
+
+    // Now test looping over nodes.
     $node1 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
     $node2 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
     $node3 = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
@@ -405,6 +418,23 @@ class RulesTestCase extends DrupalWebTestCase {
     list($node2) = $set->execute();
     $this->assertTrue($node2->nid == $node->nid, 'Rule set returned a variable.');
   }
+
+  /**
+   * Tests using input evaluators.
+   */
+  function testInputEvaluators() {
+    $node = $this->drupalCreateNode(array('title' => '<b>The body & nothing.</b>', 'type' => 'page'));
+
+    $rule = rule(array('nid' => array('type' => 'integer')));
+    $rule->action('rules_action_load_node')
+         ->action('drupal_message', array('message' => 'Title: [node_loaded:title]'))
+         ->execute($node->nid);
+
+    RulesLog::logger()->checkLog();
+    $msg = drupal_get_messages();
+    $this->assertEqual(array_pop($msg['status']), 'Title: ' . check_plain('<b>The body & nothing.</b>'), 'Token input evaluator applied.');
+  }
+
 
   function testRuleBuilding() {
 
@@ -547,7 +577,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $rule = rules_reaction_rule();
     $rule->event($event)
          ->condition(rules_condition('data_is', array('data:select' => 'node:status', 'value' => TRUE))->negate())
-         ->condition('data_is', array('data:select' => 'node:type', 'op' => 'IN', 'value' => array('page', 'story')));
+         ->condition('data_is', array('data:select' => 'node:type', 'value' => array('page', 'story')));
     if ($action) {
       $rule->action('rules_action_delete_node');
     }
@@ -666,7 +696,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     node_save($node);
 
-    $text = RulesTestCase::t('Not evaluating the rule %unlabelled to prevent recursion.', array('unlabelled'));
+    $text = RulesTestCase::t('Not evaluating the rule %unlabeled to prevent recursion.', array('unlabeled'));
     $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
     //debug(RulesLog::logger()->render());
   }
@@ -745,7 +775,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test', 'entity_metadata');
+    parent::setUp('rules', 'rules_test', 'entity_metadata', 'php');
     RulesLog::logger()->clear();
   }
 
@@ -823,7 +853,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     watchdog('php', 'test %message', array('%message' => 'message'));
     $msg = drupal_get_messages();
-    $this->assertEqual($msg['status'][0], t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
+    $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
   }
 
   function testListActions() {
@@ -885,4 +915,33 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 
+  function testPHPIntegration() {
+    $node = $this->drupalCreateNode(array('title' => 'foo'));
+    $rule = rule(array('var_name' => array('type' => 'node')));
+    $rule->condition('php_eval', array('code' => 'return TRUE;'))
+         ->action('php_eval', array('code' => 'drupal_set_message("Executed-" . $var_name->title);'))
+         ->action('drupal_message', array('message' => 'Title: <? echo $var_name->title; ?> Token: [var_name:title]'));
+
+    $rule->execute($node);
+    $rule->access();
+    RulesLog::logger()->checkLog();
+    $msg = drupal_get_messages();
+    $this->assertEqual(array_pop($msg['status']), "Title: foo Token: foo", 'PHP input evaluation has been applied.');
+    $this->assertEqual(array_pop($msg['status']), "Executed-foo", 'PHP code condition and action have been evaluated.');
+
+    // Test PHP data processor
+    $rule = rule(array('var_name' => array('type' => 'node')));
+    $rule->action('drupal_message', array(
+      'message:select' => 'var_name:title',
+      'message:process' => array(
+        'php' => array('code' => 'return "Title: $value";')
+      ),
+    ));
+    $rule->execute($node);
+    $rule->access();
+    RulesLog::logger()->checkLog();
+    $msg = drupal_get_messages();
+    $this->pass(RulesLog::logger()->render());
+    $this->assertEqual(array_pop($msg['status']), "Title: foo", 'PHP data processor has been applied.');
+  }
 }
