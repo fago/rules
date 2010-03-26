@@ -363,6 +363,9 @@ function node_rules_data_type_info() {
 class rules_data_type_node extends rules_data_type {
   function save() {
     $node = &$this->get();
+    // Bug fix: Make sure we don't create another revision when we react on the
+    // creation of an revision.
+    unset($node->revision);
     node_save($node);
     return TRUE;
   }
