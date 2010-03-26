@@ -189,7 +189,7 @@ function rules_features_process_rule($rule, &$export, &$pipe) {
     }
   }
   foreach (array('condition', 'action') as $type) {
-    _rules_features_process_rule($rule['#'. $type .'s'], $export, $pipe);
+    _rules_features_process_rule((array)$rule['#'. $type .'s'], $export, $pipe);
   }
 }
 
@@ -214,7 +214,7 @@ function _rules_features_process_rule($element, &$export, &$pipe) {
 
   // Recurse
   foreach (element_children($element) as $key) {
-    _rules_features_process_rule($element[$key], $export, $pipe);
+    _rules_features_process_rule((array)$element[$key], $export, $pipe);
   }
 }
 
