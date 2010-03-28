@@ -405,7 +405,7 @@ function rules_entity_info() {
       'controller class' => 'RulesEntityController',
       'base table' => 'rules_config',
       'fieldable' => TRUE,
-      'object keys' => array(
+      'entity keys' => array(
         'id' => 'id',
         'name' => 'name',
         'bundle' => 'name',

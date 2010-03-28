@@ -349,10 +349,10 @@ function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
   $info = entity_get_info($element->settings['type']);
 
   // Fix the type of the identifier.
-  $element_info['parameter']['id']['type'] = isset($info['object keys']['name']) ? 'text' : 'integer';
+  $element_info['parameter']['id']['type'] = isset($info['entity keys']['name']) ? 'text' : 'integer';
 
   // Add an optional revision parameter, if supported.
-  if (isset($info['object keys']['revision'])) {
+  if (isset($info['entity keys']['revision'])) {
     $element_info['parameter']['revision_id'] = array(
       'type' => 'integer',
       'label' => t('Revision identifier'),
@@ -554,7 +554,7 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
     if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
       $type = $vars[$parts[0]]['type'];
       $info = entity_get_info();
-      if (isset($info[$type]['object keys']['bundle']) && $info[$type]['object keys']['bundle'] == $parts[1]) {
+      if (isset($info[$type]['entity keys']['bundle']) && $info[$type]['entity keys']['bundle'] == $parts[1]) {
         // Assert that the object is of bundle $value.
         $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
       }
