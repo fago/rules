@@ -205,7 +205,8 @@ function rules_data_action_info() {
            'description' => t('Usually saving is postponed till the end of the evaluation, so that multiple saves can be fold into one. If this set, saving is forced to happen immediately.'),
            'default value' => FALSE,
            'optional' => TRUE,
-         )
+           'restriction' => 'input',
+         ),
       ),
       'group' => t('Data'),
       'access callback' => 'rules_data_action_access',
