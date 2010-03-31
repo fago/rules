@@ -26,6 +26,12 @@ function theme_rules_elements($variables) {
     $element['element_id']['#attributes']['class'] = array('rules-element-id');
     $element['weight']['#attributes']['class'] = array('rules-element-weight');
 
+    $element['label']['label']['#prefix'] = '<div>';
+    $element['label']['label']['#suffix'] = '</div>';
+
+    $element['label']['config']['#prefix'] = '<div class="description">';
+    $element['label']['config']['#suffix'] = '</div>';
+
     $row = array();
     $row[] = theme('indentation', array('size' => $element['#depth'])) . drupal_render($element['label']);
     $row[] = drupal_render($element['weight']) . drupal_render($element['parent_id']) . drupal_render($element['element_id']);

@@ -653,15 +653,11 @@ function rules_theme_registry_alter(&$items) {
  */
 function rules_theme() {
   return array(
-    'rules_rule' => array(
-      'render element' => 'form',
-      'file' => 'ui/ui.theme.inc',
-    ),
-    'rules_element_view' => array(
-      'render element' => 'form',
-      'file' => 'ui/ui.theme.inc',
-    ),
     'rules_elements' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_container_label' => array(
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),

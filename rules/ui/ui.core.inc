@@ -317,17 +317,50 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
   }
 
+  /**
+   * Returns the name of class for the given data type.
+   *
+   * @param $dataType
+   *  The name of the data typ
+   * @return String
+   */
+  public function getDataTypeClass($dataType) {
+    $data_info = rules_fetch_data('data_info');
+    return $data_info[$dataType]['ui class'];
+  }
+
+  /**
+   * Returns the parsed value of a parameter
+   */
+  public function getParameterValue($name) {
+    if (isset($this->element->settings[$name . ':select'])) {
+      $value = $this->element->settings[$name . ':select'];
+    }
+    else {
+      $parameters = $this->element->parameterInfo();
+      $type = $parameters[$name]['type'];
+      $value = call_user_func(array($this->getDataTypeClass($type), 'parseData'), $this->element->settings[$name]);
+    }
+    return $value;
+  }
 
   /**
    * Implements RulesPluginUIInterface.
    */
-  //TODO: Return info render array for use in table.
   public function buildContent() {
-    $form['parameter']['#markup'] = t('Parameter:');
+    $form['parameter']['#heading'] = t('Parameter:');
     foreach($this->element->parameterInfo() as $name => $parameter) {
-      $form['parameter'][$name] = array(
-        '#markup' => $name,
+      $form['parameter'][$name]['label'] = array(
+        '#markup' => $parameter['label'],
+        '#suffix' => ':&nbsp;',
       );
+
+      $form['parameter'][$name]['value'] = array(
+        '#markup' => $this->getParameterValue($name),
+        '#prefix' => '<em>',
+        '#suffix' => '</em>,&nbsp;',
+      );
+
     }
     return $form;
   }
@@ -542,9 +575,11 @@ class RulesContainerPluginUI extends RulesPluginUI {
         '#container' => $is_container,
       );
       $label = $is_container ? check_plain($child->label()) : l($child->label(), RulesPluginUI::path($this->element->root()->name, 'edit', $id));
-      $form['elements'][$id]['label'] = array(
+
+      $form['elements'][$id]['label']['label'] = array(
         '#markup' => $label,
       );
+      $form['elements'][$id]['label']['config'] = $child->buildContent();
       $form['elements'][$id]['weight'] = array(
         '#type' => 'weight',
         '#default_value' => $child->weight,

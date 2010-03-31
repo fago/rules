@@ -16,6 +16,12 @@ interface RulesDataDirectInputForm {
    *  The direct input form.
    */
   public function inputForm($name, $info, $settings, RulesPlugin $element);
+
+  /**
+   * @return String
+   *  a Truncates and parses data to string
+   */
+  public function parseData($value);
 }
 
 /**
@@ -44,6 +50,10 @@ class RulesDataUI {
     $form[$name . ':process'] = array();
     RulesDataProcessor::attachForm($form[$name . ':process'], $settings[$name . ':process'], $info, $element->availableVariables());
     return $form;
+  }
+
+  public function parseData($value) {
+    return truncate_utf8($value, 10);
   }
 }
 
@@ -78,6 +88,11 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       '#required' => empty($info['optional']),
     );
     return $form;
+  }
+
+  public function parseData($value) {
+    $return = (isset($value) && $value == 1) ? 'TRUE' : 'FALSE';
+    return $return;
   }
 }
 
