@@ -102,7 +102,7 @@ function rules_data_action_info() {
     ),
   );
 
-  if (rules_data_action_type_options('action', 'entity_fetch')) {
+  if (rules_data_action_type_options(NULL, 'entity_fetch')) {
     $return['entity_fetch'] = array(
       'label' => t('Fetch entity by id'),
       'parameter' => array(
@@ -161,7 +161,7 @@ function rules_data_action_info() {
     );
   }
 
-  if (rules_data_action_type_options('action', 'entity_create')) {
+  if (rules_data_action_type_options(NULL, 'entity_create')) {
     $return['entity_create'] = array(
       'label' => t('Create a new entity'),
       'parameter' => array(
@@ -453,12 +453,11 @@ function rules_data_parameter_validation(RulesAbstractPlugin $element) {
 /**
  * Options list callback for data actions.
  *
- * @param $type
- *   The element type, e.g. 'action' or 'condition.
  * @param $name
  *   The name of the element to return options for.
  */
-function rules_data_action_type_options($type, $name) {
+function rules_data_action_type_options(RulesAbstractPlugin $element = NULL, $name = NULL) {
+  $name = isset($element) ? $element->getElementName() : $name;
   $key = $name == 'entity_fetch' ? 'base table' : 'creation callback';
   return rules_entity_type_options($key);
 }
