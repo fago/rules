@@ -15,7 +15,7 @@ function theme_rules_elements($variables) {
   $form = $variables['element'];
   $form['#theme'] = 'table';
   $form['#header'] = array($form['#heading'], t('Weight'), t('Operations'));
-  $form['#attributes']['id'] = drupal_html_id($form['#heading']);
+  $form['#attributes']['id'] = 'rules-' . drupal_html_id($form['#heading']) . '-id';
   $form['#attached']['css'] = array(drupal_get_path('module', 'rules') . '/ui/rules.ui.css');
 
   foreach (element_children($form) as $element_id) {
