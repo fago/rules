@@ -107,7 +107,13 @@ function rules_admin_add_reaction_rule($form, &$form_state) {
   $rules_config->form($form, $form_state, array('show settings' => true, 'button' => TRUE));
 
   $form['settings']['#collapsible'] = FALSE;
-  unset($form['elements'], $form['conditions'], $form['add'], $form['events']);
+  $form['settings']['#type'] = 'container';
+
+  // Hide the rule elements stuff for now.
+  foreach (array('elements', 'conditions', 'add', 'events') as $key) {
+    $form[$key]['#access'] = FALSE;
+  }
+  $form['submit']['#value'] = t('Save');
 
   $form_state += array('rules_config' => $rules_config);
   return $form;
