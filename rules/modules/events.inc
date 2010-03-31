@@ -211,21 +211,6 @@ function rules_data_action_access($type, $name) {
   return !empty($types);
 }
 
-
-/**
- * Gets all view modes of an entity for an entity_view event.
- */
-function rules_get_entity_view_modes($type, $name) {
-  if ($type == 'event') {
-    $entity_type = substr($name, 0, -5);
-    $info = entity_get_info($entity_type);
-    foreach ($info['view modes'] as $mode => $mode_info) {
-      $modes[$mode] = $mode_info['label'];
-    }
-    return $modes;
-  }
-}
-
 /**
  * Getter callback for the log entry message property.
  */
