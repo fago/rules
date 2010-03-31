@@ -49,15 +49,10 @@ function rules_comment_event_info() {
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
     ),
     'comment_delete' => array(
-      'label' => t('After a comment has been cancelled'),
+      'label' => t('After deleting a comment'),
       'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('deleted comment')),
-        'method' => array(
-          'type' => 'text',
-          'label' => t('cancellation method'),
-          'options list' => 'rules_comment_cancel_methods',
-        ),
       ),
       'access callback' => 'rules_comment_integration_access',
     ),
