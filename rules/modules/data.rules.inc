@@ -43,6 +43,7 @@ function rules_data_data_info() {
     ),
    'duration' => array(
       'label' => t('duration'),
+      'parent' => 'decimal',
       'ui class' => 'RulesDataUIText',
     ),
    'boolean' => array(
@@ -545,8 +546,12 @@ function rules_data_condition_info() {
  * evaluated elements can make use of this information.
  */
 function rules_condition_data_is_process(RulesAbstractPlugin $element) {
+  // Clear out any old alterions.
+  unset($element->settings['#info']);
+
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_condition_data_is_value_options_list' : FALSE;
     $element->alterInfo($element_info);
   }
   // Assert the bundle of entities, if its compared.
@@ -559,6 +564,16 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
         $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
       }
     }
+  }
+}
+
+/**
+ * Returns options list for the value parameter.
+ */
+function rules_condition_data_is_value_options_list(RulesAbstractPlugin $element) {
+  // The possible values of the "value" parameter are those of the data param.
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    return $wrapper->optionsList();
   }
 }
 
@@ -579,6 +594,16 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractP
     // Clear the parameter mode for the value parameter, so its gets the proper
     // default value based upon the type of the the selected data on rebuild.
     unset($form_state['parameter_mode']['value']);
+  }
+  else {
+    // Limit the operations to what makes sense for the data type.
+    $info = $element->parameterInfo();
+    if (!RulesData::typesMatch($info['value'], array('type' => array('decimal', 'date')))) {
+      unset($form['parameter']['op']['#options']['<'], $form['parameter']['op']['#options']['>']);
+    }
+    if ($info['value']['type'] != 'text' || !empty($info['value']['options list'])) {
+      unset($form['parameter']['op']['settings']['op']['#options']['contains']);
+    }
   }
 }
 

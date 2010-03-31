@@ -64,7 +64,7 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       $form[$name] = array(
         '#type' => 'select',
         '#title' => t('Value'),
-        '#options' => $info['options list'](),
+        '#options' => $info['options list']($element),
         '#default_value' => isset($settings[$name]) ? $settings[$name] : '',
       );
     }
