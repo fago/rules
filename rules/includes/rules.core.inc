@@ -25,7 +25,7 @@ class RulesEntityController extends EntityAPIController {
     foreach ($queried_entities as $record) {
       $entity = $record->data;
       // Set the values of the other columns.
-      foreach (array_keys($schema['fields']) as $field) {
+      foreach (array_keys($schema['fields'] + array('status' => TRUE)) as $field) {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
