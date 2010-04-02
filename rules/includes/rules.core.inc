@@ -45,7 +45,7 @@ class RulesEntityController extends EntityAPIController {
       $hook = $this->entityInfo['export']['default hook'];
       foreach (module_implements($hook) as $module) {
         $function = $module . '_' . $hook;
-        foreach ($function() as $name => $entity) {
+        foreach ((array)$function() as $name => $entity) {
           $entity->name = $name;
           $entity->module = $module;
           $entity->plugin = $entity->property('itemName');
@@ -370,7 +370,13 @@ abstract class RulesPlugin extends RulesExtendable {
   protected function returnVariables(RulesState $state, $result = NULL) {
     $var_info = $this->providesVariables();
     foreach ($var_info as $name => $info) {
-      $vars[$name] = $this->getArgument($name, $info, $state);
+      try {
+        $vars[$name] = $this->getArgument($name, $info, $state);
+      }
+      catch (RulesException $e) {
+        // Ignore not existing variables.
+        $vars[$name] = NULL;
+      }
     }
     return isset($vars) ? array_values(rules_unwrap_data($vars, $var_info)) : array();
   }
@@ -386,7 +392,7 @@ abstract class RulesPlugin extends RulesExtendable {
     $args = $this->getPassedArguments($args);
 
     foreach ($this->setUpVariables() as $name => $info) {
-      if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional'])) {
+      if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional']) && $info['type'] != 'hidden') {
         throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
       }
       $args += array($name => NULL);
