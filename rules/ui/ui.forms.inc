@@ -190,8 +190,9 @@ function rules_ui_add_event($form, &$form_state, $rules_config) {
   $form_state += array('rules_config' => $rules_config);
   $form['event'] = array(
     '#type' => 'select',
-    '#title' => t('Select an Event'),
+    '#title' => t('React on event'),
     '#options' => RulesPluginUI::getOptions('event_info'),
+    '#description' => t('Specify the event you want to react on.'),
   );
   $form['submit'] = array(
     '#type' => 'submit',
@@ -208,13 +209,7 @@ function rules_ui_add_event_validate($form, &$form_state) {
   if (!empty($form_state['values']['event'])) {
     $rules_config = $form_state['rules_config'];
     $rules_config->event($form_state['values']['event']);
-    try {
-      $rules_config->integrityCheck();
-    }
-    catch (RulesException $e) {
-      //TODO: Add visual feedback which element had troubles.
-      form_set_error('', $e->getMessage());
-    }
+    $rules_config->form_validate($form, $form_state);
   }
 }
 

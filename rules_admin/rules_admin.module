@@ -28,7 +28,7 @@ function rules_admin_menu() {
     'weight' => -1,
   );
   $items[RULES_ADMIN_REACION_PATH . '/add'] = array(
-    'title' => 'Add a new reaction rule',
+    'title' => 'Add new rule',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_add_reaction_rule'),
     'access arguments' => array('administer rules'),
@@ -46,7 +46,7 @@ function rules_admin_menu() {
     'weight' => 0,
   );
   $items[RULES_ADMIN_COMPONENT_PATH . '/add'] = array(
-    'title' => 'Add a new component',
+    'title' => 'Add new component',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_admin_components_overview'),
     'access arguments' => array('administer rules'),

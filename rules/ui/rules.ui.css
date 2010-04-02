@@ -29,3 +29,7 @@ div ul.rules-operations-add {
 	padding: 5px;
 	margin: 2em;
 }
+
+#rules-filter-form {
+  margin-bottom: 1.5em;
+}
