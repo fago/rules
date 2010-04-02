@@ -886,11 +886,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $args[$name] = $this->getArgument($name, $info, $state);
     }
     // Append the settings and the execution state. Faces will append $this.
-    $args[] = $this->settings;
-    $args[] = $state;
+    $args['settings'] = $this->settings;
+    $args['state'] = $state;
     // Make the variables for the arguments available in the state too.
     $state->currentArguments = $args;
-    return $args;
+    return !empty($this->info['named parameter']) ? array($args) : $args;
   }
 
   public function __sleep() {

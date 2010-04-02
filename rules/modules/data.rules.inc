@@ -164,6 +164,7 @@ function rules_data_action_info() {
   if (rules_data_action_type_options(NULL, 'entity_create')) {
     $return['entity_create'] = array(
       'label' => t('Create a new entity'),
+      'named parameter' => TRUE,
       'parameter' => array(
         'type' => array(
           'type' => 'text',

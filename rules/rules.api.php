@@ -48,6 +48,10 @@
  *     evaluation state with the variable name as key. Optional. Each variable
  *     has to be described by a sub-array with possible attributes as described
  *     afterwards.
+ *   - 'named parameter': If set to TRUE, the arguments will be passed as a
+ *     single array with the parameter names as keys. This emulates named
+ *     parameters in PHP and is in particular useful if the number of parameters
+ *     can vary. Optionally, defaults to FALSE.
  *   - base: The base for action implementation callbacks to use instead of the
  *     action's name. Optional (defaults to the name).
  *   - callbacks: An array which allows to set specific function callbacks for
