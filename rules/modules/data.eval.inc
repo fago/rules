@@ -56,16 +56,13 @@ function rules_action_entity_query($type, $property, $value, $limit) {
 /**
  * Action: Create entities.
  */
-function rules_action_entity_create($type) {
-  $args = func_get_args();
-  // Settings is always the forth last parameter that is passed.
-  $settings = $args[count($args)-4];
+function rules_action_entity_create($args, $element) {
   $values = array();
-  foreach (array_keys($settings['#info']['parameter']) as $i => $name) {
+  foreach (array_keys($args['settings']['#info']['parameter']) as $name) {
     // Remove the parameter name prefix 'param_'.
-    $values[substr($name, 6)] = $args[$i+1];
+    $values[substr($name, 6)] = $args[$name];
   }
-  $data = entity_metadata_entity_create($type, $values)->value();
+  $data = entity_metadata_entity_create($args['type'], $values)->value();
   return array('entity_created' => $data);
 }
 
