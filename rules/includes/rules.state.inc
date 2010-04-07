@@ -302,7 +302,6 @@ class RulesData  {
     if (!isset($param_info['bundles'])) {
       $cache = &rules_get_cache();
       self::typeCalcAncestors($cache, $var_type);
-
       // If one of the types is an ancestor return TRUE.
       return (bool)array_intersect_key($cache['data_info'][$var_type]['ancestors'], array_flip($valid_types));
     }

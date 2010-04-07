@@ -580,7 +580,8 @@ function rules_condition_data_is_value_options_list(RulesAbstractPlugin $element
 
 /**
  * Form alter callback for the condition data_is.
- * Use multiple steps to configure the condition as the
+ * Use multiple steps to configure the condition as the needed type of the value
+ * depends on the selected data.
  */
 function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
   if (!isset($form_state['rules_element_step'])) {
@@ -600,7 +601,8 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractP
     // Limit the operations to what makes sense for the data type.
     $info = $element->parameterInfo();
     if (!RulesData::typesMatch($info['value'], array('type' => array('decimal', 'date')))) {
-      unset($form['parameter']['op']['#options']['<'], $form['parameter']['op']['#options']['>']);
+      $options =& $form['parameter']['op']['settings']['op']['#options'];
+      unset($options['<'], $options['>']);
     }
     if ($info['value']['type'] != 'text' || !empty($info['value']['options list'])) {
       unset($form['parameter']['op']['settings']['op']['#options']['contains']);
