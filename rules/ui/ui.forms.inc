@@ -259,3 +259,29 @@ function rules_ui_remove_event_submit($form, &$form_state) {
     drupal_set_message(t('Event %event was removed from %plugin %label', array('%event' => $form_state['rules_event'], '%label' => $rules_config->label(), '%plugin' => $rules_config->plugin())));
   }
 }
+
+/**
+ * FAPI validation of an integer element. Copy of the private function
+ * _element_validate_integer().
+ */
+function rules_ui_element_integer_validate($element, &$form_state) {;
+  $value = $element['#value'];
+  if ($value !== '' && (!is_numeric($value) || intval($value) != $value)) {
+    form_error($element, t('%name must be an integer.', array('%name' => $element['#title'])));
+  }
+}
+
+/**
+ * FAPI validation of a decimal element. Improved version of the private
+ * function _element_validate_number().
+ */
+function rules_ui_element_decimal_validate($element, &$form_state) {
+  // Substitute the decimal separator ",".
+  $value = strtr($element['#value'], ',', '.');
+  if ($value != '' && !is_numeric($value)) {
+    form_error($element, t('%name must be a number.', array('%name' => $element['#title'])));
+  }
+  elseif ($value != $element['#value']) {
+    form_set_value($element, $value, $form_state);
+  }
+}

@@ -22,7 +22,6 @@ function rules_php_evaluator_info() {
   return array(
     'php' => array(
       'class' => 'RulesPHPEvaluator',
-      'type' => 'text',
       'weight' => -10,
     ),
   );

@@ -114,7 +114,8 @@ abstract class RulesDataProcessor {
       $items[$hook][$param_info['type']] = array();
       foreach ($items[$hook]['all'] as $name => $info) {
         // Check whether the parameter type matches the supported types.
-        if (RulesData::typesMatch($param_info, $info)) {
+        $info += array('type' => 'text');
+        if (RulesData::typesMatch($param_info, $info, FALSE)) {
           $items[$hook][$param_info['type']][$name] = $info;
         }
       }
