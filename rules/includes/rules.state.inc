@@ -276,10 +276,14 @@ class RulesData  {
    *   The name of the type to check for whether it is compatible to type2.
    * @param $param_info
    *   The type expression to check for.
+   * @param $ancestors
+   *   Whether sub-type relationships for checking type compatibility should be
+   *   taken into account. Defaults to TRUE.
+   *
    * @return
    *   Whether the types match.
    */
-  public static function typesMatch($var_info, $param_info) {
+  public static function typesMatch($var_info, $param_info, $ancestors = TRUE) {
     $var_type = $var_info['type'];
     $param_type = $param_info['type'];
 
@@ -299,7 +303,7 @@ class RulesData  {
     }
 
     // Check for sub-type relationships.
-    if (!isset($param_info['bundles'])) {
+    if ($ancestors && !isset($param_info['bundles'])) {
       $cache = &rules_get_cache();
       self::typeCalcAncestors($cache, $var_type);
       // If one of the types is an ancestor return TRUE.

@@ -38,6 +38,7 @@ class RulesDataUI {
       '#type' => 'textfield',
       '#title' => t('Data selector'),
       '#default_value' => isset($settings[$name . ':select']) ? $settings[$name . ':select'] : '',
+      '#required' => empty($info['optional']),
     );
     $settings += array($name . ':process' => array());
     $form[$name . ':process'] = array();
@@ -60,22 +61,48 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       // Make sure the .rules.inc of the providing module is included as the
       // options list callback may reside there.
       $element->call('loadBasicInclude');
-
       $form[$name] = array(
         '#type' => 'select',
-        '#title' => t('Value'),
         '#options' => $info['options list']($element),
-        '#default_value' => isset($settings[$name]) ? $settings[$name] : '',
       );
     }
     else {
       $form[$name] = array(
         '#type' => 'textarea',
-        '#title' => t('Value'),
-        '#default_value' => isset($settings[$name]) ? $settings[$name] : '',
       );
       RulesDataInputEvaluator::attachForm($form, $settings, $info, $element->availableVariables());
     }
+    $form[$name] += array(
+      '#title' => t('Value'),
+      '#default_value' => isset($settings[$name]) ? $settings[$name] : '',
+      '#required' => empty($info['optional']),
+    );
+    return $form;
+  }
+}
+
+/**
+ * UI for decimal data.
+ */
+class RulesDataUIDecimal extends RulesDataUIText {
+
+  public function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#type'] = 'textfield';
+    $form[$name]['#element_validate'][] = 'rules_ui_element_decimal_validate';
+    return $form;
+  }
+}
+
+/**
+ * UI for integers.
+ */
+class RulesDataUIInteger extends RulesDataUIText {
+
+  public function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#type'] = 'textfield';
+    $form[$name]['#element_validate'][] = 'rules_ui_element_integer_validate';
     return $form;
   }
 }

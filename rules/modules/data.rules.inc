@@ -29,13 +29,13 @@ function rules_data_data_info() {
    'decimal' => array(
       'label' => t('decimal number'),
       'parent' => 'text',
-      'ui class' => 'RulesDataUIText',
+      'ui class' => 'RulesDataUIDecimal',
     ),
    'integer' => array(
       'label' => t('integer'),
       'class' => 'RulesIntegerWrapper',
       'parent' => 'decimal',
-      'ui class' => 'RulesDataUIText',
+      'ui class' => 'RulesDataUIInteger',
     ),
    'date' => array(
       'label' => t('date'),
@@ -97,9 +97,6 @@ function rules_data_action_info() {
     ),
     'group' => t('Data'),
     'base' => 'rules_action_data_set',
-    'callbacks' => array(
-      'validate' => 'rules_data_parameter_validation',
-    ),
   );
 
   if (rules_data_action_type_options(NULL, 'entity_fetch')) {
@@ -213,7 +210,6 @@ function rules_data_action_info() {
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_save',
       'callbacks' => array(
-        'validate' => 'rules_data_parameter_validation',
         'access' => 'rules_action_entity_savedelete_access',
       ),
     );
@@ -235,7 +231,6 @@ function rules_data_action_info() {
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_delete',
       'callbacks' => array(
-        'validate' => 'rules_data_parameter_validation',
         'access' => 'rules_action_entity_savedelete_access',
       ),
     );
@@ -296,6 +291,21 @@ function rules_data_action_info() {
 function rules_action_data_set_access(RulesAbstractPlugin $element) {
   if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     return $wrapper instanceof EntityMetadataWrapper && $wrapper->access('edit');
+  }
+}
+
+/**
+ * Custom validation callback for the data set action.
+ */
+function rules_action_data_set_validate(RulesAbstractPlugin $element) {
+  if (count(explode(':', $element->settings['data:select'], 2)) != 2) {
+    // Modifying rules variables itself doesn't make any sense.
+    throw new RulesException('Variables may not be changed, only their properties can be modified.');
+  }
+  $info = $element->applyDataSelector($element->settings['data:select'])->info();
+  if (empty($info['setter callback'])) {
+    // Modifying rules variables itself doesn't make any sense.
+    throw new RulesException("The selected data property doesn't support writing.", array(), $element);
   }
 }
 
@@ -440,19 +450,6 @@ function rules_action_entity_savedelete_access(RulesAbstractPlugin $element) {
 }
 
 /**
- * Custom validation callback ensuring the 'data' argument is a data wrapper.
- */
-function rules_data_parameter_validation(RulesAbstractPlugin $element) {
-  if (!isset($element->settings['data:select'])) {
-    throw new RulesException('The data argument has to be specified using data selectors.');
-  }
-  elseif ($element->getElementName() == 'data_set' && count(explode(':', $element->settings['data:select'], 2)) != 2) {
-    // Modifying rules variables itself doesn't make any sense.
-    throw new RulesException('Variables may not be changed, only their properties can be modified.');
-  }
-}
-
-/**
  * Options list callback for data actions.
  *
  * @param $name
@@ -533,9 +530,6 @@ function rules_data_condition_info() {
       ),
       'group' => t('Data'),
       'base' => 'rules_condition_data_is',
-      'callbacks' => array(
-        'validate' => 'rules_data_parameter_validation',
-      ),
     ),
   );
 }
