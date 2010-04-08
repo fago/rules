@@ -830,8 +830,10 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function processSettings($force = FALSE, $access_check = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
-      parent::processSettings($force, $access_check);
+      // First let the plugin implementation do processing, so data types of the
+      // parameters are fixed when we process the settings.
       $this->process();
+      parent::processSettings($force, $access_check);
     }
   }
 

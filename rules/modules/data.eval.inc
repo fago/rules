@@ -125,6 +125,53 @@ function rules_condition_data_is($data, $op, $value) {
   }
 }
 
+/**
+ * A class implementing a rules input evaluator processing date input. This is
+ * needed to treat relative date inputs for strtotime right, consider "now".
+ */
+class RulesDateInputEvaluator extends RulesDataInputEvaluator {
+
+  const DATE_REGEX_LOOSE = '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/';
+
+  public static function access() {
+    return TRUE;
+  }
+
+  public function prepare($text, $var_info) {
+    if (is_numeric($text)) {
+      // Let rules skip this input evaluators in case it's already a timestamp.
+      $this->setting = NULL;
+    }
+  }
+
+  public function evaluate($text, $options, RulesState $state) {
+    return self::gmstrtotime($text);
+  }
+
+  /**
+   * Convert a time string to a GMT (UTC) unix timestamp.
+   */
+  public static function gmstrtotime($date) {
+    if (strpos($date, 'UTC') === FALSE) {
+      // Append 'UTC' to indicate that the time string is in GMT/UTC.
+      $date .= ' UTC';
+    }
+    return strtotime($date);
+  }
+
+  /**
+   * Determine whether the given date string specifies a fixed date.
+   */
+  public static function isFixedDateString($date) {
+    return is_string($date) && preg_match(self::DATE_REGEX_LOOSE, $date);
+  }
+
+  public static function help($variables) {
+    // The help comes with the form element defined by RulesDataUIDate.
+  }
+}
+
+
 /*
 Classes are not used but keep the comments for now.
 

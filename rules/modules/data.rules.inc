@@ -39,7 +39,7 @@ function rules_data_data_info() {
     ),
    'date' => array(
       'label' => t('date'),
-      'ui class' => 'RulesDataUIText',
+      'ui class' => 'RulesDataUIDate',
     ),
    'duration' => array(
       'label' => t('duration'),
@@ -73,6 +73,19 @@ function rules_data_data_info() {
     }
   }
   return $return;
+}
+
+/**
+ * Implements hook_rules_evaluator_info() on behalf of the pseudo data module.
+ */
+function rules_data_evaluator_info() {
+  return array(
+    'date' => array(
+      'class' => 'RulesDateInputEvaluator',
+      'type' => 'date',
+      'weight' => -10,
+     ),
+  );
 }
 
 /**

@@ -246,7 +246,6 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
     return parent::processors($param_info, $access_check, 'evaluator_info');
   }
 
-
   /**
    * Prepares the evalution, e.g. to determine whether the input evaluator has
    * been used. If this evaluator should be skipped just unset $this->setting.
