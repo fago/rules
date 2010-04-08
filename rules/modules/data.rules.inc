@@ -43,8 +43,8 @@ function rules_data_data_info() {
     ),
    'duration' => array(
       'label' => t('duration'),
-      'parent' => 'decimal',
-      'ui class' => 'RulesDataUIText',
+      'parent' => 'integer',
+      'ui class' => 'RulesDataUIDuration',
     ),
    'boolean' => array(
       'label' => t('truth value'),

@@ -149,3 +149,50 @@ class RulesDataUIDate extends RulesDataUIText {
     return $form;
   }
 }
+
+/**
+ * UI for duration type parameter.
+ */
+class RulesDataUIDuration extends RulesDataUIText {
+
+  public function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#type'] = 'textfield';
+    $form[$name]['#size'] = 8;
+    $form[$name]['#element_validate'][] = 'rules_ui_element_integer_validate';
+    $form['multiplier'] = array(
+      '#type' => 'select',
+      '#options' => self::multipliers(),
+      '#default_value' => 1,
+    );
+
+    // Make sure it looks like a single form element.
+    $form['#theme_wrappers'] = array('form_element');
+    $form['#title'] = $form[$name]['#title'];
+    $form[$name]['#title_display'] = 'none';
+
+    $form[$name]['#prefix'] = '<div class="rules-duration container-inline">';
+    $form['multiplier']['#suffix'] = '</div>';
+
+    // Set an appropriate multiplier.
+    foreach (array_keys(self::multipliers()) as $m) {
+      if ($form[$name]['#default_value'] % $m == 0) {
+        $form['multiplier']['#default_value'] = $m;
+      }
+    }
+    // Divide value by the multiplier, so the display is correct.
+    $form[$name]['#default_value'] /= $form['multiplier']['#default_value'];
+    // Specify an after build callback that transforms the value back.
+    $form['#after_build'][] = 'rules_ui_element_duration_after_build';
+    return $form;
+  }
+
+  public static function multipliers() {
+    return array(
+      1 => t('seconds'),
+      60 => t('minutes'),
+      3600 => t('hours'),
+      86400 => t('days'),
+    );
+  }
+}
