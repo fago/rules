@@ -311,6 +311,7 @@ function rules_action_data_set_access(RulesAbstractPlugin $element) {
  * Custom validation callback for the data set action.
  */
 function rules_action_data_set_validate(RulesAbstractPlugin $element) {
+  $element->settings += array('data:select' => NULL);
   if (count(explode(':', $element->settings['data:select'], 2)) != 2) {
     // Modifying rules variables itself doesn't make any sense.
     throw new RulesException('Variables may not be changed, only their properties can be modified.');
@@ -345,6 +346,7 @@ function rules_action_data_set_form_alter(&$form, &$form_state, RulesAbstractPlu
  * Process callback for the data_set action.
  */
 function rules_action_data_set_process(RulesAbstractPlugin $element) {
+  $element->settings += array('data:select' => NULL);
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();
     $element->alterInfo($element_info);
@@ -372,6 +374,7 @@ function rules_action_entity_fetch_validate($element) {
  * Custom process callback for data fetch action.
  */
 function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
   $info = entity_get_info($element->settings['type']);
 
   // Fix the type of the identifier.
@@ -419,6 +422,7 @@ function rules_action_entity_query_access(RulesAbstractPlugin $element) {
  * Custom callback to process the data query action.
  */
 function rules_action_entity_query_process(RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
   $info['parameter']['value']['type'] = $element->settings['type'];
   $info['provides']['entity_fetched']['type'] = 'list<' . $element->settings['type'] . '>';
   $element->alterInfo($info);
@@ -437,6 +441,7 @@ function rules_action_entity_create_validate($element) {
  * Custom process callback for data create action.
  */
 function rules_action_entity_create_process(RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
   $wrapper = entity_metadata_wrapper($element->settings['type']);
   // Add the data type's needed parameter for loading to the parameter info.
   foreach ($wrapper as $name => $child) {
@@ -556,6 +561,7 @@ function rules_data_condition_info() {
 function rules_condition_data_is_process(RulesAbstractPlugin $element) {
   // Clear out any old alterions.
   unset($element->settings['#info']);
+  $element->settings += array('data:select' => NULL);
 
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();

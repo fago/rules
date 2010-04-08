@@ -529,8 +529,13 @@ abstract class RulesPlugin extends RulesExtendable {
    * Checks whether parameters are correctly configured.
    */
   protected function checkParameterSettings() {
-    $vars = $this->availableVariables();
     foreach ($this->parameterInfo() as $name => $info) {
+      if (isset($info['restriction']) && $info['restriction'] == 'selector' && isset($this->settings[$name])) {
+        throw new RulesException("%plugin: The parameter %name may only be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+      }
+      elseif (isset($info['restriction']) && $info['restriction'] == 'input' && isset($this->settings[$name . ':select'])) {
+        throw new RulesException("%plugin: The parameter %name may not be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+      }
       if ($arg_info = $this->getArgumentInfo($name)) {
         // If we have enough metadata, check whether the types match.
         if (!RulesData::typesMatch($arg_info, $info)) {
