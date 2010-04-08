@@ -285,3 +285,24 @@ function rules_ui_element_decimal_validate($element, &$form_state) {
     form_set_value($element, $value, $form_state);
   }
 }
+
+/**
+ * FAPI validation of a date element. Makes sure the specified date format is
+ * correct and converts date values specifiy a fixed (= non relative) date to
+ * a timestamp. Relative dates are handled by the date input evaluator.
+ */
+function rules_ui_element_date_validate($element, &$form_state) {
+  $value = $element['#value'];
+  if ($value == '' || (is_numeric($value) && intval($value) == $value)) {
+    // The value is a timestamp.
+    return;
+  }
+  elseif (is_string($value) && RulesDateInputEvaluator::gmstrtotime($value) === FALSE) {
+    form_error($element, t('Wrong date format. Specify the date in the format %format.', array('%format' => gmdate('Y-m-d H:i:s', time() + 86400))));
+  }
+  elseif (is_string($value) && RulesDateInputEvaluator::isFixedDateString($value)) {
+    // As the date string specifies a fixed format, we can convert it now.
+    $value = RulesDateInputEvaluator::gmstrtotime($value);
+    form_set_value($element, $value, $form_state);
+  }
+}

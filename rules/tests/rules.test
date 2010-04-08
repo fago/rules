@@ -941,7 +941,22 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->access();
     RulesLog::logger()->checkLog();
     $msg = drupal_get_messages();
-    $this->pass(RulesLog::logger()->render());
     $this->assertEqual(array_pop($msg['status']), "Title: foo", 'PHP data processor has been applied.');
+  }
+
+  /**
+   * Makes sure the date input evaluator evaluates properly using strtotime().
+   */
+  function testDateInputEvaluator() {
+    $node = $this->drupalCreateNode(array('title' => 'foo'));
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('data_set', array('data:select' => 'node:created', 'value' => '+1 day'));
+
+    $rule->execute($node);
+    RulesLog::logger()->checkLog();
+    $node = node_load($node->nid, NULL, TRUE);
+    $now = RulesDateInputEvaluator::gmstrtotime('now');
+    // Tolerate a difference of a second.
+    $this->assertTrue(abs($node->created - $now - 86400) <= 1, 'Date input has been evaluated.');
   }
 }

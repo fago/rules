@@ -126,3 +126,26 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
   }
 }
 
+/**
+ * UI for dates.
+ */
+class RulesDataUIDate extends RulesDataUIText {
+
+  public function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $settings += array($name => gmdate('Y-m-d H:i:s', time()));
+    // Convert any configured timestamp into a readable format.
+    if (is_numeric($settings[$name])) {
+      $settings[$name] = gmdate('Y-m-d H:i:s', $settings[$name]);
+    }
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#type'] = 'textfield';
+    $form[$name]['#element_validate'][] = 'rules_ui_element_date_validate';
+    // Note that the date input evaluator takes care for parsing dates using
+    // strtotime() into a timestamp, which is the internal date format.
+    $form[$name]['#description'] = t('The date in GMT. Format: %format or other values in GMT known by the PHP !strtotime function like "+1 day". Relative dates like "+1 day" or "now" relate to the evaluation time.', array('%format' => gmdate('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
+
+    //TODO: Leverage the jquery datepicker+timepicker once a module providing
+    //the timpeicker is available.
+    return $form;
+  }
+}
