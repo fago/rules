@@ -306,3 +306,14 @@ function rules_ui_element_date_validate($element, &$form_state) {
     form_set_value($element, $value, $form_state);
   }
 }
+
+/**
+ * FAPI after build callback for the duration parameter type form.
+ * Fixes up the form value by applying the multiplier.
+ */
+function rules_ui_element_duration_after_build($element, &$form_state) {
+  $name = reset(element_children($element));
+  $value = $element[$name]['#value'] * $element['multiplier']['#value'];
+  form_set_value($element, array($name => $value), $form_state);
+  return $element;
+}
