@@ -44,7 +44,7 @@ abstract class RulesDataProcessor {
    * the data processor.
    */
   public function editAccess() {
-    return self::access() && (!isset($this->processor) || $this->processor->editAccess());
+    return $this->access() && (!isset($this->processor) || $this->processor->editAccess());
   }
 
 
