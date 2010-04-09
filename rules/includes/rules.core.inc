@@ -453,11 +453,8 @@ abstract class RulesPlugin extends RulesExtendable {
         if ($wrapper->access('view') === FALSE) {
           return FALSE;
         }
-        if ($this->settings[$name . ':select'] instanceof RulesDataProcessor && !$this->settings[$name . ':select']->editAccess()) {
-          return FALSE;
-        }
       }
-      elseif (isset($this->settings[$name]) && $this->settings[$name] instanceof RulesDataProcessor && !$this->settings[$name]->editAccess()) {
+      if (isset($this->settings[$name . ':process']) && $this->settings[$name . ':process'] instanceof RulesDataProcessor && !$this->settings[$name . ':process']->editAccess()) {
         return FALSE;
       }
     }
