@@ -774,6 +774,13 @@ function rules_get_title($text, $element) {
  * Implements hook_page_build() to add the rules debug log to the page bottom.
  */
 function rules_page_build(&$page) {
+  // Invoke a the page redirect, in case the action has been executed.
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    unset($GLOBALS['_rules_action_drupal_goto_do']);
+    // $_REQUEST['destination'] has been set, drupal_goto() will use that.
+    drupal_goto('');
+  }
+
   if (variable_get('rules_debug', FALSE)) {
     $region = 'help';
 

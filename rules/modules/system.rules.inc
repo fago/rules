@@ -123,6 +123,22 @@ function rules_system_action_info() {
       'group' => t('System'),
       'parameter' => array(
         'url' => array('type' => 'uri', 'label' => t('URL')),
+        'force' => array(
+          'type' => 'boolean',
+          'label' => t('Force redirect'),
+          'restriction' => 'input',
+          'description' => t("Per default drupal doesn't redirect to the given path, if a destination parameter is set. Instead it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url", array('!example_url' => 'http://example.com/user/login?destination=node/2')),
+          'optional' => TRUE,
+          'default value' => TRUE,
+        ),
+        'destination' => array(
+          'type' => 'boolean',
+          'label' => t('Append destination parameter'),
+          'restriction' => 'input',
+          'description' => t('Whether to append a destination parameter to the URL, so another internal redirect invoked later on would lead back to the origin page.'),
+          'optional' => TRUE,
+          'default value' => FALSE,
+        ),
       ),
       'callbacks' => array('execute' => 'rules_action_drupal_goto'),
       'help' => t('Enter a Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after "?" and (optional) anchor after "#".'),
@@ -145,6 +161,7 @@ function rules_system_evaluator_info() {
   return array(
     'token' => array(
       'class' => 'RulesTokenEvaluator',
+      'type' => array('text', 'uri'),
       'weight' => 0,
      ),
   );
