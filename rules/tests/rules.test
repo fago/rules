@@ -759,6 +759,22 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
   }
 
+
+  /**
+   * Tests the drupal goto action.
+   */
+  function testRedirectAction() {
+    $rule = rules_reaction_rule();
+    $rule->event('user_login')
+         ->action('redirect', array('url' => 'user/[account:uid]/edit'))
+         ->save();
+    rules_clear_cache(TRUE);
+
+    $user = $this->drupalCreateUser();
+    $this->drupalLogin($user);
+    // Make sure the right URL has been generated and we are there now.
+    $this->assertEqual($this->getUrl(), url('user/2/edit', array('absolute' => TRUE)), 'Redirected to the right url.');
+  }
 }
 
 /**
