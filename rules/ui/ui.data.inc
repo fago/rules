@@ -119,7 +119,7 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
   public function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form[$name] = array(
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => check_plain($info['label']),
       '#default_value' => !empty($settings[$name]),
     );
     return $form;
@@ -195,4 +195,17 @@ class RulesDataUIDuration extends RulesDataUIText {
       86400 => t('days'),
     );
   }
+}
+
+/**
+ * UI for the URI type parameter.
+ */
+class RulesDataUIURI extends RulesDataUIText {
+
+  public function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#rows'] = 2;
+    return $form;
+  }
+
 }

@@ -40,43 +40,23 @@ function rules_action_set_breadcrumb($titles, $paths) {
 
 /**
  * Action: Page redirect.
- */
-function rules_action_drupal_goto($url, $immediate = TRUE, $force = FALSE) {
-  if ($force) {
-    if (strpos($query, 'destination') === FALSE && isset($_REQUEST['destination'])) {
-      // Keep the current destination parameter if there is one set.
-      if (!empty($query)) {
-        $query .= '&';
-      }
-      $query .= 'destination='. urlencode($_REQUEST['destination']);
-    }
-    unset($_REQUEST['destination']);
-  }
-  if ($immediate) {
-    drupal_goto($url);
-  }
-  else {
-    // If someone else issues a drupal_goto(), we hijack it by setting the destination parameter
-    // But obey any already set destination parameter.
-    if (!isset($_REQUEST['destination'])) {
-      $_REQUEST['destination'] = urlencode($path) . ($query ? '?'. urlencode($query) : '') . ($fragment ? '#'. urlencode($fragment) : '');
-    }
-    // This lets _rules_action_drupal_goto_handler() invoke drupal_goto before the page is output.
-    $GLOBALS['_rules_action_drupal_goto_do'] = TRUE;
-  }
-}
-
-/**
- * Page template preprocess handler for the drupal goto action.
  *
- * @see rules_theme_registry_alter().
+ * @see rules_page_build()
  */
-function _rules_action_drupal_goto_handler($variables) {
-  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
-    unset($GLOBALS['_rules_action_drupal_goto_do']);
-    // We have already set $_REQUEST['destination'] which drupal_goto() is going to respect.
-    drupal_goto('');
+function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
+  // Keep the current destination parameter if there is one set.
+  if ($destination) {
+    $url .= strpos($url, '?') === FALSE ? '?' : '&';
+    $url .= drupal_http_build_query(drupal_get_destination());
   }
+  // We set the destination parameter which will be applied by drupal_goto().
+  if ($force || !isset($_GET['destination'])) {
+    $_GET['destination'] = urlencode($url);
+  }
+  // This makes sure invoke rules_page_build() invokes drupal_goto() before
+  // the page is output. We don't invoke it right now, as this would end the
+  // the current page execution unpredictly for modules.
+  $GLOBALS['_rules_action_drupal_goto_do'] = TRUE;
 }
 
 /**

@@ -171,56 +171,40 @@ class RulesDateInputEvaluator extends RulesDataInputEvaluator {
   }
 }
 
+/**
+ * A class implementing a rules input evaluator processing URI inputs to make
+ * sure URIs are absolute and path aliases get applied.
+ */
+class RulesURIInputEvaluator extends RulesDataInputEvaluator {
 
-/*
-Classes are not used but keep the comments for now.
+  public static function access() {
+    return TRUE;
+  }
 
-class RulesTextWrapper extends RulesData {
-  // TODO: input form
-  // TODO: use input evaluator in input form
+  public function prepare($uri, $var_info) {
+    if (!isset($this->processor) && valid_url($uri, TRUE)) {
+      // Only process if another evaluator is used or the url is not absolute.
+      $this->setting = NULL;
+    }
+  }
 
-  protected $itemName = 'text';
+  public function evaluate($uri, $options, RulesState $state) {
+    if (!url_is_external($uri)) {
+      // Extract the path so URL aliases are applied properly.
+      $query = '';
+      if (($pos = strpos($uri, '?')) !== FALSE) {
+        $query = substr($uri, $pos);
+        $uri = substr($uri, 0, $pos);
+      }
+      return url($uri, array('absolute' => TRUE) + $options) . $query;
+    }
+    elseif (valid_url($uri)) {
+      return $uri;
+    }
+    throw new RulesException('Input evaluation generated an invalid URI.', array(), NULL, RulesLog::WARN);
+  }
+
+  public static function help($variables) {
+    // The help comes with the form element.
+  }
 }
-
-class RulesDecimalWrapper extends RulesTextWrapper {
-  // TODO: input form
-  // TODO: use input evaluator in input form (calculation)
-
-  protected $itemName = 'decimal';
-}
-
-class RulesIntegerWrapper extends RulesDecimalWrapper {
-  // TODO: input form
-  // TODO: use input evaluator in input form (calculation)
-
-  protected $itemName = 'integer';
-}
-
-class RulesDateWrapper extends RulesData {
-  // TODO: input form
-  // TODO: customize selector form and add offset (duration)
-
-  protected $itemName = 'date';
-}
-
-class RulesDurationWrapper extends RulesData {
-  // TODO: input form
-  // TODO: use input evaluator in input form (calculation)
-
-  protected $itemName = 'duration';
-}
-
-class RulesBooleanWrapper extends RulesData {
-  // TODO: input form
-  // TODO: customize selector form and add negation option
-
-  protected $itemName = 'boolean';
-}
-
-class RulesURIWrapper extends RulesTextWrapper {
-  // TODO: input form
-  // TODO: use input evaluator in input form
-
-  protected $itemName = 'uri';
-}
-*/

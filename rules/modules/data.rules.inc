@@ -53,7 +53,9 @@ function rules_data_data_info() {
    'uri' => array(
       'label' => t('URI'),
       'parent' => 'text',
-      'ui class' => 'RulesDataUIText',
+      // Clean inserted tokens with "rawurlencode".
+      'cleaning callback' => 'rawurlencode',
+      'ui class' => 'RulesDataUIURI',
     ),
    'list' => array(
       'label' => t('list'),
@@ -80,10 +82,17 @@ function rules_data_data_info() {
  */
 function rules_data_evaluator_info() {
   return array(
+    // Process strtotime() inputs to timestamps.
     'date' => array(
       'class' => 'RulesDateInputEvaluator',
       'type' => 'date',
       'weight' => -10,
+     ),
+    // Post-process any input value to absolute URIs.
+    'uri' => array(
+      'class' => 'RulesURIInputEvaluator',
+      'type' => 'uri',
+      'weight' => 50,
      ),
   );
 }
