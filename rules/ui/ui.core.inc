@@ -446,7 +446,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $row[] = implode(", ", $events);
       }
 
-      $row[] = l(t('edit'), $path, array('query' => drupal_get_destination()));
+      $row[] = l(t('edit'), $path);
       $row[] = l(t('clone'), $path . '/clone', array('query' => drupal_get_destination()));
       $row[] = l(t('delete'), $path . '/delete', array('query' => drupal_get_destination()));
       $rows[] = $row;
