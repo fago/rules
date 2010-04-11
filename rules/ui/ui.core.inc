@@ -98,6 +98,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates the element edit form.
    */
   public function form(&$form, &$form_state, $options = array()) {
+    // Make sure collapsible fieldsets work even if added via AJAX.
+    // See http://drupal.org/node/768128.
+    $form['#attached']['js'][] = 'misc/collapse.js';
+
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
 
