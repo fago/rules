@@ -308,12 +308,69 @@ function rules_ui_element_date_validate($element, &$form_state) {
 }
 
 /**
+ * FAPI process callback for the duration element type.
+ */
+function rules_ui_element_duration_process($element, &$form_state) {
+  $element['value'] = array(
+    '#type' => 'textfield',
+    '#size' => 8,
+    '#element_validate' => array('rules_ui_element_integer_validate'),
+    '#default_value' => $element['#default_value'],
+    '#required' => !empty($element['#required']),
+  );
+  $element['multiplier'] = array(
+    '#type' => 'select',
+    '#options' => rules_ui_element_duration_multipliers(),
+    '#default_value' => 1,
+  );
+
+  // Put the child elements in a container-inline div.
+  $element['value']['#prefix'] = '<div class="rules-duration container-inline">';
+  $element['multiplier']['#suffix'] = '</div>';
+
+  // Set an appropriate multiplier.
+  foreach (array_keys(rules_ui_element_duration_multipliers()) as $m) {
+    if ($element['value']['#default_value'] % $m == 0) {
+      $element['multiplier']['#default_value'] = $m;
+    }
+  }
+  // Divide value by the multiplier, so the display is correct.
+  $element['value']['#default_value'] /= $element['multiplier']['#default_value'];
+  return $element;
+}
+
+/**
+ * Defines possible duration multiplier.
+ */
+function rules_ui_element_duration_multipliers() {
+  return array(
+    1 => t('seconds'),
+    60 => t('minutes'),
+    3600 => t('hours'),
+    86400 => t('days'),
+  );
+}
+
+/**
+ * Helper function to determine the value for a rules duration form
+ * element.
+ */
+function rules_ui_element_duration_value($element, $input = FALSE) {
+  // This runs before child elements are processed, so we cannot calculate the
+  // value here. But we have to make sure the value is an array, so the form
+  // API is able to proccess the children to set their values in the array. Thus
+  // once the form API has finished processing the element, the value is an
+  // array containing the child element values. Then finally the after build
+  // callback converts it back to the numeric value and sets that.
+  return array();
+}
+
+/**
  * FAPI after build callback for the duration parameter type form.
  * Fixes up the form value by applying the multiplier.
  */
 function rules_ui_element_duration_after_build($element, &$form_state) {
-  $name = reset(element_children($element));
-  $value = $element[$name]['#value'] * $element['multiplier']['#value'];
-  form_set_value($element, array($name => $value), $form_state);
+  $element['#value'] = $element['value']['#value'] * $element['multiplier']['#value'];
+  form_set_value($element, $element['#value'], $form_state);
   return $element;
 }
