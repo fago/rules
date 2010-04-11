@@ -832,3 +832,21 @@ function rules_exit() {
 function rules_form_submit_rebuild($form, &$form_state) {
   $form_state['rebuild'] = TRUE;
 }
+
+/**
+ * Implements hook_element_info().
+ */
+function rules_element_info() {
+  // A duration form element for rules. Needs ui.forms.inc included.
+  $types['rules_duration'] = array(
+    '#input' => TRUE,
+    '#tree' => TRUE,
+    '#default_value' => 0,
+    '#value_callback' => 'rules_ui_element_duration_value',
+    '#process' => array('rules_ui_element_duration_process'),
+    '#after_build' => array('rules_ui_element_duration_after_build'),
+    '#pre_render' => array('form_pre_render_conditional_form_element'),
+  );
+  return $types;
+}
+
