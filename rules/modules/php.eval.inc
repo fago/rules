@@ -76,7 +76,7 @@ class RulesPHPDataProcessor extends RulesDataProcessor {
       '#description' => t('Enter PHP code to proccess the selected argument value.'),
     );
     $form['code'] = array(
-      '#type' => strlen($settings['code']) > 50 ? 'textarea' : 'textfield',
+      '#type' => 'textarea',
       '#title' => t('Code'),
       '#description' => t('Enter PHP code without &lt;?php ?&gt; delimiters that returns the processed value. The selected value is available in the variable $value. Example: %code', array('%code' => 'return $value + 1;')),
       '#default_value' => $settings['code'],

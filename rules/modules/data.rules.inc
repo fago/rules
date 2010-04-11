@@ -98,6 +98,20 @@ function rules_data_evaluator_info() {
 }
 
 /**
+ * Implements hook_rules_data_processor_info() on behalf of the pseudo data
+ * module.
+ */
+function rules_data_data_processor_info() {
+  return array(
+    'date_offset' => array(
+      'class' => 'RulesDateOffsetProcessor',
+      'type' => 'date',
+      'weight' => -2,
+     ),
+  );
+}
+
+/**
  * Implements hook_rules_action_info() on behalf of the pseudo data module.
  * @see rules_core_modules()
  */

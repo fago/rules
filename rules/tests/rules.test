@@ -976,4 +976,24 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertTrue(abs($node->created - $now - 86400) <= 1, 'Date input has been evaluated.');
   }
 
+  /**
+   * Test using a date offset.
+   */
+  function testDateOffsetProcessor() {
+    $node = $this->drupalCreateNode(array('title' => 'foo'));
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('data_set', array(
+      'data:select' => 'node:created',
+      'value:select' => 'node:created',
+      'value:process' => array(
+        'date_offset' => array('value' => 86400),
+      ),
+    ));
+    $created_orig = $node->created;
+    $rule->execute($node);
+    RulesLog::logger()->checkLog();
+    $node = node_load($node->nid, NULL, TRUE);
+    $this->assertTrue(($node->created - $created_orig - 86400) == 0, 'Date offset has been added.');
+  }
+
 }
