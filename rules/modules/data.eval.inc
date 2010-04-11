@@ -208,3 +208,37 @@ class RulesURIInputEvaluator extends RulesDataInputEvaluator {
     // The help comes with the form element.
   }
 }
+
+/**
+ * A data processor for applying date offsets.
+ */
+class RulesDateOffsetProcessor extends RulesDataProcessor {
+
+  protected static function form($settings, $var_info) {
+    $settings += array('value' => '');
+    $form = array(
+      '#type' => 'fieldset',
+      '#title' => t('Add offset'),
+      '#collapsible' => TRUE,
+      '#collapsed' => empty($settings['value']),
+      '#description' => t('Add an offset to the selected date.'),
+    );
+    $form['value'] = array(
+      '#type' => 'rules_duration',
+      '#title' => t('Offset'),
+      '#description' => t('Note that you can also specify negative numbers.'),
+      '#default_value' => $settings['value'],
+      '#weight' => 5,
+    );
+    return $form;
+  }
+
+  public static function access() {
+    return TRUE;
+  }
+
+  public function process($value, $info, RulesState $state, RulesPlugin $element) {
+    $value = isset($this->processor) ? $this->processor->process($value, $info, $state, $element) : $value;
+    return $value + $this->setting['value'];
+  }
+}
