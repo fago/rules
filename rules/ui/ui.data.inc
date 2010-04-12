@@ -12,14 +12,18 @@
 interface RulesDataDirectInputForm {
 
   /**
+   * Constructs the direct input form.
+   *
    * @return Array
    *  The direct input form.
    */
   public function inputForm($name, $info, $settings, RulesPlugin $element);
 
   /**
-   * @return String
-   *  a Truncates and parses data to string
+   * Returns a preview for the configured value.
+   *
+   * @return Array
+   *   A renderable array.
    */
   public function previewData($value);
 }
@@ -50,10 +54,6 @@ class RulesDataUI {
     $form[$name . ':process'] = array();
     RulesDataProcessor::attachForm($form[$name . ':process'], $settings[$name . ':process'], $info, $element->availableVariables());
     return $form;
-  }
-
-  public function previewData($value) {
-    return truncate_utf8($value, 10);
   }
 }
 
@@ -91,9 +91,14 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
   }
 
   public function previewData($value) {
-    $return = (!empty($value)) ? 'TRUE' : 'FALSE';
-    return $return;
+    $value = check_plain($value);
+    return array(
+      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
+      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
+      '#suffix' => '</span>'
+    );
   }
+
 }
 
 /**
@@ -139,6 +144,12 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
     );
     return $form;
   }
+
+  public function previewData($value) {
+    return array(
+      '#markup' => !empty($value) ? 'TRUE' : 'FALSE',
+    );
+  }
 }
 
 /**
@@ -163,6 +174,15 @@ class RulesDataUIDate extends RulesDataUIText {
     //the timpeicker is available.
     return $form;
   }
+
+  public function previewData($value) {
+    $value = is_numeric($value) ? format_date($value, 'short') : check_plain($value);
+    return array(
+      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
+      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
+      '#suffix' => '</span>'
+    );
+  }
 }
 
 /**
@@ -176,6 +196,14 @@ class RulesDataUIDuration extends RulesDataUIText {
     return $form;
   }
 
+  public function previewData($value) {
+    $value = is_numeric($value) ? format_interval($value) : check_plain($value);
+    return array(
+      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
+      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
+      '#suffix' => '</span>'
+    );
+  }
 }
 
 /**

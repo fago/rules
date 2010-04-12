@@ -33,3 +33,7 @@ div ul.rules-operations-add {
 #rules-filter-form {
   margin-bottom: 1.5em;
 }
+
+.rules-parameter-label {
+  font-style: italic; 
+}

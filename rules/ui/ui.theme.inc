@@ -53,27 +53,26 @@ function theme_rules_elements($variables) {
 }
 
 /**
- * Themes the container content overview
+ * Themes a view of multiple configuration items.
+ * @ingroup themeable
  */
-function theme_rules_container_content($variables) {
+function theme_rules_content_group($variables) {
+  drupal_add_css(drupal_get_path('module', 'rules') . '/ui/rules.ui.css');
   $element = $variables['element'];
-  unset($element['#theme']);
   $output = array();
   foreach (element_children($element) as $key) {
     $output[] = drupal_render($element[$key]);
   }
-  return implode(', ', $output);
+  $heading = !empty($element['#heading']) ? "<span class='rules-content-heading'>" . $element['#heading'] . ': </span>' : '';
+  return $heading . implode(', ', $output);
 }
 
 /**
- * Themes the parameter overview
+ * Themes the view of a single parameter configuration.
+ * @ingroup themeable
  */
-function theme_rules_parameter_content($variables) {
+function theme_rules_parameter_configuration($variables) {
   $element = $variables['element'];
-  unset($element['#theme']);
-  $output = array();
-  foreach (element_children($element) as $key) {
-    $output[] = drupal_render($element[$key]);
-  }
-  return implode(': ', $output);
+  $label = "<span class='rules-parameter-label'>" . check_plain($element['#info']['label']) . ': </span>';
+  return $label . drupal_render_children($element);
 }
