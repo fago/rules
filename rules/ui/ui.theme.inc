@@ -26,14 +26,15 @@ function theme_rules_elements($variables) {
     $element['element_id']['#attributes']['class'] = array('rules-element-id');
     $element['weight']['#attributes']['class'] = array('rules-element-weight');
 
-    $element['label']['label']['#prefix'] = '<div>';
-    $element['label']['label']['#suffix'] = '</div>';
+    $element['label']['value']['#prefix'] = '<div>';
+    $element['label']['value']['#suffix'] = '</div>';
 
-    $element['label']['config']['#prefix'] = '<div class="description">';
-    $element['label']['config']['#suffix'] = '</div>';
+    $element['label']['content']['#prefix'] = '<div class="description">';
+    $element['label']['content']['#suffix'] = '</div>';
 
     $row = array();
     $row[] = theme('indentation', array('size' => $element['#depth'])) . drupal_render($element['label']);
+
     $row[] = drupal_render($element['weight']) . drupal_render($element['parent_id']) . drupal_render($element['element_id']);
     $row[] = array('class' => 'rules-operations', 'data' => drupal_render($element['operations']));
 
@@ -48,5 +49,17 @@ function theme_rules_elements($variables) {
     drupal_add_tabledrag($form['#attributes']['id'], 'match', 'parent', 'rules-parent-id', 'rules-parent-id', 'rules-element-id', TRUE, 10);
     drupal_add_tabledrag($form['#attributes']['id'], 'order', 'sibling', 'rules-element-weight');
   }
+  return drupal_render($form);
+}
+
+/**
+ * Themes the parameter overview
+ */
+function themes_rules_parameter_content($variables) {
+  dpm('!test!');
+  $form = $variables['element'];
+  $form['label']['#suffix'] = ':&nbsp;';
+  $form['value']['#prefix'] = '<em>';
+  $form['value']['#suffix'] = '</em>,&nbsp;';
   return drupal_render($form);
 }

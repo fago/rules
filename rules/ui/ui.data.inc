@@ -21,7 +21,7 @@ interface RulesDataDirectInputForm {
    * @return String
    *  a Truncates and parses data to string
    */
-  public function parseData($value);
+  public function previewData($value);
 }
 
 /**
@@ -52,7 +52,7 @@ class RulesDataUI {
     return $form;
   }
 
-  public function parseData($value) {
+  public function previewData($value) {
     return truncate_utf8($value, 10);
   }
 }
@@ -90,8 +90,8 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
     return $form;
   }
 
-  public function parseData($value) {
-    $return = (isset($value) && $value == 1) ? 'TRUE' : 'FALSE';
+  public function previewData($value) {
+    $return = (!empty($value)) ? 'TRUE' : 'FALSE';
     return $return;
   }
 }
