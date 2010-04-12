@@ -482,6 +482,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         }
         $row[] = implode(", ", $events);
       }
+      // Add exportable status.
+      $row[] = array('data' => array(
+        '#theme' => 'entity_status',
+        '#status' => $config->status,
+      ));
 
       $row[] = l(t('edit'), RulesPluginUI::path($name));
       $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
@@ -490,9 +495,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       // FALSE for fixed configurations,
 
       // Add either an delete or revert link.
-      $text = $config->status & ENTITY_IN_CODE ? t('revert') : t('delete');
-      $link_path = RulesPluginUI::path($name, $config->status & ENTITY_IN_CODE ? 'revert' : 'delete');
-      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
+      if ($config->status != ENTITY_IN_CODE) {
+        $text = $config->status & ENTITY_IN_CODE ? t('revert') : t('delete');
+        $link_path = RulesPluginUI::path($name, $config->status & ENTITY_IN_CODE ? 'revert' : 'delete');
+        $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
+      }
+      else {
+        $row[] = '';
+      }
 
       // Add either an enable or disable link.
       $text = $config->active ? t('disable') : t('enable');
@@ -501,7 +511,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
       $rows[] = $row;
     }
-    $header = array(t('Label'), array('data' => t('Event')), array('data' => t('Operations'), 'colspan' => 4));
+    $header = array(t('Label'), t('Event'), t('Status'), array('data' => t('Operations'), 'colspan' => 4));
     if (!isset($events)) {
       // Remove the event heading as there is no such column.
       unset($header[1]);
