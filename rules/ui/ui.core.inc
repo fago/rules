@@ -58,7 +58,7 @@ interface RulesPluginUIInterface {
 
 
   /**
-   * Returns a structured array for rendering this element.
+   * Returns a structured array for rendering this element in overviews.
    */
   public function buildContent();
 
@@ -105,7 +105,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
 
-    $data_info = rules_fetch_data('data_info');
     // Make the element available in the form state.
     $form_state['rules_element'] = $this->element;
 
@@ -126,8 +125,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         continue;
       }
 
-      $class = is_string($type = $parameter['type']) && isset($data_info[$type]['ui class']) ? $data_info[$type]['ui class'] : 'RulesDataUI';
-
       $form['parameter'][$name] = array(
         '#type' => 'fieldset',
         '#title' => check_plain($parameter['label']),
@@ -136,7 +133,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
       // Init the parameter input mode.
       $form_state['parameter_mode'][$name] = !isset($form_state['parameter_mode'][$name]) ? NULL : $form_state['parameter_mode'][$name];
-      $form['parameter'][$name] += $this->getParameterForm($name, $parameter, $settings, $class, $form_state['parameter_mode'][$name]);
+      $form['parameter'][$name] += $this->getParameterForm($name, $parameter, $settings, $form_state['parameter_mode'][$name]);
     }
 
     // Add settings form, if specified.
@@ -156,7 +153,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Actually generates the parameter form for the given data type.
    */
-  protected function getParameterForm($name, $info, $settings, $class, &$mode) {
+  protected function getParameterForm($name, $info, $settings, &$mode) {
+    $class = $this->getDataTypeClass($info['type']);
+
     // Init the mode.
     if (!isset($mode)) {
       if (isset($settings[$name . ':select'])) {
@@ -320,50 +319,43 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Returns the name of class for the given data type.
    *
-   * @param $dataType
+   * @param $data_type
    *  The name of the data typ
-   * @return String
    */
-  public function getDataTypeClass($dataType) {
-    $data_info = rules_fetch_data('data_info');
-    return (isset($data_info[$dataType]) ? $data_info[$dataType]['ui class'] : 'RulesDataUI');
-  }
-
-  /**
-   * Returns the preview value of a parameter
-   */
-  public function getParameterValue($name) {
-    if (isset($this->element->settings[$name . ':select'])) {
-      $value = $this->element->settings[$name . ':select'];
-    }
-    else {
-      $parameters = $this->element->parameterInfo();
-      $type = $parameters[$name]['type'];
-      $value = call_user_func(array($this->getDataTypeClass($type), 'previewData'), $this->element->settings[$name]);
-    }
-    return $value;
+  public function getDataTypeClass($data_type) {
+    $cache = rules_get_cache();
+    $data_info = $cache['data_info'];
+    return (is_string($data_type) && isset($data_info[$data_type])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
   }
 
   /**
    * Implements RulesPluginUIInterface.
+   * Show a preview of the configuration settings.
    */
   public function buildContent() {
-    $form['parameter'] = array(
-      '#heading' => t('Parameter:'),
-      '#theme' => 'rules_container_content',
+    $content['parameter'] = array(
+      '#heading' => t('Parameter'),
+      '#theme' => 'rules_content_group',
     );
-    foreach($this->element->parameterInfo() as $name => $parameter) {
-      $form['parameter'][$name] = array(
-        '#theme' => 'rules_parameter_content',
+    foreach ($this->element->parameterInfo() as $name => $parameter) {
+      $element = array(
+        '#theme' => 'rules_parameter_configuration',
+        '#info' => $parameter,
       );
-      $form['parameter'][$name]['label'] = array(
-        '#markup' => $parameter['label'],
-      );
-      $form['parameter'][$name]['value'] = array(
-        '#markup' => $this->getParameterValue($name),
-      );
+      if (isset($this->element->settings[$name . ':select'])) {
+        $element['content'] = array(
+         '#markup' => '[' . $this->element->settings[$name . ':select'] . ']',
+        );
+      }
+      elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
+        $element['content'] = call_user_func(array($this->getDataTypeClass($parameter['type']), 'previewData'), $this->element->settings[$name]);
+      }
+      // Only add parameters that are really configured / not default.
+      if (!empty($element['content'])) {
+        $content['parameter'][$name] = $element;
+      }
     }
-    return $form;
+    return $content;
   }
 
   /**
