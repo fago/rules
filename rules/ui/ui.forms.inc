@@ -35,23 +35,78 @@ function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
 }
 
 /**
- * Form for deleting rule config.
+ * Gets the confirmation question for valid operations, or else FALSE.
  */
-function rules_ui_form_delete_rules_config($form, &$form_state, $rules_config) {
-  $form_state += array('rules_config' => $rules_config);
-  $confirm_question = t('Are you sure you want to delete the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
-  return confirm_form($form, $confirm_question, RULES_UI_PATH, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+function rules_ui_confirm_operations($op, $rules_config) {
+  switch ($op) {
+    case 'enable':
+      return t('Are you sure you want to enable the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+    case 'disable':
+      return t('Are you sure you want to disable the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+    case 'revert':
+      return t('Are you sure you want to revert the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+    case 'delete':
+      return t('Are you sure you want to delete the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+    default:
+      return FALSE;
+  }
+}
+
+/**
+ * Confirmation form for applying the operation to the config.
+ */
+function rules_ui_form_rules_config_confirm_op($form, &$form_state, $rules_config, $op) {
+  if ($confirm_question = rules_ui_confirm_operations($op, $rules_config)) {
+    $form_state += array('rules_config' => $rules_config, 'op' => $op);
+    return confirm_form($form, $confirm_question, RULES_UI_PATH, t('This action cannot be undone.'), t('Confirm'), t('Cancel'));
+  }
+  else {
+    drupal_not_found();
+    exit;
+  }
+}
+
+/**
+ * Applies the operation and returns the message to show to the user. Also the
+ * operation is logged to the watchdog. Note that the string is defined two
+ * times so that the translation extractor can find it.
+ */
+function rules_ui_confirm_operation_apply($op, $rules_config) {
+  $vars = array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label());
+  $edit_link = l(t('edit'), RulesPluginUI::path($rules_config->name));
+
+  switch ($op) {
+    case 'enable':
+      $rules_config->active = TRUE;
+      $rules_config->save();
+      watchdog('rules', 'Enabled %plugin %label.', $vars, WATCHDOG_NOTICE, $edit_link);
+      return t('Enabled %plugin %label.', $vars);
+
+    case 'disable':
+      $rules_config->active = FALSE;
+      $rules_config->save();
+      watchdog('rules', 'Disabled %plugin %label.', $vars, WATCHDOG_NOTICE, $edit_link);
+      return t('Disabled %plugin %label.', $vars);
+
+    case 'revert':
+      $rules_config->delete();
+      watchdog('rules', 'Reverted %plugin %label to the defaults.', $vars, WATCHDOG_NOTICE, $edit_link);
+      return t('Reverted %plugin %label to the defaults.', $vars);
+
+    case 'delete':
+      $rules_config->delete();
+      watchdog('rules', 'Deleted %plugin %label.', $vars);
+      return t('Deleted %plugin %label.', $vars);
+  }
 }
 
 /**
  * Rule config deletion form submit callback.
  */
-function rules_ui_form_delete_rules_config_submit($form, &$form_state) {
+function rules_ui_form_rules_config_confirm_op_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
-    $rules_config = $form_state['rules_config'];
-    $rules_config->delete();
-    watchdog('content', 'Deleted rules configuration %plugin %label.', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
-    drupal_set_message(t('Deleted rules configuration %plugin %label.', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label())));
+    $msg = rules_ui_confirm_operation_apply($form_state['op'], $form_state['rules_config']);
+    drupal_set_message($msg);
   }
 }
 

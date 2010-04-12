@@ -472,9 +472,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $event_info = rules_fetch_data('event_info');
 
     foreach ($configs as $name => $config) {
-      $path = RULES_UI_RULE_PATH . '/' . $name;
       $row = array();
-      $row[] = l($config->label(), $path);
+      $row[] = l($config->label(), RulesPluginUI::path($name));
       // Add events if the configs are assigned to events.
       if ($config instanceof RulesTriggerableInterface) {
         $events = array();
@@ -484,12 +483,25 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $row[] = implode(", ", $events);
       }
 
-      $row[] = l(t('edit'), $path);
-      $row[] = l(t('clone'), $path . '/clone', array('query' => drupal_get_destination()));
-      $row[] = l(t('delete'), $path . '/delete', array('query' => drupal_get_destination()));
+      $row[] = l(t('edit'), RulesPluginUI::path($name));
+      $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
+
+      // TODO: hide configs where access() is FALSE and make sure access is
+      // FALSE for fixed configurations,
+
+      // Add either an delete or revert link.
+      $text = $config->status & ENTITY_IN_CODE ? t('revert') : t('delete');
+      $link_path = RulesPluginUI::path($name, $config->status & ENTITY_IN_CODE ? 'revert' : 'delete');
+      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
+
+      // Add either an enable or disable link.
+      $text = $config->active ? t('disable') : t('enable');
+      $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
+      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
+
       $rows[] = $row;
     }
-    $header = array(t('Label'), array('data' => t('Event')), array('data' => t('Operations'), 'colspan' => '3'));
+    $header = array(t('Label'), array('data' => t('Event')), array('data' => t('Operations'), 'colspan' => 4));
     if (!isset($events)) {
       // Remove the event heading as there is no such column.
       unset($header[1]);
