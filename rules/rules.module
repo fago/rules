@@ -657,7 +657,7 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
-    'rules_container_label' => array(
+    'rules_parameter_content' => array(
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
