@@ -348,11 +348,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Implements RulesPluginUIInterface.
    */
   public function buildContent() {
-    $form['parameter']['#heading'] = t('Parameter:');
+    $form['parameter'] = array(
+      '#heading' => t('Parameter:'),
+      '#theme' => 'rules_container_content',
+    );
     foreach($this->element->parameterInfo() as $name => $parameter) {
       $form['parameter'][$name] = array(
-        '#tree' => TRUE,
-        '#theme_wrappers' => array('rules_parameter_content'),
+        '#theme' => 'rules_parameter_content',
       );
       $form['parameter'][$name]['label'] = array(
         '#markup' => $parameter['label'],

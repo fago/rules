@@ -53,13 +53,27 @@ function theme_rules_elements($variables) {
 }
 
 /**
+ * Themes the container content overview
+ */
+function theme_rules_container_content($variables) {
+  $element = $variables['element'];
+  unset($element['#theme']);
+  $output = array();
+  foreach (element_children($element) as $key) {
+    $output[] = drupal_render($element[$key]);
+  }
+  return implode(', ', $output);
+}
+
+/**
  * Themes the parameter overview
  */
-function themes_rules_parameter_content($variables) {
-  dpm('!test!');
-  $form = $variables['element'];
-  $form['label']['#suffix'] = ':&nbsp;';
-  $form['value']['#prefix'] = '<em>';
-  $form['value']['#suffix'] = '</em>,&nbsp;';
-  return drupal_render($form);
+function theme_rules_parameter_content($variables) {
+  $element = $variables['element'];
+  unset($element['#theme']);
+  $output = array();
+  foreach (element_children($element) as $key) {
+    $output[] = drupal_render($element[$key]);
+  }
+  return implode(': ', $output);
 }
