@@ -123,10 +123,12 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $type, $elemen
       '#title' => t('Select the %element to add', array('%element' => $type)),
       '#options' => RulesPluginUI::getOptions($type . '_info'),
     );
-    $form['submit'] = array(
+    $form['reload'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
     );
+    $form['#prefix'] = '<div id="rules-form-wrapper">';
+    $form['#suffix'] = '</div>';
   }
   else {
     $form_state['rules_element']->form($form, $form_state, array('button' => TRUE));
@@ -232,10 +234,10 @@ function rules_ui_parameter_replace_submit($form, &$form_state) {
 }
 
 /**
- * Ajax callback replacing the parameter form.
+ * Ajax callback for reloading the whole form.
  */
-function rules_ui_parameter_replace($form, $form_state) {
-  return $form['parameter'];
+function rules_ui_form_ajax_reload_form($form, $form_state) {
+  return $form;
 }
 
 /**
