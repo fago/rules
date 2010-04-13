@@ -190,7 +190,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#options' => array('attributes' => array('id' => $link_id)),
         '#process' => array('ajax_process_form'),
         // Hide the link by default and unhide it by javascript.
-        '#prefix' => '<div class="rules_hidden rules_parameter_switch">',
+        '#prefix' => '<div class="rules-show-js">',
         '#suffix' => '</div>',
         '#ajax' => rules_ui_form_default_ajax('none') + array(
           'event' => 'click',
@@ -204,6 +204,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $form['switch_button'] = array(
         '#type' => 'submit',
         '#name' => 'param_' . $name,
+        '#attributes' => array('class' => array('rules-hide-js')),
         '#parameter' => $name,
         '#value' => t('Switch'),
         '#submit' => array('rules_ui_parameter_replace_submit'),

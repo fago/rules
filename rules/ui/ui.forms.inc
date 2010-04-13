@@ -13,8 +13,7 @@ function rules_ui_form_defaults(&$form) {
   // See http://drupal.org/node/768128.
   $form['#attached']['js'][] = 'misc/collapse.js';
 
-  // Add our own js and css.
-  $form['#attached']['js'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.js';
+  // Add our own css.
   $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
 
   // Specify the wrapper div used by #ajax.

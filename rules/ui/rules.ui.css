@@ -1,5 +1,13 @@
 @CHARSET "UTF-8";
 
+.rules-show-js, html.js .rules-hide-js {
+  display: none;
+}
+
+.rules-hide-js, html.js .rules-show-js {
+  display: block;
+}
+
 .rules-container-plugin ul.action-links .delete a, .rules-container-plugin ul.action-links .edit a {
 	background: none;
 	padding-left: 0px;
@@ -16,10 +24,6 @@
 div ul.rules-operations-add {
 	margin: 0px;
 	margin-bottom: 2em;
-}
-
-.rules_hidden {
-  Display: none;
 }
 
 .rules-debug-log {
