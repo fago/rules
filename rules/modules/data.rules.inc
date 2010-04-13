@@ -493,9 +493,11 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
  * Form alter callback for actions relying on the entity type.
  */
 function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
+  $first_step = empty($element->settings['type']);
   $form['reload'] = array(
+    '#weight' => 5,
     '#type' => 'submit',
-    '#value' => isset($form_state['rules_element_step']) ? t('Reload form') : t('Continue'),
+    '#value' => $first_step ? t('Continue') : t('Reload form'),
     '#limit_validation_errors' => array('parameter', 'type'),
     '#submit' => array('rules_form_submit_rebuild'),
     '#ajax' => array(
@@ -508,13 +510,10 @@ function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstract
   // Use ajax and trigger as the reload button.
   $form['parameter']['type']['#ajax'] = $form['reload']['#ajax'] + array(
     'event' => 'change',
-    'trigger_as' => array(
-      'name' => 'reload',
-    ),
+    'trigger_as' => array('name' => 'reload'),
   );
 
-
-  if (!isset($form_state['rules_element_step'])) {
+  if ($first_step) {
     // In the first step show only the type select.
     foreach (element_children($form['parameter']) as $key) {
       if ($key != 'type') {

@@ -824,13 +824,6 @@ function rules_exit() {
 }
 
 /**
- * General form submit handler, that rebuilds the form
- */
-function rules_form_submit_rebuild($form, &$form_state) {
-  $form_state['rebuild'] = TRUE;
-}
-
-/**
  * Implements hook_element_info().
  */
 function rules_element_info() {
