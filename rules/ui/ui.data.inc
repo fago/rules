@@ -20,12 +20,12 @@ interface RulesDataDirectInputForm {
   public function inputForm($name, $info, $settings, RulesPlugin $element);
 
   /**
-   * Returns a preview for the configured value.
+   * Render the configured value.
    *
    * @return Array
    *   A renderable array.
    */
-  public function previewData($value);
+  public function render($value);
 }
 
 /**
@@ -90,12 +90,10 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
     return $form;
   }
 
-  public function previewData($value) {
-    $value = check_plain($value);
+  public function render($value) {
     return array(
-      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
-      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
-      '#suffix' => '</span>'
+      'content' => array('#markup' => check_plain($value)),
+      '#attributes' => array('class' => array('rules-parameter-text')),
     );
   }
 
@@ -145,9 +143,10 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
     return $form;
   }
 
-  public function previewData($value) {
+  public function render($value) {
     return array(
-      '#markup' => !empty($value) ? 'TRUE' : 'FALSE',
+      'content' => array('#markup' => !empty($value) ? t('true') : t('false')),
+      '#attributes' => array('class' => array('rules-parameter-boolean')),
     );
   }
 }
@@ -175,12 +174,11 @@ class RulesDataUIDate extends RulesDataUIText {
     return $form;
   }
 
-  public function previewData($value) {
+  public function render($value) {
     $value = is_numeric($value) ? format_date($value, 'short') : check_plain($value);
     return array(
-      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
-      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
-      '#suffix' => '</span>'
+      'content' => array('#markup' => $value),
+      '#attributes' => array('class' => array('rules-parameter-date')),
     );
   }
 }
@@ -196,12 +194,11 @@ class RulesDataUIDuration extends RulesDataUIText {
     return $form;
   }
 
-  public function previewData($value) {
+  public function render($value) {
     $value = is_numeric($value) ? format_interval($value) : check_plain($value);
     return array(
-      '#prefix' => "<span class='rules-parameter-textual' title='$value'>",
-      '#markup' => truncate_utf8($value, 20, TRUE, TRUE),
-      '#suffix' => '</span>'
+      'content' => array('#markup' => $value),
+      '#attributes' => array('class' => array('rules-parameter-duration')),
     );
   }
 }

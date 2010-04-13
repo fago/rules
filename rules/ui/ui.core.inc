@@ -338,21 +338,21 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#theme' => 'rules_content_group',
     );
     foreach ($this->element->parameterInfo() as $name => $parameter) {
-      $element = array(
-        '#theme' => 'rules_parameter_configuration',
-        '#info' => $parameter,
-      );
+      $element = array();
       if (isset($this->element->settings[$name . ':select'])) {
         $element['content'] = array(
          '#markup' => '[' . $this->element->settings[$name . ':select'] . ']',
         );
       }
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
-        $element['content'] = call_user_func(array($this->getDataTypeClass($parameter['type']), 'previewData'), $this->element->settings[$name]);
+        $element = call_user_func(array($this->getDataTypeClass($parameter['type']), 'render'), $this->element->settings[$name]);
       }
       // Only add parameters that are really configured / not default.
-      if (!empty($element['content'])) {
-        $content['parameter'][$name] = $element;
+      if ($element) {
+        $content['parameter'][$name] = array(
+          '#theme' => 'rules_parameter_configuration',
+          '#info' => $parameter,
+        ) + $element;;
       }
     }
     return $content;
