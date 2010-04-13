@@ -333,6 +333,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Show a preview of the configuration settings.
    */
   public function buildContent() {
+    $content['label'] = array(
+      '#type' => 'link',
+      '#title' => $this->element->label(),
+      '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->childElementId()),
+      '#prefix' => '<div>',
+      // Put the elements below in a "description" div.
+      '#suffix' => '</div><div class="description">'
+    );
     $content['parameter'] = array(
       '#heading' => t('Parameter'),
       '#theme' => 'rules_content_group',
@@ -352,9 +360,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $content['parameter'][$name] = array(
           '#theme' => 'rules_parameter_configuration',
           '#info' => $parameter,
-        ) + $element;;
+        ) + $element;
       }
     }
+    $content['#suffix'] = '</div>';
     return $content;
   }
 
@@ -589,12 +598,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
         '#depth' => $child->depth() - $root_depth - 1,
         '#container' => $is_container,
       );
-      $label = $is_container ? check_plain($child->label()) : l($child->label(), RulesPluginUI::path($this->element->root()->name, 'edit', $id));
-
-      $form['elements'][$id]['label']['value'] = array(
-        '#markup' => $label,
-      );
-      $form['elements'][$id]['label']['content'] = $child->buildContent();
+      $form['elements'][$id]['label'] = $child->buildContent();
       $form['elements'][$id]['weight'] = array(
         '#type' => 'weight',
         '#default_value' => $child->weight,
@@ -677,6 +681,14 @@ class RulesContainerPluginUI extends RulesPluginUI {
       }
     }
     return $render;
+  }
+
+
+  public function buildContent() {
+    $content = parent::buildContent();
+    // Don't link the title for container plugins.
+    $content['label'] = array('#markup' => check_plain($content['label']['#title']));
+    return $content;
   }
 }
 
