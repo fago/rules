@@ -526,6 +526,10 @@ function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstract
     // default value based upon the type on rebuild.
     $form_state['parameter_mode'] = array();
   }
+  else {
+    // Hide the reload button in case js is enabled and it's not the first step.
+    $form['reload']['#attributes'] = array('class' => array('rules-hide-js'));
+  }
 }
 
 
