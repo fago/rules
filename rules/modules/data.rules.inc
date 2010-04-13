@@ -154,7 +154,10 @@ function rules_data_action_info() {
       'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_fetch',
-      'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
+      'callbacks' => array(
+        'access' => 'rules_action_entity_createfetch_access',
+        'form_alter' => 'rules_action_entity_type_form_alter',
+      ),
     );
     $return['entity_query'] = array(
       'label' => t('Fetch entity by property'),
@@ -191,6 +194,9 @@ function rules_data_action_info() {
       'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_query',
+      'callbacks' => array(
+        'form_alter' => 'rules_action_entity_type_form_alter',
+      ),
     );
   }
 
@@ -218,7 +224,10 @@ function rules_data_action_info() {
       'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_create',
-      'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
+      'callbacks' => array(
+        'access' => 'rules_action_entity_createfetch_access',
+        'form_alter' => 'rules_action_entity_type_form_alter',
+      ),
     );
   }
 
@@ -404,7 +413,7 @@ function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
   $element_info['parameter']['id']['type'] = isset($info['entity keys']['name']) ? 'text' : 'integer';
 
   // Add an optional revision parameter, if supported.
-  if (isset($info['entity keys']['revision'])) {
+  if (!empty($info['entity keys']['revision'])) {
     $element_info['parameter']['revision_id'] = array(
       'type' => 'integer',
       'label' => t('Revision identifier'),
@@ -478,6 +487,48 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
   $element_info['provides']['entity_created']['type'] = $element->settings['type'];
   $element->alterInfo($element_info);
 }
+
+
+/**
+ * Form alter callback for actions relying on the entity type.
+ */
+function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
+  $form['reload'] = array(
+    '#type' => 'submit',
+    '#value' => isset($form_state['rules_element_step']) ? t('Reload form') : t('Continue'),
+    '#limit_validation_errors' => array('parameter', 'type'),
+    '#submit' => array('rules_form_submit_rebuild'),
+    '#ajax' => array(
+      'callback' => 'rules_ui_form_ajax_reload_form',
+      'wrapper' => 'rules-form-wrapper',
+      'effect' => 'slide',
+      'speed' => 'fast',
+    ),
+  );
+  // Use ajax and trigger as the reload button.
+  $form['parameter']['type']['#ajax'] = $form['reload']['#ajax'] + array(
+    'event' => 'change',
+    'trigger_as' => array(
+      'name' => 'reload',
+    ),
+  );
+
+
+  if (!isset($form_state['rules_element_step'])) {
+    // In the first step show only the type select.
+    foreach (element_children($form['parameter']) as $key) {
+      if ($key != 'type') {
+        unset($form['parameter'][$key]);
+      }
+    }
+    unset($form['submit']);
+    $form_state['rules_element_step'] = 'selected';
+    // Clear the parameter modes for the parameters, so they get the proper
+    // default value based upon the type on rebuild.
+    $form_state['parameter_mode'] = array();
+  }
+}
+
 
 /**
  * Custom access callback for data save and delete action.

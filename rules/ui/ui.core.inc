@@ -101,12 +101,19 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Make sure collapsible fieldsets work even if added via AJAX.
     // See http://drupal.org/node/768128.
     $form['#attached']['js'][] = 'misc/collapse.js';
+    // Add our own js and css.
+    $form['#attached']['js'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.js';
+    $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+
+    // Temporary fix so it won't be overwritten in ajax callbacks.
+    $form['#action'] = request_uri();
+
+    // Define a generic wrapper used to replace the form via AJAX.
+    $form['#prefix'] = '<div id="rules-form-wrapper">';
+    $form['#suffix'] = '</div>';
 
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
-
-    // Make the element available in the form state.
-    $form_state['rules_element'] = $this->element;
 
     // We use $form_state['element_settings'] to store the settings of both
     // parameter modes. That way one can switch between the parameter modes
@@ -115,9 +122,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $settings = $this->element->settings + $form_state['element_settings'];
 
     $form['parameter'] = array(
-      '#type' => 'container',
       '#tree' => TRUE,
-      '#id' => 'rules-parameter-wrapper'
     );
 
     foreach($this->element->parameterInfo() as $name => $parameter) {
@@ -185,7 +190,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // to switch it without javascript, in case switching is possible.
     if ($supports_input_mode && empty($info['restriction'])) {
       $value = $mode == 'selector' ? t('Switch to the direct input mode') : t('Switch to data selection');
-      $link_id = drupal_html_id('rules-parameter-switch-' . $name);
+      $link_id = drupal_html_id('rules-parameter-' . $name . '-switch-link');
 
       $form['link'] = array(
         '#type' => 'link',
@@ -199,13 +204,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         // Hide the link by default and unhide it by javascript.
         '#prefix' => '<div class="rules_hidden rules_parameter_switch">',
         '#suffix' => '</div>',
-        '#attached' => array(
-          'js' => array(drupal_get_path('module', 'rules') . '/ui/rules.ui.js'),
-          'css' => array(drupal_get_path('module', 'rules') . '/ui/rules.ui.css'),
-        ),
         '#ajax' => array(
-          'callback' => 'rules_ui_parameter_replace',
-          'wrapper' => 'rules-parameter-wrapper',
+          'callback' => 'rules_ui_form_ajax_reload_form',
+          'wrapper' => 'rules-form-wrapper',
           'event' => 'click',
           // Trigger as the Switch button.
           'trigger_as' => array(
@@ -214,15 +215,15 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
           ),
         ),
       );
-      $form['switch'] = array(
+      $form['switch_button'] = array(
         '#type' => 'submit',
         '#name' => 'param_' . $name,
         '#parameter' => $name,
         '#value' => t('Switch'),
         '#submit' => array('rules_ui_parameter_replace_submit'),
         '#ajax' => array(
-          'callback' => 'rules_ui_parameter_replace',
-          'wrapper' => 'rules-parameter-wrapper',
+          'callback' => 'rules_ui_form_ajax_reload_form',
+          'wrapper' => 'rules-form-wrapper',
         ),
         // Do not validate!
         '#limit_validation_errors' => array(),
@@ -576,9 +577,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
    * Generates a table for editing the contained elements.
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
-    // Make the element available in the form state.
-    $form_state['rules_element'] = $this->element;
-
     $form['elements'] = array(
       '#tree' => TRUE,
       '#theme' => 'rules_elements',
