@@ -6,6 +6,62 @@
  */
 
 /**
+ * Sets form properties common to all rules ui forms.
+ */
+function rules_ui_form_defaults(&$form) {
+  // Make sure collapsible fieldsets work even if added via AJAX.
+  // See http://drupal.org/node/768128.
+  $form['#attached']['js'][] = 'misc/collapse.js';
+
+  // Add our own js and css.
+  $form['#attached']['js'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.js';
+  $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+
+  // Specify the wrapper div used by #ajax.
+  $form['#prefix'] = '<div id="rules-form-wrapper">';
+  $form['#suffix'] = '</div>';
+}
+
+/**
+ * Ajax callback for reloading the whole form.
+ */
+function rules_ui_form_ajax_reload_form($form, $form_state) {
+  return $form;
+}
+
+/**
+ * Defines #ajax properties.
+ */
+function rules_ui_form_default_ajax($effect = 'slide') {
+  return array(
+    'callback' => 'rules_ui_form_ajax_reload_form',
+    'wrapper' => 'rules-form-wrapper',
+    'effect' => $effect,
+    'speed' => 'fast',
+  );
+}
+
+/**
+ * Submit handler for switching the parameter input mode.
+ */
+function rules_ui_parameter_replace_submit($form, &$form_state) {
+  if (isset($form_state['triggering_element'])) {
+    $name = $form_state['triggering_element']['#parameter'];
+    $form_state['parameter_mode'][$name] = $form_state['parameter_mode'][$name] == 'selector' ? 'input' : 'selector';
+  }
+  $form_state['rebuild'] = TRUE;
+}
+
+
+/**
+ * General form submit handler, that rebuilds the form
+ */
+function rules_form_submit_rebuild($form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+}
+
+
+/**
  * Edit a rules configuration.
  */
 function rules_ui_form_edit_rules_config($form, &$form_state, $rules_config) {
@@ -118,17 +174,20 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $type, $elemen
   // In the first step create the element and in the second step show its edit
   // form.
   if (!isset($form_state['rules_element'])) {
+    rules_ui_form_defaults($form);
     $form['element_name'] = array(
       '#type' => 'select',
       '#title' => t('Select the %element to add', array('%element' => $type)),
       '#options' => RulesPluginUI::getOptions($type . '_info'),
+      '#ajax' => rules_ui_form_default_ajax() + array(
+        'trigger_as' => array('name' => 'reload'),
+      ),
     );
     $form['reload'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
+      '#ajax' => rules_ui_form_default_ajax(),
     );
-    $form['#prefix'] = '<div id="rules-form-wrapper">';
-    $form['#suffix'] = '</div>';
   }
   else {
     $form_state['rules_element']->form($form, $form_state, array('button' => TRUE));
@@ -220,24 +279,6 @@ function rules_ui_edit_element_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
   $config_name = $form_state['rules_element']->root()->name;
   $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $config_name;
-}
-
-/**
- * Submit handler for switching the parameter input mode.
- */
-function rules_ui_parameter_replace_submit($form, &$form_state) {
-  if (isset($form_state['triggering_element'])) {
-    $name = $form_state['triggering_element']['#parameter'];
-    $form_state['parameter_mode'][$name] = $form_state['parameter_mode'][$name] == 'selector' ? 'input' : 'selector';
-  }
-  $form_state['rebuild'] = TRUE;
-}
-
-/**
- * Ajax callback for reloading the whole form.
- */
-function rules_ui_form_ajax_reload_form($form, $form_state) {
-  return $form;
 }
 
 /**

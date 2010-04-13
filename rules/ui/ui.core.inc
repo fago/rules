@@ -98,19 +98,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates the element edit form.
    */
   public function form(&$form, &$form_state, $options = array()) {
-    // Make sure collapsible fieldsets work even if added via AJAX.
-    // See http://drupal.org/node/768128.
-    $form['#attached']['js'][] = 'misc/collapse.js';
-    // Add our own js and css.
-    $form['#attached']['js'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.js';
-    $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
-
-    // Temporary fix so it won't be overwritten in ajax callbacks.
-    $form['#action'] = request_uri();
-
-    // Define a generic wrapper used to replace the form via AJAX.
-    $form['#prefix'] = '<div id="rules-form-wrapper">';
-    $form['#suffix'] = '</div>';
+    rules_ui_form_defaults($form);
 
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
@@ -204,9 +192,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         // Hide the link by default and unhide it by javascript.
         '#prefix' => '<div class="rules_hidden rules_parameter_switch">',
         '#suffix' => '</div>',
-        '#ajax' => array(
-          'callback' => 'rules_ui_form_ajax_reload_form',
-          'wrapper' => 'rules-form-wrapper',
+        '#ajax' => rules_ui_form_default_ajax('none') + array(
           'event' => 'click',
           // Trigger as the Switch button.
           'trigger_as' => array(
@@ -221,10 +207,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#parameter' => $name,
         '#value' => t('Switch'),
         '#submit' => array('rules_ui_parameter_replace_submit'),
-        '#ajax' => array(
-          'callback' => 'rules_ui_form_ajax_reload_form',
-          'wrapper' => 'rules-form-wrapper',
-        ),
+        '#ajax' => rules_ui_form_default_ajax('none'),
         // Do not validate!
         '#limit_validation_errors' => array(),
       );
@@ -577,6 +560,8 @@ class RulesContainerPluginUI extends RulesPluginUI {
    * Generates a table for editing the contained elements.
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
+    rules_ui_form_defaults($form);
+
     $form['elements'] = array(
       '#tree' => TRUE,
       '#theme' => 'rules_elements',
