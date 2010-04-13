@@ -73,6 +73,20 @@ function theme_rules_content_group($variables) {
  */
 function theme_rules_parameter_configuration($variables) {
   $element = $variables['element'];
-  $label = "<span class='rules-parameter-label'>" . check_plain($element['#info']['label']) . ': </span>';
-  return $label . drupal_render_children($element);
+  $content = drupal_render_children($element);
+  // Add the full content to the span's title, but don't use drupal_attributes
+  // for that as this would invoke check_plain() again.
+  $title = strip_tags($content);
+  $element['#attributes']['class'][] = 'rules-parameter-configuration';
+  $attributes = drupal_attributes($element['#attributes']) . " title='$title'";
+
+  $label_attributes['class'][] = 'rules-parameter-label';
+  if (!empty($element['#info']['description'])) {
+    $label_attributes['title'] = $element['#info']['description'];
+  }
+  $label_attributes = drupal_attributes($label_attributes);
+
+  $output = "<span $label_attributes>" . check_plain($element['#info']['label']) . ': </span>';
+  $output .= "<span $attributes>" . truncate_utf8($content, 30, TRUE, TRUE) . "</span>";
+  return $output;
 }
