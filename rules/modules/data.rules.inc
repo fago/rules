@@ -121,14 +121,14 @@ function rules_data_action_info() {
     'parameter' => array(
       'data' => array(
         'type' => '*',
-        'label' => t('Data to modify'),
-        'description' => t('Specify the data to be modified using a data selector, e.g. "node:author:name".'),
+        'label' => t('Data'),
+        'description' => t('Specifies the data to be modified using a data selector, e.g. "node:author:name".'),
         'restriction' => 'selector',
        ),
       'value' => array(
         'type' => '*',
-        'label' => t('Data value'),
-        'description' => t('The new value to set for the selected data.'),
+        'label' => t('Value'),
+        'description' => t('The new value to set for the specified data.'),
       ),
     ),
     'group' => t('Data'),
@@ -141,9 +141,9 @@ function rules_data_action_info() {
       'parameter' => array(
         'type' => array(
           'type' => 'text',
-          'label' => t('Data type'),
+          'label' => t('Entity type'),
           'options list' => 'rules_data_action_type_options',
-          'description' => t('Specify the type of the data that should be fetched.'),
+          'description' => t('Specifies the type of entity that should be fetched.'),
           'restriction' => 'input',
          ),
          'id' => array('type' => 'unknown', 'label' => t('Identifier')),
@@ -151,7 +151,7 @@ function rules_data_action_info() {
       'provides' => array(
         'entity_fetched' => array('type' => 'unknown', 'label' => t('Fetched entity')),
       ),
-      'group' => t('Data'),
+      'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_fetch',
       'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
@@ -161,26 +161,26 @@ function rules_data_action_info() {
       'parameter' => array(
         'type' => array(
           'type' => 'text',
-          'label' => t('Data type'),
+          'label' => t('Entity type'),
           'options list' => 'rules_data_action_type_options',
-          'description' => t('Specify the type of the data that should be fetched.'),
+          'description' => t('Specifies the type of the entity that should be fetched.'),
           'restriction' => 'input',
          ),
         'property' => array(
           'type' => 'text',
           'label' => t('Property'),
-          'description' => t('The property by which the data is to be selected.'),
+          'description' => t('The property by which the entity is to be selected.'),
           'restriction' => 'input',
          ),
         'value' => array(
           'type' => 'unknown',
           'label' => t('Value'),
-          'description' => t('The property value of the data to be fetched.'),
+          'description' => t('The property value of the entity to be fetched.'),
          ),
          'limit' => array(
            'type' => 'integer',
            'label' => t('Limit result count'),
-           'description' => t('Limit the maximum number of fetched data items.'),
+           'description' => t('Limit the maximum number of fetched entities.'),
            'optional' => TRUE,
            'default value' => '10',
          ),
@@ -188,7 +188,7 @@ function rules_data_action_info() {
       'provides' => array(
         'entity_fetched' => array('type' => 'list', 'label' => t('Fetched entity')),
       ),
-      'group' => t('Data'),
+      'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_query',
     );
@@ -201,9 +201,9 @@ function rules_data_action_info() {
       'parameter' => array(
         'type' => array(
           'type' => 'text',
-          'label' => t('Data type'),
+          'label' => t('Entity type'),
           'options list' => 'rules_data_action_type_options',
-          'description' => t('Specify the type of the data that should be created.'),
+          'description' => t('Specifies the type of the entity that should be created.'),
           'restriction' => 'input',
          ),
          // Further needed parameter depends on the type.
@@ -211,11 +211,11 @@ function rules_data_action_info() {
       'provides' => array(
         'entity_created' => array(
           'type' => 'unknown',
-          'label' => t('Created data'),
+          'label' => t('Created entity'),
           'save' => TRUE,
         ),
       ),
-      'group' => t('Data'),
+      'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_create',
       'callbacks' => array('access' => 'rules_action_entity_createfetch_access'),
@@ -229,8 +229,8 @@ function rules_data_action_info() {
       'parameter' => array(
         'data' => array(
           'type' => $types,
-          'label' => t('Data to save'),
-          'description' => t('The data, which should be saved permanently.'),
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity, which should be saved permanently.'),
           'restriction' => 'selector',
          ),
          'immediate' => array(
@@ -242,7 +242,7 @@ function rules_data_action_info() {
            'restriction' => 'input',
          ),
       ),
-      'group' => t('Data'),
+      'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_save',
       'callbacks' => array(
@@ -258,12 +258,12 @@ function rules_data_action_info() {
       'parameter' => array(
         'data' => array(
           'type' => $types,
-          'label' => t('Data to delete'),
-          'description' => t('The data, which should be deleted permanently.'),
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity, which should be deleted permanently.'),
           'restriction' => 'selector',
          ),
       ),
-      'group' => t('Data'),
+      'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_delete',
       'callbacks' => array(
