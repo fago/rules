@@ -45,3 +45,7 @@ div ul.rules-operations-add {
 #rules-plugin-add-help {
   margin-bottom: 1em;
 }
+
+.rules-element-content {
+  float: left;
+}
