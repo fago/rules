@@ -25,6 +25,8 @@ interface RulesPluginUIInterface {
    *      editing configuration settings like the label or categories. Defaults
    *      to FALSE.
    *    - 'button': Whether a submit button should be added. Defaults to FALSE.
+   *    - 'init': Whether the element is about to be configured the first time
+   *      and the configuration is about to be initialized. Defaults to FALSE.
    *    - 'restrict plugins: May be used to restrict the list of rules plugins
    *      that may be added to this configuration. For that set an array of
    *      valid plugins. Note that conditions and actions are always valid, so
@@ -98,7 +100,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates the element edit form.
    */
   public function form(&$form, &$form_state, $options = array()) {
-    rules_ui_form_defaults($form);
+    self::formDefaults($form);
 
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
@@ -263,7 +265,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Clear the element id index map, so the map is regenerated in case of a
     // form rebuild. That way the map is indentical to the map that would be
     // generated on the next page load.
-    self::clearElementMap($this->element->root()->map);
+    self::clearElementMap($this->element);
     drupal_set_message(t('Your changes have been saved.'));
   }
 
@@ -310,7 +312,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function getDataTypeClass($data_type) {
     $cache = rules_get_cache();
     $data_info = $cache['data_info'];
-    return (is_string($data_type) && isset($data_info[$data_type])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
+    return (is_string($data_type) && isset($data_info[$data_type]['ui class'])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
   }
 
   /**
@@ -411,11 +413,21 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $counter = &drupal_static(__FUNCTION__);
 
       if (!$map) {
-        $counter = 0;
-        // Get the rules config.
-        $element = $element->root();
-        $element->map = array();
-        $map =& $element->map;
+        // In case a new element has no id yet, get the previous map.
+        if (!empty($element->root()->map)) {
+          $map =& $element->root()->map;
+        }
+        elseif ($element->root() === $element) {
+          $counter = 0;
+          // Get the rules config.
+          $element = $element->root();
+          $element->map = array();
+          $map =& $element->map;
+        }
+        else {
+          self::indexConfig($element->root(), $map);
+          return;
+        }
       }
       $counter++;
       $map[$counter] = $element;
@@ -432,12 +444,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Clears the current element map.
    */
-  protected static function clearElementMap(&$map) {
-    if (isset($map)) {
-      foreach ($map as $element) {
-        unset($element->childElementId);
+  protected static function clearElementMap($element) {
+    $element = $element->root();
+    if (!empty($element->map)) {
+      foreach ($element->map as $child) {
+        unset($child->childElementId);
       }
-      unset($map);
+      unset($element->map);
     }
   }
 
@@ -536,6 +549,19 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     }
     return $sorted_data;
   }
+
+  public static function formDefaults(&$form) {
+    // Make sure collapsible fieldsets work even if added via AJAX.
+    // See http://drupal.org/node/768128.
+    $form['#attached']['js'][] = 'misc/collapse.js';
+
+    // Add our own css.
+    $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+
+    // Specify the wrapper div used by #ajax.
+    $form['#prefix'] = '<div id="rules-form-wrapper">';
+    $form['#suffix'] = '</div>';
+  }
 }
 
 /**
@@ -561,9 +587,11 @@ class RulesContainerPluginUI extends RulesPluginUI {
    * Generates a table for editing the contained elements.
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
-    rules_ui_form_defaults($form);
+    self::formDefaults($form);
 
     $form['elements'] = array(
+      // Hide during creation.
+      '#access' => empty($options['init']),
       '#tree' => TRUE,
       '#theme' => 'rules_elements',
       '#empty' => t('None'),
@@ -606,7 +634,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
     if (!empty($options['button'])) {
       $form['submit'] = array(
         '#type' => 'submit',
-        '#value' => t('Save changes'),
+        '#value' => empty($options['init']) ? t('Save changes') : t('Continue'),
         '#weight' => 10,
       );
     }
@@ -685,8 +713,22 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
     parent::form($form, $form_state, $options, $iterator);
     // Add the add-* operation links.
     $form['add'] = self::addOperations();
+    // Hide that during creation.
+    $form['add']['#access'] = empty($options['init']);
     $form['elements']['#attributes']['class'][] = 'rules-condition-container';
     $form['elements']['#heading'] = t('Conditions');
+
+    // By default skip
+    if (!empty($options['init'])) {
+      $config = $this->element->root();
+      $form['init_help'] = array(
+        '#type' => 'container',
+        '#id' => 'rules-plugin-add-help',
+        'content' => array(
+          '#markup' => t('You are about to add a new @plugin to the @config-plugin %label.', array('@plugin' => $this->element->plugin(), '@config-plugin' => $config->plugin(), '%label' => $config->label())),
+        ),
+      );
+    }
   }
 }
 
@@ -699,6 +741,8 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     parent::form($form,  $form_state, $options, $iterator);
     // Add the add-* operation links.
     $form['add'] = self::addOperations();
+    // Hide that during creation.
+    $form['add']['#access'] = empty($options['init']);
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
     $form['elements']['#heading'] = t('Actions');
   }

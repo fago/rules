@@ -6,22 +6,6 @@
  */
 
 /**
- * Sets form properties common to all rules ui forms.
- */
-function rules_ui_form_defaults(&$form) {
-  // Make sure collapsible fieldsets work even if added via AJAX.
-  // See http://drupal.org/node/768128.
-  $form['#attached']['js'][] = 'misc/collapse.js';
-
-  // Add our own css.
-  $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
-
-  // Specify the wrapper div used by #ajax.
-  $form['#prefix'] = '<div id="rules-form-wrapper">';
-  $form['#suffix'] = '</div>';
-}
-
-/**
  * Ajax callback for reloading the whole form.
  */
 function rules_ui_form_ajax_reload_form($form, $form_state) {
@@ -168,28 +152,47 @@ function rules_ui_form_rules_config_confirm_op_submit($form, &$form_state) {
 /**
  * Add a new element a rules configuration.
  */
-function rules_ui_add_element($form, &$form_state, $rules_config, $type, $element_id) {
-  $form_state += array('rules_config' => $rules_config, 'type' => $type, 'element_id' => $element_id);
+function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, RulesContainerPlugin $parent) {
+  $cache = rules_get_cache();
+  if (!isset($cache['plugin_info'][$plugin_name]['class'])) {
+    drupal_not_found();
+    exit;
+  }
+  $plugin_is_abstract = in_array('RulesAbstractPlugin', class_parents($cache['plugin_info'][$plugin_name]['class']));
   // In the first step create the element and in the second step show its edit
   // form.
-  if (!isset($form_state['rules_element'])) {
-    rules_ui_form_defaults($form);
+  if ($plugin_is_abstract && !isset($form_state['rules_element'])) {
+    RulesPluginUI::formDefaults($form);
+    $form_state += array('parent_element' => $parent, 'plugin' => $plugin_name);
+
     $form['element_name'] = array(
       '#type' => 'select',
-      '#title' => t('Select the %element to add', array('%element' => $type)),
-      '#options' => RulesPluginUI::getOptions($type . '_info'),
+      '#title' => t('Select the %element to add', array('%element' => $plugin_name)),
+      '#options' => RulesPluginUI::getOptions($plugin_name . '_info'),
       '#ajax' => rules_ui_form_default_ajax() + array(
-        'trigger_as' => array('name' => 'reload'),
+        'trigger_as' => array('name' => 'continue'),
       ),
     );
-    $form['reload'] = array(
+    $form['continue'] = array(
       '#type' => 'submit',
+      '#name' => 'continue',
       '#value' => t('Continue'),
       '#ajax' => rules_ui_form_default_ajax(),
     );
   }
-  else {
-    $form_state['rules_element']->form($form, $form_state, array('button' => TRUE));
+  elseif (!$plugin_is_abstract) {
+    // Create the initial, empty element.
+    $element = rules_plugin_factory($plugin_name);
+    // Always add the new element at the bottom, thus set an appropriate weight.
+    if ($sibling = end($parent->getIterator())) {
+      $element->weight = $sibling->weight + 1;
+    }
+    $element->setParent($parent);
+    $form_state['rules_element'] = $element;
+  }
+
+  if (isset($form_state['rules_element'])) {
+    $form_state['rules_element']->form($form, $form_state, array('button' => TRUE, 'init' => TRUE));
     $form['#validate'][] = 'rules_ui_edit_element_validate';
     $form['#submit'][] = 'rules_ui_edit_element_submit';
   }
@@ -198,23 +201,17 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $type, $elemen
 
 /**
  * Add element submit callback.
- * Create the new element and rebuild the form.
+ * Used for "abstract plugins" to create the initial element object with the
+ * given implemenation name and rebuild the form.
  */
 function rules_ui_add_element_submit($form, &$form_state) {
-  $rules_config = $form_state['rules_config'];
-  $parent = RulesPluginUI::getChildElementById($rules_config, $form_state['element_id']);
-  $element = rules_plugin_factory($form_state['type'], $form_state['values']['element_name']);
+  $element = rules_plugin_factory($form_state['plugin'], $form_state['values']['element_name']);
 
   // Clear the element settings so they won't be processed on serialization as
   // there is nothing to be processed yet.
   $element->settings = array();
+  $element->setParent($form_state['parent_element']);
 
-  if ($element instanceof RulesConditionInterface) {
-    $parent->condition($element);
-  }
-  else {
-    $parent->action($element);
-  }
   $form_state['rules_element'] = $element;
   $form_state['rebuild'] = TRUE;
 }
