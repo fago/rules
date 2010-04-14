@@ -694,11 +694,13 @@ function rules_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'ui/ui.forms.inc',
   );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/add'] = array(
-    'title' => 'Add an element',
+  $items[RULES_UI_RULE_PATH . '/%rules_config/add/%/%rules_element'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Add a new @plugin', 7),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_ui_add_element', 5, 7, 8),
     'access arguments' => array('administer rules'),
+    'load arguments' => array(5),
     'type' => MENU_CALLBACK,
     'file' => 'ui/ui.forms.inc',
   );
@@ -764,7 +766,11 @@ function rules_element_load($element_id, $config_name) {
  * Callback for getting the title as configured.
  */
 function rules_get_title($text, $element) {
-  return t($text, array('@label' => $element->label(), '@plugin' => $element->plugin()));
+  if ($element instanceof RulesPlugin) {
+    return t($text, array('@label' => $element->label(), '@plugin' => $element->plugin()));
+  }
+  // As fallback treat $element as simple string.
+  return t($text, array('@plugin' => $element));
 }
 
 /**

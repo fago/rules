@@ -244,8 +244,16 @@ abstract class RulesPlugin extends RulesExtendable {
       // Remove element from any previous parent.
       unset($this->parent->children[$key]);
     }
-    $this->parent = $parent;
-    $parent->children[] = $this;
+    // Make sure the interface matches the type of the container.
+    if (($parent instanceof RulesActionContainer && $this instanceof RulesActionInterface) ||
+       ($parent instanceof RulesConditionContainer && $this instanceof RulesConditionInterface)) {
+
+      $this->parent = $parent;
+      $parent->children[] = $this;
+    }
+    else {
+      throw new RulesException('The given container is incompatible with this element.', array(), $this);
+    }
   }
 
   /**
@@ -1195,7 +1203,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   public function delete() {
     if (isset($this->parent)) {
       foreach ($this->children as $child) {
-        $this->parent[] = $child;
+        $child->setParent($this->parent);
       }
     }
     parent::delete();
