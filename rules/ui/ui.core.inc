@@ -324,7 +324,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#type' => 'link',
       '#title' => $this->element->label(),
       '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->childElementId()),
-      '#prefix' => '<div>',
+      '#prefix' => '<div class="rules-element-label">',
       // Put the elements below in a "description" div.
       '#suffix' => '</div><div class="description">'
     );
@@ -351,6 +351,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       }
     }
     $content['#suffix'] = '</div>';
+    $content['#type'] = 'container';
+    $content['#attributes']['class'][] = 'rules-element-content';
     return $content;
   }
 
