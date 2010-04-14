@@ -51,12 +51,11 @@ function theme_rules_elements($variables) {
  */
 function theme_rules_content_group($variables) {
   $element = $variables['element'];
-  $output = array();
   foreach (element_children($element) as $key) {
     $output[] = drupal_render($element[$key]);
   }
   $heading = !empty($element['#heading']) ? "<span class='rules-content-heading'>" . $element['#heading'] . ': </span>' : '';
-  return $heading . implode(', ', $output);
+  return !empty($output) ? $heading . implode(', ', $output) : '';
 }
 
 /**
