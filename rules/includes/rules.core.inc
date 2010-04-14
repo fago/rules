@@ -824,9 +824,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function integrityCheck() {
-    // Validate the concrete plugin's settings first.
+    // Do the usual integrity check first so the implementation's validation
+    // handler can rely on that already.
+    parent::integrityCheck();
     $this->validate();
-    return parent::integrityCheck();
+    return $this;
   }
 
   public function processSettings($force = FALSE, $access_check = FALSE) {
