@@ -346,12 +346,12 @@ function rules_action_data_set_validate(RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
   if (count(explode(':', $element->settings['data:select'], 2)) != 2) {
     // Modifying rules variables itself doesn't make any sense.
-    throw new RulesException('Variables may not be changed, only their properties can be modified.');
+    throw new RulesException('Variables may not be changed, only their properties can be modified.', array(), array($element, 'parameter', 'data'));
   }
   $info = $element->applyDataSelector($element->settings['data:select'])->info();
   if (empty($info['setter callback'])) {
     // Modifying rules variables itself doesn't make any sense.
-    throw new RulesException("The selected data property doesn't support writing.", array(), $element);
+    throw new RulesException("The selected data property doesn't support writing.", array(), array($element, 'parameter', 'data'));
   }
 }
 
@@ -398,7 +398,7 @@ function rules_action_entity_createfetch_access(RulesAbstractPlugin $element) {
  */
 function rules_action_entity_fetch_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.');
+    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
 }
 
@@ -429,10 +429,10 @@ function rules_action_entity_fetch_process(RulesAbstractPlugin $element) {
  */
 function rules_action_entity_query_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.');
+    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
   if (!isset($element->settings['property'])) {
-    throw new RulesException('Invalid property specified.');
+    throw new RulesException('Invalid property specified.', array(), array($element, 'parameter', 'property'));
   }
 }
 
@@ -465,7 +465,7 @@ function rules_action_entity_query_process(RulesAbstractPlugin $element) {
  */
 function rules_action_entity_create_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.');
+    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
 }
 
@@ -578,7 +578,7 @@ function rules_data_validate_list_item_type(RulesAbstractPlugin $element) {
   $list_info['type'] = isset($list_info['type']) ? entity_metadata_list_extract_type($list_info['type']) : FALSE;
   if (!empty($list_info['type']) && ($item_info = $this->getArgumentInfo('item'))) {
     if (!RulesData::typesMatch($item_info, $list_info)) {
-      throw new RulesException('The item specified is of an invalid type.');
+      throw new RulesException('The item specified is of an invalid type.', array(), array($element, 'parameter', 'item'));
     }
   }
 }
