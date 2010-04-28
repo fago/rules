@@ -882,10 +882,10 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->action('list_add', array('list:select' => 'list', 'item' => 'bar2'));
     $rule->action('list_add', array('list:select' => 'list', 'item' => 'bar', 'pos' => 'start'));
     $rule->action('list_remove', array('list:select' => 'list', 'item' => 'bar2'));
-    $list = array('foo', 'foo2');
-    $rule->execute(array('list' => &$list));
+    $list = entity_metadata_wrapper('list', array('foo', 'foo2'));
+    $rule->execute($list);
     RulesLog::logger()->checkLog();
-    $this->assertEqual($list, array('bar', 'foo', 'foo2'), 'List items removed and added.');
+    $this->assertEqual($list->value(), array('bar', 'foo', 'foo2'), 'List items removed and added.');
     //debug(RulesLog::logger()->render());
   }
 
@@ -899,17 +899,17 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     taxonomy_term_save($term2);
 
     $tags[LANGUAGE_NONE][0]['tid'] = $term->tid;
-    $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article', 'taxonomy_tags' => $tags));
+    $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article', 'field_tags' => $tags));
 
     // Test assigning and remove a term from an article.
     $rule = rule(array('node' => array('type' => 'node', 'bundle' => 'article')));
     $term_wrapped = rules_wrap_data($term->tid, array('type' => 'taxonomy_term'));
     $term_wrapped2 = rules_wrap_data($term2->tid, array('type' => 'taxonomy_term'));
-    $rule->action('list_add', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped2));
-    $rule->action('list_remove', array('list:select' => 'node:taxonomy-tags', 'item' => $term_wrapped));
+    $rule->action('list_add', array('list:select' => 'node:field-tags', 'item' => $term_wrapped2));
+    $rule->action('list_remove', array('list:select' => 'node:field-tags', 'item' => $term_wrapped));
     $rule->execute($node);
     RulesLog::logger()->checkLog();
-    $this->assertEqual(array_values($node->taxonomy_tags[LANGUAGE_NONE]), array(0 => array('tid' => $term2->tid)), 'Term removed and added from a node.');
+    $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $term2->tid)), 'Term removed and added from a node.');
   }
 
   function testUserIntegration() {

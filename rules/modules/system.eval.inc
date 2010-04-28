@@ -64,10 +64,6 @@ function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
  */
 class RulesTokenEvaluator extends RulesDataInputEvaluator {
 
-  public static function access() {
-    return TRUE;
-  }
-
   public function prepare($text, $var_info) {
     // Skip this evaluator if there are no tokens.
     $this->setting = token_scan($text) ? TRUE : NULL;

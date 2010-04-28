@@ -38,7 +38,8 @@ function rules_action_entity_fetch($type, $id, $revision) {
   if (isset($info['entity keys']['revision']) && isset($revision)) {
     $conditions = array($info['entity keys']['revision'] => $revision);
   }
-  $entity = reset(entity_load($type, array($id), isset($conditions) ? $conditions : array()));
+  $return = entity_load($type, array($id), isset($conditions) ? $conditions : array());
+  $entity = reset($return);
   if (!$entity) {
     throw new RulesException('Unable to load @entity with id "@id"', array('@id' => $id, '@entity' => $type));
   }
@@ -133,10 +134,6 @@ class RulesDateInputEvaluator extends RulesDataInputEvaluator {
 
   const DATE_REGEX_LOOSE = '/^(\d{4})-?(\d{2})-?(\d{2})([T\s]?(\d{2}):?(\d{2}):?(\d{2})?)?$/';
 
-  public static function access() {
-    return TRUE;
-  }
-
   public function prepare($text, $var_info) {
     if (is_numeric($text)) {
       // Let rules skip this input evaluators in case it's already a timestamp.
@@ -165,10 +162,6 @@ class RulesDateInputEvaluator extends RulesDataInputEvaluator {
   public static function isFixedDateString($date) {
     return is_string($date) && preg_match(self::DATE_REGEX_LOOSE, $date);
   }
-
-  public static function help($variables) {
-    // The help comes with the form element defined by RulesDataUIDate.
-  }
 }
 
 /**
@@ -176,10 +169,6 @@ class RulesDateInputEvaluator extends RulesDataInputEvaluator {
  * sure URIs are absolute and path aliases get applied.
  */
 class RulesURIInputEvaluator extends RulesDataInputEvaluator {
-
-  public static function access() {
-    return TRUE;
-  }
 
   public function prepare($uri, $var_info) {
     if (!isset($this->processor) && valid_url($uri, TRUE)) {
@@ -202,10 +191,6 @@ class RulesURIInputEvaluator extends RulesDataInputEvaluator {
       return $uri;
     }
     throw new RulesException('Input evaluation generated an invalid URI.', array(), NULL, RulesLog::WARN);
-  }
-
-  public static function help($variables) {
-    // The help comes with the form element.
   }
 }
 
@@ -231,10 +216,6 @@ class RulesDateOffsetProcessor extends RulesDataProcessor {
       '#weight' => 5,
     );
     return $form;
-  }
-
-  public static function access() {
-    return TRUE;
   }
 
   public function process($value, $info, RulesState $state, RulesPlugin $element) {
