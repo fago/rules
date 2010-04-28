@@ -64,7 +64,7 @@ class RulesEntityController extends EntityAPIController {
    * @see EntityAPIController#applyConditions($entities, $conditions)
    * @see rules_query_rules_config_load_multiple_alter()
    */
-  protected function applyConditions($entities, $conditions) {
+  protected function applyConditions($entities, $conditions = array()) {
     if (isset($conditions['event'])) {
       foreach ($entities as $key => $entity) {
         if (!($entity instanceof RulesTriggerableInterface) || !in_array($conditions['event'], $entity->events())) {
@@ -536,19 +536,19 @@ abstract class RulesPlugin extends RulesExtendable {
   protected function checkParameterSettings() {
     foreach ($this->parameterInfo() as $name => $info) {
       if (isset($info['restriction']) && $info['restriction'] == 'selector' && isset($this->settings[$name])) {
-        throw new RulesException("%plugin: The parameter %name may only be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+        throw new RulesException("%plugin: The parameter %name may only be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
       }
       elseif (isset($info['restriction']) && $info['restriction'] == 'input' && isset($this->settings[$name . ':select'])) {
-        throw new RulesException("%plugin: The parameter %name may not be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+        throw new RulesException("%plugin: The parameter %name may not be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
       }
       if ($arg_info = $this->getArgumentInfo($name)) {
         // If we have enough metadata, check whether the types match.
         if (!RulesData::typesMatch($arg_info, $info)) {
-          throw new RulesException("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+          throw new RulesException("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
         }
       }
       elseif (isset($this->parent) && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
-        throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+        throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
       }
       //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
     }
@@ -640,7 +640,7 @@ abstract class RulesPlugin extends RulesExtendable {
       if ($wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
         return $wrapper->info();
       }
-      throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $this->settings[$name . ':select']), $this);
+      throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $this->settings[$name . ':select']), array($this, 'parameter', $name, 'settings', $name . ':select'));
     }
     elseif (isset($this->settings[$name . ':type'])) {
       return array('type' => $this->settings[$name . ':type']);
@@ -1415,7 +1415,7 @@ class RulesLog {
 
 class RulesException extends Exception {
 
-  public $msg, $args, $severity, $element;
+  public $msg, $args, $severity, $element, $keys = array();
 
   /**
    * @param $msg
@@ -1423,12 +1423,15 @@ class RulesException extends Exception {
    * @param $args
    *   Replacement arguments such as for t().
    * @param $element
-   *   The element of a configuration causing the exception.
+   *   The element of a configuration causing the exception or an array
+   *   consisting of the element and keys specifying a setting value causing
+   *   the exception.
    * @param $severity
    *   The RulesLog severity. Defaults to RulesLog::WARN.
    */
   function __construct($msg, $args = array(), $element = NULL, $severity = RulesLog::WARN) {
-    $this->element = $element;
+    $this->element = is_array($element) ? array_shift($element) : $element;
+    $this->keys = is_array($element) ? $element : array();
     $this->msg = $msg;
     $this->args = $args;
     $this->severity = $severity;

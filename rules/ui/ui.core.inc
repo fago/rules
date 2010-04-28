@@ -231,8 +231,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->element->integrityCheck();
     }
     catch (RulesException $e) {
-      //TODO: Add visual feedback which element had troubles.
-      form_set_error('', $e->getMessage());
+      form_set_error(implode('][',$e->keys), $e->getMessage());
     }
     if (!empty($form['settings'])) {
       $this->settingsFormValidate($form, $form_state);
