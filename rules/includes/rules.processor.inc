@@ -160,7 +160,9 @@ abstract class RulesDataProcessor {
   /**
    * Return whether the current user has permission to use the processor.
    */
-  abstract public static function access();
+  public static function access() {
+    return TRUE;
+  }
 
   /**
    * Defines the processor form element.
@@ -168,8 +170,14 @@ abstract class RulesDataProcessor {
    * @return
    *   A form element structure.
    */
-  abstract protected static function form($settings, $var_info);
+  protected static function form($settings, $var_info) {
+    return array();
+  }
 }
+
+
+
+
 
 /**
  * A processor for applying Rules input evaluators. This processor is special
@@ -232,13 +240,6 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
   }
 
   /**
-   * This won't be used as attachForm() is overridden, but has to implemented.
-   */
-  protected static function form($settings, $var_info) {
-
-  }
-
-  /**
    * Returns all input evaluators that can be applied to the parameters needed
    * type.
    */
@@ -286,6 +287,8 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
    * @return
    *   A renderable array.
    */
-  abstract public static function help($variables);
+  public static function help($variables) {
+    return array();
+  }
 
 }

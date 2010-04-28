@@ -162,7 +162,7 @@ class Rule extends RulesActionContainer {
     parent::sortChildren($deep);
   }
 
-  protected function evaluate(RulesState &$state) {
+  protected function evaluate(RulesState $state) {
     if ($state->isBlocked($this)) {
       return rules_log('Not evaluating the rule %label to prevent recursion.', array('%label' => $this->label), RulesLog::INFO);
     }

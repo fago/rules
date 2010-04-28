@@ -166,7 +166,7 @@ class RulesState {
         $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
         $this->info[$name]['handler'] = FALSE;
         if (!isset($data)) {
-          throw new RulesException('Unable to load variable %name, aborting.', array('%name' => $name), RulesLog::INFO);
+          throw new RulesException('Unable to load variable %name, aborting.', array('%name' => $name), NULL, RulesLog::INFO);
         }
       }
       $this->variables += array($name => NULL);

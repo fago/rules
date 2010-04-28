@@ -569,8 +569,8 @@ abstract class RulesPlugin extends RulesExtendable {
       $arg = $wrapper;
       if (!empty($this->settings[$name . ':process'])) {
         // For processing first unwrap the data.
-        $unwrapped = reset(rules_unwrap_data(array($wrapper), array($info)));
-        $arg = $this->settings[$name . ':process']->process($unwrapped, $info, $state, $this);
+        $return = rules_unwrap_data(array($wrapper), array($info));
+        $arg = $this->settings[$name . ':process']->process(reset($return), $info, $state, $this);
         unset($info['sanitize']);
       }
     }
@@ -609,7 +609,8 @@ abstract class RulesPlugin extends RulesExtendable {
   public function applyDataSelector($selector) {
     $parts = explode(':', $selector, 2);
     if (($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
-      $wrapper = rules_wrap_data($data = NULL, $vars[$parts[0]], TRUE);
+      $data = NULL;
+      $wrapper = rules_wrap_data($data, $vars[$parts[0]], TRUE);
       if (count($parts) > 1 && $wrapper instanceof EntityMetadataWrapper) {
         try {
           foreach (explode(':', $parts[1]) as $name) {
