@@ -953,15 +953,16 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // Build up the per plugin implementation faces cache.
       foreach ($this->faces as $interface) {
         $methods = $file_names = array();
+        $includes = self::getIncludeFiles($info['module']);
 
         foreach (get_class_methods($interface) as $method) {
           if (isset($info['callbacks'][$method]) && ($function = $info['callbacks'][$method])) {
             $methods[$method][0] = $function;
-            $file_names[$method] = $this->getFileName($function, $info);
+            $file_names[$method] = $this->getFileName($function, $includes);
           }
           elseif (function_exists($function = $info['base'] . '_' . $method)) {
             $methods[$method][0] = $function;
-            $file_names[$method] = $this->getFileName($function, $info);
+            $file_names[$method] = $this->getFileName($function, $includes);
           }
         }
         // Cache only the plugin implementation specific callbacks.
@@ -996,11 +997,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
     if (!isset($included)) {
       foreach (module_implements('rules_file_info') as $module) {
-        $files = (array)module_invoke($module, 'rules_file_info');
-        // Automatically add "$module.rules_forms.inc" for each module.
         // rules.inc are already included thanks to the rules_hook_info() group.
-        $files[] = $module . '.rules_forms';
-        foreach ($files as $name) {
+        foreach (self::getIncludeFiles($module, FALSE) as $name) {
           module_load_include('inc', $module, $name);
         }
       }
@@ -1008,14 +1006,29 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
   }
 
-  protected function getFileName($function, $info) {
+  /**
+   * Returns all include files for a module. If $all is set to FALSE the
+   * $module.rules.inc file isn't added.
+   */
+  protected static function getIncludeFiles($module, $all = TRUE) {
+    $files = (array)module_invoke($module, 'rules_file_info');
+    // Automatically add "$module.rules_forms.inc" and "$module.rules.inc".
+    $files[] = $module . '.rules_forms';
+    if ($all) {
+      $files[] = $module . '.rules';
+    }
+    return $files;
+  }
+
+  protected function getFileName($function, $includes) {
     $reflector = new ReflectionFunction($function);
     $file = $reflector->getFileName();
-    $path = drupal_get_path('module', $info['module']);
-    if (strpos($file, '.inc') && strpos($file, $path) !== FALSE) {
-      // Extract the filename without the trailing .inc.
-      $start = strpos($file, $path) + strlen($path) + 1;
-      return substr($file, $start, strlen($file) - $start - 4);
+    foreach ($includes as $include) {
+      $pos = strpos($file, $include . '.inc');
+      // Test whether the file ends with the given filename.inc.
+      if ($pos !== FALSE && strlen($file) - $pos == strlen($include) + 4) {
+        return $include;
+      }
     }
   }
 }

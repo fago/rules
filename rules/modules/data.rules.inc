@@ -13,7 +13,8 @@
  * @see rules_core_modules()
  */
 function rules_data_file_info() {
-  return array('modules/data.eval');
+  // We need to list our .rules.inc file too as this ships with rules.
+  return array('modules/data.eval', 'modules/data.rules');
 }
 
 /**

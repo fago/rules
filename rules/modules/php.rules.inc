@@ -12,7 +12,8 @@
  * Implements hook_rules_file_info() on behalf of the php module.
  */
 function rules_php_file_info() {
-  return array('modules/php.eval');
+  // We need to list our .rules.inc file too as this ships with rules.
+  return array('modules/php.eval', 'modules/php.rules');
 }
 
 /**
