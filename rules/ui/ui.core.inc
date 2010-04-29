@@ -286,12 +286,43 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#default_value' => $this->element->label(),
       '#required' => TRUE,
       '#weight' => -5,
+      '#field_suffix' => '&nbsp;<small id="edit-label-suffix">' . t('Machine name: @name', array('@name' => $this->element->name)) . '</small>',
+    );
+    $js_settings = array(
+      'type' => 'setting',
+      'data' => array(
+        'machineReadableValue' => array(
+          'label' => array(
+            'text' => t('Machine name'),
+            'target' => 'name',
+            'searchPattern' => '[^a-z0-9]+',
+          ),
+        ),
+      ),
+    );
+    $form['settings']['name'] = array(
+      '#title' => t('Machine name'),
+      '#type' => 'textfield',
+      '#default_value' => $this->element->name,
+      '#maxlength' => 32,
+      '#required' => TRUE,
+      '#description' => t('The machine-readable name of this configuration is used by rules internally to identify the configuration. Only letters and numbers are allowed and the name must be unique.'),
+      '#attached' => array(
+        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
+      ),
     );
     // TODO: Attach field form thus description and tags.
   }
 
   public function settingsFormExtractValues($form, &$form_state) {
     $this->element->label = $form_state['values']['label'];
+
+    // If the name was changed we have to redirect to the URL that contains
+    // the new name, instead of rebuilding on the old URL with the old name
+    if ($this->element->name != $form_state['values']['name']) {
+      $this->element->name = $form_state['values']['name'];
+      $form_state['redirect'] = RulesPluginUI::path($this->element->name);
+    }
   }
 
   public function settingsFormValidate($form, &$form_state) {
