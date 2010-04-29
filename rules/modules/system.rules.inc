@@ -12,7 +12,8 @@
  * Implements hook_rules_file_info() on behalf of the system module.
  */
 function rules_system_file_info() {
-  return array('modules/system.eval');
+  // We need to list our .rules.inc file too as this ships with rules.
+  return array('modules/system.eval', 'modules/system.rules');
 }
 
 /**
