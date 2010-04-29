@@ -184,7 +184,8 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, 
     // Create the initial, empty element.
     $element = rules_plugin_factory($plugin_name);
     // Always add the new element at the bottom, thus set an appropriate weight.
-    if ($sibling = end($parent->getIterator())) {
+    $iterator = $parent->getIterator();
+    if ($sibling = end($iterator)) {
       $element->weight = $sibling->weight + 1;
     }
     $element->setParent($parent);
