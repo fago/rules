@@ -81,3 +81,28 @@ function theme_rules_parameter_configuration($variables) {
   $output .= "<span $attributes>" . truncate_utf8($content, 30, TRUE, TRUE) . "</span>";
   return $output;
 }
+
+/**
+ * Themes help for using the data selector.
+ * @ingroup themeable
+ */
+function theme_rules_data_selector_help($variables) {
+  $variables_info = $variables['variables'];
+  $param_info = $variables['parameter'];
+
+  $render = array(
+    '#type' => 'fieldset',
+    '#title' => t('Data selectors'),
+    '#pre_render' => array(),
+    '#attributes' => array(),
+  );
+  $render['table'] = array(
+    '#theme' => 'table',
+    '#header' => array(t('Selector'), t('Label'), t('Description')),
+  );
+  foreach (RulesData::matchingDataSelector($variables_info, $param_info) as $selector => $info) {
+    $info += array('label' => '', 'description' => '');
+    $render['table']['#rows'][] = array(check_plain($selector), check_plain(drupal_ucfirst($info['label'])), check_plain($info['description']));
+  }
+  return drupal_render($render);
+}

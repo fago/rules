@@ -50,6 +50,13 @@ class RulesDataUI {
       '#default_value' => isset($settings[$name . ':select']) ? $settings[$name . ':select'] : '',
       '#required' => empty($info['optional']),
     );
+    $form['help'] = array(
+      '#theme' => 'rules_data_selector_help',
+      '#variables' => $element->availableVariables(),
+      '#parameter' => $info,
+    );
+
+    // Add data processor.
     $settings += array($name . ':process' => array());
     $form[$name . ':process'] = array();
     RulesDataProcessor::attachForm($form[$name . ':process'], $settings[$name . ':process'], $info, $element->availableVariables());

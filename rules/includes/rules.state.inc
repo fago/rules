@@ -327,5 +327,53 @@ class RulesData  {
       }
     }
   }
+
+  /**
+   * Returns matching data variables or properties for the given info and the to
+   * be configured parameter.
+   *
+   * @param $source
+   *   Either an array of info about available variables or a entity metadata
+   *   wrapper.
+   * @param $param_info
+   *   The information array about the to be configured parameter.
+   * @param $prefix
+   *   An optional prefix for the data selectors.
+   * @param $recursions
+   *   The number of recursions used to go down the tree. Defaults to 2.
+   *
+   * @return
+   *  An array of info about matching variables or properties that match, keyed
+   *  with the data selector.
+   */
+  public static function matchingDataSelector($source, $param_info, $prefix = '', $recursions = 2) {
+    // If an array of info is given, get entity metadata wrappers first.
+    $data = NULL;
+    if (is_array($source)) {
+      foreach ($source as $name => $info) {
+        $source[$name] = rules_wrap_data($data, $info, TRUE);
+      }
+    }
+
+    $matches = array();
+    foreach ($source as $name => $wrapper) {
+      $info = $wrapper->info();
+      if (self::typesMatch($info, $param_info)) {
+        $matches[$prefix . $name] = $info;
+      }
+      // Recurse later on to get an improved ordering of the results.
+      if ($wrapper instanceof EntityStructureWrapper) {
+        $recurse[$prefix . $name] = $wrapper;
+      }
+    }
+    if ($recursions > 0 && !empty($recurse)) {
+      $recursions--;
+      foreach ($recurse as $name => $wrapper) {
+        $matches += self::matchingDataSelector($wrapper, $param_info, $name . ':', $recursions);
+      }
+    }
+    return $matches;
+  }
+
 }
 
