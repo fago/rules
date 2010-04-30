@@ -193,10 +193,21 @@ class Rule extends RulesActionContainer {
     parent::destroy();
   }
 
+  /**
+   * @return RulesRecursiveElementIterator
+   */
   public function getIterator() {
     $this->conditions();
     $array = array_merge(array($this->conditions), $this->children);
     return new RulesRecursiveElementIterator($array);
+  }
+
+  protected function stateVariables($element = NULL) {
+    // Don't add in provided action variables for the conditions.
+    if (isset($element) && $element === $this->conditions) {
+      return $this->availableVariables();
+    }
+    return parent::stateVariables($element);
   }
 
 }
@@ -260,7 +271,7 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
     return array();
   }
 
-  public function stateVariables() {
+  public function availableVariables() {
     if (isset($this->parent)) {
       // Return the event variables provided by the event set, once cached.
       return $this->parent->stateVariables();
@@ -304,7 +315,7 @@ class RulesAnd extends RulesConditionContainer {
   }
 
   public function label() {
-    return $this->negate ? t('NOT AND') : t('AND');
+    return !empty($this->label) ? $this->label : ($this->negate ? t('NOT AND') : t('AND'));
   }
 }
 
@@ -327,7 +338,7 @@ class RulesOr extends RulesConditionContainer {
   }
 
   public function label() {
-    return $this->negate ? t('NOT OR') : t('OR');
+    return !empty($this->label) ? $this->label : ($this->negate ? t('NOT OR') : t('OR'));
   }
 }
 
@@ -398,12 +409,12 @@ class RulesLoop extends RulesActionContainer {
     }
   }
 
-  protected function stateVariables() {
-    return array($this->settings['item:var'] => $this->listItemInfo()) + $this->availableVariables();
+  protected function stateVariables($element = NULL) {
+    return array($this->settings['item:var'] => $this->listItemInfo()) + parent::stateVariables($element);
   }
 
   public function label() {
-    return t('Loop');
+    return !empty($this->label) ? $this->label : t('Loop');
   }
 }
 

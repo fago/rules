@@ -451,8 +451,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         }
         elseif ($element->root() === $element) {
           $counter = 0;
-          // Get the rules config.
-          $element = $element->root();
           $element->map = array();
           $map =& $element->map;
         }
