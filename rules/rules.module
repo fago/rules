@@ -665,6 +665,10 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
+    'rules_data_selector_help' => array(
+      'variables' => array('parameter' => NULL, 'variables' => NULL),
+      'file' => 'ui/ui.theme.inc',
+    )
   );
 }
 
