@@ -193,12 +193,16 @@ class RulesTestCase extends DrupalWebTestCase {
   function testVariableAdding() {
     $node = $this->drupalCreateNode();
     $rule = rule(array('nid' => array('type' => 'integer')));
-    $rule->action('rules_action_load_node')
+    $rule->condition('rules_test_condition_true')
+         ->action('rules_action_load_node')
          ->action('rules_action_delete_node', array('node:select' => 'node_loaded'))
          ->execute($node->nid);
 
     $this->assertEqual(FALSE, node_load($node->nid), 'Variable added and skipped optional parameter.');
     RulesLog::logger()->checkLog();
+
+    $vars = $rule->conditions()->offsetGet(0)->availableVariables();
+    $this->assertEqual(array_keys($vars), array('nid'), 'Loaded variable is not available to conditions.');
   }
 
   /**

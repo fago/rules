@@ -271,7 +271,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns whether the element is the root of the configuration.
    */
   public function isRoot() {
-    return empty($this->parent);
+    return empty($this->parent) || !empty($this->state);
   }
 
   /**
@@ -421,18 +421,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * element.
    */
   public function availableVariables() {
-    $vars = array();
-    if (isset($this->parent) && empty($this->state)) {
-      $vars += $this->parent->stateVariables();
-      // Add in variables provided by siblings executed before us.
-      foreach ($this->parent->children as $child) {
-        if ($child === $this) {
-          break;
-        }
-        $vars += $child->providesVariables();
-      }
-    }
-    return $vars;
+    return !$this->isRoot() ? $this->parent->stateVariables($this) : array();
   }
 
   /**
@@ -547,7 +536,7 @@ abstract class RulesPlugin extends RulesExtendable {
           throw new RulesException("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
         }
       }
-      elseif (isset($this->parent) && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
+      elseif (!$this->isRoot() && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
         throw new RulesException('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
       }
       //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
@@ -1105,6 +1094,8 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
   /**
    * Allow access to the children through the iterator.
+   *
+   * @return RulesRecursiveElementIterator
    */
   public function getIterator() {
     return new RulesRecursiveElementIterator($this->children);
@@ -1114,7 +1105,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * @return RulesContainerPlugin
    */
   public function integrityCheck() {
-    if (!empty($this->info['variables']) && isset($this->parent)) {
+    if (!empty($this->info['variables']) && !$this->isRoot()) {
       throw new RulesException('%plugin: Specifying state variables is not possible for child elements.', array('%plugin' => $this->getPluginName()), $this);
     }
     parent::integrityCheck();
@@ -1140,7 +1131,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function availableVariables() {
-    if (!isset($this->parent) || !empty($this->state)) {
+    if ($this->isRoot()) {
       return isset($this->info['variables']) ? $this->info['variables'] : array();
     }
     return parent::availableVariables();
@@ -1148,10 +1139,20 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
   /**
    * Returns info about variables available in the evaluation state for any
-   * children elements.
+   * children elements or if given for a special child element.
    */
-  protected function stateVariables() {
-    return $this->availableVariables();
+  protected function stateVariables($element = NULL) {
+    $vars = $this->availableVariables();
+    if (isset($element)) {
+      // Add in variables provided by siblings executed before the element.
+      foreach ($this->children as $child) {
+        if ($child === $element) {
+          break;
+        }
+        $vars += $child->providesVariables();
+      }
+    }
+    return $vars;
   }
 
   protected function setUpVariables() {
