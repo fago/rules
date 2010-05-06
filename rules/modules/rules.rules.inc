@@ -60,7 +60,7 @@ class rules_data_type_string extends rules_data_type {
    * Gets the input form for the data
    * Implement it, if your data is not identifiable.
    */
-  function get_default_input_form($info, $value) {
+  function get_default_input_form($info, $value, &$form_state) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     return array(
       '#type' => $info['long'] ? 'textarea' : 'textfield',
@@ -85,7 +85,7 @@ class rules_data_type_number extends rules_data_type_string {
  * Rules date data type
  */
 class rules_data_type_date extends rules_data_type_string {
-  function get_default_input_form($info, $value) {
+  function get_default_input_form($info, $value, &$form_state) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     $value = isset($value) ? $value : gmdate('Y-m-d H:i:s', time());
     $info['description'] = $info['description'] .' '. t('Format: %format or other values in GMT known by the PHP !strtotime function like "+1 day". ', array('%format' => gmdate('Y-m-d H:i:s', time() + 86400), '!strtotime' => l('strtotime()', 'http://php.net/strtotime')));
@@ -121,7 +121,7 @@ class rules_data_type_boolean extends rules_data_type_string {
     return (boolean)$value;
   }
 
-  function get_default_input_form($info, $value) {
+  function get_default_input_form($info, $value, &$form_state) {
     $info += array('long' => FALSE, 'required' => TRUE, 'description' => '');
     $info['description'] = $info['description'] .' '. t('Just enter 1 for TRUE, 0 for FALSE or make use of an input evaluator.');
     return array(
