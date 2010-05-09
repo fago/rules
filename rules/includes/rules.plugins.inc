@@ -210,6 +210,13 @@ class Rule extends RulesActionContainer {
     return parent::stateVariables($element);
   }
 
+  protected function exportChildren($key = NULL) {
+    $export = array();
+    if (isset($this->conditions) && $this->conditions->children) {
+      $export = $this->conditions->exportChildren('IF');
+    }
+    return $export + parent::exportChildren('DO');
+  }
 }
 
 /**
@@ -293,6 +300,11 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
 
   public function __sleep() {
     return parent::__sleep() + drupal_map_assoc(array('events'));
+  }
+
+  protected function exportChildren($key = 'ON') {
+    $export[$key] = $this->events;
+    return $export + parent::exportChildren();
   }
 }
 
@@ -416,6 +428,10 @@ class RulesLoop extends RulesActionContainer {
   public function label() {
     return !empty($this->label) ? $this->label : t('Loop');
   }
+
+  protected function exportChildren($key = 'LOOP OVER') {
+    return parent::exportChildren($key);
+  }
 }
 
 
@@ -444,6 +460,10 @@ class RulesRuleSet extends RulesActionContainer {
       // Set it back in case someone gets the object from cache.
       $rule_set->setSkipSetup(FALSE);
     }
+  }
+
+  protected function exportChildren($key = 'RULES') {
+    return parent::exportChildren($key);
   }
 }
 

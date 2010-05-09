@@ -26,6 +26,7 @@ interface RulesDataDirectInputForm {
    *   A renderable array.
    */
   public static function render($value);
+
 }
 
 /**

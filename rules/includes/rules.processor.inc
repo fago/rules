@@ -80,15 +80,10 @@ abstract class RulesDataProcessor {
   public static function attachForm(&$form, $settings, $param_info, $var_info, $access_check = TRUE) {
     // If $settings is already prepared get the settings from the processors.
     if ($settings instanceof RulesDataProcessor) {
-      while ($settings instanceof RulesDataProcessor) {
-        $processors[get_class($settings)] = $settings;
-        $settings = $settings->processor;
-      }
-      $settings = array();
+      $settings = $settings->getChainSettings();
     }
     foreach (self::processors($param_info, $access_check) as $name => $info) {
       $settings += array($name => array());
-      $settings[$name] = isset($processors[$info['class']]) ? $processors[$info['class']]->getSetting() : $settings[$name];
       $form[$name] = call_user_func(array($info['class'], 'form'), $settings[$name], $var_info);
       $form[$name]['#weight'] = $info['weight'];
     }
@@ -97,8 +92,11 @@ abstract class RulesDataProcessor {
   /**
    * Returns defined data processors applicable for the given parameter.
    * Optionally also access to the processors is checked.
+   *
+   * @param $param_info
+   *   If given, only processors valid for this parameter are returned.
    */
-  public static function processors($param_info, $access_check = TRUE, $hook = 'data_processor_info') {
+  public static function processors($param_info = NULL, $access_check = TRUE, $hook = 'data_processor_info') {
     static $items = array();
 
     if (!isset($items[$hook]['all'])) {
@@ -106,11 +104,11 @@ abstract class RulesDataProcessor {
       uasort($items[$hook]['all'], array(__CLASS__, '_item_sort'));
     }
     // Data processing isn't supported for multiple types.
-    if (is_array($param_info['type'])) {
+    if (isset($param_info) && is_array($param_info['type'])) {
       return array();
     }
     // Filter the items by type.
-    if (!isset($items[$hook][$param_info['type']])) {
+    if (isset($param_info['type']) && !isset($items[$hook][$param_info['type']])) {
       $items[$hook][$param_info['type']] = array();
       foreach ($items[$hook]['all'] as $name => $info) {
         // Check whether the parameter type matches the supported types.
@@ -121,7 +119,7 @@ abstract class RulesDataProcessor {
       }
     }
     // Apply the access check.
-    $return = $items[$hook][$param_info['type']];
+    $return = isset($param_info['type']) ? $items[$hook][$param_info['type']] : $items[$hook]['all'];
     if ($access_check) {
       foreach ($return as $base => $info) {
         if (!call_user_func(array($info['class'], 'access'))) {
@@ -136,6 +134,28 @@ abstract class RulesDataProcessor {
     return $a['weight'] < $b['weight'] ? -1 : ($a['weight'] > $b['weight'] ? 1 : 0);
   }
 
+  /**
+   * Gets the settings array for this and all contained chained processors.
+   */
+  public function getChainSettings() {
+    // First unchain the objects.
+    $processor = $this;
+    while ($processor instanceof RulesDataProcessor) {
+      $processors[get_class($processor)] = $processor;
+      $processor = $processor->processor;
+    }
+    $settings = array();
+    foreach (self::processors() as $name => $info) {
+      if (isset($processors[$info['class']])) {
+        $settings[$name] = $processors[$info['class']]->getSetting();
+      }
+    }
+    return $settings;
+  }
+
+  /**
+   * Gets the settings of this processor.
+   */
   public function getSetting() {
     return $this->setting;
   }

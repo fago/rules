@@ -439,31 +439,38 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual(array_pop($msg['status']), 'Title: ' . check_plain('<b>The body & nothing.</b>'), 'Token input evaluator applied.');
   }
 
-
   function testRuleBuilding() {
-
-    /*
-    $rule = rules_build("
-      RULE 'Label'
-        REQUIRES
-           token, php, rdf, node
-        ON
-           node_update
-           node_insert
-        IF
-           OR
-             node_content_type ( node: [node], type: page )
-             rules_comare_text ( [rdf:node.author.name], text )
-             NOT node_content_type ( node: node_old, type: page )
-        DO
-           node_publish_action( node )
-           system_message( 'bla' )
-    ")->execute();
-
-    */
+    //TODO: implement.
+    return;
+    $configs = rules_config_build('{
+      "name" : {
+        "RULE" : "Label",
+        "REQUIRES" : [ "token", "php", "rdf", "node" ],
+        "ON" : [ "node_update", "node_insert" ],
+        "IF" : [
+          { "OR" : [
+            { "NOT node_content_type" : { "node" : ["node"], "type" : "page" } },
+            { "data_is" : {
+                "data" : { "select" : "node:author:name", "php" : "$node->title = \"foo\""},
+                "value" : "sepp"
+              }
+            },
+            {  "NOT data_is" : { "data" : ["node:author:name"], "value" : "sepp" } }
+          ]}
+        ],
+        "DO" : [
+          { "system_message": { "message" : "bla" } },
+          { "node_load" : {
+              "USING" : { "id" : "1" },
+              "PROVIDE" : { "entity_fetched" : { "node" : "Loaded node" } }
+            }
+          },
+          { "system_message": { "message" : "bla" } }
+        ]
+      }
+    }')->execute();
 
   }
-
 }
 
 function rules_test_condition_true($settings, $state, $element) {

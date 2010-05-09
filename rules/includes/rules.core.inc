@@ -335,9 +335,11 @@ abstract class RulesPlugin extends RulesExtendable {
   public function providesVariables() {
     if (isset($this->info['provides'])) {
       foreach ($this->info['provides'] as $name => $info) {
+        $info['source name'] = $name;
         if (isset($this->settings[$name . ':var'])) {
           $name = $this->settings[$name . ':var'];
         }
+        $info['label'] = isset($this->settings[$name . ':label']) ? $this->settings[$name . ':label'] : $info['label'];
         $provides[$name] = $info;
       }
     }
@@ -655,20 +657,27 @@ abstract class RulesPlugin extends RulesExtendable {
       $this->plugin = $this->itemName;
       $this->name = isset($name) ? $name : $this->name;
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
-      if (!isset($this->name)) {
-        // Find a unique name for this configuration.
-        $this->name = $this->module . '_';
-        for ($i = 0; $i < 8; $i++) {
-          //Alphanumeric name generation
-          $rnd = mt_rand(97, 122);
-          $this->name .= chr($rnd);
-        }
-      }
+      $this->ensureNameExists();
       $this->data = $this;
       $return = entity_get_controller('rules_config')->save($this);
       unset($this->data);
       rules_clear_cache();
       return $return;
+    }
+  }
+
+  /**
+   * Ensure the configuration has a name. If not, generate one.
+   */
+  protected function ensureNameExists() {
+    if (!isset($this->name)) {
+      // Find a unique name for this configuration.
+      $this->name = $this->module . '_';
+      for ($i = 0; $i < 8; $i++) {
+        //Alphanumeric name generation
+        $rnd = mt_rand(97, 122);
+        $this->name .= chr($rnd);
+      }
     }
   }
 
@@ -750,8 +759,64 @@ abstract class RulesPlugin extends RulesExtendable {
   public function plugin() {
     return $this->itemName;
   }
-}
 
+  /**
+   * Exports a rule configuration.
+   *
+   * @param $php
+   *   Optional. Set to TRUE to format the export using PHP arrays. By default
+   *   JSON is used.
+   * @return
+   *   The exported confiugration.
+   */
+  public function export($php = FALSE) {
+    $export[strtoupper($this->plugin())] = $this->exportSettings();
+    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+  }
+
+  protected function exportSettings() {
+    $export = array();
+    foreach ($this->parameterInfo() as $name => $info) {
+      if ($return = $this->exportParameterSetting($name, $info)) {
+        $export['USING'][$name] = $return;
+      }
+    }
+    foreach ($this->providesVariables() as $name => $info) {
+      $export['PROVIDE'][$info['source name']][$name] = $info['label'];
+    }
+    return $export;
+  }
+
+  protected function exportParameterSetting($name, $info) {
+    if (isset($this->settings[$name])) {
+      return $this->settings[$name];
+    }
+    elseif (isset($this->settings[$name . ':select'])) {
+      if (isset($this->settings[$name . ':process']) && $processor = $this->settings[$name . ':process']) {
+        $export['select'] = $this->settings[$name . ':select'];
+        $export += $processor instanceof RulesDataProcessor ? $processor->getChainSettings() : $processor;
+        return $export;
+      }
+      // If there is no processor use a simple array to abbreviate this usual
+      // case. In JSON this turns to a nice [selector] string.
+      return array($this->settings[$name . ':select']);
+    }
+  }
+
+  /**
+   * Finalizies the configuration export by adding general attributes regarding
+   * the configuration and returns it in the right format.
+   */
+  protected function returnExport($export, $php = FALSE) {
+    $this->ensureNameExists();
+    if (!empty($this->label)) {
+      $export_cfg[$this->name]['LABEL'] = $this->label();
+    }
+    $export_cfg[$this->name]['REQUIRES'] = $this->dependencies();
+    $export_cfg[$this->name] += $export;
+    return $php ? $export_cfg : entity_var_json_export($export_cfg);
+  }
+}
 
 /**
  * Defines a common base class for so called "Abstract Plugins" like actions.
@@ -837,6 +902,20 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $this->process();
       parent::processSettings($force, $access_check);
     }
+  }
+
+  public function export($php = FALSE) {
+    $export = $this->exportSettings();
+    if (!$this->providesVariables()) {
+      // Abbreviate the export making "USING" implicit.
+      $export = $export['USING'];
+    }
+    if ($this->isRoot()) {
+      // Add the plugin as the there is no action/condition context.
+      $export['plugin'] = $this->plugin();
+    }
+    $export = array($this->elementName => $export);
+    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
   }
 
   public function dependencies() {
@@ -1243,6 +1322,20 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       }
     }
   }
+
+  protected function exportChildren($key = NULL) {
+    $key = isset($key) ? $key : strtoupper($this->plugin());
+    $export[$key] = array();
+    foreach ($this->children as $child) {
+      $export[$key][] = $child->export();
+    }
+    return $export;
+  }
+
+  public function export($php = FALSE) {
+    $export = $this->exportChildren();
+    return $this->isRoot() ? $this->returnExport($export) : $export;
+  }
 }
 
 /**
@@ -1319,6 +1412,16 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
    */
   protected function returnVariables(RulesState $state, $result = NULL) {
     return $result;
+  }
+
+  protected function exportChildren($key = NULL) {
+    $not = $this->negate ? 'NOT ' : '';
+    $key = isset($key) ? $key : $not . strtoupper($this->plugin());
+    $export[$key] = array();
+    foreach ($this->children as $child) {
+      $export[$key][] = $child->export(TRUE);
+    }
+    return $export;
   }
 }
 
