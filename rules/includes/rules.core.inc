@@ -777,7 +777,7 @@ abstract class RulesPlugin extends RulesExtendable {
   protected function exportSettings() {
     $export = array();
     foreach ($this->parameterInfo() as $name => $info) {
-      if ($return = $this->exportParameterSetting($name, $info)) {
+      if (($return = $this->exportParameterSetting($name, $info)) !== NULL) {
         $export['USING'][$name] = $return;
       }
     }
@@ -788,7 +788,7 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   protected function exportParameterSetting($name, $info) {
-    if (isset($this->settings[$name])) {
+    if (isset($this->settings[$name]) && (!isset($info['default value']) || $this->settings[$name] != $info['default value'])) {
       return $this->settings[$name];
     }
     elseif (isset($this->settings[$name . ':select'])) {
@@ -812,6 +812,7 @@ abstract class RulesPlugin extends RulesExtendable {
     if (!empty($this->label)) {
       $export_cfg[$this->name]['LABEL'] = $this->label();
     }
+    $export_cfg[$this->name]['PLUGIN'] = $this->plugin();
     $export_cfg[$this->name]['REQUIRES'] = $this->dependencies();
     $export_cfg[$this->name] += $export;
     return $php ? $export_cfg : entity_var_json_export($export_cfg);
@@ -909,10 +910,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     if (!$this->providesVariables()) {
       // Abbreviate the export making "USING" implicit.
       $export = $export['USING'];
-    }
-    if ($this->isRoot()) {
-      // Add the plugin as the there is no action/condition context.
-      $export['plugin'] = $this->plugin();
     }
     $export = array($this->elementName => $export);
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
