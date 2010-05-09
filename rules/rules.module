@@ -48,8 +48,8 @@ function rules_condition($name, $settings = array()) {
  *
  * @param $variables
  *   The array of variables to setup in the evaluation state, making them
- *   available for the configuraion elements. Variables without a specified
- *   'handler' need to be passed as argument when executed.
+ *   available for the configuraion elements. Values for the variables need to
+ *   be passed as argument when the rule is executed.
  *   Only instances with no variables can be embedded in configurations.
  * @return Rule
  */

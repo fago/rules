@@ -447,37 +447,46 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual(array_pop($msg['status']), 'Title: ' . check_plain('<b>The body & nothing.</b>'), 'Token input evaluator applied.');
   }
 
+  /**
+   * Test exporting a rule.
+   */
+  function testRuleExport() {
+    $rule = rule(array('nid' => array('type' => 'integer')));
+    $rule->name = "rules_export_test";
+    $rule->action('rules_action_load_node')
+         ->action('drupal_message', array('message' => 'Title: [node_loaded:title]'));
+
+    $export =
+'{ "rules_export_test" : {
+    "PLUGIN" : "rule",
+    "REQUIRES" : [ "rules_test", "rules" ],
+    "USES VARIABLES" : { "nid" : { "type" : "integer" } },
+    "DO" : [
+      { "rules_action_load_node" : { "PROVIDE" : { "node_loaded" : { "node_loaded" : "Loaded content" } } } },
+      { "drupal_message" : { "message" : "Title: [node_loaded:title]" } }
+    ]
+  }
+}';
+    $this->assertEqual($export, $rule->export(), 'Rule has been exported correctly.');
+  }
+
   function testRuleBuilding() {
     //TODO: implement.
     return;
-    $configs = rules_config_build('{
-      "name" : {
-        "RULE" : "Label",
-        "REQUIRES" : [ "token", "php", "rdf", "node" ],
-        "ON" : [ "node_update", "node_insert" ],
-        "IF" : [
-          { "OR" : [
-            { "NOT node_content_type" : { "node" : ["node"], "type" : "page" } },
-            { "data_is" : {
-                "data" : { "select" : "node:author:name", "php" : "$node->title = \"foo\""},
-                "value" : "sepp"
-              }
-            },
-            {  "NOT data_is" : { "data" : ["node:author:name"], "value" : "sepp" } }
-          ]}
-        ],
-        "DO" : [
-          { "system_message": { "message" : "bla" } },
-          { "node_load" : {
-              "USING" : { "id" : "1" },
-              "PROVIDE" : { "entity_fetched" : { "node" : "Loaded node" } }
-            }
-          },
-          { "system_message": { "message" : "bla" } }
-        ]
-      }
-    }')->execute();
-
+    $configs = rules_config_build(
+      '{ "rules_tzhxvirp" : {
+          "LABEL" : "example default rule",
+          "PLUGIN" : "reaction rule",
+          "REQUIRES" : [ "rules" ],
+          "ON" : [ "node_update" ],
+          "IF" : [
+            { "data_is" : { "data" : [ "node:status" ], "value" : true } },
+            { "data_is" : { "data" : [ "node:type" ], "value" : "page" } }
+          ],
+          "DO" : [ { "drupal_message" : { "message" : "A node has been updated." } } ]
+        }
+      }'
+    )->execute();
   }
 }
 
