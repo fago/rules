@@ -74,6 +74,14 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Test getting dependencies.
+   */
+  function testdependencies() {
+    $action = rules_action('rules_node_publish_action');
+    $this->assertEqual($action->dependencies(), array('rules_test'), 'Providing module is returned as dependency.');
+  }
+
+  /**
    * Test setting up an action with some action_info and serializing and
    * executing it.
    */
