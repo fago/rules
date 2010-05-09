@@ -12,8 +12,7 @@
  * Implements hook_rules_file_info() on behalf of the php module.
  */
 function rules_php_file_info() {
-  // We need to list our .rules.inc file too as this ships with rules.
-  return array('modules/php.eval', 'modules/php.rules');
+  return array('modules/php.eval');
 }
 
 /**
@@ -25,6 +24,7 @@ function rules_php_evaluator_info() {
       'class' => 'RulesPHPEvaluator',
       'type' => array('text', 'uri'),
       'weight' => -10,
+      'module' => 'php',
     ),
   );
 }
@@ -38,6 +38,7 @@ function rules_php_data_processor_info() {
       'class' => 'RulesPHPDataProcessor',
       'type' => array('text', 'decimal', 'integer', 'date', 'duration', 'boolean', 'uri'),
       'weight' => 10,
+      'module' => 'php',
     ),
   );
 }
@@ -70,6 +71,13 @@ function rules_php_action_info() {
 function rules_execute_php_eval_process(RulesAbstractPlugin $element) {
   $element_info['parameter']['used_vars']['default value'] = RulesPHPEvaluator::getUsedVars('<?' . $element->settings['code'], $element->availableVariables());
   $element->alterInfo($element_info);
+}
+
+/**
+ * Specify the php module as dependency.
+ */
+function rules_execute_php_eval_dependencies() {
+  return array('php');
 }
 
 /**

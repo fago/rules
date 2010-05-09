@@ -186,6 +186,11 @@ class Rule extends RulesActionContainer {
     return (!isset($this->conditions) || $this->conditions->access()) && parent::access();
   }
 
+  public function dependencies() {
+    $modules = !isset($this->conditions) ? array() : $this->conditions->dependencies();
+    return array_keys(array_flip($modules) + array_flip(parent::dependencies()));
+  }
+
   public function destroy() {
     if (isset($this->conditions)) {
       $this->conditions->destroy();
@@ -272,6 +277,17 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
       }
     }
     return parent::access();
+  }
+
+  public function dependencies() {
+    $modules = array_flip(parent::dependencies());
+    $event_info = rules_fetch_data('event_info');
+    foreach ($this->events as $event) {
+      if (isset($event_info[$event]['module'])) {
+        $modules[$event_info[$event]['module']] = TRUE;
+      }
+    }
+    return array_keys($modules);
   }
 
   public function providesVariables() {
