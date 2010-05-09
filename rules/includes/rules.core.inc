@@ -347,11 +347,10 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Provide the readable export format.
+   * When converted to a string, just use the export format.
    */
   public function __toString() {
-    //TODO make abstract and implement
-    return $this->getPluginName();
+    return $this->export();
   }
 
   /**
@@ -682,6 +681,9 @@ abstract class RulesPlugin extends RulesExtendable {
    * Ensure the configuration has a name. If not, generate one.
    */
   protected function ensureNameExists() {
+    if (!isset($this->module)) {
+      $this->module = 'rules';
+    }
     if (!isset($this->name)) {
       // Find a unique name for this configuration.
       $this->name = $this->module . '_';
@@ -821,11 +823,13 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   protected function returnExport($export, $php = FALSE) {
     $this->ensureNameExists();
-    if (!empty($this->label)) {
+    if (($label = $this->label()) && $label != t('unlabeled')) {
       $export_cfg[$this->name]['LABEL'] = $this->label();
     }
     $export_cfg[$this->name]['PLUGIN'] = $this->plugin();
-    $export_cfg[$this->name]['REQUIRES'] = $this->dependencies();
+    if ($modules = $this->dependencies()) {
+      $export_cfg[$this->name]['REQUIRES'] = $modules;
+    }
     $export_cfg[$this->name] += $export;
     return $php ? $export_cfg : entity_var_json_export($export_cfg);
   }
@@ -1418,8 +1422,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function export($php = FALSE) {
-    $export = $this->exportChildren();
-    return $this->isRoot() ? $this->returnExport($export) : $export;
+    $export = array();
+    if (isset($this->info['variables'])) {
+      $export['USES VARIABLES'] = $this->info['variables'];
+    }
+    $export += $this->exportChildren();
+    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
   }
 }
 
