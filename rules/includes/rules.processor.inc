@@ -138,19 +138,41 @@ abstract class RulesDataProcessor {
    * Gets the settings array for this and all contained chained processors.
    */
   public function getChainSettings() {
-    // First unchain the objects.
+    foreach ($this->unchain() as $name => $processor) {
+      $settings[$name] = $processor->getSetting();
+    }
+    return isset($settings) ? $settings : array();
+  }
+
+  /**
+   * Returns an array of modules which we depend on.
+   */
+  public function dependencies() {
+    $used_processor_info = array_intersect_key($this->processors(), $this->unchain());
+    foreach ($used_processor_info as $name => $info) {
+      $modules[] = $info['module'];
+    }
+    return array_filter($modules);
+  }
+
+  /**
+   * @return
+   *   An array of processors keyed by processor name.
+   */
+  protected function unchain() {
     $processor = $this;
     while ($processor instanceof RulesDataProcessor) {
       $processors[get_class($processor)] = $processor;
       $processor = $processor->processor;
     }
-    $settings = array();
-    foreach (self::processors() as $name => $info) {
+    // Note: Don't use the static context to call processors() here as we need a
+    // late binding to invoke the input evaluators version, if needed.
+    foreach ($this->processors() as $name => $info) {
       if (isset($processors[$info['class']])) {
-        $settings[$name] = $processors[$info['class']]->getSetting();
+        $return[$name] = $processors[$info['class']];
       }
     }
-    return $settings;
+    return $return;
   }
 
   /**
@@ -196,13 +218,10 @@ abstract class RulesDataProcessor {
 }
 
 
-
-
-
 /**
- * A processor for applying Rules input evaluators. This processor is special
- * as it's not listed in hook_rules_data_processor_info(), but gets attached
- * explicitly to input forms.
+ * A base processor for use as input evaluators. Input evaluators are not listed
+ * in hook_rules_data_processor_info(). Instead they use
+ * hook_rules_evaluator_info() and get attached to input forms.
  */
 abstract class RulesDataInputEvaluator extends RulesDataProcessor {
 
@@ -263,8 +282,16 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
    * Returns all input evaluators that can be applied to the parameters needed
    * type.
    */
-  public static function evaluators($param_info, $access_check = TRUE) {
+  public static function evaluators($param_info = NULL, $access_check = TRUE) {
     return parent::processors($param_info, $access_check, 'evaluator_info');
+  }
+
+  /**
+   * Overridden to default to our hook, thus being equivalent to
+   * self::evaluators().
+   */
+  public static function processors($param_info = NULL, $access_check = TRUE, $hook = 'evaluator_info') {
+    return parent::processors($param_info, $access_check, $hook);
   }
 
   /**

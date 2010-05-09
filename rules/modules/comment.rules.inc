@@ -12,65 +12,56 @@
  * Implementation of hook_rules_event_info().
  */
 function rules_comment_event_info() {
+  $defaults = array(
+    'group' => t('comment'),
+    'module' => 'comment',
+    'access callback' => 'rules_comment_integration_access',
+  );
   return array(
-    'comment_insert' => array(
+    'comment_insert' => $defaults + array(
       'label' => t('After saving a new comment'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('created comment')),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
-    'comment_update' => array(
+    'comment_update' => $defaults + array(
       'label' => t('After updating an existing comment'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('updated comment')),
         'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_comment_var_unchanged'),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
-    'comment_presave' => array(
+    'comment_presave' => $defaults + array(
       'label' => t('Before saving a comment'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('updated comment')),
         'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_comment_var_unchanged'),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
-    'comment_view' => array(
+    'comment_view' => $defaults + array(
       'label' => t('A comment is viewed'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('viewed comment')),
       ),
-      'access callback' => 'rules_comment_integration_access',
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
     ),
-    'comment_delete' => array(
+    'comment_delete' => $defaults + array(
       'label' => t('After deleting a comment'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('deleted comment')),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
-    'comment_publish' => array(
+    'comment_publish' => $defaults + array(
       'label' => t('A comment has been published'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('published comment')),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
-    'comment_unpublish' => array(
+    'comment_unpublish' => $defaults + array(
       'label' => t('A comment has been unpublished'),
-      'group' => t('comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('unpublished comment')),
       ),
-      'access callback' => 'rules_comment_integration_access',
     ),
   );
 }

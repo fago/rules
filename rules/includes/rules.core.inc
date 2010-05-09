@@ -435,10 +435,17 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Get required modules.
+   * Returns an array of required modules.
    */
   public function dependencies() {
-    return array();
+    $this->processSettings();
+    $modules = isset($this->itemInfo['module']) && $this->itemInfo['module'] != 'rules' ? array($this->itemInfo['module'] => 1) : array();
+    foreach ($this->parameterInfo() as $name => $info) {
+      if (isset($this->settings[$name . ':process']) && $this->settings[$name . ':process'] instanceof RulesDataProcessor) {
+        $modules += array_flip($this->settings[$name . ':process']->dependencies());
+      }
+    }
+    return array_keys($modules);
   }
 
   /**
@@ -447,7 +454,7 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function access() {
     $this->processSettings();
-    foreach ($this->info['parameter'] as $name => $info) {
+    foreach ($this->parameterInfo() as $name => $info) {
       if (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
         if ($wrapper->access('view') === FALSE) {
           return FALSE;
@@ -497,13 +504,18 @@ abstract class RulesPlugin extends RulesExtendable {
   /**
    * Makes sure the plugin is configured right, e.g. all needed variables
    * are available in the element's scope and dependent modules are enabled.
-   * //TODO: add integrity check for dependencies.
+   *
    * @return RulesPlugin
    */
   public function integrityCheck() {
     // First process the settings if not done yet.
     $this->processSettings();
-
+    // Check dependencies.
+    foreach ($this->dependencies() as $module) {
+      if (!module_exists($module)) {
+        throw new RulesException('Missing required module %name.', array('%name' => $module), $this);
+      }
+    }
     // Check the parameter settings.
     $this->checkParameterSettings();
     // Check variable names for provided variabels to be valid.
@@ -916,8 +928,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function dependencies() {
-    //TODO: add used input evaluator modules
-    return isset($this->info['module']) ? array($this->info['module']) : array();
+    $modules = array_flip(parent::dependencies());
+    $modules += (array) $this->__call('dependencies');
+    return array_keys($modules + (isset($this->info['module']) ? array($this->info['module'] => 1) : array()));
   }
 
   public function execute() {
@@ -1141,6 +1154,81 @@ interface RulesTriggerableInterface {
 }
 
 /**
+ * Provides the interface used for implementing an abstract plugin by using
+ * the Faces extension mechanism.
+ */
+interface RulesPluginImplInterface {
+
+  /**
+   * Execute the action or condition making use of the parameters as specified.
+   */
+  public function execute();
+
+  /**
+   * Validates $settings independent from a form submission.
+   *
+   * @throws RulesException
+   *   In case of validation errors, RulesExceptions are thrown.
+   */
+  public function validate();
+
+  /**
+   * Processes $settings independent from a form submission. Only successfully
+   * validated settings are processed, so it can be also used to prepare
+   * execution dependent on the settings.
+   */
+  public function process();
+
+  /**
+   * Checks whether the user has access to configure this element or rule
+   * configuration.
+   */
+  public function access();
+
+  /**
+   * Returns an array of required modules.
+   */
+  public function dependencies();
+
+  /**
+   * Alter the generated configuration form of the element.
+   *
+   * Validation and processing of the settings should be untied from the form
+   * and implemented in validate() and process() wherever it makes sense.
+   * For the remaining cases where form tied validation and processing is needed
+   * make use of the form API #element_validate and #value_callback properties.
+   */
+  public function form_alter(&$form, $form_state);
+
+}
+
+/**
+ * Class providing default implementations for the concrete plugin if not
+ * overriden by the implementation.
+ *
+ * @see RulesPluginImplInterface
+ */
+class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
+
+  public function execute() {
+    throw new RulesException($this->object->getPluginName() .": Execution implementation is missing.");
+  }
+
+  /**
+   * Implements RulesPluginImplInterface.
+   */
+  public function access() {
+    return TRUE;
+  }
+
+  public function validate() {}
+  public function process() {}
+  public function dependencies() {}
+  public function form_alter(&$form, $form_state) {}
+}
+
+
+/**
  * A RecursiveIterator for rule elements.
  */
 class RulesRecursiveElementIterator extends ArrayIterator implements RecursiveIterator {
@@ -1192,11 +1280,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function dependencies() {
-    $args = array();
+    $modules = array();
     foreach ($this->children as $child) {
-      $args[] = $child->dependencies();
+      $modules += array_flip($child->dependencies());
     }
-    return !empty($args) ? call_user_func_array('array_merge', $args) : array();
+    return array_keys($modules);
   }
 
   public function argumentInfo() {
