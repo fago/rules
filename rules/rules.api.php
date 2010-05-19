@@ -41,13 +41,15 @@
  *     interface. Should start with a capital letter and be translated.
  *     Required.
  *   - parameter: An array describing all parameter of the action with
- *     the parameter's name as key. Optional. Each parameter has to be
+ *     the parameter's name as key.  Optional. Each parameter has to be
  *     described by a sub-array with possible attributes as described
- *     afterwards.
+ *     afterwards, whereas the name of a parameter needs to be a lowercase,
+ *     valid PHP variable name.
  *   - provides: An array describing the variables the action provides to the
  *     evaluation state with the variable name as key. Optional. Each variable
  *     has to be described by a sub-array with possible attributes as described
- *     afterwards.
+ *     afterwards, whereas the name of a parameter needs to be a lowercase,
+ *     valid PHP variable name.
  *   - 'named parameter': If set to TRUE, the arguments will be passed as a
  *     single array with the parameter names as keys. This emulates named
  *     parameters in PHP and is in particular useful if the number of parameters

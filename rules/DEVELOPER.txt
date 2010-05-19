@@ -19,7 +19,8 @@ Terminology & Overview
   * Each rules configuration may be persistently saved to the db using the
     entity CRUD API. Using the API on contained rule elements is working too and
     results in the whole configuration being updated.
-  * Rules provides per plugin UI components, which are usable on its own. The
-    rules admin modules just makes use of that UI.
+  * Rules provides per plugin UI components, what makes the UI parts re-usable
+    outside of the rule admin module too. In fact the rules admin module is
+    pretty small, as it just relies on the provided UI of the components.
   * The UI is incorporated using the faces object extension mechanism, see
-    rules_rules_plugin_info() for an overview of used UI extenders.
+    rules_rules_plugin_info() for an overview of the used UI extenders.
