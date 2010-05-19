@@ -197,9 +197,10 @@ abstract class RulesExtendable extends FacesExtendable {
 /**
  * Base class for rules plugins.
  *
- * We implement the EntityAPIInterface ourself as we cannot inherit from
- * EntityDB too. Any CRUD related actions performed on contained plugins are
- * applied and the real db-entity is saved.
+ * We cannot inherit from EntityDB at the same time, so we implement our own
+ * entity related methods. Any CRUD related actions performed on contained
+ * plugins are applied and the root element representing the configuration is
+ * saved.
  */
 abstract class RulesPlugin extends RulesExtendable {
 
@@ -695,7 +696,7 @@ abstract class RulesPlugin extends RulesExtendable {
     }
   }
 
-  function __sleep() {
+  public function __sleep() {
     $this->processSettings();
     $array = (isset($this->name)) ? array('name' => 'name') : array();
     // Keep the id always as we need it for the recursion prevention.
