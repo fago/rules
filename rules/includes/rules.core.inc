@@ -1325,7 +1325,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   protected function setUpVariables() {
-    return parent::argumentInfo() + (isset($this->info['variables']) ? $this->info['variables'] : array());
+    return isset($this->info['variables']) ? parent::argumentInfo() + $this->info['variables'] : $this->argumentInfo();
   }
 
   /**

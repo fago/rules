@@ -294,6 +294,12 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
     return array();
   }
 
+  public function argumentInfo() {
+    // If executed directly, all variables as defined by the event need to
+    // be passed.
+    return $this->availableVariables();
+  }
+
   public function availableVariables() {
     if (isset($this->parent)) {
       // Return the event variables provided by the event set, once cached.
