@@ -96,6 +96,14 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   protected function returnVariables(RulesState $state, $result = NULL) {
     return $result;
   }
+
+  public function export($php = FALSE) {
+    $not = $this->negate ? 'NOT ' : '';
+    $export = $this->exportSettings();
+    // Abbreviate the export making "USING" implicit.
+    $export = array($not . $this->elementName => $export['USING']);
+    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+  }
 }
 
 /**
