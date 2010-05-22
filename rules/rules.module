@@ -260,7 +260,8 @@ function &rules_wrap_data(&$data = NULL, $info, $force = FALSE) {
   if (isset($cache['data_info'][$type]['data info'])) {
     $info['data info'] = $cache['data_info'][$type]['data info'];
   }
-  if (!empty($cache['data_info'][$type]['wrap']) || $force) {
+  // By default we do not wrap the data, except for completely unknown types.
+  if (!empty($cache['data_info'][$type]['wrap']) || $force || empty($cache['data_info'][$type])) {
     unset($info['handler']);
     $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
     return $wrapper;

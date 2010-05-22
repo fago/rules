@@ -43,7 +43,6 @@ function rules_test_rules_condition_info() {
  * Implements hook_rules_action_info().
  */
 function rules_test_rules_action_info() {
-
   return array(
     'rules_node_publish_action' => array(
       'label' => t('Blabla'),
