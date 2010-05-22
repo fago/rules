@@ -156,12 +156,16 @@ class RulesState {
    *
    * @param $name
    *   The name of the variable to return.
+   * @throws RulesException
+   *   Throws a RulesException in case we have info about the requested
+   *   variable, but it is not defined.
    * @return
    *   The variable or a EntityMetadataWrapper containing the variable.
    */
   public function &get($name) {
-    if (!array_key_exists($name, $this->variables)) {
-      if (!empty($this->info[$name]['handler'])) {
+    if (!isset($this->variables[$name])) {
+      // If there is handler to load the variable, do it now.
+      if (!array_key_exists($name, $this->variables) && !empty($this->info[$name]['handler'])) {
         $data = call_user_func_array($this->info[$name]['handler'], rules_unwrap_data($this->variables));
         $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
         $this->info[$name]['handler'] = FALSE;
@@ -169,7 +173,9 @@ class RulesState {
           throw new RulesException('Unable to load variable %name, aborting.', array('%name' => $name), NULL, RulesLog::INFO);
         }
       }
-      $this->variables += array($name => NULL);
+      else {
+        throw new RulesException('Unable to get variable %name, it is not defined.', array('%name' => $name));
+      }
     }
     return $this->variables[$name];
   }
@@ -242,6 +248,8 @@ class RulesState {
    *
    * @param $selector
    *   The selector string, e.g. "node:author:mail".
+   * @throws RulesException
+   *   Throws a RulesException in case the selector cannot be applied.
    * @return EntityMetadataWrapper
    *   The wrapper for the given selector or FALSE if the selector couldn't be
    *   applied.
@@ -249,18 +257,22 @@ class RulesState {
   public function applyDataSelector($selector) {
     $parts = explode(':', $selector, 2);
     $wrapper = $this->get($parts[0]);
-    if ($wrapper && $wrapper instanceof EntityMetadataWrapper && count($parts) > 1) {
-      try {
-        foreach (explode(':', $parts[1]) as $name) {
-          $wrapper = $wrapper->get($name);
-        }
-      }
-      // In case of an exception or we were unable to get a wrapper, return FALSE.
-      catch (EntityMetadataWrapperException $e) {
-        return FALSE;
+    if (count($parts) == 1) {
+      return $wrapper;
+    }
+    elseif (!$wrapper instanceof EntityMetadataWrapper) {
+      throw new RulesException('Unable to apply data selector %selector. The specified variable is not wrapped correctly.', array('%selector' => $selector));
+    }
+    try {
+      foreach (explode(':', $parts[1]) as $name) {
+        $wrapper = $wrapper->get($name);
       }
     }
-    return isset($wrapper) && $wrapper instanceof EntityMetadataWrapper ? $wrapper : FALSE;
+    catch (EntityMetadataWrapperException $e) {
+      // In case of an exception, re-throw it.
+      throw new RulesException('Unable to apply data selector %selector: %error.', array('%selector' => $selector, '%error' => $e->getMessage()));
+    }
+    return $wrapper;
   }
 }
 

@@ -323,7 +323,7 @@ abstract class RulesPlugin extends RulesExtendable {
         $parts = explode(':', $this->settings[$name . ':select'], 2);
         $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
       }
-      elseif (!isset($this->settings[$name]) && empty($info['optional'])) {
+      elseif (!isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
         $vars[$name] = $info;
       }
     }
@@ -560,40 +560,40 @@ abstract class RulesPlugin extends RulesExtendable {
   /**
    * Returns the argument as configured in the element settings for the
    * parameter $name described with $info.
+   *
+   * @throws RulesException
+   *   In case the argument cannot be retrieved an exception is thrown.
    */
   protected function getArgument($name, $info, RulesState $state) {
-    if (isset($this->settings[$name . ':select']) && ($var = $state->get($this->settings[$name . ':select'])) !== NULL) {
-      $arg = $var;
+    if (isset($this->settings[$name . ':select']) && $state->varinfo($name)) {
+      $arg = $state->get($this->settings[$name . ':select']);
     }
     elseif (isset($this->settings[$name . ':select'])) {
-      if (!($wrapper = $state->applyDataSelector($this->settings[$name . ':select']))) {
-        throw new RulesException('Unable to apply data selector %selector.', array('%selector' => $this->settings[$name . ':select']), $this);
-      }
-      $arg = $wrapper;
-      if (!empty($this->settings[$name . ':process'])) {
-        // For processing first unwrap the data.
-        $return = rules_unwrap_data(array($wrapper), array($info));
-        $arg = $this->settings[$name . ':process']->process(reset($return), $info, $state, $this);
-        unset($info['sanitize']);
-      }
+      $arg = $state->applyDataSelector($this->settings[$name . ':select']);
     }
     elseif (isset($this->settings[$name])) {
-      $arg = !empty($this->settings[$name . ':process']) ? $this->settings[$name . ':process']->process($this->settings[$name], $info, $state, $this) : $this->settings[$name];
-      // We don't sanitize values directly inputted by users.
-      unset($info['sanitize']);
+      $arg = $this->settings[$name];
+      // We don't sanitize directly specified values.
+      $skip_sanitize = TRUE;
     }
-    elseif (($var = $state->get($name)) !== NULL) {
-      $arg = $var;
+    elseif ($state->varinfo($name)) {
+      $arg = $state->get($name);
     }
     elseif (empty($info['optional']) && $info['type'] != 'hidden') {
       throw new RulesException('Required parameter %name is missing.', array('%name' => $name), $this);
     }
     else {
       $arg = !empty($info['default value']) ? $info['default value'] : NULL;
-      unset($info['sanitize']);
+      $skip_sanitize = TRUE;
+    }
+    // Apply any configured data processors.
+    if (!empty($this->settings[$name . ':process'])) {
+      // For processing, make sure the data is unwrapped now.
+      $return = rules_unwrap_data(array($arg), array($info));
+      return $this->settings[$name . ':process']->process($return[0], $info, $state, $this);
     }
     // Support passing already sanitized values.
-    if ($info['type'] == 'text' && !empty($info['sanitize']) && !($arg instanceof EntityMetadataWrapper)) {
+    if ($info['type'] == 'text' && !isset($skip_sanitize) && !empty($info['sanitize']) && !($arg instanceof EntityMetadataWrapper)) {
       return check_plain((string)$arg);
     }
     return $arg;
