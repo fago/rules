@@ -231,9 +231,11 @@ class RulesTestCase extends DrupalWebTestCase {
    * Test passing arguments by reference to an action.
    */
   function testPassingByReference() {
-    $data = array('foo' => 'bar');
-    $args = array('arg' => &$data);
-    rules_action('rules_action_test_reference')->execute($args);
+    // Keeping references of variables is unsupported, though the
+    // EntityMetadataArrayObject may be used to achieve that.
+    $array = array('foo' => 'bar');
+    $data = new EntityMetadataArrayObject($array);
+    rules_action('rules_action_test_reference')->execute($data);
     $this->assertTrue($data['changed'], 'Parameter has been passed by reference');
   }
 
