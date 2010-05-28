@@ -1105,7 +1105,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   protected function getFileName($function, $includes) {
     $reflector = new ReflectionFunction($function);
-    $file = $reflector->getFileName();
+    // On windows the path contains backslashes instead of slashes, fix that.
+    $file = str_replace('\\', '/', $reflector->getFileName());
     foreach ($includes as $include) {
       $pos = strpos($file, $include . '.inc');
       // Test whether the file ends with the given filename.inc.
