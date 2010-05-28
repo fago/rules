@@ -114,7 +114,9 @@ class RulesDataUIDecimal extends RulesDataUIText {
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form = parent::inputForm($name, $info, $settings, $element);
-    $form[$name]['#type'] = 'textfield';
+    if (empty($info['options list'])) {
+      $form[$name]['#type'] = 'textfield';
+    }
     $form[$name]['#element_validate'][] = 'rules_ui_element_decimal_validate';
     return $form;
   }
@@ -127,7 +129,9 @@ class RulesDataUIInteger extends RulesDataUIText {
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form = parent::inputForm($name, $info, $settings, $element);
-    $form[$name]['#type'] = 'textfield';
+    if (empty($info['options list'])) {
+      $form[$name]['#type'] = 'textfield';
+    }
     $form[$name]['#element_validate'][] = 'rules_ui_element_integer_validate';
     return $form;
   }
