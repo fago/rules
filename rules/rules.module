@@ -746,7 +746,7 @@ function rules_menu() {
     'type' => MENU_CALLBACK,
     'file' => 'ui/ui.forms.inc',
   );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/event/remove'] = array(
+  $items[RULES_UI_RULE_PATH . '/%rules_config/event/delete'] = array(
     //@todo: improve title.
     'title' => 'Remove event',
     'page callback' => 'drupal_get_form',

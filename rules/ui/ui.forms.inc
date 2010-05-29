@@ -289,7 +289,7 @@ function rules_ui_add_event($form, &$form_state, $rules_config) {
     '#type' => 'select',
     '#title' => t('React on event'),
     '#options' => RulesPluginUI::getOptions('event_info'),
-    '#description' => t('Specify the event you want to react on.'),
+    '#description' => t('Whenever the event occurrs, rule evaluation is triggered.'),
   );
   $form['submit'] = array(
     '#type' => 'submit',
@@ -317,7 +317,7 @@ function rules_ui_add_event_submit($form, &$form_state) {
   if (!empty($form_state['values']['event'])) {
     $rules_config = $form_state['rules_config'];
     $rules_config->save();
-    drupal_set_message(t('Add event to rule %label', array('%label' => $rules_config->label())));
+    drupal_set_message(t('Added event to rule %label', array('%label' => $rules_config->label())));
   }
 }
 
