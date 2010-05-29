@@ -286,6 +286,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#default_value' => $this->element->label(),
       '#required' => TRUE,
       '#weight' => -5,
+      '#description' => t('The human-readable name.'),
     );
     if (!empty($this->element->module) && !empty($this->element->name) && strpos($this->element->name, $this->element->module . '_') === 0) {
       // Remove the module prefix from the machine name.
@@ -413,12 +414,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $render['#attributes']['class'][] = 'rules-operations';
     $render['#attributes']['class'][] = 'action-links';
     $render['#links']['edit'] = array(
-      'title' => t('Edit'),
+      'title' => t('edit'),
       'href' => RulesPluginUI::path($name, 'edit', $element_id),
       'query' => drupal_get_destination(),
     );
     $render['#links']['delete'] = array(
-      'title' => t('Delete'),
+      'title' => t('delete'),
       'href' => RulesPluginUI::path($name, 'delete', $element_id),
       'query' => drupal_get_destination(),
     );
@@ -533,6 +534,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       ));
 
       $row[] = l(t('edit'), RulesPluginUI::path($name));
+      // Add either an enable or disable link.
+      $text = $config->active ? t('disable') : t('enable');
+      $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
+      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
       $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
 
       // TODO: hide configs where access() is FALSE and make sure access is
@@ -547,11 +552,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       else {
         $row[] = '';
       }
-
-      // Add either an enable or disable link.
-      $text = $config->active ? t('disable') : t('enable');
-      $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
-      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
 
       $rows[] = $row;
     }
