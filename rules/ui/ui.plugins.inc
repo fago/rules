@@ -32,7 +32,7 @@ class RulesRuleUI extends RulesActionContainerUI {
   /**
    * Applies the values of the form to the rule configuration.
    */
-  function form_extract_values($form, $form_state) {
+  function form_extract_values($form, &$form_state) {
     // Run condition and action container value extraction.
     if (isset($form['conditions'])) {
       $this->conditions->extender('RulesConditionContainerUI')->form_extract_values($form['conditions'], $form_state);

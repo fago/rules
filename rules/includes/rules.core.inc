@@ -758,6 +758,14 @@ abstract class RulesPlugin extends RulesExtendable {
     $this->__call('form', array(&$form, &$form_state, $options));
   }
 
+  public function form_validate($form, &$form_state) {
+    $this->__call('form_validate', array($form, &$form_state));
+  }
+
+  public function form_submit($form, &$form_state) {
+    $this->__call('form_submit', array($form, &$form_state));
+  }
+
   /**
    * Returns the label of the element.
    */

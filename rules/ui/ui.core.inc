@@ -11,12 +11,12 @@
 interface RulesPluginUIInterface {
 
   /**
-   * Returns the whole configuration form of this rules configuration. For rule
-   * elements that are part of a configuration this method just returns the
+   * Adds the whole configuration form of this rules configuration. For rule
+   * elements that are part of a configuration this method just adds the
    * elements configuration form.
    *
    * @param $form
-   *   The form array.
+   *   The form array where to add the form.
    * @param $form_state
    *   The current form state.
    * @param $options
@@ -46,7 +46,7 @@ interface RulesPluginUIInterface {
    * @param $form
    * @param $form_state
    */
-  public function form_validate(&$form, &$form_state);
+  public function form_validate($form, &$form_state);
 
   /**
    * Submit the configuration form of this rule element. This makes sure to
@@ -56,7 +56,7 @@ interface RulesPluginUIInterface {
    * @param $form
    * @param $form_state
    */
-  public function form_submit(&$form, &$form_state);
+  public function form_submit($form, &$form_state);
 
 
   /**
@@ -221,7 +221,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Implements RulesPluginUIInterface.
    */
-  public function form_validate(&$form, &$form_state) {
+  public function form_validate($form, &$form_state) {
     $this->form_extract_values($form, $form_state);
 
     if (!$this->element->access()) {
@@ -241,7 +241,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Applies the values of the form to the element.
    */
-  function form_extract_values($form, $form_state) {
+  public function form_extract_values($form, &$form_state) {
     $this->element->settings = array();
     foreach ($form_state['values']['parameter'] as $name => $values) {
       $this->element->settings += $values['settings'];
@@ -256,7 +256,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Implements RulesPluginUIInterface.
    */
-  public function form_submit(&$form, &$form_state) {
+  public function form_submit($form, &$form_state) {
     if (!empty($form['settings'])) {
       $this->settingsFormSubmit($form, $form_state);
     }
@@ -286,31 +286,40 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#default_value' => $this->element->label(),
       '#required' => TRUE,
       '#weight' => -5,
-      '#field_suffix' => '&nbsp;<small id="edit-label-suffix">' . t('Machine name: @name', array('@name' => $this->element->name)) . '</small>',
     );
-    $js_settings = array(
-      'type' => 'setting',
-      'data' => array(
-        'machineReadableValue' => array(
-          'label' => array(
-            'text' => t('Machine name'),
-            'target' => 'name',
-            'searchPattern' => '[^a-z0-9]+',
-          ),
-        ),
-      ),
-    );
+    if (!empty($this->element->module) && !empty($this->element->name) && strpos($this->element->name, $this->element->module . '_') === 0) {
+      // Remove the module prefix from the machine name.
+      $machine_name = substr($this->element->name, strlen($this->element->module) + 1);
+    }
     $form['settings']['name'] = array(
       '#title' => t('Machine name'),
       '#type' => 'textfield',
-      '#default_value' => $this->element->name,
+      '#default_value' => isset($machine_name) ? $machine_name : $this->element->name,
       '#maxlength' => 32,
       '#required' => TRUE,
-      '#description' => t('The machine-readable name of this configuration is used by rules internally to identify the configuration. Only letters and numbers are allowed and the name must be unique.'),
-      '#attached' => array(
-        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
-      ),
+      '#description' => t('The machine-readable name of this configuration is used by rules internally to identify the configuration. This name must contain only lowercase letters, numbers, and underscores and must be unique.'),
     );
+    // Add the JS for machine name creation only during creation, so label
+    // changes don't automatically lead to changed machine names.
+    if (empty($this->element->id)) {
+      $js_settings = array(
+        'type' => 'setting',
+        'data' => array(
+          'machineReadableValue' => array(
+            'label' => array(
+              'text' => t('Machine name'),
+              'target' => 'name',
+              'searchPattern' => '[^a-z0-9]+',
+              'replaceToken' => '_',
+            ),
+          ),
+        ),
+      );
+      $form['settings']['name']['#attached'] = array(
+        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
+      );
+      $form['settings']['label']['#field_suffix'] = '&nbsp;<small id="edit-label-suffix">' . t('Machine name: @name', array('@name' => $form['settings']['name']['#default_value'])) . '</small>';
+    }
     // TODO: Attach field form thus description and tags.
   }
 
@@ -319,14 +328,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
     // If the name was changed we have to redirect to the URL that contains
     // the new name, instead of rebuilding on the old URL with the old name
-    if ($this->element->name != $form_state['values']['name']) {
-      $this->element->name = $form_state['values']['name'];
+    if ($form['settings']['name']['#default_value'] != $form_state['values']['name']) {
+      $module = isset($this->element->module) ? $this->element->module : 'rules';
+      $this->element->name = $module . '_' . $form_state['values']['name'];
       $form_state['redirect'] = RulesPluginUI::path($this->element->name);
     }
   }
 
   public function settingsFormValidate($form, &$form_state) {
-
+    if (!preg_match('!^[a-z0-9_]+$!', $form_state['values']['name'])) {
+      form_set_error('name', t('The machine-readable name must contain only lowercase letters, numbers, and underscores.'));
+    }
+    elseif ($form['settings']['name']['#default_value'] != $form_state['values']['name'] && rules_config_load($this->element->name)) {
+      form_set_error('name', t('The machine-readable name %name is already taken.', array('%name' => $form_state['values']['name'])));
+    }
   }
 
   public function settingsFormSubmit($form, &$form_state) {
@@ -673,7 +688,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
   /**
    * Applies the values of the form to the given rule configuration.
    */
-  function form_extract_values($form, $form_state) {
+  public function form_extract_values($form, &$form_state) {
     // Get the right form values.
     $values = $form_state['values'];
     foreach ($form['#parents'] as $key) {

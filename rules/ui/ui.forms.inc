@@ -66,8 +66,10 @@ function rules_ui_form_edit_rules_config_validate($form, &$form_state) {
  */
 function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
-  // Rebuild instead of redirect as this is faster.
-  $form_state['rebuild'] = TRUE;
+  // By default, rebuild instead of redirect as this is faster.
+  if (empty($form_state['redirect'])) {
+    $form_state['rebuild'] = TRUE;
+  }
   // We need to clear the values so the new weight-id combinations can take
   // affect on rebuild.
   $form_state['input'] = array();
