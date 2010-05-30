@@ -96,6 +96,12 @@ function theme_rules_data_selector_help($variables) {
     '#pre_render' => array(),
     '#attributes' => array(),
   );
+  // Make it manually collapsible as we cannot use #collapsible without the
+  // FAPI element processor.
+  $render['#attached']['js'][] = 'misc/collapse.js';
+  $render['#attributes']['class'][] = 'collapsible';
+  $render['#attributes']['class'][] = 'collapsed';
+
   $render['table'] = array(
     '#theme' => 'table',
     '#header' => array(t('Selector'), t('Label'), t('Description')),

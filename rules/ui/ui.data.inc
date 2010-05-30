@@ -50,6 +50,8 @@ class RulesDataUI {
       '#title' => t('Data selector'),
       '#default_value' => isset($settings[$name . ':select']) ? $settings[$name . ':select'] : '',
       '#required' => empty($info['optional']),
+      '#autocomplete_path' => RulesPluginUI::path($element->root()->name, 'autocomplete'. '/' . $name),
+      '#process' => array('rules_data_selection_autocomplete_path'),
     );
     $form['help'] = array(
       '#theme' => 'rules_data_selector_help',

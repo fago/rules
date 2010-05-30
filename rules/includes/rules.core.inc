@@ -276,6 +276,13 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
+   * Returns the element's parent.
+   */
+  public function parentElement() {
+    return $this->parent;
+  }
+
+  /**
    * Returns the depth of this element in the configuration.
    */
   public function depth() {

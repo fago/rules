@@ -384,6 +384,12 @@ class RulesData  {
         $matches += self::matchingDataSelector($wrapper, $param_info, $name . ':', $recursions);
       }
     }
+    elseif (!empty($recurse)) {
+      // We may not recurse any more, but indicate the possibility to recurse.
+      foreach ($recurse as $name => $wrapper) {
+        $matches[$name . ':'] = $wrapper->info();
+      }
+    }
     return $matches;
   }
 
