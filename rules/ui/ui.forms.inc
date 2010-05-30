@@ -171,15 +171,20 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, 
       '#type' => 'select',
       '#title' => t('Select the %element to add', array('%element' => $plugin_name)),
       '#options' => RulesPluginUI::getOptions($plugin_name . '_info'),
-      '#ajax' => rules_ui_form_default_ajax() + array(
-        'trigger_as' => array('name' => 'continue'),
-      ),
+
+      // Ajax functionality is disable for now, as the javascript stuff won't
+      // be loaded correctly in the next step. Enable again once
+      // http://drupal.org/node/561858 has been fixed.
+
+      //'#ajax' => rules_ui_form_default_ajax() + array(
+      //  'trigger_as' => array('name' => 'continue'),
+      //),
     );
     $form['continue'] = array(
       '#type' => 'submit',
       '#name' => 'continue',
       '#value' => t('Continue'),
-      '#ajax' => rules_ui_form_default_ajax(),
+      //'#ajax' => rules_ui_form_default_ajax(),
     );
   }
   elseif (!$plugin_is_abstract) {
