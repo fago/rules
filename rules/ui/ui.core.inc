@@ -618,7 +618,7 @@ class RulesAbstractPluginUI extends RulesPluginUI {
    */
   public function form(&$form, &$form_state, $options = array()) {
     parent::form($form, $form_state, $options);
-    $this->element->call('form_alter', array(&$form, &$form_state));
+    $this->element->call('form_alter', array(&$form, &$form_state, $options));
   }
 }
 

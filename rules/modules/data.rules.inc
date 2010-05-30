@@ -605,8 +605,7 @@ function rules_data_condition_info() {
         'data' => array(
           'type' => '*',
           'label' => t('Data to compare'),
-          'description' => t('Specify the data to be compared using a data selector, e.g. "node:author:name".'),
-          'save' => TRUE,
+          'description' => t('The data to be compared, specified by using a data selector, e.g. "node:author:name".'),
          ),
         'op' => array(
           'type' => 'text',
@@ -673,8 +672,8 @@ function rules_condition_data_is_value_options_list(RulesAbstractPlugin $element
  * Use multiple steps to configure the condition as the needed type of the value
  * depends on the selected data.
  */
-function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
-  if (!isset($form_state['rules_element_step'])) {
+function rules_condition_data_is_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+  if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
     unset($form['parameter']['op'], $form['parameter']['value']);
     $form_state['rules_element_step'] = 'data_value';
     $form['submit'] = array(
@@ -688,6 +687,15 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractP
     unset($form_state['parameter_mode']['value']);
   }
   else {
+    // Change the data parameter to be not editable.
+    $form['parameter']['data']['settings']['#access'] = FALSE;
+    // TODO: improve display
+    $form['parameter']['data']['info'] = array(
+      '#prefix' => '<p>',
+      '#markup' => t('<strong>Selected data:</strong> %selector', array('%selector' => $element->settings['data:select'])),
+      '#suffix' => '</p>',
+    );
+
     // Limit the operations to what makes sense for the data type.
     $info = $element->parameterInfo();
     if (!RulesData::typesMatch($info['value'], array('type' => array('decimal', 'date')))) {
@@ -704,8 +712,7 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, RulesAbstractP
  * Provides configuration help for the data_is condition.
  */
 function rules_condition_data_is_help() {
-  return array('#markup' => t('Currently you have to know which data selectors are available. Helpful not? ;)'));
-}
+  return array('#markup' => t('Compare two data values of the same type with each other.'));}
 
 /**
  * Options list callback for condition data_is.
