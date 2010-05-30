@@ -662,8 +662,6 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Implement the EntityAPIInterface.
-   *
    * Saves the configuration to the database, regardless whether this is invoked
    * on the rules configuration or a contained rule element.
    */
@@ -1219,7 +1217,7 @@ interface RulesPluginImplInterface {
    * For the remaining cases where form tied validation and processing is needed
    * make use of the form API #element_validate and #value_callback properties.
    */
-  public function form_alter(&$form, $form_state);
+  public function form_alter(&$form, $form_state, $options);
 
 }
 
@@ -1245,7 +1243,7 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
   public function validate() {}
   public function process() {}
   public function dependencies() {}
-  public function form_alter(&$form, $form_state) {}
+  public function form_alter(&$form, $form_state, $options) {}
 }
 
 
