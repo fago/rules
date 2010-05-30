@@ -550,4 +550,8 @@ class RulesEventSet extends RulesRuleSet {
     // See rules_get_event_set().
     variable_set('rules_empty_sets', array_flip($empty));
   }
+
+  protected function stateVariables($element = NULL) {
+    return $this->availableVariables();
+  }
 }

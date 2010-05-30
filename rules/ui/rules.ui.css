@@ -49,3 +49,15 @@ div ul.rules-operations-add {
 .rules-element-content {
   float: left;
 }
+
+#autocomplete .rules-dsac-group {
+	font-style: italic;
+	background-color: #CCCCCC;
+	color: #222222;
+}
+
+#autocomplete li.selected .rules-dsac-group {
+  background: #0072b9;
+  color: #fff;
+}
+

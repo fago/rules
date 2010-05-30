@@ -358,6 +358,67 @@ function rules_ui_remove_event_submit($form, &$form_state) {
 }
 
 /**
+ * FAPI process callback for the data selection widget.
+ * This finalises the auto completion callback path by appending the form build
+ * id.
+ */
+function rules_data_selection_autocomplete_path($element, &$form_state, $form) {
+  $element['#autocomplete_path'] .= '/' . $form['#build_id'];
+  $form_state['cache'] = TRUE;
+  return $element;
+}
+
+/**
+ * Autocomplete data selection results.
+ */
+function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id, $string = '') {
+  // Get the form and its state from the cache to get the currently edited
+  // or created element.
+  $form_state = form_state_defaults();
+  $form = form_get_cache($form_build_id, $form_state);
+  if (!isset($form_state['rules_element'])) {
+    return;
+  }
+  $element = $form_state['rules_element'];
+
+  $params = $element->parameterInfo();
+  $matches = array();
+  if (isset($params[$parameter]) && $string) {
+    $parts = explode(':', $string);
+    // Remove the last part as it might be unfinished.
+    $last_part = array_pop($parts);
+    $selector = implode(':', $parts);
+
+    // Start with the partly given selector or from scratch.
+    $result = array();
+    if ($selector && $wrapper = $element->applyDataSelector($selector)) {
+      $result = RulesData::matchingDataSelector($wrapper, $params[$parameter], $selector . ':', 0);
+    }
+    elseif (!$selector) {
+      $result = RulesData::matchingDataSelector($element->availableVariables(), $params[$parameter], '', 1);
+    }
+
+    foreach ($result as $selector => $info) {
+      // If we have an uncomplete last part, take it into account now.
+      if (!$last_part || strpos($selector, $string) === 0) {
+        $attributes['class'][] = 'rules-dsac-item';
+        $attributes['title'] = isset($info['description']) ? check_plain($info['description']) : '';
+        if ($selector[strlen($selector) - 1] == ':') {
+          $attributes['class'][] = 'rules-dsac-group';
+          $text = '> ' . check_plain($selector) . '... (' . check_plain($info['label']) . ')';
+        }
+        else {
+          $text = check_plain($selector) . ' (' . check_plain($info['label']) . ')';
+        }
+        $matches[$selector] = "<div" . drupal_attributes($attributes) . ">$text</div";
+      }
+    }
+  }
+  drupal_json_output($matches);
+}
+
+
+/**
  * FAPI validation of an integer element. Copy of the private function
  * _element_validate_integer().
  */

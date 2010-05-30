@@ -58,7 +58,6 @@ interface RulesPluginUIInterface {
    */
   public function form_submit($form, &$form_state);
 
-
   /**
    * Returns a structured array for rendering this element in overviews.
    */
@@ -100,7 +99,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates the element edit form.
    */
   public function form(&$form, &$form_state, $options = array()) {
-    self::formDefaults($form);
+    self::formDefaults($form, $form_state);
+    $form_state += array('rules_element' => $this->element);
 
     // Add the help to the top of the form.
     $form['help'] = $this->element->help();
@@ -369,7 +369,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $content['label'] = array(
       '#type' => 'link',
       '#title' => $this->element->label(),
-      '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->childElementId()),
+      '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->element),
       '#prefix' => '<div class="rules-element-label">',
       // Put the elements below in a "description" div.
       '#suffix' => '</div><div class="description">'
@@ -407,7 +407,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public function operations() {
     $name = $this->element->root()->name;
-    $element_id = $this->childElementId();
     $render = array(
       '#theme' => 'links__rules',
     );
@@ -415,12 +414,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $render['#attributes']['class'][] = 'action-links';
     $render['#links']['edit'] = array(
       'title' => t('edit'),
-      'href' => RulesPluginUI::path($name, 'edit', $element_id),
+      'href' => RulesPluginUI::path($name, 'edit', $this->element),
       'query' => drupal_get_destination(),
     );
     $render['#links']['delete'] = array(
       'title' => t('delete'),
-      'href' => RulesPluginUI::path($name, 'delete', $element_id),
+      'href' => RulesPluginUI::path($name, 'delete', $this->element),
       'query' => drupal_get_destination(),
     );
     return $render;
@@ -434,8 +433,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Returns the child element id of the given child.
    */
-  public function childElementId($element = NULL) {
-    $element = isset($element) ? $element : $this->element;
+  public static function childElementId($element) {
     self::indexConfig($element);
     return $element->childElementId;
   }
@@ -490,7 +488,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Clears the current element map.
    */
-  protected static function clearElementMap($element) {
+  public static function clearElementMap($element) {
     $element = $element->root();
     if (!empty($element->map)) {
       foreach ($element->map as $child) {
@@ -574,7 +572,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates a path using the given operation for the element with the given
    * id of the configuration with the given name.
    */
-  public static function path($name, $op = NULL, $element_id = NULL) {
+  public static function path($name, $op = NULL, RulesPlugin $element = NULL) {
+    $element_id = isset($element) ? self::childElementId($element) : FALSE;
     return implode('/', array_filter(array(RULES_UI_RULE_PATH, $name, $op, $element_id)));
   }
 
@@ -722,7 +721,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
    */
   public function addOperations() {
     $name = $this->element->root()->name;
-    $element_id = $this->childElementId();
     $render = array(
       '#theme' => 'links__rules',
     );
@@ -732,7 +730,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
       if (!empty($info['embeddable']) && $this->element instanceof $info['embeddable']) {
         $render['#links']['add_' . $plugin] = array(
           'title' => t('Add !name', array('!name' => $plugin)),
-          'href' => RulesPluginUI::path($name, 'add/' . $plugin, $element_id),
+          'href' => RulesPluginUI::path($name, 'add/' . $plugin, $this->element),
           'query' => drupal_get_destination(),
         );
       }
