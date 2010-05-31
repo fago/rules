@@ -906,7 +906,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    */
   public function alterInfo($info) {
     $this->settings['#info'] = $info;
-    $this->info = rules_update_array($this->info, $this->settings['#info']);
+    // Apply the alter info to the element info by re-running setup(). That way
+    // we make sure to alter the un-modified element info.
+    $this->setup();
   }
 
   public function access() {

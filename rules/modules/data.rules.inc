@@ -358,8 +358,8 @@ function rules_action_data_set_validate(RulesAbstractPlugin $element) {
 /**
  * Form alter callback for the data_set action.
  */
-function rules_action_data_set_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
-  if (!isset($form_state['rules_element_step'])) {
+function rules_action_data_set_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+  if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
     unset($form['parameter']['value']);
     $form['submit'] = array(
       '#type' => 'submit',
@@ -371,6 +371,16 @@ function rules_action_data_set_form_alter(&$form, &$form_state, RulesAbstractPlu
     // Clear the parameter mode for the value parameter, so its gets the proper
     // default value based upon the type of the the selected data on rebuild.
     unset($form_state['parameter_mode']['value']);
+  }
+  else {
+    // Change the data parameter to be not editable.
+    $form['parameter']['data']['settings']['#access'] = FALSE;
+    // TODO: improve display
+    $form['parameter']['data']['info'] = array(
+      '#prefix' => '<p>',
+      '#markup' => t('<strong>Selected data:</strong> %selector', array('%selector' => $element->settings['data:select'])),
+      '#suffix' => '</p>',
+    );
   }
 }
 
@@ -444,7 +454,7 @@ function rules_action_entity_query_access(RulesAbstractPlugin $element) {
     return FALSE;
   }
   $properties = entity_metadata_get_properties($element->settings['type']);
-  if (isset($properties[$element->settings['property']]['access callback'])) {
+  if (isset($element->settings['property']) && isset($properties[$element->settings['property']]['access callback'])) {
     return call_user_func($properties[$element->settings['property']]['access callback'], 'view', $element->settings['property'], $element->settings['type'], NULL, NULL);
   }
   return TRUE;
@@ -492,23 +502,19 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
 /**
  * Form alter callback for actions relying on the entity type.
  */
-function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstractPlugin $element) {
+function rules_action_entity_type_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   $first_step = empty($element->settings['type']);
   $form['reload'] = array(
     '#weight' => 5,
     '#type' => 'submit',
+    '#name' => 'reload',
     '#value' => $first_step ? t('Continue') : t('Reload form'),
     '#limit_validation_errors' => array('parameter', 'type'),
-    '#submit' => array('rules_form_submit_rebuild'),
-    '#ajax' => array(
-      'callback' => 'rules_ui_form_ajax_reload_form',
-      'wrapper' => 'rules-form-wrapper',
-      'effect' => 'slide',
-      'speed' => 'fast',
-    ),
+    '#submit' => array('rules_action_entity_type_form_submit_rebuild'),
+    '#ajax' => rules_ui_form_default_ajax(),
   );
   // Use ajax and trigger as the reload button.
-  $form['parameter']['type']['#ajax'] = $form['reload']['#ajax'] + array(
+  $form['parameter']['type']['settings']['type']['#ajax'] = $form['reload']['#ajax'] + array(
     'event' => 'change',
     'trigger_as' => array('name' => 'reload'),
   );
@@ -521,15 +527,25 @@ function rules_action_entity_type_form_alter(&$form, &$form_state, RulesAbstract
       }
     }
     unset($form['submit']);
-    $form_state['rules_element_step'] = 'selected';
-    // Clear the parameter modes for the parameters, so they get the proper
-    // default value based upon the type on rebuild.
-    $form_state['parameter_mode'] = array();
+    // Disable #ajax for the first step as it has troubles with lazy-loaded JS.
+    // @todo: Re-enable once JS lazy-loading is fixed in core.
+    unset($form['parameter']['type']['settings']['type']['#ajax']);
+    unset($form['reload']['#ajax']);
   }
   else {
     // Hide the reload button in case js is enabled and it's not the first step.
     $form['reload']['#attributes'] = array('class' => array('rules-hide-js'));
   }
+}
+
+/**
+ * FAPI submit callback for reloading the entity type form.
+ */
+function rules_action_entity_type_form_submit_rebuild($form, &$form_state) {
+  rules_form_submit_rebuild($form, $form_state);
+  // Clear the parameter modes for the parameters, so they get the proper
+  // default values based upon the data types on rebuild.
+  $form_state['parameter_mode'] = array();
 }
 
 
