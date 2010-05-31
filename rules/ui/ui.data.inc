@@ -83,7 +83,7 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       $element->call('loadBasicInclude');
       $form[$name] = array(
         '#type' => 'select',
-        '#options' => $info['options list']($element),
+        '#options' => $info['options list']($element, $name),
       );
     }
     else {

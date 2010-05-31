@@ -391,6 +391,7 @@ function rules_action_data_set_process(RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
     $element->alterInfo($element_info);
   }
 }
@@ -657,7 +658,7 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
 
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();
-    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_condition_data_is_value_options_list' : FALSE;
+    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
     $element->alterInfo($element_info);
   }
   // Assert the bundle of entities, if its compared.
@@ -670,16 +671,6 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
         $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
       }
     }
-  }
-}
-
-/**
- * Returns options list for the value parameter.
- */
-function rules_condition_data_is_value_options_list(RulesAbstractPlugin $element) {
-  // The possible values of the "value" parameter are those of the data param.
-  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
-    return $wrapper->optionsList();
   }
 }
 
@@ -742,7 +733,15 @@ function rules_condition_data_is_operator_options() {
   );
 }
 
-
+/**
+ * Returns the options list specified by the selected data property.
+ */
+function rules_data_selector_options_list(RulesAbstractPlugin $element) {
+  // The possible values of the "value" parameter are those of the data param.
+  if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    return $wrapper->optionsList();
+  }
+}
 
 /**
  * @}
