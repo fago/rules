@@ -537,3 +537,21 @@ function rules_ui_element_duration_after_build($element, &$form_state) {
   form_set_value($element, $element['#value'], $form_state);
   return $element;
 }
+
+/**
+ * FAPI after build callback for specifying a list of values. Turns the textual
+ * value in an array.
+ */
+function rules_ui_list_textarea_after_build($element, &$form_state) {
+  $element['#value'] = explode("\n", $element['#value']);
+  form_set_value($element, $element['#value'], $form_state);
+  return $element;
+}
+
+/**
+ * FAPI pre render callback. Turns the value back to a string for rendering.
+ */
+function rules_ui_list_textarea_pre_render($element) {
+  $element['#value'] = implode("\n", $element['#value']);
+  return $element;
+}

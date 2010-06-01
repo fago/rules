@@ -127,6 +127,14 @@ function rules_condition_data_is($data, $op, $value) {
 }
 
 /**
+ * Condition: Entity is new
+ */
+function rules_condition_entity_is_new($entity, $settings, $state, $element) {
+  $wrapper = $state->currentArguments['entity'];
+  return !$wrapper->getIdentifier() || !empty($entity->is_new);
+}
+
+/**
  * A class implementing a rules input evaluator processing date input. This is
  * needed to treat relative date inputs for strtotime right, consider "now".
  */

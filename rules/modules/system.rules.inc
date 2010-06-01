@@ -99,7 +99,7 @@ function _rules_system_watchdog_log_entry_info() {
 function rules_system_action_info() {
   return array(
     'drupal_message' => array(
-      'label' => t('Show a configurable message on the site'),
+      'label' => t('Show a message on the site'),
       'group' => t('System'),
       'parameter' => array(
         'message' => array(

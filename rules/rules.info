@@ -14,6 +14,7 @@ files[] = rules.rules.inc
 files[] = modules/data.eval.inc
 files[] = modules/data.rules.inc
 files[] = modules/events.inc
+files[] = modules/node.eval.inc
 files[] = modules/node.rules.inc
 files[] = modules/php.eval.inc
 files[] = modules/php.rules.inc

@@ -103,7 +103,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $form_state += array('rules_element' => $this->element);
 
     // Add the help to the top of the form.
-    $form['help'] = $this->element->help();
+    $help = $this->element->help();
+    $form['help'] = is_array($help) ? $help : array('#markup' => $help);
 
     // We use $form_state['element_settings'] to store the settings of both
     // parameter modes. That way one can switch between the parameter modes
