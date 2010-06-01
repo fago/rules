@@ -190,11 +190,11 @@ class RulesState {
    */
   public function saveChanges($selector, $wrapper, $immediate = FALSE) {
     $info = $wrapper->info();
-    if (!$info['skip save'] && $this->isSavable($wrapper)) {
+    if (empty($info['skip save']) && $this->isSavable($wrapper)) {
       $this->save($selector, $wrapper, $immediate);
     }
     // No entity, so try saving the parent.
-    elseif (!$info['skip save'] && isset($info['parent']) && !($wrapper instanceof EntityDrupalWrapper)) {
+    elseif (empty($info['skip save']) && isset($info['parent']) && !($wrapper instanceof EntityDrupalWrapper)) {
       // Cut of the last part of the selector.
       $selector = implode(':', explode(':', $selector, -1));
       $this->saveChanges($selector, $info['parent'], $immediate);

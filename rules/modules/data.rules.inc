@@ -61,6 +61,11 @@ function rules_data_data_info() {
       'label' => t('list'),
       'wrap' => TRUE,
     ),
+   'list<text>' => array(
+      'label' => t('list of text'),
+      'ui class' => 'RulesDataUIListText',
+      'wrap' => TRUE,
+    ),
    'entity' => array(
       'label' => t('any entity'),
     )
@@ -654,6 +659,19 @@ function rules_data_condition_info() {
       'group' => t('Data'),
       'base' => 'rules_condition_data_is',
     ),
+    'entity_is_new' => array(
+      'label' => t('Entity is new'),
+      'parameter' => array(
+        'entity' => array(
+          'type' => 'entity',
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity for which to evaluate the condition.'),
+          'restriction' => 'selector',
+        ),
+      ),
+      'group' => t('Entities'),
+      'base' => 'rules_condition_entity_is_new',
+    ),
   );
 }
 
@@ -746,12 +764,34 @@ function rules_condition_data_is_operator_options() {
 }
 
 /**
+ * Help callback for condition entity_is_new.
+ */
+function rules_condition_entity_is_new_help() {
+  return t('This condition determines whether the specified entity has just been created and has not yet been saved to the database.');
+}
+
+
+/**
  * Returns the options list specified by the selected data property.
  */
 function rules_data_selector_options_list(RulesAbstractPlugin $element) {
   // The possible values of the "value" parameter are those of the data param.
   if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     return $wrapper->optionsList();
+  }
+}
+
+/**
+ * Gets all view modes of an entity for an entity_view event.
+ */
+function rules_get_entity_view_modes($type, $name) {
+  if ($type == 'event') {
+    $entity_type = substr($name, 0, -5);
+    $info = entity_get_info($entity_type);
+    foreach ($info['view modes'] as $mode => $mode_info) {
+      $modes[$mode] = $mode_info['label'];
+    }
+    return $modes;
   }
 }
 

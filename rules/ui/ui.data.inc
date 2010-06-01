@@ -227,5 +227,37 @@ class RulesDataUIURI extends RulesDataUIText {
     $form[$name]['#rows'] = 2;
     return $form;
   }
+}
 
+/**
+ * UI for textual data.
+ */
+class RulesDataUIListText extends RulesDataUIText {
+
+  public static function getDefaultMode() {
+    return 'selector';
+  }
+
+  public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $settings += array($name => array());
+    $form = parent::inputForm($name, $info, $settings, $element);
+    if ($form[$name]['#type'] == 'textarea') {
+      // Fix up the value to be an array during after build.
+      $form[$name]['#after_build'][] = 'rules_ui_list_textarea_after_build';
+      $form[$name]['#pre_render'][] = 'rules_ui_list_textarea_pre_render';
+      $form[$name]['#default_value'] = implode("\n", $settings[$name]);
+      $form[$name]['#description'] = t('A list of values, one on each line.');
+    }
+    else {
+      $form[$name]['#multiple'] = TRUE;
+    }
+    return $form;
+  }
+
+  public static function render($value) {
+    return array(
+      'content' => array('#markup' => check_plain(implode(', ', $value))),
+      '#attributes' => array('class' => array('rules-parameter-list')),
+    );
+  }
 }

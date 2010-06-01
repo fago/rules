@@ -9,6 +9,13 @@
  */
 
 /**
+ * Implements hook_rules_file_info() on behalf of the node module.
+ */
+function rules_node_file_info() {
+  return array('modules/node.eval');
+}
+
+/**
  * Implements hook_rules_event_info() on behalf of the node module.
  */
 function rules_node_event_info() {
@@ -76,6 +83,68 @@ function rules_events_node_variables($node_label, $update = FALSE) {
 }
 
 /**
+ * Implements hook_rules_condition_info() on behalf of the node module.
+ */
+function rules_node_condition_info() {
+  $defaults = array(
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content')),
+    ),
+    'group' => t('Node'),
+    'access callback' => 'rules_node_integration_access',
+  );
+  $items['node_is_of_type'] = $defaults + array(
+    'label' => t('Content is of type'),
+    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+    'base' => 'rules_condition_node_is_of_type',
+  );
+  $items['node_is_of_type']['parameter']['type'] = array(
+    'type' => 'list<text>',
+    'label' => t('Content types'),
+    'options list' => 'node_type_get_names',
+    'description' => t('The content type(s) to check for.'),
+    'restriction' => 'input',
+  );
+  $items['node_is_published'] = $defaults + array(
+    'label' => t('Content is published'),
+    'base' => 'rules_condition_node_is_published',
+  );
+  $items['node_is_sticky'] = $defaults + array(
+    'label' => t('Content is sticky'),
+    'base' => 'rules_condition_node_is_sticky',
+  );
+  $items['node_is_promoted'] = $defaults + array(
+    'label' => t('Content is promoted to frontpage'),
+    'base' => 'rules_condition_node_is_promoted',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_rules_action_info() on behalf of the node module.
+ */
+function rules_node_action_info() {
+  $defaults = array(
+    'parameter' => array(
+      'node' => array('type' => 'node', 'label' => t('Content'), 'save' => TRUE),
+    ),
+    'group' => t('Node'),
+    'access callback' => 'rules_node_admin_access',
+  );
+  // Add support for hand-picked core actions.
+  $core_actions = node_action_info();
+  $actions = array('node_publish_action', 'node_unpublish_action', 'node_make_sticky_action', 'node_make_unsticky_action', 'node_promote_action', 'node_unpromote_action');
+  foreach ($actions as $base) {
+    $action_name = str_replace('_action', '', $base);
+    $items[$action_name] = $defaults + array(
+      'label' => $core_actions[$base]['label'],
+      'base' => $base,
+    );
+  }
+  return $items;
+}
+
+/**
  * Node integration access callback.
  */
 function rules_node_integration_access($type, $name) {
@@ -84,19 +153,11 @@ function rules_node_integration_access($type, $name) {
   }
 }
 
-
 /**
- * Gets all view modes of an entity for an entity_view event.
+ * Node integration admin access callback.
  */
-function rules_get_entity_view_modes($type, $name) {
-  if ($type == 'event') {
-    $entity_type = substr($name, 0, -5);
-    $info = entity_get_info($entity_type);
-    foreach ($info['view modes'] as $mode => $mode_info) {
-      $modes[$mode] = $mode_info['label'];
-    }
-    return $modes;
-  }
+function rules_node_admin_access() {
+  return user_access('administer nodes');
 }
 
 /**
