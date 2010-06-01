@@ -902,6 +902,9 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
   }
 
+  /**
+   * Test the provided list actions.
+   */
   function testListActions() {
     $rule = rule(array(
       'list' => array(
@@ -919,6 +922,9 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     //debug(RulesLog::logger()->render());
   }
 
+  /**
+   * Test integration for the taxonomy module.
+   */
   function testTaxonomyIntegration() {
     $term = entity_metadata_entity_create('taxonomy_term', array(
       'name' => $this->randomName(),
@@ -942,6 +948,44 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $term2->tid)), 'Term removed and added from a node.');
   }
 
+  /**
+   * Test integration for the node module.
+   */
+  function testNodeIntegration() {
+    $tests = array(
+      array('node_unpublish', 'node_is_published', 'node_publish', 'status'),
+      array('node_make_unsticky', 'node_is_sticky', 'node_make_sticky', 'sticky'),
+      array('node_unpromote', 'node_is_promoted', 'node_promote', 'promote'),
+    );
+    $node = $this->drupalCreateNode(array('type' => 'page', 'status' => 1, 'sticky' => 1, 'promote' => 1));
+
+    foreach ($tests as $info) {
+      list($action1, $condition, $action2, $property) = $info;
+      rules_action($action1)->execute($node);
+
+      $node = node_load($node->nid, NULL, TRUE);
+      $this->assertFalse($node->$property, 'Action has permanently disabled node '. $property);
+      $return = rules_condition($condition)->execute($node);
+      $this->assertFalse($return, 'Condition determines node '. $property . ' is disabled.');
+
+      rules_action($action2)->execute($node);
+      $node = node_load($node->nid, NULL, TRUE);
+      $this->assertTrue($node->$property, 'Action has permanently enabled node '. $property);
+      $return = rules_condition($condition)->execute($node);
+      $this->assertTrue($return, 'Condition determines node '. $property . ' is enabled.');
+    }
+
+    $return = rules_condition('node_is_of_type', array('type' => array('page', 'article')))->execute($node);
+    $this->assertTrue($return, 'Condition determines node is of type page.');
+    $return = rules_condition('node_is_of_type', array('type' => array('article')))->execute($node);
+    $this->assertFalse($return, 'Condition determines node is not of type article.');
+
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Test integration for the user module.
+   */
   function testUserIntegration() {
     // Test adding a user role.
     $rid = $this->drupalCreateRole(array('administer nodes'), 'foo');
@@ -961,12 +1005,15 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 
+  /**
+   * Test integration for the php module.
+   */
   function testPHPIntegration() {
     $node = $this->drupalCreateNode(array('title' => 'foo'));
     $rule = rule(array('var_name' => array('type' => 'node')));
     $rule->condition('php_eval', array('code' => 'return TRUE;'))
          ->action('php_eval', array('code' => 'drupal_set_message("Executed-" . $var_name->title);'))
-         ->action('drupal_message', array('message' => 'Title: <? echo $var_name->title; ?> Token: [var_name:title]'));
+         ->action('drupal_message', array('message' => 'Title: <?php echo $var_name->title; ?> Token: [var_name:title]'));
 
     $rule->execute($node);
     $rule->access();

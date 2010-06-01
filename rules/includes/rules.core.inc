@@ -965,8 +965,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $state = $this->setUpState($args);
       module_invoke_all('rules_config_execute', $this);
 
-      $this->evaluate($state);
-      $return = $this->returnVariables($state);
+      $result = $this->evaluate($state);
+      $return = $this->returnVariables($state, $result);
     }
     else {
       $state = new RulesState($this);
