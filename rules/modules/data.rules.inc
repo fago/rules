@@ -492,13 +492,25 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
     if (!empty($info['required'])) {
       $info += array('type' => 'text');
       // Prefix parameter names to avoid name clashes with existing parameters.
-      $element_info['parameter']['param_' . $name] = array('type' => $info['type'], 'label' => $info['label']);
+      // @TODO: This saves translated strings. TODO: fix.
+      $element_info['parameter']['param_' . $name] = array_intersect_key($info, array_flip(array('type', 'label', 'description')));
+      $element_info['parameter']['param_' . $name]['options list']  = $child->optionsList() ? 'rules_action_entity_parameter_options_list' : FALSE;
     }
   }
   $element_info['provides']['entity_created']['type'] = $element->settings['type'];
   $element->alterInfo($element_info);
 }
 
+/**
+ * Options list callback for a parameter of entity_create.
+ */
+function rules_action_entity_parameter_options_list(RulesPlugin $element, $param_name) {
+  // Remove the parameter name prefix 'param_'.
+  $property_name = substr($param_name, 6);
+  $wrapper = entity_metadata_wrapper($element->settings['type']);
+  // The possible values of the "value" parameter are those of the data param.
+  return $wrapper->$property_name->optionsList();
+}
 
 /**
  * Form alter callback for actions relying on the entity type.
