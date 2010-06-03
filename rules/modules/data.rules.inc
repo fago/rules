@@ -365,6 +365,7 @@ function rules_action_data_set_validate(RulesAbstractPlugin $element) {
  */
 function rules_action_data_set_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
+    $form['negate']['#access'] = FALSE;
     unset($form['parameter']['value']);
     $form['submit'] = array(
       '#type' => 'submit',
@@ -712,6 +713,7 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
 function rules_condition_data_is_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
     unset($form['parameter']['op'], $form['parameter']['value']);
+    $form['negate']['#access'] = FALSE;
     $form_state['rules_element_step'] = 'data_value';
     $form['submit'] = array(
       '#type' => 'submit',

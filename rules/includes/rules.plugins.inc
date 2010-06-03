@@ -76,8 +76,12 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   }
 
   public function negate($negate = TRUE) {
-    $this->negate = $negate;
+    $this->negate = (bool) $negate;
     return $this;
+  }
+
+  public function isNegated() {
+    return $this->negate;
   }
 
   protected function executeCallback(array $args, RulesState $state = NULL) {
@@ -103,6 +107,11 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
     // Abbreviate the export making "USING" implicit.
     $export = array($not . $this->elementName => $export['USING']);
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+  }
+
+  public function label() {
+    $label = parent::label();
+    return $this->negate ? t('NOT @condition', array('@condition' => $label)) : $label;
   }
 }
 
