@@ -609,9 +609,9 @@ function rules_entity_type_options($key) {
  * Validation callback to ensure the list item matches to the list.
  */
 function rules_data_validate_list_item_type(RulesAbstractPlugin $element) {
-  $list_info = $this->getArgumentInfo('list');
+  $list_info = $element->getArgumentInfo('list');
   $list_info['type'] = isset($list_info['type']) ? entity_metadata_list_extract_type($list_info['type']) : FALSE;
-  if (!empty($list_info['type']) && ($item_info = $this->getArgumentInfo('item'))) {
+  if (!empty($list_info['type']) && ($item_info = $element->getArgumentInfo('item'))) {
     if (!RulesData::typesMatch($item_info, $list_info)) {
       throw new RulesException('The item specified is of an invalid type.', array(), array($element, 'parameter', 'item'));
     }
