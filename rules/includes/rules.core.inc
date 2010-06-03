@@ -642,7 +642,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * @return
    *   The determined type. If it's not known NULL is returned.
    */
-  protected function getArgumentInfo($name) {
+  public function getArgumentInfo($name) {
     $vars = $this->availableVariables();
     if (isset($this->settings[$name . ':select']) && isset($vars[$this->settings[$name . ':select']])) {
       return $vars[$this->settings[$name . ':select']];
