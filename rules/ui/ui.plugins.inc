@@ -23,10 +23,15 @@ class RulesRuleUI extends RulesActionContainerUI {
   public function form(&$form, &$form_state, $options = array()) {
     $form += array('conditions' => array('#weight' => -5, '#tree' => TRUE));
     $this->conditions->form($form['conditions'], $form_state);
+    unset($form['conditions']['negate']);
+    $form['conditions']['add']['#access'] = empty($options['init']);
 
     // Add actions form.
     $iterator = new RecursiveIteratorIterator($this->rule->actions(), RecursiveIteratorIterator::SELF_FIRST);
     parent::form($form, $form_state, $options, $iterator);
+    // For rules always show nested elements.
+    $form['elements']['#access'] = empty($options['init']);
+    $form['conditions']['elements']['#access'] = empty($options['init']);
   }
 
   /**
@@ -127,8 +132,6 @@ class RulesRuleSetUI extends RulesActionContainerUI {
     $form['elements']['#attributes']['class'][] = 'rules-rule-set';
     $form['elements']['#heading'] = t('Rules');
   }
-
 }
-
 
 

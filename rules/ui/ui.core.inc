@@ -615,11 +615,29 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 class RulesAbstractPluginUI extends RulesPluginUI {
 
   /**
-   * Overridden to invoke the abstract plugins form alter callback.
+   * Overridden to invoke the abstract plugins form alter callback and to add
+   * the negation checkbox for conditions.
    */
   public function form(&$form, &$form_state, $options = array()) {
     parent::form($form, $form_state, $options);
+
+    if ($this->element instanceof RulesCondition) {
+      $form['negate'] = array(
+        '#title' => t('Negate'),
+        '#type' => 'checkbox',
+        '#description' => t('If checked, the condition result is negated such that it returns TRUE if it evaluates to FALSE.'),
+        '#default_value' => $this->element->isNegated(),
+        '#weight' => 5,
+      );
+    }
     $this->element->call('form_alter', array(&$form, &$form_state, $options));
+  }
+
+  public function form_extract_values($form, &$form_state) {
+    parent::form_extract_values($form, $form_state);
+    if ($this->element instanceof RulesCondition && isset($form_state['values']['negate'])) {
+      $this->element->negate($form_state['values']['negate']);
+    }
   }
 }
 
@@ -635,8 +653,8 @@ class RulesContainerPluginUI extends RulesPluginUI {
     self::formDefaults($form);
 
     $form['elements'] = array(
-      // Hide during creation.
-      '#access' => empty($options['init']),
+      // Hide during creation or for embedded elements.
+      '#access' => empty($options['init']) && $this->element->isRoot(),
       '#tree' => TRUE,
       '#theme' => 'rules_elements',
       '#empty' => t('None'),
@@ -758,7 +776,7 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
     // Add the add-* operation links.
     $form['add'] = self::addOperations();
     // Hide that during creation.
-    $form['add']['#access'] = empty($options['init']);
+    $form['add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-condition-container';
     $form['elements']['#heading'] = t('Conditions');
 
@@ -773,6 +791,20 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
         ),
       );
     }
+    $form['negate'] = array(
+      '#title' => t('Negate'),
+      '#type' => 'checkbox',
+      '#description' => t('If checked, the condition result is negated such that it returns TRUE if it evaluates to FALSE.'),
+      '#default_value' => $this->element->isNegated(),
+      '#weight' => 5,
+    );
+  }
+
+  public function form_extract_values($form, &$form_state) {
+    parent::form_extract_values($form, $form_state);
+    if (isset($form_state['values']['negate'])) {
+      $this->element->negate($form_state['values']['negate']);
+    }
   }
 }
 
@@ -786,7 +818,7 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     // Add the add-* operation links.
     $form['add'] = self::addOperations();
     // Hide that during creation.
-    $form['add']['#access'] = empty($options['init']);
+    $form['add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
     $form['elements']['#heading'] = t('Actions');
   }

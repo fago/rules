@@ -1156,6 +1156,11 @@ interface RulesConditionInterface {
    * Negate the result.
    */
   public function negate($negate = TRUE);
+
+  /**
+   * Returns whether the element is configured to negate the result.
+   */
+  public function isNegated();
 }
 
 interface RulesTriggerableInterface {
@@ -1509,8 +1514,12 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
    * @return RulesConditionContainer
    */
   public function negate($negate = TRUE) {
-    $this->negate = $negate;
+    $this->negate = (bool) $negate;
     return $this;
+  }
+
+  public function isNegated() {
+    return $this->negate;
   }
 
   public function __sleep() {
