@@ -3,3 +3,4 @@ name = Rules
 description = Lets you define conditionally executed actions based on occurring events.
 package = Rules
 core = 6.x
+php = 5.1
