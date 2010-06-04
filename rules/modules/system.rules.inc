@@ -54,7 +54,7 @@ function rules_system_data_info() {
     'log_entry' => array(
       'label' => t('watchdog log entry'),
       'wrap' => TRUE,
-      'data info' => _rules_system_watchdog_log_entry_info(),
+      'property info' => _rules_system_watchdog_log_entry_info(),
     ),
   );
 }
@@ -64,7 +64,7 @@ function rules_system_data_info() {
  * type to provide an useful metadata wrapper.
  */
 function _rules_system_watchdog_log_entry_info() {
-  $info['properties'] = array(
+  return array(
     'type' => array(
       'type' => 'text',
       'label' => t('The category to which this message belongs'),
@@ -89,7 +89,6 @@ function _rules_system_watchdog_log_entry_info() {
       'label' => t('An associated, HTML formatted link'),
     ),
   );
-  return $info;
 }
 
 
