@@ -308,9 +308,10 @@ function hook_rules_event_info() {
  *     provided by the entity metadata module. This is required for entities and
  *     data structures to support the application of data selectors or
  *     intelligent saving.
- *   - data info: May be used for data structures being no entities to support
- *     data selectors via an entity metadata wrapper. Specify an array as
- *     expected by entity_metadata_wrapper(). Optionally.
+ *   - property info: May be used for data structures being no entities to
+ *     provide info about the data properties, such that data selectors via an
+ *     entity metadata wrapper are supported. Specify an array as expected by
+ *     entity_metadata_wrapper(). Optionally.
  *   - parent: Optionally a parent type may be set to specify a sub-type
  *     relationship, which will be only used for checking compatible types. E.g.
  *     the 'entity' data type is parent of the 'node' data type, thus a node may
