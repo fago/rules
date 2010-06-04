@@ -358,7 +358,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * When converted to a string, just use the export format.
    */
   public function __toString() {
-    return $this->export();
+    return $this->isRoot() ? $this->export() : entity_var_json_export($this->export());
   }
 
   /**
@@ -431,6 +431,17 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function availableVariables() {
     return !$this->isRoot() ? $this->parent->stateVariables($this) : array();
+  }
+
+  /**
+   * Returns asserted additions to the available variable info. Any returned
+   * info is merged into the variable info, in case the execution flow passes
+   * the element.
+   * E.g. this is used to assert the content type of a node if the condition
+   * is met, such that the per node type properties are available.
+   */
+  protected function variableInfoAssertions() {
+    return array();
   }
 
   /**
@@ -845,7 +856,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $export_cfg[$this->name]['REQUIRES'] = $modules;
     }
     $export_cfg[$this->name] += $export;
-    return $php ? $export_cfg : entity_var_json_export($export_cfg);
+    return $php ? entity_var_export($export_cfg) : entity_var_json_export($export_cfg);
   }
 }
 
@@ -934,6 +945,18 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // parameters are fixed when we process the settings.
       $this->process();
       parent::processSettings($force, $access_check);
+    }
+  }
+
+  protected function variableInfoAssertions() {
+    // Get the implementation's assertions and map them to the variable names.
+    if ($assertions = $this->__call('assertions')) {
+      $info = $this->parameterInfo();
+      foreach ($assertions as $param_name => $data) {
+        $name = isset($this->settings[$param_name . ':select']) ? $this->settings[$param_name . ':select'] : $param_name;
+        $return[$name] = $data;
+      }
+      return $return;
     }
   }
 
@@ -1226,13 +1249,26 @@ interface RulesPluginImplInterface {
    */
   public function form_alter(&$form, $form_state, $options);
 
+
+  /**
+   * Optionally returns an array of info assertions for the specified
+   * parameters. This allows conditions to assert additional metadata, such as
+   * info about the fields of a bundle.
+   *
+   * @see RulesPlugin::variableInfoAssertions()
+   */
+  public function assertions();
+
 }
 
 /**
- * Class providing default implementations for the concrete plugin if not
- * overriden by the implementation.
+ * Class providing default implementations of the methods of the RulesPluginImplInterface.
+ *
+ * If a plugin implementation does not provide a function for a method, the
+ * default method of this class will be invoked.
  *
  * @see RulesPluginImplInterface
+ * @see RulesAbstractPlugin
  */
 class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
 
@@ -1251,6 +1287,7 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
   public function process() {}
   public function dependencies() {}
   public function form_alter(&$form, $form_state, $options) {}
+  public function assertions() {}
 }
 
 
@@ -1340,9 +1377,23 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
           break;
         }
         $vars += $child->providesVariables();
+        // Take variable info assertions into account.
+        if ($assertions = $child->variableInfoAssertions()) {
+          $vars = RulesData::addMetadataAssertions($vars, $assertions);
+        }
       }
     }
     return $vars;
+  }
+
+  protected function variableInfoAssertions() {
+    $assertions = array();
+    foreach ($this->children as $child) {
+      if ($add = $child->variableInfoAssertions()) {
+        $assertions = rules_update_array($assertions, $add);
+      }
+    }
+    return $assertions;
   }
 
   protected function setUpVariables() {
@@ -1541,6 +1592,27 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
       $export[$key][] = $child->export(TRUE);
     }
     return $export;
+  }
+
+  /**
+   * Overridden to exclude variable assertions of negated conditions.
+   */
+  protected function stateVariables($element = NULL) {
+    $vars = $this->availableVariables();
+    if (isset($element)) {
+      // Add in variables provided by siblings executed before the element.
+      foreach ($this->children as $child) {
+        if ($child === $element) {
+          break;
+        }
+        $vars += $child->providesVariables();
+        // Take variable info assertions into account.
+        if (!$this->negate && !$child->isNegated() && ($assertions = $child->variableInfoAssertions())) {
+          $vars = RulesData::addMetadataAssertions($vars, $assertions);
+        }
+      }
+    }
+    return $vars;
   }
 }
 

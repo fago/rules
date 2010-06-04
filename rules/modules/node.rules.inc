@@ -121,6 +121,13 @@ function rules_node_condition_info() {
 }
 
 /**
+ * Provides the content type of a node as asserted metadata.
+ */
+function rules_condition_node_is_of_type_assertions($element) {
+  return array('node' => array('bundle' => $element->settings['type']));
+}
+
+/**
  * Implements hook_rules_action_info() on behalf of the node module.
  */
 function rules_node_action_info() {

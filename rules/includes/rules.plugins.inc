@@ -229,7 +229,12 @@ class Rule extends RulesActionContainer {
     if (isset($element) && $element === $this->conditions) {
       return $this->availableVariables();
     }
-    return parent::stateVariables($element);
+    $vars = parent::stateVariables($element);
+    // Take variable info assertions of conditions into account.
+    if (isset($this->conditions) && $assertions = $this->conditions->variableInfoAssertions()) {
+      $vars = RulesData::addMetadataAssertions($vars, $assertions);
+    }
+    return $vars;
   }
 
   protected function exportChildren($key = NULL) {
@@ -390,6 +395,24 @@ class RulesOr extends RulesConditionContainer {
 
   public function label() {
     return !empty($this->label) ? $this->label : ($this->negate ? t('NOT OR') : t('OR'));
+  }
+
+  /**
+   * Overridden to exclude all variable assertions as in an OR we cannot assert
+   * the children are successfully evaluated.
+   */
+  protected function stateVariables($element = NULL) {
+    $vars = $this->availableVariables();
+    if (isset($element)) {
+      // Add in variables provided by siblings executed before the element.
+      foreach ($this->children as $child) {
+        if ($child === $element) {
+          break;
+        }
+        $vars += $child->providesVariables();
+      }
+    }
+    return $vars;
   }
 }
 

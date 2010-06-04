@@ -339,19 +339,21 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test customizing action info and make sure integrity is checked.
+   * Test asserting metadata, customizing action info and make sure integrity
+   * is checked.
    */
-  function testInfoAdaption() {
+  function testMetadataAssertion() {
+    // Test adapting the info of actions.
     $settings['#info']['parameter']['node']['bundles'] = array('page');
     $action = rules_action('rules_node_make_sticky_action', $settings);
     $info = $action->parameterinfo();
     $this->assertEqual($info['node']['bundles'], array('page'), 'Info adapted.');
 
+    // Test failing integrity check.
     try {
       $rule = rule(array('node' => array('type' => 'node')));
       // Customize action info using the settings.
-      $rule->condition('data_is', array('data:select' => 'node:type', 'value' => 'page'))
-           ->action($action);
+      $rule->action($action);
       // Fails due to the 'node' variable not matching the node-page type.
       $rule->integrityCheck();
       $this->fail('Integrity check has not thrown an exception.');
@@ -359,8 +361,23 @@ class RulesTestCase extends DrupalWebTestCase {
     catch (RulesException $e) {
       $this->pass('Integrity check has thrown exception: ' . $e->getMessage());
     }
-    //$node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
-    //$rule->execute($node);
+
+    // Test asserting additional metadata.
+    $rule = rule(array('node' => array('type' => 'node')));
+    // Customize action info using the settings.
+    $rule->condition('data_is', array('data:select'   => 'node:type', 'value' => 'page'))
+         // Configure an condition using the body. As the body is a field,
+         // tis requires the bundle to be correctly asserted.
+         ->condition(rules_condition('data_is', array('data:select' => 'node:body:value', 'value' => 'foo'))->negate())
+         // The action also requires the page bundle in order to work.
+         ->action($action);
+    // Make sure the integrity check doesn't throw an exception.
+    $rule->integrityCheck();
+    // Test the rule.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+    $rule->execute($node);
+    $this->assertTrue($node->sticky, 'Rule with asserted metadata executed.');
+    RulesLog::logger()->checkLog();
   }
 
   /**
