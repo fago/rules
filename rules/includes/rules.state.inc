@@ -393,5 +393,62 @@ class RulesData  {
     return $matches;
   }
 
+  /**
+   * Adds asserted metadata to the variable info. In case there are already
+   * assertions for a variable, the assertions are merged such that both apply.
+   *
+   * @see RulesData::applyMetadataAssertions()
+   */
+  public static function addMetadataAssertions($var_info, $assertions) {
+    foreach ($assertions as $selector => $data) {
+      // For now only support assertions for variables
+      if (strpos($selector, ':') === FALSE) {
+        $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
+        // Add in a callback that the entity metadata wrapper pick up for
+        // altering the property info, such that we can add in the assertions.
+        $var_info[$selector]['property info alter'] = array('RulesData', 'applyMetadataAssertions');
+
+        // Add any single bundle directly to the variable info, so it can be
+        // used for type checking.
+        if (isset($data['bundle']) && count($bundles = (array) $data['bundle']) == 1) {
+          $var_info[$selector]['bundle'] = reset($bundles);
+        }
+      }
+    }
+    return $var_info;
+  }
+
+  /**
+   * Property info alter callback for the entity metadata wrapper for applying
+   * the rules metadata assertions.
+   *
+   * @see RulesData::addMetadataAssertions()
+   */
+  public static function applyMetadataAssertions(EntityMetadataWrapper $wrapper, $property_info) {
+    $info = $wrapper->info();
+
+    if (!empty($info['rules assertion'])) {
+      // Support specifying multiple bundles, whereas the added properties are
+      // the intersection of the bundle properties.
+      if (isset($info['rules assertion']['#info']['bundle'])) {
+        $bundles = (array) $info['rules assertion']['#info']['bundle'];
+        foreach ($bundles as $bundle) {
+          $properties[] = isset($property_info['bundles'][$bundle]['properties']) ? $property_info['bundles'][$bundle]['properties'] : array();
+        }
+        // Add the intersection.
+        $property_info['properties'] += count($properties) > 1 ? call_user_func_array('array_intersect_key', $properties) : reset($properties);
+      }
+      // Support adding directly asserted property info.
+      if (isset($info['rules assertion']['#info']['property info'])) {
+        $property_info['properties'] += $info['rules assertion']['#info']['property info'];
+      }
+      // Pass through any rules assertion of properties to their info.
+      foreach (element_children($info['rules assertion']) as $key) {
+        $property_info['properties'][$key]['rules assertion'] = $info['rules assertion'][$key];
+      }
+    }
+    return $property_info;
+  }
+
 }
 

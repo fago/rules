@@ -692,14 +692,24 @@ function rules_condition_data_is_process(RulesAbstractPlugin $element) {
     $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
     $element->alterInfo($element_info);
   }
+}
+
+/**
+ * If the bundle is compared, add the metadata assertion so other elements
+ * can make use of properties specific to the bundle.
+ */
+function rules_condition_data_is_assertions($element) {
   // Assert the bundle of entities, if its compared.
-  if (($parts = explode(':', $element->settings['data:select'])) && count($parts) == 2 && isset($element->settings['value']) && !is_array($element->settings['value'])) {
-    if (($vars = $element->availableVariables()) && isset($vars[$parts[0]])) {
-      $type = $vars[$parts[0]]['type'];
-      $info = entity_get_info();
-      if (isset($info[$type]['entity keys']['bundle']) && $info[$type]['entity keys']['bundle'] == $parts[1]) {
-        // Assert that the object is of bundle $value.
-        $element->settings['#info']['asserts'][$parts[0]] = $element->settings['value'];
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $info = $wrapper->info();
+    if (isset($info['parent']) && $info['parent'] instanceof EntityDrupalWrapper) {
+      $entity_info = $info['parent']->entityInfo();
+      if (isset($entity_info['entity keys']['bundle']) && $entity_info['entity keys']['bundle'] == $info['name']) {
+        // Assert that the entity is of bundle $value.
+        $value = is_array($element->settings['value']) ? $element->settings['value'] : array($element->settings['value']);
+        // Chop of the last part of the selector.
+        $parts = explode(':', $element->settings['data:select'], -1);
+        return array(implode(':', $parts) => array('bundle' => $value));
       }
     }
   }
