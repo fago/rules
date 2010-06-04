@@ -489,6 +489,21 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual($export, $rule->export(), 'Rule has been exported correctly.');
   }
 
+  /**
+   * Test the named parameter mode.
+   */
+  function testNamedParameters() {
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('rules_action_node_set_title', array('title' => 'foo'));
+    $rule->integrityCheck();
+
+    // Test the rule.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
+    $rule->execute($node);
+    $this->assertTrue($node->title == 'foo', 'Action with named parameters has been correctly executed.');
+    RulesLog::logger()->checkLog();
+  }
+
   function testRuleBuilding() {
     //TODO: implement.
     return;

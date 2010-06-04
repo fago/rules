@@ -135,5 +135,16 @@ function rules_test_rules_action_info() {
       'callbacks' => array('execute' => 'rules_action_node_create'),
       'access callback' => 'rules_node_integration_access',
     ),
+    // An action for testing named parameters.
+    'rules_action_node_set_title' => array(
+      'label' => t('Content'),
+      'parameter' => array(
+        'node' => array('type' => 'node', 'label' => t('Content')),
+        'title' => array('type' => 'text', 'label' => t('Text')),
+      ),
+      'named parameter' => TRUE,
+      'group' => t('Node'),
+      'access callback' => 'entity_metadata_node_access',
+    ),
   );
 }

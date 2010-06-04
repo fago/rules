@@ -18,7 +18,9 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
    */
   protected function executeCallback(array $args, RulesState $state = NULL) {
     rules_log('Evaluating the action %name.', array('%name' => $this->elementName));
-    $return = $this->__call('execute', rules_unwrap_data($args, $this->info['parameter']));
+    $return = $this->__call('execute', empty($this->info['named parameter']) ? $args : array($args));
+    // Get the (partially) wrapped arguments.
+    $args = $state->currentArguments;
 
     if (is_array($return)) {
       foreach ($return as $name => $data) {
@@ -85,7 +87,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   }
 
   protected function executeCallback(array $args, RulesState $state = NULL) {
-    $return = (bool)$this->__call('execute', rules_unwrap_data($args));
+    $return = (bool) $this->__call('execute', empty($this->info['named parameter']) ? $args : array($args));
     rules_log('The condition %name evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'));
     return $this->negate ? !$return : $return;
   }

@@ -1030,9 +1030,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // Append the settings and the execution state. Faces will append $this.
     $args['settings'] = $this->settings;
     $args['state'] = $state;
-    // Make the variables for the arguments available in the state too.
+    // Make the wrapped variables for the arguments available in the state.
     $state->currentArguments = $args;
-    return !empty($this->info['named parameter']) ? array($args) : $args;
+    return rules_unwrap_data($args, $this->info['parameter']);
   }
 
   public function __sleep() {
