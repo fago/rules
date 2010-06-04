@@ -73,3 +73,15 @@ function rules_action_node_create($author, $title, $settings) {
     return array('node_added' => $node);
   }
 }
+
+/**
+ * An action making use of named parameters.
+ */
+function rules_action_node_set_title($arguments) {
+  // Make sure the data is unwrapped.
+  if ($arguments['node'] instanceof EntityMetadataWrapper) {
+    throw new Exception('Argument has not been correctly unwrapped.');
+  }
+  $arguments['node']->title = $arguments['title'];
+  return $arguments;
+}
