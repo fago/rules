@@ -101,6 +101,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function form(&$form, &$form_state, $options = array()) {
     self::formDefaults($form, $form_state);
     $form_state += array('rules_element' => $this->element);
+    // Make sure the element has been processed.
+    $this->element->processSettings();
 
     // Add the help to the top of the form.
     $help = $this->element->help();
@@ -367,6 +369,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Show a preview of the configuration settings.
    */
   public function buildContent() {
+    // Make sure the element has been processed.
+    $this->element->processSettings();
+
     $content['label'] = array(
       '#type' => 'link',
       '#title' => $this->element->label(),
@@ -651,6 +656,8 @@ class RulesContainerPluginUI extends RulesPluginUI {
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     self::formDefaults($form);
+    // Make sure the element has been processed.
+    $this->element->processSettings();
 
     $form['elements'] = array(
       // Hide during creation or for embedded elements.
