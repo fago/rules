@@ -135,6 +135,14 @@ function rules_condition_entity_is_new($entity, $settings, $state, $element) {
 }
 
 /**
+ * Condition: Entity has field.
+ */
+function rules_condition_entity_has_field($entity, $field_name, $settings, $state) {
+  $wrapper = $state->currentArguments['entity'];
+  return isset($wrapper->$field_name) || isset($entity->$field_name);
+}
+
+/**
  * A class implementing a rules input evaluator processing date input. This is
  * needed to treat relative date inputs for strtotime right, consider "now".
  */
