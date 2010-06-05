@@ -955,6 +955,34 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Tests entity related integration.
+   */
+  function testEntityIntegration() {
+    global $user;
+
+    $node = entity_metadata_entity_create('node', array(
+      'type' => 'article',
+      'author' => $user,
+      'title' => 'foo',
+    ))->value();
+    $term_wrapped = entity_metadata_entity_create('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vid' => 1,
+    ))->save();
+
+    // Test asserting the field and using it afterwards.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('entity_has_field', array('entity:select' => 'node', 'field' => 'field_tags'));
+    $rule->condition('entity_is_new', array('entity:select' => 'node'));
+    $rule->action('list_add', array('list:select' => 'node:field-tags', 'item' => $term_wrapped));
+    $rule->execute($node);
+
+    $tid = $term_wrapped->getIdentifier();
+    RulesLog::logger()->checkLog();
+    $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $tid)), 'Entity has field conditions evaluted.');
+  }
+
+  /**
    * Test integration for the taxonomy module.
    */
   function testTaxonomyIntegration() {

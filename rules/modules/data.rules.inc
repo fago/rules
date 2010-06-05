@@ -673,6 +673,26 @@ function rules_data_condition_info() {
       'group' => t('Entities'),
       'base' => 'rules_condition_entity_is_new',
     ),
+    'entity_has_field' => array(
+      'label' => t('Entity has field'),
+      'parameter' => array(
+        'entity' => array(
+          'type' => 'entity',
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity for which to evaluate the condition.'),
+          'restriction' => 'selector',
+        ),
+        'field' => array(
+          'type' => 'text',
+          'label' => t('Field'),
+          'description' => t('The name of the field to check for.'),
+          'options list' => 'rules_condition_entity_has_field_options',
+          'restriction' => 'input',
+        ),
+      ),
+      'group' => t('Entities'),
+      'base' => 'rules_condition_entity_has_field',
+    ),
   );
 }
 
@@ -782,6 +802,34 @@ function rules_condition_entity_is_new_help() {
   return t('This condition determines whether the specified entity has just been created and has not yet been saved to the database.');
 }
 
+/**
+ * Returns options for choosing a field for the selected entity.
+ */
+function rules_condition_entity_has_field_options(RulesAbstractPlugin $element) {
+  $options = array();
+  foreach (field_info_fields() as $field_name => $field) {
+    $options[$field_name] = $field_name;
+  }
+  return $options;
+}
+
+/**
+ * Assert that the entity has the field, if there is metadata for the field.
+ */
+function rules_condition_entity_has_field_assertions($element) {
+  // Assert the bundle of entities, if its compared.
+  if ($wrapper = $element->applyDataSelector($element->settings['entity:select'])) {
+    $type = $wrapper->type();
+    $field_property = str_replace('_', '-', $element->settings['field']);
+    // Get all possible properties and check whether we have one for the field.
+    $properties = entity_metadata_get_properties($type == 'entity' ? NULL : $type);
+
+    if (isset($properties[$field_property])) {
+      $assertion = array('property info' => array($field_property => $properties[$field_property]));
+      return array($element->settings['entity:select'] => $assertion);
+    }
+  }
+}
 
 /**
  * Returns the options list specified by the selected data property.
