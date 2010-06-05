@@ -413,6 +413,18 @@ class RulesData  {
         if (isset($data['bundle']) && count($bundles = (array) $data['bundle']) == 1) {
           $var_info[$selector]['bundle'] = reset($bundles);
         }
+
+        // In case there is a VARNAME_unchanged variable as it is used in update
+        // hooks, assume the assertions are valid for the unchanged variable
+        // too.
+        if (isset($var_info[$selector . '_unchanged'])) {
+          $var_info[$selector . '_unchanged']['rules assertion'] = $var_info[$selector]['rules assertion'];
+          $var_info[$selector . '_unchanged']['property info alter'] = array('RulesData', 'applyMetadataAssertions');
+
+          if (isset($var_info[$selector]['bundle']) && !isset($var_info[$selector . '_unchanged']['bundle'])) {
+            $var_info[$selector . '_unchanged']['bundle'] = $var_info[$selector]['bundle'];
+          }
+        }
       }
     }
     return $var_info;
