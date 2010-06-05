@@ -858,3 +858,17 @@ function rules_element_info() {
   return $types;
 }
 
+/**
+ * Implements hook_modules_enabled().
+ */
+function rules_modules_enabled($modules) {
+  rules_clear_cache();
+}
+
+/**
+ * Implements hook_modules_disabled().
+ */
+function rules_modules_disbled($modules) {
+  rules_clear_cache();
+  //TODO: Disable configs with now broken dependencies?
+}
