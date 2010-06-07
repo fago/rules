@@ -411,6 +411,78 @@ function hook_rules_plugin_info() {
 }
 
 /**
+ * Declare provided rules input evaluators.
+ *
+ * The hook implementation should be placed into the file MODULENAME.rules.inc,
+ * which gets automatically included when the hook is invoked.
+ * For implementing an input evaluator a class has to be provided which
+ * extends the abstract RulesDataInputEvaluator class. Therefore the abstract
+ * methods prepare() and evaluate() have to be implemented, as well as access()
+ * and help() could be overridden in order to control access permissions or to
+ * provide some usage help.
+ *
+ * @return
+ *   An array of information about the module's provided input evaluators. The
+ *   array contains a sub-array for each evaluator, with the evaluator name as
+ *   the key. Possible attributes for each sub-array are:
+ *   - class: The implementation class, which has to extend the
+ *     RulesDataInputEvaluator class. Required.
+ *   - weight: A weight for controlling the evaluation order of multiple
+ *     evaluators. Required.
+ *   - type: Optionally, the data types for which the input evaluator should be
+ *     used. Defaults to 'text'. Multiple data types may be specified using an
+ *     array.
+ *
+ *  @see class RulesDataInputEvaluator
+ *  @see hook_rules_evaluator_info_alter()
+ */
+function hook_rules_evaluator_info() {
+  return array(
+    'token' => array(
+      'class' => 'RulesTokenEvaluator',
+      'type' => array('text', 'uri'),
+      'weight' => 0,
+     ),
+  );
+}
+
+/**
+ * Declare provided rules data processors.
+ *
+ * The hook implementation should be placed into the file MODULENAME.rules.inc,
+ * which gets automatically included when the hook is invoked.
+ * For implementing a data processors a class has to be provided which
+ * extends the abstract RulesDataProcessor class. Therefore the abstract
+ * method process() has to be implemented, but also the methods form() and
+ * access() could be overridden in order to provide a configuration form or
+ * to control access permissions.
+ *
+ * @return
+ *   An array of information about the module's provided data processors. The
+ *   array contains a sub-array for each processor, with the processor name as
+ *   the key. Possible attributes for each sub-array are:
+ *   - class: The implementation class, which has to extend the
+ *     RulesDataProcessor class. Required.
+ *   - weight: A weight for controlling the processing order of multiple data
+ *     processors. Required.
+ *   - type: Optionally, the data types for which the data processor should be
+ *     used. Defaults to 'text'. Multiple data types may be specified using an
+ *     array.
+ *
+ *  @see class RulesDataProcessor
+ *  @see hook_rules_data_processor_info_alter()
+ */
+function hook_rules_data_processor_info() {
+  return array(
+    'date_offset' => array(
+      'class' => 'RulesDateOffsetProcessor',
+      'type' => 'date',
+      'weight' => -2,
+     ),
+  );
+}
+
+/**
  * Alter rules compatible actions.
  *
  * The implementation should be placed into the file MODULENAME.rules.inc, which
@@ -440,7 +512,7 @@ function hook_rules_action_info_alter(&$actions) {
  * @see hook_rules_condition_info().
  */
 function hook_rules_condition_info_alter(&$conditions) {
-  // Change conditions
+  // Change conditions.
 }
 
 /**
@@ -455,7 +527,7 @@ function hook_rules_condition_info_alter(&$conditions) {
  * @see hook_rules_event_info().
  */
 function hook_rules_event_info_alter(&$events) {
-  // Change events
+  // Change events.
 }
 
 /**
@@ -470,7 +542,7 @@ function hook_rules_event_info_alter(&$events) {
  * @see hook_rules_data_info().
  */
 function hook_rules_data_info_alter(&$data_info) {
-  // Change data types
+  // Change data types.
 }
 
 /**
@@ -485,7 +557,37 @@ function hook_rules_data_info_alter(&$data_info) {
  * @see hook_rules_plugin_info().
  */
 function hook_rules_plugin_info_alter(&$plugin_info) {
-  // Change data types
+  // Change plugin info.
+}
+
+/**
+ * Alter rules input evaluator info.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc, which
+ * gets automatically included when the hook is invoked.
+ *
+ * @param $evaluator_info
+ *   The items of all modules as returned from hook_rules_evaluator_info().
+ *
+ * @see hook_rules_evaluator_info().
+ */
+function hook_rules_evaluator_info_alter(&$evaluator_info) {
+  // Change evaluator info.
+}
+
+/**
+ * Alter rules data_processor info.
+ *
+ * The implementation should be placed into the file MODULENAME.rules.inc, which
+ * gets automatically included when the hook is invoked.
+ *
+ * @param $processor_info
+ *   The items of all modules as returned from hook_rules_data_processor_info().
+ *
+ * @see hook_rules_data_processor_info().
+ */
+function hook_rules_data_processor_info_alter(&$processor_info) {
+  // Change processor info.
 }
 
 /**
