@@ -758,7 +758,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     node_save($node);
 
-    $text = RulesTestCase::t('Not evaluating the rule %unlabeled to prevent recursion.', array('unlabeled'));
+    $text = RulesTestCase::t('Not evaluating reaction rule %unlabeled to prevent recursion.', array('unlabeled'));
     $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
     //debug(RulesLog::logger()->render());
   }
@@ -795,7 +795,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 2', array('rule 2')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node_loaded of type %node.', array('node_loaded', 'node')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 1', array('rule 1')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Not evaluating the rule %rule 2 to prevent recursion', array('rule 2')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Not evaluating reaction rule %rule 2 to prevent recursion', array('rule 2')), $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, 'Rule1 was triggered on the event caused by Rule2.');
   }
 
