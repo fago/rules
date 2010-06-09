@@ -318,7 +318,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $node = $this->drupalCreateNode(array('title' => 'The title.', 'status' => 1));
     // Execute.
-    rules_invoke_rule_set('rules_test_set_1', $node);
+    rules_invoke_component('rules_test_set_1', $node);
 
     $msg = drupal_get_messages();
     $this->assertEqual($msg['status'][0], 'The title.', 'First rule evaluated.');
@@ -335,6 +335,41 @@ class RulesTestCase extends DrupalWebTestCase {
     // Load and execute condition set.
     $set = rules_config_load('test');
     $this->assertTrue($set->execute($node), 'Set has been correctly evaluated.');
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Tests invoking components from the action.
+   */
+  function testComponentInvocations() {
+    $set = rules_rule_set(array(
+      'node1' => array('type' => 'node', 'label' => 'node'),
+    ));
+    $set->rule(rule()->condition('node_is_published', array('node:select' => 'node1'))
+                     ->action('node_unpublish', array('node:select' => 'node1'))
+               );
+    $set->integrityCheck()->save('rules_test_set_2');
+    rules_clear_cache(TRUE);
+
+    // Use different names for the variables to ensure they are properly mapped
+    // when taking over the variables to be saved.
+    $rule = rule(array(
+      'node2' => array('type' => 'node', 'label' => 'node'),
+    ));
+    $rule->action('component_rules_test_set_2', array('node1:select' => 'node2'));
+    $rule->action('node_make_sticky', array('node:select' => 'node2'));
+
+    $node = $this->drupalCreateNode(array('title' => 'The title.', 'status' => 1, 'sticky' => 0));
+    $rule->execute($node);
+
+    $node = node_load($node->nid, NULL, TRUE);
+    $this->assertFalse($node->status, 'The component changes have been saved correctly.');
+    $this->assertTrue($node->sticky, 'The action changes have been saved correctly.');
+
+    // Check that we have saved the changes only once.
+    $text = RulesLog::logger()->render();
+    // Make sure both saves are handled in one save operation.
+    $this->assertEqual(substr_count($text, 'Saved'), 1, 'Changes have been saved in one save operation.');
     RulesLog::logger()->checkLog();
   }
 

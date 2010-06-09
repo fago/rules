@@ -300,7 +300,10 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function execute() {}
 
-  protected function evaluate(RulesState $state) {}
+  /**
+   * Evaluate the plugin on a given rules evaluation state.
+   */
+  public function evaluate(RulesState $state) {}
 
   protected static function compare(RulesPlugin $a, RulesPlugin $b) {
     if ($a->weight == $b->weight) {
@@ -352,6 +355,13 @@ abstract class RulesPlugin extends RulesExtendable {
       }
     }
     return isset($provides) ? $provides : array();
+  }
+
+  /**
+   * Returns the info of the plugin.
+   */
+  public function info() {
+    return $this->info;
   }
 
   /**
@@ -789,7 +799,7 @@ abstract class RulesPlugin extends RulesExtendable {
     if (!empty($this->label)) {
       return $this->label;
     }
-    return isset($this->info['label']) ? $this->info['label'] : t('unlabeled');
+    return isset($this->info['label']) ? $this->info['label'] : (!empty($this->name) ? $this->name : t('unlabeled'));
   }
 
   /**
@@ -977,7 +987,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function execute() {
-    $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
+    $replacements = array('%label' => $this->label(), '%plugin' => $this->itemName);
     rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->forceSetUp();
     $this->processSettings();
@@ -1007,7 +1017,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   abstract protected function executeCallback(array $args, RulesState $state = NULL);
 
 
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     $this->forceSetUp();
     $this->processSettings();
     try {
@@ -1415,7 +1425,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * the configured provided variables as an array of variables.
    */
   public function execute() {
-    $replacements = array('%label' => isset($this->info['label']) ? $this->info['label'] : $this->name, '%plugin' => $this->itemName);
+    $replacements = array('%label' => $this->label(), '%plugin' => $this->itemName);
     rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->processSettings();
     $state = $this->setUpState(func_get_args());
@@ -1537,7 +1547,7 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
   /**
    * Evaluate, whereas by default new vars are visible in the parent's scope.
    */
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     if ($state->isBlocked($this)) {
       return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label, '@plugin' => $this->plugin()), RulesLog::INFO);
     }

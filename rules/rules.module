@@ -560,18 +560,21 @@ function rules_invoke_event() {
 }
 
 /**
- * Invokes a rule set.
+ * Invokes a rule component, e.g. a rule set.
  *
- * @param $set_name
- *   The set's name.
+ * @param $component_name
+ *   The component's name.
  * @param $args
- *   Pass further parameters as required for the invoked rule set.
+ *   Pass further parameters as required for the invoked component.
+ *
+ * @return
+ *   The variables as provided by the component.
  */
-function rules_invoke_rule_set() {
+function rules_invoke_component() {
   $args = func_get_args();
   $name = array_shift($args);
-  if ($set = rules_get_cache('set_' . $name)) {
-    return call_user_func_array(array($set, 'execute'), $args);
+  if ($component = rules_get_cache('comp_' . $name)) {
+    return call_user_func_array(array($component, 'execute'), $args);
   }
 }
 

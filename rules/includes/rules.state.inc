@@ -50,6 +50,13 @@ class RulesState {
   public $currentArguments;
 
 
+  /**
+   * Construct a new rules evaluation state.
+   *
+   * @param RulesPlugin $element
+   *   The element, which will be evaluated on the state. Needed in order to
+   *   deal correctly with recursed invocations.
+   */
   public function __construct(RulesPlugin $element) {
     $this->executedElement = $element;
     $this->oldState = $element->property('state');
@@ -241,6 +248,37 @@ class RulesState {
     // Restore the state's set of blocked elements.
     $this->blocked = $previously_blocked;
     unset($this->save[$selector]);
+  }
+
+  /**
+   * Merges the info about to be saved variables form the given state into the
+   * existing state. Therefor we can aggregate saves from invoked components.
+   * Merged in saves are removed from the given state, but not mergable saves
+   * remain there.
+   *
+   * @param $state
+   *   The state for which to merge the to be saved variables in.
+   * @param $component
+   *   The component which has been invoked, thus needs to be blocked for the
+   *   merged in saves.
+   * @param $settings
+   *   The settings of the element that invoked the component. Contains
+   *   information about variable/selector mappings between the states.
+   */
+  public function mergeSaveVariables(RulesState $state, RulesPlugin $component, $settings) {
+    // For any saves that we take over, also block the component.
+    $this->block($component);
+
+    foreach ($state->save as $selector => $data) {
+      $parts = explode(':', $selector, 2);
+      // Adapt the selector to fit for the parent state and move the wrapper.
+      if (isset($settings[$parts[0] . ':select'])) {
+        $parts[0] = $settings[$parts[0] . ':select'];
+        $this->save(implode(':', $parts), $data[0], FALSE);
+        unset($state->save[$selector]);
+      }
+    }
+    $this->unblock($component);
   }
 
   /**
