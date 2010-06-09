@@ -19,10 +19,10 @@ foreach (rules_core_modules() as $module) {
  * Defines a list of core module on whose behalf we provide module integration.
  *
  * We also add a pseudo 'data' module, which will be used for providing generic
- * rules data integration.
+ * rules data integration as well as 'rules' for providing some general stuff.
  */
 function rules_core_modules() {
-  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user', 'php');
+  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user', 'php', 'rules_core');
 }
 
 /**
