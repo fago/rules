@@ -195,9 +195,7 @@ function &rules_get_cache($cid = 'data') {
  * all mentioned class, which in turn rebuild their own caches or update the
  * main cache.
  */
-function _rules_rebuild_cache(&$cache = array()) {
-  $cache = array();
-
+function _rules_rebuild_cache(&$cache) {
   foreach(array('data_info', 'plugin_info') as $hook) {
     $cache[$hook] = rules_fetch_data($hook);
   }
@@ -304,6 +302,11 @@ function rules_plugin_factory($plugin_name, $arg1 = NULL, $arg2 = NULL) {
 
 /**
  * Implementation of hook_rules_plugin_info().
+ *
+ * Note that the cache is rebuilt in the order of the plugins. Therefore the
+ * condition and action plugins must be at the top, so that any components
+ * re-building their cache can create configurations including properly setup-ed
+ * actions and conditions.
  */
 function rules_rules_plugin_info() {
   return array(

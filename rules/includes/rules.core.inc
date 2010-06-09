@@ -45,7 +45,7 @@ class RulesEntityController extends EntityAPIController {
       $hook = $this->entityInfo['export']['default hook'];
       foreach (module_implements($hook) as $module) {
         $function = $module . '_' . $hook;
-        foreach ((array)$function() as $name => $entity) {
+        foreach ((array) $function() as $name => $entity) {
           $entity->name = $name;
           $entity->module = $module;
           $entity->plugin = $entity->property('itemName');
@@ -55,8 +55,7 @@ class RulesEntityController extends EntityAPIController {
       }
       drupal_alter($hook, $this->defaultEntities);
     }
-    $entities = $ids ? array_intersect_key($this->defaultEntities, array_flip($ids)) : $this->defaultEntities;
-    return $this->applyConditions($entities, $conditions);
+    return parent::getDefaults($ids, $conditions);
   }
 
   /**
@@ -920,6 +919,15 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   /**
+   * Overridden to also re-setup in case we have no element info.
+   */
+  public function forceSetUp() {
+    if (!isset($this->cache) || count(array_filter($this->info)) == 0) {
+      $this->setUp();
+    }
+  }
+
+  /**
    * Allows altering the element information depending on the configuration.
    *
    * @param $info
@@ -953,6 +961,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     if ($force || !empty($this->settings['#_needs_processing'])) {
       // First let the plugin implementation do processing, so data types of the
       // parameters are fixed when we process the settings.
+      $this->forceSetup();
+
       $this->process();
       parent::processSettings($force, $access_check);
     }
