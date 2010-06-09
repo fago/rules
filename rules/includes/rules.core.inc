@@ -1509,6 +1509,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
  */
 abstract class RulesActionContainer extends RulesContainerPlugin implements RulesActionInterface {
 
+  /**
+   * Whether this configuration may recurse. For safety, this defaults to FALSE.
+   */
+  public $recursion = FALSE;
+
   public function __construct($variables = array(), $providesVars = array()) {
     $this->setUp();
     $this->info['variables'] = $variables;
@@ -1530,12 +1535,22 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
   }
 
   /**
-   * As default we add provided variables to the parent's scope.
+   * Evaluate, whereas by default new vars are visible in the parent's scope.
    */
   protected function evaluate(RulesState $state) {
+    if ($state->isBlocked($this)) {
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label, '@plugin' => $this->plugin()), RulesLog::INFO);
+    }
+    // Block the config to prevent recursion, if not allowed.
+    $state->block($this);
     foreach ($this->children as $action) {
       $action->evaluate($state);
     }
+    $state->unblock($this);
+  }
+
+  public function __sleep() {
+    return parent::__sleep() + array('recursion' => 'recursion');
   }
 }
 

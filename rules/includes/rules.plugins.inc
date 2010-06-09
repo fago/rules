@@ -126,10 +126,6 @@ class Rule extends RulesActionContainer {
   protected $conditions = NULL;
   protected $itemName = 'rule';
 
-  /**
-   * Whether this rule may fire recursive. For safety, this defaults to FALSE.
-   */
-  public $recursion = FALSE;
   public $label = 'unlabeled';
 
   /**
@@ -148,7 +144,7 @@ class Rule extends RulesActionContainer {
   }
 
   public function __sleep() {
-    return parent::__sleep() + drupal_map_assoc(array('conditions', 'recursion', 'label'));
+    return parent::__sleep() + drupal_map_assoc(array('conditions', 'label'));
   }
 
   /**
@@ -182,15 +178,9 @@ class Rule extends RulesActionContainer {
   }
 
   protected function evaluate(RulesState $state) {
-    if ($state->isBlocked($this)) {
-      return rules_log('Not evaluating the rule %label to prevent recursion.', array('%label' => $this->label), RulesLog::INFO);
-    }
     rules_log('Evaluating rule %label.', array('%label' => $this->label));
     if (empty($this->conditions) || $this->conditions->evaluate($state)) {
-      // Block the rule to prevent recursion, if not allowed.
-      $state->block($this);
       parent::evaluate($state);
-      $state->unblock($this);
     }
   }
 
@@ -537,6 +527,8 @@ class RulesRuleSet extends RulesActionContainer {
 class RulesEventSet extends RulesRuleSet {
 
   protected $itemName = 'event set';
+  // Event sets may recurse as we block recursions on rule-level.
+  public $recursion = TRUE;
 
   public function __construct($info = array()) {
     $this->setup();
