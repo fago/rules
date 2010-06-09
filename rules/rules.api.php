@@ -193,7 +193,7 @@ function rules_action_execution_callback($node, $title, $settings) {
  * Thus the 'provides' attribute is not supported. Furthermore the condition
  * implementation callback has to return a boolean value.
  *
- * @see hook_rules_action_info().
+ * @see hook_rules_action_info()
  */
 function hook_rules_condition_info() {
   return array(
@@ -509,7 +509,7 @@ function hook_rules_action_info_alter(&$actions) {
  * @param $conditions
  *   The items of all modules as returned from hook_rules_condition_info().
  *
- * @see hook_rules_condition_info().
+ * @see hook_rules_condition_info()
  */
 function hook_rules_condition_info_alter(&$conditions) {
   // Change conditions.
@@ -539,7 +539,7 @@ function hook_rules_event_info_alter(&$events) {
  * @param $data_info
  *   The items of all modules as returned from hook_rules_data_info().
  *
- * @see hook_rules_data_info().
+ * @see hook_rules_data_info()
  */
 function hook_rules_data_info_alter(&$data_info) {
   // Change data types.
@@ -554,7 +554,7 @@ function hook_rules_data_info_alter(&$data_info) {
  * @param $plugin_info
  *   The items of all modules as returned from hook_rules_plugin_info().
  *
- * @see hook_rules_plugin_info().
+ * @see hook_rules_plugin_info()
  */
 function hook_rules_plugin_info_alter(&$plugin_info) {
   // Change plugin info.
@@ -569,7 +569,7 @@ function hook_rules_plugin_info_alter(&$plugin_info) {
  * @param $evaluator_info
  *   The items of all modules as returned from hook_rules_evaluator_info().
  *
- * @see hook_rules_evaluator_info().
+ * @see hook_rules_evaluator_info()
  */
 function hook_rules_evaluator_info_alter(&$evaluator_info) {
   // Change evaluator info.
@@ -584,7 +584,7 @@ function hook_rules_evaluator_info_alter(&$evaluator_info) {
  * @param $processor_info
  *   The items of all modules as returned from hook_rules_data_processor_info().
  *
- * @see hook_rules_data_processor_info().
+ * @see hook_rules_data_processor_info()
  */
 function hook_rules_data_processor_info_alter(&$processor_info) {
   // Change processor info.
@@ -690,9 +690,23 @@ function hook_rules_config_execute($config) {
  * This hook is invoked when rules configurations are loaded. The implementation
  * should be placed into the file MODULENAME.rules_defaults.inc, which gets
  * automatically included when the hook is invoked.
+ *
+ * @return
+ *   An array of rules configurations with the configuration names as keys.
+ *
+ * @see hook_default_rules_configuration_alter()
  */
 function hook_default_rules_configuration() {
-  //TODO: example
+  $rule = rules_reaction_rule();
+  $rule->label = 'example default rule';
+  $rule->active = FALSE;
+  $rule->event('node_update')
+       ->condition(rules_condition('data_is', array('data:select' => 'node:status', 'value' => TRUE))->negate())
+       ->condition('data_is', array('data:select' => 'node:type', 'value' => 'page'))
+       ->action('drupal_message', array('message' => 'A node has been updated.'));
+
+  $configs['rules_test_default_1'] = $rule;
+  return $config;
 }
 
 /**
@@ -701,6 +715,12 @@ function hook_default_rules_configuration() {
  * The implementation should be placed into the file
  * MODULENAME.rules_defaults.inc, which gets automatically included when the
  * hook is invoked.
+ *
+ * @param $configs
+ *   The default configurations of all modules as returned from
+ *   hook_default_rules_configuration().
+ *
+ * @see hook_default_rules_configuration()
  */
 function hook_default_rules_configuration_alter(&$configs) {
   // Add custom condition.
