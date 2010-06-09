@@ -47,7 +47,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         }
       }
     }
-    // Save paramaters as defined in the parameter info.
+    // Save parameters as defined in the parameter info.
     if ($return !== FALSE) {
       foreach ($this->info['parameter'] as $name => $info) {
         if (!empty($info['save']) && $args[$name] instanceof EntityMetadataWrapper) {
@@ -177,7 +177,7 @@ class Rule extends RulesActionContainer {
     parent::sortChildren($deep);
   }
 
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     rules_log('Evaluating rule %label.', array('%label' => $this->label));
     if (empty($this->conditions) || $this->conditions->evaluate($state)) {
       parent::evaluate($state);
@@ -278,7 +278,7 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   /**
    * Reaction rules can't add variables to the parent scope, so clone $state.
    */
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     $copy = clone $state;
     parent::evaluate($copy);
   }
@@ -351,7 +351,7 @@ class RulesAnd extends RulesConditionContainer {
 
   protected $itemName = 'and';
 
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     foreach ($this->children as $condition) {
       if (!$condition->evaluate($state)) {
         rules_log('AND evaluated to FALSE.');
@@ -374,7 +374,7 @@ class RulesOr extends RulesConditionContainer {
 
   protected $itemName = 'or';
 
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     foreach ($this->children as $condition) {
       if ($condition->evaluate($state)) {
         rules_log('OR evaluated to TRUE.');
@@ -458,7 +458,7 @@ class RulesLoop extends RulesActionContainer {
     );
   }
 
-  protected function evaluate(RulesState $state) {
+  public function evaluate(RulesState $state) {
     $list_var = $this->getArgument('list', $this->parameter['list'], $state);
     $item_info = $this->listItemInfo();
     $name = $this->settings['item:var'];
@@ -510,7 +510,7 @@ class RulesRuleSet extends RulesActionContainer {
 
     foreach ($sets as $id => $rule_set) {
       $rule_set->setSkipSetup();
-      cache_set('set_' . $rule_set->name, $rule_set, 'cache_rules');
+      cache_set('comp_' . $rule_set->name, $rule_set, 'cache_rules');
       // Set it back in case someone gets the object from cache.
       $rule_set->setSkipSetup(FALSE);
     }

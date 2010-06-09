@@ -10,6 +10,50 @@
  */
 
 /**
+ * Action and condition callback: Invokes a rules component.
+ */
+function rules_element_invoke_component($arguments, RulesPlugin $element) {
+  $info = $element->info();
+  $state = $arguments['state'];
+  $wrapped_args = $state->currentArguments;
+
+  if ($component = rules_get_cache('comp_' . $info['#config_name'])) {
+    $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
+    rules_log('Evaluating %plugin %label.', $replacements, RulesLog::INFO, TRUE);
+
+    // Manually create a new evaluation state.
+    $new_state = new RulesState($component);
+
+    // Register all parameters as variables.
+    $args = array_intersect_key($wrapped_args, $info['parameter']);
+    foreach ($args as $name => $data) {
+      $new_state->addVariable($name, $data, $info['parameter'][$name]);
+    }
+
+    $return = $component->evaluate($new_state);
+    // Care for the right return value in case we have to provide vars.
+    if (isset($info['provides'])) {
+      $return = array();
+      foreach ($info['provides'] as $var => $var_info) {
+        $return[$var] = $new_state->get($var);
+      }
+    }
+
+    // Now merge the info about to be saved variables in the parent state.
+    $state->mergeSaveVariables($new_state, $component, $element->settings);
+
+    // Cleanup the state, what saves not mergable variables now.
+    $new_state->cleanup($component);
+    rules_log('Finished evaluation of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    return $return;
+  }
+  else {
+    throw new RulesException('Unable to get the component %name'. array('%name' => $info['#config_name']), $element);
+  }
+}
+
+
+/**
  * A class implementing a rules input evaluator processing date input. This is
  * needed to treat relative date inputs for strtotime right, consider "now".
  */
