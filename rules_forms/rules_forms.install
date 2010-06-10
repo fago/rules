@@ -15,3 +15,12 @@ function rules_forms_install() {
   // hook_form_alter().
   db_query("UPDATE {system} SET weight = 20 WHERE name = 'rules_forms'");
 }
+
+/**
+ * Update the module's weight to 20.
+ */
+function rules_forms_update_6001() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 20 WHERE name = 'rules_forms'");
+  return $ret;
+}
