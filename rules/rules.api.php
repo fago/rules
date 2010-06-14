@@ -683,7 +683,6 @@ function hook_rules_config_execute($config) {
 
 }
 
-
 /**
  * Define default rules configurations.
  *
@@ -725,6 +724,48 @@ function hook_default_rules_configuration() {
 function hook_default_rules_configuration_alter(&$configs) {
   // Add custom condition.
   $configs['foo']->condition('bar');
+}
+
+/**
+ * Alter rules components before execution.
+ *
+ * This hooks allows altering rules components before they are cached for later
+ * re-use. Use this hook only for altering the component in order to prepare
+ * re-use through rules_invoke_component() or the provided condition/action.
+ * Note that this hook is only invoked for any components cached for execution,
+ * but not for components that are programmatically created and executed on the
+ * fly (without saving them).
+ *
+ * @param $plugin
+ *   The name of the component plugin.
+ * @param $component
+ *   The component that is to be cached.
+ *
+ * @see rules_invoke_component()
+ */
+function hook_rules_component_alter($plugin, RulesPlugin $component) {
+
+}
+
+/**
+ * Alters event sets.
+ *
+ * This hooks allows altering rules event sets, which contain all rules that are
+ * triggered upon a specific event. Rules internally caches all rules associated
+ * to an event in an event set, which is cached for fast evaluation. This hook
+ * is invoked just before any event set is cached, thus it allows altering of
+ * the to be executed rules without the changes to appear in the UI, e.g. to add
+ * a further condition to some rules.
+ *
+ * @param $event_name
+ *   The name of the event.
+ * @param $event_set
+ *   The event set that is to be cached.
+ *
+ * @see rules_invoke_event()
+ */
+function hook_rules_event_set_alter($event_name, RulesEventSet $event_set) {
+
 }
 
 /**
