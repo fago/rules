@@ -503,19 +503,6 @@ class RulesRuleSet extends RulesActionContainer {
     return $this->action($rule);
   }
 
-  public function rebuildCache(&$itemInfo, &$cache) {
-    parent::rebuildCache($itemInfo, $cache);
-    // Just move each rule-set into the cache.
-    $sets = rules_config_load_multiple(FALSE, array('plugin' => 'rule set'));
-
-    foreach ($sets as $id => $rule_set) {
-      $rule_set->setSkipSetup();
-      cache_set('comp_' . $rule_set->name, $rule_set, 'cache_rules');
-      // Set it back in case someone gets the object from cache.
-      $rule_set->setSkipSetup(FALSE);
-    }
-  }
-
   protected function exportChildren($key = 'RULES') {
     return parent::exportChildren($key);
   }
@@ -564,7 +551,9 @@ class RulesEventSet extends RulesRuleSet {
         foreach ($rules as $rule) {
           $event->rule($rule);
         }
-        $event->setSkipSetup();
+        $event->setSkipSetup(TRUE);
+        // Allow modules to alter the cached event set.
+        drupal_alter('rules_event_set', $name, $event);
         cache_set('event_' . $name, $event, 'cache_rules');
         $event->destroy();
       }

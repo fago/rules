@@ -867,6 +867,30 @@ abstract class RulesPlugin extends RulesExtendable {
     $export_cfg[$this->name] += $export;
     return $php ? entity_var_export($export_cfg) : entity_var_json_export($export_cfg);
   }
+
+  /**
+   * If the plugin is a component, cache all configurations of the plugin for
+   * enabling the re-used based on the cache.
+   *
+   * @see rules_invoke_component()
+   */
+  public function rebuildCache(&$itemInfo, &$cache) {
+    parent::rebuildCache($itemInfo, $cache);
+    if (!empty($this->itemInfo['component'])) {
+      // Just move each component into the cache.
+      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName));
+
+      foreach ($components as $id => $component) {
+        // Clone the component to avoid modules getting the to be cached
+        // version from the static loading cache.
+        $component = clone $component;
+        $component->setSkipSetup(TRUE);
+        // Allow modules to alter the cached component.
+        drupal_alter('rules_component', $this->itemName, $component);
+        cache_set('comp_' . $component->name, $component, 'cache_rules');
+      }
+    }
+  }
 }
 
 /**
