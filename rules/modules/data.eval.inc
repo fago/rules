@@ -35,9 +35,10 @@ function rules_action_entity_fetch($type, $id, $revision) {
   $info = entity_get_info($type);
 
   // Support the revision parameter, if applicable.
-  if (isset($info['entity keys']['revision']) && isset($revision)) {
+  if (!empty($info['entity keys']['revision']) && isset($revision)) {
     $conditions = array($info['entity keys']['revision'] => $revision);
   }
+
   $return = entity_load($type, array($id), isset($conditions) ? $conditions : array());
   $entity = reset($return);
   if (!$entity) {

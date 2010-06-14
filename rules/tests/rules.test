@@ -1015,6 +1015,11 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $tid = $term_wrapped->getIdentifier();
     RulesLog::logger()->checkLog();
     $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $tid)), 'Entity has field conditions evaluted.');
+
+    // Test loading a non-node entity.
+    $action = rules_action('entity_fetch', array('type' => 'taxonomy_term', 'id' => $tid));
+    list($term) = $action->execute();
+    $this->assertEqual($term->tid, $tid, 'Fetched a taxonomy term using "entity_fetch".');
   }
 
   /**
