@@ -404,6 +404,9 @@ function rules_action_entity_create_process(RulesAbstractPlugin $element) {
     }
   }
   $element_info['provides']['entity_created']['type'] = $element->settings['type'];
+  if (($bundleKey = $wrapper->entityKey('bundle')) && isset($element->settings['param_' . $bundleKey])) {
+    $element_info['provides']['entity_created']['bundle'] = $element->settings['param_' . $bundleKey];
+  }
   $element->alterInfo($element_info);
 }
 
