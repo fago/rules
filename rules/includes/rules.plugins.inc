@@ -339,7 +339,7 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   }
 
   protected function exportChildren($key = 'ON') {
-    $export[$key] = $this->events;
+    $export[$key] = array_values($this->events);
     return $export + parent::exportChildren();
   }
 }
