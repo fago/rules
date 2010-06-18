@@ -93,7 +93,7 @@ function rules_categories_features_export_options() {
 /**
  * Implementation of hook_features_export_render() for categories.
  */
-function rules_categories_features_export_render($module = 'foo', $data, $features_export) {
+function rules_categories_features_export_render($module = 'foo', $data) {
   $code = array();
   $code[] = '  $rules = array();';
   $code[] = '';
@@ -101,9 +101,6 @@ function rules_categories_features_export_render($module = 'foo', $data, $featur
   // Build the usual rules $export structure for sets and categories.
   $rules_export = array();
   $items = rules_get_configured_items('rule_sets');
-  if (isset($features_export['features']['rules_sets'])) {
-    $rules_export['rule_sets'] = array_intersect_key($items, $features_export['features']['rules_sets']);
-  }
   rules_include('rules_admin');
   module_load_include('inc', 'rules_admin', 'rules_admin.export');
   rules_admin_export_by_category($rules_export, $data);
