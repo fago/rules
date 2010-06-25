@@ -870,7 +870,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $user = $this->drupalCreateUser();
     $this->drupalLogin($user);
     // Make sure the right URL has been generated and we are there now.
-    $this->assertEqual($this->getUrl(), url('user/2/edit', array('absolute' => TRUE)), 'Redirected to the right url.');
+    $this->assertEqual(strpos($this->getUrl(), "user/$user->uid/edit") !== FALSE, 'Redirected to the right url.');
   }
 }
 
