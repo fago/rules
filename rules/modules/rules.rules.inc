@@ -26,7 +26,7 @@ function rules_rules_data_type_info() {
       'class' => 'rules_data_type_number',
       'identifiable' => FALSE,
       'eval input' => TRUE,
-      'token type' => FALSE,
+      'token type' => 'number',
     ),
     'date' => array(
       'label' => t('date'),
