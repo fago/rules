@@ -106,5 +106,106 @@ function rules_user_integration_access($type, $name) {
 }
 
 /**
+ * Implements hook_rules_condition_info() on behalf of the user module.
+ */
+function rules_user_condition_info() {
+  return array(
+    'user_has_role' => array(
+      'label' => t('User has role(s)'),
+      'parameter' => array(
+        'user' => array('type' => 'user', 'label' => t('User')),
+      ),
+      'group' => t('User'),
+      'access callback' => 'rules_user_integration_access',
+      'base' => 'rules_condition_user_has_role',
+    ),
+  );
+}
+
+/**
+ * Condition user: condition to check whether user has particular roles
+ */
+function rules_condition_user_has_role($account, $roles, $operation = 'AND') {
+  $operation = $settings['operation'];
+
+  switch ($operation) {
+    case 'OR':
+      foreach ($roles as $rid) {
+        if (isset($account->roles[$rid])) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+
+    case 'AND':
+      foreach ($roles as $rid) {
+        if (!isset($account->roles[$rid])) {
+          return FALSE;
+        }
+      }
+      return TRUE;
+  }
+}
+
+/**
+ * User has role condition help callback.
+ */
+function rules_condition_user_has_role_help() {
+  return t('Whether the user has the selected role(s).');
+}
+
+/**
+ * Implements hook_rules_action_info() on behalf of the user module.
+ */
+function rules_user_action_info() {
+  return array(
+    'rules_action_user_addrole' => array(
+      'label' => t('Add user role'),
+      'arguments' => array(
+        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
+      ),
+      'module' => 'User',
+    ),
+    'rules_action_user_removerole' => array(
+      'label' => t('Remove user role'),
+      'arguments' => array(
+        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
+      ),
+      'module' => 'User',
+    ),
+  );
+}
+
+/**
+ * Action: Adds roles to a particular user.
+ */
+function rules_action_user_addrole($account, $roles) {
+  if ($account->uid) {
+    // Get role list (minus the anonymous)
+    $role_list = user_roles(TRUE);
+
+    foreach ($roles as $rid) {
+      $account->roles[$rid] = $role_list[$rid];
+    }
+    return array('user' => $account);
+  }
+}
+
+/**
+ * Action: Remove roles from a given user.
+ */
+function rules_action_user_removerole($account, $roles) {
+  if ($account->uid) {
+    foreach ($roles as $rid) {
+      // If the user has this role, remove it.
+      if (isset($account->roles[$rid])) {
+        unset($account->roles[$rid]);
+      }
+    }
+    return array('user' => $account);
+  }
+}
+
+/**
  * @}
  */
