@@ -372,7 +372,19 @@ class RulesTestCase extends DrupalWebTestCase {
     // Make sure both saves are handled in one save operation.
     $this->assertEqual(substr_count($text, 'Saved'), 1, 'Changes have been saved in one save operation.');
     RulesLog::logger()->checkLog();
+
+    // Test recursion prevention on components by invoking the component from
+    // itself, what should be prevented.
+    $set->action('component_rules_test_set_2', array('node1:select' => 'node1'))
+        ->save();
+    rules_clear_cache(TRUE);
+
+    $rule->execute($node);
+    $text1 = RulesLog::logger()->render();
+    $text2 = RulesTestCase::t('Not evaluating rule set %rules_test_set_2 to prevent recursion.', array('rules_test_set_2'));
+    $this->assertTrue((strpos($text1, $text2) !== FALSE), "Recursion of component invocation prevented.");
   }
+
 
   /**
    * Test asserting metadata, customizing action info and make sure integrity
@@ -871,7 +883,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $user = $this->drupalCreateUser();
     $this->drupalLogin($user);
     // Make sure the right URL has been generated and we are there now.
-    $this->assertEqual(strpos($this->getUrl(), "user/$user->uid/edit") !== FALSE, 'Redirected to the right url.');
+    $this->assertTrue(strpos($this->getUrl(), "user/$user->uid/edit") !== FALSE, 'Redirected to the right url.');
   }
 }
 
