@@ -59,9 +59,6 @@
  *   - callbacks: An array which allows to set specific function callbacks for
  *     the action. The default for each callback is the actions base appended
  *     by '_' and the callback name.
- *   - help: A help text to assist the user during action configuration.
- *     Optional. As an alternative one can implement
- *     rules_action_callback_help().
  *   - 'access callback': An optional callback, which has to return whether the
  *     currently logged in user is allowed to configure this action. See
  *     rules_node_integration_access() for an example callback.
@@ -203,7 +200,6 @@ function hook_rules_condition_info() {
         'text1' => array('label' => t('Text 1'), 'type' => 'text'),
         'text2' => array('label' => t('Text 2'), 'type' => 'text'),
       ),
-      'help' => t('TRUE is returned, if both texts are equal.'),
       'group' => t('Rules'),
     ),
   );
@@ -270,7 +266,6 @@ function hook_rules_event_info() {
     'node_view' => array(
       'label' => t('Content is going to be viewed'),
       'group' => t('Node'),
-      'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
       'variables' => rules_events_node_variables(t('viewed content')) + array(
         'build_mode' => array('type' => 'string', 'label' => t('view mode')),
       ),
