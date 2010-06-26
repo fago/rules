@@ -1579,7 +1579,7 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
    */
   public function evaluate(RulesState $state) {
     if ($state->isBlocked($this)) {
-      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label, '@plugin' => $this->plugin()), RulesLog::INFO);
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO);
     }
     // Block the config to prevent recursion, if not allowed.
     $state->block($this);
