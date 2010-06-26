@@ -2,7 +2,8 @@
 // $Id$
 
 /**
- * @file Rules Testing Module - File containing test cases.
+ * @file
+ * Rules tests.
  */
 
 class RulesTestCase extends DrupalWebTestCase {

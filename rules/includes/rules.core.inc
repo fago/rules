@@ -228,10 +228,6 @@ abstract class RulesPlugin extends RulesExtendable {
 
   protected $cache = NULL, $hook = 'plugin_info';
 
-  /**
-   *  The current evaluation state, if this plugin is currently executed.
-   */
-  protected $state = NULL;
 
   /**
    * Sets a new parent element.
@@ -271,7 +267,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns whether the element is the root of the configuration.
    */
   public function isRoot() {
-    return empty($this->parent) || !empty($this->state);
+    return empty($this->parent);
   }
 
   /**
@@ -414,7 +410,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * so added 'variables' are only visible for elements in scope.
    */
   protected function setUpState(array $args) {
-    $this->state = new RulesState($this);
+    $state = new RulesState();
     $args = $this->getPassedArguments($args);
 
     foreach ($this->setUpVariables() as $name => $info) {
@@ -422,9 +418,9 @@ abstract class RulesPlugin extends RulesExtendable {
         throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
       }
       $args += array($name => NULL);
-      $this->state->addVariable($name, $args[$name], $info);
+      $state->addVariable($name, $args[$name], $info);
     }
-    return $this->state;
+    return $state;
   }
 
   /**
@@ -1036,11 +1032,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $return = $this->returnVariables($state, $result);
     }
     else {
-      $state = new RulesState($this);
+      $state = new RulesState();
       module_invoke_all('rules_config_execute', $this);
       $return = $this->executeCallback($args, $state);
     }
-    $state->cleanUp($this);
+    $state->cleanUp();
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
@@ -1467,7 +1463,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
     $result = $this->evaluate($state);
     $return = $this->returnVariables($state, $result);
-    $state->cleanUp($this);
+    $state->cleanUp();
     rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
