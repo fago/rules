@@ -136,20 +136,13 @@ function rules_rules_core_condition_info() {
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
   );
-
-  // Loop over all configured components and provide conditions.
-  $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
-  $conditions = array('plugin' => $plugins);
   $items = array();
-  foreach (rules_config_load_multiple(FALSE, $conditions) as $name => $config) {
-    if ($config instanceof RulesConditionInterface) {
-      $items['component_' . $name] = $defaults + array(
-        'label' => $config->label(),
-        'parameter' => $config->argumentInfo(),
-        'provides' => $config->providesVariables(),
-      );
-      $items['component_' . $name]['#config_name'] = $name;
-    }
+  foreach (rules_get_components(FALSE, 'condition') as $name => $config) {
+    $items['component_' . $name] = $defaults + array(
+      'label' => $config->label(),
+      'parameter' => $config->argumentInfo(),
+    );
+    $items['component_' . $name]['#config_name'] = $name;
   }
   return $items;
 }
@@ -166,24 +159,17 @@ function rules_rules_core_action_info() {
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
   );
-
-  // Loop over all configured components and provide actions.
-  $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
-  $conditions = array('plugin' => $plugins);
   $items = array();
-  foreach (rules_config_load_multiple(FALSE, $conditions) as $name => $config) {
-    if ($config instanceof RulesActionInterface) {
-      $items['component_' . $name] = $defaults + array(
-        'label' => $config->label(),
-        'parameter' => $config->argumentInfo(),
-        'provides' => $config->providesVariables(),
-      );
-      $items['component_' . $name]['#config_name'] = $name;
-    }
+  foreach (rules_get_components(FALSE, 'action') as $name => $config) {
+    $items['component_' . $name] = $defaults + array(
+      'label' => $config->label(),
+      'parameter' => $config->argumentInfo(),
+      'provides' => $config->providesVariables(),
+    );
+    $items['component_' . $name]['#config_name'] = $name;
   }
   return $items;
 }
-
 
 /**
  * @}

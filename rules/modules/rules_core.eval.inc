@@ -22,7 +22,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     rules_log('Evaluating %plugin %label.', $replacements, RulesLog::INFO, TRUE);
 
     // Manually create a new evaluation state.
-    $new_state = new RulesState($component);
+    $new_state = new RulesState();
 
     // Register all parameters as variables.
     $args = array_intersect_key($wrapped_args, $info['parameter']);
@@ -43,7 +43,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     $state->mergeSaveVariables($new_state, $component, $element->settings);
 
     // Cleanup the state, what saves not mergable variables now.
-    $new_state->cleanup($component);
+    $new_state->cleanup();
     rules_log('Finished evaluation of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }

@@ -477,6 +477,38 @@ function rules_config_load($name) {
 }
 
 /**
+ * Returns an array of configured components.
+ *
+ * For actually executing a component use rules_invoke_component(), as this
+ * retrieves the component from cache instead.
+ *
+ * @param $label
+ *   Whether to return only the label or the whole component object.
+ * @param $type
+ *   Optionally filter for 'action' or 'condition' components.
+ * @param $conditions
+ *   An array of additional conditions as required by rules_config_load().
+ *
+ * @return
+ *   An array keyed by component name containing either the label or the config.
+ */
+function rules_get_components($label = FALSE, $type = NULL, $conditions = array()) {
+  $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
+  $conditions = $conditions + array('plugin' => $plugins);
+  $faces = array(
+    'action' => 'RulesActionInterface',
+    'condition' => 'RulesConditionInterface',
+  );
+  $items = array();
+  foreach (rules_config_load_multiple(FALSE, $conditions) as $name => $config) {
+    if (!isset($type) || $config instanceof $faces[$type]) {
+      $items[$name] = $label ? $config->label() : $config;
+    }
+  }
+  return $items;
+}
+
+/**
  * Implement hook_query_TAG_alter().
  */
 function rules_query_rules_config_load_multiple_alter(QueryAlterableInterface $query) {

@@ -1,0 +1,10 @@
+; $Id$
+name = Rules Scheduler
+description = Schedule the execution of rule components.
+dependencies[] = rules
+package = Rules
+core = 7.x
+files[] = rules_scheduler.module
+files[] = rules_scheduler.install
+files[] = rules_scheduler.rules.inc
+files[] = rules_scheduler.test

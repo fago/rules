@@ -1,0 +1,74 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Rules scheduler module.
+ */
+
+/**
+ * Implements hook_cron().
+ */
+function rules_scheduler_cron() {
+  // Evaluate at maxium 30 tasks.
+  //TODO: make this configurable.
+  $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
+    ->fields('r')
+    ->condition('date', gmdate('Y-m-d H:i:s'), '<=')
+    ->range(0, 30)
+    ->execute();
+
+  foreach ($result as $task) {
+    if ($component = rules_get_cache('comp_' . $task['config'])) {
+      $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
+      rules_log('Scheduled evaluation of %plugin %label.', $replacements, RulesLog::INFO, TRUE);
+      $state = unserialize($task['state']);
+      $state->restoreBlocks();
+      // Finally evaluate the component with the given state.
+      $component->evaluate($state);
+      rules_log('Finished evaluation of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
+      $state->cleanUp();
+    }
+    db_delete('rules_scheduler')
+      ->condition('tid', $task['tid'])
+      ->execute();
+  }
+  // Log the rules log to the system log.
+  if ($log = RulesLog::logger()->render()) {
+    watchdog('rules scheduler', 'Scheduled component evaluation: !log', array('!log' => $log), WATCHDOG_NOTICE);
+  }
+}
+
+/**
+ * Load a task by a given task ID.
+ */
+function rules_scheduler_task_load($tid) {
+  $result = db_select('rules_scheduler', 'r')
+    ->fields('r')
+    ->condition('tid', $tid)
+    ->execute();
+  return $result->fetchAssoc();
+}
+
+/**
+ * Schedule a task to be executed later on.
+ *
+ * @param $task
+ *   An array representing the task with the following keys:
+ *   - config: The machine readyble name of the to be scheduled component.
+ *   - date: Timestamp when the component should be executed.
+ *   - state: An rules evaluation state to use for scheduling.
+ *   - identifier: User provided string to identify the task per scheduled
+ *   configuration.
+ */
+function rules_scheduler_schedule_task($task) {
+  if (!empty($task['identifier'])) {
+    // If there is a task with the same identifier and component, we replace it.
+    db_delete('rules_scheduler')
+      ->condition('config', $task['config'])
+      ->condition('identifier', $task['identifier'])
+      ->execute();
+  }
+  $task['date'] = gmdate('Y-m-d H:i:s', $task['date']);
+  drupal_write_record('rules_scheduler', $task);
+}

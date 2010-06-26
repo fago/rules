@@ -1,0 +1,54 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Rules Scheduler - Installation file.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function rules_scheduler_schema() {
+  $schema['rules_scheduler'] = array(
+    'description' => t('Stores scheduled tasks.'),
+    'fields' => array(
+      'tid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => t("The scheduled task's id."),
+      ),
+      'config' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => t("The scheduled configuration's name."),
+      ),
+      'date' => array(
+        'type' => 'datetime',
+        'not null' => TRUE,
+        'description' => t('When the task is to be scheduled.'),
+      ),
+      'state' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+        'description' => t('The whole, serialized evaluation state.'),
+      ),
+      'identifier' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+        'not null' => FALSE,
+        'description' => t('The user defined string identifying this task.'),
+      ),
+    ),
+    'primary key' => array('tid'),
+    'indexes' => array('date' => array('date')),
+  );
+  return $schema;
+}
+
+

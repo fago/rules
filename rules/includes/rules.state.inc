@@ -11,6 +11,11 @@
 class RulesState {
 
   /**
+   * Globally keeps the ids of rules blocked due to recursion prevention.
+   */
+  static protected $blocked = array();
+
+  /**
    * The known variables.
    */
   public $variables = array();
@@ -21,27 +26,9 @@ class RulesState {
   protected $info = array();
 
   /**
-   * Keeps the ids of rules blocked due to recursion prevention.
-   */
-  protected $blocked = array();
-
-
-  /**
-   * The executed rules configuration.
-   * @var RulesPlugin
-   */
-  protected $executedElement;
-
-  /**
    * Keeps wrappers to be saved later on.
    */
-  protected $save = array();
-
-  /**
-   * In case of recursive invocations this saves the previous state of the
-   * executed configuration.
-   */
-  protected $oldState = NULL;
+  protected $save;
 
   /**
    * Holds the arguments while an element is executed. May be used by the
@@ -49,19 +36,18 @@ class RulesState {
    */
   public $currentArguments;
 
-
   /**
-   * Construct a new rules evaluation state.
-   *
-   * @param RulesPlugin $element
-   *   The element, which will be evaluated on the state. Needed in order to
-   *   deal correctly with recursed invocations.
+   * Variable for saving currently blocked configs for serialization.
    */
-  public function __construct(RulesPlugin $element) {
-    $this->executedElement = $element;
-    $this->oldState = $element->property('state');
-    $this->blocked = isset($this->oldState) ? $this->oldState->blocked : array();
+  protected $currentlyBlocked;
+
+
+  public function __construct() {
+    // Use an object in order to ensure any cloned states reference the same
+    // save information.
+    $this->save = new ArrayObject();
   }
+
 
   /**
    * Adds the given variable to the given execution state.
@@ -80,18 +66,13 @@ class RulesState {
 
   /**
    * Runs post-evaluation tasks, such as saving variables.
-   *
-   * @return RulesState
-   *   In case of recursive evaluations, the previous evaluation state.
    */
-  public function cleanUp(RulesPlugin $element) {
+  public function cleanUp() {
     // Make changes permanent.
-    foreach ($this->save as $selector => $wrapper) {
+    foreach ($this->save->getArrayCopy() as $selector => $wrapper) {
       $this->saveNow($selector);
     }
     unset($this->currentArguments);
-    $state =& $element->property('state');
-    $state = $this->oldState;
   }
 
   /**
@@ -99,7 +80,7 @@ class RulesState {
    */
   public function block($rules_config) {
     if (empty($rules_config->recursion) && $rules_config->id) {
-      $this->blocked[$rules_config->id] = TRUE;
+      self::$blocked[$rules_config->id] = TRUE;
     }
   }
 
@@ -108,7 +89,7 @@ class RulesState {
    */
   public function unblock($rules_config) {
     if (empty($rules_config->recursion) && $rules_config->id) {
-      unset($this->blocked[$rules_config->id]);
+      unset(self::$blocked[$rules_config->id]);
     }
   }
 
@@ -116,18 +97,7 @@ class RulesState {
    * Returns whether a rules configuration should be blocked from execution.
    */
   public function isBlocked($rule_config) {
-    return !empty($rule_config->id) && isset($this->blocked[$rule_config->id]);
-  }
-
-  /**
-   * When cloning the evaluation state we want to have separate variables, so
-   * that added variables won't appear in the original state. However we need
-   * some arrays to be unique over all clones, so reference them properly.
-   */
-  public function __clone() {
-    $state = $this->executedElement->property('state');
-    $this->save =& $state->save;
-    $this->blocked =& $state->blocked;
+    return !empty($rule_config->id) && isset(self::$blocked[$rule_config->id]);
   }
 
   /**
@@ -216,7 +186,7 @@ class RulesState {
     if (isset($this->save[$selector])) {
       if ($this->save[$selector][0]->getIdentifier() == $wrapper->getIdentifier()) {
         // The entity is already remembered. So do a combined save.
-        $this->save[$selector][1] += $this->blocked;
+        $this->save[$selector][1] += self::$blocked;
       }
       else {
         // The wrapper is already in there, but wraps another entity. So first
@@ -225,7 +195,7 @@ class RulesState {
       }
     }
     if (!isset($this->save[$selector])) {
-      $this->save[$selector] = array(clone $wrapper, $this->blocked);
+      $this->save[$selector] = array(clone $wrapper, self::$blocked);
     }
     if ($immediate) {
       $this->saveNow($selector);
@@ -237,8 +207,8 @@ class RulesState {
    */
   protected function saveNow($selector) {
     // Add the set of blocked elements for the recursion prevention.
-    $previously_blocked = $this->blocked;
-    $this->blocked += $this->save[$selector][1];
+    $previously_blocked = self::$blocked;
+    self::$blocked += $this->save[$selector][1];
 
     // Actually save!
     $wrapper = $this->save[$selector][0];
@@ -246,7 +216,7 @@ class RulesState {
     $wrapper->save();
 
     // Restore the state's set of blocked elements.
-    $this->blocked = $previously_blocked;
+    self::$blocked = $previously_blocked;
     unset($this->save[$selector]);
   }
 
@@ -269,7 +239,7 @@ class RulesState {
     // For any saves that we take over, also block the component.
     $this->block($component);
 
-    foreach ($state->save as $selector => $data) {
+    foreach ($state->save->getArrayCopy() as $selector => $data) {
       $parts = explode(':', $selector, 2);
       // Adapt the selector to fit for the parent state and move the wrapper.
       if (isset($settings[$parts[0] . ':select'])) {
@@ -312,6 +282,31 @@ class RulesState {
     }
     return $wrapper;
   }
+
+  /**
+   * Magic method. Only serialize variables and their info.
+   * Additionally we remember currently blocked configs, so we can restore them
+   * upon deserialization using restoreBlocks().
+   */
+  public function __sleep () {
+    $this->currentlyBlocked = self::$blocked;
+    return array('info', 'variables', 'currentlyBlocked');
+  }
+
+  public function __wakeup() {
+    $this->save = new ArrayObject();
+  }
+
+  /**
+   * Restore the before serialization blocked configurations.
+   *
+   * Warning: This overwrites any possible currently blocked configs. Thus
+   * do not invoke this method, if there might be evaluations active.
+   */
+  public function restoreBlocks() {
+    self::$blocked = $this->currentlyBlocked;
+  }
+
 }
 
 /**
