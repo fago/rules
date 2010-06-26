@@ -52,7 +52,6 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
   }
 }
 
-
 /**
  * A class implementing a rules input evaluator processing date input. This is
  * needed to treat relative date inputs for strtotime right, consider "now".
@@ -76,11 +75,8 @@ class RulesDateInputEvaluator extends RulesDataInputEvaluator {
    * Convert a time string to a GMT (UTC) unix timestamp.
    */
   public static function gmstrtotime($date) {
-    if (strpos($date, 'UTC') === FALSE) {
-      // Append 'UTC' to indicate that the time string is in GMT/UTC.
-      $date .= ' UTC';
-    }
-    return strtotime($date);
+    // Pass the current timestamp in UTC to ensure the retrieved time is UTC.
+    return strtotime($date, time());
   }
 
   /**
