@@ -161,17 +161,27 @@ function rules_user_action_info() {
   return array(
     'rules_action_user_addrole' => array(
       'label' => t('Add user role'),
-      'arguments' => array(
-        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
+      'group' => t('User'),
+      'parameter' => array(
+        'user' => array(
+          'type' => 'user',
+          'label' => t('User'),
+          'description' => t('The user whos roles should be changed.'),
+        ),
+        //TODO: add roles parameter.
       ),
-      'module' => 'User',
     ),
     'rules_action_user_removerole' => array(
       'label' => t('Remove user role'),
-      'arguments' => array(
-        'user' => array('type' => 'user', 'label' => t('User whos roles should be changed')),
+      'group' => t('User'),
+      'parameter' => array(
+        'user' => array(
+          'type' => 'user',
+          'label' => t('User'),
+          'description' => t('The user whos roles should be changed.'),
+        ),
+        //TODO: add roles parameter.
       ),
-      'module' => 'User',
     ),
   );
 }
