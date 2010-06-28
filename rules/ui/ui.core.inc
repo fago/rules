@@ -126,7 +126,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $form['parameter'][$name] = array(
         '#type' => 'fieldset',
         '#title' => check_plain($parameter['label']),
-        '#description' => check_plain(isset($parameter['description']) ? $parameter['description'] : ''),
+        '#description' => filter_xss(isset($parameter['description']) ? $parameter['description'] : ''),
       );
 
       // Init the parameter input mode.

@@ -84,8 +84,8 @@ function rules_user_update(&$edit, $account, $category) {
   }
 }
 
-function rules_user_cancel(&$edit, $account, $method) {
-  rules_invoke_event('user_delete', $account, $method);
+function rules_user_delete($account) {
+  rules_invoke_event('user_delete', $account);
 }
 
 function rules_user_login(&$edit, $account) {

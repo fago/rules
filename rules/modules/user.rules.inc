@@ -9,6 +9,13 @@
  */
 
 /**
+ * Implements hook_rules_file_info() on behalf of the user module.
+ */
+function rules_user_file_info() {
+  return array('modules/user.eval');
+}
+
+/**
  * Implementation of hook_rules_event_info().
  */
 function rules_user_event_info() {
@@ -54,15 +61,10 @@ function rules_user_event_info() {
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
     ),
     'user_delete' => array(
-      'label' => t('After a user account has been cancelled'),
+      'label' => t('After a user account has been deleted'),
       'group' => t('User'),
       'variables' => array(
         'account' => array('type' => 'user', 'label' => t('deleted user')),
-        'method' => array(
-          'type' => 'text',
-          'label' => t('cancellation method'),
-          'options list' => 'rules_user_cancel_methods',
-        ),
       ),
       'access callback' => 'rules_user_integration_access',
     ),
@@ -87,6 +89,7 @@ function rules_user_event_info() {
 
 /**
  * Options list for user cancel methods.
+ * @todo: Use for providing a user_cancel action.
  */
 function rules_user_cancel_methods() {
   module_load_include('inc', 'user', 'user.pages');
@@ -103,6 +106,8 @@ function rules_user_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
     return entity_metadata_entity_access('view', 'user');
   }
+  // Else return admin access.
+  return user_access('administer users');
 }
 
 /**
@@ -114,37 +119,26 @@ function rules_user_condition_info() {
       'label' => t('User has role(s)'),
       'parameter' => array(
         'user' => array('type' => 'user', 'label' => t('User')),
+        'roles' => array(
+          'type' => 'list<integer>',
+          'label' => t('Roles'),
+          'options list' => 'entity_metadata_user_roles',
+        ),
+        'operation' => array(
+          'type' => 'text',
+          'label' => t('Match roles'),
+          'options list' => 'rules_user_condition_operations',
+          'restriction' => 'input',
+          'optional' => TRUE,
+          'default value' => 'AND',
+          'description' => t('If matching against all selected roles, the user must have <em>all</em> the roles selected.'),
+        ),
       ),
       'group' => t('User'),
       'access callback' => 'rules_user_integration_access',
       'base' => 'rules_condition_user_has_role',
     ),
   );
-}
-
-/**
- * Condition user: condition to check whether user has particular roles
- */
-function rules_condition_user_has_role($account, $roles, $operation = 'AND') {
-  $operation = $settings['operation'];
-
-  switch ($operation) {
-    case 'OR':
-      foreach ($roles as $rid) {
-        if (isset($account->roles[$rid])) {
-          return TRUE;
-        }
-      }
-      return FALSE;
-
-    case 'AND':
-      foreach ($roles as $rid) {
-        if (!isset($account->roles[$rid])) {
-          return FALSE;
-        }
-      }
-      return TRUE;
-  }
 }
 
 /**
@@ -155,65 +149,52 @@ function rules_condition_user_has_role_help() {
 }
 
 /**
- * Implements hook_rules_action_info() on behalf of the user module.
+ * Options list callback for the operation parameter of condition user has role.
  */
-function rules_user_action_info() {
+function rules_user_condition_operations() {
   return array(
-    'rules_action_user_addrole' => array(
-      'label' => t('Add user role'),
-      'group' => t('User'),
-      'parameter' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('User'),
-          'description' => t('The user whos roles should be changed.'),
-        ),
-        //TODO: add roles parameter.
-      ),
-    ),
-    'rules_action_user_removerole' => array(
-      'label' => t('Remove user role'),
-      'group' => t('User'),
-      'parameter' => array(
-        'user' => array(
-          'type' => 'user',
-          'label' => t('User'),
-          'description' => t('The user whos roles should be changed.'),
-        ),
-        //TODO: add roles parameter.
-      ),
-    ),
+    'AND' => t('all'),
+    'OR' => t('any'),
   );
 }
 
 /**
- * Action: Adds roles to a particular user.
+ * Implements hook_rules_action_info() on behalf of the user module.
  */
-function rules_action_user_addrole($account, $roles) {
-  if ($account->uid) {
-    // Get role list (minus the anonymous)
-    $role_list = user_roles(TRUE);
-
-    foreach ($roles as $rid) {
-      $account->roles[$rid] = $role_list[$rid];
-    }
-    return array('user' => $account);
-  }
+function rules_user_action_info() {
+  $defaults = array(
+   'parameter' => array(
+      'user' => array(
+        'type' => 'user',
+        'label' => t('User'),
+        'description' => t('The user whos roles should be changed.'),
+        'save' => TRUE,
+      ),
+      'roles' => array(
+        'type' => 'list<integer>',
+        'label' => t('Roles'),
+        'options list' => 'entity_metadata_user_roles',
+      ),
+    ),
+    'group' => t('User'),
+    'access callback' => 'rules_user_role_change_access',
+  );
+  $items['user_add_role'] = $defaults + array(
+    'label' => t('Add user role'),
+    'base' => 'rules_action_user_add_role',
+  );
+  $items['user_remove_role'] = $defaults + array(
+    'label' => t('Remove user role'),
+    'base' => 'rules_action_user_remove_role',
+  );
+  return $items;
 }
 
 /**
- * Action: Remove roles from a given user.
+ * User integration role actions access callback.
  */
-function rules_action_user_removerole($account, $roles) {
-  if ($account->uid) {
-    foreach ($roles as $rid) {
-      // If the user has this role, remove it.
-      if (isset($account->roles[$rid])) {
-        unset($account->roles[$rid]);
-      }
-    }
-    return array('user' => $account);
-  }
+function rules_user_role_change_access() {
+  return entity_metadata_user_roles() && user_access('administer permissions');
 }
 
 /**

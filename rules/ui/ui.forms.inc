@@ -555,3 +555,14 @@ function rules_ui_list_textarea_pre_render($element) {
   $element['#value'] = implode("\n", $element['#value']);
   return $element;
 }
+
+/**
+ * FAPI callback to validate a list of integers.
+ */
+function rules_ui_element_integer_list_validate($element, &$form_state) {
+  foreach ($element['#value'] as $value) {
+    if ($value !== '' && (!is_numeric($value) || intval($value) != $value)) {
+      form_error($element, t('Each line of %name must be an integer.', array('%name' => $element['#title'])));
+    }
+  }
+}

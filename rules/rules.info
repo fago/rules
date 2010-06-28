@@ -23,6 +23,7 @@ files[] = modules/rules_core.rules.inc
 files[] = modules/system.eval.inc
 files[] = modules/system.rules.inc
 files[] = modules/taxonomy.rules.inc
+files[] = modules/user.eval.inc
 files[] = modules/user.rules.inc
 files[] = ui/ui.core.inc
 files[] = ui/ui.data.inc
