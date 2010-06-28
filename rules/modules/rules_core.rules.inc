@@ -69,6 +69,11 @@ function rules_rules_core_data_info() {
       'ui class' => 'RulesDataUIListText',
       'wrap' => TRUE,
     ),
+   'list<integer>' => array(
+      'label' => t('list of text'),
+      'ui class' => 'RulesDataUIListInteger',
+      'wrap' => TRUE,
+    ),
    'entity' => array(
       'label' => t('any entity'),
     )

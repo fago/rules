@@ -83,7 +83,7 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       $element->call('loadBasicInclude');
       $form[$name] = array(
         '#type' => 'select',
-        '#options' => $info['options list']($element, $name),
+        '#options' => array_map('filter_xss_admin', $info['options list']($element, $name)),
       );
     }
     else {
@@ -230,12 +230,12 @@ class RulesDataUIURI extends RulesDataUIText {
 }
 
 /**
- * UI for textual data.
+ * UI for lists of textual data.
  */
 class RulesDataUIListText extends RulesDataUIText {
 
   public static function getDefaultMode() {
-    return 'selector';
+    return 'input';
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
@@ -259,5 +259,17 @@ class RulesDataUIListText extends RulesDataUIText {
       'content' => array('#markup' => check_plain(implode(', ', $value))),
       '#attributes' => array('class' => array('rules-parameter-list')),
     );
+  }
+}
+
+/**
+ * UI for lists of integers.
+ */
+class RulesDataUIListInteger extends RulesDataUIListText {
+
+  public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form[$name]['#element_validate'][] = 'rules_ui_element_integer_list_validate';
+    return $form;
   }
 }
