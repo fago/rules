@@ -51,12 +51,14 @@ function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
   }
   // We set the destination parameter which will be applied by drupal_goto().
   if ($force || !isset($_GET['destination'])) {
+    // This does not work any more as $url is absolute.
+    // @todo: Fix once #732542 is resolved.
     $_GET['destination'] = $url;
   }
   // This makes sure invoke rules_page_build() invokes drupal_goto() before
   // the page is output. We don't invoke it right now, as this would end the
   // the current page execution unpredictly for modules.
-  $GLOBALS['_rules_action_drupal_goto_do'] = TRUE;
+  $GLOBALS['_rules_action_drupal_goto_do'] = $url;
 }
 
 /**
