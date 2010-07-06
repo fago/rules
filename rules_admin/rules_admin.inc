@@ -92,10 +92,10 @@ function rules_admin_settings($form, &$form_state) {
   $form['rules_debug'] = array(
     '#type' => 'checkbox',
     '#title' => t('Debug rules evaluation'),
-    '#default_value' => FALSE,
+    '#default_value' => variable_get('rules_debug', FALSE),
     '#description' => t('If activated debugging information is shown when rules are evaluated.'),
   );
-  return system_settings_form($form, TRUE);
+  return system_settings_form($form);
 }
 
 /**
