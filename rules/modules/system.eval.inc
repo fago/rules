@@ -84,14 +84,15 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
 
     $replacements = array();
     $data = array();
-    // Fix to properly support 'site' tokens.
-    $var_info['site']['type'] = 'site';
     foreach (token_scan($text) as $var_name => $tokens) {
-      if ($var_name != 'site') {
+      if (isset($var_info[$var_name])) {
         $key = $var_info[$var_name]['type'];
         $data = rules_unwrap_data(array($key => $state->get($var_name)), array($key => $var_info[$var_name]));
+        $replacements += token_generate($var_info[$var_name]['type'], $tokens, $data, $options);
       }
-      $replacements += token_generate($var_info[$var_name]['type'], $tokens, $data, $options);
+      else {
+        $replacements += token_generate($var_name, $tokens, array(), $options);
+      }
     }
 
     // Optionally clean the list of replacement values.
