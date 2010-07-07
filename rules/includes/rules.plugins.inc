@@ -423,7 +423,7 @@ class RulesLoop extends RulesActionContainer {
 
   public function __construct($settings = array(), $variables = NULL) {
     $this->setUp();
-    $this->settings = (array)$settings + array(
+    $this->settings = (array) $settings + array(
       'item:var' => 'list-item',
       'item:label' => t('Current list item'),
     );
@@ -434,13 +434,16 @@ class RulesLoop extends RulesActionContainer {
 
   public function parameterInfo() {
     $info = $this->parameter;
-    $info['list']['label'] = t('The list to loop over');
+    $info['list'] += array(
+      'label' => t('List'),
+      'description' => t('The list to loop over.'),
+    );
     return $info;
   }
 
   public function integrityCheck() {
     parent::integrityCheck();
-    $this->checkVarName($this->info['item:var']);
+    $this->checkVarName($this->settings['item:var']);
   }
 
   protected function listItemType() {

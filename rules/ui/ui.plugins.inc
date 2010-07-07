@@ -134,4 +134,20 @@ class RulesRuleSetUI extends RulesActionContainerUI {
   }
 }
 
+/**
+ * UI for Rules loops.
+ *
+ * @todo Make the current list item variable name and label configurable.
+ */
+class RulesLoopUI extends RulesActionContainerUI {
 
+  function form_extract_values($form, &$form_state) {
+    parent::form_extract_values($form, $form_state);
+
+    // Make sure the current list item settings are set.
+    $this->element->settings += array(
+      'item:var' => 'list_item',
+      'item:label' => t('Current list item'),
+    );
+  }
+}
