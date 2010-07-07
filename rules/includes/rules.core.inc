@@ -1302,6 +1302,23 @@ interface RulesPluginImplInterface {
 }
 
 /**
+ * Interface for optimizing evaluation.
+ *
+ * An optimization method may rearrange the internal structure of a
+ * configuration in order to speed up the evaluation. As the configuration may
+ * change optimized configurations should not be saved permanently, except when
+ * saving it for later execution only.
+ *
+ * @see RulesEventSet
+ */
+interface RulesOptimizationInterface {
+  /**
+   * Optimizes a rule configuration in order to speed up evaluation.
+   */
+  public function optimize();
+}
+
+/**
  * Class providing default implementations of the methods of the RulesPluginImplInterface.
  *
  * If a plugin implementation does not provide a function for a method, the
@@ -1330,6 +1347,15 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
   public function assertions() {}
 }
 
+/**
+ * Class providing a default optimization method doing nothing.
+ */
+class RulesDefaultOptimizer extends FacesExtender implements RulesOptimizationInterface {
+  /**
+   * Default implementation which does nothing.
+   */
+  public function optimize() {}
+}
 
 /**
  * A RecursiveIterator for rule elements.
