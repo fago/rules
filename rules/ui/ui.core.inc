@@ -227,6 +227,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function form_validate($form, &$form_state) {
     $this->form_extract_values($form, $form_state);
 
+    // Enforce processing of the settings to ensure access for any applied input
+    // evaluators and processors is checked now.
+    $this->element->processSettings(TRUE, TRUE);
+
     if (!$this->element->access()) {
       form_set_error(NULL, t('Access violation!'));
     }
@@ -234,7 +238,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->element->integrityCheck();
     }
     catch (RulesException $e) {
-      form_set_error(implode('][',$e->keys), $e->getMessage());
+      form_set_error(implode('][', $e->keys), $e->getMessage());
     }
     if (!empty($form['settings'])) {
       $this->settingsFormValidate($form, $form_state);
@@ -246,11 +250,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public function form_extract_values($form, &$form_state) {
     $this->element->settings = array();
-    foreach ($form_state['values']['parameter'] as $name => $values) {
-      $this->element->settings += $values['settings'];
+    if (isset($form_state['values']['parameter'])) {
+      foreach ($form_state['values']['parameter'] as $name => $values) {
+        $this->element->settings += $values['settings'];
+      }
     }
-    $this->element->processSettings(TRUE, TRUE);
-
     if (!empty($form['settings'])) {
       $this->settingsFormExtractValues($form, $form_state);
     }
@@ -604,9 +608,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Make sure collapsible fieldsets work even if added via AJAX.
     // See http://drupal.org/node/768128.
     $form['#attached']['js'][] = 'misc/collapse.js';
-
     // Add our own css.
     $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+    // At element 'form' defaults as else added via system_element_info().
+    $form['#attached']['js']['misc/form.js'] = array('weight' => JS_LIBRARY + 1);
 
     // Specify the wrapper div used by #ajax.
     $form['#prefix'] = '<div id="rules-form-wrapper">';
@@ -655,9 +660,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
    * Generates a table for editing the contained elements.
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
-    self::formDefaults($form);
-    // Make sure the element has been processed.
-    $this->element->processSettings();
+    parent::form($form, $form_state, $options);
 
     $form['elements'] = array(
       // Hide during creation or for embedded elements.
@@ -696,17 +699,12 @@ class RulesContainerPluginUI extends RulesPluginUI {
       $form['elements'][$id]['operations'] = $child->operations();
     }
 
-    // Add settings form, if specified.
-    if (!empty($options['show settings'])) {
-      $this->settingsForm($form, $form_state);
+    // Alter the submit button label.
+    if (!empty($options['button']) && !empty($options['init'])) {
+      $form['submit']['#value'] = t('Continue');
     }
-    // Add submit button, if specified.
-    if (!empty($options['button'])) {
-      $form['submit'] = array(
-        '#type' => 'submit',
-        '#value' => empty($options['init']) ? t('Save changes') : t('Continue'),
-        '#weight' => 10,
-      );
+    elseif (!empty($options['button']) && !element_children($form['parameter'])) {
+      $form['submit']['#value'] = t('Save changes');
     }
   }
 
@@ -714,6 +712,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
    * Applies the values of the form to the given rule configuration.
    */
   public function form_extract_values($form, &$form_state) {
+    parent::form_extract_values($form, $form_state);
     // Get the right form values.
     $values = $form_state['values'];
     foreach ($form['#parents'] as $key) {
@@ -729,9 +728,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
         $child->setParent($parent ? $parent : $this->element);
       }
       $this->element->sortChildren(TRUE);
-    }
-    if (!empty($form['settings'])) {
-      $this->settingsFormExtractValues($form, $form_state);
     }
   }
 
@@ -768,7 +764,9 @@ class RulesContainerPluginUI extends RulesPluginUI {
   public function buildContent() {
     $content = parent::buildContent();
     // Don't link the title for container plugins.
-    $content['label'] = array('#markup' => check_plain($content['label']['#title']));
+    $content['label']['#type'] = 'markup';
+    $content['label']['#markup'] = check_plain($content['label']['#title']);
+    unset($content['label']['#title']);
     return $content;
   }
 }
@@ -830,3 +828,4 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     $form['elements']['#heading'] = t('Actions');
   }
 }
+

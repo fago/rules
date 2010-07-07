@@ -551,8 +551,8 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   protected function checkVarName($name) {
-    if (!preg_match('/^[0-9a-zA-Z]*$/', $name)) {
-      throw new RulesException('%plugin: The variable name @name contains not allowed characters.', array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
+    if (!preg_match('/^[0-9a-zA-Z_]*$/', $name)) {
+      throw new RulesException('%plugin: The variable name %name contains not allowed characters.', array('%plugin' => $this->getPluginName(), '%name' => $name), $this);
     }
   }
 
