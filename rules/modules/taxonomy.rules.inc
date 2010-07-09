@@ -33,6 +33,14 @@ function rules_taxonomy_event_info() {
       'label' => t('After updating an existing term'),
       'variables' => array(
         'term' => array('type' => 'taxonomy_term', 'label' => t('updated term')),
+        'term_unchanged' => array('type' => 'taxonomy_term', 'label' => t('unchanged term'), 'handler' => 'rules_events_entity_unchanged'),
+      ),
+    ),
+    'taxonomy_term_presave' => $defaults_term + array(
+      'label' => t('Before saving a taxonomy term'),
+      'variables' => array(
+        'term' => array('type' => 'taxonomy_term', 'label' => t('saved term')),
+        'term_unchanged' => array('type' => 'taxonomy_term', 'label' => t('unchanged term'), 'handler' => 'rules_events_entity_unchanged'),
       ),
     ),
     'taxonomy_term_delete' => $defaults_term + array(
@@ -51,6 +59,14 @@ function rules_taxonomy_event_info() {
       'label' => t('After updating an existing vocabulary'),
       'variables' => array(
         'vocabulary' => array('type' => 'taxonomy_vocabulary', 'label' => t('updated vocabulary')),
+        'vocabulary_unchanged' => array('type' => 'taxonomy_vocabulary', 'label' => t('unchanged vocabulary'), 'handler' => 'rules_events_entity_unchanged'),
+      ),
+    ),
+    'taxonomy_vocabulary_presave' => $defaults_vocab + array(
+      'label' => t('Before saving a vocabulary'),
+      'variables' => array(
+        'vocabulary' => array('type' => 'taxonomy_vocabulary', 'label' => t('saved vocabulary')),
+        'vocabulary_unchanged' => array('type' => 'taxonomy_vocabulary', 'label' => t('unchanged vocabulary'), 'handler' => 'rules_events_entity_unchanged'),
       ),
     ),
     'taxonomy_vocabulary_delete' => $defaults_vocab + array(
