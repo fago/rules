@@ -211,7 +211,7 @@ class RulesTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
 
     $vars = $rule->conditions()->offsetGet(0)->availableVariables();
-    $this->assertEqual(array_keys($vars), array('nid'), 'Loaded variable is not available to conditions.');
+    $this->assertEqual(!isset($vars['node_loaded']), 'Loaded variable is not available to conditions.');
   }
 
   /**
@@ -1186,6 +1186,18 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
     $node = node_load($node->nid, NULL, TRUE);
     $this->assertTrue(($node->created - $created_orig - 86400) == 0, 'Date offset has been added.');
+  }
+
+  /**
+   * Test site/system integration.
+   */
+  function testSystemIntegration() {
+    // Test using the 'site' variable.
+    $condition = rules_condition('data_is', array('data:select' => 'site:current-user:name', 'value' => $GLOBALS['user']->name));
+    $this->assertTrue($condition->execute(), 'Retrieved the current user\'s name.');
+    // Another test using a token replacemen.t
+    $condition = rules_condition('data_is', array('data:select' => 'site:current-user:name', 'value' => '[site:current-user:name]'));
+    $this->assertTrue($condition->execute(), 'Replaced the token for the current user\'s name.');
   }
 
 }

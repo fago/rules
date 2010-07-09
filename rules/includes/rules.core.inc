@@ -324,11 +324,7 @@ abstract class RulesPlugin extends RulesExtendable {
   public function argumentInfo() {
     // We have to filter out parameters that are already configured.
     foreach ($this->parameterInfo() as $name => $info) {
-      if (isset($this->settings[$name . ':select'])) {
-        $parts = explode(':', $this->settings[$name . ':select'], 2);
-        $vars[$parts[0]] = isset($parts[1]) ? array('type' => 'unknown') : $info;
-      }
-      elseif (!isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
+      if (!isset($this->settings[$name . ':select']) && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
         $vars[$name] = $info;
       }
     }
@@ -435,7 +431,8 @@ abstract class RulesPlugin extends RulesExtendable {
    * element.
    */
   public function availableVariables() {
-    return !$this->isRoot() ? $this->parent->stateVariables($this) : array();
+    $vars = RulesState::defaultVariables();
+    return !$this->isRoot() ? $this->parent->stateVariables($this) : $vars;
   }
 
   /**
@@ -1424,10 +1421,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function availableVariables() {
-    if ($this->isRoot()) {
-      return isset($this->info['variables']) ? $this->info['variables'] : array();
+    $vars = parent::availableVariables();
+    if ($this->isRoot() && isset($this->info['variables'])) {
+      $vars += $this->info['variables'];
     }
-    return parent::availableVariables();
+    return $vars;
   }
 
   /**

@@ -331,7 +331,7 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
         $vars = array_intersect_key($vars, $event_info[$event]['variables']);
       }
     }
-    return isset($vars) ? $vars : array();
+    return parent::availableVariables() + (isset($vars) ? $vars : array());
   }
 
   public function __sleep() {
