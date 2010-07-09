@@ -10,6 +10,59 @@
  */
 
 /**
+ * Implements hook_entity_load().
+ *
+ * We keep a clone of the unchanged entity, as loaded from the database in a
+ * static variable. We update/create this static also on update/insert. That way
+ * the static variable always represents the entity as currently saved.
+ *
+ * @see rules_entity_insert()
+ * @see rules_entity_update()
+ * @see rules_events_entity_unchanged()
+ */
+function rules_entity_load($entities, $type) {
+  $unchanged = &drupal_static('rules_entity_unchanged', array());
+  foreach ($entities as $id => $entity) {
+    $unchanged[$type][$id] = clone $entity;
+  }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function rules_entity_insert($entity, $type) {
+  $unchanged = &drupal_static('rules_entity_unchanged', array());
+  list($id) = entity_extract_ids($type, $entity);
+  $unchanged[$type][$id] = clone $entity;
+  unset($unchanged[$type][$id]->is_new);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function rules_entity_update($entity, $type) {
+  $unchanged = &drupal_static('rules_entity_unchanged', array());
+  list ($id) = entity_extract_ids($type, $entity);
+  $unchanged[$type][$id] = clone $entity;
+}
+
+/**
+ * Gets an unchanged entity that doesn't contain any recent changes.
+ *
+ * @see rules_entity_load()
+ */
+function rules_events_entity_unchanged($arguments, $info) {
+  $unchanged = &drupal_static('rules_entity_unchanged', array());
+  $type = $info['type'];
+  list($id) = entity_extract_ids($type, $arguments[$type]);
+
+  if (isset($id) && isset($unchanged[$type][$id])) {
+    return $unchanged[$type][$id];
+  }
+}
+
+
+/**
  * Node events
  * For getting the unchanged node we currently have to implement a workaround.
  * If http://drupal.org/node/651240 gets in, we can simplify that.
@@ -20,12 +73,6 @@ function rules_node_view($node, $view_mode) {
 }
 
 function rules_node_presave($node) {
-  $unchanged = &drupal_static('rules_node_unchanged', array());
-  // Save the unchanged object now so that we can make use of it later on.
-  // See rules_events_node_var_unchanged().
-  if (empty($node->is_new) && !empty($node->nid)) {
-    $unchanged[$node->nid] = clone node_load($node->nid);
-  }
   rules_invoke_event('node_presave', $node);
 }
 
@@ -41,18 +88,7 @@ function rules_node_delete($node) {
   rules_invoke_event('node_delete', $node);
 }
 
-/**
- * Gets the node object, that doesn't contain the changes.
- *
- * @see rules_events_node_variables()
- */
-function rules_events_node_var_unchanged($arguments) {
-  $unchanged = drupal_static('rules_node_unchanged');
-  $node = $arguments['node'];
-  if (isset($node->nid) && isset($unchanged[$node->nid])) {
-    return $unchanged[$node->nid];
-  }
-}
+
 
 /**
  * Invoke user events.
@@ -64,11 +100,6 @@ function rules_user_view($account, $view_mode) {
 
 function rules_user_presave(&$edit, $account, $category) {
   if ($category == 'account') {
-    $unchanged = &drupal_static('rules_user_unchanged', array());
-    if (empty($account->is_new) && !empty($account->uid)) {
-      // Save the unchanged object now so that we can make use of it later on.
-      $unchanged[$account->uid] = clone user_load($account->uid);
-    }
     rules_invoke_event('user_presave', $account);
   }
 }
@@ -98,18 +129,6 @@ function rules_user_logout(&$edit, $account) {
 }
 
 /**
- * Gets the account object, that doesn't contain the changes.
- */
-function rules_events_account_var_unchanged($arguments) {
-  $unchanged = drupal_static('rules_user_unchanged', array());
-  $account = $arguments['account'];
-  if (isset($account->uid) && isset($unchanged[$account->uid])) {
-    return $unchanged[$account->uid];
-  }
-}
-
-
-/**
  * Comment events.
  */
 
@@ -118,12 +137,6 @@ function rules_comment_view($comment) {
 }
 
 function rules_comment_presave($comment) {
-  $unchanged = &drupal_static('rules_comment_unchanged', array());
-  if (!empty($comment->cid)) {
-    // Save the unchanged object now so that we can make use of it later on.
-    // See rules_events_comment_var_unchanged().
-    $unchanged[$comment->cid] = clone comment_load($comment->cid);
-  }
   rules_invoke_event('comment_presave', $comment);
 }
 
@@ -137,17 +150,6 @@ function rules_comment_insert($comment) {
 
 function rules_comment_delete($comment) {
   rules_invoke_event('comment_delete', $comment);
-}
-
-/**
- * Gets the comment object, that doesn't contain the changes.
- */
-function rules_events_comment_var_unchanged($arguments) {
-  $unchanged = drupal_static('rules_comment_unchanged');
-  $comment = $arguments['comment'];
-  if (isset($comment->cid) && isset($unchanged[$comment->cid])) {
-    return $unchanged[$comment->cid];
-  }
 }
 
 

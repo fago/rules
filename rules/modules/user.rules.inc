@@ -33,7 +33,7 @@ function rules_user_event_info() {
       'group' => t('User'),
       'variables' => array(
         'account' => array('type' => 'user', 'label' => t('updated user')),
-        'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'), 'handler' => 'rules_events_account_var_unchanged'),
+        'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'), 'handler' => 'rules_events_entity_unchanged'),
       ),
       'access callback' => 'rules_user_integration_access',
     ),
@@ -42,7 +42,7 @@ function rules_user_event_info() {
       'group' => t('User'),
       'variables' => array(
         'account' => array('type' => 'user', 'label' => t('updated user')),
-        'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'), 'handler' => 'rules_events_account_var_unchanged'),
+        'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'), 'handler' => 'rules_events_entity_unchanged'),
       ),
       'access callback' => 'rules_user_integration_access',
     ),
