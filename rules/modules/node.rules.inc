@@ -156,7 +156,7 @@ function rules_node_action_info() {
  */
 function rules_node_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
-    return entity_metadata_node_access('view', 'node');
+    return entity_metadata_no_hook_node_access('view', 'node');
   }
 }
 
