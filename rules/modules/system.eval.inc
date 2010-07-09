@@ -114,12 +114,9 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
       '#collapsed' => TRUE,
     );
     $token_info = token_info();
-
     foreach ($var_info as $name => $info) {
       $token_types[$name] = isset($info['token type']) ? $info['token type'] : $info['type'];
     }
-    $var_info['site'] = array('label' => t('Site'), 'type' => 'site');
-    $token_types['site'] = 'site';
 
     foreach ($token_types as $name => $token_type) {
       if (isset($token_info['types'][$token_type])) {
@@ -129,7 +126,7 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
           '#prefix' => '<h3>' . t('Replacement patterns for %label', array('%label' => $var_info[$name]['label'])) . '</h3>',
         );
         foreach ($token_info['tokens'][$token_type] as $token => $info) {
-          $token = $var_info[$name]['type'] . ':' . $token;
+          $token = '[' . $var_info[$name]['type'] . ':' . $token . ']';
           $render[$name]['#rows'][$token] = array(check_plain($token), check_plain($info['name']), check_plain($info['description']));
         }
       }
