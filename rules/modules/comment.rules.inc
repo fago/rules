@@ -28,14 +28,14 @@ function rules_comment_event_info() {
       'label' => t('After updating an existing comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('updated comment')),
-        'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_comment_var_unchanged'),
+        'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_entity_unchanged'),
       ),
     ),
     'comment_presave' => $defaults + array(
       'label' => t('Before saving a comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('updated comment')),
-        'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_comment_var_unchanged'),
+        'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_entity_unchanged'),
       ),
     ),
     'comment_view' => $defaults + array(

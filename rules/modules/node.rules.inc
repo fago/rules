@@ -75,7 +75,7 @@ function rules_events_node_variables($node_label, $update = FALSE) {
       'node_unchanged' => array(
         'type' => 'node',
         'label' => t('unchanged content'),
-        'handler' => 'rules_events_node_var_unchanged',
+        'handler' => 'rules_events_entity_unchanged',
       ),
     );
   }
