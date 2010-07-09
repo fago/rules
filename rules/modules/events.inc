@@ -161,6 +161,10 @@ function rules_taxonomy_term_update($taxonomy_term) {
   rules_invoke_event('taxonomy_term_update', $taxonomy_term);
 }
 
+function rules_taxonomy_term_presave($taxonomy_term) {
+  rules_invoke_event('taxonomy_term_presave', $taxonomy_term);
+}
+
 function rules_taxonomy_term_insert($taxonomy_term) {
   rules_invoke_event('taxonomy_term_insert', $taxonomy_term);
 }
@@ -171,6 +175,10 @@ function rules_taxonomy_term_delete($taxonomy_term) {
 
 function rules_taxonomy_vocabulary_update($taxonomy_vocabulary) {
   rules_invoke_event('taxonomy_vocabulary_update', $taxonomy_vocabulary);
+}
+
+function rules_taxonomy_vocabulary_presave($taxonomy_vocabulary) {
+  rules_invoke_event('taxonomy_vocabulary_presave', $taxonomy_vocabulary);
 }
 
 function rules_taxonomy_vocabulary_insert($taxonomy_vocabulary) {
