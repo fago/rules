@@ -46,8 +46,9 @@ class RulesState {
     // Use an object in order to ensure any cloned states reference the same
     // save information.
     $this->save = new ArrayObject();
+    $data = FALSE;
+    $this->addVariable('site', $data, self::defaultVariables('site'));
   }
-
 
   /**
    * Adds the given variable to the given execution state.
@@ -278,7 +279,7 @@ class RulesState {
     }
     catch (EntityMetadataWrapperException $e) {
       // In case of an exception, re-throw it.
-      throw new RulesException('Unable to apply data selector %selector: %error.', array('%selector' => $selector, '%error' => $e->getMessage()));
+      throw new RulesException('Unable to apply data selector %selector: %error', array('%selector' => $selector, '%error' => $e->getMessage()));
     }
     return $wrapper;
   }
@@ -307,6 +308,22 @@ class RulesState {
     self::$blocked = $this->currentlyBlocked;
   }
 
+  /**
+   * Defines always available variables.
+   */
+  public static function defaultVariables($key = NULL) {
+    // Add a variable for accessing site-wide data properties.
+    $vars['site'] = array(
+      'type' => 'site',
+      'label' => t('Site information'),
+      'description' => t("Site-wide settings and other global information."),
+      // Add the property info via a callback making use of the cached info.
+      'property info alter' => array('RulesData', 'addSiteMetadata'),
+      'property info' => array(),
+      'optional' => TRUE,
+    );
+    return isset($key) ? $vars[$key] : $vars;
+  }
 }
 
 /**
@@ -439,7 +456,7 @@ class RulesData  {
         $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
         // Add in a callback that the entity metadata wrapper pick up for
         // altering the property info, such that we can add in the assertions.
-        $var_info[$selector]['property info alter'] = array('RulesData', 'applyMetadataAssertions');
+        $var_info[$selector] += array('property info alter' => array('RulesData', 'applyMetadataAssertions'));
 
         // Add any single bundle directly to the variable info, so it can be
         // used for type checking.
@@ -495,5 +512,20 @@ class RulesData  {
     return $property_info;
   }
 
+  /**
+   * Property info alter callback for the entity metadata wrapper to inject
+   * metadata for the 'site' variable. In contrast to doing this via
+   * hook_rules_data_info() this callback makes use of the already existing
+   * property info cache for site information of entity metadata.
+   *
+   * @see RulesPlugin::availableVariables()
+   */
+  public static function addSiteMetadata(EntityMetadataWrapper $wrapper, $property_info) {
+    $site_info = entity_metadata_get_info('site');
+    $property_info['properties'] += $site_info['properties'];
+    // Also invoke the usual callback for altering metadata, in case actions
+    // have specified further metadata.
+    return RulesData::applyMetadataAssertions($wrapper, $property_info);
+  }
 }
 
