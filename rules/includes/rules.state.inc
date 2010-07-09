@@ -46,22 +46,20 @@ class RulesState {
     // Use an object in order to ensure any cloned states reference the same
     // save information.
     $this->save = new ArrayObject();
-    $data = FALSE;
-    $this->addVariable('site', $data, self::defaultVariables('site'));
+    $this->addVariable('site', FALSE, self::defaultVariables('site'));
   }
 
   /**
    * Adds the given variable to the given execution state.
    */
-  public function addVariable($name, &$data, $info) {
+  public function addVariable($name, $data, $info) {
     $this->info[$name] = $info + array(
       'skip save' => FALSE,
       'type' => 'unknown',
       'handler' => FALSE,
     );
     if (isset($data)) {
-      // For unwrapped data be sure to the keep references!
-      $this->variables[$name] =& rules_wrap_data($data, $this->info[$name]);
+      $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
     }
   }
 
