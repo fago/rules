@@ -129,7 +129,8 @@ function rules_php_evaluator_help($var_info, $action_help = FALSE) {
   foreach ($var_info as $name => $info) {
     $row   = array();
     $row[] = '$'. check_plain($name);
-    $row[] = check_plain(drupal_ucfirst($cache['data_info'][$info['type']]['label']));
+    $label = isset($cache['data_info'][$info['type']]['label']) ? $cache['data_info'][$info['type']]['label'] : $info['type'];
+    $row[] = check_plain(drupal_ucfirst($label));
     $row[] = check_plain($info['label']);
     $render['vars']['#rows'][] = $row;
   }
