@@ -46,8 +46,9 @@ function rules_node_delete($node) {
  *
  * @see rules_events_node_variables()
  */
-function rules_events_node_var_unchanged($node) {
+function rules_events_node_var_unchanged($arguments) {
   $unchanged = drupal_static('rules_node_unchanged');
+  $node = $arguments['node'];
   if (isset($node->nid) && isset($unchanged[$node->nid])) {
     return $unchanged[$node->nid];
   }
@@ -99,8 +100,9 @@ function rules_user_logout(&$edit, $account) {
 /**
  * Gets the account object, that doesn't contain the changes.
  */
-function rules_events_account_var_unchanged($account) {
+function rules_events_account_var_unchanged($arguments) {
   $unchanged = drupal_static('rules_user_unchanged', array());
+  $account = $arguments['account'];
   if (isset($account->uid) && isset($unchanged[$account->uid])) {
     return $unchanged[$account->uid];
   }
@@ -140,8 +142,9 @@ function rules_comment_delete($comment) {
 /**
  * Gets the comment object, that doesn't contain the changes.
  */
-function rules_events_comment_var_unchanged($comment) {
+function rules_events_comment_var_unchanged($arguments) {
   $unchanged = drupal_static('rules_comment_unchanged');
+  $comment = $arguments['comment'];
   if (isset($comment->cid) && isset($unchanged[$comment->cid])) {
     return $unchanged[$comment->cid];
   }
