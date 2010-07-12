@@ -70,7 +70,7 @@ function rules_rules_core_data_info() {
       'wrap' => TRUE,
     ),
    'list<integer>' => array(
-      'label' => t('list of text'),
+      'label' => t('list of integer'),
       'ui class' => 'RulesDataUIListInteger',
       'wrap' => TRUE,
     ),
