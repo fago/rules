@@ -183,35 +183,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // to switch it without javascript, in case switching is possible.
     if ($supports_input_mode && empty($info['restriction'])) {
       $value = $mode == 'selector' ? t('Switch to the direct input mode') : t('Switch to data selection');
-      $link_id = drupal_html_id('rules-parameter-' . $name . '-switch-link');
 
-      $form['link'] = array(
-        '#type' => 'link',
-        '#href' => '#',
-        '#title' => $value,
-        // #id is used for ajax js code generation.
-        '#id' => $link_id,
-        // Needed to actually output the #id.
-        '#options' => array('attributes' => array('id' => $link_id)),
-        '#process' => array('ajax_process_form'),
-        // Hide the link by default and unhide it by javascript.
-        '#prefix' => '<div class="rules-show-js">',
-        '#suffix' => '</div>',
-        '#ajax' => rules_ui_form_default_ajax('none') + array(
-          'event' => 'click',
-          // Trigger as the Switch button.
-          'trigger_as' => array(
-            'name' => 'param_' . $name,
-            'value' => t('Switch'),
-          ),
-        ),
-      );
       $form['switch_button'] = array(
         '#type' => 'submit',
         '#name' => 'param_' . $name,
-        '#attributes' => array('class' => array('rules-hide-js')),
+        '#attributes' => array('class' => array('rules-switch-button')),
         '#parameter' => $name,
-        '#value' => t('Switch'),
+        '#value' => $value,
         '#submit' => array('rules_ui_parameter_replace_submit'),
         '#ajax' => rules_ui_form_default_ajax('none'),
         // Do not validate!
