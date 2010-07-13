@@ -79,6 +79,7 @@ function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
  * Clone a rules configuration form.
  */
 function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
+  $rules_config = clone $rules_config;
   $rules_config->module = 'rules';
   $rules_config->id = FALSE;
   $rules_config->name = '';
