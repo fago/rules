@@ -29,6 +29,13 @@ function rules_rules_core_data_info() {
       'label' => t('text'),
       'ui class' => 'RulesDataUIText',
     ),
+    // A formatted text as used by entity metadata.
+    'text_formatted' => array(
+      'label' => t('formatted text'),
+      'ui class' => 'RulesDataUITextFormatted',
+      'wrap' => TRUE,
+      'property info' => entity_metadata_text_formatted_properties(),
+    ),
    'decimal' => array(
       'label' => t('decimal number'),
       'parent' => 'text',
