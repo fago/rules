@@ -106,8 +106,33 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
       '#attributes' => array('class' => array('rules-parameter-text')),
     );
   }
-
 }
+
+/**
+ * UI for formatted text.
+ */
+class RulesDataUITextFormatted extends RulesDataUIText {
+
+  public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $settings += array($name => array('value' => '', 'format' => NULL));
+
+    $form[$name]['#type'] = 'text_format';
+    $form[$name]['#base_type'] = 'textarea';
+    $form[$name]['#default_value'] = $settings[$name]['value'];
+    $form[$name]['#format'] = $settings[$name]['format'];
+    return $form;
+  }
+
+  public static function render($value) {
+    return array(
+      'content' => array('#markup' => check_plain($value['value'])),
+      '#attributes' => array('class' => array('rules-parameter-text-formatted')),
+    );
+  }
+}
+
+
 
 /**
  * UI for decimal data.
