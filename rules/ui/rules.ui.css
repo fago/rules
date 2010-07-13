@@ -66,3 +66,12 @@ div ul.rules-operations-add {
   color: #fff;
 }
 
+form input.rules-switch-button {
+	-moz-border-radius: 5px 5px 5px 5px;
+	cursor: pointer;
+	font-size: 0.8em;
+	font-weight: normal;
+	margin-bottom: 1em;
+	padding: 2px;
+	text-align: center;
+}
