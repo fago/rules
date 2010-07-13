@@ -76,6 +76,24 @@ function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
 }
 
 /**
+ * Clone a rules configuration form.
+ */
+function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
+  $rules_config->module = 'rules';
+  $rules_config->id = FALSE;
+  $rules_config->name = '';
+  $rules_config->label .= ' (' . t('cloned') . ')';
+
+  $form['#validate'][] = 'rules_ui_form_edit_rules_config_validate';
+  $form['#submit'][] = 'rules_ui_form_edit_rules_config_submit';
+  $form = rules_ui_form_edit_rules_config($form, $form_state, $rules_config);
+
+  // Open the settings fieldset so altering the name is easier.
+  $form['settings']['#collapsed'] = FALSE;
+  return $form;
+}
+
+/**
  * Gets the confirmation question for valid operations, or else FALSE.
  */
 function rules_ui_confirm_operations($op, $rules_config) {
@@ -566,3 +584,4 @@ function rules_ui_element_integer_list_validate($element, &$form_state) {
     }
   }
 }
+
