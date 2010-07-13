@@ -33,6 +33,13 @@ function rules_condition_user_has_role($account, $roles, $operation = 'AND') {
 }
 
 /**
+ * Condition: User is blocked.
+ */
+function rules_condition_user_is_blocked($account) {
+  return $account->status == 0;
+}
+
+/**
  * Action: Adds roles to a particular user.
  */
 function rules_action_user_add_role($account, $roles) {
@@ -64,6 +71,21 @@ function rules_action_user_remove_role($account, $roles) {
   else {
     return FALSE;
   }
+}
+
+/**
+ * Action: Block a user.
+ */
+function rules_action_user_block($account) {
+  $account->status = 0;
+  drupal_session_destroy_uid($account->uid);
+}
+
+/**
+ * Action: Unblock a user.
+ */
+function rules_action_user_unblock($account) {
+  $account->status = 1;
 }
 
 /**

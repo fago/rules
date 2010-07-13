@@ -1102,21 +1102,48 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
    * Test integration for the user module.
    */
   function testUserIntegration() {
-    // Test adding a user role.
     $rid = $this->drupalCreateRole(array('administer nodes'), 'foo');
     $user = $this->drupalCreateUser();
 
-    // Test assigning a role.
+    // Test assigning a role with the list_add action.
     $rule = rule(array('user' => array('type' => 'user')));
     $rule->action('list_add', array('list:select' => 'user:roles', 'item' => $rid));
     $rule->execute($user);
     $this->assertTrue(isset($user->roles[$rid]), 'Role assigned to user.');
 
-    // Test removing a role.
+    // Test removing a role with the list_remove action.
     $rule = rule(array('user' => array('type' => 'user')));
     $rule->action('list_remove', array('list:select' => 'user:roles', 'item' => $rid));
     $rule->execute($user);
     $this->assertTrue(!isset($user->roles[$rid]), 'Role removed from user.');
+
+    // Test assigning a role with user_add_role action.
+    $rule = rule(array('user' => array('type' => 'user')));
+    $rule->action('user_add_role', array('account:select' => 'user', 'roles' => array($rid)));
+    $rule->execute($user);
+
+    $user = user_load($user->uid, TRUE);
+    $result = rules_condition('user_has_role', array('roles' => array($rid)))->execute($user);
+    $this->assertTrue($result, 'Role assigned to user.');
+
+    // Test removing a role with the user_remove_role action.
+    $rule = rule(array('user' => array('type' => 'user')));
+    $rule->action('user_remove_role', array('account:select' => 'user', 'roles' => array($rid)));
+    $rule->execute($user);
+
+    $user = user_load($user->uid, TRUE);
+    $result = rules_condition('user_has_role', array('roles' => array($rid)))->execute($user);
+    $this->assertFalse($result, 'Role removed from user.');
+
+    // Test user blocking.
+    rules_action('user_block')->execute($user);
+    $user = user_load($user->uid, TRUE);
+    $this->assertTrue(rules_condition('user_is_blocked')->execute($user), 'User has been blocked.');
+
+    rules_action('user_unblock')->execute($user);
+    $user = user_load($user->uid, TRUE);
+    $this->assertFalse(rules_condition('user_is_blocked')->execute($user), 'User has been unblocked.');
+
     RulesLog::logger()->checkLog();
   }
 

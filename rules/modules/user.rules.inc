@@ -118,7 +118,7 @@ function rules_user_condition_info() {
     'user_has_role' => array(
       'label' => t('User has role(s)'),
       'parameter' => array(
-        'user' => array('type' => 'user', 'label' => t('User')),
+        'account' => array('type' => 'user', 'label' => t('User')),
         'roles' => array(
           'type' => 'list<integer>',
           'label' => t('Roles'),
@@ -137,6 +137,15 @@ function rules_user_condition_info() {
       'group' => t('User'),
       'access callback' => 'rules_user_integration_access',
       'base' => 'rules_condition_user_has_role',
+    ),
+    'user_is_blocked' => array(
+      'label' => t('User is blocked'),
+      'parameter' => array(
+        'account' => array('type' => 'user', 'label' => t('User')),
+      ),
+      'group' => t('User'),
+      'access callback' => 'rules_user_integration_access',
+      'base' => 'rules_condition_user_is_blocked',
     ),
   );
 }
@@ -164,7 +173,7 @@ function rules_user_condition_operations() {
 function rules_user_action_info() {
   $defaults = array(
    'parameter' => array(
-      'user' => array(
+      'account' => array(
         'type' => 'user',
         'label' => t('User'),
         'description' => t('The user whos roles should be changed.'),
@@ -186,6 +195,25 @@ function rules_user_action_info() {
   $items['user_remove_role'] = $defaults + array(
     'label' => t('Remove user role'),
     'base' => 'rules_action_user_remove_role',
+  );
+  $defaults = array(
+   'parameter' => array(
+      'account' => array(
+        'type' => 'user',
+        'label' => t('User'),
+        'save' => TRUE,
+      ),
+    ),
+    'group' => t('User'),
+    'access callback' => 'rules_user_integration_access',
+  );
+  $items['user_block'] = $defaults + array(
+    'label' => t('Block a user'),
+    'base' => 'rules_action_user_block',
+  );
+  $items['user_unblock'] = $defaults + array(
+    'label' => t('Unblock a use'),
+    'base' => 'rules_action_user_unblock',
   );
   return $items;
 }
