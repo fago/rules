@@ -8,23 +8,54 @@
   display: block;
 }
 
-.rules-container-plugin ul.action-links .delete a, .rules-container-plugin ul.action-links .edit a {
+.rules-table ul.action-links .delete a, .rules-table ul.action-links .edit a {
 	background: none;
 	padding-left: 0px;
 }
 
-.rules-container-plugin ul.action-links a {
+.rules-table ul.action-links a {
   line-height: 1em;
 }
 
-.rules-container-plugin ul.action-links {
+.rules-table ul.action-links {
 	margin: 0px;
+	padding-left: 2px;
 }
 
-div ul.rules-operations-add {
-	margin: 0px;
-	margin-bottom: 2em;
+table tr.rules-elements-add {
+  background-color: #e5eff4;
 }
+
+tr.rules-elements-add td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.rules-table {
+	margin-bottom: 3em;
+}
+/* We cannot set a positive margin-top for rules tables as the table drag link
+   should be positioned directly on top of the table. Thus we use a large bottom
+   margin and fix the upper most margin: */
+#rules-form-wrapper:first-child {
+  margin-top: 1.5em;
+}
+
+/* Fix table drag weights to don't take extra space */
+#rules-form-wrapper .tabledrag-toggle-weight-wrapper {
+	position: absolute;
+	width: 100%;
+}
+
+
+
+.rules-table caption {
+	font-size: 110%;
+	font-weight: bold;
+	padding-bottom: 0.5em;
+	text-align: left;
+}
+
 
 .rules-debug-log {
 	background-color: #EEEEEE;

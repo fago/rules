@@ -24,7 +24,7 @@ class RulesRuleUI extends RulesActionContainerUI {
     $form += array('conditions' => array('#weight' => -5, '#tree' => TRUE));
     $this->conditions->form($form['conditions'], $form_state);
     unset($form['conditions']['negate']);
-    $form['conditions']['add']['#access'] = empty($options['init']);
+    $form['conditions']['elements']['#add']['#access'] = empty($options['init']);
 
     // Add actions form.
     $iterator = new RecursiveIteratorIterator($this->rule->actions(), RecursiveIteratorIterator::SELF_FIRST);
@@ -68,9 +68,11 @@ class RulesReactionRuleUI extends RulesRuleUI {
     $event_info = rules_fetch_data('event_info');
     $form['events']['table'] = array(
       '#theme' => 'table',
+      '#caption' => 'Events',
       '#header' => array('Event', 'Operations'),
       '#empty' => t('None'),
     );
+    $form['events']['table']['#attributes']['class'][] = 'rules-table';
     foreach ($this->rule->events() as $event_name) {
       $form['events']['table']['#rows'][$event_name] = array(
         check_plain($event_info[$event_name]['label']),
@@ -78,14 +80,17 @@ class RulesReactionRuleUI extends RulesRuleUI {
       );
     }
 
-    $form['events']['add']['#theme'] = 'links__rules';
-    $form['events']['add']['#attributes']['class'][] = 'rules-operations-add';
-    $form['events']['add']['#attributes']['class'][] = 'action-links';
-    $form['events']['add']['#links']['add_event'] = array(
+    // Add the "add event" row.
+    $cell['colspan'] = 3;
+    $cell['data']['#theme'] = 'links__rules';
+    $cell['data']['#attributes']['class'][] = 'rules-operations-add';
+    $cell['data']['#attributes']['class'][] = 'action-links';
+    $cell['data']['#links']['add_event'] = array(
       'title' => t('Add event'),
       'href' => RulesPluginUI::path($this->rule->name, 'add/event'),
       'query' => drupal_get_destination(),
     );
+    $form['events']['table']['#rows'][] = array('data' => array($cell), 'class' => array('rules-elements-add'));
 
     parent::form($form, $form_state, $options);
   }
@@ -130,7 +135,7 @@ class RulesRuleSetUI extends RulesActionContainerUI {
     // Only show the add rule link.
     $form['add']['#links'] = array_intersect_key($form['add']['#links'], array('add_rule' => 1));
     $form['elements']['#attributes']['class'][] = 'rules-rule-set';
-    $form['elements']['#heading'] = t('Rules');
+    $form['elements']['#caption'] = t('Rules');
   }
 }
 
