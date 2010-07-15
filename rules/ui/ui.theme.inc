@@ -14,8 +14,8 @@
 function theme_rules_elements($variables) {
   $form = $variables['element'];
   $form['#theme'] = 'table';
-  $form['#header'] = array($form['#heading'], t('Weight'), t('Operations'));
-  $form['#attributes']['id'] = 'rules-' . drupal_html_id($form['#heading']) . '-id';
+  $form['#header'] = array(t('Elements'), t('Weight'), t('Operations'));
+  $form['#attributes']['id'] = 'rules-' . drupal_html_id($form['#caption']) . '-id';
 
   foreach (element_children($form) as $element_id) {
     $element = &$form[$element_id];
@@ -29,7 +29,7 @@ function theme_rules_elements($variables) {
     $row[] = theme('indentation', array('size' => $element['#depth'])) . drupal_render($element['label']);
 
     $row[] = drupal_render($element['weight']) . drupal_render($element['parent_id']) . drupal_render($element['element_id']);
-    $row[] = array('class' => 'rules-operations', 'data' => drupal_render($element['operations']));
+    $row[] = array('class' => 'rules-operations', 'data' => $element['operations']);
 
     $row = array('data' => $row) + $element['#attributes'];
     $row['class'][] = 'draggable';
@@ -42,6 +42,15 @@ function theme_rules_elements($variables) {
     drupal_add_tabledrag($form['#attributes']['id'], 'match', 'parent', 'rules-parent-id', 'rules-parent-id', 'rules-element-id', TRUE, 10);
     drupal_add_tabledrag($form['#attributes']['id'], 'order', 'sibling', 'rules-element-weight');
   }
+  else {
+    $form['#rows'][] = array(array('data' => t('None'), 'colspan' => 3));
+  }
+  if (!empty($form['#add'])) {
+    $row = array();
+    $row[] = array('data' => $form['#add'], 'colspan' => 3);
+    $form['#rows'][] = array('data' => $row, 'class' => array('rules-elements-add'));
+  }
+
   return drupal_render($form);
 }
 
@@ -54,7 +63,7 @@ function theme_rules_content_group($variables) {
   foreach (element_children($element) as $key) {
     $output[] = drupal_render($element[$key]);
   }
-  $heading = !empty($element['#heading']) ? "<span class='rules-content-heading'>" . $element['#heading'] . ': </span>' : '';
+  $heading = !empty($element['#caption']) ? "<span class='rules-content-heading'>" . $element['#caption'] . ': </span>' : '';
   return !empty($output) ? $heading . implode(', ', $output) : '';
 }
 

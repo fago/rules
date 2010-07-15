@@ -363,7 +363,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#suffix' => '</div><div class="description">'
     );
     $content['parameter'] = array(
-      '#heading' => t('Parameter'),
+      '#caption' => t('Parameter'),
       '#theme' => 'rules_content_group',
     );
     foreach ($this->element->parameterInfo() as $name => $parameter) {
@@ -646,8 +646,9 @@ class RulesContainerPluginUI extends RulesPluginUI {
       '#tree' => TRUE,
       '#theme' => 'rules_elements',
       '#empty' => t('None'),
-      '#heading' => t('Elements')
+      '#caption' => t('Elements')
     );
+    $form['elements']['#attributes']['class'][] = 'rules-table';
     $form['elements']['#attributes']['class'][] = 'rules-container-plugin';
 
     // Recurse over all element childrens or use the provided iterator.
@@ -757,11 +758,11 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     parent::form($form, $form_state, $options, $iterator);
     // Add the add-* operation links.
-    $form['add'] = self::addOperations();
+    $form['elements']['#add'] = self::addOperations();
     // Hide that during creation.
-    $form['add']['#access'] = empty($options['init']) && $this->element->isRoot();
+    $form['elements']['#add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-condition-container';
-    $form['elements']['#heading'] = t('Conditions');
+    $form['elements']['#caption'] = t('Conditions');
 
     // By default skip
     if (!empty($options['init'])) {
@@ -799,11 +800,11 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     parent::form($form,  $form_state, $options, $iterator);
     // Add the add-* operation links.
-    $form['add'] = self::addOperations();
+    $form['elements']['#add'] = self::addOperations();
     // Hide that during creation.
-    $form['add']['#access'] = empty($options['init']) && $this->element->isRoot();
+    $form['elements']['#add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
-    $form['elements']['#heading'] = t('Actions');
+    $form['elements']['#caption'] = t('Actions');
   }
 }
 
