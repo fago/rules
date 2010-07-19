@@ -135,3 +135,73 @@ function rules_admin_add_reaction_rule_submit($form, &$form_state) {
   $rules_config->form_submit($form, $form_state);
   $form_state['redirect'] = RulesPluginUI::path($rules_config->name);
 }
+
+/**
+ * Add component form.
+ */
+function rules_admin_add_component($form, &$form_state) {
+  RulesPluginUI::formDefaults($form);
+  $cache = rules_get_cache();
+  $options = rules_extract_property(rules_filter_array($cache['plugin_info'], 'component', TRUE), 'label');
+
+  $form['plugin_name'] = array(
+    '#type' => 'select',
+    '#title' => t('Component plugin'),
+    '#options' => $options,
+    '#description' => t('Choose which kind of component to create.'),
+    '#weight' => -2,
+    '#default_value' => isset($form_state['values']['plugin_name']) ? $form_state['values']['plugin_name'] : '',
+  );
+
+  if (!isset($form_state['rules_config'])) {
+    $form['continue'] = array(
+      '#type' => 'submit',
+      '#name' => 'continue',
+      '#submit' => array('rules_admin_add_component_create_submit'),
+      '#value' => t('Continue'),
+    );
+  }
+  else {
+    $form['plugin_name']['#disabled'] = TRUE;
+    $form_state['rules_config']->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE));
+    $form['settings']['#collapsible'] = FALSE;
+    $form['settings']['#type'] = 'container';
+    $form['settings']['label']['#default_value'] = '';
+    $form['settings']['#weight'] = -1;
+
+    // Hide the rule elements stuff for now.
+    foreach (array('elements', 'negate') as $key) {
+      $form[$key]['#access'] = FALSE;
+    }
+    foreach (array('active', 'weight') as $key) {
+      $form['settings'][$key]['#access'] = FALSE;
+    }
+  }
+  return $form;
+}
+
+/**
+ * Submit callback that creates the new component object initially.
+ */
+function rules_admin_add_component_create_submit($form, &$form_state) {
+  $form_state['rules_config'] = rules_plugin_factory($form_state['values']['plugin_name']);
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Validation callback for adding a component.
+ */
+function rules_admin_add_component_validate($form, &$form_state) {
+  if (isset($form_state['rules_config'])) {
+    $form_state['rules_config']->form_validate($form, $form_state);
+  }
+}
+
+/**
+ * Final submit callback for adding a component.
+ */
+function rules_admin_add_component_submit($form, &$form_state) {
+  $rules_config = $form_state['rules_config'];
+  $rules_config->form_submit($form, $form_state);
+  $form_state['redirect'] = RulesPluginUI::path($rules_config->name);
+}

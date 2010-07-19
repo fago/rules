@@ -47,6 +47,12 @@ function rules_schema() {
         'default' => 'rules',
         'description' => 'The module that provides the configuration.',
       ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The label of the configuration.',
+      ),
      'plugin' => array(
         'type' => 'varchar',
         'length' => 127,
@@ -103,5 +109,3 @@ function rules_schema() {
   $schema['cache_rules']['description'] = 'Cache table for the rules engine to store configured items.';
   return $schema;
 }
-
-

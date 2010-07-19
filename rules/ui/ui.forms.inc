@@ -234,6 +234,11 @@ function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, 
 function rules_ui_add_element_submit($form, &$form_state) {
   $element = rules_plugin_factory($form_state['plugin'], $form_state['values']['element_name']);
 
+  // Always add the new element at the bottom, thus set an appropriate weight.
+  $iterator = $form_state['parent_element']->getIterator();
+  if ($sibling = end($iterator)) {
+    $element->weight = $sibling->weight + 1;
+  }
   // Clear the element settings so they won't be processed on serialization as
   // there is nothing to be processed yet.
   $element->settings = array();

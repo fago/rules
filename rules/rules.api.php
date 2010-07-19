@@ -345,7 +345,8 @@ function hook_rules_data_info() {
  *   An array of information about the module's provided rules plugins. The
  *   array contains a sub-array for each plugin, with the plugin name as the
  *   key. Possible attributes for each sub-array are:
- *   - label: A label for the plugin. Start capitalized. Required.
+ *   - label: A label for the plugin. Start capitalized. Required only for
+ *     components (see below).
  *   - class: The implementation class. Has to extend the RulesPlugin class.
  *   - embeddable: A container class in which elements of those plugin may be
  *     embedded or FALSE to disallow embedding. Common classes that are used
@@ -383,23 +384,23 @@ function hook_rules_data_info() {
 function hook_rules_plugin_info() {
   return array(
     'or' => array(
+      'label' => t('Condition set (OR)'),
       'class' => 'RulesOr',
       'embeddable' => 'RulesConditionContainer',
       'component' => TRUE,
-    ),
-    'and' => array(
-      'class' => 'RulesAnd',
-      'embeddable' => 'RulesConditionContainer',
-      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesConditionContainerUI',
+        ),
+      ),
     ),
     'rule' => array(
       'class' => 'Rule',
       'embeddable' => 'RulesRuleSet',
-      'extenders' => array (
-      // Interfaces => array( class => className / methods => array of Methods).
-      ),
-      'overrides' => array(
-      // Array of overrides each being an array ('methods' => .., 'file' => ..).
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesRuleUI',
+        ),
       ),
     ),
   );
