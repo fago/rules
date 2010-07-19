@@ -335,6 +335,7 @@ function rules_rules_plugin_info() {
       ),
     ),
     'or' => array(
+      'label' => t('Condition set (OR)'),
       'class' => 'RulesOr',
       'embeddable' => 'RulesConditionContainer',
       'component' => TRUE,
@@ -345,6 +346,7 @@ function rules_rules_plugin_info() {
       ),
     ),
     'and' => array(
+      'label' => t('Condition set (AND)'),
       'class' => 'RulesAnd',
       'embeddable' => 'RulesConditionContainer',
       'component' => TRUE,
@@ -391,6 +393,7 @@ function rules_rules_plugin_info() {
       ),
     ),
     'rule set' => array(
+      'label' => t('Rule set'),
       'class' => 'RulesRuleSet',
       'component' => TRUE,
       // Rule sets don't get embedded - we use a separate action to execute.
@@ -673,8 +676,8 @@ function rules_update_array(array $array, array $update) {
  */
 function rules_extract_property($arrays, $key) {
   $data = array();
-  foreach ($elements as $name => $info) {
-    $data[$name] = $info[$key];
+  foreach ($arrays as $name => $item) {
+    $data[$name] = $item[$key];
   }
   return $data;
 }

@@ -21,6 +21,22 @@ class RulesRuleUI extends RulesActionContainerUI {
   }
 
   public function form(&$form, &$form_state, $options = array()) {
+    $label = $this->element->label();
+    // Automatically add a counter to unlabelled rules.
+    if ($label == t('unlabeled') && !$this->element->isRoot() && !empty($options['init'])) {
+      $parent = $this->element->parentElement();
+      $label .= ' ' . count($parent->getIterator());
+    }
+
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => 'Label',
+      '#default_value' => $label,
+      '#required' => TRUE,
+      '#weight' => -5,
+      '#description' => t('The human-readable name.'),
+    );
+
     $form += array('conditions' => array('#weight' => -5, '#tree' => TRUE));
     $this->conditions->form($form['conditions'], $form_state);
     unset($form['conditions']['negate']);
@@ -42,6 +58,9 @@ class RulesRuleUI extends RulesActionContainerUI {
     if (isset($form['conditions'])) {
       $this->conditions->extender('RulesConditionContainerUI')->form_extract_values($form['conditions'], $form_state);
     }
+    if (!empty($form_state['values']['label'])) {
+      $this->element->label = $form_state['values']['label'];
+    }
     parent::form_extract_values($form, $form_state);
   }
 
@@ -60,6 +79,8 @@ class RulesRuleUI extends RulesActionContainerUI {
 class RulesReactionRuleUI extends RulesRuleUI {
 
   public function form(&$form, &$form_state, $options = array()) {
+    $form['#label']['#access'] = FALSE;
+
     $form['events'] = array(
       '#type' => 'container',
       '#weight' => -10,
@@ -133,7 +154,7 @@ class RulesRuleSetUI extends RulesActionContainerUI {
     // elements will be displayed.
     parent::form($form, $form_state, $options, $this->element->getIterator());
     // Only show the add rule link.
-    $form['add']['#links'] = array_intersect_key($form['add']['#links'], array('add_rule' => 1));
+    $form['elements']['#add']['#links'] = array_intersect_key($form['elements']['#add']['#links'], array('add_rule' => 1));
     $form['elements']['#attributes']['class'][] = 'rules-rule-set';
     $form['elements']['#caption'] = t('Rules');
   }
