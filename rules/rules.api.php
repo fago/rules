@@ -291,7 +291,7 @@ function hook_rules_event_info() {
  * your data in rules, make it an entity if possible and provide metadata about
  * its properties and CRUD functions by integrating with the entity metadata
  * module.
- * For a list of data types defined by rules see rules_data_data_info().
+ * For a list of data types defined by rules see rules_rules_core_data_info().
  *
  *
  * @return
@@ -323,7 +323,7 @@ function hook_rules_event_info() {
  *
  *  @see entity_metadata_wrapper()
  *  @see hook_rules_data_info_alter()
- *  @see rules_data_data_info()
+ *  @see rules_rules_core_data_info()
  */
 function hook_rules_data_info() {
   return array(
