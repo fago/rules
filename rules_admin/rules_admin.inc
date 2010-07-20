@@ -35,12 +35,14 @@ function rules_admin_reaction_overview($form, &$form_state) {
   $category = !empty($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
 
   $conditions = array('event' => $event, 'plugin' => 'reaction rule', 'active' => TRUE);
-  $form['active'] = RulesPluginUI::overviewTable(array_filter($conditions), t('There are no matching active reaction rules.'));
-  $form['active']['#prefix'] = '<h4>' . t('Active rules') . '</h4>';
+  $form['active'] = RulesPluginUI::overviewTable(array_filter($conditions));
+  $form['active']['#caption'] = t('Active rules');
+  $form['acitve']['#empty'] = t('There are no matching active reaction rules.');
 
   $conditions = array_filter(array('event' => $event, 'plugin' => 'reaction rule')) + array('active' => FALSE);
-  $form['inactive'] = RulesPluginUI::overviewTable($conditions, t('There are no matching inactive reaction rules.'));
-  $form['inactive']['#prefix'] = '<h4>' . t('Inactive rules') . '</h4>';
+  $form['inactive'] = RulesPluginUI::overviewTable($conditions);
+  $form['inactive']['#caption'] = t('Inactive rules');
+  $form['inactive']['#empty'] = t('There are no matching inactive reaction rules.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || (count($form['active']['#rows']) + count($form['inactive']['#rows'])) < 20;
   $form['#submit'][] = 'rules_admin_form_rebuild_submit';
@@ -78,7 +80,8 @@ function rules_admin_components_overview($form, &$form_state) {
   // Get the plugin name usable as component.
   $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
   $conditions = array('plugin' => $plugins);
-  $form['table'] = RulesPluginUI::overviewTable($conditions, t('There are no rule components.'));
+  $form['table'] = RulesPluginUI::overviewTable($conditions);
+  $form['table']['#empty'] = t('There are no rule components.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || count($form['table']['#rows']) < 20;
   $form['#submit'][] = 'rules_admin_form_rebuild_submit';

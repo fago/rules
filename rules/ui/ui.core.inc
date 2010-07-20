@@ -497,7 +497,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * @return Array
    *   A renderable array.
    */
-  public static function overviewTable($conditions = array(), $empty_text) {
+  public static function overviewTable($conditions = array()) {
     $configs = rules_config_load_multiple(FALSE, $conditions);
     $rows = array();
     $event_info = rules_fetch_data('event_info');
@@ -551,8 +551,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $empty_text,
+      '#empty' => t('None'),
     );
+    $table['#attributes']['class'][] = 'rules-table';
     return $table;
   }
 
