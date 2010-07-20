@@ -146,7 +146,7 @@ abstract class RulesExtendable extends FacesExtendable {
    * Force the object to be setUp, this executes setUp() if not done yet.
    */
   public function forceSetUp() {
-    if (!isset($this->cache)) {
+    if (!isset($this->cache) || (!empty($this->itemInfo['faces_cache']) && !$this->faces)) {
       $this->setUp();
     }
   }
@@ -908,6 +908,7 @@ abstract class RulesPlugin extends RulesExtendable {
         // Allow modules to alter the cached component.
         drupal_alter('rules_component', $this->itemName, $component);
         cache_set('comp_' . $component->name, $component, 'cache_rules');
+        $component->destroy();
       }
     }
   }
@@ -932,7 +933,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    */
   function __construct($name = NULL, $settings = array()) {
     $this->elementName = $name;
-    $this->settings = (array)$settings + array('#_needs_processing' => TRUE);
+    $this->settings = (array) $settings + array('#_needs_processing' => TRUE);
     $this->setUp();
   }
 
@@ -959,15 +960,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     if (isset($this->settings['#info'])) {
       $this->info = rules_update_array($this->info, $this->settings['#info']);
-    }
-  }
-
-  /**
-   * Overridden to also re-setup in case we have no element info.
-   */
-  public function forceSetUp() {
-    if (!isset($this->cache) || count(array_filter($this->info)) == 0) {
-      $this->setUp();
     }
   }
 
