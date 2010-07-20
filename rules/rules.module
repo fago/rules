@@ -205,6 +205,10 @@ function _rules_rebuild_cache(&$cache) {
     $item->rebuildCache($info, $cache);
   }
   cache_set('data', $cache, 'cache_rules');
+  // Rebuilding the cache loads components with an incomplete cache. As a
+  // consequence the entities in the controllers cache are not fully setuped.
+  // Thus clear the cache and free the memory.
+  entity_get_controller('rules_config')->resetCache();
 }
 
 /**
