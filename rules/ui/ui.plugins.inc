@@ -85,6 +85,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
     $form['events'] = array(
       '#type' => 'container',
       '#weight' => -10,
+      '#access' => empty($options['init']),
     );
 
     $event_info = rules_fetch_data('event_info');
