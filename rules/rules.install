@@ -52,6 +52,7 @@ function rules_schema() {
         'length' => '255',
         'not null' => TRUE,
         'description' => 'The label of the configuration.',
+        'default' => 'unlabeled',
       ),
      'plugin' => array(
         'type' => 'varchar',
