@@ -76,6 +76,60 @@ interface RulesPluginUIInterface {
 }
 
 /**
+ * Helper object for mapping elements to ids.
+ */
+class RulesElementMap {
+
+  /**
+   * @var RulesPlugin
+   */
+  protected $configuration;
+  protected $index = array();
+  protected $counter = 0;
+
+  public function __construct(RulesPlugin $config) {
+    $this->configuration = $config->root();
+  }
+
+  /**
+   * Makes sure each element has an assigned id.
+   */
+  public function index($element = NULL) {
+    if (!isset($element)) {
+      $element = $this->configuration;
+    }
+    $id = &$element->property('elementId');
+
+    // Generate a new id if necessary.
+    if (!isset($id)) {
+      $this->counter++;
+      $id = $this->counter;
+    }
+    elseif ($id > $this->counter) {
+      $this->counter = $id;
+    }
+    $this->index[$id] = $element;
+
+    // Recurse down the tree.
+    if ($element instanceof RulesContainerPlugin) {
+      foreach ($element as $child) {
+        $this->index($child);
+      }
+    }
+  }
+
+  /**
+   * Looks up the element with the given id.
+   */
+  public function lookup($id) {
+    if (!$this->index) {
+      $this->index();
+    }
+    return isset($this->index[$id]) ? $this->index[$id] : FALSE;
+  }
+}
+
+/**
  * Faces UI extender for all kind of Rules plugins. Provides various useful
  * methods for any rules UI.
  */
@@ -246,10 +300,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->settingsFormSubmit($form, $form_state);
     }
     $this->element->save();
-    // Clear the element id index map, so the map is regenerated in case of a
-    // form rebuild. That way the map is indentical to the map that would be
-    // generated on the next page load.
-    self::clearElementMap($this->element);
     drupal_set_message(t('Your changes have been saved.'));
   }
 
@@ -403,12 +453,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $render['#links']['edit'] = array(
       'title' => t('edit'),
       'href' => RulesPluginUI::path($name, 'edit', $this->element),
-      'query' => drupal_get_destination(),
     );
     $render['#links']['delete'] = array(
       'title' => t('delete'),
       'href' => RulesPluginUI::path($name, 'delete', $this->element),
-      'query' => drupal_get_destination(),
     );
     return $render;
   }
@@ -417,74 +465,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Implements RulesPluginUIInterface.
    */
   public function help() {}
-
-  /**
-   * Returns the child element id of the given child.
-   */
-  public static function childElementId($element) {
-    self::indexConfig($element);
-    return $element->childElementId;
-  }
-
-  /**
-   * Returns the child element associated with the given id.
-   */
-  public static function getChildElementById($rules_config, $id) {
-    $rules_config = $rules_config->root();
-    self::indexConfig($rules_config);
-    if (isset($rules_config->map[$id])) {
-      return $rules_config->map[$id];
-    }
-    return FALSE;
-  }
-
-  /**
-   * Generates child element ids for lookup up elements.
-   */
-  protected static function indexConfig(RulesPlugin $element, &$map = array()) {
-    // Generate them only once.
-    if (!isset($element->childElementId)) {
-      $counter = &drupal_static(__FUNCTION__);
-
-      if (!$map) {
-        // In case a new element has no id yet, get the previous map.
-        if (!empty($element->root()->map)) {
-          $map =& $element->root()->map;
-        }
-        elseif ($element->root() === $element) {
-          $counter = 0;
-          $element->map = array();
-          $map =& $element->map;
-        }
-        else {
-          self::indexConfig($element->root(), $map);
-          return;
-        }
-      }
-      $counter++;
-      $map[$counter] = $element;
-      $element->childElementId = $counter;
-
-      if ($element instanceof RulesContainerPlugin) {
-        foreach ($element as $child) {
-          self::indexConfig($child, $map);
-        }
-      }
-    }
-  }
-
-  /**
-   * Clears the current element map.
-   */
-  public static function clearElementMap($element) {
-    $element = $element->root();
-    if (!empty($element->map)) {
-      foreach ($element->map as $child) {
-        unset($child->childElementId);
-      }
-      unset($element->map);
-    }
-  }
 
   /**
    * Generates the render array for a overview configuration table for arbitrary
@@ -562,7 +542,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * id of the configuration with the given name.
    */
   public static function path($name, $op = NULL, RulesPlugin $element = NULL) {
-    $element_id = isset($element) ? self::childElementId($element) : FALSE;
+    $element_id = isset($element) ? $element->elementId() : FALSE;
     return implode('/', array_filter(array(RULES_UI_RULE_PATH, $name, $op, $element_id)));
   }
 
@@ -656,9 +636,10 @@ class RulesContainerPluginUI extends RulesPluginUI {
     $iterator = isset($iterator) ? $iterator : new RecursiveIteratorIterator($this->element, RecursiveIteratorIterator::SELF_FIRST);
     $root_depth = $this->element->depth();
     foreach ($iterator as $key => $child) {
-      $id = self::childElementId($child);
+      $id = $child->elementId();
 
-      $is_container = $child instanceof RulesContainerPlugin;
+      // Do not render rules as container element when displayed in a rule set.
+      $is_container = $child instanceof RulesContainerPlugin && !($child instanceof Rule);
       $form['elements'][$id] = array(
         '#depth' => $child->depth() - $root_depth - 1,
         '#container' => $is_container,
@@ -670,7 +651,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
       );
       $form['elements'][$id]['parent_id'] = array(
         '#type' => 'hidden',
-        '#default_value' => self::childElementId($child->property('parent')),
+        '#default_value' => $child->parentElement()->elementId(),
       );
       $form['elements'][$id]['element_id'] = array(
         '#type' => 'hidden',
@@ -683,7 +664,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
     if (!empty($options['button']) && !empty($options['init'])) {
       $form['submit']['#value'] = t('Continue');
     }
-    elseif (!empty($options['button']) && !element_children($form['parameter'])) {
+    elseif (!empty($options['button']) && $this->element->isRoot()) {
       $form['submit']['#value'] = t('Save changes');
     }
   }
@@ -700,11 +681,10 @@ class RulesContainerPluginUI extends RulesPluginUI {
     }
     // Now apply the new hierarchy.
     if (isset($values['elements'])) {
-      $root_element = $this->element->root();
       foreach ($values['elements'] as $id => $data) {
-        $child = self::getChildElementById($root_element, $id);
+        $child = $this->element->elementMap()->lookup($id);
         $child->weight = $data['weight'];
-        $parent = self::getChildElementById($root_element, $data['parent_id']);
+        $parent = $this->element->elementMap()->lookup($data['parent_id']);
         $child->setParent($parent ? $parent : $this->element);
       }
       $this->element->sortChildren(TRUE);
@@ -733,7 +713,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
         $render['#links']['add_' . $plugin] = array(
           'title' => t('Add !name', array('!name' => $plugin)),
           'href' => RulesPluginUI::path($name, 'add/' . $plugin, $this->element),
-          'query' => drupal_get_destination(),
         );
       }
     }
@@ -760,8 +739,6 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
     parent::form($form, $form_state, $options, $iterator);
     // Add the add-* operation links.
     $form['elements']['#add'] = self::addOperations();
-    // Hide that during creation.
-    $form['elements']['#add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-condition-container';
     $form['elements']['#caption'] = t('Conditions');
 
@@ -802,8 +779,6 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     parent::form($form,  $form_state, $options, $iterator);
     // Add the add-* operation links.
     $form['elements']['#add'] = self::addOperations();
-    // Hide that during creation.
-    $form['elements']['#add']['#access'] = empty($options['init']) && $this->element->isRoot();
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
     $form['elements']['#caption'] = t('Actions');
   }

@@ -478,6 +478,7 @@ function rules_config_load_multiple($names = array(), $conditions = array()) {
  * Loads a single rule configuration from the database.
  *
  * @see rules_config_load_multiple()
+ * @return RulesPlugin
  */
 function rules_config_load($name) {
   $configs = entity_get_controller('rules_config')->load(array($name));
@@ -825,7 +826,7 @@ function rules_menu() {
  */
 function rules_element_load($element_id, $config_name) {
   $config = rules_config_load($config_name);
-  return RulesPluginUI::getChildElementById($config, $element_id);
+  return $config->elementMap()->lookup($element_id);
 }
 
 /**
