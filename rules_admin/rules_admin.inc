@@ -35,12 +35,13 @@ function rules_admin_reaction_overview($form, &$form_state) {
   $category = !empty($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
 
   $conditions = array('event' => $event, 'plugin' => 'reaction rule', 'active' => TRUE);
-  $form['active'] = RulesPluginUI::overviewTable(array_filter($conditions));
+  $options = array('show plugin' => FALSE);
+  $form['active'] = RulesPluginUI::overviewTable(array_filter($conditions), $options);
   $form['active']['#caption'] = t('Active rules');
   $form['acitve']['#empty'] = t('There are no matching active reaction rules.');
 
   $conditions = array_filter(array('event' => $event, 'plugin' => 'reaction rule')) + array('active' => FALSE);
-  $form['inactive'] = RulesPluginUI::overviewTable($conditions);
+  $form['inactive'] = RulesPluginUI::overviewTable($conditions, $options);
   $form['inactive']['#caption'] = t('Inactive rules');
   $form['inactive']['#empty'] = t('There are no matching inactive reaction rules.');
 
@@ -67,6 +68,12 @@ function rules_admin_components_overview($form, &$form_state) {
   );
   $form['filter']['#id'] = 'rules-filter-form';
   $form['filter']['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+  $form['filter']['plugin'] = array(
+    '#type' => 'select',
+    '#title' => t('Filter by plugin'),
+    '#options' => array(0 => '<All>') + rules_admin_component_options(),
+    '#default_value' => isset($form_state['values']['plugin']) ? $form_state['values']['plugin'] : 0,
+  );
   $form['filter']['category'] = array(
     '#type' => 'select',
     '#title' => t('Filter by category'),
@@ -79,8 +86,8 @@ function rules_admin_components_overview($form, &$form_state) {
 
   // Get the plugin name usable as component.
   $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
-  $conditions = array('plugin' => $plugins);
-  $form['table'] = RulesPluginUI::overviewTable($conditions);
+  $conditions = array('plugin' => !empty($form_state['values']['plugin']) ? array($form_state['values']['plugin']) : $plugins);
+  $form['table'] = RulesPluginUI::overviewTable($conditions, array('hide status op' => TRUE));
   $form['table']['#empty'] = t('There are no rule components.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || count($form['table']['#rows']) < 20;
@@ -144,13 +151,11 @@ function rules_admin_add_reaction_rule_submit($form, &$form_state) {
  */
 function rules_admin_add_component($form, &$form_state) {
   RulesPluginUI::formDefaults($form);
-  $cache = rules_get_cache();
-  $options = rules_extract_property(rules_filter_array($cache['plugin_info'], 'component', TRUE), 'label');
 
   $form['plugin_name'] = array(
     '#type' => 'select',
     '#title' => t('Component plugin'),
-    '#options' => $options,
+    '#options' => rules_admin_component_options(),
     '#description' => t('Choose which kind of component to create.'),
     '#weight' => -2,
     '#default_value' => isset($form_state['values']['plugin_name']) ? $form_state['values']['plugin_name'] : '',
@@ -181,6 +186,11 @@ function rules_admin_add_component($form, &$form_state) {
     }
   }
   return $form;
+}
+
+function rules_admin_component_options() {
+  $cache = rules_get_cache();
+  return rules_extract_property(rules_filter_array($cache['plugin_info'], 'component', TRUE), 'label');
 }
 
 /**

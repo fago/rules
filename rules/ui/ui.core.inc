@@ -472,12 +472,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    *
    * @param $conditions
    *   An array of conditions as needed by rules_config_load_multiple().
-   * @param $empty_text
-   *   The text to display if there are no configs matching the conditions.
+   * @param $options
+   *   An array with optional options. Known keys are:
+   *   - 'hide status op': If set to TRUE, enable/disable links are not added.
+   *   - 'show plugin: If set to FALSE, the plugin is not shown.
    * @return Array
    *   A renderable array.
    */
-  public static function overviewTable($conditions = array()) {
+  public static function overviewTable($conditions = array(), $options = array()) {
+    $options += array(
+      'hide status op' => FALSE,
+      'show plugin' => TRUE,
+    );
+
+    $cache = rules_get_cache();
     $configs = rules_config_load_multiple(FALSE, $conditions);
     $rows = array();
     $event_info = rules_fetch_data('event_info');
@@ -493,6 +501,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         }
         $row[] = implode(", ", $events);
       }
+      if ($options['show plugin']) {
+        $plugin = $config->plugin();
+        $row[] = isset($cache['plugin_info'][$plugin]['label']) ? $cache['plugin_info'][$plugin]['label'] : $plugin;
+      }
       // Add exportable status.
       $row[] = array('data' => array(
         '#theme' => 'entity_status',
@@ -500,14 +512,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       ));
 
       $row[] = l(t('edit'), RulesPluginUI::path($name));
-      // Add either an enable or disable link.
-      $text = $config->active ? t('disable') : t('enable');
-      $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
-      $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
-      $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
 
-      // TODO: hide configs where access() is FALSE and make sure access is
-      // FALSE for fixed configurations,
+      if (!$options['hide status op']) {
+        // Add either an enable or disable link.
+        $text = $config->active ? t('disable') : t('enable');
+        $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
+        $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
+      }
+      $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
 
       // Add either an delete or revert link.
       if ($config->status != ENTITY_IN_CODE) {
@@ -519,12 +531,21 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $row[] = '';
       }
 
+      // TODO: hide configs where access() is FALSE and make sure access is
+      // FALSE for fixed configurations,
+
       $rows[] = $row;
     }
-    $header = array(t('Label'), t('Event'), t('Status'), array('data' => t('Operations'), 'colspan' => 4));
+    $header = array(t('Label'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations'), 'colspan' => 4));
     if (!isset($events)) {
       // Remove the event heading as there is no such column.
       unset($header[1]);
+    }
+    if (!$options['show plugin']) {
+      unset($header[2]);
+    }
+    if ($options['hide status op']) {
+      $header[4]['colspan']--;
     }
 
     $table = array(
