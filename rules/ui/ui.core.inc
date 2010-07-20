@@ -764,7 +764,7 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
     $form['elements']['#caption'] = t('Conditions');
 
     // By default skip
-    if (!empty($options['init'])) {
+    if (!empty($options['init']) && !$this->element->isRoot()) {
       $config = $this->element->root();
       $form['init_help'] = array(
         '#type' => 'container',

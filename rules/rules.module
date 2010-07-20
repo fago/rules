@@ -815,6 +815,8 @@ function rules_menu() {
     'file' => 'ui/ui.forms.inc',
   );
   $items[RULES_UI_RULE_PATH . '/%rules_config/clone'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Cloning @plugin "@label"', 5),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_ui_form_clone_rules_config', 5, 6),
     'access arguments' => array('administer rules'),
@@ -838,7 +840,11 @@ function rules_element_load($element_id, $config_name) {
  */
 function rules_get_title($text, $element) {
   if ($element instanceof RulesPlugin) {
-    return t($text, array('@label' => $element->label(), '@plugin' => $element->plugin()));
+    $cache = rules_get_cache();
+    $plugin = $element->plugin();
+    $plugin = isset($cache['plugin_info'][$plugin]['label']) ? $cache['plugin_info'][$plugin]['label'] : $plugin;
+    $plugin = drupal_strtolower(drupal_substr($plugin, 0, 1)) . drupal_substr($plugin, 1);
+    return t($text, array('@label' => $element->label(), '@plugin' => $plugin));
   }
   // As fallback treat $element as simple string.
   return t($text, array('@plugin' => $element));

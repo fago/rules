@@ -83,7 +83,9 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
 
   $form['#validate'][] = 'rules_ui_form_edit_rules_config_validate';
   $form['#submit'][] = 'rules_ui_form_edit_rules_config_submit';
-  $form = rules_ui_form_edit_rules_config($form, $form_state, $rules_config);
+  $form_state += array('rules_element' => $rules_config);
+  // Add the rule configuration's form.
+  $rules_config->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE, 'init' => TRUE));
 
   // Open the settings fieldset so altering the name is easier.
   $form['settings']['#collapsed'] = FALSE;
