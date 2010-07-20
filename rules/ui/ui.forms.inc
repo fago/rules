@@ -66,13 +66,9 @@ function rules_ui_form_edit_rules_config_validate($form, &$form_state) {
  */
 function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
-  // By default, rebuild instead of redirect as this is faster.
   if (empty($form_state['redirect'])) {
-    $form_state['rebuild'] = TRUE;
+    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $form_state['rules_element']->root()->name;
   }
-  // We need to clear the values so the new weight-id combinations can take
-  // affect on rebuild.
-  $form_state['input'] = array();
 }
 
 /**
@@ -281,6 +277,9 @@ function rules_ui_delete_element_submit($form, &$form_state) {
     $rules_config = $form_state['rules_config'];
     $rules_config->save();
   }
+  if (empty($form_state['redirect'])) {
+    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $rules_config->name;
+  }
 }
 
 
@@ -305,8 +304,9 @@ function rules_ui_edit_element_validate($form, &$form_state) {
  */
 function rules_ui_edit_element_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
-  $config_name = $form_state['rules_element']->root()->name;
-  $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $config_name;
+  if (empty($form_state['redirect'])) {
+    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $form_state['rules_element']->root()->name;
+  }
 }
 
 /**

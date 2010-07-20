@@ -228,6 +228,11 @@ abstract class RulesPlugin extends RulesExtendable {
 
   protected $cache = NULL, $hook = 'plugin_info';
 
+  /**
+   * Identifies an element inside a configuration.
+   */
+  protected $elementId = NULL;
+
 
   /**
    * Sets a new parent element.
@@ -275,6 +280,28 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function parentElement() {
     return $this->parent;
+  }
+
+  /**
+   * Returns the element id, which identifies the element inside the config.
+   */
+  public function elementId() {
+    if (!isset($this->elementId)) {
+      $this->elementMap()->index();
+    }
+    return $this->elementId;
+  }
+
+  /**
+   * Gets the element map helper object, which helps mapping elements to ids.
+   * @return RulesElementMap
+   */
+  public function elementMap() {
+    $config = $this->root();
+    if (empty($config->map)) {
+      $config->map = new RulesElementMap($config);
+    }
+    return $config->map;
   }
 
   /**
@@ -718,7 +745,7 @@ abstract class RulesPlugin extends RulesExtendable {
     $this->processSettings();
     $array = (isset($this->name)) ? array('name' => 'name') : array();
     // Keep the id always as we need it for the recursion prevention.
-    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'weight', 'settings'));
+    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'elementId', 'weight', 'settings'));
   }
 
   /**

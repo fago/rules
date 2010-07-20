@@ -33,14 +33,13 @@ class RulesRuleUI extends RulesActionContainerUI {
       '#title' => 'Label',
       '#default_value' => $label,
       '#required' => TRUE,
-      '#weight' => -5,
-      '#description' => t('The human-readable name.'),
+      '#weight' => 5,
+      '#description' => t('A human-readable name shortly describing the rule.'),
     );
 
     $form += array('conditions' => array('#weight' => -5, '#tree' => TRUE));
     $this->conditions->form($form['conditions'], $form_state);
     unset($form['conditions']['negate']);
-    $form['conditions']['elements']['#add']['#access'] = empty($options['init']);
 
     // Add actions form.
     $iterator = new RecursiveIteratorIterator($this->rule->actions(), RecursiveIteratorIterator::SELF_FIRST);
@@ -48,6 +47,10 @@ class RulesRuleUI extends RulesActionContainerUI {
     // For rules always show nested elements.
     $form['elements']['#access'] = empty($options['init']);
     $form['conditions']['elements']['#access'] = empty($options['init']);
+
+    if (!empty($options['init'])) {
+      $form_state['redirect'] = RulesPluginUI::path($this->element->root()->name, 'edit', $this->element);
+    }
   }
 
   /**
@@ -79,8 +82,6 @@ class RulesRuleUI extends RulesActionContainerUI {
 class RulesReactionRuleUI extends RulesRuleUI {
 
   public function form(&$form, &$form_state, $options = array()) {
-    $form['#label']['#access'] = FALSE;
-
     $form['events'] = array(
       '#type' => 'container',
       '#weight' => -10,
@@ -114,6 +115,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
     $form['events']['table']['#rows'][] = array('data' => array($cell), 'class' => array('rules-elements-add'));
 
     parent::form($form, $form_state, $options);
+    unset($form['label']);
   }
 
   /**
