@@ -236,6 +236,14 @@ class Rule extends RulesActionContainer {
     }
     return $export + parent::exportChildren('DO');
   }
+
+  public function __clone() {
+    parent::__clone();
+    if (isset($this->conditions)) {
+      $this->conditions = clone $this->conditions;
+      $this->conditions->parent = $this;
+    }
+  }
 }
 
 /**
