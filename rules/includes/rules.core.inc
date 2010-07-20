@@ -1541,6 +1541,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   public function __clone() {
     foreach ($this->children as $key => $child) {
       $this->children[$key] = clone $child;
+      $this->children[$key]->parent = $this;
     }
   }
 
