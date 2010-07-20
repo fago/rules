@@ -142,7 +142,7 @@ class RulesState {
     if (!isset($this->variables[$name])) {
       // If there is handler to load the variable, do it now.
       if (!array_key_exists($name, $this->variables) && !empty($this->info[$name]['handler'])) {
-        $data = call_user_func($this->info[$name]['handler'], rules_unwrap_data($this->variables), $this->info[$name]);
+        $data = call_user_func($this->info[$name]['handler'], rules_unwrap_data($this->variables), $name, $this->info[$name]);
         $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
         $this->info[$name]['handler'] = FALSE;
         if (!isset($data)) {
