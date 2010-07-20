@@ -47,17 +47,31 @@ function rules_entity_update($entity, $type) {
 }
 
 /**
- * Gets an unchanged entity that doesn't contain any recent changes.
+ * Gets an unchanged entity that doesn't contain any recent changes. This
+ * handler assumes the name of the variable for the changed entity is the same
+ * as for the unchanged entity but without the trailing "_unchanged"; e.g., for
+ * the "node_unchanged" variable the handler assumes there is a "node" variable.
+ *
+ * Note that this handler only works properly if the entity has been loaded
+ * with entity_load() before it is saved. Thus if a module serializes an
+ * entity and saves it afterwards on another page load, the handler would fail.
  *
  * @see rules_entity_load()
  */
-function rules_events_entity_unchanged($arguments, $info) {
+function rules_events_entity_unchanged($arguments, $name, $info) {
   $unchanged = &drupal_static('rules_entity_unchanged', array());
+  // Cut of the trailing _unchanged.
+  $var_name = substr($name, 0, -10);
   $type = $info['type'];
-  list($id) = entity_extract_ids($type, $arguments[$type]);
+  list($id) = entity_extract_ids($type, $arguments[$var_name]);
 
   if (isset($id) && isset($unchanged[$type][$id])) {
     return $unchanged[$type][$id];
+  }
+  // Else try loading fresh from the db. This works only for 'presave' though.
+  elseif (isset($id)) {
+    $result = entity_load($type, array($id));
+    return isset($result[$id]) ? $result[$id] : NULL;
   }
 }
 

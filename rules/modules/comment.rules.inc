@@ -28,7 +28,7 @@ function rules_comment_event_info() {
       'label' => t('After updating an existing comment'),
       'variables' => array(
         'comment' => array('type' => 'comment', 'label' => t('updated comment')),
-        'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_entity_unchanged'),
+        // Do not add comment_unchanged as it doesn't work properly.
       ),
     ),
     'comment_presave' => $defaults + array(
