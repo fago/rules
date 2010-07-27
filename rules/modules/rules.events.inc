@@ -37,22 +37,20 @@ function rules_user($op, &$edit, &$account, $category = NULL) {
     rules_invoke_event('user_update', array('account' => &$account, 'account_unchanged' => $account_unchanged));
   }
   else if (in_array($op, array('insert', 'login', 'logout', 'view', 'delete'))) {
-    // At user creation: Get the assigned roles which are not available in $account yet
-    if ($op == 'insert') {
-      // Get the available roles
+    // At user creation add the assigned roles which are not available in
+    // $account yet to $account, so rules is aware of them.
+    if ($op == 'insert' && isset($edit['roles'])) {
       $system_roles = user_roles();
-      // Loop through the Role IDs of the User module's $edit array
       foreach ($edit['roles'] as $role_id => $value) {
         if (isset($system_roles[$role_id])) {
-          // Append Role ID and Role Name to the $account->roles array
           $account->roles[$role_id] = $system_roles[$role_id];
         }
       }
     }
-    
+
     rules_invoke_event('user_'. $op, array('account' => &$account));
 
-    // Allow adding user roles during registration
+    // Allow adding user roles during registration.
     if ($op == 'insert' && isset($account->roles)) {
       $edit += array('roles' => array());
       $edit['roles'] += $account->roles;
