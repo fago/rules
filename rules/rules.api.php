@@ -303,23 +303,31 @@ function hook_rules_event_info() {
  *     provided by the entity metadata module. This is required for entities and
  *     data structures to support the application of data selectors or
  *     intelligent saving.
- *   - property info: May be used for data structures being no entities to
- *     provide info about the data properties, such that data selectors via an
- *     entity metadata wrapper are supported. Specify an array as expected by
- *     entity_metadata_wrapper(). Optionally.
  *   - parent: Optionally a parent type may be set to specify a sub-type
  *     relationship, which will be only used for checking compatible types. E.g.
  *     the 'entity' data type is parent of the 'node' data type, thus a node may
  *     be also used for any action needing an 'entity' parameter. Can be set to
  *     any known rules data type.
+ *   - 'ui class': Specify a class that is used to generate the configuration UI
+ *     to configure parameters of this type. The given class must extend
+ *     RulesDataUI and may implement the RulesDataDirectInputFormInterface in
+ *     order to allow the direct data input configuration mode. Optionally,
+ *     defaults to RulesDataUI.
+ *   - 'property info': May be used for non-entity data structures to provide
+ *     info about the data properties, such that data selectors via an entity
+ *     metadata wrapper are supported. Specify an array as expected by
+ *     entity_metadata_wrapper(). Optionally.
+ *   - 'property defaults': May be used for non-entity data structures to
+ *     to provide property info defaults for the data properties. Specify an
+ *     array as expected by entity_metadata_wrapper(). Optionally.
  *   - group: A group for this element, used for grouping the data types in the
  *     interface. Should start with a capital letter and be translated.
- *     Required.
+ *     Optional.
  *   - 'token type': The type name as used by the token module. Defaults to the
  *     type name as used by rules. Use FALSE to let token ignore this type.
  *     Optional.
- *   - hidden: Whether the data type should be hidden from the UI. Optional
- *    (defaults to FALSE).
+ *   - 'cleaning callback': An optional callback that input evaluators may use
+ *     to clean inserted replacements; e.g. this is used by the token evaluator.
  *
  *  @see entity_metadata_wrapper()
  *  @see hook_rules_data_info_alter()

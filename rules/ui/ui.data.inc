@@ -9,7 +9,7 @@
 /**
  * Interface for data types providing a direct input form.
  */
-interface RulesDataDirectInputForm {
+interface RulesDataDirectInputFormInterface {
 
   /**
    * Constructs the direct input form.
@@ -70,7 +70,7 @@ class RulesDataUI {
 /**
  * UI for textual data.
  */
-class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputForm {
+class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputFormInterface {
 
   public static function getDefaultMode() {
     return 'input';
@@ -167,7 +167,7 @@ class RulesDataUIInteger extends RulesDataUIText {
 /**
  * UI for boolean data.
  */
-class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm {
+class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputFormInterface {
 
   public static function getDefaultMode() {
     return 'input';
