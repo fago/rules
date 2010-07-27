@@ -67,7 +67,7 @@ function rules_ui_form_edit_rules_config_validate($form, &$form_state) {
 function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
   if (empty($form_state['redirect'])) {
-    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $form_state['rules_element']->root()->name;
+    $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['rules_element']);
   }
 }
 
@@ -260,6 +260,8 @@ function rules_ui_delete_element($form, &$form_state, $rules_config, $rules_elem
  */
 function rules_ui_delete_element_validate($form, &$form_state) {
   if ($form_state['values']['confirm']) {
+    // Save the parent for determining the right redirect target on submit.
+    $form_state['element_parent'] = $form_state['rules_element']->parentElement();
     $form_state['rules_element']->delete();
     try {
       $form_state['rules_config']->integrityCheck();
@@ -278,9 +280,9 @@ function rules_ui_delete_element_submit($form, &$form_state) {
   if ($form_state['values']['confirm']) {
     $rules_config = $form_state['rules_config'];
     $rules_config->save();
-  }
-  if (empty($form_state['redirect'])) {
-    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $rules_config->name;
+    if (empty($form_state['redirect'])) {
+      $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['element_parent']);
+    }
   }
 }
 
@@ -307,7 +309,7 @@ function rules_ui_edit_element_validate($form, &$form_state) {
 function rules_ui_edit_element_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
   if (empty($form_state['redirect'])) {
-    $form_state['redirect'] = RULES_UI_RULE_PATH . '/' . $form_state['rules_element']->root()->name;
+    $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['rules_element']);
   }
 }
 

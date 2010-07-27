@@ -568,6 +568,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   }
 
   /**
+   * Determines the default redirect target for an edited/deleted element. This
+   * is a parent element which is either a rule or the configuration root.
+   */
+  public static function defaultRedirect(RulesPlugin $element) {
+    while (!$element->isRoot()) {
+      if ($element instanceof Rule) {
+        return self::path($element->root()->name, 'edit', $element);
+      }
+      $element = $element->parentElement();
+    }
+    return self::path($element->name);
+  }
+
+  /**
    * Returns an array of options to use with a select for the items specified
    * in the given hook.
    */

@@ -48,8 +48,9 @@ class RulesRuleUI extends RulesActionContainerUI {
     $form['elements']['#access'] = empty($options['init']);
     $form['conditions']['elements']['#access'] = empty($options['init']);
 
-    if (!empty($options['init'])) {
-      $form_state['redirect'] = RulesPluginUI::path($this->element->root()->name, 'edit', $this->element);
+    $form_state['redirect'] = RulesPluginUI::path($this->element->root()->name, 'edit', $this->element);
+    if (!empty($options['button'])) {
+      $form['submit']['#value'] = t('Save changes');
     }
   }
 
