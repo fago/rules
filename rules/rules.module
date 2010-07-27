@@ -257,13 +257,19 @@ function &rules_wrap_data($data = NULL, $info, $force = FALSE) {
   if ($data instanceof EntityMetadataWrapper) {
     return $data;
   }
-  $type = entity_metadata_list_extract_type($info['type']) ? 'list' : $info['type'];
   $cache = rules_get_cache();
-  if (isset($cache['data_info'][$type]['property info'])) {
-    $info['property info'] = $cache['data_info'][$type]['property info'];
+  // Define the keys to be passed through to the metadata wrapper.
+  $wrapper_keys = array_flip(array('property info', 'property defaults'));
+  if (isset($cache['data_info'][$info['type']])) {
+    $info += array_intersect_key($cache['data_info'][$info['type']], $wrapper_keys);
+  }
+  // If a list is given, also add in the info of the item type.
+  $list_item_type = entity_metadata_list_extract_type($info['type']);
+  if ($list_item_type && isset($cache['data_info'][$list_item_type])) {
+    $info += array_intersect_key($cache['data_info'][$list_item_type], $wrapper_keys);
   }
   // By default we do not wrap the data, except for completely unknown types.
-  if (!empty($cache['data_info'][$type]['wrap']) || $force || empty($cache['data_info'][$type])) {
+  if (!empty($cache['data_info'][$info['type']]['wrap']) || $list_item_type || $force || empty($cache['data_info'][$info['type']])) {
     unset($info['handler']);
     $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
     return $wrapper;
