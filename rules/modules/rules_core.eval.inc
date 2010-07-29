@@ -11,6 +11,9 @@
 
 /**
  * Action and condition callback: Invokes a rules component.
+ *
+ * We do not use the execute() method, but handle executing ourself. That way
+ * we can utilize the existing state for saving passed variables.
  */
 function rules_element_invoke_component($arguments, RulesPlugin $element) {
   $info = $element->info();
@@ -18,8 +21,14 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
   $wrapped_args = $state->currentArguments;
 
   if ($component = rules_get_cache('comp_' . $info['#config_name'])) {
-    $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
-    rules_log('Evaluating %plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    $replacements = array('%label' => $component->label(), '@plugin' => $component->plugin());
+    // Handle recursion prevention.
+    if ($state->isBlocked($component)) {
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', $replacements, RulesLog::INFO);
+    }
+    $state->block($component);
+    rules_log('Evaluating @plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    module_invoke_all('rules_config_execute', $component);
 
     // Manually create a new evaluation state.
     $new_state = new RulesState();
@@ -41,10 +50,11 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
 
     // Now merge the info about to be saved variables in the parent state.
     $state->mergeSaveVariables($new_state, $component, $element->settings);
+    $state->unblock($component);
 
     // Cleanup the state, what saves not mergable variables now.
     $new_state->cleanup();
-    rules_log('Finished evaluation of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished evaluation of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
   else {

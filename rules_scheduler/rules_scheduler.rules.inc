@@ -72,25 +72,29 @@ function rules_scheduler_component_options_list() {
  * Base action implementation for scheduling all rule sets
  */
 function rules_scheduler_action_schedule($args, $element) {
-  // Remove additional information from the arguments array.
   $state = $args['state'];
-  // Manually create a new evaluation state for scheduling the evaluation.
-  $new_state = new RulesState();
+  if ($component = rules_get_cache('comp_' . $args['component'])) {
+    // Manually create a new evaluation state for scheduling the evaluation.
+    $new_state = new RulesState();
 
-  // Register all parameters as variables.
-  foreach ($element->parameterInfo() as $name => $info) {
-    if (strpos($name, 'param_') === 0) {
-      // Remove the parameter name prefix 'param_'.
-      $var_name = substr($name, 6);
-      $new_state->addVariable($var_name, $state->currentArguments[$name], $info);
+    // Register all parameters as variables.
+    foreach ($element->parameterInfo() as $name => $info) {
+      if (strpos($name, 'param_') === 0) {
+        // Remove the parameter name prefix 'param_'.
+        $var_name = substr($name, 6);
+        $new_state->addVariable($var_name, $state->currentArguments[$name], $info);
+      }
     }
+    rules_scheduler_schedule_task(array(
+      'date' => $args['date'],
+      'config' => $args['component'],
+      'state' => $new_state,
+      'identifier' => $args['identifier'],
+    ));
   }
-  rules_scheduler_schedule_task(array(
-    'date' => $args['date'],
-    'config' => $args['component'],
-    'state' => $new_state,
-    'identifier' => $args['identifier'],
-  ));
+  else {
+    throw new RulesException('Unable to get the component %name'. array('%name' => $args['component']), $element);
+  }
 }
 
 /**

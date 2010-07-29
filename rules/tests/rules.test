@@ -26,8 +26,9 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   static function t($text, $strings) {
     $placeholders = array();
-    foreach ($strings as $string) {
-      $placeholders['%' . $string] = drupal_placeholder(array('text' => $string));
+    foreach ($strings as $key => $string) {
+      $key = !is_numeric($key) ? $key : $string;
+      $placeholders['%' . $key] = drupal_placeholder(array('text' => $string));
     }
     return strtr($text, $placeholders);
   }
@@ -806,7 +807,8 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
     node_save($node);
 
-    $text = RulesTestCase::t('Not evaluating reaction rule %unlabeled to prevent recursion.', array('unlabeled'));
+    $text = RulesTestCase::t('Not evaluating reaction rule %label to prevent recursion.', array('label' => $rule->name));
+    debug(RulesLog::logger()->render());
     $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
     //debug(RulesLog::logger()->render());
   }

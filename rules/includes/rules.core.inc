@@ -746,7 +746,7 @@ abstract class RulesPlugin extends RulesExtendable {
     // Keep the id always as we need it for the recursion prevention.
     $array = drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'elementId', 'weight', 'settings'));
     // Keep properties related to configurations if they are there.
-    foreach (array('name', 'module', 'label') as $key) {
+    foreach (array('name', 'module', 'label', 'recursion') as $key) {
       if (isset($this->$key)) {
         $array[$key] = $key;
       }
@@ -821,7 +821,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns the label of the element.
    */
   public function label() {
-    if (!empty($this->label)) {
+    if (!empty($this->label) && $this->label != t('unlabeled')) {
       return $this->label;
     }
     return isset($this->info['label']) ? $this->info['label'] : (!empty($this->name) ? $this->name : t('unlabeled'));
@@ -890,8 +890,11 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   protected function returnExport($export, $php = FALSE) {
     $this->ensureNameExists();
-    if (($label = $this->label()) && $label != t('unlabeled')) {
-      $export_cfg[$this->name]['LABEL'] = $this->label();
+    if (!empty($this->label) && $this->label != t('unlabeled')) {
+      $export_cfg[$this->name]['LABEL'] = $this->label;
+    }
+    if (!empty($this->module) && $this->module != 'rules') {
+      $export_cfg[$this->name]['MODULE'] = $this->module;
     }
     $export_cfg[$this->name]['PLUGIN'] = $this->plugin();
     if ($modules = $this->dependencies()) {
@@ -1046,8 +1049,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function execute() {
-    $replacements = array('%label' => $this->label(), '%plugin' => $this->itemName);
-    rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
+    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->forceSetUp();
     $this->processSettings();
     $args = func_get_args();
@@ -1066,7 +1069,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $return = $this->executeCallback($args, $state);
     }
     $state->cleanUp();
-    rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 
@@ -1521,16 +1524,25 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * the configured provided variables as an array of variables.
    */
   public function execute() {
-    $replacements = array('%label' => $this->label(), '%plugin' => $this->itemName);
-    rules_log('Executing %plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
+    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->processSettings();
     $state = $this->setUpState(func_get_args());
-    module_invoke_all('rules_config_execute', $this);
 
+    // Handle recursion prevention.
+    if ($state->isBlocked($this)) {
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO);
+    }
+    // Block the config to prevent any future recursion.
+    $state->block($this);
+
+    module_invoke_all('rules_config_execute', $this);
     $result = $this->evaluate($state);
     $return = $this->returnVariables($state, $result);
+
+    $state->unblock($this);
     $state->cleanUp();
-    rules_log('Finished executing of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
     return $return;
   }
 
@@ -1616,11 +1628,6 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
  */
 abstract class RulesActionContainer extends RulesContainerPlugin implements RulesActionInterface {
 
-  /**
-   * Whether this configuration may recurse. For safety, this defaults to FALSE.
-   */
-  public $recursion = FALSE;
-
   public function __construct($variables = array(), $providesVars = array()) {
     $this->setUp();
     $this->info['variables'] = $variables;
@@ -1645,19 +1652,9 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
    * Evaluate, whereas by default new vars are visible in the parent's scope.
    */
   public function evaluate(RulesState $state) {
-    if ($state->isBlocked($this)) {
-      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO);
-    }
-    // Block the config to prevent recursion, if not allowed.
-    $state->block($this);
     foreach ($this->children as $action) {
       $action->evaluate($state);
     }
-    $state->unblock($this);
-  }
-
-  public function __sleep() {
-    return parent::__sleep() + array('recursion' => 'recursion');
   }
 }
 
