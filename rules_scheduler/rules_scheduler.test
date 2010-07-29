@@ -94,7 +94,7 @@ class RulesSchedulerTestCase extends DrupalWebTestCase {
     $node = node_load($node->nid, NULL, TRUE);
     $this->assertFalse($node->status, 'The component has been properly scheduled.');
     $text1 = RulesLog::logger()->render();
-    $text2 = RulesTestCase::t('Not evaluating reaction rule %unlabeled to prevent recursion.', array('unlabeled'));
+    $text2 = RulesTestCase::t('Not evaluating reaction rule %unlabeled to prevent recursion.', array('unlabeled' => $rule->name));
     $this->assertTrue((strpos($text1, $text2) !== FALSE), "Scheduled recursion prevented.");
     RulesLog::logger()->checkLog();
   }

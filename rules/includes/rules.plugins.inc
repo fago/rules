@@ -287,8 +287,14 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
    * Reaction rules can't add variables to the parent scope, so clone $state.
    */
   public function evaluate(RulesState $state) {
+    // Implement recursion prevention for reaction rules.
+    if ($state->isBlocked($this)) {
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO);
+    }
+    $state->block($this);
     $copy = clone $state;
     parent::evaluate($copy);
+    $state->unblock($this);
   }
 
   public function access() {
