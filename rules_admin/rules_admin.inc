@@ -151,6 +151,8 @@ function rules_admin_add_reaction_rule_submit($form, &$form_state) {
  */
 function rules_admin_add_component($form, &$form_state) {
   RulesPluginUI::formDefaults($form);
+  module_load_include('inc', 'rules', 'ui/ui.forms');
+  $form_state['build_info']['files'][] = array('module' => 'rules', 'name' => 'ui/ui.forms');
 
   $form['plugin_name'] = array(
     '#type' => 'select',

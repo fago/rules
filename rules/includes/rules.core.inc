@@ -743,9 +743,15 @@ abstract class RulesPlugin extends RulesExtendable {
 
   public function __sleep() {
     $this->processSettings();
-    $array = (isset($this->name)) ? array('name' => 'name') : array();
     // Keep the id always as we need it for the recursion prevention.
-    return $array + drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'elementId', 'weight', 'settings'));
+    $array = drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'elementId', 'weight', 'settings'));
+    // Keep properties related to configurations if they are there.
+    foreach (array('name', 'module', 'label') as $key) {
+      if (isset($this->$key)) {
+        $array[$key] = $key;
+      }
+    }
+    return $array;
   }
 
   /**
@@ -826,6 +832,13 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function plugin() {
     return $this->itemName;
+  }
+
+  /**
+   * Returns info about the element's plugin.
+   */
+  public function pluginInfo() {
+    return $this->itemInfo;
   }
 
   /**
@@ -1396,8 +1409,18 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
   public function __construct($variables = array()) {
     $this->setUp();
-    if (!empty($variables)) {
+    if (!empty($variables) && $this->isRoot()) {
       $this->info['variables'] = $variables;
+    }
+  }
+
+  /**
+   * Returns the specified variables, in case the plugin is used as component.
+   */
+  public function &componentVariables() {
+    if ($this->isRoot()) {
+      $this->info += array('variables' => array());
+      return $this->info['variables'];
     }
   }
 

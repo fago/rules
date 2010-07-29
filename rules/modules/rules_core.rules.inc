@@ -83,6 +83,7 @@ function rules_rules_core_data_info() {
     ),
    'entity' => array(
       'label' => t('any entity'),
+      'group' => t('Entity'),
     )
   );
   foreach (entity_get_info() as $type => $info) {
@@ -91,6 +92,7 @@ function rules_rules_core_data_info() {
         'label' => $info['label'],
         'parent' => 'entity',
         'wrap' => TRUE,
+        'group' => t('Entity'),
       );
     }
   }

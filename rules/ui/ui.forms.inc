@@ -458,7 +458,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
 function rules_ui_element_integer_validate($element, &$form_state) {;
   $value = $element['#value'];
   if ($value !== '' && (!is_numeric($value) || intval($value) != $value)) {
-    form_error($element, t('%name must be an integer.', array('%name' => $element['#title'])));
+    form_error($element, t('%name must be an integer.', array('%name' => isset($element['#title']) ? $element['#title'] : t('Element'))));
   }
 }
 
@@ -595,3 +595,45 @@ function rules_ui_element_integer_list_validate($element, &$form_state) {
   }
 }
 
+/**
+ * FAPI callback to validate a machine readable name.
+ */
+function rules_ui_element_machine_name_validate($element, &$form_state) {
+  if ($element['#value'] && !preg_match('!^[a-z0-9_]+$!', $element['#value'])) {
+    form_error($element, t('Machine-readable names must contain only lowercase letters, numbers, and underscores.'));
+  }
+}
+
+/**
+ * FAPI callback to validate the form for editing variable info.
+ * @see RulesPluginUI::getVariableForm()
+ */
+function rules_ui_element_variable_form_validate($elements, &$form_state) {
+  $names = array();
+  foreach (element_children($elements['items']) as $item_key) {
+    $element = &$elements['items'][$item_key];
+    if ($element['name']['#value'] || $element['type']['#value'] || $element['label']['#value']) {
+      foreach (array('name' => t('Machine name'), 'label' => t('Label'), 'type' => t('Data type')) as $key => $title) {
+        if (!$element[$key]['#value']) {
+          form_error($element[$key], t('!name field is required.', array('!name' => $title)));
+        }
+      }
+      if (isset($names[$element['name']['#value']])) {
+        form_error($element['name'], t('The machine-readable name %name is already taken.', array('%name' => $element['name']['#value'])));
+      }
+      $names[$element['name']['#value']] = TRUE;
+    }
+  }
+}
+
+/**
+ * Helper to sort elements by their 'weight' key.
+ */
+function rules_element_sort_helper($a, $b) {
+  $a += array('weight' => 0);
+  $b += array('weight' => 0);
+  if ($a['weight'] == $b['weight']) {
+    return 0;
+  }
+  return ($a['weight'] < $b['weight']) ? -1 : 1;
+}
