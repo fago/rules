@@ -207,13 +207,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   protected function getParameterForm($name, $info, $settings, &$mode) {
     $class = $this->getDataTypeClass($info['type']);
+    $supports_input_mode = in_array('RulesDataDirectInputFormInterface', class_implements($class));
 
     // Init the mode.
     if (!isset($mode)) {
       if (isset($settings[$name . ':select'])) {
         $mode = 'selector';
       }
-      elseif (isset($settings[$name]) && $class instanceof RulesDataDirectInputFormInterface) {
+      elseif (isset($settings[$name]) && $supports_input_mode) {
         $mode = 'input';
       }
       elseif (isset($info['restriction'])) {
@@ -223,7 +224,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $mode = call_user_func(array($class, 'getDefaultMode'));
       }
     }
-    $supports_input_mode = in_array('RulesDataDirectInputFormInterface', class_implements($class));
 
     // Add the parameter form.
     if ($mode == 'input' && $supports_input_mode) {
