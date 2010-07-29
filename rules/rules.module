@@ -694,19 +694,6 @@ function rules_extract_property($arrays, $key) {
 }
 
 /**
- * Implements hook_theme_registry_alter().
- *
- * We need to use the alter hook here, so we can make sure we are the first
- * prepross handler called. So drupal messages aren't consumed before the
- * redirect is initiated.
- *
- * @see _rules_action_drupal_goto_handler()
- */
-function rules_theme_registry_alter(&$items) {
-  array_unshift($items['page']['preprocess functions'], '_rules_action_drupal_goto_handler');
-}
-
-/**
  * Implements hook_theme().
  */
 function rules_theme() {
@@ -726,7 +713,11 @@ function rules_theme() {
     'rules_data_selector_help' => array(
       'variables' => array('parameter' => NULL, 'variables' => NULL),
       'file' => 'ui/ui.theme.inc',
-    )
+    ),
+    'rules_ui_variable_form' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
   );
 }
 

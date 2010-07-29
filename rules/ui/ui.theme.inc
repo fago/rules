@@ -51,7 +51,58 @@ function theme_rules_elements($variables) {
     $form['#rows'][] = array('data' => $row, 'class' => array('rules-elements-add'));
   }
 
-  return drupal_render($form);
+  // Add a wrapping div.
+  return '<div class="rules-elements-table">' . drupal_render($form) . '</div>';
+}
+
+/**
+ * Themes the rules form for editing the used variables.
+ *
+ * @see RulesPluginUI::getVariableForm()
+ * @ingroup themeable
+ */
+function theme_rules_ui_variable_form($variables) {
+  $elements = $variables['element'];
+
+  $table['#theme'] = 'table';
+  $table['#header'] = array(t('Data type'), t('Label'), t('Machine name'), array('data' => t('Weight'), 'class' => array('tabledrag-hide')));
+  $table['#attributes']['id'] = 'rules-' . drupal_html_id($elements['#title']) . '-id';
+
+  foreach (element_children($elements['items']) as $key) {
+    $element = &$elements['items'][$key];
+    // Add special classes to be used for tabledrag.js.
+    $element['weight']['#attributes']['class'] = array('rules-element-weight');
+
+    $row = array();
+    $row[] = array('data' => $element['type']);
+    $row[] = array('data' => $element['label']);
+    $row[] = array('data' => $element['name']);
+    $row[] = array('data' => $element['weight']);
+    $row = array('data' => $row) + $element['#attributes'];
+    $row['class'][] = 'draggable';
+    $table['#rows'][] = $row;
+  }
+  $elements['items']['#printed'] = TRUE;
+  if (!empty($table['#rows'])) {
+    drupal_add_tabledrag($table['#attributes']['id'], 'order', 'sibling', 'rules-element-weight');
+  }
+
+  // Theme it like a form item, but with the description above the content.
+  $attributes['class'][] = 'form-item';
+  $attributes['class'][] = 'rules-variables-form';
+
+  $output = '<div' . drupal_attributes($attributes) . '>' . "\n";
+  $output .= theme('form_element_label', $variables);
+  if (!empty($elements['#description'])) {
+    $output .= ' <div class="description">' . $elements['#description'] . "</div>\n";
+  }
+  $output .= ' ' . drupal_render($table) . "\n";
+  // Add in any further children elements.
+  foreach (element_children($elements, TRUE) as $key) {
+    $output .= drupal_render($elements[$key]);
+  }
+  $output .= "</div>\n";
+  return $output;
 }
 
 /**

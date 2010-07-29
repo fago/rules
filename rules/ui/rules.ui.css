@@ -8,16 +8,16 @@
   display: block;
 }
 
-.rules-table ul.action-links .delete a, .rules-table ul.action-links .edit a {
+.rules-elements-table ul.action-links .delete a, .rules-elements-table ul.action-links .edit a {
 	background: none;
 	padding-left: 0px;
 }
 
-.rules-table ul.action-links a {
+.rules-elements-table ul.action-links a {
   line-height: 1em;
 }
 
-.rules-table ul.action-links {
+.rules-elements-table ul.action-links {
 	margin: 0px;
 	padding-left: 2px;
 }
@@ -31,7 +31,7 @@ tr.rules-elements-add td {
   padding-bottom: 2px;
 }
 
-.rules-table {
+.rules-elements-table {
 	margin-bottom: 3em;
 }
 /* We cannot set a positive margin-top for rules tables as the table drag link
@@ -42,14 +42,14 @@ tr.rules-elements-add td {
 }
 
 /* Fix table drag weights to don't take extra space */
-#rules-form-wrapper .tabledrag-toggle-weight-wrapper {
+.rules-elements-table .tabledrag-toggle-weight-wrapper {
 	position: absolute;
-	width: 100%;
+	right: 0px;
 }
 
 
 
-.rules-table caption {
+.rules-elements-table caption {
 	font-size: 110%;
 	font-weight: bold;
 	padding-bottom: 0.5em;

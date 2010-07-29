@@ -96,7 +96,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
       '#header' => array('Event', 'Operations'),
       '#empty' => t('None'),
     );
-    $form['events']['table']['#attributes']['class'][] = 'rules-table';
+    $form['events']['table']['#attributes']['class'][] = 'rules-elements-table';
     foreach ($this->rule->events() as $event_name) {
       $form['events']['table']['#rows'][$event_name] = array(
         check_plain($event_info[$event_name]['label']),

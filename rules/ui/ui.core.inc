@@ -312,7 +312,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#type' => 'fieldset',
       '#title' => t('Settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsed' => empty($form_state['values']['vars']['more']),
       '#weight' => 5,
     );
     $form['settings']['label'] = array(
@@ -330,10 +330,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $form['settings']['name'] = array(
       '#title' => t('Machine name'),
       '#type' => 'textfield',
-      '#default_value' => isset($machine_name) ? $machine_name : $this->element->name,
+      '#default_value' => isset($machine_name) ? $machine_name : '',
       '#maxlength' => 32,
       '#required' => TRUE,
       '#description' => t('The machine-readable name of this configuration is used by rules internally to identify the configuration. This name must contain only lowercase letters, numbers, and underscores and must be unique.'),
+      '#element_validate' => array('rules_ui_element_machine_name_validate'),
     );
     // Add the JS for machine name creation only during creation, so label
     // changes don't automatically lead to changed machine names.
@@ -356,6 +357,38 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       );
       $form['settings']['label']['#field_suffix'] = '&nbsp;<small id="edit-label-suffix">' . t('Machine name: @name', array('@name' => $form['settings']['name']['#default_value'])) . '</small>';
     }
+
+    // Show a form for editing variables for components.
+    if (($plugin_info = $this->element->pluginInfo()) && !empty($plugin_info['component'])) {
+      $form['settings']['vars'] = array(
+        '#prefix' => '<div id="rules-component-variables">',
+        '#suffix' => '</div>',
+        '#tree' => TRUE,
+        '#element_validate' => array('rules_ui_element_variable_form_validate'),
+        '#theme' => 'rules_ui_variable_form',
+        '#title' => t('Variables'),
+        '#description' => t('Specify the variables to be passed to the component when it is invoked. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters, and underscores.'),
+      );
+      $weight = 0;
+      foreach ($this->element->componentVariables() as $name => $var_info) {
+        $form['settings']['vars']['items'][$name] = RulesPluginUI::getVariableForm($name, $var_info);
+        $form['settings']['vars']['items'][$name]['weight']['#default_value'] = $weight++;
+      }
+      // Always add three empty forms.
+      for ($i = 0; $i < 3; $i++) {
+        $form['settings']['vars']['items'][$i] = RulesPluginUI::getVariableForm();
+        $form['settings']['vars']['items'][$i]['weight']['#default_value'] = $weight++;
+      }
+      $form['settings']['vars']['more'] = array(
+        '#type' => 'submit',
+        '#value' => t('Add more'),
+        // Enable AJAX once #756762 is fixed.
+        // '#ajax' => rules_ui_form_default_ajax('none'),
+        '#limit_validation_errors' => array(array('settings', 'vars')),
+        '#submit' => array('rules_form_submit_rebuild'),
+      );
+    }
+
     // TODO: Attach field form thus description and tags.
   }
 
@@ -369,19 +402,56 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->element->name = $module . '_' . $form_state['values']['name'];
       $form_state['redirect'] = RulesPluginUI::path($this->element->name);
     }
+
+    if (isset($form_state['values']['vars']['items'])) {
+      $vars = &$this->element->componentVariables();
+      $vars = array();
+      usort($form_state['values']['vars']['items'], 'rules_element_sort_helper');
+      foreach ($form_state['values']['vars']['items'] as $item) {
+        if ($item['type']) {
+          $vars[$item['name']] = array('label' => $item['label'], 'type' => $item['type']);
+        }
+      }
+      // Disable FAPI persistence for the variable form so renumbering works.
+      unset($form_state['input']['vars']);
+    }
   }
 
   public function settingsFormValidate($form, &$form_state) {
-    if (!preg_match('!^[a-z0-9_]+$!', $form_state['values']['name'])) {
-      form_set_error('name', t('The machine-readable name must contain only lowercase letters, numbers, and underscores.'));
-    }
-    elseif ($form['settings']['name']['#default_value'] != $form_state['values']['name'] && rules_config_load($this->element->name)) {
+    if ($form['settings']['name']['#default_value'] != $form_state['values']['name'] && rules_config_load($this->element->name)) {
       form_set_error('name', t('The machine-readable name %name is already taken.', array('%name' => $form_state['values']['name'])));
     }
   }
 
   public function settingsFormSubmit($form, &$form_state) {
 
+  }
+
+  /**
+   * Returns the form for configuring the info of a single variable.
+   */
+  public function getVariableForm($name = '', $info = array()) {
+    $form['type'] = array(
+      '#type' => 'select',
+      '#options' => array(0 => '--') + RulesPluginUI::getOptions('data_info'),
+      '#default_value' => isset($info['type']) ? $info['type'] : 0,
+    );
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#size' => 40,
+      '#default_value' => isset($info['label']) ? $info['label'] : '',
+    );
+    $form['name'] = array(
+      '#type' => 'textfield',
+      '#size' => 40,
+      '#default_value' => $name,
+      '#element_validate' => array('rules_ui_element_machine_name_validate'),
+    );
+    // Just set the weight #default_value for the returned form.
+    $form['weight'] = array(
+      '#type' => 'weight',
+    );
+    return $form;
   }
 
   /**
@@ -554,7 +624,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#rows' => $rows,
       '#empty' => t('None'),
     );
-    $table['#attributes']['class'][] = 'rules-table';
     return $table;
   }
 
@@ -587,15 +656,23 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public static function getOptions($hook) {
     $sorted_data = array();
+    $ungrouped = array();
     $data = rules_fetch_data($hook);
-    foreach ($data as $name => $set) {
-      $sorted_data[ucfirst($set['group'])][$name] = $set['label'];
+    foreach ($data as $name => $info) {
+      if (!empty($info['group'])) {
+        $sorted_data[drupal_ucfirst($info['group'])][$name] = drupal_ucfirst($info['label']);
+      }
+      else {
+        $ungrouped[$name] = drupal_ucfirst($info['label']);
+      }
     }
-    foreach ($sorted_data as $key => $set) {
-      asort($set);
-      $sorted_data[$key] = $set;
+    asort($ungrouped);
+    foreach ($sorted_data as $key => $choices) {
+      asort($choices);
+      $sorted_data[$key] = $choices;
     }
-    return $sorted_data;
+    ksort($sorted_data);
+    return $ungrouped + $sorted_data;
   }
 
   public static function formDefaults(&$form) {
@@ -604,8 +681,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $form['#attached']['js'][] = 'misc/collapse.js';
     // Add our own css.
     $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
-    // At element 'form' defaults as else added via system_element_info().
-    $form['#attached']['js']['misc/form.js'] = array('weight' => JS_LIBRARY + 1);
 
     // Specify the wrapper div used by #ajax.
     $form['#prefix'] = '<div id="rules-form-wrapper">';
@@ -664,7 +739,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
       '#empty' => t('None'),
       '#caption' => t('Elements')
     );
-    $form['elements']['#attributes']['class'][] = 'rules-table';
     $form['elements']['#attributes']['class'][] = 'rules-container-plugin';
 
     // Recurse over all element childrens or use the provided iterator.
