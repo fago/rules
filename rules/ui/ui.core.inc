@@ -94,28 +94,34 @@ class RulesElementMap {
   /**
    * Makes sure each element has an assigned id.
    */
-  public function index($element = NULL) {
-    if (!isset($element)) {
-      $element = $this->configuration;
+  public function index() {
+    foreach ($this->getUnIndexedElements($this->configuration) as $element) {
+      $id = &$element->property('elementId');
+      $id = ++$this->counter;
+      $this->index[$id] = $element;
     }
-    $id = &$element->property('elementId');
+  }
 
-    // Generate a new id if necessary.
+  protected function getUnIndexedElements($element, &$unindexed = array()) {
+    // Remember unindexed elements.
+    $id = $element->property('elementId');
     if (!isset($id)) {
-      $this->counter++;
-      $id = $this->counter;
+      $unindexed[] = $element;
     }
-    elseif ($id > $this->counter) {
-      $this->counter = $id;
+    else {
+      // Make sure $this->counter refers to the highest id.
+      if ($id > $this->counter) {
+        $this->counter = $id;
+      }
+      $this->index[$id] = $element;
     }
-    $this->index[$id] = $element;
-
     // Recurse down the tree.
     if ($element instanceof RulesContainerPlugin) {
       foreach ($element as $child) {
-        $this->index($child);
+        $this->getUnIndexedElements($child, $unindexed);
       }
     }
+    return $unindexed;
   }
 
   /**
