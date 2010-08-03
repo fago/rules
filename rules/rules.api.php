@@ -317,6 +317,11 @@ function hook_rules_event_info() {
  *     info about the data properties, such that data selectors via an entity
  *     metadata wrapper are supported. Specify an array as expected by
  *     entity_metadata_wrapper(). Optionally.
+ *   - 'creation callback': If 'property info' is given, an optional callback
+ *     that makes use of the property info to create a new instance of this
+ *     data type. Entities should use hook_entity_info() to specify
+ *     'creation callback' instead, as introduced by the entity metadata
+ *     module. See rules_action_data_create_array() for an example.
  *   - 'property defaults': May be used for non-entity data structures to
  *     to provide property info defaults for the data properties. Specify an
  *     array as expected by entity_metadata_wrapper(). Optionally.

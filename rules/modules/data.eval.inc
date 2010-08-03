@@ -111,6 +111,42 @@ function rules_action_data_list_remove($list, $item) {
 }
 
 /**
+ * Action: Add variable.
+ */
+function rules_action_variable_add($args, $element) {
+  return array('variable_added' => $args['value']);
+}
+
+/**
+ * Action: Create data.
+ */
+function rules_action_data_create($args, $element) {
+  $type = $args['settings']['type'];
+  $values = array();
+  foreach (array_keys($args['settings']['#info']['parameter']) as $name) {
+    // Remove the parameter name prefix 'param_'.
+    $values[substr($name, 6)] = $args[$name];
+  }
+  $cache = rules_get_cache();
+  $type_info = $cache['data_info'][$type];
+  if (isset($type_info['creation callback'])) {
+    $data = $type_info['creation callback']($values, $type);
+    return array('data_created' => $data);
+  }
+  else {
+    throw new RulesException('Unable to create @data, no creation callback found.', array('@data' => $type));
+  }
+}
+
+/**
+ * Creation callback for array structured data.
+ */
+function rules_action_data_create_array($values = array(), $type) {
+  // $values is an array already, so we can just pass it to the wrapper.
+  return rules_wrap_data($values, array('type' => $type));
+}
+
+/**
  * Condition: Compare data
  */
 function rules_condition_data_is($data, $op, $value) {

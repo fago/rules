@@ -148,3 +148,10 @@ function rules_test_rules_action_info() {
     ),
   );
 }
+
+/**
+ * Implements hook_rules_data_info_alter().
+ */
+function rules_test_rules_data_info_alter(&$data_info) {
+  $data_info['log_entry']['creation callback'] = 'rules_action_data_create_array';
+}

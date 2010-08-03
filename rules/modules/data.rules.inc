@@ -61,7 +61,7 @@ function rules_data_action_info() {
       'base' => 'rules_action_entity_fetch',
       'callbacks' => array(
         'access' => 'rules_action_entity_createfetch_access',
-        'form_alter' => 'rules_action_entity_type_form_alter',
+        'form_alter' => 'rules_action_type_form_alter',
       ),
     );
     $return['entity_query'] = array(
@@ -100,7 +100,7 @@ function rules_data_action_info() {
       'access callback' => 'rules_data_action_access',
       'base' => 'rules_action_entity_query',
       'callbacks' => array(
-        'form_alter' => 'rules_action_entity_type_form_alter',
+        'form_alter' => 'rules_action_type_form_alter',
       ),
     );
   }
@@ -131,7 +131,8 @@ function rules_data_action_info() {
       'base' => 'rules_action_entity_create',
       'callbacks' => array(
         'access' => 'rules_action_entity_createfetch_access',
-        'form_alter' => 'rules_action_entity_type_form_alter',
+        'form_alter' => 'rules_action_type_form_alter',
+        'validate' => 'rules_action_create_type_validate',
       ),
     );
   }
@@ -232,6 +233,64 @@ function rules_data_action_info() {
       'validate' => 'rules_data_validate_list_item_type',
     ),
   );
+  $return['variable_add'] = array(
+    'label' => t('Add a variable'),
+    'named parameter' => TRUE,
+    'parameter' => array(
+      'type' => array(
+        'type' => 'text',
+        'label' => t('Type'),
+        'options list' => 'rules_data_action_variable_add_options',
+        'description' => t('Specifies the type of the variable that should be added.'),
+        'restriction' => 'input',
+      ),
+      'value' => array(
+        'type' => 'unknown',
+        'label' => t('Value'),
+      ),
+    ),
+    'provides' => array(
+      'variable_added' => array(
+        'type' => 'unknown',
+        'label' => t('Added variable'),
+      ),
+    ),
+    'group' => t('Data'),
+    'base' => 'rules_action_variable_add',
+    'callbacks' => array(
+      'form_alter' => 'rules_action_type_form_alter',
+      'validate' => 'rules_action_create_type_validate',
+    ),
+  );
+
+  if (rules_data_action_data_create_options()) {
+    $return['data_create'] = array(
+      'label' => t('Create a data structure'),
+      'named parameter' => TRUE,
+      'parameter' => array(
+        'type' => array(
+          'type' => 'text',
+          'label' => t('Type'),
+          'options list' => 'rules_data_action_data_create_options',
+          'description' => t('Specifies the type of the data structure that should be created.'),
+          'restriction' => 'input',
+         ),
+         // Further needed parameters depend on the type.
+      ),
+      'provides' => array(
+        'data_created' => array(
+          'type' => 'unknown',
+          'label' => t('Created data'),
+        ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_action_data_create',
+      'callbacks' => array(
+        'form_alter' => 'rules_action_type_form_alter',
+        'validate' => 'rules_action_create_type_validate',
+      ),
+    );
+  }
   return $return;
 }
 
@@ -378,16 +437,17 @@ function rules_action_entity_query_process(RulesAbstractPlugin $element) {
 }
 
 /**
- * Custom validate callback for data create action.
+ * Custom validate callback for entity create, add variable and data create
+ * action.
  */
-function rules_action_entity_create_validate($element) {
+function rules_action_create_type_validate($element) {
   if (!isset($element->settings['type'])) {
     throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
 }
 
 /**
- * Custom process callback for data create action.
+ * Custom process callback for entity create action.
  */
 function rules_action_entity_create_process(RulesAbstractPlugin $element) {
   $element->settings += array('type' => NULL);
@@ -422,9 +482,9 @@ function rules_action_entity_parameter_options_list(RulesPlugin $element, $param
 }
 
 /**
- * Form alter callback for actions relying on the entity type.
+ * Form alter callback for actions relying on the entity type or the data type.
  */
-function rules_action_entity_type_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+function rules_action_type_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   $first_step = empty($element->settings['type']);
   $form['reload'] = array(
     '#weight' => 5,
@@ -432,7 +492,7 @@ function rules_action_entity_type_form_alter(&$form, &$form_state, $options, Rul
     '#name' => 'reload',
     '#value' => $first_step ? t('Continue') : t('Reload form'),
     '#limit_validation_errors' => array('parameter', 'type'),
-    '#submit' => array('rules_action_entity_type_form_submit_rebuild'),
+    '#submit' => array('rules_action_type_form_submit_rebuild'),
     '#ajax' => rules_ui_form_default_ajax(),
   );
   // Use ajax and trigger as the reload button.
@@ -461,9 +521,9 @@ function rules_action_entity_type_form_alter(&$form, &$form_state, $options, Rul
 }
 
 /**
- * FAPI submit callback for reloading the entity type form.
+ * FAPI submit callback for reloading the type form for entities or data types.
  */
-function rules_action_entity_type_form_submit_rebuild($form, &$form_state) {
+function rules_action_type_form_submit_rebuild($form, &$form_state) {
   rules_form_submit_rebuild($form, $form_state);
   // Clear the parameter modes for the parameters, so they get the proper
   // default values based upon the data types on rebuild.
@@ -529,6 +589,71 @@ function rules_action_data_list_add_positions() {
     'end' => t('Append the item to the end.'),
     'start' => t('Prepend the item to the front.'),
   );
+}
+
+/**
+ * Options list callback for variable add action.
+ */
+function rules_data_action_variable_add_options() {
+  $cache = rules_get_cache();
+  $data_info = $cache['data_info'];
+  $options = rules_extract_property($data_info, 'label');
+  natcasesort($options);
+  return $options;
+}
+
+/**
+ * Custom process callback for variable add action.
+ */
+function rules_action_variable_add_process(RulesAbstractPlugin $element) {
+  $type = $element->settings['type'];
+  $cache = rules_get_cache();
+  $type_info = $cache['data_info'][$type];
+  $element_info['parameter']['value']['type'] = $type;
+  $element_info['parameter']['value']['label'] = $type_info['label'];
+  $element_info['provides']['variable_added']['type'] = $type;
+  $element->alterInfo($element_info);
+}
+
+/**
+ * Options list callback for data create action.
+ */
+function rules_data_action_data_create_options() {
+  $cache = rules_get_cache();
+  $data_info = $cache['data_info'];
+  $entity_info = entity_get_info();
+  // Remove entities.
+  $data_info = array_diff_key($data_info, $entity_info);
+  $options = array();
+  foreach ($data_info as $type => $properties) {
+    if (isset($properties['creation callback'])) {
+      // Add data types with creation callback only.
+      $options[$type] = $properties['label'];
+    }
+  }
+  natcasesort($options);
+  return $options;
+}
+
+/**
+ * Custom process callback for data create action.
+ */
+function rules_action_data_create_process(RulesAbstractPlugin $element) {
+  $type = $element->settings['type'];
+  $cache = rules_get_cache();
+  $type_info = $cache['data_info'][$type];
+  if (isset($type_info['property info'])) {
+    // Add the data type's properties as parameters.
+    foreach ($type_info['property info'] as $property => $property_info) {
+      // Prefix parameter names to avoid name clashes with existing parameters.
+      $element_info['parameter']['param_' . $property] = array_intersect_key($property_info, array_flip(array('type', 'label')));
+      if (empty($property_info['required'])) {
+        $element_info['parameter']['param_' . $property]['optional'] = TRUE;
+      }
+    }
+  }
+  $element_info['provides']['data_created']['type'] = $type;
+  $element->alterInfo($element_info);
 }
 
 /**

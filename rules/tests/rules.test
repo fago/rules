@@ -941,6 +941,44 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     //debug(RulesLog::logger()->render());
   }
 
+  /**
+   * Test the data create action.
+   */
+  function testCreateData() {
+    $action = rules_action('data_create', array(
+      'type' => 'log_entry',
+      'param_type' => 'rules_test',
+      'param_message' => 'Rules test log message',
+      'param_severity' => WATCHDOG_WARNING,
+      'param_request_uri' => 'http://example.com',
+      'param_link' => '',
+    ));
+    $action->access();
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %log_entry', array('data_created', 'log_entry')));
+    $this->assertTrue($pos !== FALSE, 'Data of type log entry has been created.');
+  }
+
+/**
+   * Test the variable add action.
+   */
+  function testVariableAdd() {
+    // Test creation.
+    $action = rules_action('variable_add', array(
+      'type' => 'text_formatted',
+      'value' => array(
+        'value' => 'test text',
+        'format' => 1,
+      )
+    ));
+    $action->access();
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %variable_added of type %text_formatted', array('variable_added', 'text_formatted')));
+    $this->assertTrue($pos !== FALSE, 'Data of type text formatted has been created.');
+  }
+
   function testDataQueryAction() {
     $node = $this->drupalCreateNode(array('type' => 'page', 'title' => 'foo'));
     $rule = rule();
