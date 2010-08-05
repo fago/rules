@@ -55,8 +55,9 @@ function rules_item_rule_export($rule_name, &$rule, &$export, $module = NULL) {
     // Change #status to 'default'.
     $rule['#status'] = 'default';
     // Add the module name as category.
-    $rule += array('#categories' => array());
-    $rule['#categories'][$module] = $module;
+    if (empty($rule['#categories']) || !in_array($module, $rule['#categories'])) {
+      $rule['#categories'][$module] = $module;
+    }
 
     // We increase the counter in any case. As already renamed rules are passed
     // in first, this makes sure to not overwrite the names of those even if
