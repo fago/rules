@@ -178,7 +178,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#tree' => TRUE,
     );
 
-    foreach($this->element->parameterInfo() as $name => $parameter) {
+    foreach ($this->element->parameterInfo() as $name => $parameter) {
       if ($parameter['type'] == 'hidden') {
         continue;
       }
@@ -193,6 +193,39 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $form_state['parameter_mode'][$name] = !isset($form_state['parameter_mode'][$name]) ? NULL : $form_state['parameter_mode'][$name];
       $form['parameter'][$name] += $this->getParameterForm($name, $parameter, $settings, $form_state['parameter_mode'][$name]);
     }
+
+    // Provide a form for editing the label and name of provided variables.
+    $info = $this->element->info() + array('provides' => array());
+    $settings = $this->element->settings;
+
+    foreach ($info['provides'] as $var_name => $var_info) {
+      $form['provides'][$var_name] = array(
+        '#type' => 'fieldset',
+        '#title' => check_plain($var_info['label']),
+        '#description' => filter_xss(isset($var_info['description']) ? $var_info['description'] : ''),
+      );
+      $form['provides'][$var_name]['label'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Variable label'),
+        '#default_value' => isset($settings[$var_name . ':label']) ? $settings[$var_name . ':label'] : $var_info['label'],
+      );
+      $form['provides'][$var_name]['var'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Variable name'),
+        '#default_value' => isset($settings[$var_name . ':var']) ? $settings[$var_name . ':var'] : $var_name,
+        '#description' => t('The variable name must contain only lowercase letters, numbers, and underscores and must be unique in the current scope.'),
+        '#element_validate' => array('rules_ui_element_machine_name_validate'),
+      );
+    }
+    if (!empty($form['provides'])) {
+      $help = '<div class="description">' . t('Adjust the names and labels of provided variables, but note that renaming of already utilizied variables invalidates the existing uses.') . '</div>';
+      $form['provides'] += array(
+        '#tree' => TRUE,
+        '#prefix' => '<h4 class="rules-form-heading">' . t('Provided variables') . '</h4>' . $help,
+      );
+    }
+
+
 
     // Add settings form, if specified.
     if (!empty($options['show settings'])) {
@@ -265,6 +298,15 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function form_validate($form, &$form_state) {
     $this->form_extract_values($form, $form_state);
 
+    if (isset($form_state['values']['provides'])) {
+      $vars = $this->element->availableVariables();
+      foreach ($form_state['values']['provides'] as $name => $values) {
+        if (isset($vars[$values['var']])) {
+          form_error($form['provides'][$name]['var'], t('The variable name %name is already taken.', array('%name' => $values['var'])));
+        }
+      }
+    }
+
     // Enforce processing of the settings to ensure access for any applied input
     // evaluators and processors is checked now.
     $this->element->processSettings(TRUE, TRUE);
@@ -291,6 +333,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     if (isset($form_state['values']['parameter'])) {
       foreach ($form_state['values']['parameter'] as $name => $values) {
         $this->element->settings += $values['settings'];
+      }
+    }
+    if (isset($form_state['values']['provides'])) {
+      foreach ($form_state['values']['provides'] as $name => $values) {
+        $this->element->settings[$name . ':label'] = $values['label'];
+        $this->element->settings[$name . ':var'] = $values['var'];
       }
     }
     if (!empty($form['settings'])) {
@@ -510,6 +558,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         ) + $element;
       }
     }
+    foreach ($this->element->providesVariables() as $name => $var_info) {
+      $content['provides'][$name] = array(
+        '#theme' => 'rules_provides_variable_view',
+        '#info' => $var_info,
+        '#name' => $name,
+      );
+    }
+    if (!empty($content['provides'])) {
+      $content['provides'] += array(
+        '#caption' => t('Provides variables'),
+        '#theme' => 'rules_content_group',
+      );
+    }
+
     $content['#suffix'] = '</div>';
     $content['#type'] = 'container';
     $content['#attributes']['class'][] = 'rules-element-content';

@@ -106,3 +106,7 @@ form input.rules-switch-button {
 	padding: 2px;
 	text-align: center;
 }
+
+.rules-form-heading {
+	margin-top: 3em;
+}

@@ -115,7 +115,9 @@ function theme_rules_content_group($variables) {
     $output[] = drupal_render($element[$key]);
   }
   $heading = !empty($element['#caption']) ? "<span class='rules-content-heading'>" . $element['#caption'] . ': </span>' : '';
-  return !empty($output) ? $heading . implode(', ', $output) : '';
+  if (!empty($output)) {
+    return '<div class="rules-element-content-group">' . $heading . implode(', ', $output) . '</div>';
+  }
 }
 
 /**
@@ -140,6 +142,24 @@ function theme_rules_parameter_configuration($variables) {
   $output = "<span $label_attributes>" . check_plain($element['#info']['label']) . ': </span>';
   $output .= "<span $attributes>" . truncate_utf8($content, 30, TRUE, TRUE) . "</span>";
   return $output;
+}
+
+/**
+ * Themes the view of a provided variable.
+ * @ingroup themeable
+ */
+function theme_rules_provides_variable_view($variables) {
+  $element = $variables['element'];
+
+  $label_attributes['class'][] = 'rules-variable-label';
+  if (!empty($element['#info']['description'])) {
+    $label_attributes['title'] = $element['#info']['description'];
+  }
+  $label_attributes = drupal_attributes($label_attributes);
+
+  $output = check_plain($element['#name']);
+  $output .= ' (' . check_plain($element['#info']['label']) . ')';
+  return "<span $label_attributes>" . $output . '</span>';
 }
 
 /**

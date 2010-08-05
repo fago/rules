@@ -365,10 +365,10 @@ abstract class RulesPlugin extends RulesExtendable {
     if (isset($this->info['provides'])) {
       foreach ($this->info['provides'] as $name => $info) {
         $info['source name'] = $name;
+        $info['label'] = isset($this->settings[$name . ':label']) ? $this->settings[$name . ':label'] : $info['label'];
         if (isset($this->settings[$name . ':var'])) {
           $name = $this->settings[$name . ':var'];
         }
-        $info['label'] = isset($this->settings[$name . ':label']) ? $this->settings[$name . ':label'] : $info['label'];
         $provides[$name] = $info;
       }
     }
