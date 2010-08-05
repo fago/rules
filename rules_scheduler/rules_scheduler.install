@@ -11,38 +11,38 @@
  */
 function rules_scheduler_schema() {
   $schema['rules_scheduler'] = array(
-    'description' => t('Stores scheduled tasks.'),
+    'description' => 'Stores scheduled tasks.',
     'fields' => array(
       'tid' => array(
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t("The scheduled task's id."),
+        'description' => "The scheduled task's id.",
       ),
       'config' => array(
         'type' => 'varchar',
         'length' => '255',
         'default' => '',
         'not null' => TRUE,
-        'description' => t("The scheduled configuration's name."),
+        'description' => "The scheduled configuration's name.",
       ),
       'date' => array(
-        'type' => 'datetime',
+        'description' => 'The Unix timestamp of when the task is to be scheduled.',
+        'type' => 'int',
         'not null' => TRUE,
-        'description' => t('When the task is to be scheduled.'),
       ),
       'state' => array(
         'type' => 'text',
         'not null' => FALSE,
         'serialize' => TRUE,
-        'description' => t('The whole, serialized evaluation state.'),
+        'description' => 'The whole, serialized evaluation state.',
       ),
       'identifier' => array(
         'type' => 'varchar',
         'length' => '255',
         'default' => '',
         'not null' => FALSE,
-        'description' => t('The user defined string identifying this task.'),
+        'description' => 'The user defined string identifying this task.',
       ),
     ),
     'primary key' => array('tid'),
@@ -50,5 +50,3 @@ function rules_scheduler_schema() {
   );
   return $schema;
 }
-
-

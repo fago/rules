@@ -14,7 +14,7 @@ function rules_scheduler_cron() {
   //TODO: make this configurable.
   $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
     ->fields('r')
-    ->condition('date', gmdate('Y-m-d H:i:s'), '<=')
+    ->condition('date', time(), '<=')
     ->range(0, 30)
     ->execute();
 
@@ -69,6 +69,5 @@ function rules_scheduler_schedule_task($task) {
       ->condition('identifier', $task['identifier'])
       ->execute();
   }
-  $task['date'] = gmdate('Y-m-d H:i:s', $task['date']);
   drupal_write_record('rules_scheduler', $task);
 }
