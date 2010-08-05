@@ -546,9 +546,6 @@ class RulesEventSet extends RulesRuleSet {
     $this->evaluate($state);
     $state->cleanUp($this);
     rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
-    // TODO: improve that to show the log for admins or log to watchdog
-    // in case of errors.
-    RulesLog::logger()->checkLog();
   }
 
   public function rebuildCache(&$itemInfo, &$cache) {

@@ -1772,7 +1772,12 @@ class RulesLog {
     throw new Exception("Cannot clone the logger.");
   }
 
-  function log($msg, $args = array(), $logLevel = self::INFO, $scope = NULL) {
+  /**
+   * Logs a log message.
+   *
+   * @see rules_log()
+   */
+  public function log($msg, $args = array(), $logLevel = self::INFO, $scope = NULL) {
     if ($logLevel >= $this->logLevel) {
       $this->log[] = array($msg, $args, $logLevel, microtime(TRUE), $scope);
     }
@@ -1789,14 +1794,32 @@ class RulesLog {
     }
   }
 
-  function get() {
+  /**
+   * Checks the log for (error) messages with a log level equal or higher than the given one.
+   *
+   * @return
+   *   Whether the an error has been logged.
+   */
+  public function hasErrors($logLevel = self::WARN) {
+    foreach ($this->log as $entry) {
+      if ($entry[2] >= $logLevel) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * Gets an array of logged messages.
+   */
+  public function get() {
     return $this->log;
   }
 
   /**
    * Renders the whole log.
    */
-  function render() {
+  public function render() {
     $line = 0;
     $output = array();
     while (isset($this->log[$line])) {
@@ -1835,12 +1858,17 @@ class RulesLog {
     return theme('item_list', array('items' => $output));
   }
 
-  function clear() {
+  /**
+   * Clears the logged messages.
+   */
+  public function clear() {
     $this->log = array();
   }
-
 }
 
+/**
+ * An exception for Rules.
+ */
 class RulesException extends Exception {
 
   public $msg, $args, $severity, $element, $keys = array();

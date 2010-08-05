@@ -718,6 +718,10 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
+    'rules_log' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
   );
 }
 
@@ -857,37 +861,25 @@ function rules_page_build(&$page) {
     drupal_goto($GLOBALS['_rules_action_drupal_goto_do']);
   }
 
-  if (variable_get('rules_debug', FALSE)) {
-    $region = 'help';
-
-    if (isset($_SESSION['rules_debug'])) {
-      foreach ($_SESSION['rules_debug'] as $log) {
-        $page[$region]['rules_debug'][] = array(
-          '#markup' => $log,
-        );
-      }
-      unset($_SESSION['rules_debug']);
+  if (isset($_SESSION['rules_debug'])) {
+    $region = variable_get('rules_debug_region', 'help');
+    foreach ($_SESSION['rules_debug'] as $log) {
+      $page[$region]['rules_debug'][] = array(
+        '#markup' => $log,
+      );
+      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
     }
+    unset($_SESSION['rules_debug']);
+  }
+  if (variable_get('rules_debug', FALSE) || (user_access('administer rules') && RulesLog::logger()->hasErrors())) {
     $logger = RulesLog::logger();
+    $region = variable_get('rules_debug_region', 'help');
     if ($log = $logger->render()) {
       $page[$region]['rules_debug'][] = array(
         '#markup' => $log,
       );
+      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
       $logger->clear();
-    }
-    if (!empty($page[$region]['rules_debug'])) {
-      $page[$region]['rules_debug']['#attached'] = array(
-        'css' => array(drupal_get_path('module', 'rules') . '/ui/rules.ui.css'),
-      );
-      $page[$region]['rules_debug']['heading'] = array(
-        '#markup' => '<h3>' . t('Rules evaluation log') . '</h3>',
-        '#weight' => -1
-      );
-      $page[$region]['rules_debug'] += array(
-        '#prefix' => '<div class="rules-debug-log">',
-        '#suffix' => '</div>',
-        '#weight' => 5
-      );
     }
   }
 }
@@ -896,9 +888,11 @@ function rules_page_build(&$page) {
  * Implements hook_exit().
  */
 function rules_exit() {
-  if (variable_get('rules_debug', FALSE) && $log = RulesLog::logger()->render()) {
-    // Keep the log in the session so we can show it on the next page.
-    $_SESSION['rules_debug'][] = $log;
+  if (variable_get('rules_debug', FALSE) || (user_access('administer rules') && RulesLog::logger()->hasErrors())) {
+    if ($log = RulesLog::logger()->render()) {
+      // Keep the log in the session so we can show it on the next page.
+      $_SESSION['rules_debug'][] = $log;
+    }
   }
 }
 
