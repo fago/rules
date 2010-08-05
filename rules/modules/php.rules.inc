@@ -22,7 +22,7 @@ function rules_php_evaluator_info() {
   return array(
     'php' => array(
       'class' => 'RulesPHPEvaluator',
-      'type' => array('text', 'uri'),
+      'type' => array('text', 'token', 'uri'),
       'weight' => -10,
       'module' => 'php',
     ),
@@ -36,7 +36,7 @@ function rules_php_data_processor_info() {
   return array(
     'php' => array(
       'class' => 'RulesPHPDataProcessor',
-      'type' => array('text', 'decimal', 'integer', 'date', 'duration', 'boolean', 'uri'),
+      'type' => array('text', 'token',  'decimal', 'integer', 'date', 'duration', 'boolean', 'uri'),
       'weight' => 10,
       'module' => 'php',
     ),

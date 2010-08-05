@@ -29,6 +29,11 @@ function rules_rules_core_data_info() {
       'label' => t('text'),
       'ui class' => 'RulesDataUIText',
     ),
+   'token' => array(
+      'label' => t('text token'),
+      'parent' => 'text',
+      'ui class' => 'RulesDataUITextToken',
+    ),
     // A formatted text as used by entity metadata.
     'text_formatted' => array(
       'label' => t('formatted text'),
