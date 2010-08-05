@@ -109,6 +109,18 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputFormInt
 }
 
 /**
+ * UI for text tokens.
+ */
+class RulesDataUITextToken extends RulesDataUIText {
+
+  public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $form = parent::inputForm($name, $info, $settings, $element);
+    $form['#description'] = t('May only contain only lowercase letters, numbers, and underscores.');
+    return $form;
+  }
+}
+
+/**
  * UI for formatted text.
  */
 class RulesDataUITextFormatted extends RulesDataUIText {
