@@ -509,6 +509,7 @@ function rules_action_type_form_alter(&$form, &$form_state, $options, RulesAbstr
       }
     }
     unset($form['submit']);
+    unset($form['provides']);
     // Disable #ajax for the first step as it has troubles with lazy-loaded JS.
     // @todo: Re-enable once JS lazy-loading is fixed in core.
     unset($form['parameter']['type']['settings']['type']['#ajax']);
