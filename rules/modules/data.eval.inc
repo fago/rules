@@ -64,8 +64,13 @@ function rules_action_entity_create($args, $element) {
     // Remove the parameter name prefix 'param_'.
     $values[substr($name, 6)] = $args[$name];
   }
-  $data = entity_metadata_entity_create($args['type'], $values)->value();
-  return array('entity_created' => $data);
+  try {
+    $data = entity_metadata_entity_create($args['type'], $values)->value();
+    return array('entity_created' => $data);
+  }
+  catch (EntityMetadataWrapperException $e) {
+    throw new RulesException('Unable to create entity @type": ' . $e->getMessage(), array('@type' => $args['type']), $element);
+  }
 }
 
 /**
@@ -121,7 +126,7 @@ function rules_action_variable_add($args, $element) {
  * Action: Create data.
  */
 function rules_action_data_create($args, $element) {
-  $type = $args['settings']['type'];
+  $type = $args['type'];
   $values = array();
   foreach (array_keys($args['settings']['#info']['parameter']) as $name) {
     // Remove the parameter name prefix 'param_'.
@@ -130,11 +135,16 @@ function rules_action_data_create($args, $element) {
   $cache = rules_get_cache();
   $type_info = $cache['data_info'][$type];
   if (isset($type_info['creation callback'])) {
-    $data = $type_info['creation callback']($values, $type);
-    return array('data_created' => $data);
+    try {
+      $data = $type_info['creation callback']($values, $type);
+      return array('data_created' => $data);
+    }
+    catch (EntityMetadataWrapperException $e) {
+      throw new RulesException('Unable to create @data": ' . $e->getMessage(), array('@data' => $type), $element);
+    }
   }
   else {
-    throw new RulesException('Unable to create @data, no creation callback found.', array('@data' => $type));
+    throw new RulesException('Unable to create @data, no creation callback found.', array('@data' => $type), $element);
   }
 }
 

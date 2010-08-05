@@ -172,3 +172,18 @@ function theme_rules_data_selector_help($variables) {
   }
   return drupal_render($render);
 }
+
+/**
+ * Themes the rules log debug output.
+ * @ingroup themeable
+ */
+function theme_rules_log($variables) {
+  $element = $variables['element'];
+  drupal_add_css(drupal_get_path('module', 'rules') . '/ui/rules.ui.css');
+
+  $output = '<div class="rules-debug-log">';
+  $output .= '<h3>' . t('Rules evaluation log') . '</h3>';
+  $output .= $element['#children'];
+  $output .= '</div>';
+  return $output;
+}
