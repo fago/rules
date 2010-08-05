@@ -66,7 +66,7 @@ function rules_item_rule_export($rule_name, &$rule, &$export, $module = NULL) {
 
     if (strpos($rule_name, $module) !== 0) {
       // Make sure the name isn't already taken.
-      $rules = rules_get_items('rules');
+      $rules = rules_get_configured_items('rules');
       while (isset($rules[$module .'_'. $counter])) {
         $counter++;
       }
@@ -78,10 +78,6 @@ function rules_item_rule_export($rule_name, &$rule, &$export, $module = NULL) {
     }
   }
 }
-
-
-
-
 
 /**
  * Implementation of hook_features_export_options() for tags.
