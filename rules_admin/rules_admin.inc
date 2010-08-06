@@ -7,7 +7,7 @@
  */
 
 /**
- * Reaction rules overview
+ * Reaction rules overview.
  */
 function rules_admin_reaction_overview($form, &$form_state) {
   $form['filter'] = array(
@@ -58,7 +58,7 @@ function rules_admin_form_rebuild_submit($form, &$form_state) {
 }
 
 /**
- * Rules overview
+ * Components overview.
  */
 function rules_admin_components_overview($form, &$form_state) {
   $form['filter'] = array(
@@ -96,7 +96,7 @@ function rules_admin_components_overview($form, &$form_state) {
 }
 
 /**
- * Define the rule settings
+ * Rules settings form.
  */
 function rules_admin_settings($form, &$form_state) {
   $form['rules_debug'] = array(
@@ -109,7 +109,7 @@ function rules_admin_settings($form, &$form_state) {
 }
 
 /**
- * Add reaction rules form
+ * Add reaction rules form.
  */
 function rules_admin_add_reaction_rule($form, &$form_state) {
   $rules_config = rules_reaction_rule();
