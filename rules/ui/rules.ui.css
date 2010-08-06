@@ -47,15 +47,16 @@ tr.rules-elements-add td {
 	right: 0px;
 }
 
-
-
-.rules-elements-table caption {
+.rules-elements-table caption, .rules-overview-table caption {
 	font-size: 110%;
 	font-weight: bold;
 	padding-bottom: 0.5em;
 	text-align: left;
 }
 
+.rules-overview-table {
+	margin: 1em 0;
+}
 
 .rules-debug-log {
 	background-color: #EEEEEE;
@@ -68,7 +69,6 @@ tr.rules-elements-add td {
 .rules-debug-log ul {
   padding-left: 2em;
 }
-
 
 #rules-filter-form {
   margin-bottom: 1.5em;

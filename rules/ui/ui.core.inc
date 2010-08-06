@@ -692,6 +692,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#rows' => $rows,
       '#empty' => t('None'),
     );
+    $table['#attributes']['class'][] = 'rules-overview-table';
+    $table['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
     return $table;
   }
 
