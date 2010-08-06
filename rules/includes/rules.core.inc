@@ -335,23 +335,30 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Returns info about parameters needed by the plugin. Note that not
-   * necessarily all parameter need to be passed as argument when executing
-   * as parameters might be already configured in the element's settings.
+   * Returns info about parameters needed by the plugin.
    *
-   * @see self::argumentInfo()
+   * Note that not necessarily all parameters are needed when executing the
+   * plugin, as values for the parameter might have been already configured via
+   * the element settings.
+   *
+   * @see self::parameterInfo()
    */
-  public function parameterInfo() {
+  public function pluginParameterInfo() {
     return isset($this->info['parameter']) ? $this->info['parameter'] : array();
   }
 
   /**
-   * Returns info about expected arguments when executing the plugin.
+   * Returns info about parameters needed for executing the configured plugin.
+   *
+   * @param $optional
+   *   Whether optional parameters should be included.
+   *
+   * @see self::pluginParameterInfo()
    */
-  public function argumentInfo() {
+  public function parameterInfo($optional = FALSE) {
     // We have to filter out parameters that are already configured.
-    foreach ($this->parameterInfo() as $name => $info) {
-      if (!isset($this->settings[$name . ':select']) && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
+    foreach ($this->pluginParameterInfo() as $name => $info) {
+      if (!isset($this->settings[$name . ':select']) && !isset($this->settings[$name]) && ($optional || (empty($info['optional']) && $info['type'] != 'hidden'))) {
         $vars[$name] = $info;
       }
     }
@@ -359,18 +366,31 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Returns info about variables provided for later evaluated elements.
+   * Returns the about variables the plugin provides for later evaluated elements.
+   *
+   * Note that this method returns info about the provided variables as defined
+   * by the plugin. Thus this resembles the original info, which may be
+   * adapted via configuration.
+   *
+   * @see self::providesVariables()
+   */
+  public function pluginProvidesVariables() {
+    return isset($this->info['provides']) ? $this->info['provides'] : array();
+  }
+
+  /**
+   * Returns info about all variables provided for later evaluated elements.
+   *
+   * @see self::pluginProvidesVariables()
    */
   public function providesVariables() {
-    if (isset($this->info['provides'])) {
-      foreach ($this->info['provides'] as $name => $info) {
-        $info['source name'] = $name;
-        $info['label'] = isset($this->settings[$name . ':label']) ? $this->settings[$name . ':label'] : $info['label'];
-        if (isset($this->settings[$name . ':var'])) {
-          $name = $this->settings[$name . ':var'];
-        }
-        $provides[$name] = $info;
+    foreach ($this->pluginProvidesVariables() as $name => $info) {
+      $info['source name'] = $name;
+      $info['label'] = isset($this->settings[$name . ':label']) ? $this->settings[$name . ':label'] : $info['label'];
+      if (isset($this->settings[$name . ':var'])) {
+        $name = $this->settings[$name . ':var'];
       }
+      $provides[$name] = $info;
     }
     return isset($provides) ? $provides : array();
   }
@@ -396,12 +416,12 @@ abstract class RulesPlugin extends RulesExtendable {
    *   An array of passed arguments keyed by their names.
    */
   protected function getPassedArguments(array $args) {
-    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->argumentInfo()) === array()) {
+    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->parameterInfo()) === array()) {
       // The caller passed an array of arguments, so let's use that
       return $args[0];
     }
     $vars = array();
-    foreach (array_keys($this->argumentInfo()) as $i => $name) {
+    foreach (array_keys($this->parameterInfo(TRUE)) as $i => $name) {
       if (isset($args[$i])) {
         $vars[$name] = $args[$i];
       }
@@ -440,8 +460,10 @@ abstract class RulesPlugin extends RulesExtendable {
       if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional']) && $info['type'] != 'hidden') {
         throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
       }
-      $args += array($name => NULL);
-      $state->addVariable($name, $args[$name], $info);
+      if (isset($args[$name]) || !empty($info['handler'])) {
+        $args += array($name => NULL);
+        $state->addVariable($name, $args[$name], $info);
+      }
     }
     return $state;
   }
@@ -450,7 +472,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns info about all variables that have to be setup in the state.
    */
   protected function setUpVariables() {
-    return $this->argumentInfo();
+    return $this->parameterInfo(TRUE);
   }
 
   /**
@@ -487,7 +509,7 @@ abstract class RulesPlugin extends RulesExtendable {
   public function dependencies() {
     $this->processSettings();
     $modules = isset($this->itemInfo['module']) && $this->itemInfo['module'] != 'rules' ? array($this->itemInfo['module'] => 1) : array();
-    foreach ($this->parameterInfo() as $name => $info) {
+    foreach ($this->pluginParameterInfo() as $name => $info) {
       if (isset($this->settings[$name . ':process']) && $this->settings[$name . ':process'] instanceof RulesDataProcessor) {
         $modules += array_flip($this->settings[$name . ':process']->dependencies());
       }
@@ -501,7 +523,7 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function access() {
     $this->processSettings();
-    foreach ($this->parameterInfo() as $name => $info) {
+    foreach ($this->pluginParameterInfo() as $name => $info) {
       if (isset($this->settings[$name . ':select']) && $wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
         if ($wrapper->access('view') === FALSE) {
           return FALSE;
@@ -529,7 +551,7 @@ abstract class RulesPlugin extends RulesExtendable {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
       $var_info = $this->availableVariables();
-      foreach ($this->parameterInfo() as $name => $info) {
+      foreach ($this->pluginParameterInfo() as $name => $info) {
         // Prepare input evaluators.
         if (isset($this->settings[$name])) {
           $this->settings[$name . ':process'] = $this->settings[$name];
@@ -565,8 +587,8 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     // Check the parameter settings.
     $this->checkParameterSettings();
-    // Check variable names for provided variabels to be valid.
-    foreach ($this->providesVariables() as $name => $info) {
+    // Check variable names for provided variables to be valid.
+    foreach ($this->pluginProvidesVariables() as $name => $info) {
       if (isset($this->settings[$name . ':var'])) {
         $this->checkVarName($this->settings[$name . ':var']);
       }
@@ -584,7 +606,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Checks whether parameters are correctly configured.
    */
   protected function checkParameterSettings() {
-    foreach ($this->parameterInfo() as $name => $info) {
+    foreach ($this->pluginParameterInfo() as $name => $info) {
       if (isset($info['restriction']) && $info['restriction'] == 'selector' && isset($this->settings[$name])) {
         throw new RulesException("%plugin: The parameter %name may only be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name), array($this, 'parameter', $name));
       }
@@ -680,7 +702,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns info about the configured argument.
    *
    * @return
-   *   The determined type. If it's not known NULL is returned.
+   *   The determined info. If it's not known NULL is returned.
    */
   public function getArgumentInfo($name) {
     $vars = $this->availableVariables();
@@ -857,13 +879,15 @@ abstract class RulesPlugin extends RulesExtendable {
 
   protected function exportSettings() {
     $export = array();
-    foreach ($this->parameterInfo() as $name => $info) {
+    foreach ($this->pluginParameterInfo() as $name => $info) {
       if (($return = $this->exportParameterSetting($name, $info)) !== NULL) {
         $export['USING'][$name] = $return;
       }
     }
     foreach ($this->providesVariables() as $name => $info) {
-      $export['PROVIDE'][$info['source name']][$name] = $info['label'];
+      if (!empty($info['source name'])) {
+        $export['PROVIDE'][$info['source name']][$name] = $info['label'];
+      }
     }
     return $export;
   }
@@ -1023,7 +1047,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   protected function variableInfoAssertions() {
     // Get the implementation's assertions and map them to the variable names.
     if ($assertions = $this->__call('assertions')) {
-      $info = $this->parameterInfo();
       foreach ($assertions as $param_name => $data) {
         $name = isset($this->settings[$param_name . ':select']) ? $this->settings[$param_name . ':select'] : $param_name;
         $return[$name] = $data;
@@ -1458,11 +1481,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return array_keys($modules);
   }
 
-  public function argumentInfo() {
+  public function parameterInfo($optional = FALSE) {
     if (isset($this->info['variables'])) {
-      return parent::argumentInfo() + rules_filter_array($this->info['variables'], 'handler', FALSE);
+      return parent::parameterInfo($optional) + rules_filter_array($this->info['variables'], 'handler', FALSE);
     }
-    return parent::argumentInfo();
+    return parent::parameterInfo($optional);
   }
 
   public function availableVariables() {
@@ -1512,7 +1535,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   protected function setUpVariables() {
-    return isset($this->info['variables']) ? parent::argumentInfo() + $this->info['variables'] : $this->argumentInfo();
+    return isset($this->info['variables']) ? parent::parameterInfo(TRUE) + $this->info['variables'] : $this->parameterInfo(TRUE);
   }
 
   /**
@@ -1661,6 +1684,30 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
     foreach ($this->children as $action) {
       $action->evaluate($state);
     }
+  }
+
+  public function pluginProvidesVariables() {
+    return array();
+  }
+
+  public function providesVariables() {
+    $provides = parent::providesVariables();
+    if (isset($this->info['provides'])) {
+      // Collect provided vars of the actions.
+      $vars = $this->stateVariables(TRUE);
+      // Pass only the variables specified through.
+      $provides += array_intersect_key($vars, array_flip($this->info['provides']));
+    }
+    return $provides;
+  }
+
+  /**
+   * Returns an array of variable names, which are provided by passing through
+   * the provided variables of the children.
+   */
+  public function &componentProvidesVariables() {
+    $this->info += array('provides' => array());
+    return $this->info['provides'];
   }
 }
 

@@ -178,7 +178,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#tree' => TRUE,
     );
 
-    foreach ($this->element->parameterInfo() as $name => $parameter) {
+    foreach ($this->element->pluginParameterInfo() as $name => $parameter) {
       if ($parameter['type'] == 'hidden') {
         continue;
       }
@@ -195,10 +195,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     }
 
     // Provide a form for editing the label and name of provided variables.
-    $info = $this->element->info() + array('provides' => array());
     $settings = $this->element->settings;
-
-    foreach ($info['provides'] as $var_name => $var_info) {
+    foreach ($this->element->pluginProvidesVariables() as $var_name => $var_info) {
       $form['provides'][$var_name] = array(
         '#type' => 'fieldset',
         '#title' => check_plain($var_info['label']),
@@ -540,7 +538,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#caption' => t('Parameter'),
       '#theme' => 'rules_content_group',
     );
-    foreach ($this->element->parameterInfo() as $name => $parameter) {
+    foreach ($this->element->pluginParameterInfo() as $name => $parameter) {
       $element = array();
       if (isset($this->element->settings[$name . ':select'])) {
         $element['content'] = array(
@@ -960,6 +958,30 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     $form['elements']['#add'] = self::addOperations();
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
     $form['elements']['#caption'] = t('Actions');
+  }
+
+  public function settingsForm(&$form, &$form_state) {
+    parent::settingsForm($form, $form_state);
+
+    $vars = $this->element->call('stateVariables', array(TRUE));
+    $vars = array_diff_key($vars, RulesState::defaultVariables());
+    $form['settings']['component_provides'] = array(
+      '#access' => !empty($vars),
+      '#type' => 'checkboxes',
+      '#options' => rules_extract_property($vars, 'label'),
+      '#default_value' => $this->element->componentProvidesVariables(),
+      '#title' => t('Provide variables'),
+      '#description' => t('Select the variables that should be provided to the caller.'),
+    );
+  }
+
+  public function settingsFormExtractValues($form, &$form_state) {
+    parent::settingsFormExtractValues($form, $form_state);
+
+    if (isset($form_state['values']['component_provides'])) {
+      $vars = &$this->element->componentProvidesVariables();
+      $vars = array_keys(array_filter($form_state['values']['component_provides']));
+    }
   }
 }
 
