@@ -330,10 +330,10 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
     return array();
   }
 
-  public function argumentInfo() {
+  public function parameterInfo($optional = FALSE) {
     // If executed directly, all variables as defined by the event need to
     // be passed.
-    return $this->availableVariables();
+    return rules_filter_array($this->availableVariables(), 'handler', FALSE);
   }
 
   public function availableVariables() {
@@ -436,12 +436,6 @@ class RulesOr extends RulesConditionContainer {
 class RulesLoop extends RulesActionContainer {
 
   protected $itemName = 'loop';
-  protected $parameter = array(
-    'list' => array(
-      'type' => 'list',
-      'restriction' => 'selector',
-    ),
-  );
 
   public function __construct($settings = array(), $variables = NULL) {
     $this->setUp();
@@ -454,9 +448,10 @@ class RulesLoop extends RulesActionContainer {
     }
   }
 
-  public function parameterInfo() {
-    $info = $this->parameter;
-    $info['list'] += array(
+  public function pluginParameterInfo() {
+    $info['list'] = array(
+      'type' => 'list',
+      'restriction' => 'selector',
       'label' => t('List'),
       'description' => t('The list to loop over.'),
     );
@@ -484,18 +479,20 @@ class RulesLoop extends RulesActionContainer {
   }
 
   public function evaluate(RulesState $state) {
-    $list_var = $this->getArgument('list', $this->parameter['list'], $state);
-    $item_info = $this->listItemInfo();
-    $name = $this->settings['item:var'];
+    $param_info = $this->pluginParameterInfo();
+    $list = $this->getArgument('list', $param_info['list'], $state);
+    $item_var_info = $this->listItemInfo();
+    $item_var_name = $this->settings['item:var'];
+
     if (isset($this->settings['list:select'])) {
       rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
     }
 
     // Loop over the list and evaluate the children for each list item.
-    foreach ($list_var as $key => $item_value) {
+    foreach ($list as $key => $item) {
       // Use a separate state so variables are available in the loop only.
       $state2 = clone $state;
-      $state2->addVariable($name, $list_var[$key], $item_info);
+      $state2->addVariable($item_var_name, $list[$key], $item_var_info);
       parent::evaluate($state2);
     }
   }

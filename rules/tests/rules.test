@@ -395,7 +395,7 @@ class RulesTestCase extends DrupalWebTestCase {
     // Test adapting the info of actions.
     $settings['#info']['parameter']['node']['bundles'] = array('page');
     $action = rules_action('rules_node_make_sticky_action', $settings);
-    $info = $action->parameterinfo();
+    $info = $action->pluginParameterInfo();
     $this->assertEqual($info['node']['bundles'], array('page'), 'Info adapted.');
 
     // Test failing integrity check.
@@ -437,7 +437,7 @@ class RulesTestCase extends DrupalWebTestCase {
     // generally for plugin container too.
     $loop = rules_loop();
     $loop->action('drupal_message', array('message' => 'test'));
-    $arg_info = $loop->argumentInfo();
+    $arg_info = $loop->parameterInfo();
     $this->assert($arg_info['list']['type'] == 'list', 'Argument info contains list.');
     $loop->execute(array(1, 2));
 
@@ -489,13 +489,14 @@ class RulesTestCase extends DrupalWebTestCase {
     list($node2) = $action->execute();
     $this->assertTrue($node2->nid == $node->nid, 'Action returned a variable.');
 
-    $set = rules_rule_set(array(), array(
-      'node' => array('type' => 'node', 'label' => 'node'),
-    ));
-    $set->rule(rule()->action('entity_fetch', array('type' => 'node', 'id' => $node->nid, 'entity_fetched:var' => 'node')));
+    // Create a simple set that just passed through the given node.
+    $set = rules_rule_set(array('node' => array('type' => 'node')), array('node'));
     $set->integrityCheck()->save('rules_test_set_1');
 
-    list($node2) = $set->execute();
+    $provides = $set->providesVariables();
+    $this->assertTrue($provides['node']['type'] == 'node', 'Rule set correctly passed through the node.');
+
+    list($node2) = $set->execute($node);
     $this->assertTrue($node2->nid == $node->nid, 'Rule set returned a variable.');
   }
 
@@ -729,7 +730,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     rules_clear_cache(TRUE);
     // Test the basics of the event set work right.
     $event = rules_get_cache('event_node_presave');
-    $this->assertEqual(array_keys($event->argumentInfo()), array('node'), 'EventSet returns correct argument info.');
+    $this->assertEqual(array_keys($event->parameterInfo()), array('node'), 'EventSet returns correct argument info.');
 
     // Trigger the rule by updating the node.
     $nid = $node->nid;

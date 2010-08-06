@@ -78,7 +78,7 @@ function rules_scheduler_action_schedule($args, $element) {
     $new_state = new RulesState();
 
     // Register all parameters as variables.
-    foreach ($element->parameterInfo() as $name => $info) {
+    foreach ($element->pluginParameterInfo() as $name => $info) {
       if (strpos($name, 'param_') === 0) {
         // Remove the parameter name prefix 'param_'.
         $var_name = substr($name, 6);
@@ -103,7 +103,7 @@ function rules_scheduler_action_schedule($args, $element) {
 function rules_scheduler_action_schedule_process(RulesPlugin $element) {
   if ($component = rules_config_load($element->settings['component'])) {
     // Add in the needed parameters.
-    foreach ($component->argumentInfo() as $name => $info) {
+    foreach ($component->parameterInfo() as $name => $info) {
       $element_info['parameter']['param_' . $name] = $info;
     }
     if (isset($element_info)) {

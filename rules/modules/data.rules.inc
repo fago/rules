@@ -791,7 +791,7 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, $options, Rule
     );
 
     // Limit the operations to what makes sense for the data type.
-    $info = $element->parameterInfo();
+    $info = $element->pluginParameterInfo();
     if (!RulesData::typesMatch($info['value'], array('type' => array('decimal', 'date')))) {
       $options =& $form['parameter']['op']['settings']['op']['#options'];
       unset($options['<'], $options['>']);

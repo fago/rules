@@ -159,7 +159,7 @@ function rules_rules_core_condition_info() {
   foreach (rules_get_components(FALSE, 'condition') as $name => $config) {
     $items['component_' . $name] = $defaults + array(
       'label' => $config->label(),
-      'parameter' => $config->argumentInfo(),
+      'parameter' => $config->parameterInfo(),
     );
     $items['component_' . $name]['#config_name'] = $name;
   }
@@ -182,7 +182,7 @@ function rules_rules_core_action_info() {
   foreach (rules_get_components(FALSE, 'action') as $name => $config) {
     $items['component_' . $name] = $defaults + array(
       'label' => $config->label(),
-      'parameter' => $config->argumentInfo(),
+      'parameter' => $config->parameterInfo(),
       'provides' => $config->providesVariables(),
     );
     $items['component_' . $name]['#config_name'] = $name;

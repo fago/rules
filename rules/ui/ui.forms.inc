@@ -414,7 +414,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
   }
   $element = $form_state['rules_element'];
 
-  $params = $element->parameterInfo();
+  $params = $element->pluginParameterInfo();
   $matches = array();
   if (isset($params[$parameter]) && $string) {
     $parts = explode(':', $string);
