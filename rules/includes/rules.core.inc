@@ -1476,6 +1476,12 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   /**
    * Returns info about variables available in the evaluation state for any
    * children elements or if given for a special child element.
+   *
+   * @param $element
+   *   The element for which the available state variables should be returned.
+   *   If NULL is given, the variables available before any children are invoked
+   *   are returned. If set to TRUE, the variables available after evaluating
+   *   all children will be returned.
    */
   protected function stateVariables($element = NULL) {
     $vars = $this->availableVariables();
@@ -1629,10 +1635,10 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 abstract class RulesActionContainer extends RulesContainerPlugin implements RulesActionInterface {
 
   public function __construct($variables = array(), $providesVars = array()) {
-    $this->setUp();
-    $this->info['variables'] = $variables;
-    $this->info['provides'] = $providesVars;
-    $this->info = array_filter($this->info);
+    parent::__construct($variables);
+    if ($providesVars) {
+      $this->info['provides'] = $providesVars;
+    }
   }
 
   /**

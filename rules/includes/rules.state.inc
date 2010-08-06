@@ -450,7 +450,7 @@ class RulesData  {
   public static function addMetadataAssertions($var_info, $assertions) {
     foreach ($assertions as $selector => $data) {
       // For now only support assertions for variables
-      if (strpos($selector, ':') === FALSE) {
+      if (strpos($selector, ':') === FALSE && isset($var_info[$selector])) {
         $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
         // Add in a callback that the entity metadata wrapper pick up for
         // altering the property info, such that we can add in the assertions.

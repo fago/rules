@@ -244,6 +244,14 @@ class Rule extends RulesActionContainer {
       $this->conditions->parent = $this;
     }
   }
+
+  /**
+   * Rules may not provided any variable info assertions, as Rules are only
+   * conditionally executed.
+   */
+  protected function variableInfoAssertions() {
+    return array();
+  }
 }
 
 /**

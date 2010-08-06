@@ -6,7 +6,7 @@
  */
 
 define('RULES_UI_PATH', 'admin/config/workflow/rules');
-define('RULES_UI_RULE_PATH', RULES_UI_PATH . '/rules');
+define('RULES_UI_RULE_PATH', RULES_UI_PATH . '/config');
 
 
 /**

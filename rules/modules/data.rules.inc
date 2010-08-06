@@ -596,11 +596,7 @@ function rules_action_data_list_add_positions() {
  * Options list callback for variable add action.
  */
 function rules_data_action_variable_add_options() {
-  $cache = rules_get_cache();
-  $data_info = $cache['data_info'];
-  $options = rules_extract_property($data_info, 'label');
-  natcasesort($options);
-  return $options;
+  return RulesPluginUI::getOptions('data_info');
 }
 
 /**
