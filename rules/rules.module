@@ -368,6 +368,17 @@ function rules_rules_plugin_info() {
         ),
       ),
     ),
+    'action set' => array(
+      'label' => t('Action set'),
+      'class' => 'RulesActionSet',
+      'embeddable' => FALSE,
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesActionContainerUI',
+        ),
+      ),
+    ),
     'rule' => array(
       'label' => t('Rule'),
       'class' => 'Rule',

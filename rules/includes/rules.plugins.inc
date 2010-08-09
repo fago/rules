@@ -510,6 +510,14 @@ class RulesLoop extends RulesActionContainer {
   }
 }
 
+/**
+ * An action set component.
+ */
+class RulesActionSet extends RulesActionContainer {
+
+  protected $itemName = 'action set';
+
+}
 
 /**
  * A set of rules to execute upon defined variables.
