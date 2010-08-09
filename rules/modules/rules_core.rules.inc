@@ -151,14 +151,14 @@ function rules_rules_core_data_processor_info() {
  */
 function rules_rules_core_condition_info() {
   $defaults = array(
-    'group' => t('Rules components'),
+    'group' => t('Components'),
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
   );
   $items = array();
   foreach (rules_get_components(FALSE, 'condition') as $name => $config) {
     $items['component_' . $name] = $defaults + array(
-      'label' => $config->label(),
+      'label' => $config->plugin() . ': ' . drupal_ucfirst($config->label()),
       'parameter' => $config->parameterInfo(),
     );
     $items['component_' . $name]['#config_name'] = $name;
@@ -174,14 +174,14 @@ function rules_rules_core_condition_info() {
  */
 function rules_rules_core_action_info() {
   $defaults = array(
-    'group' => t('Rules components'),
+    'group' => t('Components'),
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
   );
   $items = array();
   foreach (rules_get_components(FALSE, 'action') as $name => $config) {
     $items['component_' . $name] = $defaults + array(
-      'label' => $config->label(),
+      'label' => $config->plugin() . ': ' . drupal_ucfirst($config->label()),
       'parameter' => $config->parameterInfo(),
       'provides' => $config->providesVariables(),
     );

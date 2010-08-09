@@ -173,7 +173,7 @@ function rules_admin_add_component($form, &$form_state) {
   }
   else {
     $form['plugin_name']['#disabled'] = TRUE;
-    $form_state['rules_config']->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE));
+    $form_state['rules_config']->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE, 'init' => TRUE));
     $form['settings']['#collapsible'] = FALSE;
     $form['settings']['#type'] = 'container';
     $form['settings']['label']['#default_value'] = '';

@@ -740,6 +740,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $sorted_data[$key] = $choices;
     }
     ksort($sorted_data);
+    // Always move the 'Components' group down it it exists.
+    if (isset($sorted_data[t('Components')])) {
+      $copy = $sorted_data[t('Components')];
+      unset($sorted_data[t('Components')]);
+      $sorted_data[t('Components')] = $copy;
+    }
     return $ungrouped + $sorted_data;
   }
 
@@ -798,7 +804,6 @@ class RulesContainerPluginUI extends RulesPluginUI {
    */
   public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     parent::form($form, $form_state, $options);
-
     $form['elements'] = array(
       // Hide during creation or for embedded elements.
       '#access' => empty($options['init']) && $this->element->isRoot(),
