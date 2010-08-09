@@ -27,15 +27,18 @@ class RulesRuleUI extends RulesActionContainerUI {
       $parent = $this->element->parentElement();
       $label .= ' ' . count($parent->getIterator());
     }
-
-    $form['label'] = array(
-      '#type' => 'textfield',
-      '#title' => 'Label',
-      '#default_value' => $label,
-      '#required' => TRUE,
-      '#weight' => 5,
-      '#description' => t('A human-readable name shortly describing the rule.'),
-    );
+    // Components have already a label. If used inside a rule-set add a label
+    // though.
+    if (!$this->element->isRoot()) {
+      $form['label'] = array(
+        '#type' => 'textfield',
+        '#title' => 'Label',
+        '#default_value' => $label,
+        '#required' => TRUE,
+        '#weight' => 5,
+        '#description' => t('A human-readable name shortly describing the rule.'),
+      );
+    }
 
     $form += array('conditions' => array('#weight' => -5, '#tree' => TRUE));
     $this->conditions->form($form['conditions'], $form_state);

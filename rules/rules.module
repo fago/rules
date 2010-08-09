@@ -369,8 +369,10 @@ function rules_rules_plugin_info() {
       ),
     ),
     'rule' => array(
+      'label' => t('Rule'),
       'class' => 'Rule',
       'embeddable' => 'RulesRuleSet',
+      'component' => TRUE,
       'extenders' => array(
         'RulesPluginUIInterface' => array(
           'class' => 'RulesRuleUI',
