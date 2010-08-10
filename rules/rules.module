@@ -822,7 +822,7 @@ function rules_item_save($item_type, $name, $item) {
  */
 function rules_item_delete($item_type, $name) {
   if ($info = rules_get_items($item_type)) {
-    rules_item_type_invoke($item_type, 'delete', $name);
+    rules_item_type_invoke($item_type, 'delete', array($name));
     db_query("DELETE FROM {". $info['db_table'] ."} WHERE name = '%s'", $name);
   }
 }
@@ -845,7 +845,7 @@ function rules_enable_items($item_type, $ret = array()) {
  * base appended with _$op. The parameters given in $params will be
  * passed to this function.
  */
-function rules_item_type_invoke($item_type, $op, $params) {
+function rules_item_type_invoke($item_type, $op, $params = array()) {
   $info = rules_get_items($item_type);
   if (function_exists($function = $info['base'] .'_'. $op)) {
     return call_user_func_array($function, $params);
