@@ -411,11 +411,6 @@ function rules_rules_plugin_info() {
     'event set' => array(
       'class' => 'RulesEventSet',
       'embeddable' => FALSE,
-      'extenders' => array(
-        'RulesOptimizationInterface' => array(
-          'class' => 'RulesDefaultOptimizer',
-        ),
-      ),
     ),
     'rule set' => array(
       'label' => t('Rule set'),

@@ -944,6 +944,7 @@ abstract class RulesPlugin extends RulesExtendable {
         // Clone the component to avoid modules getting the to be cached
         // version from the static loading cache.
         $component = clone $component;
+        $component->optimize();
         $component->setSkipSetup(TRUE);
         // Allow modules to alter the cached component.
         drupal_alter('rules_component', $this->itemName, $component);
@@ -1359,12 +1360,7 @@ interface RulesPluginImplInterface {
 /**
  * Interface for optimizing evaluation.
  *
- * An optimization method may rearrange the internal structure of a
- * configuration in order to speed up the evaluation. As the configuration may
- * change optimized configurations should not be saved permanently, except when
- * saving it for later execution only.
- *
- * @see RulesEventSet
+ * @see RulesContainerPlugin::optimize()
  */
 interface RulesOptimizationInterface {
   /**
@@ -1400,16 +1396,6 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
   public function dependencies() {}
   public function form_alter(&$form, $form_state, $options) {}
   public function assertions() {}
-}
-
-/**
- * Class providing a default optimization method doing nothing.
- */
-class RulesDefaultOptimizer extends FacesExtender implements RulesOptimizationInterface {
-  /**
-   * Default implementation which does nothing.
-   */
-  public function optimize() {}
 }
 
 /**
@@ -1649,6 +1635,26 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     }
     $export += $this->exportChildren();
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+  }
+
+  /**
+   * Optimizes a rule configuration in order to speed up evaluation.
+   *
+   * Applies optimization methods that have been inserted by an extender
+   * implemented the RulesOptimizationInterface. By default, there is no
+   * optimization.
+   *
+   * An optimization method may rearrange the internal structure of a
+   * configuration in order to speed up the evaluation. As the configuration may
+   * change optimized configurations should not be saved permanently, except
+   * when saving it temporary, for later execution only.
+   *
+   * @see RulesOptimizationInterface
+   */
+  public function optimize() {
+    if ($this->facesAs('RulesOptimizationInterface')) {
+      $this->__call('optimize');
+    }
   }
 }
 

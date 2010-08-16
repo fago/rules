@@ -578,7 +578,7 @@ class RulesEventSet extends RulesRuleSet {
         foreach ($rules as $rule) {
           $event->rule($rule);
         }
-        $event->__call('optimize');
+        $event->optimize();
         $event->setSkipSetup(TRUE);
         // Allow modules to alter the cached event set.
         drupal_alter('rules_event_set', $name, $event);
