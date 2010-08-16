@@ -2,7 +2,6 @@
 name = Rules
 description = React on events and conditionally evaluate actions.
 package = Rules
-version = VERSION
 core = 7.x
 files[] = tests/rules.test
 files[] = includes/rules.core.inc
