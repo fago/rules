@@ -55,9 +55,6 @@ function rules_forms_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form_events[$form_id])) {
     rules_forms_invoke_event('form_built', $form, $form_state, $form_id);
     $form['#after_build'][] = 'rules_forms_after_build';
-    if (!empty($_SESSION['rules_forms_element_ids'])) {
-      rules_forms_add_element_id($form);
-    }
   }
   // Display form ID message if enabled for this session.
   if (!empty($_SESSION['rules_forms_message'])) {
@@ -121,10 +118,13 @@ function rules_forms_add_element_id(&$form, $parent = '') {
 }
 
 /**
- * Add submit and validation callbacks to form, buttons, etc. to invoke
- * corresponding events.
+ * Add element IDs on the form if the setting is enabled. Add submit and
+ * validation callbacks to form, buttons, etc. to invoke corresponding events.
  */
 function rules_forms_after_build($form, &$form_state) {
+  if (!empty($_SESSION['rules_forms_element_ids'])) {
+    rules_forms_add_element_id($form);
+  }
   drupal_add_css(drupal_get_path('module', 'rules_forms') .'/rules_forms.css');
   if (!$form_state['submitted']) {
     return $form;
