@@ -89,9 +89,10 @@ function rules_schema() {
   $schema['rules_trigger'] = array(
     'fields' => array(
       'id' => array(
-        'type' => 'serial',
+        'type' => 'int',
+        'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => 'The primary identifier for any configuration.',
+        'description' => 'The primary identifier of the configuration.',
       ),
       'event' => array(
         'type' => 'varchar',
