@@ -28,7 +28,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $placeholders = array();
     foreach ($strings as $key => $string) {
       $key = !is_numeric($key) ? $key : $string;
-      $placeholders['%' . $key] = drupal_placeholder(array('text' => $string));
+      $placeholders['%' . $key] = drupal_placeholder($string);
     }
     return strtr($text, $placeholders);
   }
