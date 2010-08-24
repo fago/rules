@@ -22,7 +22,7 @@ function rules_data_file_info() {
  */
 function rules_data_action_info() {
   $return['data_set'] = array(
-    'label' => t('Modify data'),
+    'label' => t('Set a data value'),
     'parameter' => array(
       'data' => array(
         'type' => '*',
@@ -308,12 +308,8 @@ function rules_action_data_set_access(RulesAbstractPlugin $element) {
  */
 function rules_action_data_set_validate(RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
-  if (count(explode(':', $element->settings['data:select'], 2)) != 2) {
-    // Modifying rules variables itself doesn't make any sense.
-    throw new RulesException('Variables may not be changed, only their properties can be modified.', array(), array($element, 'parameter', 'data'));
-  }
   $info = $element->applyDataSelector($element->settings['data:select'])->info();
-  if (empty($info['setter callback'])) {
+  if (strpos($element->settings['data:select'], ':') !== FALSE && empty($info['setter callback'])) {
     // Modifying rules variables itself doesn't make any sense.
     throw new RulesException("The selected data property doesn't support writing.", array(), array($element, 'parameter', 'data'));
   }
