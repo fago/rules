@@ -21,11 +21,13 @@ function rules_action_data_set($data, $value, $settings, $state, $element) {
   catch (EntityMetadataWrapperException $e) {
     throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $settings['data:select']));
   }
-  $info = $wrapper->info();
-  // We always have to save the changes in the parent entity. E.g. when the node
-  // author is changed, we don't want to save the author but the node. So use
-  // the parent wrapper and also cut off the last part of the selector.
-  $state->saveChanges(implode(':', explode(':', $settings['data:select'], -1)), $info['parent']);
+  // Save changes if a property of a variable has been changed.
+  if (strpos($element->settings['data:select'], ':') !== FALSE) {
+    $info = $wrapper->info();
+    // We always have to save the changes in the parent entity. E.g. when the
+    // node author is changed, we don't want to save the author but the node.
+    $state->saveChanges(implode(':', explode(':', $settings['data:select'], -1)), $info['parent']);
+  }
 }
 
 /**
