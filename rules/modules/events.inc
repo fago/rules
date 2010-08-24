@@ -138,7 +138,7 @@ function rules_user_login(&$edit, $account) {
   rules_invoke_event('user_login', $account);
 }
 
-function rules_user_logout(&$edit, $account) {
+function rules_user_logout($account) {
   rules_invoke_event('user_logout', $account);
 }
 
