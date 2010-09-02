@@ -103,7 +103,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $node->status = 0;
     $action2->integrityCheck();
-    $action2->execute(array('node' => $node));
+    $action2->executeByArgs(array('node' => $node));
     $this->assertEqual($node->status, 1, 'Action executed correctly');
 
     // Test calling an extended + overriden method.
@@ -165,7 +165,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual($rule->id, $rule2->id, 'Rule created and loaded');
     $this->assertEqual(get_class($rule2), get_class($rule), 'Class properly instantiated.');
     $rule2->execute();
-    //Update.
+    // Update.
     $rule2->save();
 
     // Make sure all rule elements are still here.
@@ -175,7 +175,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $this->assertEqual(iterator_count($it), 6, 'Iterated over all conditions');
     $this->assertEqual(iterator_count($rule2->actions()), 1, 'Iterated over all actions');
 
-    //Delete.
+    // Delete.
     $rule2->delete();
     $this->assertEqual(entity_load('rules_config', FALSE, array('id' => $rule->id)), array(), 'Deleted.');
   }
@@ -186,7 +186,7 @@ class RulesTestCase extends DrupalWebTestCase {
   function testActionSaving() {
     $action = rules_action('rules_node_publish_action_save');
     $node = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
-    $action->execute(array('node' => $node));
+    $action->executeByArgs(array('node' => $node));
 
     $this->assertEqual($node->status, 1, 'Action executed correctly on node.');
     // Sync node_load cache with node_save
