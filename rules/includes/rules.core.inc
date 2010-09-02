@@ -438,14 +438,15 @@ abstract class RulesPlugin extends RulesExtendable {
 
   /**
    * Sets up the execution state for the given arguments.
-   *
-   * The state will be passed around by copy to all evaluated rule elements,
-   * so added 'variables' are only visible for elements in scope.
    */
   protected function setUpState(array $args) {
     $state = new RulesState();
-
     $vars = $this->setUpVariables();
+    // Fix numerically indexed args to start with 0.
+    if (!isset($args[key($vars)])) {
+      $args = array_values($args);
+    }
+
     foreach (array_keys($vars) as $i => $name) {
       $info = $vars[$name];
       // Support numerically indexed arrays as well as named parameter style.
