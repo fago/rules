@@ -318,14 +318,24 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Execute the plugin.
+   * Execute the configuration.
+   *
+   * @param ...
+   *   Arguments to pass to the configuration.
    */
-  public function execute() {}
+  public function execute() {
+    return $this->executeByArgs(func_get_args());
+  }
 
   /**
-   * Evaluate the plugin on a given rules evaluation state.
+   * Execute the configuration by passing arguments in a single array.
    */
-  public function evaluate(RulesState $state) {}
+  abstract public function executeByArgs($args = array());
+
+  /**
+   * Evaluate the element on a given rules evaluation state.
+   */
+  abstract function evaluate(RulesState $state);
 
   protected static function compare(RulesPlugin $a, RulesPlugin $b) {
     if ($a->weight == $b->weight) {
@@ -410,26 +420,6 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Gets the arguments passed to the plugin.
-   *
-   * @return
-   *   An array of passed arguments keyed by their names.
-   */
-  protected function getPassedArguments(array $args) {
-    if (isset($args[0]) && count($args) == 1 && is_array($args[0]) && !empty($args[0]) && array_diff_key($args[0], $this->parameterInfo()) === array()) {
-      // The caller passed an array of arguments, so let's use that
-      return $args[0];
-    }
-    $vars = array();
-    foreach (array_keys($this->parameterInfo(TRUE)) as $i => $name) {
-      if (isset($args[$i])) {
-        $vars[$name] = $args[$i];
-      }
-    }
-    return $vars;
-  }
-
-  /**
    * Gets variables to return once the configuration has been executed.
    */
   protected function returnVariables(RulesState $state, $result = NULL) {
@@ -454,15 +444,22 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   protected function setUpState(array $args) {
     $state = new RulesState();
-    $args = $this->getPassedArguments($args);
 
-    foreach ($this->setUpVariables() as $name => $info) {
-      if (!isset($args[$name]) && empty($info['handler']) && empty($info['optional']) && $info['type'] != 'hidden') {
-        throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
+    $vars = $this->setUpVariables();
+    foreach (array_keys($vars) as $i => $name) {
+      $info = $vars[$name];
+      // Support numerically indexed arrays as well as named parameter style.
+      if (isset($args[$i])) {
+        $state->addVariable($name, $args[$i], $info);
       }
-      if (isset($args[$name]) || !empty($info['handler'])) {
-        $args += array($name => NULL);
+      elseif (isset($args[$name])) {
         $state->addVariable($name, $args[$name], $info);
+      }
+      elseif (!empty($info['handler'])) {
+        $state->addVariable($name, NULL, $info);
+      }
+      elseif (empty($info['optional']) && $info['type'] != 'hidden') {
+        throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
       }
     }
     return $state;
@@ -1072,12 +1069,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     return array_keys($modules + (isset($this->info['module']) ? array($this->info['module'] => 1) : array()));
   }
 
-  public function execute() {
+  public function executeByArgs($args = array()) {
     $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
     rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->forceSetUp();
     $this->processSettings();
-    $args = func_get_args();
     // If there is no parameter info, just pass through the passed arguments.
     // That way we support executing actions without any info at all.
     if ($this->info['parameter']) {
@@ -1538,11 +1534,11 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * Condition containers just return a boolean while action containers return
    * the configured provided variables as an array of variables.
    */
-  public function execute() {
+  public function executeByArgs($args = array()) {
     $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
     rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
     $this->processSettings();
-    $state = $this->setUpState(func_get_args());
+    $state = $this->setUpState($args);
 
     // Handle recursion prevention.
     if ($state->isBlocked($this)) {

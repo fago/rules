@@ -601,25 +601,96 @@ function rules_rules_config_delete($rule_config) {
 }
 
 /**
+ * Invokes a hook and the associated rules event.
+ *
+ * Calling this function does the same as calling module_invoke_all() and
+ * rules_invoke_event() separately, however merges both functions into one in
+ * order to ease usage and to work efficiently.
+ *
+ * @param $hook
+ *   The name of the hook / event to invoke.
+ * @param ...
+ *   Arguments to pass to the hook / event.
+ *
+ * @return
+ *   An array of return values of the hook implementations. If modules return
+ *   arrays from their implementations, those are merged into one array.
+ */
+function rules_invoke_all() {
+  // Copied code from module_invoke_all().
+  $args = func_get_args();
+  $hook = $args[0];
+  unset($args[0]);
+  $return = array();
+  foreach (module_implements($hook) as $module) {
+    $function = $module . '_' . $hook;
+    if (function_exists($function)) {
+      $result = call_user_func_array($function, $args);
+      if (isset($result) && is_array($result)) {
+        $return = array_merge_recursive($return, $result);
+      }
+      elseif (isset($result)) {
+        $return[] = $result;
+      }
+    }
+  }
+  // Invoke the event.
+  rules_invoke_event_by_args($hook, $args);
+
+  return $return;
+}
+
+/**
  * Invokes configured rules for the given event.
  *
  * @param $event_name
- *   The events name.
- * @param $args
- *   Pass parameters provided by this event as it has been defined in
- *   hook_rules_event_info(). The parameters may be passed as usual, one by one,
- *   or as array, with the paramter names as keys. The latter makes it possible
- *   to pass argumenty by reference to rules. See http://drupal.org/node/298559.
+ *   The event's name.
+ * @param ...
+ *   Pass parameters for the variables provided by this event, as defined in
+ *   hook_rules_event_info(). Example given:
+ *   @code
+ *     rules_invoke_event('node_insert', $node);
+ *   @endcode
+ *
+ * @see rules_invoke_event_by_args()
  */
 function rules_invoke_event() {
   global $conf;
 
   $args = func_get_args();
-  $name = array_shift($args);
-  // Directly acccess the global $conf. This is fast without having to
-  // statically cache anything.
-  if (!isset($conf['rules_empty_sets'][$name]) && $event = rules_get_cache('event_' . $name)) {
-    call_user_func_array(array($event, 'execute'), $args);
+  $event_name = $args[0];
+  unset($args[0]);
+  // For invoking the rules event we directly acccess the global $conf. This is
+  // fast without having to introduce another static cache.
+  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+    $event->executeByArgs($args);
+  }
+}
+
+/**
+ * Invokes configured rules for the given event.
+ *
+ * @param $event_name
+ *   The event's name.
+ * @param $args
+ *   An array of parameters for the variables provided by the event, as defined
+ *   in hook_rules_event_info(). Either pass an array keyed by the variable
+ *   names or a numerically indexed array, in which case the ordering of the
+ *   passed parameters has to match the order of the specified variables.
+ *   Example given:
+ *   @code
+ *     rules_invoke_event('node_insert', array('node' => $node));
+ *   @endcode
+ *
+ * @see rules_invoke_event()
+ */
+function rules_invoke_event_by_args($event_name, $args = array()) {
+  global $conf;
+
+  // For invoking the rules event we directly acccess the global $conf. This is
+  // fast without having to introduce another static cache.
+  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+    $event->executeByArgs($args);
   }
 }
 
@@ -638,7 +709,7 @@ function rules_invoke_component() {
   $args = func_get_args();
   $name = array_shift($args);
   if ($component = rules_get_cache('comp_' . $name)) {
-    return call_user_func_array(array($component, 'execute'), $args);
+    return $component->executeByArgs($args);
   }
 }
 
