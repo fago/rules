@@ -170,8 +170,13 @@ function &rules_get_cache($cid = 'data') {
     // Speed up multiple calls by using drupal_static only for initializing.
     $cache = &drupal_static(__FUNCTION__, array());
   }
+
   if (!isset($cache[$cid])) {
-    if ($get = cache_get($cid, 'cache_rules')) {
+    // The main 'data' cache includes translated strings, so each language is
+    // ached separately.
+    $cid_suffix = $cid == 'data' ? ':' . $GLOBALS['language']->language : '';
+
+    if ($get = cache_get($cid . $cid_suffix, 'cache_rules')) {
       $cache[$cid] = $get->data;
     }
     elseif (!isset($cache['data']) && $cid != 'data') {
@@ -206,7 +211,8 @@ function _rules_rebuild_cache(&$cache) {
     $item = new $info['class']();
     $item->rebuildCache($info, $cache);
   }
-  cache_set('data', $cache, 'cache_rules');
+  $cid_suffix = ':' . $GLOBALS['language']->language;
+  cache_set('data' . $cid_suffix, $cache, 'cache_rules');
   // Rebuilding the cache loads components with an incomplete cache. As a
   // consequence the entities in the controllers cache are not fully setuped.
   // Thus clear the cache and free the memory.
