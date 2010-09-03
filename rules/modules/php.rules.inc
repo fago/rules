@@ -57,7 +57,6 @@ function rules_php_action_info() {
           'type' => 'text',
           'label' => t('PHP code'),
         ),
-        'used_vars' => array('type' => 'hidden'),
       ),
       'base' => 'rules_execute_php_eval',
       'access callback' => 'rules_php_integration_access',
@@ -69,8 +68,7 @@ function rules_php_action_info() {
  * Process the settings to prepare code execution.
  */
 function rules_execute_php_eval_process(RulesAbstractPlugin $element) {
-  $element_info['parameter']['used_vars']['default value'] = RulesPHPEvaluator::getUsedVars('<?' . $element->settings['code'], $element->availableVariables());
-  $element->alterInfo($element_info);
+  $element->settings['used_vars'] = RulesPHPEvaluator::getUsedVars('<?' . $element->settings['code'], $element->availableVariables());
 }
 
 /**
@@ -101,7 +99,6 @@ function rules_php_condition_info() {
           'type' => 'text',
           'label' => t('PHP code'),
         ),
-        'used_vars' => array('type' => 'hidden'),
       ),
       'base' => 'rules_execute_php_eval',
       'access callback' => 'rules_php_integration_access',

@@ -89,8 +89,7 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testActionSetup() {
     $action = rules_action('rules_node_publish_action');
-    // Try skipping setup on wakeup.
-    $action->setSkipSetUp(TRUE);
+
     $s = serialize($action);
     $action2 = unserialize($s);
     $node = (object)array('status' => 0, 'type' => 'page');
@@ -392,18 +391,13 @@ class RulesTestCase extends DrupalWebTestCase {
    * is checked.
    */
   function testMetadataAssertion() {
-    // Test adapting the info of actions.
-    $settings['#info']['parameter']['node']['bundles'] = array('page');
-    $action = rules_action('rules_node_make_sticky_action', $settings);
-    $info = $action->pluginParameterInfo();
-    $this->assertEqual($info['node']['bundles'], array('page'), 'Info adapted.');
+    $action = rules_action('rules_node_make_sticky_action');
 
     // Test failing integrity check.
     try {
-      $rule = rule(array('node' => array('type' => 'node')));
-      // Customize action info using the settings.
+      $rule = rule(array('node' => array('type' => 'entity')));
       $rule->action($action);
-      // Fails due to the 'node' variable not matching the node-page type.
+      // Fails due to the 'node' variable not matching the node type.
       $rule->integrityCheck();
       $this->fail('Integrity check has not thrown an exception.');
     }

@@ -31,6 +31,17 @@ function rules_action_data_set($data, $value, $settings, $state, $element) {
 }
 
 /**
+ * Info alter callback for the data_set action.
+ */
+function rules_action_data_set_info_alter(&$element_info, $element) {
+  $element->settings += array('data:select' => NULL);
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
+  }
+}
+
+/**
  * Action: Fetch data.
  */
 function rules_action_entity_fetch($type, $id, $revision) {
@@ -49,6 +60,28 @@ function rules_action_entity_fetch($type, $id, $revision) {
   return array('entity_fetched' => $entity);
 }
 
+
+/**
+ * Info alteration callback for the entity fetch action.
+ */
+function rules_action_entity_fetch_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
+  $info = entity_get_info($element->settings['type']);
+
+  // Fix the type of the identifier.
+  $element_info['parameter']['id']['type'] = isset($info['entity keys']['name']) ? 'text' : 'integer';
+
+  // Add an optional revision parameter, if supported.
+  if (!empty($info['entity keys']['revision'])) {
+    $element_info['parameter']['revision_id'] = array(
+      'type' => 'integer',
+      'label' => t('Revision identifier'),
+      'optional' => TRUE,
+    );
+  }
+  $element_info['provides']['entity_fetched']['type'] = $element->settings['type'];
+}
+
 /**
  * Action: Query entities.
  */
@@ -57,14 +90,26 @@ function rules_action_entity_query($type, $property, $value, $limit) {
   return array('entity_fetched' => array_values($return));
 }
 
+
+/**
+ * Info alteration callback for the entity query action.
+ */
+function rules_action_entity_query_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
+  $element_info['parameter']['value']['type'] = $element->settings['type'];
+  $element_info['provides']['entity_fetched']['type'] = 'list<' . $element->settings['type'] . '>';
+}
+
 /**
  * Action: Create entities.
  */
 function rules_action_entity_create($args, $element) {
   $values = array();
-  foreach (array_keys($args['settings']['#info']['parameter']) as $name) {
-    // Remove the parameter name prefix 'param_'.
-    $values[substr($name, 6)] = $args[$name];
+  foreach ($element->pluginParameterInfo() as $name => $info) {
+    if ($name != 'type') {
+      // Remove the parameter name prefix 'param_'.
+      $values[substr($name, 6)] = $args[$name];
+    }
   }
   try {
     $data = entity_metadata_entity_create($args['type'], $values)->value();
@@ -72,6 +117,28 @@ function rules_action_entity_create($args, $element) {
   }
   catch (EntityMetadataWrapperException $e) {
     throw new RulesException('Unable to create entity @type": ' . $e->getMessage(), array('@type' => $args['type']), $element);
+  }
+}
+
+/**
+ * Info alteration callback for the entity create action.
+ */
+function rules_action_entity_create_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
+  $wrapper = entity_metadata_wrapper($element->settings['type']);
+  // Add the data type's needed parameter for loading to the parameter info.
+  foreach ($wrapper as $name => $child) {
+    $info = $child->info();
+    if (!empty($info['required'])) {
+      $info += array('type' => 'text');
+      // Prefix parameter names to avoid name clashes with existing parameters.
+      $element_info['parameter']['param_' . $name] = array_intersect_key($info, array_flip(array('type', 'label', 'description')));
+      $element_info['parameter']['param_' . $name]['options list']  = $child->optionsList() ? 'rules_action_entity_parameter_options_list' : FALSE;
+    }
+  }
+  $element_info['provides']['entity_created']['type'] = $element->settings['type'];
+  if (($bundleKey = $wrapper->entityKey('bundle')) && isset($element->settings['param_' . $bundleKey])) {
+    $element_info['provides']['entity_created']['bundle'] = $element->settings['param_' . $bundleKey];
   }
 }
 
@@ -125,14 +192,28 @@ function rules_action_variable_add($args, $element) {
 }
 
 /**
+ * Info alteration callback for variable add action.
+ */
+function rules_action_variable_add_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $type = $element->settings['type'];
+  $cache = rules_get_cache();
+  $type_info = $cache['data_info'][$type];
+  $element_info['parameter']['value']['type'] = $type;
+  $element_info['parameter']['value']['label'] = $type_info['label'];
+  $element_info['provides']['variable_added']['type'] = $type;
+}
+
+/**
  * Action: Create data.
  */
 function rules_action_data_create($args, $element) {
   $type = $args['type'];
   $values = array();
-  foreach (array_keys($args['settings']['#info']['parameter']) as $name) {
-    // Remove the parameter name prefix 'param_'.
-    $values[substr($name, 6)] = $args[$name];
+  foreach ($element->pluginParameterInfo() as $name => $info) {
+    if ($name != 'type') {
+      // Remove the parameter name prefix 'param_'.
+      $values[substr($name, 6)] = $args[$name];
+    }
   }
   $cache = rules_get_cache();
   $type_info = $cache['data_info'][$type];
@@ -148,6 +229,26 @@ function rules_action_data_create($args, $element) {
   else {
     throw new RulesException('Unable to create @data, no creation callback found.', array('@data' => $type), $element);
   }
+}
+
+/**
+ * Info alteration callback for data create action.
+ */
+function rules_action_data_create_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $type = $element->settings['type'];
+  $cache = rules_get_cache();
+  $type_info = $cache['data_info'][$type];
+  if (isset($type_info['property info'])) {
+    // Add the data type's properties as parameters.
+    foreach ($type_info['property info'] as $property => $property_info) {
+      // Prefix parameter names to avoid name clashes with existing parameters.
+      $element_info['parameter']['param_' . $property] = array_intersect_key($property_info, array_flip(array('type', 'label')));
+      if (empty($property_info['required'])) {
+        $element_info['parameter']['param_' . $property]['optional'] = TRUE;
+      }
+    }
+  }
+  $element_info['provides']['data_created']['type'] = $type;
 }
 
 /**
@@ -172,6 +273,20 @@ function rules_condition_data_is($data, $op, $value) {
       return $data > $value;
     case 'contains':
       return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
+  }
+}
+
+/**
+ * Info alteration callback for the data_is condition.
+ *
+ * If we check the bundle property of a variable, add an assertion so that later
+ * evaluated elements can make use of this information.
+ */
+function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  $element->settings += array('data:select' => NULL);
+  if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
   }
 }
 

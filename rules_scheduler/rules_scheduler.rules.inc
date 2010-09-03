@@ -98,16 +98,13 @@ function rules_scheduler_action_schedule($args, $element) {
 }
 
 /**
- * Process callback for the schedule action.
+ * Info alteration callback for the schedule action.
  */
-function rules_scheduler_action_schedule_process(RulesPlugin $element) {
-  if ($component = rules_config_load($element->settings['component'])) {
+function rules_scheduler_action_schedule_info_alter(&$element_info, RulesPlugin $element) {
+  if ($component = rules_get_cache('comp_' . $element->settings['component'])) {
     // Add in the needed parameters.
     foreach ($component->parameterInfo() as $name => $info) {
       $element_info['parameter']['param_' . $name] = $info;
-    }
-    if (isset($element_info)) {
-      $element->alterInfo($element_info);
     }
   }
 }

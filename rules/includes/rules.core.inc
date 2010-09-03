@@ -79,14 +79,9 @@ class RulesEntityController extends EntityAPIController {
 /**
  * The RulesExtendable uses the rules cache to setup the defined extenders
  * and overrides automatically.
+ * As soon faces is used the faces information is autoloaded using setUp().
  */
 abstract class RulesExtendable extends FacesExtendable {
-
-  /**
-   * Allows skipping setUp on wakeup for performance reasons. But be aware that
-   * setUp is invoked automatically only if the plugin is executed.
-   */
-  protected $skipSetUp = FALSE;
 
   /**
    * The name of the info definitions associated with info about this class.
@@ -119,36 +114,25 @@ abstract class RulesExtendable extends FacesExtendable {
   }
 
   /**
-   * Sets skipSetup to the given value.
-   */
-  public function setSkipSetUp($value = TRUE) {
-    $this->skipSetup = $value;
-  }
-
-  /**
-   * Serialize only what's necessary. We don't save info about extended methods either.
-   */
-  function __sleep() {
-    return array('skipSetUp');
-  }
-
-  /**
-   * We have to setup again once we woke up. But we do only so, if we skipSetUp
-   * isn't set. If activated, setUp will be invoked automatically once executed.
-   */
-  function __wakeup() {
-    if (empty($this->skipSetUp)) {
-      $this->setUp();
-    }
-  }
-
-  /**
    * Force the object to be setUp, this executes setUp() if not done yet.
    */
   public function forceSetUp() {
     if (!isset($this->cache) || (!empty($this->itemInfo['faces_cache']) && !$this->faces)) {
       $this->setUp();
     }
+  }
+
+  /**
+   * Magic method: Invoke the dynamically implemented methods.
+   */
+  public function __call($name, $arguments = array()) {
+    $this->forceSetUp();
+    return parent::__call($name, $arguments);
+  }
+
+  public function facesAs($interface = NULL) {
+    $this->forceSetUp();
+    return parent::facesAs($interface);
   }
 
   /**
@@ -764,7 +748,7 @@ abstract class RulesPlugin extends RulesExtendable {
   public function __sleep() {
     $this->processSettings();
     // Keep the id always as we need it for the recursion prevention.
-    $array = drupal_map_assoc(array('skipSetUp', 'parent', 'id', 'elementId', 'weight', 'settings'));
+    $array = drupal_map_assoc(array('parent', 'id', 'elementId', 'weight', 'settings'));
     // Keep properties related to configurations if they are there.
     foreach (array('name', 'module', 'label', 'recursion') as $key) {
       if (isset($this->$key)) {
@@ -858,6 +842,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns info about the element's plugin.
    */
   public function pluginInfo() {
+    $this->forceSetUp();
     return $this->itemInfo;
   }
 
@@ -943,7 +928,6 @@ abstract class RulesPlugin extends RulesExtendable {
         // version from the static loading cache.
         $component = clone $component;
         $component->optimize();
-        $component->setSkipSetup(TRUE);
         // Allow modules to alter the cached component.
         drupal_alter('rules_component', $this->itemName, $component);
         cache_set('comp_' . $component->name, $component, 'cache_rules');
@@ -987,9 +971,13 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
           foreach ($methods as $method => $callback) {
             $this->facesMethods[$method] = $callback;
           }
-          foreach ((array)$file_names as $method => $name) {
+          foreach ((array) $file_names as $method => $name) {
             $this->facesIncludes[$method] = array('module' => $this->info['module'], 'name' => $name);
           }
+        }
+        // Invoke the info_alter callback, but only if it has been implemented.
+        if ($this->facesMethods['info_alter'] != $this->itemInfo['faces_cache'][0]['info_alter']) {
+          $this->__call('info_alter', array(&$this->info));
         }
       }
     }
@@ -997,22 +985,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // We don't have any info, so just add the name as execution callback.
       $this->override(array('execute' => $this->elementName));
     }
-    if (isset($this->settings['#info'])) {
-      $this->info = rules_update_array($this->info, $this->settings['#info']);
-    }
-  }
-
-  /**
-   * Allows altering the element information depending on the configuration.
-   *
-   * @param $info
-   *   An array of info, only containing the changes to the usual info array.
-   */
-  public function alterInfo($info) {
-    $this->settings['#info'] = $info;
-    // Apply the alter info to the element info by re-running setUp(). That way
-    // we make sure to alter the un-modified element info.
-    $this->setUp();
   }
 
   public function access() {
@@ -1034,13 +1006,35 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function processSettings($force = FALSE, $access_check = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
+      // In case the element implements the info alteration callback, re-setup
+      // the element so that any settings depending info alterations are
+      // applied.
+      if ($this->facesMethods && $this->facesMethods['info_alter'] != $this->itemInfo['faces_cache'][0]['info_alter']) {
+        $this->setUp();
+      }
       // First let the plugin implementation do processing, so data types of the
       // parameters are fixed when we process the settings.
-      $this->forceSetup();
-
       $this->process();
       parent::processSettings($force, $access_check);
     }
+  }
+
+  public function pluginParameterInfo() {
+    // Ensure the info alter callback has been executed.
+    $this->forceSetup();
+    return parent::pluginParameterInfo();
+  }
+
+  public function pluginProvidesVariables() {
+    // Ensure the info alter callback has been executed.
+    $this->forceSetup();
+    return parent::pluginProvidesVariables();
+  }
+
+  public function info() {
+    // Ensure the info alter callback has been executed.
+    $this->forceSetup();
+    return $this->info;
   }
 
   protected function variableInfoAssertions() {
@@ -1073,11 +1067,10 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function executeByArgs($args = array()) {
     $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
     rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
-    $this->forceSetUp();
     $this->processSettings();
-    // If there is no parameter info, just pass through the passed arguments.
+    // If there is no element info, just pass through the passed arguments.
     // That way we support executing actions without any info at all.
-    if ($this->info['parameter']) {
+    if ($this->info()) {
       $state = $this->setUpState($args);
       module_invoke_all('rules_config_execute', $this);
 
@@ -1101,7 +1094,6 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
 
   public function evaluate(RulesState $state) {
-    $this->forceSetUp();
     $this->processSettings();
     try {
       // Get vars as needed for execute and call it.
@@ -1117,7 +1109,8 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    * Gets the right arguments for executing this.
    */
   protected function getExecutionArguments(RulesState $state) {
-    foreach ($this->info['parameter'] as $name => $info) {
+    $param_info = $this->pluginParameterInfo();
+    foreach ($param_info as $name => $info) {
       $args[$name] = $this->getArgument($name, $info, $state);
     }
     // Append the settings and the execution state. Faces will append $this.
@@ -1125,7 +1118,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $args['state'] = $state;
     // Make the wrapped variables for the arguments available in the state.
     $state->currentArguments = $args;
-    return rules_unwrap_data($args, $this->info['parameter']);
+    return rules_unwrap_data($args, $param_info);
   }
 
   public function __sleep() {
@@ -1315,11 +1308,22 @@ interface RulesPluginImplInterface {
   public function validate();
 
   /**
-   * Processes $settings independent from a form submission. Only successfully
-   * validated settings are processed, so it can be also used to prepare
-   * execution dependent on the settings.
+   * Processes $settings independent from a form submission in order to prepare
+   * element execution. Processing results may be stored and accessed on
+   * execution time in $settings.
    */
   public function process();
+
+  /**
+   * Allows altering of the element's action/condition info.
+   *
+   * Note that this method is also invoked on evaluation time, thus any costly
+   * operations should be avoided.
+   *
+   * @param $element_info
+   *   A reference on the element's info as returned by RulesPlugin::info().
+   */
+  public function info_alter(&$element_info);
 
   /**
    * Checks whether the user has access to configure this element or rule
@@ -1390,6 +1394,7 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
 
   public function validate() {}
   public function process() {}
+  public function info_alter(&$element_info) {}
   public function dependencies() {}
   public function form_alter(&$form, $form_state, $options) {}
   public function assertions() {}
@@ -1519,16 +1524,6 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
   protected function setUpVariables() {
     return isset($this->info['variables']) ? parent::parameterInfo(TRUE) + $this->info['variables'] : $this->parameterInfo(TRUE);
-  }
-
-  /**
-   * Sets skipSetup to the given value for this plugin and all its children.
-   */
-  public function setSkipSetUp($value = TRUE) {
-    foreach ($this->children as $child) {
-      $child->setSkipSetUp($value);
-    }
-    $this->skipSetup = $value;
   }
 
   /**

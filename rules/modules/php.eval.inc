@@ -98,10 +98,12 @@ class RulesPHPDataProcessor extends RulesDataProcessor {
 /**
  * Action and condition callback: Execute PHP code.
  */
-function rules_execute_php_eval($code, $used_vars = NULL, $settings, $state) {
+function rules_execute_php_eval($code, $settings, $state, $element) {
   $data = array();
-  foreach ((array)$used_vars as $key => $var_name) {
-    $data[$var_name] = $state->get($var_name);
+  if (!empty($settings['used_vars'])) {
+    foreach ($settings['used_vars'] as $key => $var_name) {
+      $data[$var_name] = $state->get($var_name);
+    }
   }
   return rules_php_eval_return($code, rules_unwrap_data($data));
 }
