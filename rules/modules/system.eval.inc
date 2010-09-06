@@ -64,7 +64,7 @@ function rules_action_breadcrumb_set(array $titles, array $paths) {
 /**
  * Action Implementation: Send mail.
  */
-function rules_action_mail($to, $from, $subject, $message, $settings, RulesState $state, RulesPlugin $element) {
+function rules_action_mail($to, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element) {
   $to = str_replace(array("\r", "\n"), '', $to);
   $from = !empty($from) ? str_replace(array("\r", "\n"), '', $from) : NULL;
   $params = array(
@@ -80,6 +80,46 @@ function rules_action_mail($to, $from, $subject, $message, $settings, RulesState
   $message = drupal_mail('rules', $key, $to, language_default(), $params, $from);
   if ($message['result']) {
     watchdog('rules', 'Successfully sent email to %recipient', array('%recipient' => $to));
+  }
+}
+
+/**
+ * Action: Send mail to all users of a specific role group(s).
+ */
+function rules_action_mail_to_users_of_role($roles, $subject, $message, $from = NULL, $settings, RulesState $state, RulesPlugin $element) {
+  $from = !empty($from) ? str_replace(array("\r", "\n"), '', $from) : NULL;
+
+  // All authenticated users, which is everybody.
+  if (in_array(DRUPAL_AUTHENTICATED_RID, $roles)) {
+    $result = db_query('SELECT mail FROM {users} WHERE uid > 0');
+  }
+  else {
+    $rids = implode(',', $recipients);
+    // Avoid sending emails to members of two or more target role groups.
+    $result = db_query('SELECT DISTINCT u.mail FROM {users} u INNER JOIN {users_roles} r ON u.uid = r.uid WHERE r.rid IN ('. $rids .')');
+  }
+
+  // Now, actually send the mails.
+  $params = array(
+    'subject' => $subject,
+    'message' => $message,
+    'action' => $element,
+    'state' => $state,
+  );
+  // Set a unique key for this mail.
+  $name = isset($element->root()->name) ? $element->root()->name : 'unnamed';
+  $key = 'rules_action_mail_to_users_of_role_' . $name . '_' . $element->elementId();
+
+  $message = array('result' => TRUE);
+  foreach ($result as $row) {
+    $message = drupal_mail('rules', $key, $row->mail, language_default(), $params, $from);
+    if (!$message['result']) {
+      break;
+    }
+  }
+  if ($message['result']) {
+    $role_names = array_intersect_key(user_roles(TRUE), array_flip($roles));
+    watchdog('rules', 'Successfully sent email to the role(s) %roles.', array('%roles' => implode(', ', $role_names)));
   }
 }
 

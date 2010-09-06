@@ -181,11 +181,35 @@ function rules_system_action_info() {
           'label' => t('To'),
           'description' => t('The e-mail address or addresses where the message will be sent to. The formatting of this string must comply with RFC 2822.'),
         ),
+        'subject' => array(
+          'type' => 'text',
+          'label' => t('Subject'),
+          'description' => t("The mail's subject."),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Message'),
+          'description' => t("The mail's message body."),
+        ),
         'from' => array(
           'type' => 'text',
           'label' => t('From'),
           'description' => t("The mail's from address. Leave it empty to use the site-wide configured address."),
           'optional' => TRUE,
+        ),
+      ),
+      'base' => 'rules_action_mail',
+      'access callback' => 'rules_system_integration_access',
+    ),
+    'mail_to_users_of_role' => array(
+      'label' => t('Send mail to all users of a role'),
+      'group' => t('System'),
+      'parameter' => array(
+        'roles' => array(
+          'type' => 'list<integer>',
+          'label' => t('Roles'),
+          'options list' => 'entity_metadata_user_roles',
+          'description' => t('Select the roles whose users should receive the mail.'),
         ),
         'subject' => array(
           'type' => 'text',
@@ -197,11 +221,24 @@ function rules_system_action_info() {
           'label' => t('Message'),
           'description' => t("The mail's message body."),
         ),
+        'from' => array(
+          'type' => 'text',
+          'label' => t('From'),
+          'description' => t("The mail's from address. Leave it empty to use the site-wide configured address."),
+          'optional' => TRUE,
+        ),
       ),
-      'base' => 'rules_action_mail',
+      'base' => 'rules_action_mail_to_users_of_role',
       'access callback' => 'rules_system_integration_access',
     ),
   );
+}
+
+/**
+ * Help callback for the "Send mail to users of a role" action.
+ */
+function rules_action_mail_to_users_of_role_help() {
+  return t('WARNING: This may cause problems if there are too many users of these roles on your site, as your server may not be able to handle all the mail requests all at once.');
 }
 
 /**
