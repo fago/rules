@@ -10,7 +10,7 @@
  * access.
  */
 function rules_test_entity_property_info_alter(&$info) {
-  $properties =& $info['system']['properties'];
+  $properties =& $info['site']['properties'];
 
   $properties['no-access-user'] = array(
     'label' => t("Logged in user"),

@@ -470,7 +470,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule = rule();
     // Try to set a property which is provided by the test module and is not
     // accessible, so the access check has to return FALSE.
-    $rule->action('data_set', array('data:select' => 'no-access-user', 'value' => 'foo'));
+    $rule->action('data_set', array('data:select' => 'site:no-access-user', 'value' => 'foo'));
     $this->assertTrue($rule->access() === FALSE, 'Access check is working.');
   }
 
@@ -1257,9 +1257,48 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     // Test using the 'site' variable.
     $condition = rules_condition('data_is', array('data:select' => 'site:current-user:name', 'value' => $GLOBALS['user']->name));
     $this->assertTrue($condition->execute(), 'Retrieved the current user\'s name.');
-    // Another test using a token replacemen.t
+    // Another test using a token replacement.
     $condition = rules_condition('data_is', array('data:select' => 'site:current-user:name', 'value' => '[site:current-user:name]'));
     $this->assertTrue($condition->execute(), 'Replaced the token for the current user\'s name.');
+
+    // Test breadcrumbs and drupal set message.
+    $rule = rules_reaction_rule();
+    $rule->event('init')
+         ->action('breadcrumb_set', array('titles' => array('foo'), 'paths' => array('bar')))
+         ->action('drupal_message', array('message' => 'A message.'));
+    $rule->save('test');
+    rules_clear_cache();
+
+    $this->drupalGet('node');
+    $this->assertLink('foo', 0, 'Breadcrumb has been set.');
+    $this->assertText('A message.', 'Drupal message has been shown.');
+
+    // Test the page redirect.
+    $node = $this->drupalCreateNode();
+    $rule = rules_reaction_rule();
+    $rule->event('node_view')
+         ->action('redirect', array('url' => 'user'));
+    $rule->save('test2');
+    rules_clear_cache();
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirect has been issued.');
+
+    // Test sending mail.
+    $settings = array('to' => 'mail@example.com', 'subject' => 'subject', 'message' => 'hello.');
+    rules_action('mail', $settings)->execute();
+    $this->assertMail('to', 'mail@example.com', 'Mail has been sent.');
+    $this->assertMail('from', variable_get('site_mail', ini_get('sendmail_from')), 'Default from address has been used');
+
+    rules_action('mail', $settings + array('from' => 'sender@example.com'))->execute();
+    $this->assertMail('from', 'sender@example.com', 'Specified from address has been used');
+
+    // Test sending mail to all users of a role. First make sure there is a
+    // custom role and a user for it.
+    $user = $this->drupalCreateUser(array('administer nodes'));
+    $roles = array_keys($user->roles);
+    rules_action('mail_to_users_of_role', $settings + array('roles' => $roles))->execute();
+    $this->assertMail('to', $user->mail, 'Mail to users of a role has been sent.');
   }
 
 }
