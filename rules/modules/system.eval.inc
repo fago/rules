@@ -62,6 +62,39 @@ function rules_action_breadcrumb_set(array $titles, array $paths) {
 }
 
 /**
+ * Action Implementation: Send mail.
+ */
+function rules_action_mail($to, $from, $subject, $message, $settings, RulesState $state, RulesPlugin $element) {
+  $to = str_replace(array("\r", "\n"), '', $to);
+  $from = !empty($from) ? str_replace(array("\r", "\n"), '', $from) : NULL;
+  $params = array(
+    'subject' => $subject,
+    'message' => $message,
+    'action' => $element,
+    'state' => $state,
+  );
+  // Set a unique key for this mail.
+  $name = isset($element->root()->name) ? $element->root()->name : 'unnamed';
+  $key = 'rules_action_mail_' . $name . '_' . $element->elementId();
+
+  $message = drupal_mail('rules', $key, $to, language_default(), $params, $from);
+  if ($message['result']) {
+    watchdog('rules', 'Successfully sent email to %recipient', array('%recipient' => $to));
+  }
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * Set's the message subject and body as configured.
+ */
+function rules_mail($key, &$message, $params) {
+
+  $message['subject'] .= str_replace(array("\r", "\n"), '', $params['subject']);
+  $message['body'][] = $params['message'];
+}
+
+/**
  * A class implementing a rules input evaluator processing tokens.
  */
 class RulesTokenEvaluator extends RulesDataInputEvaluator {

@@ -172,6 +172,35 @@ function rules_system_action_info() {
       'base' => 'rules_action_breadcrumb_set',
       'access callback' => 'rules_system_integration_access',
     ),
+    'mail' => array(
+      'label' => t('Send mail'),
+      'group' => t('System'),
+      'parameter' => array(
+        'to' => array(
+          'type' => 'text',
+          'label' => t('To'),
+          'description' => t('The e-mail address or addresses where the message will be sent to. The formatting of this string must comply with RFC 2822.'),
+        ),
+        'from' => array(
+          'type' => 'text',
+          'label' => t('From'),
+          'description' => t("The mail's from address. Leave it empty to use the site-wide configured address."),
+          'optional' => TRUE,
+        ),
+        'subject' => array(
+          'type' => 'text',
+          'label' => t('Subject'),
+          'description' => t("The mail's subject."),
+        ),
+        'message' => array(
+          'type' => 'text',
+          'label' => t('Message'),
+          'description' => t("The mail's message body."),
+        ),
+      ),
+      'base' => 'rules_action_mail',
+      'access callback' => 'rules_system_integration_access',
+    ),
   );
 }
 
