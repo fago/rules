@@ -106,11 +106,19 @@ function rules_system_action_info() {
           'label' => t('Message'),
           'sanitize' => TRUE,
         ),
-        'error' => array(
-          'type' => 'boolean',
-          'label' => t('Show as error'),
+        'type' => array(
+          'type' => 'token',
+          'label' => t('Message type'),
+          'options list' => 'rules_action_drupal_message_types',
+          'default value' => 'status',
           'optional' => TRUE,
-          'default value' => FALSE,
+        ),
+        'repeat' => array(
+          'type' => 'boolean',
+          'label' => t('Repeat message'),
+          'description' => t("If this is FALSE and the message has been already shown, then the message won't be repeated."),
+          'default value' => TRUE,
+          'optional' => TRUE,
           'restriction' => 'input',
         ),
       ),
@@ -151,6 +159,17 @@ function rules_system_action_info() {
  */
 function rules_system_integration_access($type, $name) {
   return user_access('administer site configuration');
+}
+
+/**
+ * Options list callback defining drupal_message types.
+ */
+function rules_action_drupal_message_types() {
+  return array(
+    'status' => t('Status'),
+    'warning' => t('Warning'),
+    'error' => t('Error'),
+  );
 }
 
 /**

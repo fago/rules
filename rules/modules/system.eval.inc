@@ -12,8 +12,8 @@
 /**
  * Action: Show a drupal message.
  */
-function rules_action_drupal_message($message, $error) {
-  drupal_set_message($message, $error ? 'error' : 'status');
+function rules_action_drupal_message($message, $status, $repeat) {
+  drupal_set_message(filter_xss_admin($message), $status, $repeat);
 }
 
 /**
