@@ -17,28 +17,6 @@ function rules_action_drupal_message($message, $status, $repeat) {
 }
 
 /**
- * Action: Set breadcrumb.
- */
-function rules_action_set_breadcrumb($titles, $paths) {
-  $trail = array(l(t('Home'), ''));
-  for ($i = 0; $i < count($titles); $i++) {
-    // Skip empty titles
-    if ($title = trim($titles[$i])) {
-      // Output plaintext instead of a link if there is a title
-      // without a path.
-      $path = trim($paths[$i]);
-      if (strlen($path) > 0 && $path != '<none>') {
-        $trail[] = l($title, trim($paths[$i]));
-      }
-      else {
-        $trail[] = check_plain($title);
-      }
-    }
-  }
-  drupal_set_breadcrumb($trail);
-}
-
-/**
  * Action: Page redirect.
  *
  * @see rules_page_build()
@@ -59,6 +37,28 @@ function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
   // the page is output. We don't invoke it right now, as this would end the
   // the current page execution unpredictly for modules.
   $GLOBALS['_rules_action_drupal_goto_do'] = $url;
+}
+
+/**
+ * Action: Set breadcrumb.
+ */
+function rules_action_breadcrumb_set(array $titles, array $paths) {
+  $trail = array(l(t('Home'), ''));
+  foreach ($titles as $i => $title) {
+    // Skip empty titles.
+    if ($title = trim($title)) {
+      // Output plaintext instead of a link if there is a title
+      // without a path.
+      $path = trim($paths[$i]);
+      if (!empty($paths[$i]) && $paths[$i] != '<none>') {
+        $trail[] = l($title, trim($paths[$i]));
+      }
+      else {
+        $trail[] = check_plain($title);
+      }
+    }
+  }
+  drupal_set_breadcrumb($trail);
 }
 
 /**

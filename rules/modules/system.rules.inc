@@ -154,6 +154,24 @@ function rules_system_action_info() {
       'base' => 'rules_action_drupal_goto',
       'access callback' => 'rules_system_integration_access',
     ),
+    'breadcrumb_set' => array(
+      'label' => t('Set breadcrumb'),
+      'group' => t('System'),
+      'parameter' => array(
+        'titles' => array(
+          'type' => 'list<text>',
+          'label' => t('Titles'),
+          'description' => t('A list of titles for the breadcrumb links.'),
+        ),
+        'paths' => array(
+          'type' => 'list<text>',
+          'label' => t('Paths'),
+          'description' => t('A list of Drupal paths for the breadcrumb links, matching the order of the titles.'),
+        ),
+      ),
+      'base' => 'rules_action_breadcrumb_set',
+      'access callback' => 'rules_system_integration_access',
+    ),
   );
 }
 
