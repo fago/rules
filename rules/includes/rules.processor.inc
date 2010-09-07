@@ -240,8 +240,9 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
   public function process($value, $info, RulesState $state, RulesPlugin $element, $options = NULL) {
     if (!isset($options)) {
       $cache = rules_get_cache();
+      $languages = language_list();
       $options = array_filter(array(
-        'language' => isset($element->settings['language']) ? $element->settings['language'] : NULL,
+        'language' => isset($element->settings['language']) && isset($languages[$element->settings['language']]) ? $languages[$element->settings['language']] : NULL,
         'callback' => isset($cache['data info'][$info['type']]['cleaning callback']) ? $cache['data info'][$info['type']]['cleaning callback'] : FALSE,
         'sanitize' => !empty($info['sanitize']),
       ));

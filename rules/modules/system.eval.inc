@@ -199,7 +199,7 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
           '#prefix' => '<h3>' . t('Replacement patterns for %label', array('%label' => $var_info[$name]['label'])) . '</h3>',
         );
         foreach ($token_info['tokens'][$token_type] as $token => $info) {
-          $token = '[' . $var_info[$name]['type'] . ':' . $token . ']';
+          $token = '[' . $name . ':' . $token . ']';
           $render[$name]['#rows'][$token] = array(check_plain($token), check_plain($info['name']), check_plain($info['description']));
         }
       }
