@@ -124,21 +124,22 @@ function rules_action_entity_create($args, $element) {
  * Info alteration callback for the entity create action.
  */
 function rules_action_entity_create_info_alter(&$element_info, RulesAbstractPlugin $element) {
-  $element->settings += array('type' => NULL);
-  $wrapper = entity_metadata_wrapper($element->settings['type']);
-  // Add the data type's needed parameter for loading to the parameter info.
-  foreach ($wrapper as $name => $child) {
-    $info = $child->info();
-    if (!empty($info['required'])) {
-      $info += array('type' => 'text');
-      // Prefix parameter names to avoid name clashes with existing parameters.
-      $element_info['parameter']['param_' . $name] = array_intersect_key($info, array_flip(array('type', 'label', 'description')));
-      $element_info['parameter']['param_' . $name]['options list']  = $child->optionsList() ? 'rules_action_entity_parameter_options_list' : FALSE;
+  if (!empty($element->settings['type'])) {
+    $wrapper = entity_metadata_wrapper($element->settings['type']);
+    // Add the data type's needed parameter for loading to the parameter info.
+    foreach ($wrapper as $name => $child) {
+      $info = $child->info();
+      if (!empty($info['required'])) {
+        $info += array('type' => 'text');
+        // Prefix parameter names to avoid name clashes with existing parameters.
+        $element_info['parameter']['param_' . $name] = array_intersect_key($info, array_flip(array('type', 'label', 'description')));
+        $element_info['parameter']['param_' . $name]['options list']  = $child->optionsList() ? 'rules_action_entity_parameter_options_list' : FALSE;
+      }
     }
-  }
-  $element_info['provides']['entity_created']['type'] = $element->settings['type'];
-  if (($bundleKey = $wrapper->entityKey('bundle')) && isset($element->settings['param_' . $bundleKey])) {
-    $element_info['provides']['entity_created']['bundle'] = $element->settings['param_' . $bundleKey];
+    $element_info['provides']['entity_created']['type'] = $element->settings['type'];
+    if (($bundleKey = $wrapper->entityKey('bundle')) && isset($element->settings['param_' . $bundleKey])) {
+      $element_info['provides']['entity_created']['bundle'] = $element->settings['param_' . $bundleKey];
+    }
   }
 }
 
