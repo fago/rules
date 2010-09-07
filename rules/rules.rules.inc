@@ -22,7 +22,7 @@ foreach (rules_core_modules() as $module) {
  */
 function rules_core_modules() {
   $return = array('data', 'node', 'system', 'user', 'rules_core');
-  foreach (array('comment', 'taxonomy', 'php') as $module) {
+  foreach (array('comment', 'taxonomy', 'php', 'path') as $module) {
     if (module_exists($module)) {
       $return[] = $module;
     }
