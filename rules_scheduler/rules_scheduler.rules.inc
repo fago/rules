@@ -33,6 +33,7 @@ function rules_scheduler_rules_action_info() {
         'type' => 'text',
         'label' => t('Identifier'),
         'description' => t('User provided string to identify the task. Existing tasks for this component with the same identifier will be replaced.'),
+        'optional' => TRUE,
       ),
       // Further needed parameter by the component are added during processing.
     ),
@@ -101,7 +102,7 @@ function rules_scheduler_action_schedule($args, $element) {
  * Info alteration callback for the schedule action.
  */
 function rules_scheduler_action_schedule_info_alter(&$element_info, RulesPlugin $element) {
-  if ($component = rules_get_cache('comp_' . $element->settings['component'])) {
+  if (isset($element->settings['component']) && $component = rules_get_cache('comp_' . $element->settings['component'])) {
     // Add in the needed parameters.
     foreach ($component->parameterInfo() as $name => $info) {
       $element_info['parameter']['param_' . $name] = $info;
@@ -114,6 +115,46 @@ function rules_scheduler_action_schedule_info_alter(&$element_info, RulesPlugin 
  */
 function rules_scheduler_action_schedule_help() {
   return t("The evaluation of the component is going to be scheduled with the help of cron. Therefore make sure cron is configured correctly by checking your site's !status.", array('!status' => l('Status report', 'admin/reports/status'))) .' '. t('Note that the scheduling time accuracy depends on your configured cron interval.');
+}
+
+/**
+ * Form alter callback for actions relying on the entity type or the data type.
+ */
+function rules_scheduler_action_schedule_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+  $first_step = empty($element->settings['component']);
+  $form['reload'] = array(
+    '#weight' => 5,
+    '#type' => 'submit',
+    '#name' => 'reload',
+    '#value' => $first_step ? t('Continue') : t('Reload form'),
+    '#limit_validation_errors' => array(array('parameter', 'component')),
+    '#submit' => array('rules_action_type_form_submit_rebuild'),
+    '#ajax' => rules_ui_form_default_ajax(),
+  );
+  // Use ajax and trigger as the reload button.
+  $form['parameter']['component']['settings']['type']['#ajax'] = $form['reload']['#ajax'] + array(
+    'event' => 'change',
+    'trigger_as' => array('name' => 'reload'),
+  );
+
+  if ($first_step) {
+    // In the first step show only the component select.
+    foreach (element_children($form['parameter']) as $key) {
+      if ($key != 'component') {
+        unset($form['parameter'][$key]);
+      }
+    }
+    unset($form['submit']);
+    unset($form['provides']);
+    // Disable #ajax for the first step as it has troubles with lazy-loaded JS.
+    // @todo: Re-enable once JS lazy-loading is fixed in core.
+    unset($form['parameter']['component']['settings']['type']['#ajax']);
+    unset($form['reload']['#ajax']);
+  }
+  else {
+    // Hide the reload button in case js is enabled and it's not the first step.
+    $form['reload']['#attributes'] = array('class' => array('rules-hide-js'));
+  }
 }
 
 /**
