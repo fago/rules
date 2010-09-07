@@ -34,7 +34,7 @@ function rules_comment_event_info() {
     'comment_presave' => $defaults + array(
       'label' => t('Before saving a comment'),
       'variables' => array(
-        'comment' => array('type' => 'comment', 'label' => t('saved comment')),
+        'comment' => array('type' => 'comment', 'label' => t('saved comment'), 'skip save' => TRUE),
         'comment_unchanged' => array('type' => 'comment', 'label' => t('unchanged comment'), 'handler' => 'rules_events_entity_unchanged'),
       ),
     ),

@@ -41,7 +41,7 @@ function rules_user_event_info() {
       'label' => t('Before saving a user account'),
       'group' => t('User'),
       'variables' => array(
-        'account' => array('type' => 'user', 'label' => t('saved user')),
+        'account' => array('type' => 'user', 'label' => t('saved user'), 'skip save' => TRUE),
         'account_unchanged' => array('type' => 'user', 'label' => t('unchanged user'), 'handler' => 'rules_events_entity_unchanged'),
       ),
       'access callback' => 'rules_user_integration_access',
