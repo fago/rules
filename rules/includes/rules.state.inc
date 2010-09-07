@@ -404,12 +404,15 @@ class RulesData  {
    *   An optional prefix for the data selectors.
    * @param $recursions
    *   The number of recursions used to go down the tree. Defaults to 2.
+   * @param $suggestions
+   *   Whether possibilities to recurse are suggested as soon as the deepest
+   *   level of recursions is reached. Defaults to TRUE.
    *
    * @return
    *  An array of info about matching variables or properties that match, keyed
    *  with the data selector.
    */
-  public static function matchingDataSelector($source, $param_info, $prefix = '', $recursions = 2) {
+  public static function matchingDataSelector($source, $param_info, $prefix = '', $recursions = 2, $suggestions = TRUE) {
     // If an array of info is given, get entity metadata wrappers first.
     $data = NULL;
     if (is_array($source)) {
@@ -432,10 +435,10 @@ class RulesData  {
     if ($recursions > 0 && !empty($recurse)) {
       $recursions--;
       foreach ($recurse as $name => $wrapper) {
-        $matches += self::matchingDataSelector($wrapper, $param_info, $name . ':', $recursions);
+        $matches += self::matchingDataSelector($wrapper, $param_info, $name . ':', $recursions, $suggestions);
       }
     }
-    elseif (!empty($recurse)) {
+    elseif (!empty($recurse) && $suggestions) {
       // We may not recurse any more, but indicate the possibility to recurse.
       foreach ($recurse as $name => $wrapper) {
         $matches[$name . ':'] = $wrapper->info();

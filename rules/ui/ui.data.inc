@@ -45,10 +45,22 @@ class RulesDataUI {
    * Provides the selection form for a parameter.
    */
   public static function selectionForm($name, $info, $settings, RulesPlugin $element) {
+    if (!isset($settings[$name . ':select'])) {
+      $settings[$name . ':select'] = '';
+      $vars = $element->availableVariables();
+      // Default to variables with the same name as the parameter.
+      if (isset($vars[$name])) {
+        $settings[$name . ':select'] = $name;
+      }
+      // If there is only one match, use it by default.
+      elseif (count($matches = RulesData::matchingDataSelector($vars, $info, '', 1, FALSE)) == 1) {
+        $settings[$name . ':select'] = key($matches);
+      }
+    }
     $form[$name . ':select'] = array(
       '#type' => 'textfield',
       '#title' => t('Data selector'),
-      '#default_value' => isset($settings[$name . ':select']) ? $settings[$name . ':select'] : '',
+      '#default_value' => $settings[$name . ':select'],
       '#required' => empty($info['optional']),
       '#autocomplete_path' => RulesPluginUI::path($element->root()->name, 'autocomplete'. '/' . $name),
       '#process' => array('rules_data_selection_autocomplete_path'),

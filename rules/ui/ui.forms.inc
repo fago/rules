@@ -416,7 +416,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
 
   $params = $element->pluginParameterInfo();
   $matches = array();
-  if (isset($params[$parameter]) && $string) {
+  if (isset($params[$parameter])) {
     $parts = explode(':', $string);
     // Remove the last part as it might be unfinished.
     $last_part = array_pop($parts);
@@ -433,6 +433,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
 
     foreach ($result as $selector => $info) {
       // If we have an uncomplete last part, take it into account now.
+      $attributes = array();
       if (!$last_part || strpos($selector, $string) === 0) {
         $attributes['class'][] = 'rules-dsac-item';
         $attributes['title'] = isset($info['description']) ? check_plain($info['description']) : '';
