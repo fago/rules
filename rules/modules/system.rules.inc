@@ -116,7 +116,7 @@ function rules_system_action_info() {
         'repeat' => array(
           'type' => 'boolean',
           'label' => t('Repeat message'),
-          'description' => t("If this is FALSE and the message has been already shown, then the message won't be repeated."),
+          'description' => t("If disabled and the message has been already shown, then the message won't be repeated."),
           'default value' => TRUE,
           'optional' => TRUE,
           'restriction' => 'input',

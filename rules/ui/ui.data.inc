@@ -92,9 +92,10 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputFormInt
       );
       RulesDataInputEvaluator::attachForm($form, $settings, $info, $element->availableVariables());
     }
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : '');
     $form[$name] += array(
       '#title' => t('Value'),
-      '#default_value' => isset($settings[$name]) ? $settings[$name] : '',
+      '#default_value' => $settings[$name],
       '#required' => empty($info['optional']),
     );
     return $form;
@@ -127,7 +128,7 @@ class RulesDataUITextFormatted extends RulesDataUIText {
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form = parent::inputForm($name, $info, $settings, $element);
-    $settings += array($name => array('value' => '', 'format' => NULL));
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : array('value' => '', 'format' => NULL));
 
     $form[$name]['#type'] = 'text_format';
     $form[$name]['#base_type'] = 'textarea';
@@ -186,6 +187,7 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : '');
     $form[$name] = array(
       '#type' => 'checkbox',
       '#title' => check_plain($info['label']),
@@ -276,7 +278,7 @@ class RulesDataUIListText extends RulesDataUIText {
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
-    $settings += array($name => array());
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : array());
     $form = parent::inputForm($name, $info, $settings, $element);
     if ($form[$name]['#type'] == 'textarea') {
       // Fix up the value to be an array during after build.
