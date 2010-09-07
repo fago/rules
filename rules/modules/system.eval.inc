@@ -158,10 +158,10 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
     $replacements = array();
     $data = array();
     foreach (token_scan($text) as $var_name => $tokens) {
-      if (isset($var_info[$var_name])) {
-        $key = $var_info[$var_name]['type'];
-        $data = rules_unwrap_data(array($key => $state->get($var_name)), array($key => $var_info[$var_name]));
-        $replacements += token_generate($var_info[$var_name]['type'], $tokens, $data, $options);
+      if (isset($var_info[$var_name]) && ($token_type = _rules_system_token_map_type($var_info[$var_name]['type']))) {
+        // We have to key $data with the type token uses for the variable.
+        $data = rules_unwrap_data(array($token_type => $state->get($var_name)), array($token_type => $var_info[$var_name]));
+        $replacements += token_generate($token_type, $tokens, $data, $options);
       }
       else {
         $replacements += token_generate($var_name, $tokens, array(), $options);
@@ -188,7 +188,7 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
     );
     $token_info = token_info();
     foreach ($var_info as $name => $info) {
-      $token_types[$name] = isset($info['token type']) ? $info['token type'] : $info['type'];
+      $token_types[$name] = _rules_system_token_map_type($info['type']);
     }
 
     foreach ($token_types as $name => $token_type) {
@@ -206,6 +206,21 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
     }
     return $render;
   }
+}
+
+/**
+ * Looks for a token type mapping. Defaults to passing through the type.
+ */
+function _rules_system_token_map_type($type) {
+  $entity_info = entity_get_info();
+  if (isset($entity_info[$type]['token type'])) {
+    return $entity_info[$type]['token type'];
+  }
+  $cache = rules_get_cache();
+  if (isset($cache['data_info'][$type]['token type'])) {
+    return $cache['data_info'][$type]['token type'];
+  }
+  return $type;
 }
 
 /**
