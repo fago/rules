@@ -11,7 +11,6 @@
  */
 foreach (rules_core_modules() as $module) {
   module_load_include('inc', 'rules', "modules/$module.rules");
-  //TODO: Temporary hack. Force include to be included.
   module_load_include('inc', 'rules', 'modules/events');
 }
 
@@ -22,7 +21,13 @@ foreach (rules_core_modules() as $module) {
  * rules data integration as well as 'rules' for providing some general stuff.
  */
 function rules_core_modules() {
-  return array('comment', 'data', 'node', 'system', 'taxonomy', 'user', 'php', 'rules_core');
+  $return = array('data', 'node', 'system', 'user', 'rules_core');
+  foreach (array('comment', 'taxonomy', 'php') as $module) {
+    if (module_exists($module)) {
+      $return[] = $module;
+    }
+  }
+  return $return;
 }
 
 /**
