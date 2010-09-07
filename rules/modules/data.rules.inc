@@ -325,7 +325,7 @@ function rules_action_data_set_form_alter(&$form, &$form_state, $options, RulesA
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
-      '#limit_validation_errors' => array('parameter', 'data'),
+      '#limit_validation_errors' => array(array('parameter', 'data')),
       '#submit' => array('rules_form_submit_rebuild'),
     );
     $form_state['rules_element_step'] = 'data_value';
@@ -419,7 +419,7 @@ function rules_action_type_form_alter(&$form, &$form_state, $options, RulesAbstr
     '#type' => 'submit',
     '#name' => 'reload',
     '#value' => $first_step ? t('Continue') : t('Reload form'),
-    '#limit_validation_errors' => array('parameter', 'type'),
+    '#limit_validation_errors' => array(array('parameter', 'type')),
     '#submit' => array('rules_action_type_form_submit_rebuild'),
     '#ajax' => rules_ui_form_default_ajax(),
   );
@@ -649,7 +649,7 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, $options, Rule
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
-      '#limit_validation_errors' => array('parameter', 'data'),
+      '#limit_validation_errors' => array(array('parameter', 'data')),
       '#submit' => array('rules_form_submit_rebuild'),
     );
     // Clear the parameter mode for the value parameter, so its gets the proper
