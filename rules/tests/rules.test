@@ -900,7 +900,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test', 'entity_metadata', 'php');
+    parent::setUp('rules', 'rules_test', 'entity_metadata', 'php', 'path');
     RulesLog::logger()->clear();
   }
 
@@ -1299,6 +1299,38 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $roles = array_keys($user->roles);
     rules_action('mail_to_users_of_role', $settings + array('roles' => $roles))->execute();
     $this->assertMail('to', $user->mail, 'Mail to users of a role has been sent.');
+  }
+
+  /**
+   * Tests the path module integration.
+   */
+  function testPathIntegration() {
+    rules_action('path_alias')->execute('foo', 'bar');
+    $path = path_load('foo');
+    $this->assertTrue($path['alias'] == 'bar', 'URL alias has been created.');
+
+    $alias_exists = rules_condition('path_alias_exists', array('alias' => 'bar'))->execute();
+    $this->assertTrue($alias_exists, 'Created URL alias exists.');
+
+    $has_alias = rules_condition('path_has_alias', array('source' => 'foo'))->execute();
+    $this->assertTrue($has_alias, 'System path has an alias.');
+
+    // Test node alias action.
+    $node = $this->drupalCreateNode();
+    rules_action('node_path_alias')->execute($node, 'test');
+    $path = path_load("node/$node->nid");
+    $this->assertTrue($path['alias'] == 'test', 'Node URL alias has been created.');
+
+    // Test term alias action.
+    $term = entity_metadata_entity_create('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vid' => 1,
+    ))->value();
+    rules_action('taxonomy_term_path_alias')->execute($term, 'term-test');
+    $path = path_load("taxonomy/term/$term->tid");
+    $this->assertTrue($path['alias'] == 'term-test', 'Term URL alias has been created.');
+
+    RulesLog::logger()->checkLog();
   }
 
 }
