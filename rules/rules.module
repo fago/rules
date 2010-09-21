@@ -118,6 +118,19 @@ function rules_rule_set($variables, $provides = array()) {
 }
 
 /**
+ * Creates an action set.
+ *
+ * @param $variables
+ *   An array as for rule().
+ * @param $provides
+ *   An array of the names of variables, which should be provided to the caller.
+ * @return RulesActionSet
+ */
+function rules_action_set($variables, $provides = array()) {
+  return rules_plugin_factory('action set', $variables, $provides);
+}
+
+/**
  * Log a message to the rules logger.
  *
  * @param $msg
