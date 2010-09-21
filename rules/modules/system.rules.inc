@@ -60,7 +60,7 @@ function rules_system_data_info() {
 }
 
 /**
- * Defines entity info for watchdog log entries, used by the log entry data
+ * Defines property info for watchdog log entries, used by the log entry data
  * type to provide an useful metadata wrapper.
  */
 function _rules_system_watchdog_log_entry_info() {
