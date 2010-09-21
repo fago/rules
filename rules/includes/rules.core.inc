@@ -661,7 +661,7 @@ abstract class RulesPlugin extends RulesExtendable {
    *   be applied.
    */
   public function applyDataSelector($selector) {
-    $parts = explode(':', $selector, 2);
+    $parts = explode(':', str_replace('-', '_', $selector), 2);
     if (($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
       $data = NULL;
       $wrapper = rules_wrap_data($data, $vars[$parts[0]], TRUE);

@@ -265,7 +265,7 @@ class RulesState {
    *   applied.
    */
   public function applyDataSelector($selector) {
-    $parts = explode(':', $selector, 2);
+    $parts = explode(':', str_replace('-', '_', $selector), 2);
     $wrapper = $this->get($parts[0]);
     if (count($parts) == 1) {
       return $wrapper;
@@ -424,6 +424,8 @@ class RulesData  {
     $matches = array();
     foreach ($source as $name => $wrapper) {
       $info = $wrapper->info();
+      $name = str_replace('_', '-', $name);
+
       if (self::typesMatch($info, $param_info)) {
         $matches[$prefix . $name] = $info;
       }
