@@ -6,9 +6,6 @@
  * Rules base classes and interfaces needed for any rule evaluation.
  */
 
-//TODO: add schedule routine that works like executing, but takes a $date as first argument.
-//TODO: Make variables() info methods optionally return properly translated strings.
-
 /**
  * Make sure loaded rule configs are instantiated right.
  */
