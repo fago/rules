@@ -613,10 +613,7 @@ abstract class RulesPlugin extends RulesExtendable {
    *   In case the argument cannot be retrieved an exception is thrown.
    */
   protected function getArgument($name, $info, RulesState $state) {
-    if (!empty($this->settings[$name . ':select']) && $state->varinfo($name)) {
-      $arg = $state->get($this->settings[$name . ':select']);
-    }
-    elseif (!empty($this->settings[$name . ':select'])) {
+    if (!empty($this->settings[$name . ':select'])) {
       $arg = $state->applyDataSelector($this->settings[$name . ':select']);
     }
     elseif (isset($this->settings[$name])) {
