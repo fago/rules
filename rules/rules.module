@@ -451,14 +451,14 @@ function rules_rules_plugin_info() {
 function rules_entity_info() {
   return array(
     'rules_config' => array(
-      'label' => t('Rule configuration'),
+      'label' => t('Rules configuration'),
       'controller class' => 'RulesEntityController',
       'base table' => 'rules_config',
       'fieldable' => TRUE,
       'entity keys' => array(
         'id' => 'id',
         'name' => 'name',
-        'bundle' => 'name',
+        'label' => 'label',
       ),
       'bundles' => array(),
       'exportable' => TRUE,
