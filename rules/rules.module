@@ -252,7 +252,6 @@ function rules_clear_cache($immediate = FALSE) {
   variable_del('rules_empty_sets');
   if ($immediate) {
     drupal_static_reset('rules_get_cache');
-    drupal_static_reset('rules_get_event_set');
     entity_get_controller('rules_config')->resetCache();
   }
 }
