@@ -1936,21 +1936,6 @@ class RulesException extends Exception {
     $this->msg = $msg;
     $this->args = $args;
     $this->severity = $severity;
-    unset($this->message);
-  }
-
-  /**
-   * The getMessage() method cannot be overriden, so this is the only
-   * possibility to override its output.
-   */
-  public function __get($name) {
-    if ($name == 'message') {
-      return $this->__toString();
-    }
-    return parent::$name;
-  }
-
-  public function __toString() {
-    return t($this->msg, $this->args);
+    $this->message = t($this->msg, $this->args);
   }
 }
