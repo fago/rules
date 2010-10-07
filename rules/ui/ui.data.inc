@@ -58,12 +58,14 @@ class RulesDataUI {
       }
     }
     $form[$name . ':select'] = array(
-      '#type' => 'textfield',
+      '#type' => 'rules_data_selection',
       '#title' => t('Data selector'),
       '#default_value' => $settings[$name . ':select'],
       '#required' => empty($info['optional']),
-      '#autocomplete_path' => RulesPluginUI::path($element->root()->name, 'autocomplete'. '/' . $name),
-      '#process' => array('rules_data_selection_autocomplete_path'),
+      '#autocomplete_path' => RulesPluginUI::path($element->root()->name, 'autocomplete' . '/' . $name),
+      // Make the autocomplete textfield big enough so that it can display
+      // descriptions without word wraps.
+      '#size' => 75,
     );
     $form['help'] = array(
       '#theme' => 'rules_data_selector_help',

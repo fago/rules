@@ -9,8 +9,8 @@
 }
 
 .rules-elements-table ul.action-links .delete a, .rules-elements-table ul.action-links .edit a {
-	background: none;
-	padding-left: 0px;
+  background: none;
+  padding-left: 0px;
 }
 
 .rules-elements-table ul.action-links a {
@@ -18,8 +18,8 @@
 }
 
 .rules-elements-table ul.action-links {
-	margin: 0px;
-	padding-left: 2px;
+  margin: 0px;
+  padding-left: 2px;
 }
 
 table tr.rules-elements-add {
@@ -32,7 +32,7 @@ tr.rules-elements-add td {
 }
 
 .rules-elements-table {
-	margin-bottom: 3em;
+  margin-bottom: 3em;
 }
 /* We cannot set a positive margin-top for rules tables as the table drag link
    should be positioned directly on top of the table. Thus we use a large bottom
@@ -43,27 +43,27 @@ tr.rules-elements-add td {
 
 /* Fix table drag weights to don't take extra space */
 .rules-elements-table .tabledrag-toggle-weight-wrapper {
-	position: absolute;
-	right: 0px;
+  position: absolute;
+  right: 0px;
 }
 
 .rules-elements-table caption, .rules-overview-table caption {
-	font-size: 110%;
-	font-weight: bold;
-	padding-bottom: 0.5em;
-	text-align: left;
+  font-size: 110%;
+  font-weight: bold;
+  padding-bottom: 0.5em;
+  text-align: left;
 }
 
 .rules-overview-table {
-	margin: 1em 0;
+  margin: 1em 0;
 }
 
 .rules-debug-log {
-	background-color: #EEEEEE;
-	border: 1px solid #CCCCCC;
-	font-color: #333333;
-	padding: 5px;
-	margin: 2em;
+  background-color: #eeeeee;
+  border: 1px solid #cccccc;
+  font-color: #333333;
+  padding: 5px;
+  margin: 2em;
 }
 
 .rules-debug-log ul {
@@ -86,27 +86,43 @@ tr.rules-elements-add td {
   float: left;
 }
 
-#autocomplete .rules-dsac-group {
-	font-style: italic;
-	background-color: #CCCCCC;
-	color: #222222;
+.rules-dsac-group {
+  font-style: italic;
+  background-color: #cccccc;
+  color: #222222;
 }
 
-#autocomplete li.selected .rules-dsac-group {
+li.selected .rules-dsac-group {
   background: #0072b9;
   color: #fff;
 }
 
 form input.rules-switch-button {
-	-moz-border-radius: 5px 5px 5px 5px;
-	cursor: pointer;
-	font-size: 0.8em;
-	font-weight: normal;
-	margin-bottom: 1em;
-	padding: 2px;
-	text-align: center;
+  -moz-border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+  font-size: 0.8em;
+  font-weight: normal;
+  margin-bottom: 1em;
+  padding: 2px;
+  text-align: center;
 }
 
 .rules-form-heading {
-	margin-top: 3em;
+  margin-top: 3em;
 }
+
+.rules-autocomplete-button {
+  top: 3px;
+  height: 22px;
+}
+
+ul.rule-autocomplete {
+  max-height: 23em;
+  overflow-y: auto;
+}
+
+/* IE 6 hack for max-height. */
+* html ul.rule-autocomplete{
+  height: 23em;
+}
+

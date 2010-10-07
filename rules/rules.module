@@ -825,6 +825,10 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
+    'rules_autocomplete' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
   );
 }
 
@@ -1012,6 +1016,12 @@ function rules_element_info() {
     '#process' => array('rules_ui_element_duration_process'),
     '#after_build' => array('rules_ui_element_duration_after_build'),
     '#pre_render' => array('form_pre_render_conditional_form_element'),
+  );
+  $types['rules_data_selection'] = array(
+    '#input' => TRUE,
+    '#pre_render' => array('form_pre_render_conditional_form_element'),
+    '#process' => array('rules_data_selection_autocomplete_path'),
+    '#theme' => 'rules_autocomplete',
   );
   return $types;
 }

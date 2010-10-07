@@ -207,3 +207,33 @@ function theme_rules_log($variables) {
   $output .= '</div>';
   return $output;
 }
+
+/**
+ * Themes rules autocomplete forms.
+ * @ingroup themeable
+ */
+function theme_rules_autocomplete($variables) {
+  $element = $variables['element'];
+  drupal_add_js(drupal_get_path('module', 'rules') . '/ui/rules.autocomplete.js');
+  drupal_add_library('system', 'ui.autocomplete');
+  drupal_add_library('system', 'ui.button');
+
+  $element['#attributes']['type'] = 'text';
+  element_set_attributes($element, array('id', 'name', 'value', 'size', 'maxlength'));
+  _form_set_class($element, array('form-text', 'rules-autocomplete'));
+
+  $id = $element['#attributes']['id'];
+  $id_button = drupal_html_id($id . '-button');
+
+  $js_vars['rules_autocomplete'][$id] = array(
+    'inputId' => $id,
+    'source' => $element['#autocomplete_path'],
+  );
+  drupal_add_js($js_vars, 'setting');
+
+  $output = '<div class="rules-autocomplete">';
+  $output .= '<input' . drupal_attributes($element['#attributes']) . ' />';
+  $output .= '</div>';
+
+  return $output;
+}
