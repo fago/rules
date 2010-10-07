@@ -22,6 +22,11 @@
   padding-left: 2px;
 }
 
+.rules-operations ul.action-links li {
+  list-style: none;
+  float: left;
+}
+
 table tr.rules-elements-add {
   background-color: #e5eff4;
 }
@@ -29,6 +34,11 @@ table tr.rules-elements-add {
 tr.rules-elements-add td {
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+ul.rules-operations-add li {
+  float: left;
+  list-style-position: inside;
 }
 
 .rules-elements-table {
