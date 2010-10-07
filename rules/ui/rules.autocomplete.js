@@ -48,7 +48,7 @@ Drupal.rules = Drupal.rules || {};
     this.jqObject.autocomplete("option", "minLength", 0);
     // Add a custom class, so we can style the autocomplete box without
     // interfering with other jquery autocomplete widgets. 
-    this.jqObject.autocomplete("widget").addClass('rule-autocomplete');
+    this.jqObject.autocomplete("widget").addClass('rules-autocomplete');
 
     // Save the current rules_autocomplete object, so it can be used in
     // handlers.

@@ -86,17 +86,6 @@ tr.rules-elements-add td {
   float: left;
 }
 
-.rules-dsac-group {
-  font-style: italic;
-  background-color: #cccccc;
-  color: #222222;
-}
-
-li.selected .rules-dsac-group {
-  background: #0072b9;
-  color: #fff;
-}
-
 form input.rules-switch-button {
   -moz-border-radius: 5px 5px 5px 5px;
   cursor: pointer;
@@ -116,10 +105,25 @@ form input.rules-switch-button {
   height: 22px;
 }
 
-ul.rule-autocomplete {
+ul.rules-autocomplete {
   max-height: 23em;
   overflow-y: auto;
 }
+
+ul.rules-autocomplete div {
+  padding-left: 5px;
+  color: inherit;
+}
+
+ul.rules-autocomplete a.ui-corner-all {
+  padding: 0px;
+}
+
+ul.rules-autocomplete .rules-dsac-group {
+  font-style: italic;
+}
+
+
 
 /* IE 6 hack for max-height. */
 * html ul.rule-autocomplete{
