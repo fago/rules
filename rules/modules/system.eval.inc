@@ -23,15 +23,14 @@ function rules_action_drupal_message($message, $status, $repeat) {
  */
 function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
   // Keep the current destination parameter if there is one set.
-  if ($destination) {
+  if (FALSE && $destination) {
     $url .= strpos($url, '?') === FALSE ? '?' : '&';
     $url .= drupal_http_build_query(drupal_get_destination());
   }
   // We set the destination parameter which will be applied by drupal_goto().
   if ($force || !isset($_GET['destination'])) {
-    // This does not work any more as $url is absolute.
-    // @todo: Fix once #732542 is resolved.
-    $_GET['destination'] = $url;
+    $destination = drupal_parse_url($url);
+    $_GET['destination'] = url($destination['path'], $destination);
   }
   // This makes sure invoke rules_page_build() invokes drupal_goto() before
   // the page is output. We don't invoke it right now, as this would end the
