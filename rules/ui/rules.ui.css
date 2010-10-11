@@ -8,28 +8,29 @@
   display: block;
 }
 
-.rules-elements-table ul.action-links .delete a, .rules-elements-table ul.action-links .edit a {
-  background: none;
+.rules-elements-table ul.action-links {
+  margin: 0px;
   padding-left: 0px;
 }
 
-.rules-elements-table ul.action-links a {
-  line-height: 1em;
-}
-
-.rules-elements-table ul.action-links {
-  margin: 0px;
-  padding-left: 2px;
-}
-
-.rules-operations ul.action-links li {
+.rules-elements-table ul.rules-operations li {
   list-style: none;
   float: left;
+}
+
+.rules-elements-table ul.rules-operations a {
+  background: none;
+  padding-left: 0px;
 }
 
 table tr.rules-elements-add {
   background-color: #e5eff4;
 }
+
+.rules-elements-table ul.rules-operations-add a {
+  line-height: 1em;
+}
+
 
 tr.rules-elements-add td {
   padding-top: 2px;
