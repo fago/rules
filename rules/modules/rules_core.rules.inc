@@ -191,5 +191,20 @@ function rules_rules_core_action_info() {
 }
 
 /**
+ * Implements RulesPluginUIInterface::operations() for the action.
+ */
+function rules_element_invoke_component_operations(RulesPlugin $element) {
+  $defaults = $element->extender('RulesPluginUI')->operations();
+  $info = $element->info();
+
+  // Add an operation for editing the component.
+  $defaults['#links']['component'] = array(
+    'title' => t('edit component'),
+    'href' => RulesPluginUI::path($info['#config_name']),
+  );
+  return $defaults;
+}
+
+/**
  * @}
  */
