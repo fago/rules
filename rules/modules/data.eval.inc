@@ -196,12 +196,13 @@ function rules_action_variable_add($args, $element) {
  * Info alteration callback for variable add action.
  */
 function rules_action_variable_add_info_alter(&$element_info, RulesAbstractPlugin $element) {
-  $type = $element->settings['type'];
-  $cache = rules_get_cache();
-  $type_info = $cache['data_info'][$type];
-  $element_info['parameter']['value']['type'] = $type;
-  $element_info['parameter']['value']['label'] = $type_info['label'];
-  $element_info['provides']['variable_added']['type'] = $type;
+  if (isset($element->settings['type']) && $type = $element->settings['type']) {
+    $cache = rules_get_cache();
+    $type_info = $cache['data_info'][$type];
+    $element_info['parameter']['value']['type'] = $type;
+    $element_info['parameter']['value']['label'] = $type_info['label'];
+    $element_info['provides']['variable_added']['type'] = $type;
+  }
 }
 
 /**
