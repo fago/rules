@@ -223,8 +223,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       );
     }
 
-
-
     // Add settings form, if specified.
     if (!empty($options['show settings'])) {
       $this->settingsForm($form, $form_state);
@@ -380,35 +378,16 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $machine_name = substr($this->element->name, strlen($this->element->module) + 1);
     }
     $form['settings']['name'] = array(
-      '#title' => t('Machine name'),
-      '#type' => 'textfield',
+      '#type' => 'machine_name',
       '#default_value' => isset($machine_name) ? $machine_name : '',
       '#maxlength' => 32,
+      '#machine_name' => array(
+        'exists' => 'rules_config_load',
+        'source' => array('settings', 'label'),
+      ),
       '#required' => TRUE,
       '#description' => t('The machine-readable name of this configuration is used by rules internally to identify the configuration. This name must contain only lowercase letters, numbers, and underscores and must be unique.'),
-      '#element_validate' => array('rules_ui_element_machine_name_validate'),
     );
-    // Add the JS for machine name creation only during creation, so label
-    // changes don't automatically lead to changed machine names.
-    if (empty($this->element->id)) {
-      $js_settings = array(
-        'type' => 'setting',
-        'data' => array(
-          'machineReadableValue' => array(
-            'label' => array(
-              'text' => t('Machine name'),
-              'target' => 'name',
-              'searchPattern' => '[^a-z0-9]+',
-              'replaceToken' => '_',
-            ),
-          ),
-        ),
-      );
-      $form['settings']['name']['#attached'] = array(
-        'js' => array(drupal_get_path('module', 'system') . '/system.js', $js_settings),
-      );
-      $form['settings']['label']['#field_suffix'] = '&nbsp;<small id="edit-label-suffix">' . t('Machine name: @name', array('@name' => $form['settings']['name']['#default_value'])) . '</small>';
-    }
 
     // Show a form for editing variables for components.
     if (($plugin_info = $this->element->pluginInfo()) && !empty($plugin_info['component'])) {
