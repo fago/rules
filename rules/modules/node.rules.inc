@@ -95,7 +95,7 @@ function rules_node_condition_info() {
   );
   $items['node_is_of_type'] = $defaults + array(
     'label' => t('Content is of type'),
-    'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
+    'help' => t('Evaluates to TRUE if the given content is of one of the selected content types.'),
     'base' => 'rules_condition_node_is_of_type',
   );
   $items['node_is_of_type']['parameter']['type'] = array(
