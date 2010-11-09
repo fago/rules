@@ -398,7 +398,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#element_validate' => array('rules_ui_element_variable_form_validate'),
         '#theme' => 'rules_ui_variable_form',
         '#title' => t('Variables'),
-        '#description' => t('Specify the variables to be passed to the component when it is invoked. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters, and underscores.'),
+        '#description' => t('Specify the variables to be passed to the component when it is invoked. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters and underscores.'),
       );
       $weight = 0;
       foreach ($this->element->componentVariables() as $name => $var_info) {
