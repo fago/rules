@@ -112,7 +112,7 @@ function rules_action_entity_create($args, $element) {
     }
   }
   try {
-    $data = entity_metadata_entity_create($args['type'], $values)->value();
+    $data = entity_metadata_entity_create($args['type'], $values);
     return array('entity_created' => $data);
   }
   catch (EntityMetadataWrapperException $e) {
