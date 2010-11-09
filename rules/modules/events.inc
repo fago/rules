@@ -222,7 +222,7 @@ function rules_watchdog($log_entry) {
  */
 function rules_data_action_access($type, $name) {
   if ($name == 'entity_fetch' || $name == 'entity_create' || $name == 'entity_query') {
-    $types = array_keys(rules_data_action_type_options(NULL, $name));
+    $types = array_keys(rules_data_action_type_options($name));
     $op = $name == 'entity_create' ? 'create' : 'view';
   }
   elseif ($name == 'entity_save' || $name == 'entity_delete') {

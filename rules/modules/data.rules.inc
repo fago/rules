@@ -40,7 +40,7 @@ function rules_data_action_info() {
     'base' => 'rules_action_data_set',
   );
 
-  if (rules_data_action_type_options(NULL, 'entity_fetch')) {
+  if (rules_data_action_type_options('entity_fetch')) {
     $return['entity_fetch'] = array(
       'label' => t('Fetch entity by id'),
       'parameter' => array(
@@ -105,7 +105,7 @@ function rules_data_action_info() {
     );
   }
 
-  if (rules_data_action_type_options(NULL, 'entity_create')) {
+  if (rules_data_action_type_options('entity_create')) {
     $return['entity_create'] = array(
       'label' => t('Create a new entity'),
       'named parameter' => TRUE,
@@ -138,7 +138,7 @@ function rules_data_action_info() {
   }
 
   // Get an array of types that are savable.
-  if ($types = array_keys(rules_entity_type_options('save callback'))) {
+  if ($types = array_keys(rules_entity_type_options('save'))) {
     $return['entity_save'] = array(
       'label' => t('Save entity'),
       'parameter' => array(
@@ -167,7 +167,7 @@ function rules_data_action_info() {
   }
 
   // Get an array of types that are deletable.
-  if ($types = array_keys(rules_entity_type_options('deletion callback'))) {
+  if ($types = array_keys(rules_entity_type_options('delete'))) {
     $return['entity_delete'] = array(
       'label' => t('Delete entity'),
       'parameter' => array(
@@ -474,23 +474,26 @@ function rules_action_entity_savedelete_access(RulesAbstractPlugin $element) {
 /**
  * Options list callback for data actions.
  *
- * @param $name
- *   The name of the element to return options for.
+ * @param $element
+ *   The element to return options for.
+ * @param $param
+ *   The name of the parameter to return options for.
  */
-function rules_data_action_type_options(RulesAbstractPlugin $element = NULL, $name = NULL) {
-  $name = isset($element) ? $element->getElementName() : $name;
-  $key = $name == 'entity_fetch' ? 'base table' : 'creation callback';
-  return rules_entity_type_options($key);
+function rules_data_action_type_options($element, $name = NULL) {
+  // We allow calling this function with just the element name too. That way
+  // we ease manual re-use.
+  $name = is_object($element) ? $element->getElementName() : $element;
+  return ($name == 'entity_create') ? rules_entity_type_options('create') : rules_entity_type_options();
 }
 
 /**
  * Returns options containing entity types having the given key set in the info.
  */
-function rules_entity_type_options($key) {
+function rules_entity_type_options($key = NULL) {
   $info = entity_get_info();
   $types = array();
   foreach ($info as $type => $entity_info) {
-    if (!empty($entity_info[$key])) {
+    if (!isset($key) || entity_metadata_entity_type_supports($type, $key)) {
       $types[$type] = $entity_info['label'];
     }
   }

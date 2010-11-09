@@ -803,7 +803,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     node_save($node);
 
     $text = RulesTestCase::t('Not evaluating reaction rule %label to prevent recursion.', array('label' => $rule->name));
-    debug(RulesLog::logger()->render());
+    //debug(RulesLog::logger()->render());
     $this->assertTrue((strpos(RulesLog::logger()->render(), $text) !== FALSE), "Recursion prevented.");
     //debug(RulesLog::logger()->render());
   }

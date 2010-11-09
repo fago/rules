@@ -117,7 +117,7 @@ class RulesState {
    */
   public function isSavable($wrapper) {
     $entity_info = entity_get_info();
-    return isset($entity_info[$wrapper->type()]['save callback']);
+    return entity_metadata_entity_type_supports($wrapper->type(), 'save');
   }
 
   /**
