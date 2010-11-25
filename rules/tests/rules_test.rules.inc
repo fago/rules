@@ -28,7 +28,7 @@ function rules_test_rules_condition_info() {
     'label' => t('Content has type'),
     'parameter' => array(
       'node' => array('type' => 'node', 'label' => t('Content')),
-      'type' => array('type' => 'list<string>', 'label' => t('Content types')),
+      'type' => array('type' => 'list<text>', 'label' => t('Content types')),
     ),
     'help' => t('Evaluates to TRUE, if the given content has one of the selected content types.'),
   ) + $defaults;
@@ -118,7 +118,7 @@ function rules_test_rules_action_info() {
       'parameter' => array(
         'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
         'title' => array(
-          'type' => 'string',
+          'type' => 'text',
           'label' => t('Title'),
           'description' => t('The title of the newly created content.'),
         ),
