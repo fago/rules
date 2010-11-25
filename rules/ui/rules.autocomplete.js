@@ -3,7 +3,7 @@
 // Registers the rules namespace.
 Drupal.rules = Drupal.rules || {};
 
-(function ($) {
+(function($) {
   Drupal.behaviors.rules_autocomplete = {
     attach: function(context) {
       var autocomplete_settings = Drupal.settings.rules_autocomplete;
@@ -30,13 +30,13 @@ Drupal.rules = Drupal.rules || {};
     this.opendByFocus = false;
 
     this.button = $('<span>&nbsp;</span>');
-    this.button.attr({
+    this.button.attr( {
       'tabIndex': -1,
       'title': 'Show all items'
     });
     this.button.insertAfter(this.jqObject);
 
-    this.button.button({
+    this.button.button( {
       icons: {
         primary: 'ui-icon-triangle-1-s'
       },
@@ -50,7 +50,7 @@ Drupal.rules = Drupal.rules || {};
     this.jqObject.autocomplete();
     this.jqObject.autocomplete("option", "minLength", 0);
     // Add a custom class, so we can style the autocomplete box without
-    // interfering with other jquery autocomplete widgets. 
+    // interfering with other jquery autocomplete widgets.
     this.jqObject.autocomplete("widget").addClass('rules-autocomplete');
 
     // Save the current rules_autocomplete object, so it can be used in
@@ -72,7 +72,7 @@ Drupal.rules = Drupal.rules || {};
 
     // Needed when the window is closed but the textfield has the focus.
     this.jqObject.click(function() {
-      if (! instance.opendByFocus) {
+      if (!instance.opendByFocus) {
         instance.toggle();
       }
       else {
@@ -80,7 +80,7 @@ Drupal.rules = Drupal.rules || {};
       }
     });
 
-    this.jqObject.bind( "autocompleteselect", function(event, ui) {
+    this.jqObject.bind("autocompleteselect", function(event, ui) {
       instance.close();
       instance.selected = true;
     });
@@ -90,7 +90,7 @@ Drupal.rules = Drupal.rules || {};
         response(instance.cache[request.term]);
         return;
       }
-      $.ajax({
+      $.ajax( {
         url: instance.uri + '/' + request.term,
         dataType: "json",
         success: function(data) {
@@ -99,9 +99,15 @@ Drupal.rules = Drupal.rules || {};
       });
     });
 
+    // Since jquery autocomplete by default strips html text by using .text()
+    // we need our own _renderItem function to display html content.
+    this.jqObject.data("autocomplete")._renderItem = function(ul, item) {
+      return $("<li></li>").data("item.autocomplete", item).append("<a>" + item.label + "</a>").appendTo(ul);
+    };
+
     this.button.click(function() {
       instance.toggle();
-    }); 
+    });
   };
 
   /**
@@ -110,19 +116,20 @@ Drupal.rules = Drupal.rules || {};
   Drupal.rules.autocomplete.prototype.success = function(data, request, response) {
     var list = new Array();
     jQuery.each(data, function(index, value) {
-      list.push({
+      list.push( {
         label: value,
         value: index
       });
     });
     this.cache[request.term] = list;
+    console.log(list);
     response(list);
   };
 
   /**
    * Open the autocomplete window.
    */
-  Drupal.rules.autocomplete.prototype.open = function () {
+  Drupal.rules.autocomplete.prototype.open = function() {
     this.jqObject.autocomplete("search", this.jqObject.val());
     this.button.addClass("ui-state-focus");
     this.groupSelected = false;
@@ -131,10 +138,10 @@ Drupal.rules = Drupal.rules || {};
   /**
    * Close the autocomplete window.
    */
-  Drupal.rules.autocomplete.prototype.close = function () {
+  Drupal.rules.autocomplete.prototype.close = function() {
     var value = this.jqObject.val();
     // If the Selector is group, then keep the selection list open.
-    if (value.substring(value.length-1, value.length) != ':') {
+    if (value.substring(value.length - 1, value.length) != ':') {
       this.jqObject.autocomplete("close");
       this.button.removeClass("ui-state-focus");
       this.opendByFocus = false;
@@ -147,13 +154,13 @@ Drupal.rules = Drupal.rules || {};
   /**
    * Toogle the autcomplete window.
    */
-  Drupal.rules.autocomplete.prototype.toggle = function () {
+  Drupal.rules.autocomplete.prototype.toggle = function() {
     if (this.jqObject.autocomplete("widget").is(":visible")) {
       this.close();
     }
     else {
       this.open();
-    }    
+    }
   };
 
 })(jQuery);
