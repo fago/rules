@@ -260,6 +260,24 @@ function rules_admin_rule_title($text, $proxy) {
   return t($text, array('@label' => $rule['#label']));
 }
 
+/**
+ * Validate the machine name.
+ */
+function rules_admin_validate_machine_name($item_type, $element_name, $machine_name) {
+  // Check that the machine name is valid. We only
+  if (!preg_match('/^[a-z][a-z0-9_]*$/', $machine_name)) {
+    form_set_error($element_name, t('Machine name must be alphanumeric and underscores only, and the first character must be a lower case letter.'));
+    return;
+  }
+  // Fetch information about table.
+  $info = rules_get_items($item_type);
+  // Check that the machine name doesn't exist.
+  $count = db_result(db_query("SELECT COUNT(*) FROM {" . $info['db_table'] . "} WHERE name = '%s'", 'rules_' . $machine_name));
+  if ($count) {
+    form_set_error($element_name, t('The given machine name already exists.'));
+  }
+}
+
 function rules_item_load($name, $item_type) {
   $items = rules_get_configured_items($item_type);
   if (!isset($items[$name])) {

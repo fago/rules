@@ -113,17 +113,25 @@ function rules_item_rule_set_delete($set_name) {
  */
 function rules_admin_form_edit_rule_set(&$form_state, $set_info) {
   $form_state['set'] = $set_info;
-  $form = rules_admin_form_rule_set_settings($set_info);
-
+  $changable_name = $set_info['status'] == 'custom';
+  $rule_name = $set_info['name'];
+  // Does our name start with rules?
+  if (preg_match('/^rules_/', $set_info['name'])) {
+    $set_info['name'] = drupal_substr($set_info['name'], drupal_strlen('rules_'));
+  }
+  else {
+    $changable_name = FALSE;
+  }
+  $form = rules_admin_form_rule_set_settings($set_info, $changable_name);
   $form['active_header'] = array('#value' => '<br /><h3>'. t('Active rules') .'</h3>');
-  $form['active'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => TRUE));
+  $form['active'] = rules_admin_overview_table(array('set' => $rule_name, 'active' => TRUE));
   $form['active']['#suffix'] = '<br />';
   $form['inactive_header'] = array('#value' => '<h3>'. t('Inactive rules') .'</h3>');
-  $form['inactive'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => FALSE));
+  $form['inactive'] = rules_admin_overview_table(array('set' => $rule_name, 'active' => FALSE));
 
   if (variable_get('rules_show_fixed', FALSE)) {
     $form['fixed_header'] = array('#value' => '<h3>'. t('Fixed rules') .'</h3>');
-    $form['fixed'] = rules_admin_overview_table(array('set' => $set_info['name'], 'active' => TRUE, 'fixed' => TRUE));
+    $form['fixed'] = rules_admin_overview_table(array('set' => $rule_name, 'active' => TRUE, 'fixed' => TRUE));
   }
   return $form;
 }
@@ -131,7 +139,7 @@ function rules_admin_form_edit_rule_set(&$form_state, $set_info) {
 /**
  * Returns the form for the settings of a rule set
  */
-function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
+function rules_admin_form_rule_set_settings($set_info = array(), $changable_name = TRUE) {
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule set settings'),
@@ -144,14 +152,17 @@ function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
     '#default_value' => isset($set_info['label']) ? $set_info['label'] : '',
     '#required' => TRUE,
   );
-  if ($add) {
-    $form['settings']['name'] = array(
-      '#title' => t('Machine readable name'),
-      '#type' => 'textfield',
-      '#description' => t('Specify a unique name containing only alphanumeric characters, and underscores.'),
-      '#default_value' => isset($set_info['name']) ? $set_info['name'] : '',
-      '#required' => TRUE,
-    );
+  $form['settings']['name'] = array(
+    '#title' => t('Machine readable name'),
+    '#type' => 'textfield',
+    '#description' => t('Specify a unique name containing only alphanumeric characters, and underscores.'),
+    '#default_value' => isset($set_info['name']) ? $set_info['name'] : '',
+    '#disabled' => !$changable_name,
+    '#required' => TRUE,
+  );
+  // Only set the value if name isn't changable.
+  if (!$changable_name) {
+    $form['settings']['name']['#value'] = isset($set_info['name']) ? $set_info['name'] : '';
   }
   $form['settings']['categories'] = array(
     '#type' => 'textfield',
@@ -164,6 +175,12 @@ function rules_admin_form_rule_set_settings($set_info = array(), $add = FALSE) {
   return $form;
 }
 
+function rules_admin_form_edit_rule_set_validate($form, &$form_state) {
+  if ($form_state['set']['name'] != 'rules_' . $form_state['values']['name']) {
+    rules_admin_validate_machine_name('rule_sets', 'name', $form_state['values']['name']);
+  }
+}
+
 function rules_admin_form_edit_rule_set_submit($form, &$form_state) {
   $set_info = $form_state['set'];
   $set_info['label'] = $form_state['values']['label'];
@@ -174,6 +191,11 @@ function rules_admin_form_edit_rule_set_submit($form, &$form_state) {
   unset($set_info['name']);
   rules_item_save('rule_sets', $form_state['set']['name'], $set_info);
   drupal_set_message(t("The rule set %label has been updated.", array('%label' => $set_info['label'])));
+  $name = 'rules_' . $form_state['values']['name'];
+  if ($set_info['status'] == 'custom' && $form_state['set']['name'] != $name) {
+    rules_item_change_name('rule_sets', $form_state['set']['name'], $name);
+    $form_state['redirect'] = 'admin/rules/rule_sets/' . $name . '/edit';
+  }
 }
 
 /**
@@ -183,7 +205,7 @@ function rules_admin_form_add_rule_set(&$form_state) {
   //in case of non-js we degrade to a multistep form
   $set_info = isset($form_state['set']) ? $form_state['set'] : array('arguments' => array());
 
-  $form = rules_admin_form_rule_set_settings($set_info, TRUE);
+  $form = rules_admin_form_rule_set_settings($set_info);
   unset($form['settings']['button']);
 
   //add form for specifying arguments
@@ -224,10 +246,8 @@ function rules_admin_form_add_rule_set(&$form_state) {
  * Validates the set and builds it -> $form_state['set']
  */
 function rules_admin_form_add_rule_set_validate($form, &$form_state) {
-
-  if (!eregi('^[0-9a-z_]*$', $form_state['values']['name'])) {
-    form_set_error('name', t('The name may contain only digits, numbers and underscores.'));
-  }
+  // Validate machine name.
+  rules_admin_validate_machine_name('rule_sets', 'name', $form_state['values']['name']);
 
   //validate the arguments
   unset($form_state['values']['args']['rules_more']);
@@ -238,7 +258,7 @@ function rules_admin_form_add_rule_set_validate($form, &$form_state) {
           form_set_error(implode('][', array('args', $i, $key)), t('All fields of an argument are required.'));
         }
       }
-      if (!eregi('^[0-9a-z_]*$', $values['name'])) {
+      if (!preg_match('/^[a-z][a-z0-9_]*$/', $values['name'])) {
         form_set_error(implode('][', array('args', $i, 'name')), t('The name may contain only digits, numbers and underscores.'));
       }
     }

@@ -14,6 +14,7 @@ class rules_admin_rule_proxy {
 
   var $_rule;
   var $_rule_name;
+  var $_new_name;
   var $_counter;      //used when generating ids
   var $_variables;    //variables defined by previous rules
   var $map = array(); //stores the id => element map
@@ -53,6 +54,10 @@ class rules_admin_rule_proxy {
     return $this->_rule_name;
   }
 
+  function set_rule_name($name) {
+    $this->_new_name = $name;
+  }
+
   /**
    * Gets an element of the referenced rule by id
    */
@@ -88,7 +93,7 @@ class rules_admin_rule_proxy {
   function save_changes() {
     $rule = $this->get_rule();
     $orig_rule = $this->_rule;
-    if ($orig_rule != $rule) {
+    if ($orig_rule != $rule || isset($this->_new_name)) {
       $this->save_rule();
       rules_clear_cache();
     }
@@ -146,6 +151,11 @@ class rules_admin_rule_proxy {
     rules_sort_elements($rule['#actions']);
 
     rules_item_save('rules', $this->get_rule_name(), $rule);
+    if (isset($this->_new_name)) {
+      rules_item_change_name('rules', $this->get_rule_name(), $this->_new_name);
+      $this->_rule_name = $this->_new_name;
+      unset($this->_new_name);
+    }
   }
 
   /**

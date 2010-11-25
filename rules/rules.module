@@ -818,6 +818,15 @@ function rules_item_save($item_type, $name, $item) {
 }
 
 /**
+ * Change the name of a rules item.
+ */
+function rules_item_change_name($item_type, $old_name, $new_name) {
+  if ($info = rules_get_items($item_type)) {
+    db_query("UPDATE {". $info['db_table'] ."} SET name = '%s' WHERE name = '%s' ", $new_name, $old_name);
+  }
+}
+
+/**
  * Deletes the given item from the database
  */
 function rules_item_delete($item_type, $name) {

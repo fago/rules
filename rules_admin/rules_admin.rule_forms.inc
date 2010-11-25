@@ -72,10 +72,14 @@ function rules_admin_check_token() {
  * Returns the add rule form
  */
 function rules_admin_form_add_rule(&$form_state, $set_info = FALSE) {
-
+  drupal_add_js(drupal_get_path('module', 'rules_admin') . '/rules_admin.js');
   $form = rules_admin_form_rule_settings(array(), (boolean)$set_info);
   $form['settings']['set']['#default_value'] = $set_info['name'];
   return $form;
+}
+
+function rules_admin_form_add_rule_validate($form_id, &$form_state) {
+  rules_admin_validate_machine_name('rules', 'name', $form_state['values']['name']);
 }
 
 function rules_admin_form_add_rule_submit($form_id, &$form_state) {
@@ -87,8 +91,8 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
   $rule['#categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
   $rule['#status'] = 'custom';
 
-  //get an unique name
-  $rule_name = _rules_admin_rule_get_new_unique_name();
+  // Get the name of the rule.
+  $rule_name = 'rules_' . $form_state['values']['name'];
 
   rules_item_save('rules', $rule_name, $rule);
   rules_clear_cache();
@@ -102,7 +106,7 @@ function rules_admin_form_add_rule_submit($form_id, &$form_state) {
  * @param $is_set
  *   When adding a new rule for a rule set, TRUE.
  */
-function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
+function rules_admin_form_rule_settings($rule, $is_set = FALSE, $changable_name = TRUE) {
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Rule settings'),
@@ -115,6 +119,18 @@ function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
     '#default_value' => isset($rule['#label']) ? $rule['#label'] : '',
     '#required' => TRUE,
   );
+  $form['settings']['name'] = array(
+    '#title' => t('Machine readable name'),
+    '#type' => 'textfield',
+    '#description' => t('Specify a unique name containing only alphanumeric characters, and underscores.'),
+    '#default_value' => isset($rule['#name']) ? $rule['#name'] : '',
+    '#disabled' => !$changable_name,
+    '#required' => TRUE,
+  );
+  // Only set the value if name isn't changable.
+  if (!$changable_name) {
+    $form['settings']['name']['#value'] = $rule['#name'];
+  }
   $form['settings']['set'] = array(
     '#type' => 'select',
     '#default_value' => isset($rule['#set']) ? $rule['#set'] : '',
@@ -160,13 +176,12 @@ function rules_admin_form_rule_settings($rule, $is_set = FALSE) {
  * Returns the form for editing a rule
  */
 function rules_admin_form_edit_rule(&$form_state, $proxy) {
-
   $form_state['proxy'] = &$proxy;
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
-
+  $rule['#name'] = drupal_substr($proxy->get_rule_name(), drupal_strlen('rules_'));
   $is_set = strpos($rule['#set'], 'event_') !== 0;
-  $form = rules_admin_form_rule_settings($rule, $is_set);
+  $form = rules_admin_form_rule_settings($rule, $is_set, $rule['#status'] == 'custom');
   $form['settings']['#collapsed'] = TRUE;
 
   // Add help
@@ -192,13 +207,27 @@ function rules_admin_form_edit_rule(&$form_state, $proxy) {
   return $form;
 }
 
-function rules_admin_form_edit_rule_submit($form, &$form_state) {
+function rules_admin_form_edit_rule_validate($form, &$form_state) {
+  // Get the name of the rule.
+  $name = $form_state['proxy']->get_rule_name();
+  // We only need to check this if the name differs.
+  if ('rules_' . $form_state['values']['name'] != $name) {
+    rules_admin_validate_machine_name('rules', 'name', $form_state['values']['name']);
+  }
+}
+
+function rules_admin_form_edit_rule_submit(&$form, &$form_state) {
   $rule_ref = &$form_state['proxy']->get_rule();
   foreach (array('label', 'active', 'weight', 'set') as $key) {
     $rule_ref['#'. $key] = $form_state['values'][$key];
   }
   $rule_ref['#categories'] = array_filter(array_map('trim', explode(',', $form_state['values']['categories'])));
-
+  // Set the new rule name if needed.
+  if ($rule_ref['#status'] == 'custom' && $form_state['values']['name'] != $form_state['proxy']->get_rule_name()) {
+    $name = 'rules_' . $form_state['values']['name'];
+    $form_state['proxy']->set_rule_name($name);
+    $form_state['redirect'] = 'admin/rules/rules/' . $name . '/edit';
+  }
   $form_state['proxy']->save_changes();
   drupal_set_message(t("The rule %label has been updated.", array('%label' => $rule_ref['#label'])));
 }
@@ -831,16 +860,17 @@ function rules_admin_form_delete_submit($form_id, $form_state) {
  * Clones a rule
  */
 function rules_admin_form_clone(&$form_state, $proxy) {
-
+  drupal_add_js(drupal_get_path('module', 'rules_admin') . '/rules_admin.js');
   $form_state['proxy'] = &$proxy;
   $rule = $proxy->get_rule();
   _rules_element_defaults($rule);
-
+  $rule['#name'] = drupal_substr($proxy->get_rule_name(), drupal_strlen('rules_')) . '_cloned';
   if (!$form_state['post']) {
     drupal_set_message(t('Alter the settings for the cloned rule.'));
   }
 
   $form_state['set'] = strpos($rule['#set'], 'event_') !== 0;
+
   $form = rules_admin_form_rule_settings($rule, $form_state['set']);
   $form['#submit'] = array('rules_admin_form_add_rule_submit');
   return $form;

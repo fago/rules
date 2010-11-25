@@ -220,16 +220,6 @@ function rules_admin_get_categories($item_type) {
 }
 
 /**
- * Gets an unique name for a newly added rule.
- */
-function _rules_admin_rule_get_new_unique_name() {
-  $id = variable_get('rules_counter', 0);
-  $id++;
-  variable_set('rules_counter', $id);
-  return 'rules_'. $id;
-}
-
-/**
  * Gets the label for the info of the given element by apply label callbacks.
  * Note that this is also used for argument infos.
  *
