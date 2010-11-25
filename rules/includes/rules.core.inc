@@ -33,29 +33,6 @@ class RulesEntityController extends EntityAPIController {
   }
 
   /**
-   * Override to add the providing module and make sure the name is set.
-   * @see EntityAPIController#getDefaults($ids, $conditions)
-   */
-  protected function getDefaults($ids, $conditions = array()) {
-    if (!isset($this->defaultEntities)) {
-      $this->defaultEntities = array();
-      $hook = $this->entityInfo['export']['default hook'];
-      foreach (module_implements($hook) as $module) {
-        $function = $module . '_' . $hook;
-        foreach ((array) $function() as $name => $entity) {
-          $entity->name = $name;
-          $entity->module = $module;
-          $entity->plugin = $entity->property('itemName');
-          $entity->status |= ENTITY_IN_CODE;
-          $this->defaultEntities[$name] = $entity;
-        }
-      }
-      drupal_alter($hook, $this->defaultEntities);
-    }
-    return parent::getDefaults($ids, $conditions);
-  }
-
-  /**
    * Override to support having an event as condition.
    * @see EntityAPIController#applyConditions($entities, $conditions)
    * @see rules_query_rules_config_load_multiple_alter()
