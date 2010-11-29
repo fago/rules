@@ -721,10 +721,10 @@ function rules_condition_entity_has_field_options(RulesAbstractPlugin $element) 
  * Assert that the entity has the field, if there is metadata for the field.
  */
 function rules_condition_entity_has_field_assertions($element) {
-  // Assert the bundle of entities, if its compared.
+  // Assert the field is there if the condition matches.
   if ($wrapper = $element->applyDataSelector($element->settings['entity:select'])) {
     $type = $wrapper->type();
-    $field_property = str_replace('_', '-', $element->settings['field']);
+    $field_property = $element->settings['field'];
     // Get all possible properties and check whether we have one for the field.
     $properties = entity_metadata_get_properties($type == 'entity' ? NULL : $type);
 

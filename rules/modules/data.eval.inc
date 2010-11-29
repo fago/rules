@@ -309,4 +309,3 @@ function rules_condition_entity_has_field($entity, $field_name, $settings, $stat
   $wrapper = $state->currentArguments['entity'];
   return isset($wrapper->$field_name) || isset($entity->$field_name);
 }
-

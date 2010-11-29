@@ -1060,6 +1060,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->condition('entity_has_field', array('entity:select' => 'node', 'field' => 'field_tags'));
     $rule->condition('entity_is_new', array('entity:select' => 'node'));
     $rule->action('list_add', array('list:select' => 'node:field-tags', 'item' => $term_wrapped));
+    $rule->integrityCheck();
     $rule->execute($node);
 
     $tid = $term_wrapped->getIdentifier();
@@ -1096,6 +1097,63 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->execute($node);
     RulesLog::logger()->checkLog();
     $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $term2->tid)), 'Term removed and added from a node.');
+
+    // Test using the taxonomy term reference field on a term object.
+    $field_name = drupal_strtolower($this->randomName() . '_field_name');
+    $field = field_create_field(array(
+      'field_name' => $field_name,
+      'type' => 'taxonomy_term_reference',
+      // Set cardinality to unlimited for tagging.
+      'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+      'settings' => array(
+        'allowed_values' => array(
+          array(
+            'vocabulary' => 'tags',
+            'parent' => 0,
+          ),
+        ),
+      ),
+    ));
+    $instance = array(
+      'field_name' => $field_name,
+      'entity_type' => 'taxonomy_term',
+      'bundle' => 'tags', // Machine name of vocabulary.
+      'label' => $this->randomName() . '_label',
+      'description' => $this->randomName() . '_description',
+      'weight' => mt_rand(0, 127),
+      'widget' => array(
+        'type' => 'taxonomy_autocomplete',
+        'weight' => -4,
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'taxonomy_term_reference_link',
+          'weight' => 10,
+        ),
+      ),
+    );
+    field_create_instance($instance);
+
+    $term1 = entity_metadata_entity_create('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vid' => 1,
+    ))->save();
+    $term2 = entity_metadata_entity_create('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vid' => 1,
+    ))->save();
+
+    // Test asserting the term reference field and using it afterwards.
+    $rule = rule(array('taxonomy_term' => array('type' => 'taxonomy_term')));
+    $rule->condition('entity_has_field', array('entity:select' => 'taxonomy_term', 'field' => $field_name));
+    // Add $term_wrapped to $term1 using the term reference field.
+    $field_name_ui = str_replace('_', '-', $field_name);
+    $rule->action('list_add', array('list:select' => 'taxonomy_term:' . $field_name_ui, 'item' => $term2));
+    $rule->integrityCheck();
+    $rule->execute($term1);
+
+    RulesLog::logger()->checkLog();
+    $this->assertEqual($term1->{$field_name}[0]->getIdentifier(), $term2->getIdentifier(), 'Rule appended a term to the term reference field on a term.');
   }
 
   /**
