@@ -10,6 +10,8 @@
  * Reaction rules overview.
  */
 function rules_admin_reaction_overview($form, &$form_state) {
+  form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
+
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -46,21 +48,16 @@ function rules_admin_reaction_overview($form, &$form_state) {
   $form['inactive']['#empty'] = t('There are no matching inactive reaction rules.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || (count($form['active']['#rows']) + count($form['inactive']['#rows'])) < 20;
-  $form['#submit'][] = 'rules_admin_form_rebuild_submit';
+  $form['#submit'][] = 'rules_form_submit_rebuild';
   return $form;
-}
-
-/**
- * Submit callback for the reaction rules overview form.
- */
-function rules_admin_form_rebuild_submit($form, &$form_state) {
-  $form_state['rebuild'] = TRUE;
 }
 
 /**
  * Components overview.
  */
 function rules_admin_components_overview($form, &$form_state) {
+  RulesPluginUI::formDefaults($form, $form_state);
+
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -91,7 +88,7 @@ function rules_admin_components_overview($form, &$form_state) {
   $form['table']['#empty'] = t('There are no rule components.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || count($form['table']['#rows']) < 20;
-  $form['#submit'][] = 'rules_admin_form_rebuild_submit';
+  $form['#submit'][] = 'rules_form_submit_rebuild';
   return $form;
 }
 
@@ -112,6 +109,8 @@ function rules_admin_settings($form, &$form_state) {
  * Add reaction rules form.
  */
 function rules_admin_add_reaction_rule($form, &$form_state) {
+  RulesPluginUI::formDefaults($form, $form_state);
+
   $rules_config = rules_reaction_rule();
   $rules_config->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE));
 
@@ -127,8 +126,8 @@ function rules_admin_add_reaction_rule($form, &$form_state) {
     $form['settings'][$key]['#access'] = FALSE;
   }
   // Incorporate the form to add the first event.
-  module_load_include('inc', 'rules', 'ui/ui.forms');
   $form['settings'] += rules_ui_add_event(array(), $form_state, $rules_config);
+
   unset($form['settings']['submit']);
   $form['submit']['#value'] = t('Save');
 
@@ -150,9 +149,7 @@ function rules_admin_add_reaction_rule_submit($form, &$form_state) {
  * Add component form.
  */
 function rules_admin_add_component($form, &$form_state) {
-  RulesPluginUI::formDefaults($form);
-  module_load_include('inc', 'rules', 'ui/ui.forms');
-  $form_state['build_info']['files'][] = array('module' => 'rules', 'name' => 'ui/ui.forms');
+  RulesPluginUI::formDefaults($form, $form_state);
 
   $form['plugin_name'] = array(
     '#type' => 'select',

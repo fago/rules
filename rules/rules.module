@@ -239,10 +239,6 @@ function _rules_rebuild_cache(&$cache) {
   }
   $cid_suffix = ':' . $GLOBALS['language']->language;
   cache_set('data' . $cid_suffix, $cache, 'cache_rules');
-  // Rebuilding the cache loads components with an incomplete cache. As a
-  // consequence the entities in the controllers cache are not fully setuped.
-  // Thus clear the cache and free the memory.
-  entity_get_controller('rules_config')->resetCache();
 }
 
 /**
@@ -473,6 +469,13 @@ function rules_entity_info() {
         'name' => 'name',
         'label' => 'label',
       ),
+      // Note that the static cache is disabled, as it makes cache rebuilding
+      // unnecessarily complicated. This is, as rebuilding the cache loads
+      // components with an incomplete cache, see
+      // rules_rules_core_condition_info(). Due to the incomplete cache these
+      // rules configs have not been initialized completely, thus may not end up
+      // in a static cache.
+      'static cache' => FALSE,
       'bundles' => array(),
       'exportable' => TRUE,
       'export' => array(
@@ -553,7 +556,8 @@ function rules_config_load($name) {
  *   An array keyed by component name containing either the label or the config.
  */
 function rules_get_components($label = FALSE, $type = NULL, $conditions = array()) {
-  $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
+  $cache = rules_get_cache();
+  $plugins = array_keys(rules_filter_array($cache['plugin_info'], 'component', TRUE));
   $conditions = $conditions + array('plugin' => $plugins);
   $faces = array(
     'action' => 'RulesActionInterface',

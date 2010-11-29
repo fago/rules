@@ -15,9 +15,9 @@ class RulesRuleUI extends RulesActionContainerUI {
   public function __construct(FacesExtendable $object) {
     parent::__construct($object);
     $this->rule = $object;
-    // Make sure the condition is intialized and then get it.
+    // Make sure the 'and' container is intialized and then get it.
     $this->rule->conditions();
-    $this->conditions = $this->property('conditions');
+    $this->conditions = &$this->property('conditions');
   }
 
   public function form(&$form, &$form_state, $options = array()) {
@@ -47,7 +47,7 @@ class RulesRuleUI extends RulesActionContainerUI {
     // Add actions form.
     $iterator = new RecursiveIteratorIterator($this->rule->actions(), RecursiveIteratorIterator::SELF_FIRST);
     parent::form($form, $form_state, $options, $iterator);
-    // For rules always show nested elements.
+    // Hide nested elements during creation.
     $form['elements']['#access'] = empty($options['init']);
     $form['conditions']['elements']['#access'] = empty($options['init']);
 

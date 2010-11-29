@@ -728,10 +728,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     return $ungrouped + $sorted_data;
   }
 
-  public static function formDefaults(&$form) {
-    // Make sure collapsible fieldsets work even if added via AJAX.
-    // See http://drupal.org/node/768128.
-    $form['#attached']['js'][] = 'misc/collapse.js';
+  public static function formDefaults(&$form, &$form_state) {
+    form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
     // Add our own css.
     $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
 

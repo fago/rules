@@ -13,7 +13,7 @@ class RulesEntityController extends EntityAPIController {
 
   /**
    * Overriden.
-   * @see DrupalDefaultEntityController#attachLoad()
+   * @see DrupalDefaultEntityController::attachLoad()
    */
   protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
     $schema = drupal_get_schema($this->entityInfo['base table']);
@@ -34,7 +34,7 @@ class RulesEntityController extends EntityAPIController {
 
   /**
    * Override to support having an event as condition.
-   * @see EntityAPIController#applyConditions($entities, $conditions)
+   * @see EntityAPIController::applyConditions($entities, $conditions)
    * @see rules_query_rules_config_load_multiple_alter()
    */
   protected function applyConditions($entities, $conditions = array()) {
