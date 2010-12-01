@@ -810,7 +810,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
       );
       $form['elements'][$id]['parent_id'] = array(
         '#type' => 'hidden',
-        '#default_value' => $child->parentElement()->elementId(),
+        '#default_value' => $this->element->elementId(),
       );
       $form['elements'][$id]['element_id'] = array(
         '#type' => 'hidden',
