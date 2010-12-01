@@ -576,7 +576,9 @@ class RulesEventSet extends RulesRuleSet {
         $event = new RulesEventSet($info);
         $event->name = $name;
         foreach ($rules as $rule) {
-          $event->rule($rule);
+          // Clone the rule to avoid modules getting the changed version from
+          // the static cache.
+          $event->rule(clone $rule);
         }
         $event->optimize();
         // Allow modules to alter the cached event set.

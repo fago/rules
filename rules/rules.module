@@ -469,13 +469,7 @@ function rules_entity_info() {
         'name' => 'name',
         'label' => 'label',
       ),
-      // Note that the static cache is disabled, as it makes cache rebuilding
-      // unnecessarily complicated. This is, as rebuilding the cache loads
-      // components with an incomplete cache, see
-      // rules_rules_core_condition_info(). Due to the incomplete cache these
-      // rules configs have not been initialized completely, thus may not end up
-      // in a static cache.
-      'static cache' => FALSE,
+      'static cache' => TRUE,
       'bundles' => array(),
       'exportable' => TRUE,
       'export' => array(

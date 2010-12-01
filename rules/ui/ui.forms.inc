@@ -254,17 +254,15 @@ function rules_ui_delete_element($form, &$form_state, $rules_config, $rules_elem
  * Rule config deletion form validation callback.
  */
 function rules_ui_delete_element_validate($form, &$form_state) {
-  if ($form_state['values']['confirm']) {
-    // Save the parent for determining the right redirect target on submit.
-    $form_state['element_parent'] = $form_state['rules_element']->parentElement();
-    $form_state['rules_element']->delete();
-    try {
-      $form_state['rules_config']->integrityCheck();
-    }
-    catch (RulesException $e) {
-      //TODO: Add visual feedback which element had troubles.
-      form_set_error('', $e->getMessage());
-    }
+  // Save the parent for determining the right redirect target on submit.
+  $form_state['element_parent'] = $form_state['rules_element']->parentElement();
+  $form_state['rules_element']->delete();
+  try {
+    $form_state['rules_config']->integrityCheck();
+  }
+  catch (RulesException $e) {
+    //TODO: Add visual feedback which element had troubles.
+    form_set_error('', $e->getMessage());
   }
 }
 
@@ -272,12 +270,10 @@ function rules_ui_delete_element_validate($form, &$form_state) {
  * Rule config deletion form submit callback.
  */
 function rules_ui_delete_element_submit($form, &$form_state) {
-  if ($form_state['values']['confirm']) {
-    $rules_config = $form_state['rules_config'];
-    $rules_config->save();
-    if (empty($form_state['redirect'])) {
-      $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['element_parent']);
-    }
+  $rules_config = $form_state['rules_config'];
+  $rules_config->save();
+  if (empty($form_state['redirect'])) {
+    $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['element_parent']);
   }
 }
 
