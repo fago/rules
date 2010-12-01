@@ -15,8 +15,6 @@ class RulesRuleUI extends RulesActionContainerUI {
   public function __construct(FacesExtendable $object) {
     parent::__construct($object);
     $this->rule = $object;
-    // Make sure the 'and' container is intialized and then get it.
-    $this->rule->conditions();
     $this->conditions = &$this->property('conditions');
   }
 

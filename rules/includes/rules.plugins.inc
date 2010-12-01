@@ -128,6 +128,17 @@ class Rule extends RulesActionContainer {
 
   public $label = 'unlabeled';
 
+  public function __construct($variables = array(), $providesVars = array()) {
+    parent::__construct($variables, $providesVars);
+
+    // Initialize the conditions container.
+    if (!isset($this->conditions)) {
+      $this->conditions = rules_and();
+      // Don't use setParent() to avoid having it added to the children.
+      $this->conditions->parent = $this;
+    }
+  }
+
   /**
    * Get an iterator over all contained conditions. Note that this iterator also
    * implements the ArrayAcces interface.
@@ -135,11 +146,6 @@ class Rule extends RulesActionContainer {
    * @return RulesRecursiveElementIterator
    */
   public function conditions() {
-    if (!isset($this->conditions)) {
-      $this->conditions = rules_and();
-      // Don't use setParent() to avoid having it added to the children.
-      $this->conditions->parent = $this;
-    }
     return $this->conditions->getIterator();
   }
 
@@ -165,29 +171,24 @@ class Rule extends RulesActionContainer {
    *   Returns $this to support chained usage.
    */
   public function condition($name, $settings = array()) {
-    $this->conditions();
     $this->conditions->condition($name, $settings);
     return $this;
   }
 
   public function sortChildren($deep = FALSE) {
-    if (isset($this->conditions)) {
-      $this->conditions->sortChildren($deep);
-    }
+    $this->conditions->sortChildren($deep);
     parent::sortChildren($deep);
   }
 
   public function evaluate(RulesState $state) {
     rules_log('Evaluating rule %label.', array('%label' => $this->label));
-    if (empty($this->conditions) || $this->conditions->evaluate($state)) {
+    if ($this->conditions->evaluate($state)) {
       parent::evaluate($state);
     }
   }
 
   public function integrityCheck() {
-    if (isset($this->conditions)) {
-      $this->conditions->integrityCheck();
-    }
+    $this->conditions->integrityCheck();
     return parent::integrityCheck();
   }
 
@@ -196,14 +197,11 @@ class Rule extends RulesActionContainer {
   }
 
   public function dependencies() {
-    $modules = !isset($this->conditions) ? array() : $this->conditions->dependencies();
-    return array_keys(array_flip($modules) + array_flip(parent::dependencies()));
+    return array_keys(array_flip($this->conditions->dependencies()) + array_flip(parent::dependencies()));
   }
 
   public function destroy() {
-    if (isset($this->conditions)) {
-      $this->conditions->destroy();
-    }
+    $this->conditions->destroy();
     parent::destroy();
   }
 
@@ -211,7 +209,6 @@ class Rule extends RulesActionContainer {
    * @return RulesRecursiveElementIterator
    */
   public function getIterator() {
-    $this->conditions();
     $array = array_merge(array($this->conditions), $this->children);
     return new RulesRecursiveElementIterator($array);
   }
@@ -223,7 +220,7 @@ class Rule extends RulesActionContainer {
     }
     $vars = parent::stateVariables($element);
     // Take variable info assertions of conditions into account.
-    if (isset($this->conditions) && $assertions = $this->conditions->variableInfoAssertions()) {
+    if ($assertions = $this->conditions->variableInfoAssertions()) {
       $vars = RulesData::addMetadataAssertions($vars, $assertions);
     }
     return $vars;
@@ -231,7 +228,7 @@ class Rule extends RulesActionContainer {
 
   protected function exportChildren($key = NULL) {
     $export = array();
-    if (isset($this->conditions) && $this->conditions->children) {
+    if ($this->conditions->children) {
       $export = $this->conditions->exportChildren('IF');
     }
     return $export + parent::exportChildren('DO');
@@ -239,10 +236,8 @@ class Rule extends RulesActionContainer {
 
   public function __clone() {
     parent::__clone();
-    if (isset($this->conditions)) {
-      $this->conditions = clone $this->conditions;
-      $this->conditions->parent = $this;
-    }
+    $this->conditions = clone $this->conditions;
+    $this->conditions->parent = $this;
   }
 
   /**
