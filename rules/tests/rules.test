@@ -1145,10 +1145,10 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     // Test asserting the term reference field and using it afterwards.
     $rule = rule(array('taxonomy_term' => array('type' => 'taxonomy_term')));
-    $rule->condition('entity_has_field', array('entity:select' => 'taxonomy_term', 'field' => $field_name));
-    // Add $term_wrapped to $term1 using the term reference field.
-    $field_name_ui = str_replace('_', '-', $field_name);
-    $rule->action('list_add', array('list:select' => 'taxonomy_term:' . $field_name_ui, 'item' => $term2));
+    $rule->condition('entity_has_field', array('entity:select' => 'taxonomy-term', 'field' => $field_name));
+    // Add $term2 to $term1 using the term reference field.
+    $selector = str_replace('_', '-', 'taxonomy_term:' . $field_name);
+    $rule->action('list_add', array('list:select' => $selector, 'item' => $term2));
     $rule->integrityCheck();
     $rule->execute($term1);
 

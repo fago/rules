@@ -457,6 +457,8 @@ class RulesData  {
    */
   public static function addMetadataAssertions($var_info, $assertions) {
     foreach ($assertions as $selector => $data) {
+      // Convert the selector back to underscores, such it maches the varname.
+      $selector = str_replace('-', '_', $selector);
       // For now only support assertions for variables
       if (strpos($selector, ':') === FALSE && isset($var_info[$selector])) {
         $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
