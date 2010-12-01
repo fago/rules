@@ -38,13 +38,16 @@ class RulesEntityController extends EntityAPIController {
    * @see rules_query_rules_config_load_multiple_alter()
    */
   protected function applyConditions($entities, $conditions = array()) {
-    if (isset($conditions['event'])) {
+    if (isset($conditions['event']) || isset($conditions['plugin'])) {
       foreach ($entities as $key => $entity) {
-        if (!($entity instanceof RulesTriggerableInterface) || !in_array($conditions['event'], $entity->events())) {
+        if (isset($conditions['event']) && (!($entity instanceof RulesTriggerableInterface) || !in_array($conditions['event'], $entity->events()))) {
+          unset($entities[$key]);
+        }
+        if (isset($conditions['plugin']) && $entity->plugin() != $conditions['plugin']) {
           unset($entities[$key]);
         }
       }
-      unset($conditions['event']);
+      unset($conditions['event'], $conditions['plugin']);
     }
     return parent::applyConditions($entities, $conditions);
   }
