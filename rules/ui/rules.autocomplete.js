@@ -122,7 +122,6 @@ Drupal.rules = Drupal.rules || {};
       });
     });
     this.cache[request.term] = list;
-    console.log(list);
     response(list);
   };
 
