@@ -1162,9 +1162,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    */
   protected function loadBasicInclude() {
     static $included = array();
-    $module = $this->info['module'];
 
-    if (!isset($included[$module])) {
+    if (isset($this->info['module']) && !isset($included[$this->info['module']])) {
+      $module = $this->info['module'];
       module_load_include('inc', $module, $module . '.rules');
       $included[$module] = TRUE;
     }
