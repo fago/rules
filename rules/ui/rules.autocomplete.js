@@ -25,9 +25,8 @@ Drupal.rules = Drupal.rules || {};
     this.cache = new Array();
     this.jqObject.addClass('ui-corner-left');
 
-    this.selected = false;
-    this.groupSelected = false;
     this.opendByFocus = false;
+    this.focusOpens = true;
 
     this.button = $('<span>&nbsp;</span>');
     this.button.attr( {
@@ -59,30 +58,29 @@ Drupal.rules = Drupal.rules || {};
 
     // Event handlers
     this.jqObject.focus(function() {
-      // If the something was selected, the window should not open again.
-      if (!instance.selected || instance.groupSelected) {
+      if (instance.focusOpens) {
         instance.open();
         instance.opendByFocus = true;
-      }
-      else {
-        // If the something was selected, the window should not open again.
-        instance.selected = false;
+      } else {
+        instance.focusOpens = true;
       }
     });
 
     // Needed when the window is closed but the textfield has the focus.
     this.jqObject.click(function() {
+      // Since the focus event happens earlier then the focus event, we need to
+      // check here, if the window should be opened.
       if (!instance.opendByFocus) {
         instance.toggle();
       }
       else {
-        instance.close();
+        instance.opendByFocus = false;
       }
     });
 
     this.jqObject.bind("autocompleteselect", function(event, ui) {
-      instance.close();
-      instance.selected = true;
+      instance.focusOpens = false;
+      instance.opendByFocus = false;
     });
 
     this.jqObject.autocomplete("option", "source", function(request, response) {
@@ -104,9 +102,40 @@ Drupal.rules = Drupal.rules || {};
     this.jqObject.data("autocomplete")._renderItem = function(ul, item) {
       return $("<li></li>").data("item.autocomplete", item).append("<a>" + item.label + "</a>").appendTo(ul);
     };
+    
+    // Override close function
+    this.jqObject.data("autocomplete").close = function (event) {
+      var value = this.element.val();
+      // If the selector is not a group, then trigger the close event an and 
+      // hide the menu.
+      if (value === undefined || value.substring(value.length - 1, value.length) != ':') {
+        clearTimeout(this.closing);
+        if (this.menu.element.is(":visible")) {
+          this._trigger("close", event);
+          this.menu.element.hide();
+          this.menu.deactivate();
+        }
+      }
+      else {
+        // Else keep all open and trigger a search for the group.
+        instance.jqObject.autocomplete("search", instance.jqObject.val());
+      }
+    };
 
     this.button.click(function() {
-      instance.toggle();
+      if (instance.jqObject.autocomplete("widget").is(":visible")) {
+        instance.close();
+      }
+      else {
+        var groups = instance.jqObject.val().split(":");
+        var selector = "";
+        for (var i=0; i<groups.length-1; i++) {
+          selector = selector.concat(groups[i]) + ":";
+        }
+        instance.focusOpens = false;
+        instance.jqObject.focus();
+        instance.open(selector);
+      }
     });
   };
 
@@ -127,27 +156,21 @@ Drupal.rules = Drupal.rules || {};
 
   /**
    * Open the autocomplete window.
+   * @param searchFor The term for will be searched for. If undefined then the
+   *                  entered input text will be used. 
    */
-  Drupal.rules.autocomplete.prototype.open = function() {
-    this.jqObject.autocomplete("search", this.jqObject.val());
+  Drupal.rules.autocomplete.prototype.open = function(searchFor) {
+    // If searchFor is undefined, we want to search for the passed argument.
+    this.jqObject.autocomplete("search", ((searchFor === undefined) ? this.jqObject.val() : searchFor));
     this.button.addClass("ui-state-focus");
-    this.groupSelected = false;
   };
 
   /**
    * Close the autocomplete window.
    */
   Drupal.rules.autocomplete.prototype.close = function() {
-    var value = this.jqObject.val();
-    // If the Selector is group, then keep the selection list open.
-    if (value.substring(value.length - 1, value.length) != ':') {
-      this.jqObject.autocomplete("close");
-      this.button.removeClass("ui-state-focus");
-      this.opendByFocus = false;
-    }
-    else {
-      this.groupSelected = true;
-    }
+    this.jqObject.autocomplete("close");
+    this.button.removeClass("ui-state-focus");
   };
 
   /**
