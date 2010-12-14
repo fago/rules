@@ -227,7 +227,7 @@ function theme_rules_autocomplete($variables) {
 
   $js_vars['rules_autocomplete'][$id] = array(
     'inputId' => $id,
-    'source' => $element['#autocomplete_path'],
+    'source' => url($element['#autocomplete_path'], array('absolute' => TRUE)),
   );
   drupal_add_js($js_vars, 'setting');
 

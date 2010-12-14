@@ -12,7 +12,9 @@ Drupal.rules = Drupal.rules || {};
         var input = this;
         new Drupal.rules.autocomplete(input, autocomplete_settings[$(input).attr('id')]);
       });
+
     }
+
   };
 
   /**
@@ -20,7 +22,7 @@ Drupal.rules = Drupal.rules || {};
    */
   Drupal.rules.autocomplete = function(input, settings) {
     this.id = settings.inputId;
-    this.uri = location.protocol + '//' + location.host + Drupal.settings.basePath + settings.source;
+    this.uri = settings.source;
     this.jqObject = $('#' + this.id);
     this.cache = new Array();
     this.jqObject.addClass('ui-corner-left');
@@ -59,9 +61,10 @@ Drupal.rules = Drupal.rules || {};
     // Event handlers
     this.jqObject.focus(function() {
       if (instance.focusOpens) {
-        instance.open();
+        instance.toggle(true);
         instance.opendByFocus = true;
-      } else {
+      }
+      else {
         instance.focusOpens = true;
       }
     });
@@ -94,6 +97,7 @@ Drupal.rules = Drupal.rules || {};
         success: function(data) {
           instance.success(data, request, response);
         }
+
       });
     });
 
@@ -102,11 +106,11 @@ Drupal.rules = Drupal.rules || {};
     this.jqObject.data("autocomplete")._renderItem = function(ul, item) {
       return $("<li></li>").data("item.autocomplete", item).append("<a>" + item.label + "</a>").appendTo(ul);
     };
-    
+
     // Override close function
     this.jqObject.data("autocomplete").close = function (event) {
       var value = this.element.val();
-      // If the selector is not a group, then trigger the close event an and 
+      // If the selector is not a group, then trigger the close event an and
       // hide the menu.
       if (value === undefined || value.substring(value.length - 1, value.length) != ':') {
         clearTimeout(this.closing);
@@ -123,20 +127,9 @@ Drupal.rules = Drupal.rules || {};
     };
 
     this.button.click(function() {
-      if (instance.jqObject.autocomplete("widget").is(":visible")) {
-        instance.close();
-      }
-      else {
-        var groups = instance.jqObject.val().split(":");
-        var selector = "";
-        for (var i=0; i<groups.length-1; i++) {
-          selector = selector.concat(groups[i]) + ":";
-        }
-        instance.focusOpens = false;
-        instance.jqObject.focus();
-        instance.open(selector);
-      }
+      instance.toggle();
     });
+
   };
 
   /**
@@ -150,6 +143,7 @@ Drupal.rules = Drupal.rules || {};
         value: index
       });
     });
+
     this.cache[request.term] = list;
     response(list);
   };
@@ -157,7 +151,7 @@ Drupal.rules = Drupal.rules || {};
   /**
    * Open the autocomplete window.
    * @param searchFor The term for will be searched for. If undefined then the
-   *                  entered input text will be used. 
+   *                  entered input text will be used.
    */
   Drupal.rules.autocomplete.prototype.open = function(searchFor) {
     // If searchFor is undefined, we want to search for the passed argument.
@@ -176,12 +170,19 @@ Drupal.rules = Drupal.rules || {};
   /**
    * Toogle the autcomplete window.
    */
-  Drupal.rules.autocomplete.prototype.toggle = function() {
-    if (this.jqObject.autocomplete("widget").is(":visible")) {
+  Drupal.rules.autocomplete.prototype.toggle = function(open) {
+    if (this.jqObject.autocomplete("widget").is(":visible") && open !== undefined) {
       this.close();
     }
     else {
-      this.open();
+      var groups = this.jqObject.val().split(":");
+      var selector = "";
+      for (var i=0; i<groups.length-1; i++) {
+        selector = selector.concat(groups[i]) + ":";
+      }
+      this.focusOpens = false;
+      this.jqObject.focus();
+      this.open(selector);
     }
   };
 
