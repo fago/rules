@@ -381,6 +381,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#type' => 'machine_name',
       '#default_value' => isset($machine_name) ? $machine_name : '',
       '#maxlength' => 32,
+      '#disabled' => entity_has_status('rules_config', $this->element, ENTITY_IN_CODE),
       '#machine_name' => array(
         'exists' => 'rules_config_load',
         'source' => array('settings', 'label'),
