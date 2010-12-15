@@ -51,7 +51,7 @@ function rules_scheduler_form($form_state) {
       '#description' => t('User provided string to identify the task. Existing tasks for this rule set with the same identifier will be replaced.'),
     );
     $rules_date = new rules_data_type_date();
-    $form['manual_scheduling']['date'] = $rules_date->get_default_input_form(array('label' => 'Execution date'), NULL);
+    $form['manual_scheduling']['date'] = $rules_date->get_default_input_form(array('label' => 'Execution date'), NULL, $form_state);
     $form['manual_scheduling']['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Schedule'),
