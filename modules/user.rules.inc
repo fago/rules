@@ -176,7 +176,7 @@ function rules_user_action_info() {
       'account' => array(
         'type' => 'user',
         'label' => t('User'),
-        'description' => t('The user whos roles should be changed.'),
+        'description' => t('The user whose roles should be changed.'),
         'save' => TRUE,
       ),
       'roles' => array(
