@@ -47,7 +47,8 @@ function rules_form_submit_rebuild($form, &$form_state) {
 /**
  * Edit a rules configuration.
  */
-function rules_ui_form_edit_rules_config($form, &$form_state, $rules_config) {
+function rules_ui_form_edit_rules_config($form, &$form_state, $rules_config, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_element' => $rules_config);
   // Add the rule configuration's form.
   $rules_config->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE));
@@ -76,7 +77,8 @@ function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
 /**
  * Clone a rules configuration form.
  */
-function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
+function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $rules_config = clone $rules_config;
   $rules_config->module = 'rules';
   $rules_config->id = FALSE;
@@ -97,9 +99,10 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
 /**
  * Configuration form to directly execute a rules configuration.
  */
-function rules_ui_form_execute_rules_config($form, &$form_state, $rules_config) {
+function rules_ui_form_execute_rules_config($form, &$form_state, $rules_config, $base_path) {
   // Only components can be executed.
   if (!($rules_config instanceof RulesTriggerableInterface)) {
+    RulesPluginUI::$basePath = $base_path;
     // Create either the appropriate action or condition element.
     $element = rules_plugin_factory($rules_config instanceof RulesActionInterface ? 'action' : 'condition', 'component_' . $rules_config->name);
     $form['exec_help'] = array(
@@ -162,10 +165,11 @@ function rules_ui_confirm_operations($op, $rules_config) {
 /**
  * Confirmation form for applying the operation to the config.
  */
-function rules_ui_form_rules_config_confirm_op($form, &$form_state, $rules_config, $op) {
+function rules_ui_form_rules_config_confirm_op($form, &$form_state, $rules_config, $op, $base_path) {
   if ($confirm_question = rules_ui_confirm_operations($op, $rules_config)) {
+    RulesPluginUI::$basePath = $base_path;
     $form_state += array('rules_config' => $rules_config, 'op' => $op);
-    return confirm_form($form, $confirm_question, RULES_UI_PATH, t('This action cannot be undone.'), t('Confirm'), t('Cancel'));
+    return confirm_form($form, $confirm_question, $base_path, t('This action cannot be undone.'), t('Confirm'), t('Cancel'));
   }
   else {
     drupal_not_found();
@@ -220,12 +224,13 @@ function rules_ui_form_rules_config_confirm_op_submit($form, &$form_state) {
 /**
  * Add a new element a rules configuration.
  */
-function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, RulesContainerPlugin $parent) {
+function rules_ui_add_element($form, &$form_state, $rules_config, $plugin_name, RulesContainerPlugin $parent, $base_path) {
   $cache = rules_get_cache();
   if (!isset($cache['plugin_info'][$plugin_name]['class'])) {
     drupal_not_found();
     exit;
   }
+  RulesPluginUI::$basePath = $base_path;
   $plugin_is_abstract = in_array('RulesAbstractPlugin', class_parents($cache['plugin_info'][$plugin_name]['class']));
   // In the first step create the element and in the second step show its edit
   // form.
@@ -293,10 +298,11 @@ function rules_ui_add_element_submit($form, &$form_state) {
 /**
  * Delete elements.
  */
-function rules_ui_delete_element($form, &$form_state, $rules_config, $rules_element) {
+function rules_ui_delete_element($form, &$form_state, $rules_config, $rules_element, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_config' => $rules_config, 'rules_element' => $rules_element);
   $confirm_question = t('Are you sure you want to delete the %element_plugin %element_name?', array('%element_plugin' => $rules_element->plugin(), '%element_name' => $rules_element->label(), '%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
-  return confirm_form($form, $confirm_question, RULES_UI_PATH, t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+  return confirm_form($form, $confirm_question, RulesPluginUI::path($rules_config->name), t('This action cannot be undone.'), t('Delete'), t('Cancel'));
 }
 
 /**
@@ -330,7 +336,8 @@ function rules_ui_delete_element_submit($form, &$form_state) {
 /**
  * Configure a rule element.
  */
-function rules_ui_edit_element($form, &$form_state, $rules_config, $element) {
+function rules_ui_edit_element($form, &$form_state, $rules_config, $element, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_element' => $element);
   $form_state['rules_element']->form($form, $form_state, array('button' => TRUE));
   return $form;
@@ -356,7 +363,8 @@ function rules_ui_edit_element_submit($form, &$form_state) {
 /**
  * Add a new event.
  */
-function rules_ui_add_event($form, &$form_state, $rules_config) {
+function rules_ui_add_event($form, &$form_state, $rules_config, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_config' => $rules_config);
   $form['event'] = array(
     '#type' => 'select',
@@ -397,10 +405,13 @@ function rules_ui_add_event_submit($form, &$form_state) {
 /**
  * Form to remove a event from a rule.
  */
-function rules_ui_remove_event($form, &$form_state, $rules_config, $event) {
+function rules_ui_remove_event($form, &$form_state, $rules_config, $event, $base_path) {
+  RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_config' => $rules_config, 'rules_event' => $event);
-  $confirm_question = t('Are you sure you want to remove %event from the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label(), '%event' => $event));
-  return confirm_form($form, $confirm_question, RULES_UI_RULE_PATH, t('This action cannot be undone.'), t('Remove'), t('Cancel'));
+  $events = rules_fetch_data('event_info');
+  $event_label = $events[$event]['label'];
+  $confirm_question = t('Are you sure you want to remove the event %event from the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label(), '%event' => $event_label));
+  return confirm_form($form, $confirm_question, RulesPluginUI::path($rules_config->name), t('This action cannot be undone.'), t('Remove'), t('Cancel'));
 }
 
 /**
@@ -677,4 +688,16 @@ function rules_element_sort_helper($a, $b) {
     return 0;
   }
   return ($a['weight'] < $b['weight']) ? -1 : 1;
+}
+
+/**
+ * Form after build handler to set the static base path.
+ *
+ * @see RulesPluginUI::formDefaults()
+ */
+function rules_form_after_build_restore_base_path($form, &$form_state) {
+  if (isset($form_state['_rules_base_path'])) {
+    RulesPluginUI::$basePath = $form_state['_rules_base_path'];
+  }
+  return $form;
 }

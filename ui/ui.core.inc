@@ -147,6 +147,18 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   protected $element;
 
   /**
+   * The base path determines where a Rules overview UI lives. All forms that
+   * want to display Rules (overview) forms need to set this variable. This is
+   * necessary in order to get correct operation links, paths, redirects, bread
+   * crumbs etc. for the form() and overviewTable() methods.
+   *
+   * @see RulesUIController
+   * @see rules_admin_reaction_overview()
+   * @see rules_admin_components_overview()
+   */
+  public static $basePath = NULL;
+
+  /**
    * Provide $this->element to make the code more meaningful.
    */
   public function __construct(FacesExtendable $object) {
@@ -157,6 +169,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Implements RulesPluginUIInterface.
    * Generates the element edit form.
+   *
+   * Note: Make sure that you set RulesPluginUI::$basePath before using this
+   * method, otherwise paths, links, redirects etc. won't be correct.
    */
   public function form(&$form, &$form_state, $options = array()) {
     self::formDefaults($form, $form_state);
@@ -586,6 +601,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates the render array for a overview configuration table for arbitrary
    * rule configs that match the given conditions.
    *
+   * Note: Make sure that you set RulesPluginUI::$basePath before using this
+   * method, otherwise paths, links, redirects etc. won't be correct.
+   *
    * @param $conditions
    *   An array of conditions as needed by rules_config_load_multiple().
    * @param $options
@@ -697,9 +715,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Generates a path using the given operation for the element with the given
    * id of the configuration with the given name.
    */
-  public static function path($name, $op = NULL, RulesPlugin $element = NULL) {
+  public static function path($name, $op = NULL, RulesPlugin $element = NULL, $parameter = FALSE) {
     $element_id = isset($element) ? $element->elementId() : FALSE;
-    return implode('/', array_filter(array(RULES_UI_RULE_PATH, $name, $op, $element_id)));
+    $base_path = isset(self::$basePath) ? self::$basePath : 'admin/config/workflow/rules';
+    return implode('/', array_filter(array($base_path . '/manage', $name, $op, $element_id, $parameter)));
   }
 
   /**
@@ -755,6 +774,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Specify the wrapper div used by #ajax.
     $form['#prefix'] = '<div id="rules-form-wrapper">';
     $form['#suffix'] = '</div>';
+
+    // Preserve the base path in the form state. The after build handler will
+    // set self::$basePath again for cached forms.
+    if (isset(self::$basePath)) {
+      $form_state['_rules_base_path'] = self::$basePath;
+      $form['#after_build'][] = 'rules_form_after_build_restore_base_path';
+    }
   }
 }
 
@@ -890,7 +916,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
       if (!empty($info['embeddable']) && $this->element instanceof $info['embeddable']) {
         $render['#links']['add_' . $plugin] = array(
           'title' => t('Add !name', array('!name' => $plugin)),
-          'href' => RulesPluginUI::path($name, 'add/' . $plugin, $this->element),
+          'href' => RulesPluginUI::path($name, 'add', $this->element, $plugin),
         );
       }
     }

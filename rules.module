@@ -5,9 +5,6 @@
  * @file Rules engine module
  */
 
-define('RULES_UI_PATH', 'admin/config/workflow/rules');
-define('RULES_UI_RULE_PATH', RULES_UI_PATH . '/config');
-
 // Add the rules autoloader, which cares about auto-loading the faces include.
 // @see http://drupal.org/project/faces
 spl_autoload_register('rules_autoload');
@@ -475,6 +472,7 @@ function rules_entity_info() {
       'export' => array(
         'default hook' => 'default_rules_configuration',
       ),
+      'access callback' => 'rules_config_access',
     ),
   );
 }
@@ -856,106 +854,6 @@ function rules_permission() {
 }
 
 /**
- * Implements hook_menu().
- * Provides some callbacks used by the embeddable UI.
- */
-function rules_menu() {
-  $items[RULES_UI_RULE_PATH . '/%rules_config'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Editing !plugin "!label"', 5),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_form_edit_rules_config', 5),
-    'access arguments' => array('administer rules'),
-    'description' => 'Manage reaction rules and rule components.',
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/add/%/%rules_element'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Add a new !plugin', 7),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_add_element', 5, 7, 8),
-    'access arguments' => array('administer rules'),
-    'load arguments' => array(5),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/add/event'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Addin events to !plugin "!label"', 5),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_add_event', 5),
-    'access arguments' => array('administer rules'),
-    'load arguments' => array(5),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/delete/event'] = array(
-    //@todo: improve title.
-    'title' => 'Remove event',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_remove_event', 5, 8),
-    'access arguments' => array('administer rules'),
-    'description' => 'Remove an event from a reaction rule.',
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/edit/%rules_element'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Editing !plugin "!label"', 7),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_edit_element', 5, 7),
-    'access arguments' => array('administer rules'),
-    'load arguments' => array(5),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/autocomplete'] = array(
-    'page callback' => 'rules_ui_form_data_selection_auto_completion',
-    'page arguments' => array(7, 8, 9),
-    'access arguments' => array('administer rules'),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/delete/%rules_element'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Editing !plugin "!label"', 7),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_delete_element', 5, 7),
-    'access arguments' => array('administer rules'),
-    'load arguments' => array(5),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/%'] = array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_form_rules_config_confirm_op', 5, 6),
-    'access arguments' => array('administer rules'),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/clone'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Cloning !plugin "!label"', 5),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_form_clone_rules_config', 5),
-    'access arguments' => array('administer rules'),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  $items[RULES_UI_RULE_PATH . '/%rules_config/execute'] = array(
-    'title callback' => 'rules_get_title',
-    'title arguments' => array('Executing !plugin "!label"', 5),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_form_execute_rules_config', 5),
-    'access arguments' => array('administer rules'),
-    'type' => MENU_CALLBACK,
-    'file' => 'ui/ui.forms.inc',
-  );
-  return $items;
-}
-
-/**
  * Callback for loading rules configuration elements.
  */
 function rules_element_load($element_id, $config_name) {
@@ -1059,4 +957,13 @@ function rules_modules_enabled($modules) {
 function rules_modules_disabled($modules) {
   rules_clear_cache();
   //TODO: Disable configs with now broken dependencies?
+}
+
+/**
+ * Access callback for rules configurations.
+ *
+ * @see entity_access()
+ */
+function rules_config_access($op, $rules_config, $account = NULL) {
+  return user_access('administer rules', $account);
 }

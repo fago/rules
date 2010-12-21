@@ -110,9 +110,10 @@ function rules_scheduler_delete_task_submit($form, &$form_state) {
 /**
  * Configuration form to manually schedule a rules component.
  */
-function rules_scheduler_schedule_form($form, &$form_state, $rules_config) {
+function rules_scheduler_schedule_form($form, &$form_state, $rules_config, $base_path) {
   // Only components can be scheduled.
   if (!($rules_config instanceof RulesTriggerableInterface)) {
+    RulesPluginUI::$basePath = $base_path;
     $form_state['component'] = $rules_config->name;
     $action = rules_action('schedule', array('component' => $rules_config->name));
     $action->form($form, $form_state);
