@@ -606,6 +606,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $rows = array();
     $event_info = rules_fetch_data('event_info');
 
+    $num_cols = 1;
+    $scheduler_exists = module_exists('rules_scheduler');
     foreach ($configs as $name => $config) {
       $row = array();
       $row[] = l($config->label(), RulesPluginUI::path($name));
@@ -637,6 +639,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       }
       $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
 
+      // Add execute link for components only.
+      if (!($config instanceof RulesTriggerableInterface)) {
+        $row[] = l(t('execute'), RulesPluginUI::path($name, 'execute'), array('query' => drupal_get_destination()));
+        if ($scheduler_exists) {
+          if ($config instanceof RulesActionInterface) {
+            // Add schedule link for action components only.
+            $row[] = l(t('schedule'), RulesPluginUI::path($name, 'schedule'), array('query' => drupal_get_destination()));
+          }
+          else {
+            $row[] = '';
+          }
+        }
+      }
+
       // Add either an delete or revert link.
       if ($config->status != ENTITY_IN_CODE) {
         $text = $config->status & ENTITY_IN_CODE ? t('revert') : t('delete');
@@ -650,9 +666,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       // TODO: hide configs where access() is FALSE and make sure access is
       // FALSE for fixed configurations,
 
+      $num_cols = max($num_cols, count($row));
       $rows[] = $row;
     }
-    $header = array(t('Label'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations'), 'colspan' => 4));
+    $header = array(t('Label'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations')));
     if (!isset($events)) {
       // Remove the event heading as there is no such column.
       unset($header[1]);
@@ -660,8 +677,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     if (!$options['show plugin']) {
       unset($header[2]);
     }
-    if ($options['hide status op']) {
-      $header[4]['colspan']--;
+    // Fix the header operation column colspan.
+    if (($addition = $num_cols - count($header)) > 0) {
+      $header[4]['colspan'] = $addition + 1;
     }
 
     $table = array(

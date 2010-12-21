@@ -51,13 +51,15 @@ function rules_ui_form_edit_rules_config($form, &$form_state, $rules_config) {
   $form_state += array('rules_element' => $rules_config);
   // Add the rule configuration's form.
   $rules_config->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE));
+  $form['#validate'] = array('rules_ui_form_rules_config_validate');
   return $form;
 }
 
 /**
- * Edit a rules configuration form validation callback.
+ * General rules configuration form validation callback. Also populates the
+ * rules configuration with the form values.
  */
-function rules_ui_form_edit_rules_config_validate($form, &$form_state) {
+function rules_ui_form_rules_config_validate($form, &$form_state) {
   $form_state['rules_element']->form_validate($form, $form_state);
 }
 
@@ -81,7 +83,7 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
   $rules_config->name = '';
   $rules_config->label .= ' (' . t('cloned') . ')';
 
-  $form['#validate'][] = 'rules_ui_form_edit_rules_config_validate';
+  $form['#validate'][] = 'rules_ui_form_rules_config_validate';
   $form['#submit'][] = 'rules_ui_form_edit_rules_config_submit';
   $form_state += array('rules_element' => $rules_config);
   // Add the rule configuration's form.
@@ -90,6 +92,53 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config) {
   // Open the settings fieldset so altering the name is easier.
   $form['settings']['#collapsed'] = FALSE;
   return $form;
+}
+
+/**
+ * Configuration form to directly execute a rules configuration.
+ */
+function rules_ui_form_execute_rules_config($form, &$form_state, $rules_config) {
+  // Only components can be executed.
+  if (!($rules_config instanceof RulesTriggerableInterface)) {
+    // Create either the appropriate action or condition element.
+    $element = rules_plugin_factory($rules_config instanceof RulesActionInterface ? 'action' : 'condition', 'component_' . $rules_config->name);
+    $form['exec_help'] = array(
+      '#prefix' => '<p>',
+      '#markup' => t('This form allows you to manually trigger the execution of the @plugin "%label". If this component requires any parameters, input the suiting execution arguments below.', array('@plugin' => $rules_config->plugin(), '%label' => $rules_config->label())),
+      '#suffix' => '</p>',
+    );
+    $element->form($form, $form_state);
+
+    // For conditions hide the option to negate them.
+    if (isset($form['negate'])) {
+      $form['negate']['#access'] = FALSE;
+    }
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Execute'),
+      '#weight' => 20,
+    );
+    // Re-use the validation callback, which will also populate the action with
+    // the configuration settings in the form.
+    $form['#validate'] = array('rules_ui_form_rules_config_validate');
+    return $form;
+  }
+  drupal_not_found();
+  exit;
+}
+
+/**
+ * Submit callback for directly executing a component.
+ */
+function rules_ui_form_execute_rules_config_submit($form, &$form_state) {
+  $element = $form_state['rules_element'];
+  $result = $element->execute();
+  if ($element instanceof RulesActionInterface) {
+    drupal_set_message(t('Component %label has been executed.', array('%label' => $element->label())));
+  }
+  else {
+    drupal_set_message(t('Component %label evaluated to %result.', array('%label' => $element->label(), '%result' => $result ? 'true' : 'false')));
+  }
 }
 
 /**

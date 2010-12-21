@@ -1910,7 +1910,7 @@ class RulesException extends Exception {
    * @param $severity
    *   The RulesLog severity. Defaults to RulesLog::WARN.
    */
-  function __construct($msg, $args = array(), $element = NULL, $severity = RulesLog::WARN) {
+  function __construct($msg, array $args = array(), $element = NULL, $severity = RulesLog::WARN) {
     $this->element = is_array($element) ? array_shift($element) : $element;
     $this->keys = is_array($element) ? $element : array();
     $this->msg = $msg;

@@ -32,29 +32,29 @@ function rules_scheduler_rules_action_info() {
       'identifier' => array(
         'type' => 'text',
         'label' => t('Identifier'),
-        'description' => t('User provided string to identify the task. Existing tasks for this component with the same identifier will be replaced.'),
+        'description' => t('User provided string to identify the task. Any existing tasks for this component with the same identifier will be replaced.'),
         'optional' => TRUE,
       ),
       // Further needed parameter by the component are added during processing.
     ),
   );
-  // Add action to cancel scheduled tasks.
-  $items['schedule_cancel'] = array(
+  // Add action to delete scheduled tasks.
+  $items['schedule_delete'] = array(
     'label' => t('Delete scheduled tasks'),
     'group' => t('Rules scheduler'),
-    'base' => 'rules_scheduler_action_cancel',
+    'base' => 'rules_scheduler_action_delete',
     'parameter' => array(
       'component' => array(
         'type' => 'text',
         'label' => t('Component'),
         'options list' => 'rules_scheduler_component_options_list',
-        'description' => t('The component, for which the scheduled tasks will be cancelled.'),
+        'description' => t('The component for which scheduled tasks will be deleted.'),
         'optional' => TRUE,
       ),
       'task' => array(
         'type' => 'text',
         'label' => t('Task identifier'),
-        'description' => t('All tasks that are annotated with the given identifier will be cancelled.'),
+        'description' => t('All tasks that are annotated with the given identifier will be deleted.'),
         'optional' => TRUE,
       ),
     ),
@@ -70,7 +70,7 @@ function rules_scheduler_component_options_list() {
 }
 
 /**
- * Base action implementation for scheduling all rule sets
+ * Base action implementation for scheduling components.
  */
 function rules_scheduler_action_schedule($args, $element) {
   $state = $args['state'];
@@ -94,7 +94,7 @@ function rules_scheduler_action_schedule($args, $element) {
     ));
   }
   else {
-    throw new RulesException('Unable to get the component %name'. array('%name' => $args['component']), $element);
+    throw new RulesException('Unable to get the component %name', array('%name' => $args['component']), $element);
   }
 }
 
@@ -118,7 +118,7 @@ function rules_scheduler_action_schedule_help() {
 }
 
 /**
- * Form alter callback for actions relying on the entity type or the data type.
+ * Form alter callback for the schedule action.
  */
 function rules_scheduler_action_schedule_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   $first_step = empty($element->settings['component']);
@@ -146,10 +146,6 @@ function rules_scheduler_action_schedule_form_alter(&$form, &$form_state, $optio
     }
     unset($form['submit']);
     unset($form['provides']);
-    // Disable #ajax for the first step as it has troubles with lazy-loaded JS.
-    // @todo: Re-enable once JS lazy-loading is fixed in core.
-    unset($form['parameter']['component']['settings']['type']['#ajax']);
-    unset($form['reload']['#ajax']);
   }
   else {
     // Hide the reload button in case js is enabled and it's not the first step.
@@ -158,12 +154,12 @@ function rules_scheduler_action_schedule_form_alter(&$form, &$form_state, $optio
 }
 
 /**
- * Action: Cancel scheduled tasks.
+ * Action: Delete scheduled tasks.
  */
-function rules_scheduler_action_cancel($component_name = NULL, $task_identifier = NULL) {
+function rules_scheduler_action_delete($component_name = NULL, $task_identifier = NULL) {
   $query = db_delete('rules_scheduler');
   if (!empty($component_name)) {
-    $query->condition('name', $component_name);
+    $query->condition('config', $component_name);
   }
   if (!empty($task_identifier)) {
     $query->condition('identifier', $task_identifier);
@@ -174,7 +170,7 @@ function rules_scheduler_action_cancel($component_name = NULL, $task_identifier 
 /**
  * Cancel scheduled task action validation callback.
  */
-function rules_scheduler_action_cancel_validate($element) {
+function rules_scheduler_action_delete_validate($element) {
   if (empty($element->settings['task']) && empty($element->settings['task:select']) &&
       empty($element->settings['component']) && empty($element->settings['component:select'])) {
 
@@ -185,8 +181,8 @@ function rules_scheduler_action_cancel_validate($element) {
 /**
  * Help for the cancel action.
  */
-function rules_scheduler_action_cancel_help() {
-  return t('This action allows you to cancel scheduled tasks that are waiting for future execution.') .' '. t('They can be addressed by an identifier or by the component name, whereas if both are specified only tasks fulfilling both requirements will be cancelled.');
+function rules_scheduler_action_delete_help() {
+  return t('This action allows you to delete scheduled tasks that are waiting for future execution.') .' '. t('They can be addressed by an identifier or by the component name, whereas if both are specified only tasks fulfilling both requirements will be deleted.');
 }
 
 /**

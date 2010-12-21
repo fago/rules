@@ -526,11 +526,12 @@ function rules_config_load_multiple($names = array(), $conditions = array()) {
  * Loads a single rule configuration from the database.
  *
  * @see rules_config_load_multiple()
+ *
  * @return RulesPlugin
  */
 function rules_config_load($name) {
-  $configs = entity_get_controller('rules_config')->load(array($name));
-  return $configs ? reset($configs) : FALSE;
+  $result = entity_get_controller('rules_config')->load(array($name));
+  return reset($result);
 }
 
 /**
@@ -937,12 +938,20 @@ function rules_menu() {
     'title callback' => 'rules_get_title',
     'title arguments' => array('Cloning !plugin "!label"', 5),
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('rules_ui_form_clone_rules_config', 5, 6),
+    'page arguments' => array('rules_ui_form_clone_rules_config', 5),
     'access arguments' => array('administer rules'),
     'type' => MENU_CALLBACK,
     'file' => 'ui/ui.forms.inc',
   );
-
+  $items[RULES_UI_RULE_PATH . '/%rules_config/execute'] = array(
+    'title callback' => 'rules_get_title',
+    'title arguments' => array('Executing !plugin "!label"', 5),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_form_execute_rules_config', 5),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_CALLBACK,
+    'file' => 'ui/ui.forms.inc',
+  );
   return $items;
 }
 
