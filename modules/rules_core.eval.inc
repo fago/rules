@@ -41,7 +41,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
 
     $return = $component->evaluate($new_state);
     // Care for the right return value in case we have to provide vars.
-    if (isset($info['provides'])) {
+    if ($component instanceof RulesActionInterface && !empty($info['provides'])) {
       $return = array();
       foreach ($info['provides'] as $var => $var_info) {
         $return[$var] = $new_state->get($var);
