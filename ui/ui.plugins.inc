@@ -15,7 +15,7 @@ class RulesRuleUI extends RulesActionContainerUI {
   public function __construct(FacesExtendable $object) {
     parent::__construct($object);
     $this->rule = $object;
-    $this->conditions = &$this->property('conditions');
+    $this->conditions = $this->rule->conditionContainer();
   }
 
   public function form(&$form, &$form_state, $options = array()) {

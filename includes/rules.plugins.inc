@@ -149,6 +149,16 @@ class Rule extends RulesActionContainer {
     return $this->conditions->getIterator();
   }
 
+  /**
+   * Returns the "And" condition container, which contains all conditions of
+   * this rule.
+   *
+   * @return RulesAnd
+   */
+  public function conditionContainer() {
+    return $this->conditions;
+  }
+
   public function __sleep() {
     return parent::__sleep() + drupal_map_assoc(array('conditions', 'label'));
   }
@@ -185,6 +195,16 @@ class Rule extends RulesActionContainer {
     if ($this->conditions->evaluate($state)) {
       parent::evaluate($state);
     }
+  }
+
+  /**
+   * Fires the rule, i.e. evaluates the rule without checking its conditions.
+   *
+   * @see RulesPlugin::evaluate()
+   */
+  public function fire(RulesState $state) {
+    rules_log('Firing rule %label.', array('%label' => $this->label));
+    parent::evaluate($state);
   }
 
   public function integrityCheck() {
