@@ -43,7 +43,10 @@ class RulesEntityController extends EntityAPIController {
         if (isset($conditions['event']) && (!($entity instanceof RulesTriggerableInterface) || !in_array($conditions['event'], $entity->events()))) {
           unset($entities[$key]);
         }
-        if (isset($conditions['plugin']) && $entity->plugin() != $conditions['plugin']) {
+        if (isset($conditions['plugin']) && !is_array($conditions['plugin'])) {
+          $conditions['plugin'] = array($conditions['plugin']);
+        }
+        if (isset($conditions['plugin']) && !in_array($entity->plugin(), $conditions['plugin'])) {
           unset($entities[$key]);
         }
       }
