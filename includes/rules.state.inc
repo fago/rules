@@ -116,8 +116,7 @@ class RulesState {
    * Returns whether the given wrapper is savable.
    */
   public function isSavable($wrapper) {
-    $entity_info = entity_get_info();
-    return entity_metadata_entity_type_supports($wrapper->type(), 'save');
+    return entity_type_supports($wrapper->type(), 'save');
   }
 
   /**
@@ -385,7 +384,7 @@ class RulesData  {
         $cache['data_info'][$type]['ancestors'] += $cache['data_info'][$parent]['ancestors'];
       }
       // For special lists like list<node> add in "list" as valid parent.
-      if (entity_metadata_list_extract_type($type)) {
+      if (entity_property_list_extract_type($type)) {
         $cache['data_info'][$type]['ancestors']['list'] = TRUE;
       }
     }
@@ -529,7 +528,7 @@ class RulesData  {
    * @see RulesPlugin::availableVariables()
    */
   public static function addSiteMetadata(EntityMetadataWrapper $wrapper, $property_info) {
-    $site_info = entity_metadata_get_info('site');
+    $site_info = entity_get_property_info('site');
     $property_info['properties'] += $site_info['properties'];
     // Also invoke the usual callback for altering metadata, in case actions
     // have specified further metadata.

@@ -231,7 +231,7 @@ function rules_data_action_access($type, $name) {
     $op = $name == 'entity_save' ? 'save' : 'delete';
   }
   foreach ($types as $key => $type) {
-    if (!entity_metadata_entity_access($op, $type)) {
+    if (!entity_access($op, $type)) {
       unset($types[$key]);
     }
   }

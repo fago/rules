@@ -102,7 +102,7 @@ function rules_test_rules_action_info() {
         ),
       ),
       'group' => t('Node'),
-      'access callback' => 'entity_metadata_no_hook_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     // TODO: Replace by a generic delete data action.
     'rules_action_delete_node' => array(
@@ -111,7 +111,7 @@ function rules_test_rules_action_info() {
         'node' => array('type' => 'node', 'label' => t('Content')),
       ),
       'group' => t('Node'),
-      'access callback' => 'entity_metadata_no_hook_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
     'node_create' => array(
       'label' => t('Create new content'),
@@ -144,7 +144,7 @@ function rules_test_rules_action_info() {
       ),
       'named parameter' => TRUE,
       'group' => t('Node'),
-      'access callback' => 'entity_metadata_no_hook_node_access',
+      'access callback' => 'rules_node_integration_access',
     ),
   );
 }

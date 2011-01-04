@@ -39,7 +39,7 @@ function rules_rules_core_data_info() {
       'label' => t('formatted text'),
       'ui class' => 'RulesDataUITextFormatted',
       'wrap' => TRUE,
-      'property info' => entity_metadata_text_formatted_properties(),
+      'property info' => entity_property_text_formatted_info(),
     ),
    'decimal' => array(
       'label' => t('decimal number'),

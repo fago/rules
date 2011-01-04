@@ -83,7 +83,7 @@ function rules_taxonomy_event_info() {
  */
 function rules_taxonomy_term_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
-    return entity_metadata_entity_access('view', 'taxonomy_term');
+    return entity_access('view', 'taxonomy_term');
   }
 }
 
@@ -92,7 +92,7 @@ function rules_taxonomy_term_integration_access($type, $name) {
  */
 function rules_taxonomy_vocabulary_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
-    return entity_metadata_entity_access('view', 'taxonomy_vocabulary');
+    return entity_access('view', 'taxonomy_vocabulary');
   }
 }
 

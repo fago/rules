@@ -290,7 +290,7 @@ function &rules_wrap_data($data = NULL, $info, $force = FALSE) {
     $info += array_intersect_key($cache['data_info'][$info['type']], $wrapper_keys);
   }
   // If a list is given, also add in the info of the item type.
-  $list_item_type = entity_metadata_list_extract_type($info['type']);
+  $list_item_type = entity_property_list_extract_type($info['type']);
   if ($list_item_type && isset($cache['data_info'][$list_item_type])) {
     $info += array_intersect_key($cache['data_info'][$list_item_type], $wrapper_keys);
   }

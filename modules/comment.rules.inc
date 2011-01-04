@@ -71,7 +71,7 @@ function rules_comment_event_info() {
  */
 function rules_comment_integration_access($type, $name) {
   if ($type == 'event' || $type == 'condition') {
-    return entity_metadata_entity_access('view', 'comment');
+    return entity_access('view', 'comment');
   }
 }
 

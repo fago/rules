@@ -481,7 +481,7 @@ class RulesLoop extends RulesActionContainer {
   protected function listItemType() {
     if (!isset($this->settings['item:type'])) {
       $info = $this->getArgumentInfo('list');
-      $this->settings['item:type'] = isset($info['type']) ? entity_metadata_list_extract_type($info['type']) : 'unknown';
+      $this->settings['item:type'] = isset($info['type']) ? entity_property_list_extract_type($info['type']) : 'unknown';
     }
     return $this->settings['item:type'];
   }

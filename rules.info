@@ -14,5 +14,5 @@ files[] = modules/system.eval.inc
 files[] = ui/ui.core.inc
 files[] = ui/ui.data.inc
 files[] = ui/ui.plugins.inc
-dependencies[] = entity_metadata
+dependencies[] = entity_token
 dependencies[] = entity

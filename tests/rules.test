@@ -17,7 +17,7 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test', 'entity_metadata');
+    parent::setUp('rules', 'rules_test');
     RulesLog::logger()->clear();
   }
 
@@ -675,7 +675,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test', 'entity_metadata');
+    parent::setUp('rules', 'rules_test');
     RulesLog::logger()->clear();
   }
 
@@ -899,7 +899,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   function setUp() {
-    parent::setUp('rules', 'rules_test', 'entity_metadata', 'php', 'path');
+    parent::setUp('rules', 'rules_test', 'php', 'path');
     RulesLog::logger()->clear();
   }
 
@@ -1044,12 +1044,12 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   function testEntityIntegration() {
     global $user;
 
-    $node = entity_metadata_entity_create('node', array(
+    $node = entity_property_values_create_entity('node', array(
       'type' => 'article',
       'author' => $user,
       'title' => 'foo',
     ))->value();
-    $term_wrapped = entity_metadata_entity_create('taxonomy_term', array(
+    $term_wrapped = entity_property_values_create_entity('taxonomy_term', array(
       'name' => $this->randomName(),
       'vocabulary' => 1,
     ))->save();
@@ -1076,7 +1076,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
    * Test integration for the taxonomy module.
    */
   function testTaxonomyIntegration() {
-    $term = entity_metadata_entity_create('taxonomy_term', array(
+    $term = entity_property_values_create_entity('taxonomy_term', array(
       'name' => $this->randomName(),
       'vocabulary' => 1,
     ))->value();
@@ -1133,11 +1133,11 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     );
     field_create_instance($instance);
 
-    $term1 = entity_metadata_entity_create('taxonomy_term', array(
+    $term1 = entity_property_values_create_entity('taxonomy_term', array(
       'name' => $this->randomName(),
       'vocabulary' => 1,
     ))->save();
-    $term2 = entity_metadata_entity_create('taxonomy_term', array(
+    $term2 = entity_property_values_create_entity('taxonomy_term', array(
       'name' => $this->randomName(),
       'vocabulary' => 1,
     ))->save();
@@ -1379,7 +1379,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertTrue($path['alias'] == 'test', 'Node URL alias has been created.');
 
     // Test term alias action.
-    $term = entity_metadata_entity_create('taxonomy_term', array(
+    $term = entity_property_values_create_entity('taxonomy_term', array(
       'name' => $this->randomName(),
       'vocabulary' => 1,
     ))->value();
