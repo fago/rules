@@ -16,13 +16,12 @@ class RulesEntityController extends EntityAPIController {
    * @see DrupalDefaultEntityController::attachLoad()
    */
   protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
-    $schema = drupal_get_schema($this->entityInfo['base table']);
     // Retrieve stdClass records and turn them in rules objects stored in 'data'
     $entities = array();
     foreach ($queried_entities as $record) {
       $entity = $record->data;
       // Set the values of the other columns.
-      foreach (array_keys($schema['fields'] + array('status' => TRUE)) as $field) {
+      foreach ($this->entityInfo['schema_fields_sql']['base table'] as $field) {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
@@ -723,7 +722,6 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   public function __sleep() {
-    $this->processSettings();
     // Keep the id always as we need it for the recursion prevention.
     $array = drupal_map_assoc(array('parent', 'id', 'elementId', 'weight', 'settings'));
     // Keep properties related to configurations if they are there.
@@ -733,6 +731,28 @@ abstract class RulesPlugin extends RulesExtendable {
       }
     }
     return $array;
+  }
+
+  /**
+   * Optimizes a rule configuration in order to speed up evaluation.
+   *
+   * Additional optimization methods may be inserted by an extender
+   * implementing the RulesOptimizationInterface. By default, there is no
+   * optimization extender.
+   *
+   * An optimization method may rearrange the internal structure of a
+   * configuration in order to speed up the evaluation. As the configuration may
+   * change optimized configurations should not be saved permanently, except
+   * when saving it temporary, for later execution only.
+   *
+   * @see RulesOptimizationInterface
+   */
+  public function optimize() {
+    // Make sure settings are processed before configs are cached.
+    $this->processSettings();
+    if ($this->facesAs('RulesOptimizationInterface')) {
+      $this->__call('optimize');
+    }
   }
 
   /**
@@ -1604,26 +1624,6 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     }
     $export += $this->exportChildren();
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
-  }
-
-  /**
-   * Optimizes a rule configuration in order to speed up evaluation.
-   *
-   * Applies optimization methods that have been inserted by an extender
-   * implemented the RulesOptimizationInterface. By default, there is no
-   * optimization.
-   *
-   * An optimization method may rearrange the internal structure of a
-   * configuration in order to speed up the evaluation. As the configuration may
-   * change optimized configurations should not be saved permanently, except
-   * when saving it temporary, for later execution only.
-   *
-   * @see RulesOptimizationInterface
-   */
-  public function optimize() {
-    if ($this->facesAs('RulesOptimizationInterface')) {
-      $this->__call('optimize');
-    }
   }
 }
 

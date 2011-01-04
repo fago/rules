@@ -40,13 +40,6 @@ function rules_schema() {
         'not null' => TRUE,
         'description' => 'The name of the configuration.',
       ),
-     'module' => array(
-        'type' => 'varchar',
-        'length' => 127,
-        'not null' => TRUE,
-        'default' => 'rules',
-        'description' => 'The module that provides the configuration.',
-      ),
       'label' => array(
         'type' => 'varchar',
         'length' => '255',
@@ -80,7 +73,7 @@ function rules_schema() {
         'serialize' => TRUE,
         'description' => 'Everything else, serialized.',
       ),
-    ),
+    ) + entity_exportable_schema_fields(),
     'primary key' => array('id'),
     'unique keys' => array(
       'name' => array('name'),
@@ -113,9 +106,15 @@ function rules_schema() {
 }
 
 /**
- * The rules.module has been moved up in the main module directory.
+ * Add in the exportable entity db columns as required by the entity API.
  */
-function rules_update_7001() {
-  // This empty update is required such that all caches are cleared as
-  // necessary.
+function rules_update_7200() {
+  db_add_field('rules_config', 'status', array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => ENTITY_CUSTOM,
+    'size' => 'tiny',
+    'description' => 'The exportable status of the entity.',
+  ));
+  // The module column did already exist before.
 }
