@@ -1,0 +1,969 @@
+<?php
+// $Id$
+
+/**
+ * @file Rules engine module
+ */
+
+// Add the rules autoloader, which cares about auto-loading the faces include.
+// @see http://drupal.org/project/faces
+spl_autoload_register('rules_autoload');
+
+/**
+ * Autoload API includes. Note that the code registry autoload is used only
+ * by the providing API module.
+ */
+function rules_autoload($class) {
+  if (stripos($class, 'faces') === 0) {
+    module_load_include('inc', 'rules', 'includes/faces');
+  }
+}
+
+/**
+ * Implements hook_init().
+ */
+function rules_init() {
+  module_load_include('inc', 'rules', 'modules/events');
+  rules_invoke_event('init');
+}
+
+/**
+ * Returns a new rules action.
+ *
+ * @param $name
+ *   The action's name.
+ * @param $settings
+ *   The action's settings array.
+ * @return RulesAction
+ */
+function rules_action($name, $settings = array()) {
+  return rules_plugin_factory('action', $name, $settings);
+}
+
+/**
+ * Returns a new rules condition.
+ *
+ * @param $name
+ *   The condition's name.
+ * @param $settings
+ *   The condition's settings array.
+ * @return RulesCondition
+ */
+function rules_condition($name, $settings = array()) {
+  return rules_plugin_factory('condition', $name, $settings);
+}
+
+/**
+ * Creates a new rule.
+ *
+ * @param $variables
+ *   The array of variables to setup in the evaluation state, making them
+ *   available for the configuraion elements. Values for the variables need to
+ *   be passed as argument when the rule is executed.
+ *   Only instances with no variables can be embedded in configurations.
+ * @return Rule
+ */
+function rule($variables = NULL) {
+  return rules_plugin_factory('rule', $variables);
+}
+
+/**
+ * Creates a new reaction rule.
+ *
+ * @return RulesReactionRule
+ */
+function rules_reaction_rule() {
+  return rules_plugin_factory('reaction rule');
+}
+
+/**
+ * Creates a logical OR condition container.
+ *
+ * @param $variables
+ *   An optional array as for rule().
+ * @return RulesOr
+ */
+function rules_or($variables = NULL) {
+  return rules_plugin_factory('or', $variables);
+}
+
+/**
+ * Creates a logical AND condition container.
+ *
+ * @param $variables
+ *   An optional array as for rule().
+ * @return RulesAnd
+ */
+function rules_and($variables = NULL) {
+  return rules_plugin_factory('and', $variables);
+}
+
+/**
+ * Creates a loop.
+ *
+ * @param $settings
+ *   The loop settings, containing
+ *     'list:select': The data selector for the list to loop over.
+ *     'item:var': Optionally a name for the list item variable.
+ *     'item:label': Optionally a lebel for the list item variable.
+ * @param $variables
+ *   An optional array as for rule().
+ * @return RulesLoop
+ */
+function rules_loop($settings = array(), $variables = NULL) {
+  return rules_plugin_factory('loop', $settings, $variables);
+}
+
+/**
+ * Creates a rule set.
+ *
+ * @param $variables
+ *   An array as for rule().
+ * @param $provides
+ *   An array of the names of variables, which should be provided to the caller.
+ * @return RulesRuleSet
+ */
+function rules_rule_set($variables, $provides = array()) {
+  return rules_plugin_factory('rule set', $variables, $provides);
+}
+
+/**
+ * Creates an action set.
+ *
+ * @param $variables
+ *   An array as for rule().
+ * @param $provides
+ *   An array of the names of variables, which should be provided to the caller.
+ * @return RulesActionSet
+ */
+function rules_action_set($variables, $provides = array()) {
+  return rules_plugin_factory('action set', $variables, $provides);
+}
+
+/**
+ * Log a message to the rules logger.
+ *
+ * @param $msg
+ *   The message to log.
+ * @param $args
+ *   An array of placeholder arguments as used by t().
+ * @param $priority
+ *   A priority as defined by the RulesLog class.
+ * @param $scope
+ *   Optionally this may be used to denote the beginning (TRUE) or the end
+ *   (FALSE) of a new execution scope.
+ */
+function rules_log($msg, $args = array(), $priority = RulesLog::INFO, $scope = NULL) {
+  static $logger;
+  if (!isset($logger)) {
+    $logger = RulesLog::logger();
+  }
+  $logger->log($msg, $args, $priority, $scope);
+}
+
+/**
+ * Fetches module definitions for the given name
+ * Used for collecting events, rules, actions and condtions from other modules.
+ *
+ * @param $hook
+ *   The hook of the definitions to get from invoking hook_rules_{$hook}.
+ */
+function rules_fetch_data($hook) {
+  $data = array();
+  foreach (module_implements('rules_' . $hook) as $module) {
+    $result = call_user_func($module . '_rules_' . $hook);
+    if (isset($result) && is_array($result)) {
+      foreach ($result as $name => $item) {
+        $item += array('module' => $module);
+        $data[$name] = $item;
+      }
+    }
+  }
+  drupal_alter('rules_'. $hook, $data);
+  return $data;
+}
+
+/**
+ * Gets a rules cache entry.
+ */
+function &rules_get_cache($cid = 'data') {
+  static $cache;
+
+  if (!isset($cache)) {
+    // Speed up multiple calls by using drupal_static only for initializing.
+    $cache = &drupal_static(__FUNCTION__, array());
+  }
+
+  if (!isset($cache[$cid])) {
+    // The main 'data' cache includes translated strings, so each language is
+    // ached separately.
+    $cid_suffix = $cid == 'data' ? ':' . $GLOBALS['language']->language : '';
+
+    if ($get = cache_get($cid . $cid_suffix, 'cache_rules')) {
+      $cache[$cid] = $get->data;
+    }
+    elseif (!isset($cache['data']) && $cid != 'data') {
+      // Cache hasn't been initialized yet, do that by retrieving 'data' cache.
+      rules_get_cache('data');
+      return rules_get_cache($cid);
+    }
+    elseif (!isset($cache['data'])) {
+      // There is no 'data' cache so we need to rebuild it. Make sure subsequent
+      // cache gets of the main 'data' cache during rebuild get the interim
+      // cache by passing in the reference of the static cache variable.
+      _rules_rebuild_cache($cache['data']);
+    }
+    else {
+      $cache[$cid] = FALSE;
+    }
+  }
+  return $cache[$cid];
+}
+
+/**
+ * Rebuilds the main rules cache ('data') and invokes rebuildCache() methods on
+ * all mentioned class, which in turn rebuild their own caches or update the
+ * main cache.
+ */
+function _rules_rebuild_cache(&$cache) {
+  foreach(array('data_info', 'plugin_info') as $hook) {
+    $cache[$hook] = rules_fetch_data($hook);
+  }
+  foreach ($cache['plugin_info'] as $name => &$info) {
+    // Let the items add something to the cache.
+    $item = new $info['class']();
+    $item->rebuildCache($info, $cache);
+  }
+  $cid_suffix = ':' . $GLOBALS['language']->language;
+  cache_set('data' . $cid_suffix, $cache, 'cache_rules');
+}
+
+/**
+ * Implements hook_flush_caches().
+ */
+function rules_flush_caches() {
+  variable_del('rules_empty_sets');
+  return array('cache_rules');
+}
+
+/**
+ * Clears the rule set cache
+ *
+ * @param $immediate
+ *   If FALSE, the static cache will be kept until the next page
+ *   load. If set to TRUE static caches will be cleared too.
+ */
+function rules_clear_cache($immediate = FALSE) {
+  cache_clear_all('*', 'cache_rules', TRUE);
+  variable_del('rules_empty_sets');
+  if ($immediate) {
+    drupal_static_reset('rules_get_cache');
+    entity_get_controller('rules_config')->resetCache();
+  }
+}
+
+
+/**
+ * Wraps the given data.
+ *
+ * @param $data
+ *   If available, the actual data, else NULL.
+ * @param $info
+ *   An array of info about this data.
+ * @param $force
+ *   Usually data is only wrapped if really needed. If set to TRUE, wrapping the
+ *   data is forced, so primitive data types are also wrapped.
+ * @return EntityMetadataWrapper
+ *   An EntityMetadataWrapper or the unwrapped data.
+ *
+ * @see hook_rules_data_info()
+ */
+function &rules_wrap_data($data = NULL, $info, $force = FALSE) {
+  // If the data is already wrapped, use the existing wrapper.
+  if ($data instanceof EntityMetadataWrapper) {
+    return $data;
+  }
+  $cache = rules_get_cache();
+  // Define the keys to be passed through to the metadata wrapper.
+  $wrapper_keys = array_flip(array('property info', 'property defaults'));
+  if (isset($cache['data_info'][$info['type']])) {
+    $info += array_intersect_key($cache['data_info'][$info['type']], $wrapper_keys);
+  }
+  // If a list is given, also add in the info of the item type.
+  $list_item_type = entity_property_list_extract_type($info['type']);
+  if ($list_item_type && isset($cache['data_info'][$list_item_type])) {
+    $info += array_intersect_key($cache['data_info'][$list_item_type], $wrapper_keys);
+  }
+  // By default we do not wrap the data, except for completely unknown types.
+  if (!empty($cache['data_info'][$info['type']]['wrap']) || $list_item_type || $force || empty($cache['data_info'][$info['type']])) {
+    unset($info['handler']);
+    $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
+    return $wrapper;
+  }
+  return $data;
+}
+
+/**
+ * Unwraps the given data, if it's wrapped.
+ *
+ * @param $data
+ *   An array of wrapped data.
+ * @param $info
+ *   Optionally an array of info about how to unwrap the data. Keyed as $data.
+ * @return
+ *   An array containing unwrapped or passed through data.
+ */
+function rules_unwrap_data(array $data, $info = array()) {
+  foreach ($data as $key => $entry) {
+    // If it's a wrapper, unwrap.
+    if ($entry instanceof EntityMetadataWrapper) {
+      $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
+      $data[$key] = $entry->value($options);
+    }
+  }
+  return $data;
+}
+
+/**
+ * Creates a new instance of a the given rules plugin.
+ *
+ * @return RulesPlugin
+ */
+function rules_plugin_factory($plugin_name, $arg1 = NULL, $arg2 = NULL) {
+  $cache = rules_get_cache();
+  if (isset($cache['plugin_info'][$plugin_name]['class'])) {
+    return new $cache['plugin_info'][$plugin_name]['class']($arg1, $arg2);
+  }
+}
+
+/**
+ * Implementation of hook_rules_plugin_info().
+ *
+ * Note that the cache is rebuilt in the order of the plugins. Therefore the
+ * condition and action plugins must be at the top, so that any components
+ * re-building their cache can create configurations including properly setup-ed
+ * actions and conditions.
+ */
+function rules_rules_plugin_info() {
+  return array(
+    'condition' => array(
+      'class' => 'RulesCondition',
+      'embeddable' => 'RulesConditionContainer',
+      'extenders' => array (
+        'RulesPluginImplInterface' => array(
+          'class' => 'RulesAbstractPluginDefaults',
+        ),
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesAbstractPluginUI',
+        ),
+      ),
+    ),
+    'action' => array(
+      'class' => 'RulesAction',
+      'embeddable' => 'RulesActionContainer',
+      'extenders' => array (
+        'RulesPluginImplInterface' => array(
+          'class' => 'RulesAbstractPluginDefaults',
+        ),
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesAbstractPluginUI',
+        ),
+      ),
+    ),
+    'or' => array(
+      'label' => t('Condition set (OR)'),
+      'class' => 'RulesOr',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesConditionContainerUI',
+        ),
+      ),
+    ),
+    'and' => array(
+      'label' => t('Condition set (AND)'),
+      'class' => 'RulesAnd',
+      'embeddable' => 'RulesConditionContainer',
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesConditionContainerUI',
+        ),
+      ),
+    ),
+    'action set' => array(
+      'label' => t('Action set'),
+      'class' => 'RulesActionSet',
+      'embeddable' => FALSE,
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesActionContainerUI',
+        ),
+      ),
+    ),
+    'rule' => array(
+      'label' => t('Rule'),
+      'class' => 'Rule',
+      'embeddable' => 'RulesRuleSet',
+      'component' => TRUE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesRuleUI',
+        ),
+      ),
+    ),
+    'loop' => array(
+      'class' => 'RulesLoop',
+      'embeddable' => 'RulesActionContainer',
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesLoopUI',
+        ),
+      ),
+    ),
+    'reaction rule' => array(
+      'class' => 'RulesReactionRule',
+      'embeddable' => FALSE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesReactionRuleUI',
+        ),
+      ),
+    ),
+    'event set' => array(
+      'class' => 'RulesEventSet',
+      'embeddable' => FALSE,
+    ),
+    'rule set' => array(
+      'label' => t('Rule set'),
+      'class' => 'RulesRuleSet',
+      'component' => TRUE,
+      // Rule sets don't get embedded - we use a separate action to execute.
+      'embeddable' => FALSE,
+      'extenders' => array(
+        'RulesPluginUIInterface' => array(
+          'class' => 'RulesRuleSetUI',
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_entity_info().
+ */
+function rules_entity_info() {
+  return array(
+    'rules_config' => array(
+      'label' => t('Rules configuration'),
+      'controller class' => 'RulesEntityController',
+      'base table' => 'rules_config',
+      'fieldable' => TRUE,
+      'entity keys' => array(
+        'id' => 'id',
+        'name' => 'name',
+        'label' => 'label',
+      ),
+      'static cache' => TRUE,
+      'bundles' => array(),
+      'exportable' => TRUE,
+      'export' => array(
+        'default hook' => 'default_rules_configuration',
+      ),
+      'access callback' => 'rules_config_access',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_hook_info().
+ */
+function rules_hook_info() {
+  foreach(array('plugin_info', 'data_info', 'condition_info', 'action_info', 'event_info', 'file_info', 'evaluator_info', 'data_processor_info') as $hook) {
+    $hooks['rules_' . $hook] = array(
+      'group' => 'rules',
+    );
+    $hooks['rules_' . $hook . '_alter'] = array(
+      'group' => 'rules',
+    );
+  }
+  $hooks['default_rules_configuration'] = array(
+    'group' => 'rules_defaults',
+  );
+  $hooks['default_rules_configuration_alter'] = array(
+    'group' => 'rules_defaults',
+  );
+  return $hooks;
+}
+
+/**
+ * Load rule configurations from the database.
+ *
+ * This function should be used whenever you need to load more than one entity
+ * from the database. The entities are loaded into memory and will not require
+ * database access if loaded again during the same page request.
+ *
+ * @see hook_entity_info()
+ * @see RulesEntityController
+ *
+ * @param $names
+ *   An array of rules configuration names or FALSE to load all.
+ * @param $conditions
+ *   An array of conditions in the form 'field' => $value.
+ *
+ * @return
+ *   An array of rule configurations indexed by their ids.
+ */
+function rules_config_load_multiple($names = array(), $conditions = array()) {
+  return entity_get_controller('rules_config')->load($names, $conditions);
+}
+
+/**
+ * Loads a single rule configuration from the database.
+ *
+ * @see rules_config_load_multiple()
+ *
+ * @return RulesPlugin
+ */
+function rules_config_load($name) {
+  $result = entity_get_controller('rules_config')->load(array($name));
+  return reset($result);
+}
+
+/**
+ * Returns an array of configured components.
+ *
+ * For actually executing a component use rules_invoke_component(), as this
+ * retrieves the component from cache instead.
+ *
+ * @param $label
+ *   Whether to return only the label or the whole component object.
+ * @param $type
+ *   Optionally filter for 'action' or 'condition' components.
+ * @param $conditions
+ *   An array of additional conditions as required by rules_config_load().
+ *
+ * @return
+ *   An array keyed by component name containing either the label or the config.
+ */
+function rules_get_components($label = FALSE, $type = NULL, $conditions = array()) {
+  $cache = rules_get_cache();
+  $plugins = array_keys(rules_filter_array($cache['plugin_info'], 'component', TRUE));
+  $conditions = $conditions + array('plugin' => $plugins);
+  $faces = array(
+    'action' => 'RulesActionInterface',
+    'condition' => 'RulesConditionInterface',
+  );
+  $items = array();
+  foreach (rules_config_load_multiple(FALSE, $conditions) as $name => $config) {
+    if (!isset($type) || $config instanceof $faces[$type]) {
+      $items[$name] = $label ? $config->label() : $config;
+    }
+  }
+  return $items;
+}
+
+/**
+ * Implement hook_query_TAG_alter().
+ */
+function rules_query_rules_config_load_multiple_alter(QueryAlterableInterface $query) {
+  // Support using 'event' => $name as condition.
+  $conditions =& $query->conditions();
+  foreach ($conditions as &$condition) {
+    if ($condition['field'] == 'base.event') {
+      $query->join('rules_trigger', 'tr', "base.id = tr.id");
+      $condition['field'] = 'tr.event';
+    }
+  }
+}
+
+/**
+ * Delete rule configurations from database.
+ *
+ * @param $ids
+ *   An array of entity IDs.
+ */
+function rules_config_delete(array $ids) {
+  return entity_get_controller('rules_config')->delete($ids);
+}
+
+
+/**
+ * Implement hook_rules_config_insert().
+ */
+function rules_rules_config_insert($rule_config) {
+  // If it's an reactive rule write entries in trigger table.
+  if ($rule_config instanceof RulesTriggerableInterface) {
+    foreach ($rule_config->events() as $event) {
+      db_insert('rules_trigger')
+        ->fields(array(
+        'id' => $rule_config->id,
+        'event' => $event,
+      ))
+      ->execute();
+    }
+  }
+}
+
+/**
+ * Implement hook_rules_config_update().
+ */
+function rules_rules_config_update($rule_config) {
+  if ($rule_config instanceof RulesTriggerableInterface) {
+    rules_rules_config_delete($rule_config);
+    rules_rules_config_insert($rule_config);
+  }
+}
+
+/**
+ * Implement hook_rules_config_delete().
+ */
+function rules_rules_config_delete($rule_config) {
+  if ($rule_config instanceof RulesTriggerableInterface) {
+    db_delete('rules_trigger')
+      ->condition('id', $rule_config->id)
+      ->execute();
+  }
+}
+
+/**
+ * Invokes a hook and the associated rules event.
+ *
+ * Calling this function does the same as calling module_invoke_all() and
+ * rules_invoke_event() separately, however merges both functions into one in
+ * order to ease usage and to work efficiently.
+ *
+ * @param $hook
+ *   The name of the hook / event to invoke.
+ * @param ...
+ *   Arguments to pass to the hook / event.
+ *
+ * @return
+ *   An array of return values of the hook implementations. If modules return
+ *   arrays from their implementations, those are merged into one array.
+ */
+function rules_invoke_all() {
+  // Copied code from module_invoke_all().
+  $args = func_get_args();
+  $hook = $args[0];
+  unset($args[0]);
+  $return = array();
+  foreach (module_implements($hook) as $module) {
+    $function = $module . '_' . $hook;
+    if (function_exists($function)) {
+      $result = call_user_func_array($function, $args);
+      if (isset($result) && is_array($result)) {
+        $return = array_merge_recursive($return, $result);
+      }
+      elseif (isset($result)) {
+        $return[] = $result;
+      }
+    }
+  }
+  // Invoke the event.
+  rules_invoke_event_by_args($hook, $args);
+
+  return $return;
+}
+
+/**
+ * Invokes configured rules for the given event.
+ *
+ * @param $event_name
+ *   The event's name.
+ * @param ...
+ *   Pass parameters for the variables provided by this event, as defined in
+ *   hook_rules_event_info(). Example given:
+ *   @code
+ *     rules_invoke_event('node_insert', $node);
+ *   @endcode
+ *
+ * @see rules_invoke_event_by_args()
+ */
+function rules_invoke_event() {
+  global $conf;
+
+  $args = func_get_args();
+  $event_name = $args[0];
+  unset($args[0]);
+  // For invoking the rules event we directly acccess the global $conf. This is
+  // fast without having to introduce another static cache.
+  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+    $event->executeByArgs($args);
+  }
+}
+
+/**
+ * Invokes configured rules for the given event.
+ *
+ * @param $event_name
+ *   The event's name.
+ * @param $args
+ *   An array of parameters for the variables provided by the event, as defined
+ *   in hook_rules_event_info(). Either pass an array keyed by the variable
+ *   names or a numerically indexed array, in which case the ordering of the
+ *   passed parameters has to match the order of the specified variables.
+ *   Example given:
+ *   @code
+ *     rules_invoke_event('node_insert', array('node' => $node));
+ *   @endcode
+ *
+ * @see rules_invoke_event()
+ */
+function rules_invoke_event_by_args($event_name, $args = array()) {
+  global $conf;
+
+  // For invoking the rules event we directly acccess the global $conf. This is
+  // fast without having to introduce another static cache.
+  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+    $event->executeByArgs($args);
+  }
+}
+
+/**
+ * Invokes a rule component, e.g. a rule set.
+ *
+ * @param $component_name
+ *   The component's name.
+ * @param $args
+ *   Pass further parameters as required for the invoked component.
+ *
+ * @return
+ *   The variables as provided by the component.
+ */
+function rules_invoke_component() {
+  $args = func_get_args();
+  $name = array_shift($args);
+  if ($component = rules_get_cache('comp_' . $name)) {
+    return $component->executeByArgs($args);
+  }
+}
+
+/**
+ * Filters the given array of arrays by keeping only entries which have $key set
+ * to the value of $value.
+ *
+ * @param $array
+ *   The array of arrays to filter.
+ * @param $key
+ *   The key used for the comparison.
+ * @param $value
+ *   The value to compare the array's entry to.
+ * @return array
+ *   The filtered array.
+ */
+function rules_filter_array($array, $key, $value) {
+  $return = array();
+  foreach ($array as $i => $entry) {
+    $entry += array($key => NULL);
+    if ($entry[$key] == $value) {
+      $return[$i] = $entry;
+    }
+  }
+  return $return;
+}
+
+/**
+ * Merges the $update array into $array making sure no values of $array not
+ * appearing in $update are lost.
+ *
+ * @return
+ *   The updated array.
+ */
+function rules_update_array(array $array, array $update) {
+  foreach ($update as $key => $data) {
+    if (isset($array[$key]) && is_array($array[$key]) && is_array($data)) {
+      $array[$key] = rules_update_array($array[$key], $data);
+    }
+    else {
+      $array[$key] = $data;
+    }
+  }
+  return $array;
+}
+
+/**
+ * Extracts the property with the given name.
+ *
+ * @param $arrays
+ *   An array of arrays from which a property is to be extracted.
+ * @param $key
+ *   The name of the property to extract.
+ *
+ * @return An array of extracted properties, keyed as in $arrays-
+ */
+function rules_extract_property($arrays, $key) {
+  $data = array();
+  foreach ($arrays as $name => $item) {
+    $data[$name] = $item[$key];
+  }
+  return $data;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function rules_theme() {
+  return array(
+    'rules_elements' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_content_group' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_parameter_configuration' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_provides_variable_view' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_data_selector_help' => array(
+      'variables' => array('parameter' => NULL, 'variables' => NULL),
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_ui_variable_form' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_log' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+    'rules_autocomplete' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function rules_permission() {
+  return array(
+    'administer rules' => array(
+      'title' => t('Administer rule configurations'),
+    ),
+  );
+}
+
+/**
+ * Callback for loading rules configuration elements.
+ */
+function rules_element_load($element_id, $config_name) {
+  $config = rules_config_load($config_name);
+  return $config->elementMap()->lookup($element_id);
+}
+
+/**
+ * Callback for getting the title as configured.
+ */
+function rules_get_title($text, $element) {
+  if ($element instanceof RulesPlugin) {
+    $cache = rules_get_cache();
+    $plugin = $element->plugin();
+    $plugin = isset($cache['plugin_info'][$plugin]['label']) ? $cache['plugin_info'][$plugin]['label'] : $plugin;
+    $plugin = drupal_strtolower(drupal_substr($plugin, 0, 1)) . drupal_substr($plugin, 1);
+    return t($text, array('!label' => $element->label(), '!plugin' => $plugin));
+  }
+  // As fallback treat $element as simple string.
+  return t($text, array('!plugin' => $element));
+}
+
+/**
+ * Implements hook_page_build() to add the rules debug log to the page bottom.
+ */
+function rules_page_build(&$page) {
+  // Invoke a the page redirect, in case the action has been executed.
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    // $_REQUEST['destination'] has been set, drupal_goto() will use that.
+    drupal_goto($GLOBALS['_rules_action_drupal_goto_do']);
+  }
+
+  if (isset($_SESSION['rules_debug'])) {
+    $region = variable_get('rules_debug_region', 'help');
+    foreach ($_SESSION['rules_debug'] as $log) {
+      $page[$region]['rules_debug'][] = array(
+        '#markup' => $log,
+      );
+      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
+    }
+    unset($_SESSION['rules_debug']);
+  }
+  if (variable_get('rules_debug', FALSE) || (user_access('administer rules') && RulesLog::logger()->hasErrors())) {
+    $logger = RulesLog::logger();
+    $region = variable_get('rules_debug_region', 'help');
+    if ($log = $logger->render()) {
+      $page[$region]['rules_debug'][] = array(
+        '#markup' => $log,
+      );
+      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
+      $logger->clear();
+    }
+  }
+}
+
+/**
+ * Implements hook_exit().
+ */
+function rules_exit() {
+  if (variable_get('rules_debug', FALSE) || (user_access('administer rules') && RulesLog::logger()->hasErrors())) {
+    if ($log = RulesLog::logger()->render()) {
+      // Keep the log in the session so we can show it on the next page.
+      $_SESSION['rules_debug'][] = $log;
+    }
+  }
+}
+
+/**
+ * Implements hook_element_info().
+ */
+function rules_element_info() {
+  // A duration form element for rules. Needs ui.forms.inc included.
+  $types['rules_duration'] = array(
+    '#input' => TRUE,
+    '#tree' => TRUE,
+    '#default_value' => 0,
+    '#value_callback' => 'rules_ui_element_duration_value',
+    '#process' => array('rules_ui_element_duration_process'),
+    '#after_build' => array('rules_ui_element_duration_after_build'),
+    '#pre_render' => array('form_pre_render_conditional_form_element'),
+  );
+  $types['rules_data_selection'] = array(
+    '#input' => TRUE,
+    '#pre_render' => array('form_pre_render_conditional_form_element'),
+    '#process' => array('rules_data_selection_process'),
+    '#theme' => 'rules_autocomplete',
+  );
+  return $types;
+}
+
+/**
+ * Implements hook_modules_enabled().
+ */
+function rules_modules_enabled($modules) {
+  rules_clear_cache();
+}
+
+/**
+ * Implements hook_modules_disabled().
+ */
+function rules_modules_disabled($modules) {
+  rules_clear_cache();
+  //TODO: Disable configs with now broken dependencies?
+}
+
+/**
+ * Access callback for rules configurations.
+ *
+ * @see entity_access()
+ */
+function rules_config_access($op, $rules_config, $account = NULL) {
+  return user_access('administer rules', $account);
+}

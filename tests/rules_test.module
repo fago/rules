@@ -1,0 +1,26 @@
+<?php
+// $Id$
+
+/**
+ * @file Rules test module.
+ */
+
+/**
+ * Implements hook_entity_property_info_alter() to add a property without
+ * access.
+ */
+function rules_test_entity_property_info_alter(&$info) {
+  $properties =& $info['site']['properties'];
+
+  $properties['no-access-user'] = array(
+    'label' => t("Logged in user"),
+    'description' => t("The currently logged in user."),
+    'getter callback' => 'entity_metadata_system_get_properties',
+    'access callback' => 'rules_test_no_access',
+    'type' => 'user',
+  );
+}
+
+function rules_test_no_access($op) {
+  return $op == 'edit' ? FALSE : TRUE;
+}

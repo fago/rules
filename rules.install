@@ -1,0 +1,120 @@
+<?php
+// $Id$
+
+
+/**
+ * @file Rules - Installation file.
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function rules_install() {
+  module_load_include('inc', 'rules', 'modules/events');
+  // Set the modules' weight to 20, see
+  // http://drupal.org/node/445084#comment-1533280 for the reasoning.
+  db_query("UPDATE {system} SET weight = 20 WHERE name = 'rules'");
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function rules_uninstall() {
+  variable_del('rules_empty_sets');
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function rules_schema() {
+  $schema['rules_config'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'The internal identifier for any configuration.',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The name of the configuration.',
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The label of the configuration.',
+        'default' => 'unlabeled',
+      ),
+     'plugin' => array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'The name of the plugin of this configuration.',
+      ),
+      'active' => array(
+        'description' => 'Boolean indicating whether the configuration is active. Usage depends on how the using module makes use of it.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Weight of the configuration. Usage depends on how the using module makes use of it.',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'size' => 'big',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+        'description' => 'Everything else, serialized.',
+      ),
+    ) + entity_exportable_schema_fields(),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'name' => array('name'),
+    ),
+  );
+  $schema['rules_trigger'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier of the configuration.',
+      ),
+      'event' => array(
+        'type' => 'varchar',
+        'length' => '127',
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'The name of the event on which the configuration should be triggered.',
+      ),
+    ),
+    'primary key' => array('id', 'event'),
+    'foreign keys' => array(
+      'id' => array('rules_config' => 'id'),
+    ),
+  );
+  $schema['cache_rules'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_rules']['description'] = 'Cache table for the rules engine to store configured items.';
+  return $schema;
+}
+
+/**
+ * Add in the exportable entity db columns as required by the entity API.
+ */
+function rules_update_7200() {
+  db_add_field('rules_config', 'status', array(
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => ENTITY_CUSTOM,
+    'size' => 'tiny',
+    'description' => 'The exportable status of the entity.',
+  ));
+  // The module column did already exist before.
+}
