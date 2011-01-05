@@ -471,8 +471,12 @@ function rules_ui_remove_event_submit($form, &$form_state) {
  * This finalises the auto completion callback path by appending the form build
  * id.
  */
-function rules_data_selection_autocomplete_path($element, &$form_state, $form) {
+function rules_data_selection_process($element, &$form_state, $form) {
   $element['#autocomplete_path'] .= '/' . $form['#build_id'];
+  // Workaround for problems with jquery css in seven theme.
+  if ($GLOBALS['theme'] == 'seven') {
+    drupal_add_css(drupal_get_path('module', 'rules') . '/ui/rules.ui.seven.css');
+  }
   $form_state['cache'] = TRUE;
   return $element;
 }

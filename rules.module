@@ -938,7 +938,7 @@ function rules_element_info() {
   $types['rules_data_selection'] = array(
     '#input' => TRUE,
     '#pre_render' => array('form_pre_render_conditional_form_element'),
-    '#process' => array('rules_data_selection_autocomplete_path'),
+    '#process' => array('rules_data_selection_process'),
     '#theme' => 'rules_autocomplete',
   );
   return $types;
