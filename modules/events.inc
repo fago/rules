@@ -9,72 +9,21 @@
  * @{
  */
 
-/**
- * Implements hook_entity_load().
- *
- * We keep a clone of the unchanged entity, as loaded from the database in a
- * static variable. We update/create this static also on update/insert. That way
- * the static variable always represents the entity as currently saved.
- *
- * @see rules_entity_insert()
- * @see rules_entity_update()
- * @see rules_events_entity_unchanged()
- */
-function rules_entity_load($entities, $type) {
-  $unchanged = &drupal_static('rules_entity_unchanged', array());
-  foreach ($entities as $id => $entity) {
-    $unchanged[$type][$id] = clone $entity;
-  }
-}
-
-/**
- * Implements hook_entity_insert().
- */
-function rules_entity_insert($entity, $type) {
-  $unchanged = &drupal_static('rules_entity_unchanged', array());
-  list($id) = entity_extract_ids($type, $entity);
-  $unchanged[$type][$id] = clone $entity;
-  unset($unchanged[$type][$id]->is_new);
-}
-
-/**
- * Implements hook_entity_update().
- */
-function rules_entity_update($entity, $type) {
-  $unchanged = &drupal_static('rules_entity_unchanged', array());
-  list ($id) = entity_extract_ids($type, $entity);
-  $unchanged[$type][$id] = clone $entity;
-}
 
 /**
  * Gets an unchanged entity that doesn't contain any recent changes. This
  * handler assumes the name of the variable for the changed entity is the same
  * as for the unchanged entity but without the trailing "_unchanged"; e.g., for
  * the "node_unchanged" variable the handler assumes there is a "node" variable.
- *
- * Note that this handler only works properly if the entity has been loaded
- * with entity_load() before it is saved. Thus if a module serializes an
- * entity and saves it afterwards on another page load, the handler would fail.
- *
- * @see rules_entity_load()
  */
 function rules_events_entity_unchanged($arguments, $name, $info) {
-  $unchanged = &drupal_static('rules_entity_unchanged', array());
   // Cut of the trailing _unchanged.
   $var_name = substr($name, 0, -10);
-  $type = $info['type'];
-  list($id) = entity_extract_ids($type, $arguments[$var_name]);
-
-  if (isset($id) && isset($unchanged[$type][$id])) {
-    return $unchanged[$type][$id];
-  }
-  // Else try loading fresh from the db. This works only for 'presave' though.
-  elseif (isset($id)) {
-    $result = entity_load($type, array($id));
-    return isset($result[$id]) ? $result[$id] : NULL;
+  $entity = $arguments[$var_name];
+  if (isset($entity->original)) {
+    return $entity->original;
   }
 }
-
 
 /**
  * Node events
