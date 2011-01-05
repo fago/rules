@@ -311,13 +311,19 @@ function rules_ui_delete_element($form, &$form_state, $rules_config, $rules_elem
 function rules_ui_delete_element_validate($form, &$form_state) {
   // Save the parent for determining the right redirect target on submit.
   $form_state['element_parent'] = $form_state['rules_element']->parentElement();
+  $removed_plugin = $form_state['rules_element']->plugin();
   $form_state['rules_element']->delete();
   try {
     $form_state['rules_config']->integrityCheck();
   }
   catch (RulesException $e) {
-    //TODO: Add visual feedback which element had troubles.
-    form_set_error('', $e->getMessage());
+    $args = array(
+      '@plugin' => $e->element->plugin(),
+      '%label' => $e->element->label(),
+      '@removed-plugin' => $removed_plugin,
+      '!url' => url(RulesPluginUI::path($form_state['rules_config']->name, 'edit', $e->element)),
+    );
+    form_set_error('', t('Unable to delete the @removed-plugin as some of its provided variables are utilized by the @plugin <a href="!url">%label</a>.', $args));
   }
 }
 
@@ -396,7 +402,12 @@ function rules_ui_add_event_validate($form, &$form_state) {
       $rules_config->integrityCheck();
     }
     catch (RulesException $e) {
-      form_set_error('event', t('Unable to add this event as it does not provide all utilized variables. Error message: "!message"', array('!message' => $e->getMessage())));
+      $args = array(
+        '@plugin' => $e->element->plugin(),
+        '%label' => $e->element->label(),
+        '!url' => url(RulesPluginUI::path($form_state['rules_config']->name, 'edit', $e->element)),
+      );
+      form_set_error('', t('Unable to add this event as it does not provide all variables utilized by the @plugin <a href="!url">%label</a>.', $args));
     }
   }
 }
@@ -434,8 +445,12 @@ function rules_ui_remove_event_validate($form, &$form_state) {
     $rules_config->integrityCheck();
   }
   catch (RulesException $e) {
-    //TODO: Add visual feedback which element had troubles.
-    form_set_error('', $e->getMessage());
+    $args = array(
+      '@plugin' => $e->element->plugin(),
+      '%label' => $e->element->label(),
+      '!url' => url(RulesPluginUI::path($form_state['rules_config']->name, 'edit', $e->element)),
+    );
+    form_set_error('', t('Unable to remove the event as some of its provided variables are utilized by the @plugin <a href="!url">%label</a>.', $args));
   }
 }
 

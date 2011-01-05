@@ -329,7 +329,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->element->integrityCheck();
     }
     catch (RulesException $e) {
-      form_set_error(implode('][', $e->keys), $e->getMessage());
+      form_set_error(implode('][', $e->keys), t('The integrity check failed with the following error message: "!message"', array('!message' => $e->getMessage())));
     }
     if (!empty($form['settings'])) {
       $this->settingsFormValidate($form, $form_state);
