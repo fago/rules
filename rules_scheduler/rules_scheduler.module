@@ -55,11 +55,10 @@ function rules_scheduler_menu() {
   );
   $items[RULES_SCHEDULER_PATH .'/%rules_scheduler_task/delete'] = array(
     'title' => 'Delete a scheduled task',
-    'type' => MENU_LOCAL_TASK,
+    'type' => MENU_CALLBACK,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('rules_scheduler_delete_task', 5),
     'access arguments' => array('administer rules'),
-    'load arguments' => array(5),
     'file' => 'rules_scheduler.admin.inc',
   );
   return $items;
@@ -71,7 +70,7 @@ function rules_scheduler_menu() {
 function rules_scheduler_task_load($tid) {
   $result = db_select('rules_scheduler', 'r')
     ->fields('r')
-    ->condition('tid', $tid)
+    ->condition('tid', (int) $tid)
     ->execute();
   return $result->fetchAssoc();
 }
