@@ -171,7 +171,10 @@ function rules_rules_condition_info() {
  * Condition Implementation: Textual comparison.
  */
 function rules_condition_text_compare($text1, $text2, $settings) {
-  return $settings['regex'] ? ereg($text2, $text1) : $text1 == $text2;
+  if ($settings['regex']) {
+    return (bool) preg_match('/'. $text2 .'/', $text1);
+  }
+  return $text1 == $text2;
 }
 
 /**

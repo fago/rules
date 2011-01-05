@@ -734,7 +734,7 @@ function rules_admin_new_variables_form_validate($form, &$form_state) {
     if (isset($variables[ $values['name'] ]) && ($values['name'] != $old_name || !isset($form_state['element']['#id']))) {
       form_set_error(implode('][', array('new', $old_name, 'name')), t('A variable with this name does already exist. Please choose another name.'));
     }
-    if (!eregi('^[0-9a-z_]*$', $values['name'])) {
+    if (!preg_match('/^[0-9a-zA-Z_]*$/', $values['name'])) {
       form_set_error(implode('][', array('new', $old_name, 'name')), t('The name contains not allowed characters.'));
     }
   }
