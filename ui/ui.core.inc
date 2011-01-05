@@ -738,11 +738,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   /**
    * Returns an array of options to use with a select for the items specified
    * in the given hook.
+   *
+   * @param $hook
+   *   The hook to use to fetch data, or an array of data to use.
    */
   public static function getOptions($hook) {
     $sorted_data = array();
     $ungrouped = array();
-    $data = rules_fetch_data($hook);
+    $data = !is_array($hook) ? rules_fetch_data($hook) : $hook;
     foreach ($data as $name => $info) {
       if (!empty($info['group'])) {
         $sorted_data[drupal_ucfirst($info['group'])][$name] = drupal_ucfirst($info['label']);

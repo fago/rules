@@ -337,7 +337,7 @@ class RulesUIController extends EntityDefaultUIController {
     );
     $items[$base_path . '/manage/%rules_config/add/event'] = array(
       'title callback' => 'rules_get_title',
-      'title arguments' => array('Addin events to !plugin "!label"', $base_count + 1),
+      'title arguments' => array('Adding event to !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_add_event', $base_count + 1, $base_path),
       'access arguments' => array('administer rules'),

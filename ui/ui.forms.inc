@@ -363,18 +363,23 @@ function rules_ui_edit_element_submit($form, &$form_state) {
 /**
  * Add a new event.
  */
-function rules_ui_add_event($form, &$form_state, $rules_config, $base_path) {
+function rules_ui_add_event($form, &$form_state, RulesReactionRule $rules_config, $base_path) {
   RulesPluginUI::$basePath = $base_path;
   $form_state += array('rules_config' => $rules_config);
+  $events = array_diff_key(rules_fetch_data('event_info'), array_flip($rules_config->events()));
+
+  $form['help'] = array(
+    '#markup' => t('Select the event to add, however note that only events providing all utilized variables can be added.'),
+  );
   $form['event'] = array(
     '#type' => 'select',
     '#title' => t('React on event'),
-    '#options' => RulesPluginUI::getOptions('event_info'),
+    '#options' => RulesPluginUI::getOptions($events),
     '#description' => t('Whenever the event occurrs, rule evaluation is triggered.'),
   );
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save'),
+    '#value' => t('Add'),
   );
   $form_state['redirect'] = RulesPluginUI::path($rules_config->name);
   return $form;
@@ -387,7 +392,12 @@ function rules_ui_add_event_validate($form, &$form_state) {
   if (!empty($form_state['values']['event'])) {
     $rules_config = $form_state['rules_config'];
     $rules_config->event($form_state['values']['event']);
-    $rules_config->form_validate($form, $form_state);
+    try {
+      $rules_config->integrityCheck();
+    }
+    catch (RulesException $e) {
+      form_set_error('event', t('Unable to add this event as it does not provide all utilized variables. Error message: "!message"', array('!message' => $e->getMessage())));
+    }
   }
 }
 
