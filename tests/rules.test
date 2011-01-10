@@ -383,6 +383,13 @@ class RulesTestCase extends DrupalWebTestCase {
     $text1 = RulesLog::logger()->render();
     $text2 = RulesTestCase::t('Not evaluating rule set %rules_test_set_2 to prevent recursion.', array('rules_test_set_2'));
     $this->assertTrue((strpos($text1, $text2) !== FALSE), "Recursion of component invocation prevented.");
+
+    // Test executing the component provided in code via the action. This makes
+    // sure the component in code has been properly picked up.
+    $node->status = 0;
+    node_save($node);
+    rules_action('component_rules_test_action_set')->execute($node);
+    $this->assertTrue($node->status == 1, 'Component provided in code has been executed.');
   }
 
 

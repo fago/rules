@@ -19,5 +19,10 @@ function rules_test_default_rules_configuration() {
        ->action('drupal_message', array('message' => 'A node has been updated.'));
 
   $configs['rules_test_default_1'] = $rule;
+
+  $action_set = rules_action_set(array('node' => array('type' => 'node', 'label' => 'Content')));
+  $action_set->action('node_publish');
+  $configs['rules_test_action_set'] = $action_set;
+
   return $configs;
 }
