@@ -89,7 +89,7 @@ function rules_scheduler_task_delete($tid) {
  *
  * @param $task
  *   An array representing the task with the following keys:
- *   - config: The machine readyble name of the to be scheduled component.
+ *   - config: The machine readable name of the to be scheduled component.
  *   - date: Timestamp when the component should be executed.
  *   - state: An rules evaluation state to use for scheduling.
  *   - identifier: User provided string to identify the task per scheduled
@@ -104,6 +104,16 @@ function rules_scheduler_schedule_task($task) {
       ->execute();
   }
   drupal_write_record('rules_scheduler', $task);
+}
+
+/**
+ * Implements hook_rules_config_delete().
+ */
+function rules_scheduler_rules_config_delete($rules_config) {
+  // Delete all tasks scheduled for this config.
+  db_delete('rules_scheduler')
+    ->condition('config', $rules_config->name)
+    ->execute();
 }
 
 /**
