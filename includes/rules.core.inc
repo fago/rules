@@ -794,6 +794,22 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
+   * Checks if the configuration has a certain exportable status.
+   *
+   * @param $status
+   *   A status constant, i.e. one of ENTITY_CUSTOM, ENTITY_IN_CODE,
+   *   ENTITY_OVERRIDDEN or ENTITY_FIXED.
+   *
+   * @return
+   *   TRUE if the configuration has the status, else FALSE.
+   *
+   * @see entity_has_status()
+   */
+  public function hasStatus($status) {
+    return $this->isRoot() && isset($this->status) && ($this->status & $status) == $status;
+  }
+
+  /**
    * Remove circular object references so the PHP garbage collector does its
    * work.
    */

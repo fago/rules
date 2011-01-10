@@ -97,6 +97,20 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config, $b
 }
 
 /**
+ * A simple form just showing a textarea with the export.
+ */
+function rules_ui_form_export_rules_config($form, &$form_state, $rules_config, $base_path) {
+  $form['export'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Export'),
+    '#description' => t('For importing copy the content of the text area and paste it into the import page.'),
+    '#rows' => 25,
+    '#default_value' => $rules_config->export(),
+  );
+  return $form;
+}
+
+/**
  * Configuration form to directly execute a rules configuration.
  */
 function rules_ui_form_execute_rules_config($form, &$form_state, $rules_config, $base_path) {

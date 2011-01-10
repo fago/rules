@@ -6,14 +6,73 @@
  */
 
 /**
- * Implements hook_entity_info_alter().
+ * Implements hook_menu().
  */
-function rules_admin_entity_info_alter(&$entity_info) {
-  // Enable the entity API UI controller. See EntityDefaultUIController.
-  $entity_info['rules_config']['admin ui'] = array(
-    'controller class' => 'RulesUIController',
-    'path' => 'admin/config/workflow/rules',
+function rules_admin_menu() {
+  // Reaction rules UI menu entries.
+  $reaction_path = 'admin/config/workflow/rules/reaction';
+  $items = rules_ui()->config_menu($reaction_path);
+
+  $items[$reaction_path] = array(
+    'title' => 'Reaction rules',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -1,
+  );
+  $items[$reaction_path . '/add'] = array(
+    'title' => 'Add new rule',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_add_reaction_rule', $reaction_path),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'rules_admin.inc',
+    'file path' => drupal_get_path('module', 'rules_admin'),
+    'weight' => 0,
+  );
+
+  // Components UI menu entries.
+  $component_path = 'admin/config/workflow/rules/components';
+  $items += rules_ui()->config_menu($component_path);
+  $items[$component_path] = array(
+    'title' => 'Components',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_components_overview', $component_path),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules_admin.inc',
+    'file path' => drupal_get_path('module', 'rules_admin'),
+    'weight' => 0,
+  );
+  $items[$component_path . '/add'] = array(
+    'title' => 'Add new component',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_add_component', $component_path),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'rules_admin.inc',
+    'file path' => drupal_get_path('module', 'rules_admin'),
+    'weight' => 0,
+  );
+
+  // Some general rules admin menu items.
+  $items['admin/config/workflow/rules'] = array(
+    'title' => 'Rules',
+    'position' => 'right',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_reaction_overview', $reaction_path),
+    'description' => 'Manage reaction rules and rule components.',
+    'access arguments' => array('administer rules'),
     'file' => 'rules_admin.inc',
     'file path' => drupal_get_path('module', 'rules_admin'),
   );
+  $items['admin/config/workflow/rules/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_admin_settings'),
+    'access arguments' => array('administer rules'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'rules_admin.inc',
+    'file path' => drupal_get_path('module', 'rules_admin'),
+    'weight' => 1,
+  );
+  return $items;
 }

@@ -11,6 +11,7 @@ files[] = includes/rules.state.inc
 files[] = modules/php.eval.inc
 files[] = modules/rules_core.eval.inc
 files[] = modules/system.eval.inc
+files[] = ui/ui.controller.inc
 files[] = ui/ui.core.inc
 files[] = ui/ui.data.inc
 files[] = ui/ui.plugins.inc

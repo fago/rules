@@ -597,118 +597,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public function help() {}
 
+
   /**
-   * Generates the render array for a overview configuration table for arbitrary
-   * rule configs that match the given conditions.
-   *
-   * Note: Make sure that you set RulesPluginUI::$basePath before using this
-   * method, otherwise paths, links, redirects etc. won't be correct.
-   *
-   * @param $conditions
-   *   An array of conditions as needed by rules_config_load_multiple().
-   * @param $options
-   *   An array with optional options. Known keys are:
-   *   - 'hide status op': If set to TRUE, enable/disable links are not added.
-   *   - 'show plugin: If set to FALSE, the plugin is not shown.
-   * @return Array
-   *   A renderable array.
+   * Deprecated by the controllers overviewTable() method.
    */
   public static function overviewTable($conditions = array(), $options = array()) {
-    $options += array(
-      'hide status op' => FALSE,
-      'show plugin' => TRUE,
-    );
-
-    $cache = rules_get_cache();
-    $configs = rules_config_load_multiple(FALSE, $conditions);
-    $rows = array();
-    $event_info = rules_fetch_data('event_info');
-
-    $num_cols = 1;
-    $scheduler_exists = module_exists('rules_scheduler');
-    foreach ($configs as $name => $config) {
-      $row = array();
-      $row[] = l($config->label(), RulesPluginUI::path($name));
-      // Add events if the configs are assigned to events.
-      if ($config instanceof RulesTriggerableInterface) {
-        $events = array();
-        foreach ($config->events() as $event_name) {
-          $events[] = $event_info[$event_name]['label'];
-        }
-        $row[] = implode(", ", $events);
-      }
-      if ($options['show plugin']) {
-        $plugin = $config->plugin();
-        $row[] = isset($cache['plugin_info'][$plugin]['label']) ? $cache['plugin_info'][$plugin]['label'] : $plugin;
-      }
-      // Add exportable status.
-      $row[] = array('data' => array(
-        '#theme' => 'entity_status',
-        '#status' => $config->status,
-      ));
-
-      $row[] = l(t('edit'), RulesPluginUI::path($name));
-
-      if (!$options['hide status op']) {
-        // Add either an enable or disable link.
-        $text = $config->active ? t('disable') : t('enable');
-        $link_path = RulesPluginUI::path($name, $config->active ? 'disable' : 'enable');
-        $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
-      }
-      $row[] = l(t('clone'), RulesPluginUI::path($name, 'clone'), array('query' => drupal_get_destination()));
-
-      // Add execute link for components only.
-      if (!($config instanceof RulesTriggerableInterface)) {
-        $row[] = l(t('execute'), RulesPluginUI::path($name, 'execute'), array('query' => drupal_get_destination()));
-        if ($scheduler_exists) {
-          if ($config instanceof RulesActionInterface) {
-            // Add schedule link for action components only.
-            $row[] = l(t('schedule'), RulesPluginUI::path($name, 'schedule'), array('query' => drupal_get_destination()));
-          }
-          else {
-            $row[] = '';
-          }
-        }
-      }
-
-      // Add either an delete or revert link.
-      if ($config->status != ENTITY_IN_CODE) {
-        $text = $config->status & ENTITY_IN_CODE ? t('revert') : t('delete');
-        $link_path = RulesPluginUI::path($name, $config->status & ENTITY_IN_CODE ? 'revert' : 'delete');
-        $row[] = l($text, $link_path, array('query' => drupal_get_destination()));
-      }
-      else {
-        $row[] = '';
-      }
-
-      // TODO: hide configs where access() is FALSE and make sure access is
-      // FALSE for fixed configurations,
-
-      $num_cols = max($num_cols, count($row));
-      $rows[] = $row;
-    }
-    $header = array(t('Label'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations')));
-    if (!isset($events)) {
-      // Remove the event heading as there is no such column.
-      unset($header[1]);
-    }
-    if (!$options['show plugin']) {
-      unset($header[2]);
-    }
-    // Fix the header operation column colspan.
-    if (($addition = $num_cols - count($header)) > 0) {
-      $header[4]['colspan'] = $addition + 1;
-    }
-
-    $table = array(
-      '#theme' => 'table',
-      '#header' => $header,
-      '#rows' => $rows,
-      '#empty' => t('None'),
-    );
-    $table['#attributes']['class'][] = 'rules-overview-table';
-    $table['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
-    return $table;
+    return rules_ui()->overviewTable($conditions, $options);
   }
 
   /**

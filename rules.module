@@ -28,6 +28,19 @@ function rules_init() {
 }
 
 /**
+ * Returns an instance of the rules UI controller, which eases re-using the Rules UI.
+ *
+ * @return RulesUIController
+ */
+function rules_ui() {
+  $static = drupal_static(__FUNCTION__);
+  if (!isset($static)) {
+    $static = new RulesUIController();
+  }
+  return $static;
+}
+
+/**
  * Returns a new rules action.
  *
  * @param $name
