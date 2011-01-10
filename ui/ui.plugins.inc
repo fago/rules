@@ -140,6 +140,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
       '#delta' => 10,
       '#description' => t('Adjust the weight to influence the evaluation order of rules reacting on the same event.'),
     );
+    unset($form['settings']['component_provides']);
   }
 
   public function settingsFormExtractValues($form, &$form_state) {
