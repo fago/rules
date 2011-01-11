@@ -19,6 +19,7 @@ class RulesRuleUI extends RulesActionContainerUI {
   }
 
   public function form(&$form, &$form_state, $options = array()) {
+    $form_state['rules_element'] = $this->rule;
     $label = $this->element->label();
     // Automatically add a counter to unlabelled rules.
     if ($label == t('unlabeled') && !$this->element->isRoot() && !empty($options['init'])) {

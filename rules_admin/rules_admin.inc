@@ -127,22 +127,16 @@ function rules_admin_add_reaction_rule($form, &$form_state, $base_path) {
   }
   // Incorporate the form to add the first event.
   $form['settings'] += rules_ui_add_event(array(), $form_state, $rules_config, $base_path);
+  unset($form['settings']['help']);
 
   unset($form['settings']['submit']);
   $form['submit']['#value'] = t('Save');
 
   $form_state += array('rules_config' => $rules_config);
+  $form['#validate'][] = 'rules_ui_edit_element_validate';
   $form['#validate'][] = 'rules_ui_add_event_validate';
+  $form['#submit'][] = 'rules_ui_edit_element_submit';
   return $form;
-}
-
-/**
- * Form add reaction_rule submit callback.
- */
-function rules_admin_add_reaction_rule_submit($form, &$form_state) {
-  $rules_config = $form_state['rules_config'];
-  $rules_config->form_submit($form, $form_state);
-  $form_state['redirect'] = RulesPluginUI::path($rules_config->name);
 }
 
 /**
