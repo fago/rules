@@ -53,6 +53,43 @@ class RulesEntityController extends EntityAPIController {
     }
     return parent::applyConditions($entities, $conditions);
   }
+
+  /**
+   * Overridden to work with Rules' custom export format.
+   *
+   * @param $export
+   *   A serialized string in JSON format as produced by the
+   *   RulesPlugin::export() method, or the PHP export as usual PHP array.
+   */
+  public function import($export) {
+    $export = is_array($export) ? $export : drupal_json_decode($export);
+    if (!is_array($export)) {
+      return FALSE;
+    }
+    // The key ist the configuration name and the value the actual export.
+    list($name, $export) = each($export);
+    if (!isset($export['PLUGIN'])) {
+      return FALSE;
+    }
+    // Create an empty configuration, re-set basic keys and import.
+    $config = rules_plugin_factory($export['PLUGIN']);
+    $config->name = $name;
+    foreach (array('label', 'module', 'active', 'weight') as $key) {
+      if (isset($export[strtoupper($key)])) {
+        $config->$key = $export[strtoupper($key)];
+      }
+    }
+    if (!empty($export['REQUIRES'])) {
+      foreach ($export['REQUIRES'] as $module) {
+        if (!module_exists($module)) {
+          // @todo: show error message?
+          return FALSE;
+        }
+      }
+    }
+    $config->import($export);
+    return $config;
+  }
 }
 
 /**
@@ -860,6 +897,47 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
+   * Applies the given export.
+   */
+  public function import(array $export) {
+    $this->importSettings($export[strtoupper($this->plugin())]);
+  }
+
+  protected function importSettings($export) {
+    // Import parameter settings.
+    $export += array('USING' => array(), 'PROVIDE' => array());
+    foreach ($export['USING'] as $name => $param_export) {
+      $this->importParameterSetting($name, $param_export);
+    }
+    foreach ($export['PROVIDE'] as $name => $var_export) {
+      // The key of $var_export is the variable name, the value the label.
+      $this->settings[$name . ':var'] = key($var_export);
+      $this->settings[$name . ':label'] = reset($var_export);
+    }
+  }
+
+  protected function importParameterSetting($name, $export) {
+    if (is_array($export) && isset($export['select'])) {
+      $this->settings[$name . ':select'] = $export['select'];
+      if (count($export) > 1) {
+        // Add in processor settings.
+        unset($export['select']);
+        $this->settings[$name . ':process'] = $export;
+      }
+    }
+    // Convert back the [selector] strings being an array with one entry.
+    elseif (is_array($export) && count($export) == 1 && isset($export[0])) {
+      $this->settings[$name . ':select'] = $export[0];
+    }
+    elseif (is_array($export) && isset($export['value'])) {
+      $this->settings[$name] = $export['value'];
+    }
+    else {
+      $this->settings[$name] = $export;
+    }
+  }
+
+  /**
    * Exports a rule configuration.
    *
    * @param $php
@@ -867,6 +945,8 @@ abstract class RulesPlugin extends RulesExtendable {
    *   JSON is used.
    * @return
    *   The exported confiugration.
+   *
+   * @see rules_import()
    */
   public function export($php = FALSE) {
     $export[strtoupper($this->plugin())] = $this->exportSettings();
@@ -890,7 +970,9 @@ abstract class RulesPlugin extends RulesExtendable {
 
   protected function exportParameterSetting($name, $info) {
     if (isset($this->settings[$name]) && (!isset($info['default value']) || $this->settings[$name] != $info['default value'])) {
-      return $this->settings[$name];
+      // In case of an array-value wrap the value into another array, such that
+      // the value cannot be confused with an exported data selector.
+      return is_array($this->settings[$name]) ? array('value' => $this->settings[$name]) : $this->settings[$name];
     }
     elseif (isset($this->settings[$name . ':select'])) {
       if (isset($this->settings[$name . ':process']) && $processor = $this->settings[$name . ':process']) {
@@ -917,6 +999,12 @@ abstract class RulesPlugin extends RulesExtendable {
       $export_cfg[$this->name]['MODULE'] = $this->module;
     }
     $export_cfg[$this->name]['PLUGIN'] = $this->plugin();
+    if (!empty($this->weight)) {
+      $export_cfg[$this->name]['WEIGHT'] = $this->weight;
+    }
+    if (isset($this->active) && !$this->active) {
+      $export_cfg[$this->name]['ACTIVE'] = FALSE;
+    }
     if ($modules = $this->dependencies()) {
       $export_cfg[$this->name]['REQUIRES'] = $modules;
     }
@@ -1061,11 +1149,27 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
   }
 
+  public function import(array $export) {
+    // The key is the element name and the value the actual export.
+    $this->elementName = key($export);
+    $export = reset($export);
+
+    // After setting the element name, setup the element again so the right
+    // element info is loaded.
+    $this->setUp();
+
+    if (!isset($export['USING']) && !isset($export['PROVIDES']) && $this->pluginParameterInfo()) {
+      // The export has been abbreviated to skip "USING".
+      $export = array('USING' => $export);
+    }
+    $this->importSettings($export);
+  }
+
   public function export($php = FALSE) {
     $export = $this->exportSettings();
     if (!$this->providesVariables()) {
       // Abbreviate the export making "USING" implicit.
-      $export = $export['USING'];
+      $export = isset($export['USING']) ? $export['USING'] : array();
     }
     $export = array($this->elementName => $export);
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
@@ -1641,6 +1745,23 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     $export += $this->exportChildren();
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
   }
+
+  public function import(array $export) {
+    if (isset($export['USES VARIABLES'])) {
+      $this->info['variables'] = $export['USES VARIABLES'];
+    }
+    $this->importChildren($export);
+  }
+
+  protected function importChildren($export, $key = NULL) {
+    $key = isset($key) ? $key : strtoupper($this->plugin());
+    foreach ($export[$key] as $child_export) {
+      $plugin = _rules_import_get_plugin(key($child_export), 'action');
+      $child = rules_plugin_factory($plugin);
+      $child->setParent($this);
+      $child->import($child_export);
+    }
+  }
 }
 
 /**
@@ -1755,6 +1876,22 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
       $export[$key][] = $child->export(TRUE);
     }
     return $export;
+  }
+
+
+  protected function importChildren($export, $key = NULL) {
+    $key = isset($key) ? $key : strtoupper($this->plugin());
+    // Care for negated elements.
+    if (!isset($export[$key]) && isset($export['NOT ' . $key])) {
+      $this->negate = TRUE;
+      $key = 'NOT ' . $key;
+    }
+    foreach ($export[$key] as $child_export) {
+      $plugin = _rules_import_get_plugin(key($child_export), 'condition');
+      $child = rules_plugin_factory($plugin);
+      $child->setParent($this);
+      $child->import($child_export);
+    }
   }
 
   /**
@@ -1937,4 +2074,31 @@ class RulesException extends Exception {
     $this->severity = $severity;
     $this->message = t($this->msg, $this->args);
   }
+}
+
+/**
+ * Determines the plugin to be used for importing a child element.
+ *
+ * @param $key
+ *   The key to look for, e.g. 'OR' or 'DO'.
+ * @param $default
+ *   The default to return if no special plugin can be found.
+ */
+function _rules_import_get_plugin($key, $default = 'action') {
+  $map = &drupal_static(__FUNCTION__);
+  if (!isset($map)) {
+    $cache = rules_get_cache();
+    foreach ($cache['plugin_info'] as $name => $info) {
+      if (!empty($info['embeddable'])) {
+        $info += array('import keys' => array(strtoupper($name)));
+        foreach ($info['import keys'] as $k) {
+          $map[$k] = $name;
+        }
+      }
+    }
+  }
+  if (isset($map[$key])) {
+    return $map[$key];
+  }
+  return $default;
 }

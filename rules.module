@@ -275,6 +275,18 @@ function rules_clear_cache($immediate = FALSE) {
   }
 }
 
+/**
+ * Imports the given export and returns the imported configuration.
+ *
+ * @param $export
+ *   A serialized string in JSON format as produced by the RulesPlugin::export()
+ *   method, or the PHP export as usual PHP array.
+ * @return RulesPlugin
+ */
+function rules_import($export) {
+  return entity_import('rules_config', $export);
+}
+
 
 /**
  * Wraps the given data.
@@ -426,6 +438,7 @@ function rules_rules_plugin_info() {
           'class' => 'RulesRuleUI',
         ),
       ),
+      'import keys' => array('IF', 'DO'),
     ),
     'loop' => array(
       'class' => 'RulesLoop',
@@ -435,6 +448,7 @@ function rules_rules_plugin_info() {
           'class' => 'RulesLoopUI',
         ),
       ),
+      'import keys' => array('LOOP OVER'),
     ),
     'reaction rule' => array(
       'class' => 'RulesReactionRule',

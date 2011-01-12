@@ -107,8 +107,22 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
     $not = $this->negate ? 'NOT ' : '';
     $export = $this->exportSettings();
     // Abbreviate the export making "USING" implicit.
-    $export = array($not . $this->elementName => $export['USING']);
+    $export = array($not . $this->elementName => isset($export['USING']) ? $export['USING'] : array());
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+  }
+
+  public function import(array $export) {
+    $this->elementName = key($export);
+    if (strpos($this->elementName, 'NOT ') === 0) {
+      $this->elementName = substr($this->elementName, 4);
+      $this->negate = TRUE;
+    }
+    // After setting the element name, setup the element again so the right
+    // element info is loaded.
+    $this->setUp();
+
+    // Re-add 'USING' which has been removed for abbreviation.
+    $this->importSettings(array('USING' => reset($export)));
   }
 
   public function label() {
@@ -246,12 +260,34 @@ class Rule extends RulesActionContainer {
     return $vars;
   }
 
+  public function export($php = FALSE) {
+    $export = parent::export($php);
+    if (!$this->isRoot()) {
+      $export['LABEL'] = $this->label;
+    }
+    return $export;
+  }
+
   protected function exportChildren($key = NULL) {
     $export = array();
     if ($this->conditions->children) {
       $export = $this->conditions->exportChildren('IF');
     }
     return $export + parent::exportChildren('DO');
+  }
+
+  public function import(array $export) {
+    if (!$this->isRoot() && isset($export['LABEL'])) {
+      $this->label = $export['LABEL'];
+    }
+    parent::import($export);
+  }
+
+  protected function importChildren($export, $key = NULL) {
+    if (!empty($export['IF'])) {
+      $this->conditions->importChildren($export, 'IF');
+    }
+    parent::importChildren($export, 'DO');
   }
 
   public function __clone() {
@@ -378,6 +414,11 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   protected function exportChildren($key = 'ON') {
     $export[$key] = array_values($this->events);
     return $export + parent::exportChildren();
+  }
+
+  protected function importChildren($export, $key = 'ON') {
+    $this->events = $export[$key];
+    parent::importChildren($export);
   }
 }
 
@@ -523,6 +564,10 @@ class RulesLoop extends RulesActionContainer {
   protected function exportChildren($key = 'LOOP OVER') {
     return parent::exportChildren($key);
   }
+
+  protected function importChildren($export, $key = 'LOOP OVER') {
+    parent::importChildren($export, $key);
+  }
 }
 
 /**
@@ -550,6 +595,10 @@ class RulesRuleSet extends RulesActionContainer {
 
   protected function exportChildren($key = 'RULES') {
     return parent::exportChildren($key);
+  }
+
+  protected function importChildren($export, $key = 'RULES') {
+    parent::importChildren($export, $key);
   }
 }
 

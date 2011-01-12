@@ -25,8 +25,16 @@ function rules_admin_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'rules_admin.inc',
-    'file path' => drupal_get_path('module', 'rules_admin'),
     'weight' => 0,
+  );
+  $items[$reaction_path . '/import'] = array(
+    'title' => 'Import rule',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_import_form', $reaction_path),
+    'access arguments' => array('administer rules'),
+    'file' => 'ui/ui.forms.inc',
+    'file path' => drupal_get_path('module', 'rules'),
+    'type' => MENU_LOCAL_ACTION,
   );
 
   // Components UI menu entries.
@@ -39,7 +47,6 @@ function rules_admin_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'rules_admin.inc',
-    'file path' => drupal_get_path('module', 'rules_admin'),
     'weight' => 0,
   );
   $items[$component_path . '/add'] = array(
@@ -49,8 +56,16 @@ function rules_admin_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'rules_admin.inc',
-    'file path' => drupal_get_path('module', 'rules_admin'),
     'weight' => 0,
+  );
+  $items[$component_path . '/import'] = array(
+    'title' => 'Import component',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_ui_import_form', $component_path),
+    'access arguments' => array('administer rules'),
+    'file' => 'ui/ui.forms.inc',
+    'file path' => drupal_get_path('module', 'rules'),
+    'type' => MENU_LOCAL_ACTION,
   );
 
   // Some general rules admin menu items.
@@ -62,7 +77,6 @@ function rules_admin_menu() {
     'description' => 'Manage reaction rules and rule components.',
     'access arguments' => array('administer rules'),
     'file' => 'rules_admin.inc',
-    'file path' => drupal_get_path('module', 'rules_admin'),
   );
   $items['admin/config/workflow/rules/settings'] = array(
     'title' => 'Settings',
@@ -71,7 +85,6 @@ function rules_admin_menu() {
     'access arguments' => array('administer rules'),
     'type' => MENU_LOCAL_TASK,
     'file' => 'rules_admin.inc',
-    'file path' => drupal_get_path('module', 'rules_admin'),
     'weight' => 1,
   );
   return $items;

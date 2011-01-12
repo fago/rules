@@ -34,7 +34,8 @@
  * @return
  *   An array of information about the module's provided rules actions.
  *   The array contains a sub-array for each action, with the action name as
- *   the key.
+ *   the key. Actions names may only contain lowercase alpha-numeric characters
+ *   and underscores and should be prefixed with the providing module name.
  *   Possible attributes for each sub-array are:
  *   - label: The label of the action. Start capitalized. Required.
  *   - group: A group for this element, used for grouping the actions in the
@@ -218,8 +219,10 @@ function hook_rules_condition_info() {
  *
  * @return
  *   An array of information about the module's provided rules events. The array
- *   contains a sub-array for each event, with the event name as the key.
- *   Possible attributes for each sub-array are:
+ *   contains a sub-array for each event, with the event name as the key. The
+ *   name may only contain lower case alpha-numeric characters and underscores
+ *   and should be prefixed with the providing module name. Possible attributes
+ *   for each sub-array are:
  *   - label: The label of the event. Start capitalized. Required.
  *   - group: A group for this element, used for grouping the events in the
  *     interface. Should start with a capital letter and be translated.
@@ -296,8 +299,10 @@ function hook_rules_event_info() {
  *
  * @return
  *   An array of information about the module's provided data types. The array
- *   contains a sub-array for each data type, with the data type name as the key.
- *   Possible attributes for each sub-array are:
+ *   contains a sub-array for each data type, with the data type name as the
+ *   key. The name may only contain lower case alpha-numeric characters and
+ *   underscores and should be prefixed with the providing module name. Possible
+ *   attributes for each sub-array are:
  *   - label: The label of the data type. Start uncapitalized. Required.
  *   - wrap: If set to TRUE, the data is wrapped internally using wrappers
  *     provided by the entity metadata module. This is required for entities and
@@ -357,7 +362,10 @@ function hook_rules_data_info() {
  * @return
  *   An array of information about the module's provided rules plugins. The
  *   array contains a sub-array for each plugin, with the plugin name as the
- *   key. Possible attributes for each sub-array are:
+ *   key. The name may only contain lower case alpha-numeric characters,
+ *   underscores and spaces and should be prefixed with the providing module
+ *   name. Possible attributes for
+ *   each sub-array are:
  *   - label: A label for the plugin. Start capitalized. Required only for
  *     components (see below).
  *   - class: The implementation class. Has to extend the RulesPlugin class.
@@ -390,6 +398,11 @@ function hook_rules_data_info() {
  *       For each method appearing in methods a file may be specified by using
  *       the method name as key and another array as value, which describes the
  *       file to include - looking like the file array supported by 'extenders'.
+ *   - import keys: (optional) Embeddable plugins may specify an array of import
+ *     keys, which the plugin make use for exporting. Defaults to the upper
+ *     case plugin name, thus the key 'OR' in an export triggers the creation
+ *     of the 'or' plugin. Note that only uppercase values are allowed, as
+ *     lower case values are treated as action or condition exports.
  *
  *  @see class RulesPlugin
  *  @see hook_rules_plugin_info_alter()
@@ -415,6 +428,7 @@ function hook_rules_plugin_info() {
           'class' => 'RulesRuleUI',
         ),
       ),
+      'import keys' => array('DO', 'IF'),
     ),
   );
 }
@@ -433,7 +447,9 @@ function hook_rules_plugin_info() {
  * @return
  *   An array of information about the module's provided input evaluators. The
  *   array contains a sub-array for each evaluator, with the evaluator name as
- *   the key. Possible attributes for each sub-array are:
+ *   the key. The name may only contain lower case alpha-numeric characters and
+ *   underscores and should be prefixed with the providing module name. Possible
+ *   attributes for each sub-array are:
  *   - class: The implementation class, which has to extend the
  *     RulesDataInputEvaluator class. Required.
  *   - weight: A weight for controlling the evaluation order of multiple
@@ -469,7 +485,10 @@ function hook_rules_evaluator_info() {
  * @return
  *   An array of information about the module's provided data processors. The
  *   array contains a sub-array for each processor, with the processor name as
- *   the key. Possible attributes for each sub-array are:
+ *   the key. The name may only contain lower case alpha-numeric characters and
+ *   underscores and should be prefixed with the providing module name, whereas
+ *   'select' is reserved as well.
+ *   Possible attributes for each sub-array are:
  *   - class: The implementation class, which has to extend the
  *     RulesDataProcessor class. Required.
  *   - weight: A weight for controlling the processing order of multiple data

@@ -675,7 +675,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Preserve the base path in the form state. The after build handler will
     // set self::$basePath again for cached forms.
     if (isset(self::$basePath)) {
-      $form_state['_rules_base_path'] = self::$basePath;
+      $form_state['_rules_base_path'] = RulesPluginUI::$basePath;
       $form['#after_build'][] = 'rules_form_after_build_restore_base_path';
     }
   }
@@ -908,4 +908,3 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     }
   }
 }
-
