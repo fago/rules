@@ -749,10 +749,13 @@ class RulesContainerPluginUI extends RulesPluginUI {
       $form['elements'][$id]['weight'] = array(
         '#type' => 'weight',
         '#default_value' => $child->weight,
+        '#delta' => 20,
       );
       $form['elements'][$id]['parent_id'] = array(
         '#type' => 'hidden',
-        '#default_value' => $this->element->elementId(),
+        // If another iterator is passed in, the childs parent may not equal
+        // the current element. Thus ask the child for its parent.
+        '#default_value' => $child->parentElement()->elementId(),
       );
       $form['elements'][$id]['element_id'] = array(
         '#type' => 'hidden',

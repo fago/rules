@@ -1722,7 +1722,18 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    *   this element is sorted.
    */
   public function sortChildren($deep = FALSE) {
+    // Make sure the array order is kept in case two children have the same
+    // weight by ensuring later childrens would have higher weights.
+    foreach (array_values($this->children) as $i => $child) {
+      $child->weight += $i / 1000;
+    }
     usort($this->children, array('RulesPlugin', 'compare'));
+
+    // Fix up the weights afterwards to be unique integers.
+    foreach (array_values($this->children) as $i => $child) {
+      $child->weight = $i * 2;
+    }
+
     if ($deep) {
       foreach (new ParentIterator($this->getIterator()) as $child) {
         $child->sortChildren(TRUE);
