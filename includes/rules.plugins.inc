@@ -103,7 +103,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
     return $result;
   }
 
-  public function export($php = FALSE) {
+  public function export($prefix = '',$php = FALSE) {
     $not = $this->negate ? 'NOT ' : '';
     $export = $this->exportSettings();
     // Abbreviate the export making "USING" implicit.
@@ -260,7 +260,7 @@ class Rule extends RulesActionContainer {
     return $vars;
   }
 
-  public function export($php = FALSE) {
+  public function export($prefix = '',$php = FALSE) {
     $export = parent::export($php);
     if (!$this->isRoot()) {
       $export['LABEL'] = $this->label;

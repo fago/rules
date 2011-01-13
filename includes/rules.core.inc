@@ -943,6 +943,8 @@ abstract class RulesPlugin extends RulesExtendable {
   /**
    * Exports a rule configuration.
    *
+   * @param $prefix
+   *   An optional prefix for each line.
    * @param $php
    *   Optional. Set to TRUE to format the export using PHP arrays. By default
    *   JSON is used.
@@ -951,7 +953,7 @@ abstract class RulesPlugin extends RulesExtendable {
    *
    * @see rules_import()
    */
-  public function export($php = FALSE) {
+  public function export($prefix = '',$php = FALSE) {
     $export[strtoupper($this->plugin())] = $this->exportSettings();
     return $this->isRoot() ? $this->returnExport($export, $php) : $export;
   }
@@ -1168,7 +1170,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $this->importSettings($export);
   }
 
-  public function export($php = FALSE) {
+  public function export($prefix = '',$php = FALSE) {
     $export = $this->exportSettings();
     if (!$this->providesVariables()) {
       // Abbreviate the export making "USING" implicit.
@@ -1751,7 +1753,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return $export;
   }
 
-  public function export($php = FALSE) {
+  public function export($prefix = '',$php = FALSE) {
     $export = array();
     if (isset($this->info['variables'])) {
       $export['USES VARIABLES'] = $this->info['variables'];
