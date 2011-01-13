@@ -247,13 +247,16 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule = $this->createTestRule();
     $conditions = $rule->conditions();
     $conditions[0]->weight = 10;
-    $conditions[2]->weight = -1;
+    $conditions[2]->weight = 10;
+    $id[0] = $conditions[0]->elementId();
+    $id[1] = $conditions[1]->elementId();
+    $id[2] = $conditions[2]->elementId();
     // For testing use a deep sort, even if not necessary here.
     $rule->sortChildren(TRUE);
     $conditions = $rule->conditions();
-    $this->assertEqual($conditions[0]->weight, -1, 'Condition sorted correctly.');
-    $this->assertEqual($conditions[1]->weight, 0, 'Condition sorted correctly.');
-    $this->assertEqual($conditions[2]->weight, 10, 'Condition sorted correctly.');
+    $this->assertEqual($conditions[0]->elementId(), $id[1], 'Condition sorted correctly.');
+    $this->assertEqual($conditions[1]->elementId(), $id[0], 'Condition sorted correctly.');
+    $this->assertEqual($conditions[2]->elementId(), $id[2], 'Condition sorted correctly.');
   }
 
   /**
