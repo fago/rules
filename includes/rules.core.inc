@@ -76,7 +76,7 @@ class RulesEntityController extends EntityAPIController {
     // Create an empty configuration, re-set basic keys and import.
     $config = rules_plugin_factory($export['PLUGIN']);
     $config->name = $name;
-    foreach (array('label', 'module', 'active', 'weight') as $key) {
+    foreach (array('label', 'active', 'weight') as $key) {
       if (isset($export[strtoupper($key)])) {
         $config->$key = $export[strtoupper($key)];
       }
@@ -999,9 +999,6 @@ abstract class RulesPlugin extends RulesExtendable {
     $this->ensureNameExists();
     if (!empty($this->label) && $this->label != t('unlabeled')) {
       $export_cfg[$this->name]['LABEL'] = $this->label;
-    }
-    if (!empty($this->module) && $this->module != 'rules') {
-      $export_cfg[$this->name]['MODULE'] = $this->module;
     }
     $export_cfg[$this->name]['PLUGIN'] = $this->plugin();
     if (!empty($this->weight)) {

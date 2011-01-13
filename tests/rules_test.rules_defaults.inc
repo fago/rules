@@ -31,14 +31,11 @@ function rules_test_default_rules_configuration() {
 }
 
 /**
- * Defines the export of rule for testing import/export. It is defined such it
- * is expected to be exported afterwards again, i.e. with MODULE being set to
- * 'rules_test'.
+ * Defines the export of rule for testing import/export.
  */
 function _rules_export_get_test_export() {
   return '{ "rules_export_test" : {
     "LABEL" : "Test import rule2",
-    "MODULE" : "rules_test",
     "PLUGIN" : "reaction rule",
     "WEIGHT" : "-1",
     "ACTIVE" : false,
