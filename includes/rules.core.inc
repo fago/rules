@@ -880,7 +880,8 @@ abstract class RulesPlugin extends RulesExtendable {
     if (!empty($this->label) && $this->label != t('unlabeled')) {
       return $this->label;
     }
-    return isset($this->info['label']) ? $this->info['label'] : (!empty($this->name) ? $this->name : t('unlabeled'));
+    $info = $this->info();
+    return isset($info['label']) ? $info['label'] : (!empty($this->name) ? $this->name : t('unlabeled'));
   }
 
   /**
