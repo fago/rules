@@ -3,6 +3,7 @@ name = Rules
 description = React on events and conditionally evaluate actions.
 package = Rules
 core = 7.x
+files[] = rules.features.inc
 files[] = tests/rules.test
 files[] = includes/rules.core.inc
 files[] = includes/rules.processor.inc

@@ -500,6 +500,7 @@ function rules_entity_info() {
         'default hook' => 'default_rules_configuration',
       ),
       'access callback' => 'rules_config_access',
+      'features controller class' => 'RulesFeaturesController',
     ),
   );
 }
