@@ -283,8 +283,8 @@ function rules_clear_cache($immediate = FALSE) {
  *   method, or the PHP export as usual PHP array.
  * @return RulesPlugin
  */
-function rules_import($export) {
-  return entity_import('rules_config', $export);
+function rules_import($export, &$error_msg = '') {
+  return entity_get_controller('rules_config')->import($export, $error_msg);
 }
 
 

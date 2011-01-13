@@ -61,14 +61,16 @@ class RulesEntityController extends EntityAPIController {
    *   A serialized string in JSON format as produced by the
    *   RulesPlugin::export() method, or the PHP export as usual PHP array.
    */
-  public function import($export) {
+  public function import($export, &$error_msg = '') {
     $export = is_array($export) ? $export : drupal_json_decode($export);
     if (!is_array($export)) {
+      $error_msg = t('Unable to parse the pasted export.');
       return FALSE;
     }
     // The key ist the configuration name and the value the actual export.
     list($name, $export) = each($export);
     if (!isset($export['PLUGIN'])) {
+      $error_msg = t('Export misses plugin information.');
       return FALSE;
     }
     // Create an empty configuration, re-set basic keys and import.
@@ -82,7 +84,7 @@ class RulesEntityController extends EntityAPIController {
     if (!empty($export['REQUIRES'])) {
       foreach ($export['REQUIRES'] as $module) {
         if (!module_exists($module)) {
-          // @todo: show error message?
+          $error_msg = t('Missing the required module %module.', array('%module' => $module));
           return FALSE;
         }
       }

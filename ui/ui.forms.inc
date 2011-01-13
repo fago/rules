@@ -509,7 +509,7 @@ function rules_ui_import_form($form, &$form_state, $base_path) {
  * Validation callback for the import form.
  */
 function rules_ui_import_form_validate($form, &$form_state) {
-  if ($rules_config = rules_import($form_state['values']['import'])) {
+  if ($rules_config = rules_import($form_state['values']['import'], $error_msg)) {
     // Store the successfully imported entity in $form_state.
     $form_state['rules_config'] = $rules_config;
     if (!$form_state['values']['overwrite']) {
@@ -531,6 +531,9 @@ function rules_ui_import_form_validate($form, &$form_state) {
   }
   else {
     form_set_error('import', t('Import failed.'));
+    if ($error_msg) {
+      drupal_set_message($error_msg, 'error');
+    }
   }
 }
 
