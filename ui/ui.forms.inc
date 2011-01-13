@@ -81,13 +81,15 @@ function rules_ui_form_clone_rules_config($form, &$form_state, $rules_config, $b
   RulesPluginUI::$basePath = $base_path;
   $rules_config = clone $rules_config;
   $rules_config->module = 'rules';
-  $rules_config->id = FALSE;
+  $rules_config->id = NULL;
   $rules_config->name = '';
   $rules_config->label .= ' (' . t('cloned') . ')';
+  $rules_config->status = ENTITY_CUSTOM;
 
   $form['#validate'][] = 'rules_ui_form_rules_config_validate';
   $form['#submit'][] = 'rules_ui_form_edit_rules_config_submit';
-  $form_state += array('rules_element' => $rules_config);
+  $form_state += array('rules_element' => $rules_config, 'op' => 'clone');
+
   // Add the rule configuration's form.
   $rules_config->form($form, $form_state, array('show settings' => TRUE, 'button' => TRUE, 'init' => TRUE));
 
