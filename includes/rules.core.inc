@@ -1163,7 +1163,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // element info is loaded.
     $this->setUp();
 
-    if (!isset($export['USING']) && !isset($export['PROVIDES']) && $this->pluginParameterInfo()) {
+    if (!isset($export['USING']) && !isset($export['PROVIDES']) && !empty($export)) {
       // The export has been abbreviated to skip "USING".
       $export = array('USING' => $export);
     }

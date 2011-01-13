@@ -24,5 +24,55 @@ function rules_test_default_rules_configuration() {
   $action_set->action('node_publish');
   $configs['rules_test_action_set'] = $action_set;
 
+  // Test providing a rule using an export.
+  $configs['rules_export_test'] = rules_import(_rules_export_get_test_export());
+
   return $configs;
+}
+
+/**
+ * Defines the export of rule for testing import/export. It is defined such it
+ * is expected to be exported afterwards again, i.e. with MODULE being set to
+ * 'rules_test'.
+ */
+function _rules_export_get_test_export() {
+  return '{ "rules_export_test" : {
+    "LABEL" : "Test import rule2",
+    "MODULE" : "rules_test",
+    "PLUGIN" : "reaction rule",
+    "WEIGHT" : "-1",
+    "ACTIVE" : false,
+    "REQUIRES" : [ "rules", "comment" ],
+    "ON" : [ "comment_insert" ],
+    "IF" : [
+      { "OR" : [
+          { "NOT node_is_sticky" : { "node" : [ "comment:node" ] } },
+          { "node_is_of_type" : {
+              "node" : [ "comment:node" ],
+              "type" : { "value" : { "page" : "page" } }
+            }
+          }
+        ]
+      }
+    ],
+    "DO" : [
+      { "data_set" : {
+          "data" : [ "comment:node:created" ],
+          "value" : { "select" : "site:current-date", "date_offset" : { "value" : -604800 } }
+        }
+      },
+      { "node_make_sticky" : { "node" : [ "comment:node" ] } },
+      { "variable_add" : {
+          "USING" : { "type" : "token", "value" : "error" },
+          "PROVIDE" : { "variable_added" : { "level" : "Error level" } }
+        }
+      },
+      { "drupal_message" : {
+          "message" : "fein, [comment:node:title] has been made sticky!",
+          "type" : [ "level" ]
+        }
+      }
+    ]
+  }
+}';
 }
