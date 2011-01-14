@@ -108,7 +108,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
     $export = $this->exportSettings();
     // Abbreviate the export making "USING" implicit.
     $export = array($not . $this->elementName => isset($export['USING']) ? $export['USING'] : array());
-    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
   }
 
   public function import(array $export) {
@@ -261,7 +261,7 @@ class Rule extends RulesActionContainer {
   }
 
   public function export($prefix = '',$php = FALSE) {
-    $export = parent::export($php);
+    $export = parent::export($prefix, $php);
     if (!$this->isRoot()) {
       $export['LABEL'] = $this->label;
     }

@@ -955,7 +955,7 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function export($prefix = '',$php = FALSE) {
     $export[strtoupper($this->plugin())] = $this->exportSettings();
-    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
   }
 
   protected function exportSettings() {
@@ -995,7 +995,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Finalizies the configuration export by adding general attributes regarding
    * the configuration and returns it in the right format.
    */
-  protected function returnExport($export, $php = FALSE) {
+  protected function returnExport($export, $prefix = '', $php = FALSE) {
     $this->ensureNameExists();
     if (!empty($this->label) && $this->label != t('unlabeled')) {
       $export_cfg[$this->name]['LABEL'] = $this->label;
@@ -1011,7 +1011,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $export_cfg[$this->name]['REQUIRES'] = $modules;
     }
     $export_cfg[$this->name] += $export;
-    return $php ? entity_var_export($export_cfg) : entity_var_json_export($export_cfg);
+    return $php ? entity_var_export($export_cfg, $prefix) : entity_var_json_export($export_cfg, $prefix);
   }
 
   /**
@@ -1174,7 +1174,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $export = isset($export['USING']) ? $export['USING'] : array();
     }
     $export = array($this->elementName => $export);
-    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
   }
 
   public function dependencies() {
@@ -1756,7 +1756,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       $export['USES VARIABLES'] = $this->info['variables'];
     }
     $export += $this->exportChildren();
-    return $this->isRoot() ? $this->returnExport($export, $php) : $export;
+    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
   }
 
   public function import(array $export) {
