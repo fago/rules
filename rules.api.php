@@ -91,6 +91,8 @@
  *   - sanitize: Optionally. Allows parameters of type 'text' to demand an
  *     already sanitized argument. If enabled, any user specified value won't be
  *     sanitized itself, but replacements applied by input evaluators are.
+ *   - wrapped: Optionally, set this to TRUE in case the data should be passed
+ *     wrapped. This only applies to wrapped data types, e.g. entities.
  *  Each 'provides' array may contain the following properties:
  *   - label: The label of the variable. Start capitalized. Required.
  *   - type: The rules data type of the variable. All types declared in
@@ -308,6 +310,9 @@ function hook_rules_event_info() {
  *     provided by the entity metadata module. This is required for entities and
  *     data structures to support the application of data selectors or
  *     intelligent saving.
+ *   - is wrapped: (optional) In case the data wrapper is already wrapped when
+ *     passed to Rules and Rules should not unwrap it when passing the data as
+ *     argument, e.g. to an action, set this to TRUE.
  *   - parent: Optionally a parent type may be set to specify a sub-type
  *     relationship, which will be only used for checking compatible types. E.g.
  *     the 'entity' data type is parent of the 'node' data type, thus a node may

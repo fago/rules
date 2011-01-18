@@ -339,9 +339,13 @@ function &rules_wrap_data($data = NULL, $info, $force = FALSE) {
  *   An array containing unwrapped or passed through data.
  */
 function rules_unwrap_data(array $data, $info = array()) {
+  $cache = rules_get_cache();
   foreach ($data as $key => $entry) {
-    // If it's a wrapper, unwrap.
+    // If it's a wrapper, unwrap unless specified otherwise.
     if ($entry instanceof EntityMetadataWrapper) {
+      if (isset($info[$key]) && (!empty($info[$key]['wrapped']) || (is_string($info[$key]['type']) && !empty($cache['data_info'][$info[$key]['type']]['is wrapped'])))) {
+        continue;
+      }
       $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
       $data[$key] = $entry->value($options);
     }
