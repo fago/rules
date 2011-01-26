@@ -172,7 +172,7 @@ function rules_rules_condition_info() {
  */
 function rules_condition_text_compare($text1, $text2, $settings) {
   if ($settings['regex']) {
-    return (bool) preg_match('/'. $text2 .'/', $text1);
+    return (bool) preg_match('/'. str_replace('/', '\\/', $text2) .'/', $text1);
   }
   return $text1 == $text2;
 }
