@@ -260,8 +260,7 @@ class RulesState {
    * @throws RulesException
    *   Throws a RulesException in case the selector cannot be applied.
    * @return EntityMetadataWrapper
-   *   The wrapper for the given selector or FALSE if the selector couldn't be
-   *   applied.
+   *   The wrapper for the given selector.
    */
   public function applyDataSelector($selector) {
     $parts = explode(':', str_replace('-', '_', $selector), 2);
@@ -274,7 +273,12 @@ class RulesState {
     }
     try {
       foreach (explode(':', $parts[1]) as $name) {
-        $wrapper = $wrapper->get($name);
+        if ($wrapper instanceof EntityListWrapper || $wrapper instanceof EntityStructureWrapper) {
+          $wrapper = $wrapper->get($name);
+        }
+        else {
+          throw new RulesException('Unable to apply data selector %selector. The specified variable is not a list or a structure: %wrapper.', array('%selector' => $selector, '%wrapper' => $wrapper));
+        }
       }
     }
     catch (EntityMetadataWrapperException $e) {

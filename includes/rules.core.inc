@@ -683,7 +683,12 @@ abstract class RulesPlugin extends RulesExtendable {
       if (count($parts) > 1 && $wrapper instanceof EntityMetadataWrapper) {
         try {
           foreach (explode(':', $parts[1]) as $name) {
-            $wrapper = $wrapper->get($name);
+            if ($wrapper instanceof EntityListWrapper || $wrapper instanceof EntityStructureWrapper) {
+              $wrapper = $wrapper->get($name);
+            }
+            else {
+              return FALSE;
+            }
           }
         }
         // In case of an exception or we were unable to get a wrapper, return FALSE.
