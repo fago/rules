@@ -113,28 +113,6 @@ function rules_test_rules_action_info() {
       'group' => t('Node'),
       'access callback' => 'rules_node_integration_access',
     ),
-    'node_create' => array(
-      'label' => t('Create new content'),
-      'parameter' => array(
-        'author' => array('type' => 'user', 'label' => t('User, who is set as author')),
-        'title' => array(
-          'type' => 'text',
-          'label' => t('Title'),
-          'description' => t('The title of the newly created content.'),
-        ),
-      ),
-      'provides' => array(
-        'node_added' => array(
-          'type' => 'node',
-          'label' => t('New content'),
-          'save' => TRUE,
-          'label callback' => 'rules_action_add_node_variable_label',
-        ),
-      ),
-      'group' => t('Node'),
-      'callbacks' => array('execute' => 'rules_action_node_create'),
-      'access callback' => 'rules_node_integration_access',
-    ),
     // An action for testing named parameters.
     'rules_action_node_set_title' => array(
       'label' => t('Content'),

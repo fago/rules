@@ -180,9 +180,10 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test saving a parameter.
+   * Test automatic saving of variables.
    */
   function testActionSaving() {
+    // Test saving a parameter.
     $action = rules_action('rules_node_publish_action_save');
     $node = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
     $action->executeByArgs(array('node' => $node));
@@ -193,6 +194,27 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $node = node_load($node->nid);
     $this->assertEqual($node->status, 1, 'Node has been saved.');
+
+    // Now test saving a provided variable, which is renamed and modified before
+    // it is saved.
+    $title = $this->randomName();
+    $rule = rule();
+    $rule->action('entity_create', array(
+      'type' => 'node',
+      'param_type' => 'article',
+      'param_author:select' => 'site:current-user',
+      'param_title' => $title,
+      'entity_created:var' => 'node',
+    ));
+    $rule->action('data_set', array(
+      'data:select' => 'node:body',
+      'value' => array('value' => 'body'),
+    ));
+    $rule->integrityCheck();
+    $rule->execute();
+
+    $node = $this->drupalGetNodeByTitle($title);
+    $this->assertTrue(!empty($node) && $node->body[LANGUAGE_NONE][0]['value'] == 'body', 'Saved a provided variable');
     RulesLog::logger()->checkLog();
   }
 

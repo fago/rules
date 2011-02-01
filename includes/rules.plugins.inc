@@ -41,8 +41,8 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $state->addVariable($var_name, $data, $this->info['provides'][$name]);
           rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']));
-          if (!empty($this->info['provides'][$name]['save']) && $state->variables[$name] instanceof EntityDrupalWrapper) {
-            $state->saveChanges($var_name, $state->variables[$name]);
+          if (!empty($this->info['provides'][$name]['save']) && $state->variables[$var_name] instanceof EntityMetadataWrapper) {
+            $state->saveChanges($var_name, $state->variables[$var_name]);
           }
         }
       }
