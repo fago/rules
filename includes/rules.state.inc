@@ -116,7 +116,7 @@ class RulesState {
    * Returns whether the given wrapper is savable.
    */
   public function isSavable($wrapper) {
-    return entity_type_supports($wrapper->type(), 'save');
+    return $wrapper instanceof EntityDrupalWrapper && entity_type_supports($wrapper->type(), 'save');
   }
 
   /**
