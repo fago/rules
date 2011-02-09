@@ -14,7 +14,7 @@ function rules_admin_menu() {
   $items = rules_ui()->config_menu($reaction_path);
 
   $items[$reaction_path] = array(
-    'title' => 'Reaction rules',
+    'title' => 'Rules',
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -1,
   );
