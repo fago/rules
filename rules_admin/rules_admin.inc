@@ -40,12 +40,12 @@ function rules_admin_reaction_overview($form, &$form_state, $base_path) {
   $options = array('show plugin' => FALSE, 'base path' => $base_path);
   $form['active'] = rules_ui()->overviewTable(array_filter($conditions), $options);
   $form['active']['#caption'] = t('Active rules');
-  $form['acitve']['#empty'] = t('There are no matching active reaction rules.');
+  $form['active']['#empty'] = t('There are no active rules. <a href="!url">Add new rule</a>.', array('!url' => url('admin/config/workflow/rules/reaction/add')));
 
   $conditions = array_filter(array('event' => $event, 'plugin' => 'reaction rule')) + array('active' => FALSE);
   $form['inactive'] = rules_ui()->overviewTable($conditions, $options);
   $form['inactive']['#caption'] = t('Inactive rules');
-  $form['inactive']['#empty'] = t('There are no matching inactive reaction rules.');
+  $form['inactive']['#empty'] = t('There are no inactive rules.');
 
   $form['filter']['#collapsed'] = isset($form_state['values']) || (count($form['active']['#rows']) + count($form['inactive']['#rows'])) < 20;
   $form['#submit'][] = 'rules_form_submit_rebuild';
