@@ -230,13 +230,9 @@ class RulesUIController {
    *   Additional columns to be added after the entity label column.
    */
   protected function overviewTableRow($conditions, $name, $config, $options) {
-    $row[] = array('data' => array(
-      '#theme' => 'entity_ui_overview_item',
-      '#label' => $config->label(),
-      '#name' => $name,
-      '#url' => array('path' => RulesPluginUI::path($name), 'options' => array()),
-      '#entity_type' => 'rules_config'),
-    );
+    // Build content includes the label, as well as a short overview including
+    // the machine name.
+    $row[] = array('data' => $config->buildContent());
 
     // Add events if the configs are assigned to events.
     if ($options['show events']) {

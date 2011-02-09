@@ -111,9 +111,11 @@ function theme_rules_ui_variable_form($variables) {
  */
 function theme_rules_content_group($variables) {
   $element = $variables['element'];
+  $output = array();
   foreach (element_children($element) as $key) {
     $output[] = drupal_render($element[$key]);
   }
+  $output = array_filter($output);
   $heading = !empty($element['#caption']) ? "<span class='rules-content-heading'>" . $element['#caption'] . ': </span>' : '';
   if (!empty($output)) {
     return '<div class="rules-element-content-group">' . $heading . implode(', ', $output) . '</div>';
@@ -145,7 +147,7 @@ function theme_rules_parameter_configuration($variables) {
 }
 
 /**
- * Themes the view of a provided variable.
+ * Themes info about variables.
  * @ingroup themeable
  */
 function theme_rules_provides_variable_view($variables) {
@@ -157,8 +159,8 @@ function theme_rules_provides_variable_view($variables) {
   }
   $label_attributes = drupal_attributes($label_attributes);
 
-  $output = check_plain($element['#name']);
-  $output .= ' (' . check_plain($element['#info']['label']) . ')';
+  $output = check_plain($element['#info']['label']);
+  $output .= ' (' . check_plain($element['#info']['type']) . ')';
   return "<span $label_attributes>" . $output . '</span>';
 }
 

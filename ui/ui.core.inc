@@ -525,10 +525,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#title' => $this->element->label(),
       '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->element),
       '#prefix' => '<div class="rules-element-label">',
-      // Put the elements below in a "description" div.
-      '#suffix' => '</div><div class="description">'
+      '#suffix' => '</div>'
     );
-    $content['parameter'] = array(
+    // Put the elements below in a "description" div.
+    $content['description'] = array(
+      '#prefix' => '<div class="description">',
+    );
+    $content['description']['parameter'] = array(
       '#caption' => t('Parameter'),
       '#theme' => 'rules_content_group',
     );
@@ -544,21 +547,21 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       }
       // Only add parameters that are really configured / not default.
       if ($element) {
-        $content['parameter'][$name] = array(
+        $content['description']['parameter'][$name] = array(
           '#theme' => 'rules_parameter_configuration',
           '#info' => $parameter,
         ) + $element;
       }
     }
     foreach ($this->element->providesVariables() as $name => $var_info) {
-      $content['provides'][$name] = array(
+      $content['description']['provides'][$name] = array(
         '#theme' => 'rules_provides_variable_view',
         '#info' => $var_info,
         '#name' => $name,
       );
     }
-    if (!empty($content['provides'])) {
-      $content['provides'] += array(
+    if (!empty($content['description']['provides'])) {
+      $content['description']['provides'] += array(
         '#caption' => t('Provides variables'),
         '#theme' => 'rules_content_group',
       );
@@ -825,10 +828,25 @@ class RulesContainerPluginUI extends RulesPluginUI {
 
   public function buildContent() {
     $content = parent::buildContent();
-    // Don't link the title for container plugins.
-    $content['label']['#type'] = 'markup';
-    $content['label']['#markup'] = check_plain($content['label']['#title']);
-    unset($content['label']['#title']);
+    // Don't link the title for embedded container plugins.
+    if (!$this->element->isRoot()) {
+      $content['label']['#type'] = 'markup';
+      $content['label']['#markup'] = check_plain($content['label']['#title']);
+      unset($content['label']['#title']);
+    }
+    elseif ($vars = $this->element->componentVariables()) {
+      $content['description']['variables'] = array(
+        '#caption' => t('Variables'),
+        '#theme' => 'rules_content_group',
+      );
+      foreach ($vars as $name => $info) {
+        $content['description']['variables'][$name] = array(
+          '#theme' => 'rules_provides_variable_view',
+          '#info' => $info,
+          '#name' => $name,
+        );
+      }
+    }
     return $content;
   }
 }
