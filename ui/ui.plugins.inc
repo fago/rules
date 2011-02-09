@@ -27,11 +27,11 @@ class RulesRuleUI extends RulesActionContainerUI {
       $label .= ' ' . count($parent->getIterator());
     }
     // Components have already a label. If used inside a rule-set add a label
-    // though.
+    // though. It's called 'Name' in the UI though.
     if (!$this->element->isRoot()) {
       $form['label'] = array(
         '#type' => 'textfield',
-        '#title' => 'Label',
+        '#title' => t('Name'),
         '#default_value' => $label,
         '#required' => TRUE,
         '#weight' => 5,
@@ -130,7 +130,6 @@ class RulesReactionRuleUI extends RulesRuleUI {
     $form['settings']['active'] = array(
       '#type' => 'checkbox',
       '#title' => t('Active'),
-      '#description' => t('If checked the reaction rule will be triggered when the configured events occur.'),
       '#default_value' => !isset($this->rule->active) || $this->rule->active,
     );
     $form['settings']['weight'] = array(
@@ -139,7 +138,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
       '#default_value' => $this->element->weight,
       '#weight' => 5,
       '#delta' => 10,
-      '#description' => t('Adjust the weight to influence the evaluation order of rules reacting on the same event.'),
+      '#description' => t('Order rules that react on the same event. Rules with a higher weight are evaluated after rules with less weight.'),
     );
     unset($form['settings']['component_provides']);
   }

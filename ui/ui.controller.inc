@@ -196,7 +196,7 @@ class RulesUIController {
       $rows[] = $this->overviewTableRow($conditions, $id, $entity, $options);
     }
     // Assemble the right table header.
-    $header = array(t('Label'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations')));
+    $header = array(t('Name'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations')));
     if (!$options['show events']) {
       // Remove the event heading as there is no such column.
       unset($header[1]);

@@ -382,11 +382,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     );
     $form['settings']['label'] = array(
       '#type' => 'textfield',
-      '#title' => 'Label',
+      '#title' => t('Name'),
       '#default_value' => $this->element->label(),
       '#required' => TRUE,
       '#weight' => -5,
-      '#description' => t('The human-readable name.'),
     );
     if (!empty($this->element->module) && !empty($this->element->name) && strpos($this->element->name, $this->element->module . '_') === 0) {
       // Remove the module prefix from the machine name.
