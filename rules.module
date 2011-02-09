@@ -913,9 +913,10 @@ function rules_get_title($text, $element) {
  */
 function rules_page_build(&$page) {
   // Invoke a the page redirect, in case the action has been executed.
+  // @see rules_action_drupal_goto()
   if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
-    // $_REQUEST['destination'] has been set, drupal_goto() will use that.
-    drupal_goto($GLOBALS['_rules_action_drupal_goto_do']);
+    list($url, $force) = $GLOBALS['_rules_action_drupal_goto_do'];
+    drupal_goto($url);
   }
 
   if (isset($_SESSION['rules_debug'])) {
@@ -937,6 +938,26 @@ function rules_page_build(&$page) {
       );
       $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
       $logger->clear();
+    }
+  }
+}
+
+/**
+ * Implements hook_drupal_goto_alter().
+ *
+ * @see rules_action_drupal_goto()
+ */
+function rules_drupal_goto_alter(&$path, &$options, &$http_response_code) {
+  // Invoke a the page redirect, in case the action has been executed.
+  if (isset($GLOBALS['_rules_action_drupal_goto_do'])) {
+    list($url, $force) = $GLOBALS['_rules_action_drupal_goto_do'];
+
+    if ($force || !isset($_GET['destination'])) {
+      $url = drupal_parse_url($url);
+      $path = $url['path'];
+      $options['query'] = $url['query'];
+      $options['fragment'] = $url['fragment'];
+      $http_response_code = 302;
     }
   }
 }

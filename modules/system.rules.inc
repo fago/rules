@@ -138,7 +138,7 @@ function rules_system_action_info() {
           'type' => 'boolean',
           'label' => t('Force redirect'),
           'restriction' => 'input',
-          'description' => t("Per default Drupal doesn't redirect to the given path if a destination parameter is set, but it redirects to the given destination parameter. Most times, the destination parameter is set by appending it to the URL, e.g. !example_url", array('!example_url' => 'http://example.com/user/login?destination=node/2')),
+          'description' => t("Force the redirect even if another destination parameter is present. Per default Drupal would redirect to the path given as destination parameter, in case it is set. Usually the destination parameter is set by appending it to the URL, e.g. !example_url", array('!example_url' => 'http://example.com/user/login?destination=node/2')),
           'optional' => TRUE,
           'default value' => TRUE,
         ),

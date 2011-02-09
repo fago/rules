@@ -20,22 +20,24 @@ function rules_action_drupal_message($message, $status, $repeat) {
  * Action: Page redirect.
  *
  * @see rules_page_build()
+ * @see rules_drupal_goto_alter()
  */
 function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
   // Keep the current destination parameter if there is one set.
-  if (FALSE && $destination) {
+  if ($destination) {
     $url .= strpos($url, '?') === FALSE ? '?' : '&';
     $url .= drupal_http_build_query(drupal_get_destination());
   }
-  // We set the destination parameter which will be applied by drupal_goto().
-  if ($force || !isset($_GET['destination'])) {
-    $destination = drupal_parse_url($url);
-    $_GET['destination'] = url($destination['path'], $destination);
+  // If force is enabled, remove any destination parameter.
+  if ($force && isset($_GET['destination'])) {
+    unset($_GET['destination']);
   }
-  // This makes sure invoke rules_page_build() invokes drupal_goto() before
-  // the page is output. We don't invoke it right now, as this would end the
-  // the current page execution unpredictly for modules.
-  $GLOBALS['_rules_action_drupal_goto_do'] = $url;
+  // We don't invoke drupal_goto() right now, as this would end the the current
+  // page execution unpredictly for modules. So we'll take over drupal_goto()
+  // calls from somewhere else via hook_drupal_goto_alter() and make sure
+  // a drupal_goto() is invoked before the page is output with
+  // rules_page_build().
+  $GLOBALS['_rules_action_drupal_goto_do'] = array($url, $force);
 }
 
 /**
