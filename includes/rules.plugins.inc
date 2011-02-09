@@ -303,6 +303,13 @@ class Rule extends RulesActionContainer {
   protected function variableInfoAssertions() {
     return array();
   }
+
+  /**
+   * Overridden to ensure the whole Rule is deleted at once.
+   */
+  public function delete($keep_children = FALSE) {
+    parent::delete($keep_children);
+  }
 }
 
 /**

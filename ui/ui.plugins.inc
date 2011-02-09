@@ -32,7 +32,7 @@ class RulesRuleUI extends RulesActionContainerUI {
       $form['label'] = array(
         '#type' => 'textfield',
         '#title' => t('Name'),
-        '#default_value' => $label,
+        '#default_value' => empty($options['init']) ? $label : '',
         '#required' => TRUE,
         '#weight' => 5,
         '#description' => t('A human-readable name shortly describing the rule.'),

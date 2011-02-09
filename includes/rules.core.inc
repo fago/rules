@@ -1560,6 +1560,9 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       $this->info += array('variables' => array());
       return $this->info['variables'];
     }
+    // We have to return a reference in any case.
+    $return = NULL;
+    return $return;
   }
 
   /**
@@ -1706,8 +1709,8 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   /**
    * Override delete to keep the children alive, if possible.
    */
-  public function delete() {
-    if (isset($this->parent)) {
+  public function delete($keep_children = TRUE) {
+    if (isset($this->parent) && $keep_children) {
       foreach ($this->children as $child) {
         $child->setParent($this->parent);
       }
