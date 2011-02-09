@@ -749,6 +749,32 @@ function rules_data_selector_options_list(RulesAbstractPlugin $element) {
 }
 
 /**
+ * Returns the options list for choosing a property of an entity type.
+ */
+function rules_action_entity_query_property_options_list(RulesAbstractPlugin $element) {
+  $element->settings += array('type' => NULL);
+  if ($element->settings['type']) {
+    $properties = entity_get_all_property_info($element->settings['type']);
+    return rules_extract_property($properties, 'label');
+  }
+}
+
+/**
+ * Returns the options list specified for the choosen property.
+ */
+function rules_action_entity_query_value_options_list(RulesAbstractPlugin $element) {
+  // Get the possible values for the selected property.
+  $element->settings += array('type' => NULL, 'property' => NULL);
+  if ($element->settings['type'] && $element->settings['property']) {
+    $wrapper = entity_metadata_wrapper($element->settings['type']);
+
+    if (isset($wrapper->{$element->settings['property']}) && $property = $wrapper->{$element->settings['property']}) {
+      return $property->optionsList();
+    }
+  }
+}
+
+/**
  * Gets all view modes of an entity for an entity_view event.
  */
 function rules_get_entity_view_modes($type, $name) {

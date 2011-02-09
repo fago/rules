@@ -94,8 +94,18 @@ function rules_action_entity_query($type, $property, $value, $limit) {
  * Info alteration callback for the entity query action.
  */
 function rules_action_entity_query_info_alter(&$element_info, RulesAbstractPlugin $element) {
-  $element->settings += array('type' => NULL);
-  $element_info['parameter']['value']['type'] = $element->settings['type'];
+  $element->settings += array('type' => NULL, 'property' => NULL);
+  if ($element->settings['type']) {
+    $element_info['parameter']['property']['options list'] = 'rules_action_entity_query_property_options_list';
+
+    if ($element->settings['property']) {
+      $wrapper = entity_metadata_wrapper($element->settings['type']);
+      if (isset($wrapper->{$element->settings['property']}) && $property = $wrapper->{$element->settings['property']}) {
+        $element_info['parameter']['value']['type'] = $property->type();
+        $element_info['parameter']['value']['options list']  = $property->optionsList() ? 'rules_action_entity_query_value_options_list' : FALSE;
+      }
+    }
+  }
   $element_info['provides']['entity_fetched']['type'] = 'list<' . $element->settings['type'] . '>';
 }
 
