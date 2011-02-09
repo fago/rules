@@ -12,8 +12,7 @@
 /**
  * Action: Modify data.
  */
-function rules_action_data_set($data, $value, $settings, $state, $element) {
-  $wrapper = $state->currentArguments['data'];
+function rules_action_data_set($wrapper, $value, $settings, $state, $element) {
   try {
     // Update the value first then save changes, if possible.
     $wrapper->set($value);
@@ -146,16 +145,14 @@ function rules_action_entity_create_info_alter(&$element_info, RulesAbstractPlug
 /**
  * Action: Save entities.
  */
-function rules_action_entity_save($data, $immediate = FALSE, $settings, $state, $element) {
-  $wrapper = $state->currentArguments['data'];
+function rules_action_entity_save($wrapper, $immediate = FALSE, $settings, $state, $element) {
   $state->saveChanges($settings['data:select'], $wrapper, $immediate);
 }
 
 /**
  * Action: Delete entities.
  */
-function rules_action_entity_delete($data, $settings, $state, $element) {
-  $wrapper = $state->currentArguments['data'];
+function rules_action_entity_delete($wrapper, $settings, $state, $element) {
   $wrapper->delete();
 }
 

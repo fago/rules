@@ -29,6 +29,7 @@ function rules_data_action_info() {
         'label' => t('Data'),
         'description' => t('Specifies the data to be modified using a data selector, e.g. "node:author:name".'),
         'restriction' => 'selector',
+        'wrapped' => TRUE,
        ),
       'value' => array(
         'type' => '*',
@@ -147,6 +148,7 @@ function rules_data_action_info() {
           'label' => t('Entity'),
           'description' => t('Specifies the entity, which should be saved permanently.'),
           'restriction' => 'selector',
+          'wrapped' => TRUE,
          ),
          'immediate' => array(
            'type' => 'boolean',
@@ -176,7 +178,8 @@ function rules_data_action_info() {
           'label' => t('Entity'),
           'description' => t('Specifies the entity, which should be deleted permanently.'),
           'restriction' => 'selector',
-         ),
+          'wrapped' => TRUE,
+        ),
       ),
       'group' => t('Entities'),
       'access callback' => 'rules_data_action_access',
