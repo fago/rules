@@ -431,22 +431,29 @@ class RulesData  {
 
       if (self::typesMatch($info, $param_info)) {
         $matches[$prefix . $name] = $info;
+        if (!is_array($source) && $source instanceof EntityListWrapper) {
+          // Add some more possible list items.
+          for ($i = 1; $i < 4; $i++) {
+            $matches[$prefix . $i] = $info;
+          }
+        }
       }
       // Recurse later on to get an improved ordering of the results.
-      if ($wrapper instanceof EntityStructureWrapper) {
+      if ($wrapper instanceof EntityStructureWrapper || $wrapper instanceof EntityListWrapper) {
         $recurse[$prefix . $name] = $wrapper;
-      }
-    }
-    if ($recursions > 0 && !empty($recurse)) {
-      $recursions--;
-      foreach ($recurse as $name => $wrapper) {
-        $matches += self::matchingDataSelector($wrapper, $param_info, $name . ':', $recursions, $suggestions);
-      }
-    }
-    elseif (!empty($recurse) && $suggestions) {
-      // We may not recurse any more, but indicate the possibility to recurse.
-      foreach ($recurse as $name => $wrapper) {
-        $matches[$name . ':'] = $wrapper->info();
+        if ($recursions > 0) {
+          $matches += self::matchingDataSelector($wrapper, $param_info, $prefix . $name . ':', $recursions - 1, $suggestions);
+        }
+        elseif ($suggestions) {
+          // We may not recurse any more, but indicate the possibility to recurse.
+          $matches[$prefix . $name . ':'] = $wrapper->info();
+          if (!is_array($source) && $source instanceof EntityListWrapper) {
+            // Add some more possible list items.
+            for ($i = 1; $i < 4; $i++) {
+              $matches[$prefix . $i . ':'] = $wrapper->info();
+            }
+          }
+        }
       }
     }
     return $matches;

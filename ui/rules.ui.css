@@ -130,9 +130,12 @@ ul.rules-autocomplete a.ui-corner-all {
 }
 
 ul.rules-autocomplete .rules-dsac-group {
-  font-style: italic;
+  background-color: #eee;
 }
 
+ul.rules-autocomplete .ui-corner-all {
+  -moz-border-radius: 0px;
+}
 
 
 /* IE 6 hack for max-height. */

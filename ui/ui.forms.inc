@@ -597,7 +597,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
       $result = RulesData::matchingDataSelector($wrapper, $params[$parameter], $selector . ':', 0);
     }
     elseif (!$selector) {
-      $result = RulesData::matchingDataSelector($element->availableVariables(), $params[$parameter], '', 1);
+      $result = RulesData::matchingDataSelector($element->availableVariables(), $params[$parameter], '', 0);
     }
 
     foreach ($result as $selector => $info) {
@@ -608,7 +608,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
         $attributes['title'] = isset($info['description']) ? check_plain($info['description']) : '';
         if ($selector[strlen($selector) - 1] == ':') {
           $attributes['class'][] = 'rules-dsac-group';
-          $text = '> ' . check_plain($selector) . '... (' . check_plain($info['label']) . ')';
+          $text = check_plain($selector) . '... (' . check_plain($info['label']) . ')';
         }
         else {
           $text = check_plain($selector) . ' (' . check_plain($info['label']) . ')';
