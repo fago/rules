@@ -171,8 +171,9 @@ Drupal.rules = Drupal.rules || {};
    * Toogle the autcomplete window.
    */
   Drupal.rules.autocomplete.prototype.toggle = function(open) {
-    if (this.jqObject.autocomplete("widget").is(":visible") && open !== undefined) {
+    if (this.jqObject.autocomplete("widget").is(":visible")) {
       this.close();
+      this.focusOpens = true;
     }
     else {
       var groups = this.jqObject.val().split(":");
