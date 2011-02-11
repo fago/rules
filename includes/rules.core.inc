@@ -441,14 +441,13 @@ abstract class RulesPlugin extends RulesExtendable {
   /**
    * Sets up the execution state for the given arguments.
    */
-  protected function setUpState(array $args) {
+  public function setUpState(array $args) {
     $state = new RulesState();
     $vars = $this->setUpVariables();
     // Fix numerically indexed args to start with 0.
     if (!isset($args[key($vars)])) {
       $args = array_values($args);
     }
-
     foreach (array_keys($vars) as $i => $name) {
       $info = $vars[$name];
       // Support numerically indexed arrays as well as named parameter style.
@@ -458,7 +457,7 @@ abstract class RulesPlugin extends RulesExtendable {
       elseif (isset($args[$name])) {
         $state->addVariable($name, $args[$name], $info);
       }
-      elseif (!empty($info['handler'])) {
+      elseif (!empty($info['handler']) || (isset($info['parameter']) && $info['parameter'] === FALSE)) {
         $state->addVariable($name, NULL, $info);
       }
       elseif (empty($info['optional']) && $info['type'] != 'hidden') {
@@ -651,16 +650,22 @@ abstract class RulesPlugin extends RulesExtendable {
     else {
       $arg = !empty($info['default value']) ? $info['default value'] : NULL;
       $skip_sanitize = TRUE;
+      $info['allow null'] = TRUE;
     }
+    // Make sure the given value is set if required (default).
+    if (!isset($arg) && empty($info['allow null'])) {
+      throw new RulesException('The provided argument for parameter %name is empty.', array('%name' => $name), $this);
+    }
+
     // Apply any configured data processors.
     if (!empty($this->settings[$name . ':process'])) {
       // For processing, make sure the data is unwrapped now.
       $return = rules_unwrap_data(array($arg), array($info));
-      return $this->settings[$name . ':process']->process($return[0], $info, $state, $this);
+      return isset($return[0]) ? $this->settings[$name . ':process']->process($return[0], $info, $state, $this) : NULL;
     }
     // Support passing already sanitized values.
     if ($info['type'] == 'text' && !isset($skip_sanitize) && !empty($info['sanitize']) && !($arg instanceof EntityMetadataWrapper)) {
-      return check_plain((string)$arg);
+      return check_plain((string) $arg);
     }
     return $arg;
   }
@@ -1597,10 +1602,15 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function parameterInfo($optional = FALSE) {
+    $params = parent::parameterInfo($optional);
     if (isset($this->info['variables'])) {
-      return parent::parameterInfo($optional) + rules_filter_array($this->info['variables'], 'handler', FALSE);
+      foreach ($this->info['variables'] as $name => $var_info) {
+        if (empty($var_info['handler']) && (!isset($var_info['parameter']) || $var_info['parameter'])) {
+          $params[$name] = $var_info;
+        }
+      }
     }
-    return parent::parameterInfo($optional);
+    return $params;
   }
 
   public function availableVariables() {

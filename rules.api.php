@@ -41,26 +41,26 @@
  *   - group: A group for this element, used for grouping the actions in the
  *     interface. Should start with a capital letter and be translated.
  *     Required.
- *   - parameter: An array describing all parameter of the action with
- *     the parameter's name as key.  Optional. Each parameter has to be
+ *   - parameter: (optional) An array describing all parameter of the action
+ *     with the parameter's name as key. Each parameter has to be
  *     described by a sub-array with possible attributes as described
  *     afterwards, whereas the name of a parameter needs to be a lowercase,
  *     valid PHP variable name.
- *   - provides: An array describing the variables the action provides to the
- *     evaluation state with the variable name as key. Optional. Each variable
- *     has to be described by a sub-array with possible attributes as described
- *     afterwards, whereas the name of a parameter needs to be a lowercase,
- *     valid PHP variable name.
- *   - 'named parameter': If set to TRUE, the arguments will be passed as a
- *     single array with the parameter names as keys. This emulates named
- *     parameters in PHP and is in particular useful if the number of parameters
- *     can vary. Optionally, defaults to FALSE.
- *   - base: The base for action implementation callbacks to use instead of the
- *     action's name. Optional (defaults to the name).
- *   - callbacks: An array which allows to set specific function callbacks for
- *     the action. The default for each callback is the actions base appended
- *     by '_' and the callback name.
- *   - 'access callback': An optional callback, which has to return whether the
+ *   - provides: (optional) An array describing the variables the action
+ *     provides to the evaluation state with the variable name as key. Each
+ *     variable has to be described by a sub-array with possible attributes as
+ *     described afterwards, whereas the name of a parameter needs to be a
+ *     lowercase, valid PHP variable name.
+ *   - 'named parameter': (optional) If set to TRUE, the arguments will be
+ *     passed as a single array with the parameter names as keys. This emulates
+ *     named parameters in PHP and is in particular useful if the number of
+ *     parameters can vary. Defaults to FALSE.
+ *   - base: (optional) The base for action implementation callbacks to use
+ *     instead of the action's name. Defaults to the action name.
+ *   - callbacks: (optional) An array which allows to set specific function
+ *     callbacks for the action. The default for each callback is the actions
+ *     base appended by '_' and the callback name.
+ *   - 'access callback': (optional) A callback which has to return whether the
  *     currently logged in user is allowed to configure this action. See
  *     rules_node_integration_access() for an example callback.
  *  Each 'parameter' array may contain the following properties:
@@ -71,38 +71,42 @@
  *     can be specified by using the notating list<integer> as introduced by
  *     the entity metadata module. The special keyword '*' can be used when all
  *     types should be allowed. Required.
- *   - bundles: Optionally, an array of bundle names. When the specified type is
+ *   - bundles: (optional) An array of bundle names. When the specified type is
  *     set to a single entity type, this may be used to restrict the allowed
  *     bundles.
- *   - description: If necessary, a further description of the parameter.
- *     Optional.
- *   - options list: Optionally, a callback that returns an array of possible
+ *   - description: (optional) If necessary, a further description of the
+ *     parameter.
+ *   - options list: (optional) A callback that returns an array of possible
  *     values for this parameter. The callback has to return an array as used
  *     by hook_options_list(). For an example implementation see
  *     rules_data_action_type_options().
- *   - save: If this is set to TRUE, the parameter will be saved by rules when
- *     the rules evaluation ends. This is only supported for savable data
- *     types. If the action returns FALSE, saving is skipped.
- *   - optional: May be set to TRUE, when the parameter isn't required.
- *   - 'default value': The value to pass to the action, in case the parameter
- *     is optional and there is no specified value. Optional.
- *   - restriction: Restrict how the argument for this parameter may be
- *     provided. Supported values are 'selector' and 'input'. Optional.
- *   - sanitize: Optionally. Allows parameters of type 'text' to demand an
+ *   - save: (optional) If this is set to TRUE, the parameter will be saved by
+ *     rules when the rules evaluation ends. This is only supported for savable
+ *     data types. If the action returns FALSE, saving is skipped.
+ *   - optional: (optional) May be set to TRUE, when the parameter isn't
+ *     required.
+ *   - 'default value': (optional) The value to pass to the action, in case the
+ *     parameter is optional and there is no specified value.
+ *   - 'allow null': (optional) Usually Rules will not pass any NULL values as
+ *     argument, but abort the evaluation if a NULL value is present. If set to
+ *     TRUE, Rules will not abort and pass the NULL value through. Defaults to
+ *     FALSE.
+ *   - restriction: (optional) Restrict how the argument for this parameter may
+ *     be provided. Supported values are 'selector' and 'input'.
+ *   - sanitize: (optional) Allows parameters of type 'text' to demand an
  *     already sanitized argument. If enabled, any user specified value won't be
- *     sanitized itself, but replacements applied by input evaluators are.
- *   - wrapped: Optionally, set this to TRUE in case the data should be passed
+ *     sanitized itself, but replacements applied by input evaluators are as
+ *     well as values retrieved from selected data sources.
+ *   - wrapped: (optional) Set this to TRUE in case the data should be passed
  *     wrapped. This only applies to wrapped data types, e.g. entities.
  *  Each 'provides' array may contain the following properties:
  *   - label: The label of the variable. Start capitalized. Required.
  *   - type: The rules data type of the variable. All types declared in
  *     hook_rules_data_info() may be specified. Types may be parametrized e.g.
  *     the types node<page> or list<integer> are valid.
- *   - save: If this is set to TRUE, the provided variable is saved by rules
- *     when the rules evaluation ends. Only possible for savable data types.
- *     Optional (defaults to FALSE).
- *   - 'label callback': A callback to improve the variables label using the
- *     action's configuration settings. Optional.
+ *   - save: (optional) If this is set to TRUE, the provided variable is saved
+ *     by rules when the rules evaluation ends. Only possible for savable data
+ *     types. Defaults to FALSE.
  *
  *  The module has to provide an implementation for each action, being a
  *  function named as specified in the 'base' key or for the execution callback.

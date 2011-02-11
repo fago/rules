@@ -72,8 +72,19 @@ function rules_condition($name, $settings = array()) {
  * @param $variables
  *   The array of variables to setup in the evaluation state, making them
  *   available for the configuraion elements. Values for the variables need to
- *   be passed as argument when the rule is executed.
- *   Only instances with no variables can be embedded in configurations.
+ *   be passed as argument when the rule is executed. Only Rule instances with
+ *   no variables can be embedded in other configurations, e.g. rule sets.
+ *   The array has to be keyed by variable name and contain a sub-array for each
+ *   variable that has the same structure as the arrays used for describing
+ *   parameters of an action, see hook_rules_action_info(). However, in addition
+ *   to that the following keys are supported:
+ *    - parameter: (optional) If set to FALSE, no parameter for the variable
+ *      is created - thus no argument needs to be passed to the rule for the
+ *      variable upon execution. As a consequence no value will be set
+ *      initially, but the "Set data value" action may be used to do so. This is
+ *      in particular useful for defining variables which can be provided to the
+ *      caller (see e.g. rules_action_set()) but need not be passed in as
+ *      parameter.
  * @return Rule
  */
 function rule($variables = NULL) {
@@ -348,6 +359,9 @@ function rules_unwrap_data(array $data, $info = array()) {
       }
       $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
       $data[$key] = $entry->value($options);
+      if (!isset($data[$key]) && empty($info[$key]['allow null'])) {
+        throw new RulesException('The provided argument for parameter %name is empty.', array('%name' => $key));
+      }
     }
   }
   return $data;

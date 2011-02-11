@@ -13,19 +13,28 @@
  * Action: Modify data.
  */
 function rules_action_data_set($wrapper, $value, $settings, $state, $element) {
-  try {
-    // Update the value first then save changes, if possible.
-    $wrapper->set($value);
+  if ($wrapper instanceof EntityMetadataWrapper) {
+    try {
+      // Update the value first then save changes, if possible.
+      $wrapper->set($value);
+    }
+    catch (EntityMetadataWrapperException $e) {
+      throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $settings['data:select']));
+    }
+    // Save changes if a property of a variable has been changed.
+    if (strpos($element->settings['data:select'], ':') !== FALSE) {
+      $info = $wrapper->info();
+      // We always have to save the changes in the parent entity. E.g. when the
+      // node author is changed, we don't want to save the author but the node.
+      $state->saveChanges(implode(':', explode(':', $settings['data:select'], -1)), $info['parent']);
+    }
   }
-  catch (EntityMetadataWrapperException $e) {
-    throw new RulesException('Unable to modify data "@selector": ' . $e->getMessage(), array('@selector' => $settings['data:select']));
-  }
-  // Save changes if a property of a variable has been changed.
-  if (strpos($element->settings['data:select'], ':') !== FALSE) {
-    $info = $wrapper->info();
-    // We always have to save the changes in the parent entity. E.g. when the
-    // node author is changed, we don't want to save the author but the node.
-    $state->saveChanges(implode(':', explode(':', $settings['data:select'], -1)), $info['parent']);
+  else {
+    // A not wrapped variable (e.g. a number) is being set. As we don't have
+    // a reference on the variable, we need to directly update the variable in
+    // the state.
+    $var_name = $element->settings['data:select'];
+    $state->variables[$var_name] = $value;
   }
 }
 

@@ -524,6 +524,29 @@ class RulesTestCase extends DrupalWebTestCase {
 
     list($node2) = $set->execute($node);
     $this->assertTrue($node2->nid == $node->nid, 'Rule set returned a variable.');
+
+    // Create an action set returning a variable that is no parameter.
+    $set = rules_action_set(array(
+      'node' => array(
+        'type' => 'node',
+        'parameter' => FALSE,
+      )), array('node'));
+    $set->action('entity_fetch', array('type' => 'node', 'id' => $node->nid))
+        ->action('data_set', array('data:select' => 'node', 'value:select' => 'entity_fetched'));
+    $set->integrityCheck();
+    list($node3) = $set->execute();
+    $this->assertTrue($node3->nid == $node->nid, 'Action set returned a variable that has not been passed as parameter.');
+
+    // Test the same again with a variable holding a not wrapped data type.
+    $set = rules_action_set(array(
+      'number' => array(
+        'type' => 'integer',
+        'parameter' => FALSE,
+      )), array('number'));
+    $set->action('data_set', array('data:select' => 'number', 'value' => 3));
+    $set->integrityCheck();
+    list($number) = $set->execute();
+    $this->assertTrue($number == 3, 'Actions set returned a number.');
   }
 
   /**
@@ -621,6 +644,24 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule->execute($node);
     $this->assertTrue($node->title == 'foo', 'Action with named parameters has been correctly executed.');
     RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Make sure Rules aborts when NULL values are used.
+   */
+  function testAbortOnNULLValues() {
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('drupal_message', array('message:select' => 'node:type'));
+    $rule->integrityCheck();
+
+    // Test the rule.
+    $node = $this->drupalCreateNode();
+    $node->type = NULL;
+    $rule->execute($node);
+
+    $text = RulesLog::logger()->render();
+    $msg = RulesTestCase::t('The provided argument for parameter %message is empty.', array('message'));
+    $this->assertTrue(strpos($text, $msg) !== FALSE, 'Evaluation aborted due to an empty argument value.');
   }
 }
 

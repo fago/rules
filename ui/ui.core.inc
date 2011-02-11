@@ -417,8 +417,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       );
       $weight = 0;
       foreach ($this->element->componentVariables() as $name => $var_info) {
-        $form['settings']['vars']['items'][$name] = RulesPluginUI::getVariableForm($name, $var_info);
-        $form['settings']['vars']['items'][$name]['weight']['#default_value'] = $weight++;
+        if (!(isset($var_info['parameter']) && $var_info['parameter'] == FALSE)) {
+          $form['settings']['vars']['items'][$name] = RulesPluginUI::getVariableForm($name, $var_info);
+          $form['settings']['vars']['items'][$name]['weight']['#default_value'] = $weight++;
+        }
       }
       // Always add three empty forms.
       for ($i = 0; $i < 3; $i++) {

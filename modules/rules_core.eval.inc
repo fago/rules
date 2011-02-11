@@ -30,16 +30,10 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     rules_log('Evaluating @plugin %label.', $replacements, RulesLog::INFO, TRUE);
     module_invoke_all('rules_config_execute', $component);
 
-    // Manually create a new evaluation state.
-    $new_state = new RulesState();
-
-    // Register all parameters as variables.
-    $args = array_intersect_key($wrapped_args, $info['parameter']);
-    foreach ($args as $name => $data) {
-      $new_state->addVariable($name, $data, $info['parameter'][$name]);
-    }
-
+    // Manually create a new evaluation state and evaluate the component.
+    $new_state = $component->setUpState($wrapped_args);
     $return = $component->evaluate($new_state);
+
     // Care for the right return value in case we have to provide vars.
     if ($component instanceof RulesActionInterface && !empty($info['provides'])) {
       $return = array();

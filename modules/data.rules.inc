@@ -30,6 +30,7 @@ function rules_data_action_info() {
         'description' => t('Specifies the data to be modified using a data selector, e.g. "node:author:name".'),
         'restriction' => 'selector',
         'wrapped' => TRUE,
+        'allow null' => TRUE,
        ),
       'value' => array(
         'type' => '*',
@@ -313,7 +314,6 @@ function rules_action_data_set_validate(RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
   $info = $element->applyDataSelector($element->settings['data:select'])->info();
   if (strpos($element->settings['data:select'], ':') !== FALSE && empty($info['setter callback'])) {
-    // Modifying rules variables itself doesn't make any sense.
     throw new RulesException("The selected data property doesn't support writing.", array(), array($element, 'parameter', 'data'));
   }
 }
