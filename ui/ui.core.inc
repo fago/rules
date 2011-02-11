@@ -520,10 +520,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Make sure the element has been processed.
     $this->element->processSettings();
 
+    $config_name = $this->element->root()->name;
     $content['label'] = array(
       '#type' => 'link',
       '#title' => $this->element->label(),
-      '#href' => RulesPluginUI::path($this->element->root()->name, 'edit', $this->element),
+      '#href' => $this->element->isRoot() ? RulesPluginUI::path($config_name) : RulesPluginUI::path($config_name, 'edit', $this->element),
       '#prefix' => '<div class="rules-element-label">',
       '#suffix' => '</div>'
     );
