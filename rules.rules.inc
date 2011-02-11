@@ -87,6 +87,14 @@ function rules_rules_data_info() {
 }
 
 /**
+ * Implements hook_rules_data_info_alter().
+ */
+function rules_rules_data_info_alter(&$items) {
+  // For now just invoke the rules core implementation manually.
+  rules_rules_core_data_info_alter($items);
+}
+
+/**
  * Implements hook_rules_evaluator_info().
  */
 function rules_rules_evaluator_info() {

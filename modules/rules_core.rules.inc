@@ -75,16 +75,19 @@ function rules_rules_core_data_info() {
    'list' => array(
       'label' => t('list'),
       'wrap' => TRUE,
+      'group' => t('List'),
     ),
    'list<text>' => array(
       'label' => t('list of text'),
       'ui class' => 'RulesDataUIListText',
       'wrap' => TRUE,
+      'group' => t('List'),
     ),
    'list<integer>' => array(
       'label' => t('list of integer'),
       'ui class' => 'RulesDataUIListInteger',
       'wrap' => TRUE,
+      'group' => t('List'),
     ),
    'entity' => array(
       'label' => t('any entity'),
@@ -95,7 +98,7 @@ function rules_rules_core_data_info() {
   foreach (entity_get_info() as $type => $info) {
     if (!empty($info['label'])) {
       $return[$type] = array(
-        'label' => $info['label'],
+        'label' => strtolower($info['label'][0]) . substr($info['label'], 1),
         'parent' => 'entity',
         'wrap' => TRUE,
         'group' => t('Entity'),
@@ -103,6 +106,28 @@ function rules_rules_core_data_info() {
     }
   }
   return $return;
+}
+
+/**
+ * Implements hook_rules_data_info_alter() on behalf of the pseudo rules_core module.
+ *
+ * Makes sure there is a list<type> data type for each type registered.
+ *
+ * @see rules_rules_data_info_alter()
+ */
+function rules_rules_core_data_info_alter(&$data_info) {
+  foreach ($data_info as $type => $info) {
+    if (!entity_property_list_extract_type($type)) {
+      $list_type = "list<$type>";
+      if (!isset($data_info[$list_type])) {
+        $data_info[$list_type] = array(
+          'label' => t('list of @type_label items', array('@type_label' => $info['label'])),
+          'wrap' => TRUE,
+          'group' => t('List'),
+        );
+      }
+    }
+  }
 }
 
 /**
