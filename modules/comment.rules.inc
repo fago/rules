@@ -51,18 +51,6 @@ function rules_comment_event_info() {
         'comment' => array('type' => 'comment', 'label' => t('deleted comment')),
       ),
     ),
-    'comment_publish' => $defaults + array(
-      'label' => t('A comment has been published'),
-      'variables' => array(
-        'comment' => array('type' => 'comment', 'label' => t('published comment')),
-      ),
-    ),
-    'comment_unpublish' => $defaults + array(
-      'label' => t('A comment has been unpublished'),
-      'variables' => array(
-        'comment' => array('type' => 'comment', 'label' => t('unpublished comment')),
-      ),
-    ),
   );
 }
 
