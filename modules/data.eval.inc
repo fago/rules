@@ -313,15 +313,13 @@ function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin 
 /**
  * Condition: Entity is new
  */
-function rules_condition_entity_is_new($entity, $settings, $state, $element) {
-  $wrapper = $state->currentArguments['entity'];
+function rules_condition_entity_is_new($wrapper, $settings, $state, $element) {
   return !$wrapper->getIdentifier() || !empty($entity->is_new);
 }
 
 /**
  * Condition: Entity has field.
  */
-function rules_condition_entity_has_field($entity, $field_name, $settings, $state) {
-  $wrapper = $state->currentArguments['entity'];
+function rules_condition_entity_has_field($wrapper, $field_name, $settings, $state) {
   return isset($wrapper->$field_name) || isset($entity->$field_name);
 }

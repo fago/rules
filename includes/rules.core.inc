@@ -683,8 +683,7 @@ abstract class RulesPlugin extends RulesExtendable {
   public function applyDataSelector($selector) {
     $parts = explode(':', str_replace('-', '_', $selector), 2);
     if (($vars = $this->availableVariables()) && isset($vars[$parts[0]]['type'])) {
-      $data = NULL;
-      $wrapper = rules_wrap_data($data, $vars[$parts[0]], TRUE);
+      $wrapper = rules_wrap_data(NULL, $vars[$parts[0]], TRUE);
       if (count($parts) > 1 && $wrapper instanceof EntityMetadataWrapper) {
         try {
           foreach (explode(':', $parts[1]) as $name) {

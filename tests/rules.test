@@ -660,7 +660,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule->execute($node);
 
     $text = RulesLog::logger()->render();
-    $msg = RulesTestCase::t('The provided argument for parameter %message is empty.', array('message'));
+    $msg = RulesTestCase::t('The variable or parameter %message is empty.', array('message'));
     $this->assertTrue(strpos($text, $msg) !== FALSE, 'Evaluation aborted due to an empty argument value.');
   }
 }
