@@ -79,6 +79,40 @@ class RulesDataUI {
     RulesDataProcessor::attachForm($form[$name . ':process'], $settings[$name . ':process'], $info, $element->availableVariables());
     return $form;
   }
+
+  /**
+   * Renders the value by making use of the label if an options list is available.
+   *
+   * Used for data UI classes implementing the
+   * RulesDataDirectInputFormInterface.
+   *
+   * In case an options list is available, the the usual render() method won't
+   * be invoked, instead the selected entry is rendered via this method.
+   *
+   * @todo for Drupal 8: Refactor to avoid implementations have to care about
+   * option lists when generating the form, but not when rendering values.
+   */
+  public static function renderOptionsLabel($value, $name, $info, RulesPlugin $element) {
+    if (!empty($info['options list'])) {
+      $element->call('loadBasicInclude');
+      $options = entity_property_options_flatten($info['options list']($element, $name));
+      if (!is_array($value) && isset($options[$value])) {
+        $value = $options[$value];
+      }
+      else {
+        foreach ($value as $key => $single_value) {
+          if (isset($options[$single_value])) {
+            $value[$key] = $options[$single_value];
+          }
+        }
+        $value = implode(', ', $value);
+      }
+      return array(
+        'content' => array('#markup' => check_plain($value)),
+        '#attributes' => array('class' => array('rules-parameter-options-entry')),
+      );
+    }
+  }
 }
 
 /**

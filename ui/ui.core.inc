@@ -546,7 +546,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         );
       }
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
-        $element = call_user_func(array($this->getDataTypeClass($parameter['type']), 'render'), $this->element->settings[$name]);
+        $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
+        $element = call_user_func(array($this->getDataTypeClass($parameter['type']), $method), $this->element->settings[$name], $name, $parameter, $this->element);
       }
       // Only add parameters that are really configured / not default.
       if ($element) {
