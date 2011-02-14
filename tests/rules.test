@@ -1160,13 +1160,22 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->execute($node);
 
     $tid = $term_wrapped->getIdentifier();
-    RulesLog::logger()->checkLog();
     $this->assertEqual(array_values($node->field_tags[LANGUAGE_NONE]), array(0 => array('tid' => $tid)), 'Entity has field conditions evaluted.');
 
     // Test loading a non-node entity.
     $action = rules_action('entity_fetch', array('type' => 'taxonomy_term', 'id' => $tid));
     list($term) = $action->execute();
     $this->assertEqual($term->tid, $tid, 'Fetched a taxonomy term using "entity_fetch".');
+
+    // Test the entity is of type condition.
+    $rule = rule(array('entity' => array('type' => 'entity', 'label' => 'entity')));
+    $rule->condition('entity_is_of_type', array('type' => 'node'));
+    $rule->action('data_set', array('data:select' => 'entity:title', 'value' => 'bar'));
+    $rule->integrityCheck();
+    $rule->execute(entity_metadata_wrapper('node', $node));
+
+    $this->assertEqual(entity_metadata_wrapper('node', $node->nid)->title->value(), 'bar', 'Entity is of type condition correctly asserts the entity type.');
+    RulesLog::logger()->checkLog();
   }
 
   /**

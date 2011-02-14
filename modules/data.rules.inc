@@ -618,6 +618,25 @@ function rules_data_condition_info() {
       'group' => t('Entities'),
       'base' => 'rules_condition_entity_has_field',
     ),
+    'entity_is_of_type' => array(
+      'label' => t('Entity is of type'),
+      'parameter' => array(
+        'entity' => array(
+          'type' => 'entity',
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity for which to evaluate the condition.'),
+        ),
+        'type' => array(
+          'type' => 'token',
+          'label' => t('Entity type'),
+          'description' => t('The entity type to check for.'),
+          'options list' => 'rules_data_action_type_options',
+          'restriction' => 'input',
+        ),
+      ),
+      'group' => t('Entities'),
+      'base' => 'rules_condition_entity_is_of_type',
+    ),
   );
 }
 
@@ -735,6 +754,15 @@ function rules_condition_entity_has_field_assertions($element) {
       $assertion = array('property info' => array($field_property => $properties[$field_property]));
       return array($element->settings['entity:select'] => $assertion);
     }
+  }
+}
+
+/**
+ * Assert the selected entity type.
+ */
+function rules_condition_entity_is_of_type_assertions($element) {
+  if ($type = $element->settings['type']) {
+    return array('entity' => array('type' => $type));
   }
 }
 

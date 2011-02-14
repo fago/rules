@@ -323,3 +323,10 @@ function rules_condition_entity_is_new($wrapper, $settings, $state, $element) {
 function rules_condition_entity_has_field($wrapper, $field_name, $settings, $state) {
   return isset($wrapper->$field_name) || isset($entity->$field_name);
 }
+
+/**
+ * Condition: Entity is of type.
+ */
+function rules_condition_entity_is_of_type($wrapper, $type) {
+  return $wrapper->type() == $type;
+}

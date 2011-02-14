@@ -471,6 +471,12 @@ class RulesData  {
       $selector = str_replace('-', '_', $selector);
       // For now only support assertions for variables
       if (strpos($selector, ':') === FALSE && isset($var_info[$selector])) {
+        // Allow conditions to specialize data types via assertions.
+        if (isset($data['type'])) {
+          $var_info[$selector]['type'] = $data['type'];
+          unset($data['type']);
+        }
+
         $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
         // Add in a callback that the entity metadata wrapper pick up for
         // altering the property info, such that we can add in the assertions.
