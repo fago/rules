@@ -310,6 +310,17 @@ class Rule extends RulesActionContainer {
   public function delete($keep_children = FALSE) {
     parent::delete($keep_children);
   }
+
+  /**
+   * Overriden to expose the variables of all actions.
+   */
+  public function providesVariables() {
+    $provides = parent::providesVariables();
+    foreach ($this->actions() as $action) {
+      $provides += $action->providesVariables();
+    }
+    return $provides;
+  }
 }
 
 /**
