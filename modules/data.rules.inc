@@ -740,11 +740,14 @@ function rules_condition_entity_has_field_assertions($element) {
 
 /**
  * Returns the options list specified by the selected data property.
+ *
+ * @see rules_action_data_set_info_alter()
+ * @see rules_condition_data_is_info_alter()
  */
 function rules_data_selector_options_list(RulesAbstractPlugin $element) {
   // The possible values of the "value" parameter are those of the data param.
   if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
-    return $wrapper->optionsList();
+    return $wrapper->optionsList($lement instanceof RulesActionInterface ? 'edit' : 'view');
   }
 }
 
@@ -769,7 +772,7 @@ function rules_action_entity_query_value_options_list(RulesAbstractPlugin $eleme
     $wrapper = entity_metadata_wrapper($element->settings['type']);
 
     if (isset($wrapper->{$element->settings['property']}) && $property = $wrapper->{$element->settings['property']}) {
-      return $property->optionsList();
+      return $property->optionsList('view');
     }
   }
 }

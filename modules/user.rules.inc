@@ -122,7 +122,7 @@ function rules_user_condition_info() {
         'roles' => array(
           'type' => 'list<integer>',
           'label' => t('Roles'),
-          'options list' => 'entity_metadata_user_roles',
+          'options list' => 'rules_user_roles_options_list',
         ),
         'operation' => array(
           'type' => 'text',
@@ -182,7 +182,7 @@ function rules_user_action_info() {
       'roles' => array(
         'type' => 'list<integer>',
         'label' => t('Roles'),
-        'options list' => 'entity_metadata_user_roles',
+        'options list' => 'rules_user_roles_options_list',
       ),
     ),
     'group' => t('User'),
@@ -223,6 +223,13 @@ function rules_user_action_info() {
  */
 function rules_user_role_change_access() {
   return entity_metadata_user_roles() && user_access('administer permissions');
+}
+
+/**
+ * Options list callback for user roles.
+ */
+function rules_user_roles_options_list($element) {
+  return entity_metadata_user_roles('roles', array(), $element instanceof RulesConditionInterface ? 'view' : 'edit');
 }
 
 /**
