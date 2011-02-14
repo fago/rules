@@ -763,7 +763,7 @@ abstract class RulesPlugin extends RulesExtendable {
       // Find a unique name for this configuration.
       $this->name = $this->module . '_';
       for ($i = 0; $i < 8; $i++) {
-        //Alphanumeric name generation
+        // Alphanumeric name generation.
         $rnd = mt_rand(97, 122);
         $this->name .= chr($rnd);
       }

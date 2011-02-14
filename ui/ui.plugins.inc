@@ -88,7 +88,6 @@ class RulesRuleUI extends RulesActionContainerUI {
           '#markup' => t('Machine name: ') . $this->rule->name,
         ),
         'weight' => array(
-          '#access' => (bool) $this->rule->weight,
           '#markup' => t('Weight: ') . $this->rule->weight,
         ),
       );
