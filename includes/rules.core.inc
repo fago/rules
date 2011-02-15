@@ -121,7 +121,9 @@ abstract class RulesExtendable extends FacesExtendable {
   }
 
   protected function setUp() {
-    $this->cache = rules_get_cache();
+    // Keep a reference on the cache, so elements created during cache
+    // rebuilding end up with a complete cache in the end too.
+    $this->cache = &rules_get_cache();
     if (isset($this->cache[$this->hook][$this->itemName])) {
       $this->itemInfo = &$this->cache[$this->hook][$this->itemName];
     }
@@ -1057,6 +1059,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   protected $elementName;
   protected $info = array('parameter' => array(), 'provides' => array());
+  protected $infoLoaded = FALSE;
 
   /**
    * @param $name
@@ -1076,6 +1079,10 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     parent::setUp();
     if (isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
       $this->info = $this->cache[$this->itemName . '_info'][$this->elementName];
+      // Remember that the info has been correctly setup.
+      // @see self::forceSetup().
+      $this->infoLoaded = TRUE;
+
       // Add in per-plugin implementation callbacks if any.
       if (!empty($this->info['faces_cache'])) {
         foreach ($this->info['faces_cache'] as $face => $data) {
@@ -1096,6 +1103,18 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     elseif (!empty($this->itemInfo['faces_cache']) && function_exists($this->elementName)) {
       // We don't have any info, so just add the name as execution callback.
       $this->override(array('execute' => $this->elementName));
+    }
+  }
+
+  public function forceSetUp() {
+    if (!isset($this->cache) || (!empty($this->itemInfo['faces_cache']) && !$this->faces)) {
+      $this->setUp();
+    }
+    // In case we have element specific information, which is not loaded yet,
+    // do so now. This might happen if the element has been initially loaded
+    // with an incomplete cache, i.e. during cache rebuilding.
+    elseif (!$this->infoLoaded && isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
+      $this->setUp();
     }
   }
 
