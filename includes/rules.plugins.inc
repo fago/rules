@@ -510,6 +510,7 @@ class RulesOr extends RulesConditionContainer {
 class RulesLoop extends RulesActionContainer {
 
   protected $itemName = 'loop';
+  protected $listItemInfo;
 
   public function __construct($settings = array(), $variables = NULL) {
     $this->setUp();
@@ -537,19 +538,19 @@ class RulesLoop extends RulesActionContainer {
     $this->checkVarName($this->settings['item:var']);
   }
 
-  protected function listItemType() {
-    if (!isset($this->settings['item:type'])) {
-      $info = $this->getArgumentInfo('list');
-      $this->settings['item:type'] = isset($info['type']) ? entity_property_list_extract_type($info['type']) : 'unknown';
-    }
-    return $this->settings['item:type'];
-  }
-
   protected function listItemInfo() {
-    return array(
-      'type' => $this->listItemType(),
-      'label' => $this->settings['item:label'],
-    );
+    if (!isset($this->listItemInfo)) {
+      if ($info = $this->getArgumentInfo('list')) {
+        // Pass through the variable info keys like property info.
+        $this->listItemInfo = array_intersect_key($info, array_flip(array('type', 'property info', 'bundle')));
+        $this->listItemInfo['type'] = isset($info['type']) ? entity_property_list_extract_type($info['type']) : 'unknown';
+      }
+      else {
+        $this->listItemInfo = array('type' => 'unknown');
+      }
+      $this->listItemInfo['label'] = $this->settings['item:label'];
+    }
+    return $this->listItemInfo;
   }
 
   public function evaluate(RulesState $state) {
