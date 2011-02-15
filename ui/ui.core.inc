@@ -387,9 +387,12 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#required' => TRUE,
       '#weight' => -5,
     );
-    if (!empty($this->element->module) && !empty($this->element->name) && strpos($this->element->name, $this->element->module . '_') === 0) {
-      // Remove the module prefix from the machine name.
+    if (!empty($this->element->module) && !empty($this->element->name) && $this->element->module == 'rules' && strpos($this->element->name, 'rules_') === 0) {
+      // Remove the Rules module prefix from the machine name.
       $machine_name = substr($this->element->name, strlen($this->element->module) + 1);
+    }
+    else {
+      $machine_name = $this->element->name;
     }
     $form['settings']['name'] = array(
       '#type' => 'machine_name',
@@ -406,6 +409,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
     // Show a form for editing variables for components.
     if (($plugin_info = $this->element->pluginInfo()) && !empty($plugin_info['component'])) {
+      $description = $this->element->hasStatus(ENTITY_IN_CODE) ? t('Variables that are passed to the component when it is invoked. They can not be edited for configurations that are provided in code.') : t('Specify the variables to be passed to the component when it is invoked. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters and underscores.');
       $form['settings']['vars'] = array(
         '#prefix' => '<div id="rules-component-variables">',
         '#suffix' => '</div>',
@@ -413,7 +417,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#element_validate' => array('rules_ui_element_variable_form_validate'),
         '#theme' => 'rules_ui_variable_form',
         '#title' => t('Variables'),
-        '#description' => t('Specify the variables to be passed to the component when it is invoked. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters and underscores.'),
+        '#description' => $description,
+        // Variables can not be edited on configurations in code.
+        '#disabled' => $this->element->hasStatus(ENTITY_IN_CODE),
       );
       $weight = 0;
       foreach ($this->element->componentVariables() as $name => $var_info) {
@@ -918,8 +924,10 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
       '#type' => 'checkboxes',
       '#options' => rules_extract_property($vars, 'label'),
       '#default_value' => $this->element->componentProvidesVariables(),
-      '#title' => t('Provide variables'),
-      '#description' => t('Select the variables that should be provided to the caller.'),
+      '#title' => t('Provided variables'),
+      '#description' => $this->element->hasStatus(ENTITY_IN_CODE) ? t('Variables that are provided to the caller. They can not be edited for configurations that are provided in code.') : t('Select the variables that should be provided to the caller.'),
+      // Variables can not be edited on configurations in code.
+      '#disabled' => $this->element->hasStatus(ENTITY_IN_CODE),
     );
   }
 
