@@ -473,7 +473,10 @@ class RulesData  {
       if (strpos($selector, ':') === FALSE && isset($var_info[$selector])) {
         // Allow conditions to specialize data types via assertions.
         if (isset($data['type'])) {
-          $var_info[$selector]['type'] = $data['type'];
+          // Make sure the data type is more special than the current one.
+          if (RulesData::typesMatch($data, $var_info[$selector])) {
+            $var_info[$selector]['type'] = $data['type'];
+          }
           unset($data['type']);
         }
 
