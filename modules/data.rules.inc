@@ -775,7 +775,7 @@ function rules_condition_entity_is_of_type_assertions($element) {
 function rules_data_selector_options_list(RulesAbstractPlugin $element) {
   // The possible values of the "value" parameter are those of the data param.
   if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
-    return $wrapper->optionsList($lement instanceof RulesActionInterface ? 'edit' : 'view');
+    return $wrapper->optionsList($element instanceof RulesActionInterface ? 'edit' : 'view');
   }
 }
 
