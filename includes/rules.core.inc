@@ -450,17 +450,21 @@ abstract class RulesPlugin extends RulesExtendable {
     if (!isset($args[key($vars)])) {
       $args = array_values($args);
     }
+    $offset = 0;
     foreach (array_keys($vars) as $i => $name) {
       $info = $vars[$name];
+      if (!empty($info['handler']) || (isset($info['parameter']) && $info['parameter'] === FALSE)) {
+        $state->addVariable($name, NULL, $info);
+        // Count the variables that are not passed as parameters.
+        $offset++;
+      }
       // Support numerically indexed arrays as well as named parameter style.
-      if (isset($args[$i])) {
-        $state->addVariable($name, $args[$i], $info);
+      // The index is reduced to exclude non-parameter variables.
+      elseif (isset($args[$i - $offset])) {
+        $state->addVariable($name, $args[$i - $offset], $info);
       }
       elseif (isset($args[$name])) {
         $state->addVariable($name, $args[$name], $info);
-      }
-      elseif (!empty($info['handler']) || (isset($info['parameter']) && $info['parameter'] === FALSE)) {
-        $state->addVariable($name, NULL, $info);
       }
       elseif (empty($info['optional']) && $info['type'] != 'hidden') {
         throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
