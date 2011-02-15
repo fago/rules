@@ -396,6 +396,11 @@ function rules_rules_plugin_info() {
         'RulesPluginImplInterface' => array(
           'class' => 'RulesAbstractPluginDefaults',
         ),
+        'RulesPluginFeaturesIntegrationInterace' => array(
+          'methods' => array(
+            'features_export' => 'rules_features_abstract_default_features_export',
+          ),
+        ),
         'RulesPluginUIInterface' => array(
           'class' => 'RulesAbstractPluginUI',
         ),
@@ -407,6 +412,11 @@ function rules_rules_plugin_info() {
       'extenders' => array (
         'RulesPluginImplInterface' => array(
           'class' => 'RulesAbstractPluginDefaults',
+        ),
+        'RulesPluginFeaturesIntegrationInterace' => array(
+          'methods' => array(
+            'features_export' => 'rules_features_abstract_default_features_export',
+          ),
         ),
         'RulesPluginUIInterface' => array(
           'class' => 'RulesAbstractPluginUI',
