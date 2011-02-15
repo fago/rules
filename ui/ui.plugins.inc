@@ -77,23 +77,6 @@ class RulesRuleUI extends RulesActionContainerUI {
     $ops['#links'] = array_intersect_key($ops['#links'], array_flip(array('edit', 'delete')));
     return $ops;
   }
-
-  public function buildContent() {
-    $content = parent::buildContent();
-    if ($this->rule->isRoot()) {
-      $content['description']['settings'] = array(
-        '#theme' => 'rules_content_group',
-        '#weight' => -4,
-        'machine_name' => array(
-          '#markup' => t('Machine name: ') . $this->rule->name,
-        ),
-        'weight' => array(
-          '#markup' => t('Weight: ') . $this->rule->weight,
-        ),
-      );
-    }
-    return $content;
-  }
 }
 
 /**

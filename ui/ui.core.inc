@@ -838,23 +838,36 @@ class RulesContainerPluginUI extends RulesPluginUI {
 
   public function buildContent() {
     $content = parent::buildContent();
-    // Don't link the title for embedded container plugins.
+    // Don't link the title for embedded container plugins, except for rules.
     if (!$this->element->isRoot() && !($this->element instanceof Rule)) {
       $content['label']['#type'] = 'markup';
       $content['label']['#markup'] = check_plain($content['label']['#title']);
       unset($content['label']['#title']);
     }
-    elseif ($vars = $this->element->componentVariables()) {
-      $content['description']['variables'] = array(
-        '#caption' => t('Variables'),
+    elseif ($this->element->isRoot()) {
+      $content['description']['settings'] = array(
         '#theme' => 'rules_content_group',
+        '#weight' => -4,
+        'machine_name' => array(
+          '#markup' => t('Machine name: ') . $this->element->name,
+        ),
+        'weight' => array(
+          '#access' => $this->element instanceof RulesTriggerableInterface,
+          '#markup' => t('Weight: ') . $this->element->weight,
+        ),
       );
-      foreach ($vars as $name => $info) {
-        $content['description']['variables'][$name] = array(
-          '#theme' => 'rules_provides_variable_view',
-          '#info' => $info,
-          '#name' => $name,
+      if ($vars = $this->element->componentVariables()) {
+        $content['description']['variables'] = array(
+          '#caption' => t('Variables'),
+          '#theme' => 'rules_content_group',
         );
+        foreach ($vars as $name => $info) {
+          $content['description']['variables'][$name] = array(
+            '#theme' => 'rules_provides_variable_view',
+            '#info' => $info,
+            '#name' => $name,
+          );
+        }
       }
     }
     return $content;
