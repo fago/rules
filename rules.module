@@ -365,7 +365,13 @@ function rules_unwrap_data(array $data, $info = array()) {
         continue;
       }
       $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
-      $data[$key] = $entry->value($options);
+      try {
+        $data[$key] = $entry->value($options);
+      }
+      catch (Exception $e) {
+        // Getting the data value failed.
+        throw new RulesException($e->getMessage());
+      }
       if (!isset($data[$key]) && empty($info[$key]['allow null'])) {
         throw new RulesException('The variable or parameter %name is empty.', array('%name' => $key));
       }
