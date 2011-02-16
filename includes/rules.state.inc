@@ -116,7 +116,7 @@ class RulesState {
    * Returns whether the given wrapper is savable.
    */
   public function isSavable($wrapper) {
-    return $wrapper instanceof EntityDrupalWrapper && entity_type_supports($wrapper->type(), 'save');
+    return ($wrapper instanceof EntityDrupalWrapper && entity_type_supports($wrapper->type(), 'save')) || $wrapper instanceof RulesDataWrapperSavableInterface;
   }
 
   /**
@@ -562,6 +562,14 @@ class RulesData  {
  * This class is intended to serve as base for a custom wrapper classes of
  * identifiable data types, which are non-entities. By extending this class only
  * the extractIdentifier() and load() methods have to be defined.
+ * In order to make the data type savable implement the
+ * RulesDataWrapperSavableInterface.
+ *
+ * That way it is possible for non-entity data types to be work with Rules, i.e.
+ * one can implement a 'ui class' with a direct input form returning the
+ * identifier of the data. However, instead of that it is suggested to implement
+ * an entity type, such that the same is achieved via general API functions like
+ * entity_load().
  */
 abstract class RulesIdentifiableDataWrapper extends EntityStructureWrapper {
 
@@ -680,4 +688,15 @@ abstract class RulesIdentifiableDataWrapper extends EntityStructureWrapper {
    *   The loaded data object, or FALSE if loading failed.
    */
   abstract protected function load($id);
+}
+
+/**
+ * Interface that allows custom wrapper classes to declare that they are savable.
+ */
+interface RulesDataWrapperSavableInterface {
+
+  /**
+   * Save the currently wrapped data.
+   */
+  public function save();
 }

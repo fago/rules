@@ -335,7 +335,7 @@ function hook_rules_event_info() {
  *     existing wrappers will be kept.
  *     For modules implementing identifiable data types being non-entites the
  *     class RulesIdentifiableDataWrapper is provided, which can be used as base
- *     for a custom wrapper class.
+ *     for a custom wrapper class. See RulesIdentifiableDataWrapper for details.
  *   - property info: (optional) May be used for non-entity data structures to
  *     provide info about the data properties, such that data selectors via an
  *     entity metadata wrapper are supported. Specify an array as expected by

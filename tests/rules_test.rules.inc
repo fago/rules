@@ -124,6 +124,15 @@ function rules_test_rules_action_info() {
       'group' => t('Node'),
       'access callback' => 'rules_node_integration_access',
     ),
+    // Tests automatic saving with a non-entity data type.
+    'test_type_save' => array(
+      'base' => 'rules_test_type_save',
+      'label' => t('Save test type'),
+      'parameter' => array(
+        'node' => array('type' => 'rules_test_type', 'label' => t('Test content'), 'save' => TRUE),
+      ),
+      'group' => t('Node'),
+    ),
   );
 }
 
@@ -152,7 +161,7 @@ function rules_test_rules_data_info_alter(&$data_info) {
  *
  * For testing we internally just make use of nodes.
  */
-class RulesTestTypeWrapper extends RulesIdentifiableDataWrapper {
+class RulesTestTypeWrapper extends RulesIdentifiableDataWrapper implements RulesDataWrapperSavableInterface {
 
   protected function extractIdentifier($data) {
     return $data->nid;
@@ -160,5 +169,9 @@ class RulesTestTypeWrapper extends RulesIdentifiableDataWrapper {
 
   protected function load($id) {
     return node_load($id);
+  }
+
+  public function save() {
+    node_save($this->value());
   }
 }

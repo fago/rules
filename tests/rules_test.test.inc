@@ -67,3 +67,10 @@ function rules_action_node_set_title($arguments) {
   $arguments['node']->title = $arguments['title'];
   return $arguments;
 }
+
+/**
+ * Action: Test saving - nothing to do here.
+ */
+function rules_test_type_save($node) {
+
+}

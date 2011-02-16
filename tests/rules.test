@@ -813,6 +813,16 @@ class RulesTestDataCase extends DrupalWebTestCase {
     catch (EntityMetadataWrapperException $e) {
       $this->pass("Exception was thrown: ". $e->getMessage());
     }
+
+    // Test saving a savable custom, identifiable wrapper.
+    $action = rules_action('test_type_save');
+    $node = $this->drupalCreateNode(array('status' => 0, 'type' => 'page'));
+    $node->status = 1;
+    $action->execute($node);
+
+    // Load the node fresh from the db.
+    $node = node_load($node->nid, NULL, TRUE);
+    $this->assertEqual($node->status, 1, 'Savable non-entity has been saved.');
   }
 }
 
