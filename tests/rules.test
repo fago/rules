@@ -785,6 +785,35 @@ class RulesTestDataCase extends DrupalWebTestCase {
     $this->assertEqual($term_wrapped->vocabulary->machine_name->value(), 'tags', 'Vocabulary name used as direct input value.');
     RulesLog::logger()->checkLog();
   }
+
+  /**
+   * Makes sure the RulesIdentifiableDataWrapper is working correctly.
+   */
+  function testRulesIdentifiableDataWrapper() {
+    $node = $this->drupalCreateNode();
+    $wrapper = new RulesTestTypeWrapper('rules_test_type', $node);
+    $this->assertTrue($wrapper->value() == $node, 'Data correctly wrapped.');
+
+    // Test serializing and make sure only the id is stored.
+    $this->assertTrue(strpos(serialize($wrapper), $node->title) === FALSE, 'Data has been correctly serialized.');
+    $this->assertEqual(unserialize(serialize($wrapper))->value()->title, $node->title, 'Serializing works right.');
+
+    $wrapper2 = unserialize(serialize($wrapper));
+    // Test serializing the unloaded wrapper.
+    $this->assertEqual(unserialize(serialize($wrapper2))->value()->title, $node->title, 'Serializing works right.');
+
+    // Test loading a not more existing node.
+    $s = serialize($wrapper2);
+    node_delete($node->nid);
+    $this->assertFalse(node_load($node->nid), 'Node deleted.');
+    try {
+      unserialize($s)->value();
+      $this->fail("Loading hasn't created an exception.");
+    }
+    catch (EntityMetadataWrapperException $e) {
+      $this->pass("Exception was thrown: ". $e->getMessage());
+    }
+  }
 }
 
 

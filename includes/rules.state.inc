@@ -555,3 +555,129 @@ class RulesData  {
     return RulesData::applyMetadataAssertions($wrapper, $property_info);
   }
 }
+
+/**
+ * A wrapper class similar to the EntityDrupalWrapper, but for non-entities.
+ *
+ * This class is intended to serve as base for a custom wrapper classes of
+ * identifiable data types, which are non-entities. By extending this class only
+ * the extractIdentifier() and load() methods have to be defined.
+ */
+abstract class RulesIdentifiableDataWrapper extends EntityStructureWrapper {
+
+  /**
+   * Contains the id.
+   */
+  protected $id = FALSE;
+
+  /**
+   * Construct a new wrapper object.
+   *
+   * @param $type
+   *   The type of the passed data.
+   * @param $data
+   *   Optional. The data to wrap or its identifier.
+   * @param $info
+   *   Optional. Used internally to pass info about properties down the tree.
+   */
+  public function __construct($type, $data = NULL, $info = array()) {
+    parent::__construct($type, $data, $info);
+    $this->setData($data);
+  }
+
+  /**
+   * Sets the data internally accepting both the data id and object.
+   */
+  protected function setData($data) {
+    if (isset($data) && $data !== FALSE && !is_object($data)) {
+      $this->id = $data;
+      $this->data = FALSE;
+    }
+    elseif (is_object($data)) {
+      // We got the data object passed.
+      $this->data = $data;
+      $id = $this->extractIdentifier($data);
+      $this->id = isset($id) ? $id : FALSE;
+    }
+  }
+
+  /**
+   * Returns the identifier of the wrapped data.
+   */
+  public function getIdentifier() {
+    return $this->dataAvailable() && $this->value() ? $this->id : NULL;
+  }
+
+  /**
+   * Overridden.
+   */
+  public function value(array $options = array()) {
+    $this->setData(parent::value());
+    if (!$this->data && !empty($this->id)) {
+      // Lazy load the data if necessary.
+      $this->data = $this->load($this->id);
+      if (!$this->data) {
+        throw new EntityMetadataWrapperException('Unable to load the ' . check_plain($this->type) . ' with the id ' . check_plain($this->id) . '.');
+      }
+    }
+    return $this->data;
+  }
+
+  /**
+   * Overridden to support setting the data by either the object or the id.
+   */
+  public function set($value) {
+    if (!$this->validate($value)) {
+      throw new EntityMetadataWrapperException('Invalid data value given. Be sure it matches the required data type and format.');
+    }
+    // As custom wrapper classes can only appear for Rules variables, but not
+    // as properties we don't have to care about updating the parent.
+    $this->clear();
+    $this->setData($value);
+    return $this;
+  }
+
+  /**
+   * Overridden.
+   */
+  public function clear() {
+    $this->id = NULL;
+    parent::clear();
+  }
+
+  /**
+   * Prepare for serializiation.
+   */
+  public function __sleep() {
+    $vars = parent::__sleep();
+    // Don't serialize the loaded data, except for the case the data is not
+    // saved yet.
+    if (!empty($this->id)) {
+      unset($vars['data']);
+    }
+    return $vars;
+  }
+
+  public function __wakeup() {
+    if ($this->id !== FALSE) {
+      // Make sure data is set, so the data will be loaded when needed.
+      $this->data = FALSE;
+    }
+  }
+
+  /**
+   * Extract the identifier of the given data object.
+   *
+   * @return
+   *   The extracted identifier.
+   */
+  abstract protected function extractIdentifier($data);
+
+  /**
+   * Load a data object given an identifier.
+   *
+   * @return
+   *   The loaded data object, or FALSE if loading failed.
+   */
+  abstract protected function load($id);
+}

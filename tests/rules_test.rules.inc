@@ -128,8 +128,37 @@ function rules_test_rules_action_info() {
 }
 
 /**
+ * Implements hook_rules_data_info().
+ */
+function rules_test_rules_data_info() {
+  return array(
+    'rules_test_type' => array(
+      'label' => t('test type'),
+      'wrap' => TRUE,
+      'wrapper class' => 'RulesTestTypeWrapper',
+    ),
+  );
+}
+
+/**
  * Implements hook_rules_data_info_alter().
  */
 function rules_test_rules_data_info_alter(&$data_info) {
   $data_info['log_entry']['creation callback'] = 'rules_action_data_create_array';
+}
+
+/**
+ * The custom wrapper class for the rules test type.
+ *
+ * For testing we internally just make use of nodes.
+ */
+class RulesTestTypeWrapper extends RulesIdentifiableDataWrapper {
+
+  protected function extractIdentifier($data) {
+    return $data->nid;
+  }
+
+  protected function load($id) {
+    return node_load($id);
+  }
 }
