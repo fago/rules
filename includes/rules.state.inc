@@ -555,4 +555,3 @@ class RulesData  {
     return RulesData::applyMetadataAssertions($wrapper, $property_info);
   }
 }
-

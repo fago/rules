@@ -755,6 +755,36 @@ class RulesTestDataCase extends DrupalWebTestCase {
     $this->assertTrue(RulesData::typesMatch(array('type' => 'integer'), array('type' => 'text')), 'Types match.');
     $this->assertFalse(RulesData::typesMatch(array('type' => 'text'), array('type' => 'integer')), 'Types don\'t match.');
   }
+
+  /**
+   * Tests making use of custom wrapper classes.
+   */
+  function testCustomWrapperClasses() {
+    // Test loading a vocabulary by name, which is done by a custom wrapper.
+    $set = rules_action_set(array('vocab' => array('type' => 'taxonomy_vocabulary')), array('vocab'));
+    $set->action('drupal_message', array('message:select' => 'vocab:name'));
+    $set->integrityCheck();
+    list($vocab) = $set->execute('tags');
+    $this->assertTrue($vocab->machine_name == 'tags', 'Loaded vocabulary by name.');
+
+    // Now test wrapper creation for a direct input argument value.
+    $set = rules_action_set(array('term' => array('type' => 'taxonomy_term')));
+    $set->action('data_set', array('data:select' => 'term:vocabulary', 'value' => 'tags'));
+    $set->integrityCheck();
+
+    $vocab = entity_create('taxonomy_vocabulary', array(
+      'name' => 'foo',
+      'machine_name' => 'foo',
+    ));
+    entity_save('taxonomy_vocabulary', $vocab);
+    $term_wrapped = entity_property_values_create_entity('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vocabulary' => $vocab,
+    ))->save();
+    $set->execute($term_wrapped);
+    $this->assertEqual($term_wrapped->vocabulary->machine_name->value(), 'tags', 'Vocabulary name used as direct input value.');
+    RulesLog::logger()->checkLog();
+  }
 }
 
 

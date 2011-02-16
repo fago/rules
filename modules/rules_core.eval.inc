@@ -150,3 +150,22 @@ class RulesDateOffsetProcessor extends RulesDataProcessor {
     return $value + $this->setting['value'];
   }
 }
+
+/**
+ * A custom wrapper class for vocabularies that is capable of loading vocabularies by machine name.
+ */
+class RulesTaxonomyVocabularyWrapper extends EntityDrupalWrapper {
+
+  /**
+   * Overridden to support identifying vocabularies by machine names.
+   */
+  protected function setEntity($data) {
+    if (isset($data) && $data !== FALSE && !is_object($data) && !is_numeric($data)) {
+      // The vocabulary name has been passed.
+      parent::setEntity(taxonomy_vocabulary_machine_name_load($data));
+    }
+    else {
+      parent::setEntity($data);
+    }
+  }
+}

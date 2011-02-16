@@ -333,7 +333,14 @@ function &rules_wrap_data($data = NULL, $info, $force = FALSE) {
   // By default we do not wrap the data, except for completely unknown types.
   if (!empty($cache['data_info'][$info['type']]['wrap']) || $list_item_type || $force || empty($cache['data_info'][$info['type']])) {
     unset($info['handler']);
-    $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
+    // Allow data types to define custom wrapper classes.
+    if (!empty($cache['data_info'][$info['type']]['wrapper class'])) {
+      $class = $cache['data_info'][$info['type']]['wrapper class'];
+      $wrapper = new $class($info['type'], $data, $info);
+    }
+    else {
+      $wrapper = entity_metadata_wrapper($info['type'], $data, $info);
+    }
     return $wrapper;
   }
   return $data;

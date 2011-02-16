@@ -643,7 +643,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $arg = $state->applyDataSelector($this->settings[$name . ':select']);
     }
     elseif (isset($this->settings[$name])) {
-      $arg = $this->settings[$name];
+      $arg = rules_wrap_data($this->settings[$name], $info);
       // We don't sanitize directly specified values.
       $skip_sanitize = TRUE;
     }

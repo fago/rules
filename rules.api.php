@@ -310,42 +310,48 @@ function hook_rules_event_info() {
  *   underscores and should be prefixed with the providing module name. Possible
  *   attributes for each sub-array are:
  *   - label: The label of the data type. Start uncapitalized. Required.
- *   - wrap: If set to TRUE, the data is wrapped internally using wrappers
- *     provided by the entity metadata module. This is required for entities and
- *     data structures to support the application of data selectors or
- *     intelligent saving.
- *   - is wrapped: (optional) In case the data wrapper is already wrapped when
- *     passed to Rules and Rules should not unwrap it when passing the data as
- *     argument, e.g. to an action, set this to TRUE.
- *   - parent: Optionally a parent type may be set to specify a sub-type
+ *   - parent: (optional) A parent type may be set to specify a sub-type
  *     relationship, which will be only used for checking compatible types. E.g.
  *     the 'entity' data type is parent of the 'node' data type, thus a node may
  *     be also used for any action needing an 'entity' parameter. Can be set to
  *     any known rules data type.
- *   - 'ui class': Specify a class that is used to generate the configuration UI
- *     to configure parameters of this type. The given class must extend
- *     RulesDataUI and may implement the RulesDataDirectInputFormInterface in
- *     order to allow the direct data input configuration mode. Optionally,
- *     defaults to RulesDataUI.
- *   - 'property info': May be used for non-entity data structures to provide
- *     info about the data properties, such that data selectors via an entity
- *     metadata wrapper are supported. Specify an array as expected by
- *     entity_metadata_wrapper(). Optionally.
- *   - 'creation callback': If 'property info' is given, an optional callback
- *     that makes use of the property info to create a new instance of this
- *     data type. Entities should use hook_entity_info() to specify
- *     'creation callback' instead, as introduced by the entity module. See
- *     rules_action_data_create_array() for an example.
- *   - 'property defaults': May be used for non-entity data structures to
- *     to provide property info defaults for the data properties. Specify an
- *     array as expected by entity_metadata_wrapper(). Optionally.
- *   - group: A group for this element, used for grouping the data types in the
- *     interface. Should start with a capital letter and be translated.
- *     Optional.
- *   - 'token type': The type name as used by the token module. Defaults to the
- *     type name as used by rules. Use FALSE to let token ignore this type.
- *     Optional.
- *   - 'cleaning callback': An optional callback that input evaluators may use
+ *   - ui class: (optional) Specify a class that is used to generate the
+ *     configuration UI to configure parameters of this type. The given class
+ *     must extend RulesDataUI and may implement the
+ *     RulesDataDirectInputFormInterface in order to allow the direct data input
+ *     configuration mode. Defaults to RulesDataUI.
+ *   - wrap: (optional) If set to TRUE, the data is wrapped internally using
+ *     wrappers provided by the entity API module. This is required for entities
+ *     and data structures to support selecting a property via the data selector
+ *     and for intelligent saving.
+ *   - is wrapped: (optional) In case the data wrapper is already wrapped when
+ *     passed to Rules and Rules should not unwrap it when passing the data as
+ *     argument, e.g. to an action, set this to TRUE. The default FALSE is fine
+ *     in most cases.
+ *   - wrapper class: (optional) Allows the specification of a custom wrapper
+ *     class, which has to inherit from 'EntityMetadataWrapper'. If given Rules
+ *     makes use of the class for wrapping the data of the given type. However
+ *     note that if data is already wrapped when it is passed to Rules, the
+ *     existing wrappers will be kept.
+ *   - property info: (optional) May be used for non-entity data structures to
+ *     provide info about the data properties, such that data selectors via an
+ *     entity metadata wrapper are supported. Specify an array as expected by
+ *     the $info parameter of entity_metadata_wrapper().
+ *   - creation callback: (optional) If 'property info' is given, an optional
+ *     callback that makes use of the property info to create a new instance of
+ *     this data type. Entities should use hook_entity_info() to specify the
+ *     'creation callback' instead, as utilized by the entity API module. See
+ *     rules_action_data_create_array() for an example callback.
+ *   - property defaults: (optional) May be used for non-entity data structures
+ *     to to provide property info defaults for the data properties. Specify an
+ *     array as expected by entity_metadata_wrapper().
+ *   - group: (optional) A group for this element, used for grouping the data
+ *     types in the interface. Should start with a capital letter and be
+ *     translated.
+ *   - token type: (optional) The type name as used by the token module.
+ *     Defaults to the type name as used by rules. Use FALSE to let token ignore
+ *     this type.
+ *   - cleaning callback: (optional) A callback that input evaluators may use
  *     to clean inserted replacements; e.g. this is used by the token evaluator.
  *
  *  @see entity_metadata_wrapper()
@@ -358,6 +364,13 @@ function hook_rules_data_info() {
       'label' => t('content'),
       'parent' => 'entity',
       'group' => t('Node'),
+    ),
+    // Formatted text as used by in hook_entity_property_info() for text fields.
+    'text_formatted' => array(
+      'label' => t('formatted text'),
+      'ui class' => 'RulesDataUITextFormatted',
+      'wrap' => TRUE,
+      'property info' => entity_property_text_formatted_info(),
     ),
   );
 }
