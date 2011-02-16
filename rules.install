@@ -118,3 +118,10 @@ function rules_update_7200() {
   ));
   // The module column did already exist before.
 }
+
+/**
+ * Ensure caches are cleared.
+ */
+function rules_update_7201() {
+  // Just do nothing as caches are cleared nevertheless afterwards.
+}
