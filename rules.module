@@ -962,7 +962,7 @@ function rules_page_build(&$page) {
       $page[$region]['rules_debug'][] = array(
         '#markup' => $log,
       );
-      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
+      $page[$region]['rules_debug']['#theme_wrappers'] = array('rules_log');
     }
     unset($_SESSION['rules_debug']);
   }
@@ -973,7 +973,7 @@ function rules_page_build(&$page) {
       $page[$region]['rules_debug'][] = array(
         '#markup' => $log,
       );
-      $page[$region]['rules_debug']['#theme_wrappers'][] = 'rules_log';
+      $page[$region]['rules_debug']['#theme_wrappers'] = array('rules_log');
       $logger->clear();
     }
   }
