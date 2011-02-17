@@ -923,7 +923,8 @@ function rules_permission() {
 }
 
 /**
- * Callback for loading rules configuration elements.
+ * Menu callback for loading rules configuration elements.
+ * @see RulesUIController::config_menu()
  */
 function rules_element_load($element_id, $config_name) {
   $config = rules_config_load($config_name);
@@ -931,7 +932,8 @@ function rules_element_load($element_id, $config_name) {
 }
 
 /**
- * Callback for getting the title as configured.
+ * Menu callback for getting the title as configured.
+ * @see RulesUIController::config_menu()
  */
 function rules_get_title($text, $element) {
   if ($element instanceof RulesPlugin) {
@@ -943,6 +945,22 @@ function rules_get_title($text, $element) {
   }
   // As fallback treat $element as simple string.
   return t($text, array('!plugin' => $element));
+}
+
+/**
+ * Menu callback for getting the title for the add element page.
+ *
+ * Uses a work-a-round for accessing the plugin name.
+ * @see RulesUIController::config_menu()
+ */
+function rules_menu_add_element_title($array) {
+  $plugin_name = arg($array[0]);
+  $cache = rules_get_cache();
+  if (isset($cache['plugin_info'][$plugin_name]['class'])) {
+    $info = $cache['plugin_info'][$plugin_name] + array('label' => $plugin_name);
+    $label = drupal_strtolower(drupal_substr($info['label'], 0, 1)) . drupal_substr($info['label'], 1);
+    return t('Add a new !plugin', array('!plugin' => $label));
+  }
 }
 
 /**

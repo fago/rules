@@ -35,8 +35,12 @@ class RulesUIController {
       'file path' => drupal_get_path('module', 'rules'),
     );
     $items[$base_path . '/manage/%rules_config/add/%rules_element'] = array(
-      'title callback' => 'rules_get_title',
-      'title arguments' => array('Add a new !plugin', $base_count + 3),
+      // Adding another part to the path would hit the menu path-part-limit
+      // for base paths like admin/config/workflow/rules. Therefor we have to
+      // use this fugly way for setting the title.
+      'title callback' => 'rules_menu_add_element_title',
+      // Wrap the integer in an array, so it is passed as is.
+      'title arguments' => array(array($base_count + 4)),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_add_element', $base_count + 1, $base_count + 4, $base_count + 3, $base_path),
       'access arguments' => array('administer rules'),
