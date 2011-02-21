@@ -569,6 +569,13 @@ class RulesLoop extends RulesActionContainer {
       $state2 = clone $state;
       $state2->addVariable($item_var_name, $list[$key], $item_var_info);
       parent::evaluate($state2);
+
+      // Update variables from parent scope.
+      foreach ($state->variables as $var_key => &$var_value) {
+        if (array_key_exists($var_key, $state2->variables)) {
+          $var_value = $state2->variables[$var_key];
+        }
+      }
     }
   }
 
