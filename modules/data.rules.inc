@@ -585,6 +585,19 @@ function rules_data_condition_info() {
       'group' => t('Data'),
       'base' => 'rules_condition_data_is',
     ),
+    'data_is_empty' => array(
+      'label' => t('Data value is empty'),
+      'parameter' => array(
+        'data' => array(
+          'type' => '*',
+          'label' => t('Data to check'),
+          'description' => t('The data to be checked to be empty, specified by using a data selector, e.g. "node:author:name".'),
+          'allow null' => TRUE,
+         ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_condition_data_is_empty',
+    ),
     'entity_is_new' => array(
       'label' => t('Entity is new'),
       'parameter' => array(

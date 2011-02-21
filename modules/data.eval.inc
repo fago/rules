@@ -176,7 +176,7 @@ function rules_action_entity_delete($wrapper, $settings, $state, $element) {
 }
 
 /**
- * Action: Add a list item
+ * Action: Add a list item.
  */
 function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
   switch ($pos) {
@@ -192,7 +192,7 @@ function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
 }
 
 /**
- * Action: Remove a list item
+ * Action: Remove a list item.
  */
 function rules_action_data_list_remove($list, $item) {
   foreach (array_keys($list, $item) as $key) {
@@ -280,7 +280,7 @@ function rules_action_data_create_array($values = array(), $type) {
 }
 
 /**
- * Condition: Compare data
+ * Condition: Compare data.
  */
 function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
@@ -311,7 +311,14 @@ function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin 
 }
 
 /**
- * Condition: Entity is new
+ * Condition: Data value is empty.
+ */
+function rules_condition_data_is_empty($data) {
+  return empty($data);
+}
+
+/**
+ * Condition: Entity is new.
  */
 function rules_condition_entity_is_new($wrapper, $settings, $state, $element) {
   return !$wrapper->getIdentifier() || !empty($entity->is_new);

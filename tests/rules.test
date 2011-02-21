@@ -1185,9 +1185,9 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test the provided list actions.
+   * Test data integration.
    */
-  function testListActions() {
+  function testDataIntegration() {
     $rule = rule(array(
       'list' => array(
         'type' => 'list<text>',
@@ -1202,6 +1202,24 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
     $this->assertEqual($list->value(), array('bar', 'foo', 'foo2'), 'List items removed and added.');
     //debug(RulesLog::logger()->render());
+
+    // Test Condition: Data is empty.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('data_is_empty', array('data:select' => 'node:title'));
+    $rule->action('data_set', array('data:select' => 'node:title', 'value' => 'bar'));
+    $rule->integrityCheck();
+
+    // Data is empty condition evaluates to TRUE
+    // for node with empty title, action sets title to 'bar'.
+    $node = $this->drupalCreateNode(array('title' => '', 'type' => 'article'));
+    $rule->execute($node);
+    $this->assertEqual($node->title, 'bar', "Data is empty condition evaluates to TRUE for node with empty title, action sets title to 'bar'.");
+
+    // Data is empty condition evaluates to FALSE
+    // for node with title 'foo', action is not executed.
+    $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article'));
+    $rule->execute($node);
+    $this->assertEqual($node->title, 'foo', "Data is empty condition evaluates to FALSE for node with title 'foo', action is not executed.");
   }
 
   /**
