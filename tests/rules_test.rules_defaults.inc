@@ -48,7 +48,8 @@ function _rules_export_get_test_export() {
               "node" : [ "comment:node" ],
               "type" : { "value" : { "page" : "page" } }
             }
-          }
+          },
+          { "NOT AND" : [ { "OR" : [] } ] }
         ]
       }
     ],
@@ -67,6 +68,11 @@ function _rules_export_get_test_export() {
       { "drupal_message" : {
           "message" : "fein, [comment:node:title] has been made sticky!",
           "type" : [ "level" ]
+        }
+      },
+      { "LOOP" : {
+          "USING" : { "list" : [ "site:current-user:roles" ] },
+          "DO" : [ { "drupal_message" : { "message" : [ "list-item" ] } } ]
         }
       }
     ]

@@ -83,12 +83,13 @@ function rules_condition($name, $settings = array()) {
  *      variable upon execution. As a consequence no value will be set
  *      initially, but the "Set data value" action may be used to do so. This is
  *      in particular useful for defining variables which can be provided to the
- *      caller (see e.g. rules_action_set()) but need not be passed in as
- *      parameter.
+ *      caller (see $provides argument) but need not be passed in as parameter.
+ * @param $provides
+ *   An array of the names of variables, which should be provided to the caller.
  * @return Rule
  */
-function rule($variables = NULL) {
-  return rules_plugin_factory('rule', $variables);
+function rule($variables = NULL, $provides = array()) {
+  return rules_plugin_factory('rule', $variables, $provides);
 }
 
 /**
@@ -489,7 +490,6 @@ function rules_rules_plugin_info() {
           'class' => 'RulesLoopUI',
         ),
       ),
-      'import keys' => array('LOOP OVER'),
     ),
     'reaction rule' => array(
       'class' => 'RulesReactionRule',

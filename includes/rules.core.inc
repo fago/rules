@@ -969,20 +969,27 @@ abstract class RulesPlugin extends RulesExtendable {
    * @see rules_import()
    */
   public function export($prefix = '',$php = FALSE) {
-    $export[strtoupper($this->plugin())] = $this->exportSettings();
+    $export = $this->exportToArray();
     return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
+  }
+
+  protected function exportToArray() {
+    $export[strtoupper($this->plugin())] = $this->exportSettings();
+    return $export;
   }
 
   protected function exportSettings() {
     $export = array();
-    foreach ($this->pluginParameterInfo() as $name => $info) {
-      if (($return = $this->exportParameterSetting($name, $info)) !== NULL) {
-        $export['USING'][$name] = $return;
+    if (!$this->isRoot()) {
+      foreach ($this->pluginParameterInfo() as $name => $info) {
+        if (($return = $this->exportParameterSetting($name, $info)) !== NULL) {
+          $export['USING'][$name] = $return;
+        }
       }
-    }
-    foreach ($this->providesVariables() as $name => $info) {
-      if (!empty($info['source name'])) {
-        $export['PROVIDE'][$info['source name']][$name] = $info['label'];
+      foreach ($this->providesVariables() as $name => $info) {
+        if (!empty($info['source name'])) {
+          $export['PROVIDE'][$info['source name']][$name] = $info['label'];
+        }
       }
     }
     return $export;
@@ -1199,14 +1206,13 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     $this->importSettings($export);
   }
 
-  public function export($prefix = '',$php = FALSE) {
+  protected function exportToArray() {
     $export = $this->exportSettings();
     if (!$this->providesVariables()) {
       // Abbreviate the export making "USING" implicit.
       $export = isset($export['USING']) ? $export['USING'] : array();
     }
-    $export = array($this->elementName => $export);
-    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
+    return array($this->elementName => $export);
   }
 
   public function dependencies() {
@@ -1790,20 +1796,33 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     return $export;
   }
 
-  public function export($prefix = '',$php = FALSE) {
+  protected function exportToArray() {
     $export = array();
     if (isset($this->info['variables'])) {
       $export['USES VARIABLES'] = $this->info['variables'];
     }
-    $export += $this->exportChildren();
-    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
+    if ($settings_export = $this->exportSettings()) {
+      $export[strtoupper($this->plugin())] = $settings_export + $this->exportChildren();
+    }
+    else {
+      $export += $this->exportChildren();
+    }
+    return $export;
   }
 
   public function import(array $export) {
     if (isset($export['USES VARIABLES'])) {
       $this->info['variables'] = $export['USES VARIABLES'];
     }
-    $this->importChildren($export);
+    $key = strtoupper($this->plugin());
+    if (isset($export[$key]) && (isset($export[$key]['USING']) || isset($export[$key]['PROVIDE']))) {
+      $export = $export[$key];
+      $this->importSettings($export);
+      $this->importChildren($export);
+    }
+    else {
+      $this->importChildren($export);
+    }
   }
 
   protected function importChildren($export, $key = NULL) {
@@ -1874,6 +1893,21 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
     $this->info += array('provides' => array());
     return $this->info['provides'];
   }
+
+  protected function exportToArray() {
+    $export = parent::exportToArray();
+    if (isset($this->info['provides'])) {
+      $export['PROVIDES VARIABLES'] = $this->info['provides'];
+    }
+    return $export;
+  }
+
+  public function import(array $export) {
+    parent::import($export);
+    if (isset($export['PROVIDES VARIABLES'])) {
+      $this->info['provides'] = $export['PROVIDES VARIABLES'];
+    }
+  }
 }
 
 /**
@@ -1930,7 +1964,6 @@ abstract class RulesConditionContainer extends RulesContainerPlugin implements R
     }
     return $export;
   }
-
 
   protected function importChildren($export, $key = NULL) {
     $key = isset($key) ? $key : strtoupper($this->plugin());
@@ -2149,6 +2182,10 @@ function _rules_import_get_plugin($key, $default = 'action') {
         }
       }
     }
+  }
+  // Cut of any leading NOT from the key.
+  if (strpos($key, 'NOT ') === 0) {
+    $key = substr($key, 4);
   }
   if (isset($map[$key])) {
     return $map[$key];

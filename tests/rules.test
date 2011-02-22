@@ -629,6 +629,30 @@ class RulesTestCase extends DrupalWebTestCase {
     $set->execute($node);
     $this->assertEqual($node->title, 'test', 'Imported rule set has been executed.');
     RulesLog::logger()->checkLog();
+
+    // Try import / export for a rule component providing a variable.
+    $rule = rule(array(
+      'number' => array(
+        'type' => 'integer',
+        'label' => 'Number',
+        'parameter' => FALSE,
+      )), array('number'));
+    $rule->action('data_set', array('data:select' => 'number', 'value' => 3));
+    $rule->name = 'rules_test_provides';
+
+    $export = '{ "rules_test_provides" : {
+    "PLUGIN" : "rule",
+    "REQUIRES" : [ "rules" ],
+    "USES VARIABLES" : { "number" : { "type" : "integer", "label" : "Number", "parameter" : false } },
+    "DO" : [ { "data_set" : { "data" : [ "number" ], "value" : 3 } } ],
+    "PROVIDES VARIABLES" : [ "number" ]
+  }
+}';
+    $this->assertEqual($export, $rule->export(), 'Rule 2 has been exported correctly.');
+    $imported_rule = rules_import($rule->export());
+
+    $this->assertTrue(!empty($imported_rule) && $imported_rule->integrityCheck(), 'Rule 2 has been imported.');
+    $this->assertEqual($export, $imported_rule->export(), 'Export of imported rule 2 equals original export.');
   }
 
   /**

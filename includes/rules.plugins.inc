@@ -103,12 +103,11 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
     return $result;
   }
 
-  public function export($prefix = '',$php = FALSE) {
+  protected function exportToArray() {
     $not = $this->negate ? 'NOT ' : '';
     $export = $this->exportSettings();
     // Abbreviate the export making "USING" implicit.
-    $export = array($not . $this->elementName => isset($export['USING']) ? $export['USING'] : array());
-    return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
+    return array($not . $this->elementName => isset($export['USING']) ? $export['USING'] : array());
   }
 
   public function import(array $export) {
@@ -260,8 +259,8 @@ class Rule extends RulesActionContainer {
     return $vars;
   }
 
-  public function export($prefix = '',$php = FALSE) {
-    $export = parent::export($prefix, $php);
+  protected function exportToArray() {
+    $export = parent::exportToArray();
     if (!$this->isRoot()) {
       $export['LABEL'] = $this->label;
     }
@@ -312,12 +311,14 @@ class Rule extends RulesActionContainer {
   }
 
   /**
-   * Overriden to expose the variables of all actions.
+   * Overriden to expose the variables of all actions for embedded rules.
    */
   public function providesVariables() {
     $provides = parent::providesVariables();
-    foreach ($this->actions() as $action) {
-      $provides += $action->providesVariables();
+    if (!$this->isRoot()) {
+      foreach ($this->actions() as $action) {
+        $provides += $action->providesVariables();
+      }
     }
     return $provides;
   }
@@ -587,11 +588,11 @@ class RulesLoop extends RulesActionContainer {
     return !empty($this->label) ? $this->label : t('Loop');
   }
 
-  protected function exportChildren($key = 'LOOP OVER') {
+  protected function exportChildren($key = 'DO') {
     return parent::exportChildren($key);
   }
 
-  protected function importChildren($export, $key = 'LOOP OVER') {
+  protected function importChildren($export, $key = 'DO') {
     parent::importChildren($export, $key);
   }
 }
