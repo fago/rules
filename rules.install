@@ -1,13 +1,12 @@
 <?php
 // $Id$
 
-
 /**
  * @file Rules - Installation file.
  */
 
 /**
- * Implementation of hook_install().
+ * Implements hook_install().
  */
 function rules_install() {
   module_load_include('inc', 'rules', 'modules/events');
@@ -17,14 +16,15 @@ function rules_install() {
 }
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */
 function rules_uninstall() {
   variable_del('rules_empty_sets');
+  variable_del('rules_debug');
 }
 
 /**
- * Implementation of hook_schema().
+ * Implements hook_schema().
  */
 function rules_schema() {
   $schema['rules_config'] = array(
@@ -106,22 +106,113 @@ function rules_schema() {
 }
 
 /**
- * Add in the exportable entity db columns as required by the entity API.
+ * Upgrade from Rules 6.x-1.x to 7.x.
  */
 function rules_update_7200() {
-  db_add_field('rules_config', 'status', array(
-    'type' => 'int',
-    'not null' => TRUE,
-    'default' => ENTITY_CUSTOM,
-    'size' => 'tiny',
-    'description' => 'The exportable status of the entity.',
-  ));
-  // The module column did already exist before.
+  // Create the new db tables first.
+  $schema['rules_config'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'The internal identifier for any configuration.',
+      ),
+      'name' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The name of the configuration.',
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The label of the configuration.',
+        'default' => 'unlabeled',
+      ),
+     'plugin' => array(
+        'type' => 'varchar',
+        'length' => 127,
+        'not null' => TRUE,
+        'description' => 'The name of the plugin of this configuration.',
+      ),
+      'active' => array(
+        'description' => 'Boolean indicating whether the configuration is active. Usage depends on how the using module makes use of it.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'weight' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Weight of the configuration. Usage depends on how the using module makes use of it.',
+      ),
+      'data' => array(
+        'type' => 'blob',
+        'size' => 'big',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+        'description' => 'Everything else, serialized.',
+      ),
+    ) + entity_exportable_schema_fields(),
+    'primary key' => array('id'),
+    'unique keys' => array(
+      'name' => array('name'),
+    ),
+  );
+  $schema['rules_trigger'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier of the configuration.',
+      ),
+      'event' => array(
+        'type' => 'varchar',
+        'length' => '127',
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'The name of the event on which the configuration should be triggered.',
+      ),
+    ),
+    'primary key' => array('id', 'event'),
+    'foreign keys' => array(
+      'id' => array('rules_config' => 'id'),
+    ),
+  );
+  db_create_table('rules_config', $schema['rules_config']);
+  db_create_table('rules_trigger', $schema['rules_trigger']);
+  // The cache table already exists, but changed. So re-create it.
+  db_drop_table('cache_rules');
+  $schema['cache_rules'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_rules']['description'] = 'Cache table for the rules engine to store configured items.';
+  db_create_table('cache_rules', $schema['cache_rules']);
+  // Remove deprecated variables.
+  variable_del('rules_inactive_sets');
+  variable_del('rules_show_fixed');
+  variable_del('rules_hide_token_message');
+  variable_del('rules_counter');
+
+  return t('The database tables for Rules 2.x have been created. The old tables from Rules 1.x are still available and contain your rules, which are not updated yet.');
 }
 
 /**
- * Ensure caches are cleared.
+ * Add in the exportable entity db columns as required by the entity API.
  */
 function rules_update_7201() {
-  // Just do nothing as caches are cleared nevertheless afterwards.
+  // Previously this was update 7200, so check whether we need to run it really.
+  // The update has been moved as 7200 needs to be the 6.x-7.x upgrade.
+  if (!db_field_exists('rules_config', 'status')) {
+    db_add_field('rules_config', 'status', array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => ENTITY_CUSTOM,
+      'size' => 'tiny',
+      'description' => 'The exportable status of the entity.',
+    ));
+    // The module column did already exist before.
+  }
 }

@@ -50,3 +50,52 @@ function rules_scheduler_schema() {
   );
   return $schema;
 }
+
+/**
+ * Upgrade from Rules scheduler 6.x-1.x to 7.x.
+ */
+function rules_scheduler_update_7200() {
+  // Rename the old table so we can keep its content and start over with a
+  // fresh one.
+  db_rename_table('rules_scheduler', 'rules_scheduler_d6');
+  // Create the d7 table.
+  $schema['rules_scheduler'] = array(
+    'description' => 'Stores scheduled tasks.',
+    'fields' => array(
+      'tid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => "The scheduled task's id.",
+      ),
+      'config' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => "The scheduled configuration's name.",
+      ),
+      'date' => array(
+        'description' => 'The Unix timestamp of when the task is to be scheduled.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'state' => array(
+        'type' => 'text',
+        'not null' => FALSE,
+        'serialize' => TRUE,
+        'description' => 'The whole, serialized evaluation state.',
+      ),
+      'identifier' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'default' => '',
+        'not null' => FALSE,
+        'description' => 'The user defined string identifying this task.',
+      ),
+    ),
+    'primary key' => array('tid'),
+    'indexes' => array('date' => array('date')),
+  );
+  db_create_table('rules_scheduler', $schema['rules_scheduler']);
+}
