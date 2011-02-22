@@ -105,7 +105,11 @@ function rules_rules_core_data_info() {
       );
     }
   }
-  $return['taxonomy_vocabulary']['wrapper class'] = 'RulesTaxonomyVocabularyWrapper';
+
+  if (module_exists('taxonomy')) {
+    $return['taxonomy_vocabulary']['wrapper class'] = 'RulesTaxonomyVocabularyWrapper';
+  }
+
   return $return;
 }
 
