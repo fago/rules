@@ -161,8 +161,8 @@ class RulesState {
   /**
    * Apply permanent changes provided the wrapper's data type is savable.
    *
-   * @param $name
-   *   The name of the variable to update.
+   * @param $selector
+   *   The data selector of the wrapper to save or just a variable name.
    * @param $immediate
    *   Pass FALSE to postpone saving to later on. Else it's immediately saved.
    */
@@ -184,6 +184,8 @@ class RulesState {
    * Remembers to save the wrapper on cleanup or does it now.
    */
   protected function save($selector, EntityMetadataWrapper $wrapper, $immediate) {
+    // Convert variable names and selectors to both use underscores.
+    $selector = strtr($selector, '-', '_');
     if (isset($this->save[$selector])) {
       if ($this->save[$selector][0]->getIdentifier() == $wrapper->getIdentifier()) {
         // The entity is already remembered. So do a combined save.
@@ -196,7 +198,9 @@ class RulesState {
       }
     }
     if (!isset($this->save[$selector])) {
-      $this->save[$selector] = array(clone $wrapper, self::$blocked);
+      // In case of immediate saving don't clone the wrapper, so saving a new
+      // entity immediately makes the identifier available afterwards.
+      $this->save[$selector] = array($immediate ? $wrapper : clone $wrapper, self::$blocked);
     }
     if ($immediate) {
       $this->saveNow($selector);
