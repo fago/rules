@@ -259,10 +259,14 @@ class Rule extends RulesActionContainer {
     return $vars;
   }
 
+  protected function exportFlat() {
+    return $this->isRoot();
+  }
+
   protected function exportToArray() {
     $export = parent::exportToArray();
     if (!$this->isRoot()) {
-      $export['LABEL'] = $this->label;
+      $export[strtoupper($this->plugin())]['LABEL'] = $this->label;
     }
     return $export;
   }
@@ -276,8 +280,8 @@ class Rule extends RulesActionContainer {
   }
 
   public function import(array $export) {
-    if (!$this->isRoot() && isset($export['LABEL'])) {
-      $this->label = $export['LABEL'];
+    if (!$this->isRoot() && isset($export[strtoupper($this->plugin())]['LABEL'])) {
+      $this->label = $export[strtoupper($this->plugin())]['LABEL'];
     }
     parent::import($export);
   }

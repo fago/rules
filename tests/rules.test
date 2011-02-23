@@ -607,14 +607,16 @@ class RulesTestCase extends DrupalWebTestCase {
     "REQUIRES" : [ "rules" ],
     "USES VARIABLES" : { "node" : { "label" : "Test node", "type" : "node" } },
     "RULES" : [
-      {
-        "IF" : [ { "NOT data_is" : { "data" : [ "node:title" ], "value" : "test" } } ],
-        "DO" : [ { "data_set" : { "data" : [ "node:title" ], "value" : "test" } } ],
-        "LABEL" : "Test Rule"
+      { "RULE" : {
+          "IF" : [ { "NOT data_is" : { "data" : [ "node:title" ], "value" : "test" } } ],
+          "DO" : [ { "data_set" : { "data" : [ "node:title" ], "value" : "test" } } ],
+          "LABEL" : "Test Rule"
+        }
       },
-      {
-        "DO" : [ { "drupal_message" : { "message" : "hi" } } ],
-        "LABEL" : "Test Rule 2"
+      { "RULE" : {
+          "DO" : [ { "drupal_message" : { "message" : "hi" } } ],
+          "LABEL" : "Test Rule 2"
+        }
       }
     ]
   }
@@ -653,6 +655,17 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $this->assertTrue(!empty($imported_rule) && $imported_rule->integrityCheck(), 'Rule 2 has been imported.');
     $this->assertEqual($export, $imported_rule->export(), 'Export of imported rule 2 equals original export.');
+
+    // Test importing a negated condition component.
+    $export = '{ "rules_negated_component" : {
+    "LABEL" : "negated_component",
+    "PLUGIN" : "or",
+    "REQUIRES" : [ "rules" ],
+    "NOT OR" : [ { "data_is_empty" : { "data" : [ "site:slogan" ] } } ]
+  }
+}';
+    $or = rules_import($export);
+    $this->assertTrue($or->integrityCheck() && $or->isNegated(), 'Negated condition component imported.');
   }
 
   /**
