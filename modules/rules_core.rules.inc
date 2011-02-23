@@ -102,6 +102,7 @@ function rules_rules_core_data_info() {
         'parent' => 'entity',
         'wrap' => TRUE,
         'group' => t('Entity'),
+        'ui class' => empty($info['exportable']) ? 'RulesDataUIEntity' : 'RulesDataUIEntityExportable',
       );
     }
   }
