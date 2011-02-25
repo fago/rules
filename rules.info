@@ -1,4 +1,3 @@
-; $Id$
 name = Rules
 description = React on events and conditionally evaluate actions.
 package = Rules

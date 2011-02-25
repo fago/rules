@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Invokes events on behalf core modules. Usually this should be

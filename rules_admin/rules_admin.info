@@ -1,4 +1,3 @@
-; $Id$
 name = Rules UI
 description = Administrative interface for managing rules.
 package = Rules

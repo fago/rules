@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Contains data type related forms.

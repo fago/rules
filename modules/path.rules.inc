@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file rules integration for the path module

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Include file for testing file inclusion.

@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Rules core integration providing data types and conditions and

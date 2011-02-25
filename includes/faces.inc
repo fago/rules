@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Extendable Object Faces API. Provided by the faces module.

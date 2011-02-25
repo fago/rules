@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file Includes any rules integration provided by the module.
