@@ -1,5 +1,4 @@
 # translation of rules to Greek
-# $Id$
 # Generated from files:
 #  rules.admin.inc,v 1.1.2.61 2008/10/24 10:53:17 fago
 #  rules_admin.sets.inc,v 1.1.2.10 2008/09/02 14:47:52 fago

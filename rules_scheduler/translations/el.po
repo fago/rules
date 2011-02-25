@@ -1,5 +1,4 @@
 # translation of rules_scheduler to Greek
-# $Id$
 # Generated from files:
 #  rules_scheduler.rules.inc,v 1.1.2.3 2008/10/03 10:21:04 fago
 #  rules_scheduler.module,v 1.1.2.3 2008/08/19 11:58:21 fago

@@ -1,4 +1,3 @@
-$Id$
 
 Rules Forms Module
 ------------------

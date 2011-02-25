@@ -1,4 +1,3 @@
-; $Id$
 name = Rules Administration UI
 description = Provides the administration UI for rules.
 dependencies[] = rules
