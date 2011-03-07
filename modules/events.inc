@@ -174,8 +174,7 @@ function rules_data_action_access($type, $name) {
     $op = $name == 'entity_create' ? 'create' : 'view';
   }
   elseif ($name == 'entity_save' || $name == 'entity_delete') {
-    $cache = rules_get_cache();
-    $types = $cache['action_info'][$name]['parameter']['data']['type'];
+    $types = array_keys(entity_get_info());
     $op = $name == 'entity_save' ? 'save' : 'delete';
   }
   foreach ($types as $key => $type) {

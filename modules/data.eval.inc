@@ -171,7 +171,12 @@ function rules_action_entity_save($wrapper, $immediate = FALSE, $settings, $stat
  * Action: Delete entities.
  */
 function rules_action_entity_delete($wrapper, $settings, $state, $element) {
-  $wrapper->delete();
+  try {
+    $wrapper->delete();
+  }
+  catch (EntityMetadataWrapperException $e) {
+    throw new RulesException($e->getMessage(), array(), $element);
+  }
 }
 
 /**
