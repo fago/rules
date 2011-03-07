@@ -348,7 +348,7 @@ function rules_core_action_transform_info($name, $core_action_info, $type_map) {
 /**
  * Action implementation: Execute a core action
  */
-function rules_core_action_execute(&$object, $settings, $element, &$state) {
+function rules_core_action_execute($object, $settings, $element, &$state) {
   $info = rules_get_element_info($element);
 
   $info['action_name']($object, $settings);
