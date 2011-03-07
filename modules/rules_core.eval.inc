@@ -51,7 +51,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     return $return;
   }
   else {
-    throw new RulesException('Unable to get the component %name'. array('%name' => $info['#config_name']), $element);
+    throw new RulesException('Unable to get the component %name', array('%name' => $info['#config_name']), $element);
   }
 }
 
