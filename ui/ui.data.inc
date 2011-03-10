@@ -98,7 +98,7 @@ class RulesDataUI {
       if (!is_array($value) && isset($options[$value])) {
         $value = $options[$value];
       }
-      else {
+      elseif (is_array($value)) {
         foreach ($value as $key => $single_value) {
           if (isset($options[$single_value])) {
             $value[$key] = $options[$single_value];
