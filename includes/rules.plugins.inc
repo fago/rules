@@ -674,6 +674,7 @@ class RulesEventSet extends RulesRuleSet {
           // the static cache.
           $event->rule(clone $rule);
         }
+        $event->sortChildren();
         $event->optimize();
         // Allow modules to alter the cached event set.
         drupal_alter('rules_event_set', $name, $event);
