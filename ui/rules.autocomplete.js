@@ -11,9 +11,7 @@ Drupal.rules = Drupal.rules || {};
         var input = this;
         new Drupal.rules.autocomplete(input, autocomplete_settings[$(input).attr('id')]);
       });
-
     }
-
   };
 
   /**
@@ -28,6 +26,7 @@ Drupal.rules = Drupal.rules || {};
 
     this.opendByFocus = false;
     this.focusOpens = true;
+    this.groupSelected = false;
 
     this.button = $('<span>&nbsp;</span>');
     this.button.attr( {
@@ -60,7 +59,7 @@ Drupal.rules = Drupal.rules || {};
     // Event handlers
     this.jqObject.focus(function() {
       if (instance.focusOpens) {
-        instance.toggle(true);
+        instance.toggle();
         instance.opendByFocus = true;
       }
       else {
@@ -81,6 +80,11 @@ Drupal.rules = Drupal.rules || {};
     });
 
     this.jqObject.bind("autocompleteselect", function(event, ui) {
+      // If a group was selected then set the groupSelected to true for the
+      // overriden close function from jquery autocomplete.
+      if (ui.item.value.substring(ui.item.value.length - 1, ui.item.value.length) == ":") {
+        instance.groupSelected = true;
+      }
       instance.focusOpens = false;
       instance.opendByFocus = false;
     });
@@ -96,7 +100,6 @@ Drupal.rules = Drupal.rules || {};
         success: function(data) {
           instance.success(data, request, response);
         }
-
       });
     });
 
@@ -111,7 +114,7 @@ Drupal.rules = Drupal.rules || {};
       var value = this.element.val();
       // If the selector is not a group, then trigger the close event an and
       // hide the menu.
-      if (value === undefined || value.substring(value.length - 1, value.length) != ':') {
+      if (value === undefined || instance.groupSelected === false) {
         clearTimeout(this.closing);
         if (this.menu.element.is(":visible")) {
           this._trigger("close", event);
@@ -122,6 +125,9 @@ Drupal.rules = Drupal.rules || {};
       else {
         // Else keep all open and trigger a search for the group.
         instance.jqObject.autocomplete("search", instance.jqObject.val());
+        // After the suggestion box was opened again, we want to be able to
+        // close it.
+        instance.groupSelected = false;
       }
     };
 
@@ -169,7 +175,7 @@ Drupal.rules = Drupal.rules || {};
   /**
    * Toogle the autcomplete window.
    */
-  Drupal.rules.autocomplete.prototype.toggle = function(open) {
+  Drupal.rules.autocomplete.prototype.toggle = function() {
     if (this.jqObject.autocomplete("widget").is(":visible")) {
       this.close();
       this.focusOpens = true;
