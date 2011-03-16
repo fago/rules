@@ -43,6 +43,7 @@ function rules_node_update($node) {
 }
 
 function rules_node_insert($node) {
+  unset($node->is_new);
   rules_invoke_event('node_insert', $node);
 }
 

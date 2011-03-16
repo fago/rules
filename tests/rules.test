@@ -1619,4 +1619,19 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 
+  /**
+   * Test auto saving of a new node after it has been inserted into the DB.
+   */
+  function testNodeInsert() {
+    $rule = rules_reaction_rule();
+    $rand = $this->randomName();
+    $rule->event('node_insert')
+         ->action('data_set', array('data:select' => 'node:title', 'value' => $rand));
+    $rule->save('test');
+    rules_clear_cache(TRUE);
+    $node = $this->drupalCreateNode();
+    $node = node_load($node->nid);
+    RulesLog::logger()->checkLog();
+    $this->assertEqual($node->title, $rand, 'Node title is correct.');
+  }
 }
