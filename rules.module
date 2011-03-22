@@ -1081,3 +1081,28 @@ function rules_modules_disabled($modules) {
 function rules_config_access($op, $rules_config, $account = NULL) {
   return user_access('administer rules', $account);
 }
+
+/**
+ * Implements hook_menu().
+ */
+function rules_menu() {
+  $items['admin/config/workflow/rules/upgrade'] = array(
+    'title' => 'Upgrade',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_upgrade_form'),
+    'access arguments' => array('administer rules'),
+    'file' => 'includes/rules.upgrade.inc',
+    'file path' => drupal_get_path('module', 'rules'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/config/workflow/rules/upgrade/clear'] = array(
+    'title' => 'Clear',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('rules_upgrade_confirm_clear_form'),
+    'access arguments' => array('administer rules'),
+    'file' => 'includes/rules.upgrade.inc',
+    'file path' => drupal_get_path('module', 'rules'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}

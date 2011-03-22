@@ -101,6 +101,9 @@ function rules_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('rules_debug', FALSE),
     '#description' => t('If activated debugging information is shown when rules are evaluated.'),
   );
+  if (db_table_exists('rules_rules')) {
+    drupal_set_message(t('There are left over rule configurations from a previous Rules 1.x installation. Proceed to the <a href="!url">upgrade page</a> to convert them and consult the README.txt for more details.', array('!url' => url('admin/config/workflow/rules/upgrade'))), 'warning');
+  }
   return system_settings_form($form);
 }
 

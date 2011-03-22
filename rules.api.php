@@ -821,5 +821,73 @@ function hook_rules_event_set_alter($event_name, RulesEventSet $event_set) {
 }
 
 /**
+ * D6 to D7 upgrade procedure hook for mapping action or condition names.
+ *
+ * If for a module the action or condition name changed since Drupal 6, this
+ * "hook" can be implemented in order to map to the new name of the action or
+ * condition.
+ *
+ * This is no real hook, but a callback that is invoked for each Drupal 6
+ * action or condition that is to be upgraded to Drupal 7. E.g. the function
+ * name called for the action "rules_action_set_node_title" would be
+ * "rules_action_set_node_title_upgrade_map_name".
+ *
+ * @param $element
+ *   The element array of a configured condition or action which is to be
+ *   upgraded.
+ * @return
+ *   The name of the action or condition which should be used.
+ */
+function hook_rules_action_base_upgrade_map_name($element) {
+  return 'data_set';
+}
+
+/**
+ * D6 to D7 upgrade procedure hook for mapping action or condition configuration.
+ *
+ * During upgrading Drupal 6 rule configurations to Drupal 7 Rules is taking
+ * care of upgrading the configuration of all known parameters, which only works
+ * if the parameter name has not changed.
+ * If something changed, this callback can be used to properly apply the
+ * configruation of the Drupal 6 action ($element) to the Drupal 7 version
+ * ($target).
+ *
+ * This is no real hook, but a callback that is invoked for each Drupal 6
+ * action or condition that is to be upgraded to Drupal 7. E.g. the function
+ * name called for the action "rules_action_set_node_title" would be
+ * "rules_action_set_node_title_upgrade".
+ *
+ * @param $element
+ *   The element array of a configured condition or action which is to be
+ *   upgraded.
+ * @param $target
+ *   The Drupal 7 version of the configured element.
+ *
+ * @see hook_rules_element_upgrade_alter()
+ */
+function hook_rules_action_base_upgrade($element, RulesPlugin $target) {
+  $target->settings['data:select'] = $element['#settings']['#argument map']['node'] . ':title';
+  $target->settings['value'] = $element['#settings']['title'];
+}
+
+/**
+ * D6 to D7 upgrade procedure hook for mapping action or condition configuration.
+ *
+ * A alter hook that is called after the action/condition specific callback for
+ * each element of a configuration that is upgraded.
+ *
+ * @param $element
+ *   The element array of a configured condition or action which is to be
+ *   upgraded.
+ * @param $target
+ *   The Drupal 7 version of the configured element.
+ *
+ * @see hook_rules_action_base_upgrade()
+ */
+function hook_rules_element_upgrade_alter($element, $target) {
+
+}
+
+/**
  * @}
  */

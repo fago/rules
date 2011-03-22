@@ -98,3 +98,39 @@ function rules_scheduler_update_7200() {
   );
   db_create_table('rules_scheduler', $schema['rules_scheduler']);
 }
+
+/**
+ * Rules upgrade callback for mapping the action name.
+ */
+function rules_scheduler_action_upgrade_map_name($element) {
+  return 'schedule';
+}
+
+/**
+ * Rules upgrade callback.
+ */
+function rules_scheduler_action_upgrade($element, $target) {
+  $target->settings['component'] = $element['#info']['set'];
+  $target->settings['date'] = $element['#settings']['task_date'];
+  $target->settings['identifier'] = $element['#settings']['task_identifier'];
+
+  unset($element['#info']['arguments']['task_date'], $element['#info']['arguments']['task_identifier']);
+  foreach ($element['#info']['arguments'] as $name => $info) {
+    rules_upgrade_element_parameter_settings($element, $target, $name, $info, 'param_' . $name);
+  }
+}
+
+/**
+ * Rules upgrade callback for mapping the action name.
+ */
+function rules_action_delete_scheduled_set_upgrade_map_name($element) {
+  return 'schedule_delete';
+}
+
+/**
+ * Rules upgrade callback.
+ */
+function rules_action_delete_scheduled_set_upgrade($element, $target) {
+  $target->settings['component'] = $element['#settings']['ruleset'];
+  $target->settings['task'] = $element['#settings']['task_identifier'];
+}
