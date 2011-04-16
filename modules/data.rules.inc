@@ -722,7 +722,7 @@ function rules_condition_data_is_operator_options() {
   return array(
     '==' => t('equals'),
     '<' => t('is lower than'),
-    '>' => t('is greather than'),
+    '>' => t('is greater than'),
     'contains' => t('contains'),
   );
 }
