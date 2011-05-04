@@ -71,6 +71,11 @@ function rules_action_path_alias($settings) {
   if (!drupal_lookup_path('source', $dst)) {
     path_set_alias($settings['src'], $dst, NULL, $settings['language']);
   }
+  // Otherwise, the path alias is taken.
+  // If the system path is empty, delete the alias.
+  elseif (!$settings['src']) {
+    path_set_alias(NULL, $dst, NULL, $settings['language']);
+  }
 }
 
 /**
