@@ -995,7 +995,7 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   protected function exportParameterSetting($name, $info) {
-    if (isset($this->settings[$name]) && (!isset($info['default value']) || $this->settings[$name] != $info['default value'])) {
+    if (isset($this->settings[$name]) && (empty($info['optional']) || !isset($info['default value']) || $this->settings[$name] != $info['default value'])) {
       // In case of an array-value wrap the value into another array, such that
       // the value cannot be confused with an exported data selector.
       return is_array($this->settings[$name]) ? array('value' => $this->settings[$name]) : $this->settings[$name];
