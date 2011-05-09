@@ -65,6 +65,21 @@ function rules_schema() {
         'size' => 'tiny',
         'description' => 'Weight of the configuration. Usage depends on how the using module makes use of it.',
       ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        // Set the default to ENTITY_CUSTOM without using the constant as it is
+        // not safe to use it at this point.
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
       'data' => array(
         'type' => 'blob',
         'size' => 'big',
@@ -72,7 +87,7 @@ function rules_schema() {
         'serialize' => TRUE,
         'description' => 'Everything else, serialized.',
       ),
-    ) + entity_exportable_schema_fields(),
+    ),
     'primary key' => array('id'),
     'unique keys' => array(
       'name' => array('name'),
@@ -148,6 +163,21 @@ function rules_update_7200() {
         'size' => 'tiny',
         'description' => 'Weight of the configuration. Usage depends on how the using module makes use of it.',
       ),
+      'status' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        // Set the default to ENTITY_CUSTOM without using the constant as it is
+        // not safe to use it at this point.
+        'default' => 0x01,
+        'size' => 'tiny',
+        'description' => 'The exportable status of the entity.',
+      ),
+      'module' => array(
+        'description' => 'The name of the providing module if the entity has been defined in code.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
       'data' => array(
         'type' => 'blob',
         'size' => 'big',
@@ -155,7 +185,7 @@ function rules_update_7200() {
         'serialize' => TRUE,
         'description' => 'Everything else, serialized.',
       ),
-    ) + entity_exportable_schema_fields(),
+    ),
     'primary key' => array('id'),
     'unique keys' => array(
       'name' => array('name'),
