@@ -1066,25 +1066,6 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $msg = drupal_get_messages();
     $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
   }
-
-
-  /**
-   * Tests the drupal goto action.
-   */
-  function testRedirectAction() {
-    $rule = rules_reaction_rule();
-    $rule->event('user_login')
-         ->action('redirect', array('url' => 'user/[account:uid]/edit'))
-         ->save();
-    rules_clear_cache(TRUE);
-
-    $user = $this->drupalCreateUser();
-    $this->drupalLogin($user);
-    // Make sure the right URL has been generated and we are there now.
-    // The action currently does not work correctly.
-    // @todo: Reenable once it has been fixed.
-    //$this->assertTrue(strpos($this->getUrl(), "user/$user->uid/edit") !== FALSE, 'Redirected to the right url.');
-  }
 }
 
 /**
@@ -1569,6 +1550,16 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     $this->drupalGet('node/' . $node->nid);
     $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE)), 'Redirect has been issued.');
+
+    // Also test using a url including a fragment.
+    $actions = $rule->actions();
+    $actions[0]->settings['url'] = 'user#fragment';
+    $rule->save();
+    rules_clear_cache();
+
+    $this->drupalGet('node/' . $node->nid);
+    $this->assertEqual($this->getUrl(), url('user', array('absolute' => TRUE, 'fragment' => 'fragment')), 'Redirect has been issued.');
+
 
     // Test sending mail.
     $settings = array('to' => 'mail@example.com', 'subject' => 'subject', 'message' => 'hello.');

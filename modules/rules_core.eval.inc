@@ -105,13 +105,13 @@ class RulesURIInputEvaluator extends RulesDataInputEvaluator {
 
   public function evaluate($uri, $options, RulesState $state) {
     if (!url_is_external($uri)) {
-      // Extract the path so URL aliases are applied properly.
-      $query = '';
-      if (($pos = strpos($uri, '?')) !== FALSE) {
-        $query = substr($uri, $pos);
-        $uri = substr($uri, 0, $pos);
-      }
-      return url($uri, array('absolute' => TRUE) + $options) . $query;
+      // Extract the path and build the URL using the url() function, so URL
+      // aliases are applied and query parameters and fragments get handled.
+      $url = drupal_parse_url($uri);
+      $url_options = array('absolute' => TRUE);
+      $url_options['query'] = $url['query'];
+      $url_options['fragment'] = $url['fragment'];
+      return url($url['path'], $url_options);
     }
     elseif (valid_url($uri)) {
       return $uri;
