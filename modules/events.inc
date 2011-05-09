@@ -43,7 +43,9 @@ function rules_node_update($node) {
 }
 
 function rules_node_insert($node) {
-  unset($node->is_new);
+  // Make sure the node is not marked as new any more, such that any
+  // sub-sequent saves triggered by rules are updating the node.
+  $node->is_new = FALSE;
   rules_invoke_event('node_insert', $node);
 }
 
