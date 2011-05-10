@@ -244,6 +244,7 @@ function rules_data_action_info() {
       'value' => array(
         'type' => 'unknown',
         'label' => t('Value'),
+        'optional' => TRUE,
       ),
     ),
     'provides' => array(
