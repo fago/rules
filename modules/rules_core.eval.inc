@@ -167,4 +167,14 @@ class RulesTaxonomyVocabularyWrapper extends EntityDrupalWrapper {
       parent::setEntity($data);
     }
   }
+
+  /**
+   * Overriden to permit machine names as values.
+   */
+  public function validate($value) {
+    if (isset($value) && is_string($value)) {
+      return TRUE;
+    }
+    return parent::validate($value);
+  }
 }
