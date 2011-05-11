@@ -196,6 +196,18 @@ function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
 }
 
 /**
+ * Info alteration callback for the "Add and Remove a list item" actions.
+ */
+function rules_action_data_list_info_alter(&$element_info, RulesAbstractPlugin $element) {
+  // Update the required type for the list item if it is known.
+  if ($arg_info = $element->getArgumentInfo('list')) {
+    if ($type = entity_property_list_extract_type($arg_info['type'])) {
+      $element_info['parameter']['item']['type'] = $type;
+    }
+  }
+}
+
+/**
  * Action: Remove a list item.
  */
 function rules_action_data_list_remove($list, $item) {

@@ -207,7 +207,8 @@ function rules_data_action_info() {
     'group' => t('Data'),
     'base' => 'rules_action_data_list_add',
     'callbacks' => array(
-      'validate' => 'rules_data_validate_list_item_type',
+      'info_alter' => 'rules_action_data_list_info_alter',
+      'form_alter' => 'rules_action_data_list_form_alter',
     ),
   );
   $return['list_remove'] = array(
@@ -227,7 +228,8 @@ function rules_data_action_info() {
     'group' => t('Data'),
     'base' => 'rules_action_data_list_remove',
     'callbacks' => array(
-      'validate' => 'rules_data_validate_list_item_type',
+      'info_alter' => 'rules_action_data_list_info_alter',
+      'form_alter' => 'rules_action_data_list_form_alter',
     ),
   );
   $return['variable_add'] = array(
@@ -407,6 +409,37 @@ function rules_action_entity_parameter_options_list(RulesPlugin $element, $param
 }
 
 /**
+ * Form alter callback for the list add and remove actions.
+ *
+ * Use multiple steps to configure the action to update the item configuration
+ * form once we know the data type.
+ *
+ * @see rules_action_data_list_info_alter()
+ */
+function rules_action_data_list_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+  if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
+    unset($form['parameter']['item'], $form['parameter']['pos']);
+    $form_state['rules_element_step'] = 1;
+    $form['submit'] = array(
+      '#type' => 'submit',
+      '#value' => t('Continue'),
+      '#limit_validation_errors' => array(array('parameter', 'list')),
+      '#submit' => array('rules_form_submit_rebuild'),
+    );
+  }
+  else {
+    // Change the list parameter to be not editable any more.
+    $form['parameter']['list']['settings']['#access'] = FALSE;
+    $form['parameter']['list']['info'] = array(
+      '#prefix' => '<p>',
+      '#markup' => t('<strong>Selected list:</strong> %selector', array('%selector' => $element->settings['list:select'])),
+      '#suffix' => '</p>',
+    );
+  }
+}
+
+
+/**
  * Form alter callback for actions relying on the entity type or the data type.
  */
 function rules_action_type_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
@@ -495,19 +528,6 @@ function rules_entity_type_options($key = NULL) {
     }
   }
   return $types;
-}
-
-/**
- * Validation callback to ensure the list item matches to the list.
- */
-function rules_data_validate_list_item_type(RulesAbstractPlugin $element) {
-  $list_info = $element->getArgumentInfo('list');
-  $list_info['type'] = isset($list_info['type']) ? entity_property_list_extract_type($list_info['type']) : FALSE;
-  if (!empty($list_info['type']) && ($item_info = $element->getArgumentInfo('item'))) {
-    if (!RulesData::typesMatch($item_info, $list_info)) {
-      throw new RulesException('The item specified is of an invalid type.', array(), array($element, 'parameter', 'item'));
-    }
-  }
 }
 
 /**

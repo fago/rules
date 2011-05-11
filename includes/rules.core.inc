@@ -724,7 +724,7 @@ abstract class RulesPlugin extends RulesExtendable {
       if ($wrapper = $this->applyDataSelector($this->settings[$name . ':select'])) {
         return $wrapper->info();
       }
-      throw new RulesException('%plugin: Invalid data selector %selector specified.', array('%plugin' => $this->getPluginName(), '%selector' => $this->settings[$name . ':select']), array($this, 'parameter', $name, 'settings', $name . ':select'));
+      return;
     }
     elseif (isset($this->settings[$name . ':type'])) {
       return array('type' => $this->settings[$name . ':type']);
