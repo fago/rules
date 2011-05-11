@@ -71,7 +71,8 @@ function _rules_export_get_test_export() {
       },
       { "LOOP" : {
           "USING" : { "list" : [ "site:current-user:roles" ] },
-          "DO" : [ { "drupal_message" : { "message" : [ "list-item" ] } } ]
+          "ITEM" : { "current_role" : "Current role" },
+          "DO" : [ { "drupal_message" : { "message" : [ "current-role" ] } } ]
         }
       }
     ]

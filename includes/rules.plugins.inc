@@ -598,6 +598,20 @@ class RulesLoop extends RulesActionContainer {
   protected function importChildren($export, $key = 'DO') {
     parent::importChildren($export, $key);
   }
+
+  protected function exportSettings() {
+    $export = parent::exportSettings();
+    $export['ITEM'][$this->settings['item:var']] = $this->settings['item:label'];
+    return $export;
+  }
+
+  protected function importSettings($export) {
+    parent::importSettings($export);
+    if (isset($export['ITEM'])) {
+      $this->settings['item:var'] = key($export['ITEM']);
+      $this->settings['item:label'] = reset($export['ITEM']);
+    }
+  }
 }
 
 /**
