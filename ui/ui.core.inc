@@ -220,6 +220,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#type' => 'textfield',
         '#title' => t('Variable label'),
         '#default_value' => isset($settings[$var_name . ':label']) ? $settings[$var_name . ':label'] : $var_info['label'],
+        '#required' => TRUE,
       );
       $form['provides'][$var_name]['var'] = array(
         '#type' => 'textfield',
@@ -227,6 +228,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#default_value' => isset($settings[$var_name . ':var']) ? $settings[$var_name . ':var'] : $var_name,
         '#description' => t('The variable name must contain only lowercase letters, numbers, and underscores and must be unique in the current scope.'),
         '#element_validate' => array('rules_ui_element_machine_name_validate'),
+        '#required' => TRUE,
       );
     }
     if (!empty($form['provides'])) {

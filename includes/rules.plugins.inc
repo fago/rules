@@ -542,7 +542,7 @@ class RulesLoop extends RulesActionContainer {
     $this->checkVarName($this->settings['item:var']);
   }
 
-  protected function listItemInfo() {
+  public function listItemInfo() {
     if (!isset($this->listItemInfo)) {
       if ($info = $this->getArgumentInfo('list')) {
         // Pass through the variable info keys like property info.
