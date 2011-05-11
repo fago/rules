@@ -653,7 +653,7 @@ abstract class RulesPlugin extends RulesExtendable {
       throw new RulesException('Required parameter %name is missing.', array('%name' => $name), $this);
     }
     else {
-      $arg = !empty($info['default value']) ? $info['default value'] : NULL;
+      $arg = isset($info['default value']) ? $info['default value'] : NULL;
       $skip_sanitize = TRUE;
       $info['allow null'] = TRUE;
     }
