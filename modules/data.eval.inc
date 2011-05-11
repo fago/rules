@@ -43,8 +43,9 @@ function rules_action_data_set($wrapper, $value, $settings, $state, $element) {
 function rules_action_data_set_info_alter(&$element_info, $element) {
   $element->settings += array('data:select' => NULL);
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $info = $wrapper->info();
     $element_info['parameter']['value']['type'] = $wrapper->type();
-    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
+    $element_info['parameter']['value']['options list']  = !empty($info['options list']) ? 'rules_data_selector_options_list' : FALSE;
   }
 }
 
@@ -182,7 +183,12 @@ function rules_action_entity_delete($wrapper, $settings, $state, $element) {
 /**
  * Action: Add a list item.
  */
-function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
+function rules_action_data_list_add($list, $item, $unique = FALSE, $pos = 'end', $settings, $state) {
+  // Optionally, only add the list item if it is not yet contained.
+  if ($unique && rules_condition_data_list_contains($list, $item, $settings, $state)) {
+    return;
+  }
+
   switch ($pos) {
     case 'start':
       array_unshift($list, $item);
@@ -198,11 +204,14 @@ function rules_action_data_list_add($list, $item, $pos = 'end', $settings) {
 /**
  * Info alteration callback for the "Add and Remove a list item" actions.
  */
-function rules_action_data_list_info_alter(&$element_info, RulesAbstractPlugin $element) {
+function rules_data_list_info_alter(&$element_info, RulesAbstractPlugin $element) {
   // Update the required type for the list item if it is known.
-  if ($arg_info = $element->getArgumentInfo('list')) {
-    if ($type = entity_property_list_extract_type($arg_info['type'])) {
+  $element->settings += array('list:select' => NULL);
+  if ($wrapper = $element->applyDataSelector($element->settings['list:select'])) {
+    if ($type = entity_property_list_extract_type($wrapper->type())) {
+      $info = $wrapper->info();
       $element_info['parameter']['item']['type'] = $type;
+      $element_info['parameter']['item']['options list']  = !empty($info['options list']) ? 'rules_data_selector_options_list' : FALSE;
     }
   }
 }
@@ -328,8 +337,25 @@ function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin 
   $element->settings += array('data:select' => NULL);
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $element_info['parameter']['value']['type'] = $wrapper->type();
-    $element_info['parameter']['value']['options list']  = $wrapper->optionsList() ? 'rules_data_selector_options_list' : FALSE;
+    $element_info['parameter']['value']['options list']  = !empty($info['options list']) ? 'rules_data_selector_options_list' : FALSE;
   }
+}
+
+/**
+ * Condition: List contains.
+ */
+function rules_condition_data_list_contains($list, $item, $settings, $state) {
+  $wrapper = $state->currentArguments['item'];
+  if ($wrapper instanceof EntityStructureWrapper && $id = $wrapper->getIdentifier()) {
+    // Check for equal items using the identifier if there is one.
+    foreach ($state->currentArguments['list'] as $i) {
+      if ($i->getIdentifier() == $id) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+  return in_array($item, $list);
 }
 
 /**

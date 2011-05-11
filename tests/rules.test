@@ -1213,11 +1213,14 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     ));
     $rule->action('list_add', array('list:select' => 'list', 'item' => 'bar2'));
     $rule->action('list_add', array('list:select' => 'list', 'item' => 'bar', 'pos' => 'start'));
+    $rule->action('list_add', array('list:select' => 'list', 'item' => 'bar', 'unique' => TRUE));
     $rule->action('list_remove', array('list:select' => 'list', 'item' => 'bar2'));
     $list = entity_metadata_wrapper('list', array('foo', 'foo2'));
     $rule->execute($list);
     RulesLog::logger()->checkLog();
     $this->assertEqual($list->value(), array('bar', 'foo', 'foo2'), 'List items removed and added.');
+    $this->assertFalse(rules_condition('list_contains')->execute($list, 'foo-bar'), 'Condition "List item contains" evaluates to FALSE');
+    $this->assertTrue(rules_condition('list_contains')->execute($list, 'foo'), 'Condition "List item contains" evaluates to TRUE');
     //debug(RulesLog::logger()->render());
 
     // Test Condition: Data is empty.

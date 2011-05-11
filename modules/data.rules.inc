@@ -196,6 +196,13 @@ function rules_data_action_info() {
         'type' => 'unknown',
         'label' => t('Item to add'),
       ),
+      'unique' => array(
+        'type' => 'boolean',
+        'label' => t('Enforce uniqueness'),
+        'description' => t('Only add the item to the list if it is not yet contained.'),
+        'optional' => TRUE,
+        'default value' => FALSE,
+      ),
       'pos' => array(
         'type' => 'text',
         'label' => t('Insert position'),
@@ -207,8 +214,8 @@ function rules_data_action_info() {
     'group' => t('Data'),
     'base' => 'rules_action_data_list_add',
     'callbacks' => array(
-      'info_alter' => 'rules_action_data_list_info_alter',
-      'form_alter' => 'rules_action_data_list_form_alter',
+      'info_alter' => 'rules_data_list_info_alter',
+      'form_alter' => 'rules_data_list_form_alter',
     ),
   );
   $return['list_remove'] = array(
@@ -228,8 +235,8 @@ function rules_data_action_info() {
     'group' => t('Data'),
     'base' => 'rules_action_data_list_remove',
     'callbacks' => array(
-      'info_alter' => 'rules_action_data_list_info_alter',
-      'form_alter' => 'rules_action_data_list_form_alter',
+      'info_alter' => 'rules_data_list_info_alter',
+      'form_alter' => 'rules_data_list_form_alter',
     ),
   );
   $return['variable_add'] = array(
@@ -414,12 +421,14 @@ function rules_action_entity_parameter_options_list(RulesPlugin $element, $param
  * Use multiple steps to configure the action to update the item configuration
  * form once we know the data type.
  *
- * @see rules_action_data_list_info_alter()
+ * @see rules_data_list_info_alter()
  */
-function rules_action_data_list_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+function rules_data_list_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
     unset($form['parameter']['item'], $form['parameter']['pos']);
     $form_state['rules_element_step'] = 1;
+    $form['negate']['#access'] = FALSE;
+    $form['parameter']['unique']['#access'] = FALSE;
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),
@@ -612,6 +621,27 @@ function rules_data_condition_info() {
       'group' => t('Data'),
       'base' => 'rules_condition_data_is_empty',
     ),
+    'list_contains'  => array(
+      'label' => t('List contains item'),
+      'parameter' => array(
+        'list' => array(
+          'type' => 'list',
+          'label' => t('List'),
+          'restriction' => 'selector',
+        ),
+        'item' => array(
+          'type' => 'unknown',
+          'label' => t('Item'),
+          'description' => t('The item to check for.'),
+        ),
+      ),
+      'group' => t('Data'),
+      'base' => 'rules_condition_data_list_contains',
+      'callbacks' => array(
+        'info_alter' => 'rules_data_list_info_alter',
+        'form_alter' => 'rules_data_list_form_alter',
+      ),
+    ),
     'entity_is_new' => array(
       'label' => t('Entity is new'),
       'parameter' => array(
@@ -794,14 +824,17 @@ function rules_condition_entity_is_of_type_assertions($element) {
 }
 
 /**
- * Returns the options list specified by the selected data property.
+ * Returns the options list as specified by the selected property of the first parameter.
  *
+ * @see rules_data_list_info_alter()
  * @see rules_action_data_set_info_alter()
  * @see rules_condition_data_is_info_alter()
  */
 function rules_data_selector_options_list(RulesAbstractPlugin $element) {
-  // The possible values of the "value" parameter are those of the data param.
-  if (isset($element->settings['data:select']) && $wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+  $parameter_info = $element->pluginParameterInfo();
+  $name = key($parameter_info);
+  // If the selected data property has an option list, make use of it.
+  if (isset($element->settings[$name . ':select']) && $wrapper = $element->applyDataSelector($element->settings[$name . ':select'])) {
     return $wrapper->optionsList($element instanceof RulesActionInterface ? 'edit' : 'view');
   }
 }
