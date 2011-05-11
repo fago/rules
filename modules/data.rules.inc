@@ -30,7 +30,7 @@ function rules_data_action_info() {
         'restriction' => 'selector',
         'wrapped' => TRUE,
         'allow null' => TRUE,
-       ),
+      ),
       'value' => array(
         'type' => '*',
         'label' => t('Value'),
@@ -51,8 +51,8 @@ function rules_data_action_info() {
           'options list' => 'rules_data_action_type_options',
           'description' => t('Specifies the type of entity that should be fetched.'),
           'restriction' => 'input',
-         ),
-         'id' => array('type' => 'unknown', 'label' => t('Identifier')),
+        ),
+        'id' => array('type' => 'unknown', 'label' => t('Identifier')),
       ),
       'provides' => array(
         'entity_fetched' => array('type' => 'unknown', 'label' => t('Fetched entity')),
@@ -74,25 +74,25 @@ function rules_data_action_info() {
           'options list' => 'rules_data_action_type_options',
           'description' => t('Specifies the type of the entity that should be fetched.'),
           'restriction' => 'input',
-         ),
+        ),
         'property' => array(
           'type' => 'text',
           'label' => t('Property'),
           'description' => t('The property by which the entity is to be selected.'),
           'restriction' => 'input',
-         ),
+        ),
         'value' => array(
           'type' => 'unknown',
           'label' => t('Value'),
           'description' => t('The property value of the entity to be fetched.'),
-         ),
-         'limit' => array(
-           'type' => 'integer',
-           'label' => t('Limit result count'),
-           'description' => t('Limit the maximum number of fetched entities.'),
-           'optional' => TRUE,
-           'default value' => '10',
-         ),
+        ),
+        'limit' => array(
+          'type' => 'integer',
+          'label' => t('Limit result count'),
+          'description' => t('Limit the maximum number of fetched entities.'),
+          'optional' => TRUE,
+          'default value' => '10',
+        ),
       ),
       'provides' => array(
         'entity_fetched' => array('type' => 'list', 'label' => t('Fetched entity')),
@@ -117,8 +117,8 @@ function rules_data_action_info() {
           'options list' => 'rules_data_action_type_options',
           'description' => t('Specifies the type of the entity that should be created.'),
           'restriction' => 'input',
-         ),
-         // Further needed parameter depends on the type.
+        ),
+        // Further needed parameter depends on the type.
       ),
       'provides' => array(
         'entity_created' => array(
@@ -147,15 +147,15 @@ function rules_data_action_info() {
         'description' => t('Specifies the entity, which should be saved permanently.'),
         'restriction' => 'selector',
         'wrapped' => TRUE,
-       ),
-       'immediate' => array(
-         'type' => 'boolean',
-         'label' => t('Force saving immediately'),
-         'description' => t('Usually saving is postponed till the end of the evaluation, so that multiple saves can be fold into one. If this set, saving is forced to happen immediately.'),
-         'default value' => FALSE,
-         'optional' => TRUE,
-         'restriction' => 'input',
-       ),
+      ),
+      'immediate' => array(
+        'type' => 'boolean',
+        'label' => t('Force saving immediately'),
+        'description' => t('Usually saving is postponed till the end of the evaluation, so that multiple saves can be fold into one. If this set, saving is forced to happen immediately.'),
+        'default value' => FALSE,
+        'optional' => TRUE,
+        'restriction' => 'input',
+      ),
     ),
     'group' => t('Entities'),
     'access callback' => 'rules_data_action_access',
@@ -191,18 +191,18 @@ function rules_data_action_info() {
         'label' => t('List'),
         'description' => t('The data list, to which an item is to be added.'),
         'restriction' => 'selector',
-       ),
+      ),
       'item' => array(
         'type' => 'unknown',
         'label' => t('Item to add'),
-       ),
-       'pos' => array(
-         'type' => 'text',
-         'label' => t('Insert position'),
-         'optional' => TRUE,
-         'default value' => 'end',
-         'options list' => 'rules_action_data_list_add_positions',
-       ),
+      ),
+      'pos' => array(
+        'type' => 'text',
+        'label' => t('Insert position'),
+        'optional' => TRUE,
+        'default value' => 'end',
+        'options list' => 'rules_action_data_list_add_positions',
+      ),
     ),
     'group' => t('Data'),
     'base' => 'rules_action_data_list_add',
@@ -219,11 +219,11 @@ function rules_data_action_info() {
         'label' => t('List'),
         'description' => t('The data list for which an item is to be removed.'),
         'restriction' => 'selector',
-       ),
+      ),
       'item' => array(
         'type' => 'unknown',
         'label' => t('Item to remove'),
-       ),
+      ),
     ),
     'group' => t('Data'),
     'base' => 'rules_action_data_list_remove',
@@ -274,8 +274,8 @@ function rules_data_action_info() {
           'options list' => 'rules_data_action_data_create_options',
           'description' => t('Specifies the type of the data structure that should be created.'),
           'restriction' => 'input',
-         ),
-         // Further needed parameters depend on the type.
+        ),
+        // Further needed parameters depend on the type.
       ),
       'provides' => array(
         'data_created' => array(
@@ -580,7 +580,7 @@ function rules_data_condition_info() {
           'type' => '*',
           'label' => t('Data to compare'),
           'description' => t('The data to be compared, specified by using a data selector, e.g. "node:author:name".'),
-         ),
+        ),
         'op' => array(
           'type' => 'text',
           'label' => t('Operator'),
@@ -607,7 +607,7 @@ function rules_data_condition_info() {
           'label' => t('Data to check'),
           'description' => t('The data to be checked to be empty, specified by using a data selector, e.g. "node:author:name".'),
           'allow null' => TRUE,
-         ),
+        ),
       ),
       'group' => t('Data'),
       'base' => 'rules_condition_data_is_empty',
