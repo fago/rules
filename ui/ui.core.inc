@@ -628,7 +628,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public static function path($name, $op = NULL, RulesPlugin $element = NULL, $parameter = FALSE) {
     $element_id = isset($element) ? $element->elementId() : FALSE;
-    $base_path = isset(self::$basePath) ? self::$basePath : 'admin/config/workflow/rules';
+    if (isset(self::$basePath)) {
+      $base_path = self::$basePath;
+    }
+    // Default to the paths used by 'rules_admin', so modules can easily re-use
+    // its UI.
+    else {
+      $base_path = isset($element) && $element instanceof RulesTriggerableInterface ? 'admin/config/workflow/rules/reaction' : 'admin/config/workflow/rules/components';
+    }
     return implode('/', array_filter(array($base_path . '/manage', $name, $op, $element_id, $parameter)));
   }
 
