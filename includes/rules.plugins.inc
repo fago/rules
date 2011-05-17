@@ -692,8 +692,7 @@ class RulesEventSet extends RulesRuleSet {
         $event->optimize();
         // Allow modules to alter the cached event set.
         drupal_alter('rules_event_set', $name, $event);
-        cache_set('event_' . $name, $event, 'cache_rules');
-        $event->destroy();
+        rules_set_cache('event_' . $name, $event);
       }
       else {
         $empty[] = $name;

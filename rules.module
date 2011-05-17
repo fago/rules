@@ -220,7 +220,7 @@ function &rules_get_cache($cid = 'data') {
 
   if (!isset($cache[$cid])) {
     // The main 'data' cache includes translated strings, so each language is
-    // ached separately.
+    // cached separately.
     $cid_suffix = $cid == 'data' ? ':' . $GLOBALS['language']->language : '';
 
     if ($get = cache_get($cid . $cid_suffix, 'cache_rules')) {
@@ -260,6 +260,22 @@ function _rules_rebuild_cache(&$cache) {
   }
   $cid_suffix = ':' . $GLOBALS['language']->language;
   cache_set('data' . $cid_suffix, $cache, 'cache_rules');
+}
+
+/**
+ * Sets a rules cache item.
+ *
+ * In addition to calling cache_set(), this function makes sure the cache item
+ * is immediately available via rules_get_cache() by keeping all cache items
+ * in memory. That way we can garantuee rules_get_cache() is able to retrieve
+ * any cache item, even if all cache gets fail.
+ *
+ * @see rules_get_cache()
+ */
+function rules_set_cache($cid, $data) {
+  $cache = &drupal_static('rules_get_cache', array());
+  $cache[$cid] = $data;
+  cache_set($cid, $data, 'cache_rules');
 }
 
 /**

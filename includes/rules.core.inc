@@ -1055,8 +1055,7 @@ abstract class RulesPlugin extends RulesExtendable {
         $component->optimize();
         // Allow modules to alter the cached component.
         drupal_alter('rules_component', $this->itemName, $component);
-        cache_set('comp_' . $component->name, $component, 'cache_rules');
-        $component->destroy();
+        rules_set_cache('comp_' . $component->name, $component);
       }
     }
   }
@@ -1148,11 +1147,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function processSettings($force = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
-      // In case the element implements the info alteration callback, re-setup
-      // the element so that any settings depending info alterations are
+      // In case the element implements the info alteration callback, (re-)run
+      // the alteration so that any settings depending info alterations are
       // applied.
       if ($this->facesMethods && $this->facesMethods['info_alter'] != $this->itemInfo['faces_cache'][0]['info_alter']) {
-        $this->setUp();
+        $this->__call('info_alter', array(&$this->info));
       }
       // First let the plugin implementation do processing, so data types of the
       // parameters are fixed when we process the settings.
