@@ -175,8 +175,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function form(&$form, &$form_state, $options = array()) {
     self::formDefaults($form, $form_state);
     $form_state += array('rules_element' => $this->element);
-    // Make sure the element has been processed.
-    $this->element->processSettings();
 
     // Add the help to the top of the form.
     $help = $this->element->help();
@@ -318,13 +316,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         }
       }
     }
+    // Settings have been updated, so process them now.
+    $this->element->processSettings(TRUE);
 
-    // Enforce processing of the settings to ensure access for any applied input
-    // evaluators and processors is checked now.
-    $this->element->processSettings(TRUE, TRUE);
-
+    // Make sure the current user really has access to configure this element
+    // as well as the used input evaluators and data processors.
     if (!$this->element->access()) {
-      form_set_error(NULL, t('Access violation!'));
+      form_set_error('', t('Access violation!'));
     }
     try {
       $this->element->integrityCheck();
@@ -532,9 +530,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Show a preview of the configuration settings.
    */
   public function buildContent() {
-    // Make sure the element has been processed.
-    $this->element->processSettings();
-
     $config_name = $this->element->root()->name;
     $content['label'] = array(
       '#type' => 'link',

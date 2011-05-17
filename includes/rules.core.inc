@@ -533,6 +533,7 @@ abstract class RulesPlugin extends RulesExtendable {
           return FALSE;
         }
       }
+      // Incorporate access checks for data processors and input evaluators.
       if (isset($this->settings[$name . ':process']) && $this->settings[$name . ':process'] instanceof RulesDataProcessor && !$this->settings[$name . ':process']->editAccess()) {
         return FALSE;
       }
@@ -547,11 +548,8 @@ abstract class RulesPlugin extends RulesExtendable {
    * has been altered manually after element construction, it needs to be
    * invoked explicitly with $force set to TRUE.
    *
-   * @param $access_check
-   *   Whether only input evaluators accessible to the current user should be
-   *   taken into account.
    */
-  public function processSettings($force = FALSE, $access_check = FALSE) {
+  public function processSettings($force = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
       $var_info = $this->availableVariables();
@@ -559,11 +557,11 @@ abstract class RulesPlugin extends RulesExtendable {
         // Prepare input evaluators.
         if (isset($this->settings[$name])) {
           $this->settings[$name . ':process'] = $this->settings[$name];
-          RulesDataInputEvaluator::prepareSetting($this->settings[$name . ':process'], $info, $var_info, $access_check);
+          RulesDataInputEvaluator::prepareSetting($this->settings[$name . ':process'], $info, $var_info);
         }
         // Prepare data processors.
         elseif (isset($this->settings[$name . ':select']) && !empty($this->settings[$name . ':process'])) {
-          RulesDataProcessor::prepareSetting($this->settings[$name . ':process'], $info, $var_info, $access_check);
+          RulesDataProcessor::prepareSetting($this->settings[$name . ':process'], $info, $var_info);
         }
         // Clean up.
         if (empty($this->settings[$name . ':process'])) {
@@ -744,6 +742,9 @@ abstract class RulesPlugin extends RulesExtendable {
       return $this->parent->save($name, $module);
     }
     else {
+      // Make sure all element settings are processed before we save.
+      $this->processSettings();
+
       $this->plugin = $this->itemName;
       $this->name = isset($name) ? $name : $this->name;
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
@@ -1144,7 +1145,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     return $this;
   }
 
-  public function processSettings($force = FALSE, $access_check = FALSE) {
+  public function processSettings($force = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
       // In case the element implements the info alteration callback, re-setup
@@ -1156,7 +1157,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // First let the plugin implementation do processing, so data types of the
       // parameters are fixed when we process the settings.
       $this->process();
-      parent::processSettings($force, $access_check);
+      parent::processSettings($force);
     }
   }
 

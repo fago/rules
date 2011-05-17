@@ -39,8 +39,8 @@ abstract class RulesDataProcessor {
   }
 
   /**
-   * Returns whether the current user has permission to edit this instance of
-   * the data processor.
+   * Returns whether the current user has permission to edit this chain of data
+   * processors.
    */
   public function editAccess() {
     return $this->access() && (!isset($this->processor) || $this->processor->editAccess());
@@ -59,12 +59,10 @@ abstract class RulesDataProcessor {
    *   The info about the parameter to prepare the processor for.
    * @param $var_info
    *   An array of info about the available variables.
-   * @param $access_check
-   *   Whether access checks for the processors hould be performed.
    */
-  public static function prepareSetting(&$setting, $param_info, $var_info = array(), $access_check = TRUE) {
+  public static function prepareSetting(&$setting, $param_info, $var_info = array()) {
     $processor = NULL;
-    foreach (self::processors($param_info, $access_check) as $name => $info) {
+    foreach (self::processors($param_info, FALSE) as $name => $info) {
       if (!empty($setting[$name])) {
         $object = new $info['class']($setting[$name], $param_info, $var_info, $processor);
         $processor = $object->getPreparedValue();
@@ -148,6 +146,7 @@ abstract class RulesDataProcessor {
    */
   public function dependencies() {
     $used_processor_info = array_intersect_key($this->processors(), $this->unchain());
+    $modules = array();
     foreach ($used_processor_info as $name => $info) {
       $modules[] = $info['module'];
     }
@@ -166,6 +165,7 @@ abstract class RulesDataProcessor {
     }
     // Note: Don't use the static context to call processors() here as we need a
     // late binding to invoke the input evaluators version, if needed.
+    $return = array();
     foreach ($this->processors() as $name => $info) {
       if (isset($processors[$info['class']])) {
         $return[$name] = $processors[$info['class']];
@@ -255,9 +255,9 @@ abstract class RulesDataInputEvaluator extends RulesDataProcessor {
    * to be the input value to be evaluated later on and is replaced by the
    * suiting processor.
    */
-  public static function prepareSetting(&$setting, $param_info, $var_info = array(), $access_check = TRUE) {
+  public static function prepareSetting(&$setting, $param_info, $var_info = array()) {
     $processor = NULL;
-    foreach (self::evaluators($param_info, $access_check) as $name => $info) {
+    foreach (self::evaluators($param_info, FALSE) as $name => $info) {
       $object = new $info['class']($setting, $param_info, $var_info, $processor);
       $processor = $object->getPreparedValue();
     }
