@@ -17,10 +17,11 @@ foreach (rules_core_modules() as $module) {
  * Defines a list of core module on whose behalf we provide module integration.
  *
  * We also add a pseudo 'data' module, which will be used for providing generic
- * rules data integration as well as 'rules' for providing some general stuff.
+ * rules data integration, 'entity' for entity-related integration and 'rules'
+ * for providing some general stuff.
  */
 function rules_core_modules() {
-  $return = array('data', 'node', 'system', 'user', 'rules_core');
+  $return = array('data', 'entity', 'node', 'system', 'user', 'rules_core');
   foreach (array('comment', 'taxonomy', 'php', 'path') as $module) {
     if (module_exists($module)) {
       $return[] = $module;
