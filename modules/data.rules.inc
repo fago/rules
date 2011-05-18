@@ -45,7 +45,7 @@ function rules_data_action_info() {
     'parameter' => array(
       'list' => array(
         'type' => 'list',
-        'label' => t('List'),
+        'label' => t('List', array(), array('context' => 'data_types')),
         'description' => t('The data list, to which an item is to be added.'),
         'restriction' => 'selector',
         'allow null' => TRUE,
@@ -81,7 +81,7 @@ function rules_data_action_info() {
     'parameter' => array(
       'list' => array(
         'type' => 'list',
-        'label' => t('List'),
+        'label' => t('List', array(), array('context' => 'data_types')),
         'description' => t('The data list for which an item is to be removed.'),
         'restriction' => 'selector',
       ),
@@ -389,7 +389,7 @@ function rules_data_condition_info() {
       'parameter' => array(
         'list' => array(
           'type' => 'list',
-          'label' => t('List'),
+          'label' => t('List', array(), array('context' => 'data_types')),
           'restriction' => 'selector',
         ),
         'item' => array(
