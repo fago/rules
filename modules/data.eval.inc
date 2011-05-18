@@ -110,7 +110,6 @@ function rules_action_variable_add_info_alter(&$element_info, RulesAbstractPlugi
     $cache = rules_get_cache();
     $type_info = $cache['data_info'][$type];
     $element_info['parameter']['value']['type'] = $type;
-    $element_info['parameter']['value']['label'] = $type_info['label'];
     $element_info['provides']['variable_added']['type'] = $type;
 
     // For lists, we default to an empty list so subsequent actions can add

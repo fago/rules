@@ -112,6 +112,7 @@ function rules_data_action_info() {
         'type' => 'unknown',
         'label' => t('Value'),
         'optional' => TRUE,
+        'description' => t('Optionally, specify the initial value of the variable.')
       ),
     ),
     'provides' => array(
