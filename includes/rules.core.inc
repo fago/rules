@@ -1851,6 +1851,8 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
 
   public function __construct($variables = array(), $providesVars = array()) {
     parent::__construct($variables);
+    // The provided vars of a component are the names of variables, which should
+    // be provided to the caller. See rule().
     if ($providesVars) {
       $this->info['provides'] = $providesVars;
     }
@@ -1884,10 +1886,9 @@ abstract class RulesActionContainer extends RulesContainerPlugin implements Rule
 
   public function providesVariables() {
     $provides = parent::providesVariables();
-    if (isset($this->info['provides'])) {
-      // Collect provided vars of the actions.
-      $vars = $this->stateVariables(TRUE);
-      // Pass only the variables specified through.
+    if (isset($this->info['provides']) && $vars = $this->componentVariables()) {
+      // Determine the full variable info for the provided variables. Note that
+      // we only support providing variables list in the component vars.
       $provides += array_intersect_key($vars, array_flip($this->info['provides']));
     }
     return $provides;

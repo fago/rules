@@ -191,6 +191,7 @@ function rules_data_action_info() {
         'label' => t('List'),
         'description' => t('The data list, to which an item is to be added.'),
         'restriction' => 'selector',
+        'allow null' => TRUE,
       ),
       'item' => array(
         'type' => 'unknown',

@@ -84,7 +84,8 @@ function rules_condition($name, $settings = array()) {
  *      in particular useful for defining variables which can be provided to the
  *      caller (see $provides argument) but need not be passed in as parameter.
  * @param $provides
- *   An array of the names of variables, which should be provided to the caller.
+ *   The names of variables which should be provided to the caller. Only
+ *   variables contained in $variables may be specified.
  * @return Rule
  */
 function rule($variables = NULL, $provides = array()) {
@@ -144,7 +145,7 @@ function rules_loop($settings = array(), $variables = NULL) {
  * @param $variables
  *   An array as for rule().
  * @param $provides
- *   An array of the names of variables, which should be provided to the caller.
+ *   The names of variables which should be provided to the caller. See rule().
  * @return RulesRuleSet
  */
 function rules_rule_set($variables, $provides = array()) {
@@ -157,7 +158,7 @@ function rules_rule_set($variables, $provides = array()) {
  * @param $variables
  *   An array as for rule().
  * @param $provides
- *   An array of the names of variables, which should be provided to the caller.
+ *   The names of variables which should be provided to the caller. See rule().
  * @return RulesActionSet
  */
 function rules_action_set($variables, $provides = array()) {
@@ -902,7 +903,7 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
-    'rules_provides_variable_view' => array(
+    'rules_variable_view' => array(
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),

@@ -1366,6 +1366,19 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     RulesLog::logger()->checkLog();
     $this->assertEqual($term1->{$field_name}[0]->getIdentifier(), $term2->getIdentifier(), 'Rule appended a term to the term reference field on a term.');
+
+    // Test an action set for merging term parents, which is provided as default
+    // config.
+    $term = entity_property_values_create_entity('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vocabulary' => 1,
+      'parent' => array($term1->value()),
+    ))->save();
+
+    $action = rules_action('component_rules_retrieve_term_parents');
+    list($parents) = $action->execute(array($term->getIdentifier()));
+    $this->assertTrue($parents[0]->tid == $term1->getIdentifier(), 'Invoked component to retrieve term parents.');
+    RulesLog::logger()->checkLog();
   }
 
   /**

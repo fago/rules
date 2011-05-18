@@ -64,7 +64,7 @@ function theme_rules_ui_variable_form($variables) {
   $elements = $variables['element'];
 
   $table['#theme'] = 'table';
-  $table['#header'] = array(t('Data type'), t('Label'), t('Machine name'), array('data' => t('Weight'), 'class' => array('tabledrag-hide')));
+  $table['#header'] = array(t('Data type'), t('Label'), t('Machine name'), t('Usage'), array('data' => t('Weight'), 'class' => array('tabledrag-hide')));
   $table['#attributes']['id'] = 'rules-' . drupal_html_id($elements['#title']) . '-id';
 
   foreach (element_children($elements['items']) as $key) {
@@ -76,6 +76,7 @@ function theme_rules_ui_variable_form($variables) {
     $row[] = array('data' => $element['type']);
     $row[] = array('data' => $element['label']);
     $row[] = array('data' => $element['name']);
+    $row[] = array('data' => $element['usage']);
     $row[] = array('data' => $element['weight']);
     $row = array('data' => $row) + $element['#attributes'];
     $row['class'][] = 'draggable';
@@ -149,17 +150,19 @@ function theme_rules_parameter_configuration($variables) {
  * Themes info about variables.
  * @ingroup themeable
  */
-function theme_rules_provides_variable_view($variables) {
+function theme_rules_variable_view($variables) {
   $element = $variables['element'];
 
   $label_attributes['class'][] = 'rules-variable-label';
+  $label_attributes['title'] = '';
   if (!empty($element['#info']['description'])) {
-    $label_attributes['title'] = $element['#info']['description'];
+    $label_attributes['title'] = $element['#info']['description'] . ' ';
   }
+  $label_attributes['title'] .= t('Data type: !type', array('!type' => $element['#info']['type']));
   $label_attributes = drupal_attributes($label_attributes);
 
   $output = check_plain($element['#info']['label']);
-  $output .= ' (' . check_plain($element['#info']['type']) . ')';
+  $output .= ' (' . check_plain($element['#name']) . ')';
   return "<span $label_attributes>" . $output . '</span>';
 }
 
