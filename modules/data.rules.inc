@@ -832,8 +832,7 @@ function rules_condition_entity_is_of_type_assertions($element) {
  * @see rules_condition_data_is_info_alter()
  */
 function rules_data_selector_options_list(RulesAbstractPlugin $element) {
-  $parameter_info = $element->pluginParameterInfo();
-  $name = key($parameter_info);
+  $name = rules_array_key($element->pluginParameterInfo());
   // If the selected data property has an option list, make use of it.
   if (isset($element->settings[$name . ':select']) && $wrapper = $element->applyDataSelector($element->settings[$name . ':select'])) {
     return $wrapper->optionsList($element instanceof RulesActionInterface ? 'edit' : 'view');

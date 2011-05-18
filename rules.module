@@ -887,6 +887,14 @@ function rules_extract_property($arrays, $key) {
 }
 
 /**
+ * Returns the first key of the array.
+ */
+function rules_array_key($array) {
+  reset($array);
+  return key($array);
+}
+
+/**
  * Implements hook_theme().
  */
 function rules_theme() {

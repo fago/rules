@@ -336,6 +336,7 @@ function rules_condition_data_is($data, $op, $value) {
 function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
+    $info = $wrapper->info();
     $element_info['parameter']['value']['type'] = $wrapper->type();
     $element_info['parameter']['value']['options list']  = !empty($info['options list']) ? 'rules_data_selector_options_list' : FALSE;
   }

@@ -53,7 +53,7 @@ class RulesDataUI {
       }
       // If there is only one match, use it by default.
       elseif (count($matches = RulesData::matchingDataSelector($vars, $info, '', 1, FALSE)) == 1) {
-        $settings[$name . ':select'] = key($matches);
+        $settings[$name . ':select'] = rules_array_key($matches);
       }
     }
     $form[$name . ':select'] = array(

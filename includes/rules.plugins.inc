@@ -110,7 +110,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
   }
 
   public function import(array $export) {
-    $this->elementName = key($export);
+    $this->elementName = rules_array_key($export);
     if (strpos($this->elementName, 'NOT ') === 0) {
       $this->elementName = substr($this->elementName, 4);
       $this->negate = TRUE;
@@ -608,7 +608,7 @@ class RulesLoop extends RulesActionContainer {
   protected function importSettings($export) {
     parent::importSettings($export);
     if (isset($export['ITEM'])) {
-      $this->settings['item:var'] = key($export['ITEM']);
+      $this->settings['item:var'] = rules_array_key($export['ITEM']);
       $this->settings['item:label'] = reset($export['ITEM']);
     }
   }

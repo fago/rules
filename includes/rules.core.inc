@@ -446,7 +446,7 @@ abstract class RulesPlugin extends RulesExtendable {
     $state = new RulesState();
     $vars = $this->setUpVariables();
     // Fix numerically indexed args to start with 0.
-    if (!isset($args[key($vars)])) {
+    if (!isset($args[rules_array_key($vars)])) {
       $args = array_values($args);
     }
     $offset = 0;
@@ -929,7 +929,7 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     foreach ($export['PROVIDE'] as $name => $var_export) {
       // The key of $var_export is the variable name, the value the label.
-      $this->settings[$name . ':var'] = key($var_export);
+      $this->settings[$name . ':var'] = rules_array_key($var_export);
       $this->settings[$name . ':label'] = reset($var_export);
     }
   }
@@ -1191,7 +1191,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   public function import(array $export) {
     // The key is the element name and the value the actual export.
-    $this->elementName = key($export);
+    $this->elementName = rules_array_key($export);
     $export = reset($export);
 
     // After setting the element name, setup the element again so the right
@@ -1836,7 +1836,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   protected function importChildren($export, $key = NULL) {
     $key = isset($key) ? $key : strtoupper($this->plugin());
     foreach ($export[$key] as $child_export) {
-      $plugin = _rules_import_get_plugin(key($child_export), $this instanceof RulesActionInterface ? 'action' : 'condition');
+      $plugin = _rules_import_get_plugin(rules_array_key($child_export), $this instanceof RulesActionInterface ? 'action' : 'condition');
       $child = rules_plugin_factory($plugin);
       $child->setParent($this);
       $child->import($child_export);
