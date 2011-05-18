@@ -41,7 +41,7 @@ function rules_data_action_info() {
     'base' => 'rules_action_data_set',
   );
   $return['list_add'] = array(
-    'label' => t('Add list item'),
+    'label' => t('Add an item to a list'),
     'parameter' => array(
       'list' => array(
         'type' => 'list',
@@ -77,7 +77,7 @@ function rules_data_action_info() {
     ),
   );
   $return['list_remove'] = array(
-    'label' => t('Remove a list item'),
+    'label' => t('Remove an item from a list'),
     'parameter' => array(
       'list' => array(
         'type' => 'list',
