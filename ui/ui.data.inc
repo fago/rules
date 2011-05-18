@@ -139,11 +139,12 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputFormInt
       );
       RulesDataInputEvaluator::attachForm($form, $settings, $info, $element->availableVariables());
     }
-    $settings += array($name => isset($info['default value']) ? $info['default value'] : '');
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : NULL);
     $form[$name] += array(
       '#title' => t('Value'),
       '#default_value' => $settings[$name],
       '#required' => empty($info['optional']),
+      '#after_build' => array('rules_ui_element_fix_empty_after_build'),
     );
     return $form;
   }
@@ -175,7 +176,7 @@ class RulesDataUITextFormatted extends RulesDataUIText {
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form = parent::inputForm($name, $info, $settings, $element);
-    $settings += array($name => isset($info['default value']) ? $info['default value'] : array('value' => '', 'format' => NULL));
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : array('value' => NULL, 'format' => NULL));
 
     $form[$name]['#type'] = 'text_format';
     $form[$name]['#base_type'] = 'textarea';
@@ -234,11 +235,12 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
-    $settings += array($name => isset($info['default value']) ? $info['default value'] : '');
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : NULL);
+    // Note: Due to the checkbox even optional parameter always receive a value.
     $form[$name] = array(
       '#type' => 'checkbox',
       '#title' => check_plain($info['label']),
-      '#default_value' => !empty($settings[$name]),
+      '#default_value' => $settings[$name],
     );
     return $form;
   }
@@ -257,7 +259,8 @@ class RulesDataUIBoolean extends RulesDataUI implements RulesDataDirectInputForm
 class RulesDataUIDate extends RulesDataUIText {
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
-    $settings += array($name => gmdate('Y-m-d H:i:s', time()));
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : (empty($info['optional']) ? gmdate('Y-m-d H:i:s', time()) : NULL));
+
     // Convert any configured timestamp into a readable format.
     if (is_numeric($settings[$name])) {
       $settings[$name] = gmdate('Y-m-d H:i:s', $settings[$name]);
@@ -291,6 +294,7 @@ class RulesDataUIDuration extends RulesDataUIText {
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
     $form = parent::inputForm($name, $info, $settings, $element);
     $form[$name]['#type'] = 'rules_duration';
+    $form[$name]['#after_build'][] = 'rules_ui_element_duration_after_build';
     return $form;
   }
 
@@ -325,8 +329,9 @@ class RulesDataUIListText extends RulesDataUIText {
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
-    $settings += array($name => isset($info['default value']) ? $info['default value'] : array());
+    $settings += array($name => isset($info['default value']) ? $info['default value'] : NULL);
     $form = parent::inputForm($name, $info, $settings, $element);
+
     if ($form[$name]['#type'] == 'textarea') {
       // Fix up the value to be an array during after build.
       $form[$name]['#after_build'][] = 'rules_ui_list_textarea_after_build';

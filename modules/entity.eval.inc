@@ -27,7 +27,6 @@ function rules_action_entity_fetch($type, $id, $revision) {
   return array('entity_fetched' => $entity);
 }
 
-
 /**
  * Info alteration callback for the entity fetch action.
  */

@@ -570,7 +570,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     );
     foreach ($this->element->pluginParameterInfo() as $name => $parameter) {
       $element = array();
-      if (isset($this->element->settings[$name . ':select'])) {
+      if (!empty($this->element->settings[$name . ':select'])) {
         $element['content'] = array(
          '#markup' => '[' . $this->element->settings[$name . ':select'] . ']',
         );
