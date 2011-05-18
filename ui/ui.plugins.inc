@@ -221,7 +221,7 @@ class RulesLoopUI extends RulesActionContainerUI {
       '#theme' => 'rules_content_group',
     );
     $content['description']['item']['var'] = array(
-      '#theme' => 'rules_provides_variable_view',
+      '#theme' => 'rules_variable_view',
       '#info' => $this->element->listItemInfo(),
       '#name' => $this->element->settings['item:var'],
     );
