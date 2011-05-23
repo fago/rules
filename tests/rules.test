@@ -233,12 +233,9 @@ class RulesTestCase extends DrupalWebTestCase {
 
     $vars = $rule->conditions()->offsetGet(0)->availableVariables();
     $this->assertEqual(!isset($vars['node_loaded']), 'Loaded variable is not available to conditions.');
-  }
 
-  /**
-   * Test adding a variable with a custom variable name.
-   */
-  function testVariableAddingCustom() {
+
+    // Test adding a variable with a custom variable name.
     $node = $this->drupalCreateNode();
     $rule = rule(array('nid' => array('type' => 'integer')));
     $rule->action('rules_action_load_node', array('node_loaded:var' => 'node'))
@@ -1086,92 +1083,6 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->clear();
   }
 
-  function testCRUDActions() {
-    // Test creation.
-    $action = rules_action('entity_create', array(
-      'type' => 'node',
-      'param_type' => 'page',
-      'param_title' => 'foo',
-      'param_author' => $GLOBALS['user'],
-    ));
-    $action->access();
-    $action->execute();
-    $text = RulesLog::logger()->render();
-    $pos = strpos($text, RulesTestCase::t('Added the provided variable %entity_created of type %node', array('entity_created', 'node')));
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %entity_created of type %node.', array('entity_created', 'node')), $pos) : FALSE;
-    $this->assertTrue($pos !== FALSE, 'Data has been created and saved.');
-
-    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
-    $rule = rule();
-    $rule->action('entity_fetch', array('type' => 'node', 'id' => $node->nid, 'entity_fetched:var' => 'node'));
-    $rule->action('entity_save', array('data:select' => 'node', 'immediate' => TRUE));
-    $rule->action('entity_delete', array('data:select' => 'node'));
-    $rule->access();
-    $rule->integrityCheck()->execute();
-
-    $text = RulesLog::logger()->render();
-    $pos = strpos($text, RulesTestCase::t('Evaluating the action %entity_fetch.', array('entity_fetch')));
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Added the provided variable %node of type %node', array('node')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node of type %node.', array('node')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating the action %entity_delete.', array('entity_delete')), $pos) : FALSE;
-    $this->assertTrue($pos !== FALSE, 'Data has been fetched, saved and deleted.');
-    //debug(RulesLog::logger()->render());
-  }
-
-  /**
-   * Test the data create action.
-   */
-  function testCreateData() {
-    $action = rules_action('data_create', array(
-      'type' => 'log_entry',
-      'param_type' => 'rules_test',
-      'param_message' => 'Rules test log message',
-      'param_severity' => WATCHDOG_WARNING,
-      'param_request_uri' => 'http://example.com',
-      'param_link' => '',
-    ));
-    $action->access();
-    $action->execute();
-    $text = RulesLog::logger()->render();
-    $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %log_entry', array('data_created', 'log_entry')));
-    $this->assertTrue($pos !== FALSE, 'Data of type log entry has been created.');
-  }
-
-/**
-   * Test the variable add action.
-   */
-  function testVariableAdd() {
-    // Test creation.
-    $action = rules_action('variable_add', array(
-      'type' => 'text_formatted',
-      'value' => array(
-        'value' => 'test text',
-        'format' => 1,
-      )
-    ));
-    $action->access();
-    $action->execute();
-    $text = RulesLog::logger()->render();
-    $pos = strpos($text, RulesTestCase::t('Added the provided variable %variable_added of type %text_formatted', array('variable_added', 'text_formatted')));
-    $this->assertTrue($pos !== FALSE, 'Data of type text formatted has been created.');
-  }
-
-  function testDataQueryAction() {
-    $node = $this->drupalCreateNode(array('type' => 'page', 'title' => 'foo'));
-    $rule = rule();
-    $rule->action('entity_query', array('type' => 'node', 'property' => 'title', 'value' => 'foo'))
-         ->action('data_set', array('data:select' => 'entity_fetched:0:title', 'value' => 'bar'));
-    $rule->access();
-    $rule->integrityCheck();
-    $rule->execute();
-
-    RulesLog::logger()->checkLog();
-    //debug(RulesLog::logger()->render());
-
-    $node = node_load($node->nid);
-    $this->assertEqual('bar', $node->title, 'Fetched a node by title and modified it.');
-  }
-
   /**
    * Just make sure the access callback run without errors.
    */
@@ -1187,24 +1098,41 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test reacting on new log entries and make sure the log entry is usable.
-   */
-  function testWatchdog() {
-    $rule = rules_reaction_rule();
-    $rule->event('watchdog');
-    $rule->action('drupal_message', array('message:select' => 'log_entry:message'));
-    $rule->integrityCheck()->save('test_watchdog');
-    rules_clear_cache(TRUE);
-
-    watchdog('php', 'test %message', array('%message' => 'message'));
-    $msg = drupal_get_messages();
-    $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
-  }
-
-  /**
    * Test data integration.
    */
   function testDataIntegration() {
+    // Test data_create action.
+    $action = rules_action('data_create', array(
+      'type' => 'log_entry',
+      'param_type' => 'rules_test',
+      'param_message' => 'Rules test log message',
+      'param_severity' => WATCHDOG_WARNING,
+      'param_request_uri' => 'http://example.com',
+      'param_link' => '',
+    ));
+    $action->access();
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %data_created of type %log_entry', array('data_created', 'log_entry')));
+    $this->assertTrue($pos !== FALSE, 'Data of type log entry has been created.');
+
+
+    // Test variable_add action.
+    $action = rules_action('variable_add', array(
+      'type' => 'text_formatted',
+      'value' => array(
+        'value' => 'test text',
+        'format' => 1,
+      )
+    ));
+    $action->access();
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %variable_added of type %text_formatted', array('variable_added', 'text_formatted')));
+    $this->assertTrue($pos !== FALSE, 'Data of type text formatted has been created.');
+
+
+    // Test using the list actions.
     $rule = rule(array(
       'list' => array(
         'type' => 'list<text>',
@@ -1264,6 +1192,38 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   function testEntityIntegration() {
     global $user;
 
+    // Test CRUD actions.
+    $action = rules_action('entity_create', array(
+      'type' => 'node',
+      'param_type' => 'page',
+      'param_title' => 'foo',
+      'param_author' => $GLOBALS['user'],
+    ));
+    $action->access();
+    $action->execute();
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Added the provided variable %entity_created of type %node', array('entity_created', 'node')));
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %entity_created of type %node.', array('entity_created', 'node')), $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, 'Data has been created and saved.');
+
+    $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0, 'status' => 0));
+    $rule = rule();
+    $rule->action('entity_fetch', array('type' => 'node', 'id' => $node->nid, 'entity_fetched:var' => 'node'));
+    $rule->action('entity_save', array('data:select' => 'node', 'immediate' => TRUE));
+    $rule->action('entity_delete', array('data:select' => 'node'));
+    $rule->access();
+    $rule->integrityCheck()->execute();
+
+    $text = RulesLog::logger()->render();
+    $pos = strpos($text, RulesTestCase::t('Evaluating the action %entity_fetch.', array('entity_fetch')));
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Added the provided variable %node of type %node', array('node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node of type %node.', array('node')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating the action %entity_delete.', array('entity_delete')), $pos) : FALSE;
+    $this->assertTrue($pos !== FALSE, 'Data has been fetched, saved and deleted.');
+    //debug(RulesLog::logger()->render());
+
+
+
     $node = entity_property_values_create_entity('node', array(
       'type' => 'article',
       'author' => $user,
@@ -1298,6 +1258,19 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->execute(entity_metadata_wrapper('node', $node));
 
     $this->assertEqual(entity_metadata_wrapper('node', $node->nid)->title->value(), 'bar', 'Entity is of type condition correctly asserts the entity type.');
+
+
+    // Test the entity_query action.
+    $node = $this->drupalCreateNode(array('type' => 'page', 'title' => 'foo2'));
+    $rule = rule();
+    $rule->action('entity_query', array('type' => 'node', 'property' => 'title', 'value' => 'foo2'))
+         ->action('data_set', array('data:select' => 'entity_fetched:0:title', 'value' => 'bar'));
+    $rule->access();
+    $rule->integrityCheck();
+    $rule->execute();
+    $node = node_load($node->nid);
+    $this->assertEqual('bar', $node->title, 'Fetched a node by title and modified it.');
+
     RulesLog::logger()->checkLog();
   }
 
@@ -1429,6 +1402,17 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $return = rules_condition('node_is_of_type', array('type' => array('article')))->execute($node);
     $this->assertFalse($return, 'Condition determines node is not of type article.');
 
+
+    // Test auto saving of a new node after it has been inserted into the DB.
+    $rule = rules_reaction_rule();
+    $rand = $this->randomName();
+    $rule->event('node_insert')
+         ->action('data_set', array('data:select' => 'node:title', 'value' => $rand));
+    $rule->save('test');
+    rules_clear_cache(TRUE);
+    $node = $this->drupalCreateNode();
+    $node = node_load($node->nid);
+    $this->assertEqual($node->title, $rand, 'Node title is correct.');
     RulesLog::logger()->checkLog();
   }
 
@@ -1541,12 +1525,8 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->integrityCheck();
     list($result) = $rule->execute(10);
     $this->assertTrue($result == 11, 'Numeric offset has been applied');
-  }
 
-  /**
-   * Test using a date offset.
-   */
-  function testDateOffsetProcessor() {
+    // Test using a date offset.
     $node = $this->drupalCreateNode(array('title' => 'foo'));
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->action('data_set', array(
@@ -1622,6 +1602,17 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $roles = array_keys($user->roles);
     rules_action('mail_to_users_of_role', $settings + array('roles' => $roles))->execute();
     $this->assertMail('to', $user->mail, 'Mail to users of a role has been sent.');
+
+    // Test reacting on new log entries and make sure the log entry is usable.
+    $rule = rules_reaction_rule();
+    $rule->event('watchdog');
+    $rule->action('drupal_message', array('message:select' => 'log_entry:message'));
+    $rule->integrityCheck()->save('test_watchdog');
+    rules_clear_cache(TRUE);
+
+    watchdog('php', 'test %message', array('%message' => 'message'));
+    $msg = drupal_get_messages();
+    $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
   }
 
   /**
@@ -1654,21 +1645,5 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertTrue($path['alias'] == 'term-test', 'Term URL alias has been created.');
 
     RulesLog::logger()->checkLog();
-  }
-
-  /**
-   * Test auto saving of a new node after it has been inserted into the DB.
-   */
-  function testNodeInsert() {
-    $rule = rules_reaction_rule();
-    $rand = $this->randomName();
-    $rule->event('node_insert')
-         ->action('data_set', array('data:select' => 'node:title', 'value' => $rand));
-    $rule->save('test');
-    rules_clear_cache(TRUE);
-    $node = $this->drupalCreateNode();
-    $node = node_load($node->nid);
-    RulesLog::logger()->checkLog();
-    $this->assertEqual($node->title, $rand, 'Node title is correct.');
   }
 }
