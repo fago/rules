@@ -1514,9 +1514,10 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Makes sure the date input evaluator evaluates properly using strtotime().
+   * Test the "rules_core" integration.
    */
-  function testDateInputEvaluator() {
+  function testRulesCoreIntegration() {
+    // Make sure the date input evaluator evaluates properly using strtotime().
     $node = $this->drupalCreateNode(array('title' => 'foo'));
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->action('data_set', array('data:select' => 'node:created', 'value' => '+1 day'));
@@ -1527,6 +1528,19 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $now = RulesDateInputEvaluator::gmstrtotime('now');
     // Tolerate a difference of a second.
     $this->assertTrue(abs($node->created - $now - 86400) <= 1, 'Date input has been evaluated.');
+
+    // Test using a numeric offset.
+    $rule = rule(array('number' => array('type' => 'decimal')), array('number'));
+    $rule->action('data_set', array(
+      'data:select' => 'number',
+      'value:select' => 'number',
+      'value:process' => array(
+        'num_offset' => array('value' => 1),
+      ),
+    ));
+    $rule->integrityCheck();
+    list($result) = $rule->execute(10);
+    $this->assertTrue($result == 11, 'Numeric offset has been applied');
   }
 
   /**

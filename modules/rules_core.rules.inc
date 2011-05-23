@@ -171,6 +171,11 @@ function rules_rules_core_data_processor_info() {
       'type' => 'date',
       'weight' => -2,
      ),
+    'num_offset' => array(
+      'class' => 'RulesNumericOffsetProcessor',
+      'type' => array('integer', 'decimal'),
+      'weight' => -2,
+     ),
   );
 }
 

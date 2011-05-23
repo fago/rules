@@ -151,6 +151,38 @@ class RulesDateOffsetProcessor extends RulesDataProcessor {
 }
 
 /**
+ * A data processor for applying numerical offsets.
+ */
+class RulesNumericOffsetProcessor extends RulesDataProcessor {
+
+  protected static function form($settings, $var_info) {
+    $settings += array('value' => '');
+    $form = array(
+      '#type' => 'fieldset',
+      '#title' => t('Add offset'),
+      '#collapsible' => TRUE,
+      '#collapsed' => empty($settings['value']),
+      '#description' => t('Add an offset to the selected number. E.g. an offset of "1" adds 1 to the number before it is passed on as argument.'),
+    );
+    $form['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Offset'),
+      '#description' => t('Note that you can also specify negative numbers.'),
+      '#default_value' => $settings['value'],
+      '#element_validate' => array('rules_ui_element_integer_validate'),
+      '#weight' => 5,
+    );
+    return $form;
+  }
+
+  public function process($value, $info, RulesState $state, RulesPlugin $element) {
+    $value = isset($this->processor) ? $this->processor->process($value, $info, $state, $element) : $value;
+    return $value + $this->setting['value'];
+  }
+}
+
+
+/**
  * A custom wrapper class for vocabularies that is capable of loading vocabularies by machine name.
  */
 class RulesTaxonomyVocabularyWrapper extends EntityDrupalWrapper {

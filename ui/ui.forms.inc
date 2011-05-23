@@ -627,7 +627,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
 function rules_ui_element_integer_validate($element, &$form_state) {;
   $value = $element['#value'];
   if (isset($value) && $value !== '' && (!is_numeric($value) || intval($value) != $value)) {
-    form_error($element, t('%name must be an integer.', array('%name' => isset($element['#title']) ? $element['#title'] : t('Element'))));
+    form_error($element, t('%name must be an integer value.', array('%name' => isset($element['#title']) ? $element['#title'] : t('Element'))));
   }
 }
 

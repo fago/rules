@@ -208,6 +208,11 @@ abstract class RulesDataProcessor {
   /**
    * Defines the processor form element.
    *
+   * @param $settings
+   *   The settings of the processor.
+   * @param $var_info
+   *   An array of info about the available variables.
+   *
    * @return
    *   A form element structure.
    */
