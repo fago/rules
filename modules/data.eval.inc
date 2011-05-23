@@ -50,6 +50,56 @@ function rules_action_data_set_info_alter(&$element_info, $element) {
 }
 
 /**
+ * Action: Calculate a value.
+ */
+function rules_action_data_calc($input1, $op, $input2, $settings, $state, $element) {
+  switch ($op) {
+    case '+':
+      $result = $input1 + $input2;
+      break;
+    case '-':
+      $result = $input1 - $input2;
+      break;
+    case '*':
+      $result = $input1 * $input2;
+      break;
+    case '/':
+      $result = $input1 / $input2;
+      break;
+  }
+  if (isset($result)) {
+    // Ensure results are valid integer values if necesary.
+    $var_info = rules_array_key($element->providesVariables());
+    if (in_array($var_info['type'], array('integer', 'date', 'duration'))) {
+      $result = (int) $result;
+    }
+    return array('result' => $result);
+  }
+}
+
+/**
+ * Info alter callback for the data_calc action.
+ */
+function rules_action_data_calc_info_alter(&$element_info, RulesPlugin $element) {
+  if ($info = $element->getArgumentInfo('input_1')) {
+    // Only allow durations as offset for date values.
+    if ($info['type'] == 'date') {
+      $element_info['parameter']['input_2']['type'] = 'duration';
+    }
+    // Specify the data type of the result.
+    $element_info['provides']['result']['type'] = $info['type'];
+
+    if ($info['type'] == 'integer' && ($info2 = $element->getArgumentInfo('input_2')) && $info2['type'] == 'decimal') {
+      $element_info['provides']['result']['type'] = 'decimal';
+    }
+    // A division with two integers results in a decimal.
+    elseif (isset($element->settings['op']) && $element->settings['op'] == '/') {
+      $element_info['provides']['result']['type'] = 'decimal';
+    }
+  }
+}
+
+/**
  * Action: Add a list item.
  */
 function rules_action_data_list_add($list, $item, $unique = FALSE, $pos = 'end', $settings, $state) {

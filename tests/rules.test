@@ -1240,6 +1240,22 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article'));
     $rule->execute($node);
     $this->assertEqual($node->title, 'foo', "Data is empty condition evaluates to FALSE for node with title 'foo', action is not executed.");
+
+    // Test Action: Calculate a value.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('data_calc', array('input_1:select' => 'node:nid', 'op' => '*', 'input_2' => 2));
+    $rule->action('data_set', array('data:select' => 'node:title', 'value:select' => 'result'));
+    $rule->integrityCheck();
+    $rule->execute($node);
+    $this->assertEqual($node->title, $node->nid * 2, "Value has been calculated.");
+
+    // Test moving a date.
+    $action_set = rules_action_set(array('date' => array('type' => 'date')), array('date'));
+    $action_set->action('data_calc', array('input_1:select' => 'date', 'op' => '+', 'input_2' => 86400))
+               ->action('data_set', array('data:select' => 'date', 'value:select' => 'result'));
+    $action_set->integrityCheck();
+    list($result) = $action_set->execute(REQUEST_TIME);
+    $this->assertEqual($result, REQUEST_TIME + 86400, 'Used data calculation action to move a date by a day.');
   }
 
   /**

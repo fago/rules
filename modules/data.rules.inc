@@ -40,6 +40,37 @@ function rules_data_action_info() {
     'group' => t('Data'),
     'base' => 'rules_action_data_set',
   );
+  $return['data_calc'] = array(
+    'label' => t('Calculate a value'),
+    'parameter' => array(
+      'input_1' => array(
+        'type' => array('decimal', 'date'),
+        'label' => t('Input value 1'),
+        'description' => t('The first input value for the calculation.'),
+      ),
+      'op' => array(
+        'type' => 'text',
+        'label' => t('Operator'),
+        'description' => t('The calculation operator.'),
+        'options list' => 'rules_action_data_calc_operator_options',
+        'restriction' => 'input',
+        'default value' => '+',
+      ),
+      'input_2' => array(
+        'type' => 'decimal',
+        'label' => t('Input value 2'),
+        'description' => t('The second input value.'),
+      ),
+    ),
+    'group' => t('Data'),
+    'base' => 'rules_action_data_calc',
+    'provides' => array(
+      'result' => array(
+        'type' => 'unknown',
+        'label' => t('Calculation result'),
+      ),
+    ),
+  );
   $return['list_add'] = array(
     'label' => t('Add an item to a list'),
     'parameter' => array(
@@ -211,6 +242,22 @@ function rules_action_data_set_form_alter(&$form, &$form_state, $options, RulesA
 }
 
 /**
+ * Form alter callback for the data calculation action.
+ */
+function rules_action_data_calc_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+
+  $form['reload'] = array(
+    '#weight' => 5,
+    '#type' => 'submit',
+    '#name' => 'reload',
+    '#value' => t('Reload form'),
+    '#limit_validation_errors' => array(array('parameter', 'input_1')),
+    '#submit' => array('rules_form_submit_rebuild'),
+    '#ajax' => rules_ui_form_default_ajax(),
+  );
+}
+
+/**
  * Custom validate callback for entity create, add variable and data create
  * action.
  */
@@ -318,6 +365,24 @@ function rules_action_data_list_add_positions() {
  */
 function rules_data_action_variable_add_options() {
   return RulesPluginUI::getOptions('data_info');
+}
+
+/**
+ * Options list callback for the data calculation action.
+ */
+function rules_action_data_calc_operator_options(RulesPlugin $element, $param_name) {
+  $options = array(
+    '+' => '( + )',
+    '-' => '( - )',
+    '*' => '( * )',
+    '/' => '( / )',
+  );
+  // Only show +/- in case a date has been selected.
+  if (($info = $element->getArgumentInfo('input_1')) && $info['type'] == 'date') {
+    unset($options['*']);
+    unset($options['/']);
+  }
+  return $options;
 }
 
 /**

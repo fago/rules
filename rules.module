@@ -1070,14 +1070,14 @@ function rules_element_info() {
     '#tree' => TRUE,
     '#default_value' => 0,
     '#value_callback' => 'rules_ui_element_duration_value',
-    '#process' => array('rules_ui_element_duration_process'),
+    '#process' => array('rules_ui_element_duration_process', 'ajax_process_form'),
     '#after_build' => array('rules_ui_element_duration_after_build'),
     '#pre_render' => array('form_pre_render_conditional_form_element'),
   );
   $types['rules_data_selection'] = array(
     '#input' => TRUE,
     '#pre_render' => array('form_pre_render_conditional_form_element'),
-    '#process' => array('rules_data_selection_process'),
+    '#process' => array('rules_data_selection_process', 'ajax_process_form'),
     '#theme' => 'rules_autocomplete',
   );
   return $types;
