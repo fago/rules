@@ -29,11 +29,9 @@ function rules_action_data_set($wrapper, $value, $settings, $state, $element) {
     }
   }
   else {
-    // A not wrapped variable (e.g. a number) is being set. As we don't have
-    // a reference on the variable, we need to directly update the variable in
-    // the state.
-    $var_name = $element->settings['data:select'];
-    $state->variables[$var_name] = $value;
+    // A not wrapped variable (e.g. a number) is being updated. Just overwrite
+    // the variable with the new value.
+    return array('data' => $value);
   }
 }
 

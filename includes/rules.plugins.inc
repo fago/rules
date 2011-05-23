@@ -32,8 +32,10 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
             throw new RulesException('Unable to update the argument for parameter %name: %error', array('%name' => $name, '%error' => $e->getMessage()), $this);
           }
         }
-        elseif (isset($args[$name])) {
-          $state->variables[$name] = $data;
+        elseif (array_key_exists($name, $args)) {
+          // Map back to the source variable name and update it.
+          $var_name = !empty($this->settings[$name . ':select']) ? str_replace('-', '_', $this->settings[$name . ':select']) : $name;
+          $state->variables[$var_name] = $data;
         }
         // Add provided variables.
         elseif (!$state->varInfo($name) && isset($this->info['provides'][$name])) {
