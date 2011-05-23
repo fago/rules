@@ -65,6 +65,16 @@ function rules_php_action_info() {
 }
 
 /**
+ * Alter the form for improved UX.
+ */
+function rules_execute_php_eval_form_alter(&$form, &$form_state) {
+  // Remove the PHP evaluation help to avoid confusion whether <?php tags should
+  // be used. But keep the help about available variables.
+  $form['parameter']['code']['settings']['help']['php']['#type'] = 'container';
+  $form['parameter']['code']['settings']['help']['php']['top']['#markup'] = t('The following variables are available and may be used by your PHP code:');
+}
+
+/**
  * Process the settings to prepare code execution.
  */
 function rules_execute_php_eval_process(RulesAbstractPlugin $element) {
