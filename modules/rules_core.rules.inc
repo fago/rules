@@ -88,6 +88,12 @@ function rules_rules_core_data_info() {
       'wrap' => TRUE,
       'group' => t('List', array(), array('context' => 'data_types')),
     ),
+    'list<token>' => array(
+      'label' => t('list of text tokens'),
+      'ui class' => 'RulesDataUIListToken',
+      'wrap' => TRUE,
+      'group' => t('List', array(), array('context' => 'data_types')),
+    ),
    'entity' => array(
       'label' => t('any entity'),
       'group' => t('Entity'),
@@ -130,6 +136,9 @@ function rules_rules_core_data_info_alter(&$data_info) {
           'wrap' => TRUE,
           'group' => t('List', array(), array('context' => 'data_types')),
         );
+        if (isset($info['parent']) && $info['parent'] == 'entity') {
+          $data_info[$list_type]['ui class'] = 'RulesDataUIListEntity';
+        }
       }
     }
   }

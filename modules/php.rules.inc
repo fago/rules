@@ -21,7 +21,7 @@ function rules_php_evaluator_info() {
   return array(
     'php' => array(
       'class' => 'RulesPHPEvaluator',
-      'type' => array('text', 'token', 'uri'),
+      'type' => array('text', 'uri'),
       'weight' => -10,
       'module' => 'php',
     ),
