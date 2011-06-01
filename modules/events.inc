@@ -43,9 +43,6 @@ function rules_node_update($node) {
 }
 
 function rules_node_insert($node) {
-  // Make sure the node is not marked as new any more, such that any
-  // sub-sequent saves triggered by rules are updating the node.
-  $node->is_new = FALSE;
   rules_invoke_event('node_insert', $node);
 }
 
@@ -63,9 +60,13 @@ function rules_user_view($account, $view_mode) {
   rules_invoke_event('user_view', $account, $view_mode);
 }
 
-function rules_user_presave(&$edit, $account, $category) {
-  if ($category == 'account') {
-    rules_invoke_event('user_presave', $account);
+/**
+ * We don't want to use hook_user_presave() here as it would requires us
+ * to mess with the $edit array to get an updated $account.
+ */
+function rules_entity_presave($entity, $entity_type) {
+  if ($entity_type == 'user') {
+    rules_invoke_event('user_presave', $entity);
   }
 }
 

@@ -42,12 +42,17 @@ function rules_condition_user_is_blocked($account) {
  * Action: Adds roles to a particular user.
  */
 function rules_action_user_add_role($account, $roles) {
-  if ($account->uid) {
+  if ($account->uid || !empty($account->is_new)) {
     // Get role list (minus the anonymous)
     $role_list = user_roles(TRUE);
 
     foreach ($roles as $rid) {
       $account->roles[$rid] = $role_list[$rid];
+    }
+    if (!empty($account->is_new) && $account->uid) {
+      // user_save() inserts roles after invoking hook_user_insert() anyway, so
+      // we skip saving to avoid errors due saving them twice.
+      return FALSE;
     }
   }
   else {
@@ -59,12 +64,17 @@ function rules_action_user_add_role($account, $roles) {
  * Action: Remove roles from a given user.
  */
 function rules_action_user_remove_role($account, $roles) {
-  if ($account->uid) {
+  if ($account->uid || !empty($account->is_new)) {
     foreach ($roles as $rid) {
       // If the user has this role, remove it.
       if (isset($account->roles[$rid])) {
         unset($account->roles[$rid]);
       }
+    }
+    if (!empty($account->is_new) && $account->uid) {
+      // user_save() inserts roles after invoking hook_user_insert() anyway, so
+      // we skip saving to avoid errors due saving them twice.
+      return FALSE;
     }
   }
   else {

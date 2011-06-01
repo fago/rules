@@ -216,6 +216,13 @@ class RulesState {
 
     // Actually save!
     $wrapper = $this->save[$selector][0];
+    $entity = $wrapper->value();
+    // When operating in hook_entity_insert() $entity->is_new might be still
+    // set. In that case remove the flag to avoid causing another insert instead
+    // of an update.
+    if (!empty($entity->is_new) && $wrapper->getIdentifier()) {
+      unset($entity->is_new);
+    }
     rules_log('Saved %selector of type %type.', array('%selector' => $selector, '%type' => $wrapper->type()));
     $wrapper->save();
 
