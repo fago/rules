@@ -460,7 +460,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $vars = &$this->element->componentVariables();
       $vars = array();
       if ($this->element instanceof RulesActionContainer) {
-        $provides = $this->element->componentProvidesVariables();
+        $provides = &$this->element->componentProvidesVariables();
         $provides = array();
       }
 
