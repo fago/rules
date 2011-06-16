@@ -601,7 +601,7 @@ function rules_hook_info() {
  *   An array of rule configurations indexed by their ids.
  */
 function rules_config_load_multiple($names = array(), $conditions = array()) {
-  return entity_get_controller('rules_config')->load($names, $conditions);
+  return entity_load_multiple_by_name('rules_config', $names, $conditions);
 }
 
 /**
@@ -612,8 +612,7 @@ function rules_config_load_multiple($names = array(), $conditions = array()) {
  * @return RulesPlugin
  */
 function rules_config_load($name) {
-  $result = entity_get_controller('rules_config')->load(array($name));
-  return reset($result);
+  return entity_load_single('rules_config', $name);
 }
 
 /**

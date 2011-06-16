@@ -8,7 +8,7 @@
 /**
  * Make sure loaded rule configs are instantiated right.
  */
-class RulesEntityController extends EntityAPIController {
+class RulesEntityController extends EntityAPIControllerExportable {
 
   /**
    * Overriden.
@@ -24,7 +24,7 @@ class RulesEntityController extends EntityAPIController {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
-      $entities[$entity->name] = $entity;
+      $entities[$entity->id] = $entity;
     }
     $queried_entities = $entities;
     parent::attachLoad($queried_entities, $revision_id);
