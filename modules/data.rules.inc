@@ -35,6 +35,7 @@ function rules_data_action_info() {
         'type' => '*',
         'label' => t('Value'),
         'description' => t('The new value to set for the specified data.'),
+        'optional' => TRUE,
       ),
     ),
     'group' => t('Data'),
