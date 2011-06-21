@@ -321,8 +321,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
     // Make sure the current user really has access to configure this element
     // as well as the used input evaluators and data processors.
-    if (!$this->element->access()) {
-      form_set_error('', t('Access violation!'));
+    if (!user_access('bypass rules access') && !$this->element->access()) {
+      form_set_error('', t('Access violation! You have insufficient access permissions to edit this configuration.'));
     }
     try {
       $this->element->integrityCheck();

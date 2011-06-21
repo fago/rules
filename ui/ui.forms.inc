@@ -524,7 +524,7 @@ function rules_ui_import_form_validate($form, &$form_state) {
     catch (RulesException $e) {
       form_set_error('import', t('Integrity check for the imported configuratoin failed. Error message: %message.', array('%message' => $e->getMessage())));
     }
-    if (!$rules_config->access()) {
+    if (!user_access('bypass rules access') && !$rules_config->access()) {
       form_set_error('import', t('You have insufficient access permissions for importing this Rules configuration.'));
     }
   }

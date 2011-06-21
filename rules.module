@@ -941,6 +941,11 @@ function rules_permission() {
     'administer rules' => array(
       'title' => t('Administer rule configurations'),
     ),
+    'bypass rules access' => array(
+      'title' => t('Bypass Rules access control'),
+      'description' => t('Use any data property, Rules action or input evaluation system regardless of permission restrictions.'),
+      'restrict access' => TRUE,
+    ),
   );
 }
 
