@@ -32,7 +32,7 @@ class RulesFeaturesController extends EntityDefaultFeaturesController {
    */
   public function export($data, &$export, $module_name = '') {
     $pipe = parent::export($data, $export, $module_name);
-    foreach (entity_load($this->type, $data) as $name => $rules_config) {
+    foreach (entity_load_multiple_by_name($this->type, $data) as $name => $rules_config) {
       // Add in the dependencies.
       $export['dependencies'] += drupal_map_assoc($rules_config->dependencies());
       // Add in plugin / element specific additions.
