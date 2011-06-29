@@ -403,7 +403,7 @@ class RulesDataUIListToken extends RulesDataUIListInteger {
 class RulesDataUIEntity extends RulesDataUIText {
 
   public static function getDefaultMode() {
-    return 'select';
+    return 'selector';
   }
 
   public static function inputForm($name, $info, $settings, RulesPlugin $element) {
