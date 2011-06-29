@@ -11,29 +11,69 @@ define('RULES_SCHEDULER_PATH', 'admin/config/workflow/rules/schedule');
  * Implements hook_cron().
  */
 function rules_scheduler_cron() {
-  // Evaluate at maxium 30 tasks.
-  //TODO: make this configurable.
+  // Limit adding tasks to 1000 per cron run.
   $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
     ->fields('r')
     ->condition('date', time(), '<=')
-    ->range(0, 30)
+    ->range(0, 1000)
     ->execute();
 
+  $queue = DrupalQueue::get('rules_scheduler_tasks');
   foreach ($result as $task) {
-    if ($component = rules_get_cache('comp_' . $task['config'])) {
-      $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
-      rules_log('Scheduled evaluation of %plugin %label.', $replacements, RulesLog::INFO, TRUE);
-      $state = unserialize($task['state']);
-      $state->restoreBlocks();
-      // Finally evaluate the component with the given state.
-      $component->evaluate($state);
-      rules_log('Finished evaluation of %plugin %label.', $replacements, RulesLog::INFO, FALSE);
-      $state->cleanUp();
+    // Add the task to the queue and remove the entry afterwards.
+    if ($queue->createItem($task)) {
+      db_delete('rules_scheduler')
+        ->condition('tid', $task['tid'])
+        ->execute();
+      $task_created = TRUE;
     }
-    db_delete('rules_scheduler')
-      ->condition('tid', $task['tid'])
-      ->execute();
   }
+
+  if (!empty($task_created)) {
+    // Register shutdown callback for logging the rules log to the watchdog.
+    drupal_register_shutdown_function('rules_scheduler_keep_log');
+    // Clear the log before running tasks via the queue to avoid logging
+    // unrelated logs from previous cron-operations.
+    RulesLog::logger()->clear();
+  }
+}
+
+/**
+ * Implements hook_cron_queue_info().
+ */
+function rules_scheduler_cron_queue_info() {
+  $queues['rules_scheduler_tasks'] = array(
+    'worker callback' => 'rules_scheduler_run_task',
+    'time' => 15,
+  );
+  return $queues;
+}
+
+/**
+ * Queue worker callback for running a single task.
+ */
+function rules_scheduler_run_task(array $task) {
+  if ($component = rules_get_cache('comp_' . $task['config'])) {
+    $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
+    $replacements['%identifier'] = $task['identifier'] ? $task['identifier'] : t('without identifier');
+    rules_log('Scheduled evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, TRUE);
+    $state = unserialize($task['state']);
+    $state->restoreBlocks();
+    // Finally evaluate the component with the given state.
+    $component->evaluate($state);
+    rules_log('Finished evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, FALSE);
+    $state->cleanUp();
+  }
+}
+
+/**
+ * Shutdown callback that cares about keeping rules log.
+ *
+ * @todo Add setting for the severity of appeared messages to log.
+ *
+ * @see rules_scheduler_cron()
+ */
+function rules_scheduler_keep_log() {
   // Log the rules log to the system log.
   if ($log = RulesLog::logger()->render()) {
     watchdog('rules scheduler', 'Scheduled component evaluation: !log', array('!log' => $log), WATCHDOG_NOTICE);
