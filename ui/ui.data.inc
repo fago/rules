@@ -130,7 +130,7 @@ class RulesDataUIText extends RulesDataUI implements RulesDataDirectInputFormInt
       $element->call('loadBasicInclude');
       $form[$name] = array(
         '#type' => 'select',
-        '#options' => $info['options list']($element, $name),
+        '#options' => call_user_func($info['options list'], $element, $name),
       );
     }
     else {
@@ -430,6 +430,34 @@ class RulesDataUIEntityExportable extends RulesDataUIEntity {
 
   public static function getDefaultMode() {
     return 'input';
+  }
+}
+
+/**
+ * UI for taxonomy vocabularies.
+ *
+ * @see RulesTaxonomyVocabularyWrapper
+ */
+class RulesDataUITaxonomyVocabulary extends RulesDataUIEntity {
+
+  public static function getDefaultMode() {
+    return 'input';
+  }
+
+  public static function inputForm($name, $info, $settings, RulesPlugin $element) {
+    // Add an options list of all vocabularies if there is none yet.
+    if (!isset($info['options list'])) {
+      $info['options list'] = array('RulesDataUITaxonomyVocabulary', 'optionsList');
+    }
+    return parent::inputForm($name, $info, $settings, $element);
+  }
+
+  public static function optionsList() {
+    $options = array();
+    foreach (taxonomy_vocabulary_get_names() as $machine_name => $vocab) {
+      $options[$machine_name] = $vocab->name;
+    }
+    return $options;
   }
 }
 

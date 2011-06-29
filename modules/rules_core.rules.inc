@@ -113,7 +113,9 @@ function rules_rules_core_data_info() {
   }
 
   if (module_exists('taxonomy')) {
+    // For exportability identify vocabularies by name.
     $return['taxonomy_vocabulary']['wrapper class'] = 'RulesTaxonomyVocabularyWrapper';
+    $return['taxonomy_vocabulary']['ui class'] = 'RulesDataUITaxonomyVocabulary';
   }
 
   return $return;
