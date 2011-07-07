@@ -1196,7 +1196,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     $result = rules_condition('text_matches')->execute('my-text', 'text', 'ends');
     $result2 = rules_condition('text_matches')->execute('my-text', 'my', 'ends');
-    $this->assertTrue($result && !$result2, 'Text matching condition using operation starts evaluated.');
+    $this->assertTrue($result && !$result2, 'Text matching condition using operation ends evaluated.');
 
     $result = rules_condition('text_matches')->execute('my-text', 'me?y-texx?t', 'regex');
     $result2 = rules_condition('text_matches')->execute('my-text', 'me+y-texx?t', 'regex');
