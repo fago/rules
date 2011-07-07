@@ -1184,6 +1184,23 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $action_set->integrityCheck();
     list($result) = $action_set->execute(REQUEST_TIME);
     $this->assertEqual($result, REQUEST_TIME + 86400, 'Used data calculation action to move a date by a day.');
+
+    // Test text matching condition.
+    $result = rules_condition('text_matches')->execute('my-text', 'text', 'contains');
+    $result2 = rules_condition('text_matches')->execute('my-text', 'tex2t', 'contains');
+    $this->assertTrue($result && !$result2, 'Text matching condition using operation contain evaluated.');
+
+    $result = rules_condition('text_matches')->execute('my-text', 'my', 'starts');
+    $result2 = rules_condition('text_matches')->execute('my-text', 'text', 'starts');
+    $this->assertTrue($result && !$result2, 'Text matching condition using operation starts evaluated.');
+
+    $result = rules_condition('text_matches')->execute('my-text', 'text', 'ends');
+    $result2 = rules_condition('text_matches')->execute('my-text', 'my', 'ends');
+    $this->assertTrue($result && !$result2, 'Text matching condition using operation starts evaluated.');
+
+    $result = rules_condition('text_matches')->execute('my-text', 'me?y-texx?t', 'regex');
+    $result2 = rules_condition('text_matches')->execute('my-text', 'me+y-texx?t', 'regex');
+    $this->assertTrue($result && !$result2, 'Text matching condition using operation regex evaluated.');
   }
 
   /**

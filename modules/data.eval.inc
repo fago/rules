@@ -282,3 +282,18 @@ function rules_condition_data_is_empty($data) {
   return empty($data);
 }
 
+/**
+ * Condition: Textual comparison.
+ */
+function rules_data_text_comparison($text, $text2, $op = 'contains') {
+  switch ($op) {
+    case 'contains':
+      return strpos($text, $text2) !== FALSE;
+    case 'starts':
+      return strpos($text, $text2) === 0;
+    case 'ends':
+     return strrpos($text, $text2) === (strlen($text) - strlen($text2));
+    case 'regex':
+     return (bool) preg_match('/'. str_replace('/', '\\/', $text2) .'/', $text);
+  }
+}
