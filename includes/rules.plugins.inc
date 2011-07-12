@@ -23,27 +23,30 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
 
     if (is_array($return)) {
       foreach ($return as $name => $data) {
-        // Update the data value using the wrapper.
-        if (isset($args[$name]) && $args[$name] instanceof EntityMetadataWrapper) {
-          try {
-            $args[$name]->set($data);
-          }
-          catch (EntityMetadataWrapperException $e) {
-            throw new RulesException('Unable to update the argument for parameter %name: %error', array('%name' => $name, '%error' => $e->getMessage()), $this);
-          }
-        }
-        elseif (array_key_exists($name, $args)) {
-          // Map back to the source variable name and update it.
-          $var_name = !empty($this->settings[$name . ':select']) ? str_replace('-', '_', $this->settings[$name . ':select']) : $name;
-          $state->variables[$var_name] = $data;
-        }
         // Add provided variables.
-        elseif (!$state->varInfo($name) && isset($this->info['provides'][$name])) {
+        if (!$state->varInfo($name) && isset($this->info['provides'][$name])) {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $state->addVariable($var_name, $data, $this->info['provides'][$name]);
           rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']));
           if (!empty($this->info['provides'][$name]['save']) && $state->variables[$var_name] instanceof EntityMetadataWrapper) {
             $state->saveChanges($var_name, $state->variables[$var_name]);
+          }
+        }
+        // Support updating variables by returning the values.
+        elseif (!isset($this->info['provides'][$name])) {
+          // Update the data value using the wrapper.
+          if (isset($args[$name]) && $args[$name] instanceof EntityMetadataWrapper) {
+            try {
+              $args[$name]->set($data);
+            }
+            catch (EntityMetadataWrapperException $e) {
+              throw new RulesException('Unable to update the argument for parameter %name: %error', array('%name' => $name, '%error' => $e->getMessage()), $this);
+            }
+          }
+          elseif (array_key_exists($name, $args)) {
+            // Map back to the source variable name and update it.
+            $var_name = !empty($this->settings[$name . ':select']) ? str_replace('-', '_', $this->settings[$name . ':select']) : $name;
+            $state->variables[$var_name] = $data;
           }
         }
       }
