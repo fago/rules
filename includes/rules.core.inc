@@ -435,6 +435,7 @@ abstract class RulesPlugin extends RulesExtendable {
         // Ignore not existing variables.
         $vars[$name] = NULL;
       }
+      $var_info[$name] += array('allow null' => TRUE);
     }
     return isset($vars) ? array_values(rules_unwrap_data($vars, $var_info)) : array();
   }
@@ -1634,6 +1635,10 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       foreach ($this->info['variables'] as $name => $var_info) {
         if (empty($var_info['handler']) && (!isset($var_info['parameter']) || $var_info['parameter'])) {
           $params[$name] = $var_info;
+          // For lists allow empty variables by default.
+          if (entity_property_list_extract_type($var_info['type'])) {
+            $params[$name] += array('allow null' => TRUE);
+          }
         }
       }
     }

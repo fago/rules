@@ -30,6 +30,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     module_invoke_all('rules_config_execute', $component);
 
     // Manually create a new evaluation state and evaluate the component.
+    $args = array_intersect_key($wrapped_args, $component->parameterInfo());
     $new_state = $component->setUpState($wrapped_args);
     $return = $component->evaluate($new_state);
 
