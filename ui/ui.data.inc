@@ -344,7 +344,7 @@ class RulesDataUIListText extends RulesDataUIText {
       // Fix up the value to be an array during after build.
       $form[$name]['#after_build'][] = 'rules_ui_list_textarea_after_build';
       $form[$name]['#pre_render'][] = 'rules_ui_list_textarea_pre_render';
-      $form[$name]['#default_value'] = implode("\n", $settings[$name]);
+      $form[$name]['#default_value'] = !empty($settings[$name]) ? implode("\n", $settings[$name]) : NULL;
       $form[$name]['#description'] = t('A list of values, one on each line.');
     }
     else {
@@ -373,7 +373,7 @@ class RulesDataUIListInteger extends RulesDataUIListText {
     if ($form[$name]['#type'] == 'textarea') {
       $form[$name]['#description'] = t('A list of integers, separated by commas. E.g. enter "1, 2, 3".');
       $form[$name]['#delimiter'] = ',';
-      $form[$name]['#default_value'] = implode(", ", $settings[$name]);
+      $form[$name]['#default_value'] = !empty($settings[$name]) ? implode(", ", $settings[$name]) : NULL;
       $form[$name]['#element_validate'][] = 'rules_ui_element_integer_list_validate';
       $form[$name]['#rows'] = 1;
     }
