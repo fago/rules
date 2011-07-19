@@ -221,7 +221,7 @@ class RulesState {
     // set. In that case remove the flag to avoid causing another insert instead
     // of an update.
     if (!empty($entity->is_new) && $wrapper->getIdentifier()) {
-      unset($entity->is_new);
+      $entity->is_new = FALSE;
     }
     rules_log('Saved %selector of type %type.', array('%selector' => $selector, '%type' => $wrapper->type()));
     $wrapper->save();
