@@ -20,7 +20,7 @@ function rules_scheduler_schema() {
       ),
       'config' => array(
         'type' => 'varchar',
-        'length' => '255',
+        'length' => '32',
         'default' => '',
         'not null' => TRUE,
         'description' => "The scheduled configuration's name.",
@@ -45,7 +45,12 @@ function rules_scheduler_schema() {
       ),
     ),
     'primary key' => array('tid'),
-    'indexes' => array('date' => array('date')),
+    'indexes' => array(
+      'date' => array('date'),
+    ),
+    'unique key' => array(
+      'id' => array('config', 'identifier'),
+    ),
   );
   return $schema;
 }
@@ -69,7 +74,7 @@ function rules_scheduler_update_7200() {
       ),
       'config' => array(
         'type' => 'varchar',
-        'length' => '255',
+        'length' => '32',
         'default' => '',
         'not null' => TRUE,
         'description' => "The scheduled configuration's name.",
@@ -97,6 +102,13 @@ function rules_scheduler_update_7200() {
     'indexes' => array('date' => array('date')),
   );
   db_create_table('rules_scheduler', $schema['rules_scheduler']);
+}
+
+/**
+ * Add an index for updating and deleting scheduled tasks by identifier.
+ */
+function rules_scheduler_update_7201() {
+  db_add_unique_key('rules_scheduler', 'id', array('config', 'identifier'));
 }
 
 /**

@@ -35,7 +35,7 @@ function rules_schema() {
       ),
       'name' => array(
         'type' => 'varchar',
-        'length' => '255',
+        'length' => '32',
         'not null' => TRUE,
         'description' => 'The name of the configuration.',
       ),
@@ -91,6 +91,9 @@ function rules_schema() {
     'primary key' => array('id'),
     'unique keys' => array(
       'name' => array('name'),
+    ),
+    'indexes' => array(
+      'plugin' => array('plugin'),
     ),
   );
   $schema['rules_trigger'] = array(
@@ -244,4 +247,11 @@ function rules_update_7201() {
     ));
     // The module column did already exist before.
   }
+}
+
+/**
+ * Add an index for the rules configuration plugin column.
+ */
+function rules_update_7202() {
+  db_add_index('rules_config', 'plugin', array('plugin'));
 }
