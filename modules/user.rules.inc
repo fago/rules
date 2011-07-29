@@ -211,7 +211,7 @@ function rules_user_action_info() {
     'base' => 'rules_action_user_block',
   );
   $items['user_unblock'] = $defaults + array(
-    'label' => t('Unblock a use'),
+    'label' => t('Unblock a user'),
     'base' => 'rules_action_user_unblock',
   );
   return $items;
