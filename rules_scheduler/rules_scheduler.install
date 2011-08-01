@@ -20,7 +20,7 @@ function rules_scheduler_schema() {
       ),
       'config' => array(
         'type' => 'varchar',
-        'length' => '32',
+        'length' => '64',
         'default' => '',
         'not null' => TRUE,
         'description' => "The scheduled configuration's name.",
@@ -74,7 +74,7 @@ function rules_scheduler_update_7200() {
       ),
       'config' => array(
         'type' => 'varchar',
-        'length' => '32',
+        'length' => '255',
         'default' => '',
         'not null' => TRUE,
         'description' => "The scheduled configuration's name.",
@@ -105,9 +105,20 @@ function rules_scheduler_update_7200() {
 }
 
 /**
- * Add an index for updating and deleting scheduled tasks by identifier.
+ * Fix the length of the rules_scheduler.name column.
  */
-function rules_scheduler_update_7201() {
+function rules_scheduler_update_7202() {
+  // Note that update 7201 (add the 'id' unique key') has been removed as it is
+  // incorporated by 7202. For anyone that has already run the previous update
+  // 7201, we have to first drop the unique key.
+  db_drop_unique_key('rules_scheduler', 'id');
+  db_change_field('rules_scheduler', 'config', 'config', array(
+    'type' => 'varchar',
+    'length' => '64',
+    'default' => '',
+    'not null' => TRUE,
+    'description' => "The scheduled configuration's name.",
+  ));
   db_add_unique_key('rules_scheduler', 'id', array('config', 'identifier'));
 }
 

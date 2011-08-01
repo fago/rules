@@ -396,7 +396,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $form['settings']['name'] = array(
       '#type' => 'machine_name',
       '#default_value' => isset($machine_name) ? $machine_name : '',
-      '#maxlength' => 32,
+      '#maxlength' => 64,
       '#disabled' => entity_has_status('rules_config', $this->element, ENTITY_IN_CODE) && !(isset($form_state['op']) && $form_state['op'] == 'clone'),
       '#machine_name' => array(
         'exists' => 'rules_config_load',

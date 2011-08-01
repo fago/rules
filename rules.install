@@ -35,7 +35,7 @@ function rules_schema() {
       ),
       'name' => array(
         'type' => 'varchar',
-        'length' => '32',
+        'length' => '64',
         'not null' => TRUE,
         'description' => 'The name of the configuration.',
       ),
@@ -255,3 +255,22 @@ function rules_update_7201() {
 function rules_update_7202() {
   db_add_index('rules_config', 'plugin', array('plugin'));
 }
+
+/**
+ * Fix the length of the rules_config.name column.
+ */
+function rules_update_7203() {
+  db_drop_unique_key('rules_config', 'name');
+  $keys = array(
+    'unique keys' => array(
+      'name' => array('name'),
+    ),
+  );
+  db_change_field('rules_config', 'name', 'name', array(
+    'type' => 'varchar',
+    'length' => '64',
+    'not null' => TRUE,
+    'description' => 'The name of the configuration.',
+  ), $keys);
+}
+
