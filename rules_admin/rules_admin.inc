@@ -11,6 +11,24 @@
 function rules_admin_reaction_overview($form, &$form_state, $base_path) {
   RulesPluginUI::formDefaults($form, $form_state);
 
+  $conditions = array('plugin' => 'reaction rule', 'active' => TRUE);
+  $collapsed = TRUE;
+  if (empty($_GET['tag'])) {
+    $tag = 0;
+  }
+  else {
+    $tag = $_GET['tag'];
+    $conditions['tags'] = array($tag);
+    $collapsed = FALSE;
+  }
+  if (empty($_GET['event'])) {
+    $event = 0;
+  }
+  else {
+    $event = $_GET['event'];
+    $conditions['event'] = $event;
+    $collapsed = FALSE;
+  }
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -21,33 +39,34 @@ function rules_admin_reaction_overview($form, &$form_state, $base_path) {
   $form['filter']['event'] = array(
     '#type' => 'select',
     '#title' => t('Filter by event'),
-    '#options' => array(0 => '<All>') + RulesPluginUI::getOptions('event_info'),
-    '#default_value' => isset($form_state['values']['event']) ? $form_state['values']['event'] : 0,
+    '#options' => array(0 => t('<All>')) + RulesPluginUI::getOptions('event_info'),
+    '#default_value' => $event,
   );
-  $form['filter']['category'] = array(
+  $form['filter']['tag'] = array(
     '#type' => 'select',
-    '#title' => t('Filter by category'),
-    '#options' => array(0 => '<All>'),
-    '#default_value' => isset($form_state['values']['category']) ? $form_state['values']['category'] : 0,
+    '#title' => t('Filter by tag'),
+    '#options' => array(0 => t('<All>')) + RulesPluginUI::getTags(),
+    '#default_value' => $tag,
   );
-  $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
+  $form['filter']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Filter'),
+    '#name' => '', // prevent from showing up in $_GET.
+  );
 
-  $event = !empty($form_state['values']['event']) ? $form_state['values']['event'] : FALSE;
-  $category = !empty($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
-
-  $conditions = array('event' => $event, 'plugin' => 'reaction rule', 'active' => TRUE);
   $options = array('show plugin' => FALSE, 'base path' => $base_path);
-  $form['active'] = rules_ui()->overviewTable(array_filter($conditions), $options);
+  $form['active'] = rules_ui()->overviewTable($conditions, $options);
   $form['active']['#caption'] = t('Active rules');
   $form['active']['#empty'] = t('There are no active rules. <a href="!url">Add new rule</a>.', array('!url' => url('admin/config/workflow/rules/reaction/add')));
 
-  $conditions = array_filter(array('event' => $event, 'plugin' => 'reaction rule')) + array('active' => FALSE);
+  $conditions['active'] = FALSE;
   $form['inactive'] = rules_ui()->overviewTable($conditions, $options);
   $form['inactive']['#caption'] = t('Inactive rules');
   $form['inactive']['#empty'] = t('There are no inactive rules.');
 
-  $form['filter']['#collapsed'] = isset($form_state['values']) || (count($form['active']['#rows']) + count($form['inactive']['#rows'])) < 20;
+  $form['filter']['#collapsed'] = $collapsed;
   $form['#submit'][] = 'rules_form_submit_rebuild';
+  $form['#method'] = 'get';
   return $form;
 }
 
@@ -57,6 +76,25 @@ function rules_admin_reaction_overview($form, &$form_state, $base_path) {
 function rules_admin_components_overview($form, &$form_state, $base_path) {
   RulesPluginUI::formDefaults($form, $form_state);
 
+  $collapsed = TRUE;
+  if (empty($_GET['tag'])) {
+    $tag = 0;
+  }
+  else {
+    $tag = $_GET['tag'];
+    $conditions['tags'] = array($tag);
+    $collapsed = FALSE;
+  }
+  if (empty($_GET['plugin'])) {
+    // Get the plugin name usable as component.
+    $conditions['plugin'] = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
+    $plugin = 0;
+  }
+  else {
+    $plugin = $_GET['plugin'];
+    $conditions['plugin'] = $plugin;
+    $collapsed = FALSE;
+  }
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -67,27 +105,27 @@ function rules_admin_components_overview($form, &$form_state, $base_path) {
   $form['filter']['plugin'] = array(
     '#type' => 'select',
     '#title' => t('Filter by plugin'),
-    '#options' => array(0 => '<All>') + rules_admin_component_options(),
-    '#default_value' => isset($form_state['values']['plugin']) ? $form_state['values']['plugin'] : 0,
+    '#options' => array(0 => t('<All>')) + rules_admin_component_options(),
+    '#default_value' => $plugin,
   );
-  $form['filter']['category'] = array(
+  $form['filter']['tag'] = array(
     '#type' => 'select',
-    '#title' => t('Filter by category'),
-    '#options' => array(0 => '<All>'),
-    '#default_value' => isset($form_state['values']['category']) ? $form_state['values']['category'] : 0,
+    '#title' => t('Filter by tag'),
+    '#options' => array(0 => '<All>') + RulesPluginUI::getTags(),
+    '#default_value' => $tag,
   );
-  $form['filter']['submit'] = array('#type' => 'submit', '#value' => t('Filter'));
+  $form['filter']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Filter'),
+    '#name' => '', // prevent from showing up in $_GET.
+  );
 
-  $category = !empty($form_state['values']['category']) ? $form_state['values']['category'] : FALSE;
-
-  // Get the plugin name usable as component.
-  $plugins = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
-  $conditions = array('plugin' => !empty($form_state['values']['plugin']) ? array($form_state['values']['plugin']) : $plugins);
   $form['table'] = RulesPluginUI::overviewTable($conditions, array('hide status op' => TRUE));
   $form['table']['#empty'] = t('There are no rule components.');
 
-  $form['filter']['#collapsed'] = isset($form_state['values']) || count($form['table']['#rows']) < 20;
+  $form['filter']['#collapsed'] = $collapsed;
   $form['#submit'][] = 'rules_form_submit_rebuild';
+  $form['#method'] = 'get';
   return $form;
 }
 

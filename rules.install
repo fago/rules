@@ -117,6 +117,26 @@ function rules_schema() {
       'id' => array('rules_config' => 'id'),
     ),
   );
+  $schema['rules_tags'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier of the configuration.',
+      ),
+      'tag' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The tag string associated with this configuration',
+      ),
+    ),
+    'primary key' => array('id', 'tag'),
+    'foreign keys' => array(
+      'id' => array('rules_config' => 'id'),
+    ),
+  );
   $schema['cache_rules'] = drupal_get_schema_unprocessed('system', 'cache');
   $schema['cache_rules']['description'] = 'Cache table for the rules engine to store configured items.';
   return $schema;
@@ -274,3 +294,31 @@ function rules_update_7203() {
   ), $keys);
 }
 
+/**
+ * Add a table for rules-config tags.
+ */
+function rules_update_7204() {
+  if (!db_table_exists('rules_tags')) {
+    $schema['rules_tags'] = array(
+      'fields' => array(
+        'id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'The primary identifier of the configuration.',
+        ),
+        'tag' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+          'description' => 'The tag string associated with this configuration',
+        ),
+      ),
+      'primary key' => array('id', 'tag'),
+      'foreign keys' => array(
+        'id' => array('rules_config' => 'id'),
+      ),
+    );
+    db_create_table('rules_tags', $schema['rules_tags']);
+  }
+}

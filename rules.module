@@ -649,20 +649,6 @@ function rules_get_components($label = FALSE, $type = NULL, $conditions = array(
 }
 
 /**
- * Implement hook_query_TAG_alter().
- */
-function rules_query_rules_config_load_multiple_alter(QueryAlterableInterface $query) {
-  // Support using 'event' => $name as condition.
-  $conditions =& $query->conditions();
-  foreach ($conditions as &$condition) {
-    if ($condition['field'] == 'base.event') {
-      $query->join('rules_trigger', 'tr', "base.id = tr.id");
-      $condition['field'] = 'tr.event';
-    }
-  }
-}
-
-/**
  * Delete rule configurations from database.
  *
  * @param $ids
@@ -670,45 +656,6 @@ function rules_query_rules_config_load_multiple_alter(QueryAlterableInterface $q
  */
 function rules_config_delete(array $ids) {
   return entity_get_controller('rules_config')->delete($ids);
-}
-
-
-/**
- * Implement hook_rules_config_insert().
- */
-function rules_rules_config_insert($rule_config) {
-  // If it's an reactive rule write entries in trigger table.
-  if ($rule_config instanceof RulesTriggerableInterface) {
-    foreach ($rule_config->events() as $event) {
-      db_insert('rules_trigger')
-        ->fields(array(
-        'id' => $rule_config->id,
-        'event' => $event,
-      ))
-      ->execute();
-    }
-  }
-}
-
-/**
- * Implement hook_rules_config_update().
- */
-function rules_rules_config_update($rule_config) {
-  if ($rule_config instanceof RulesTriggerableInterface) {
-    rules_rules_config_delete($rule_config);
-    rules_rules_config_insert($rule_config);
-  }
-}
-
-/**
- * Implement hook_rules_config_delete().
- */
-function rules_rules_config_delete($rule_config) {
-  if ($rule_config instanceof RulesTriggerableInterface) {
-    db_delete('rules_trigger')
-      ->condition('id', $rule_config->id)
-      ->execute();
-  }
 }
 
 /**
@@ -1131,6 +1078,14 @@ function rules_menu() {
     'access arguments' => array('administer rules'),
     'file' => 'includes/rules.upgrade.inc',
     'file path' => drupal_get_path('module', 'rules'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/config/workflow/rules/autocomplete_tags'] = array(
+    'title' => 'Rules tags autocomplete',
+    'page callback' => 'rules_autocomplete_tags',
+    'page arguments' => array(5),
+    'access arguments' => array('administer rules'),
+    'file' => 'ui/ui.forms.inc',
     'type' => MENU_CALLBACK,
   );
   return $items;

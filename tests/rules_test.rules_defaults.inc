@@ -77,6 +77,7 @@ function _rules_export_get_test_export() {
     "PLUGIN" : "reaction rule",
     "WEIGHT" : "-1",
     "ACTIVE" : false,
+    "TAGS" : [ "bar", "baz", "foo" ],
     "REQUIRES" : [ "rules", "comment" ],
     "ON" : [ "comment_insert" ],
     "IF" : [

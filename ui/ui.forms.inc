@@ -868,3 +868,45 @@ function rules_form_after_build_restore_base_path($form, &$form_state) {
   }
   return $form;
 }
+
+/**
+ * AJAX page callback to load tag suggestions.
+ *
+ * Largely copied from taxonomy_autocomplete().
+ */
+function rules_autocomplete_tags($tags_typed = '') {
+  // The user enters a comma-separated list of tags. We only autocomplete the
+  // last tag.
+  $tags_typed = drupal_explode_tags($tags_typed);
+  $tag_last = drupal_strtolower(array_pop($tags_typed));
+
+  $tag_matches = array();
+  if ($tag_last != '') {
+    $query = db_select('rules_tags', 'rt');
+    // Do not select already entered terms.
+    if (!empty($tags_typed)) {
+      $query->condition('rt.tag', $tags_typed, 'NOT IN');
+    }
+    // Select rows that match by tag name.
+    $tags_return = $query
+      ->distinct()
+      ->fields('rt', array('tag'))
+      ->condition('rt.tag', '%' . db_like($tag_last) . '%', 'LIKE')
+      ->groupBy('rt.tag')
+      ->range(0, 10)
+      ->execute()
+      ->fetchCol('rt.tag');
+
+    $prefix = count($tags_typed) ? drupal_implode_tags($tags_typed) . ', ' : '';
+
+    foreach ($tags_return as $name) {
+      $n = $name;
+      // Tag names containing commas or quotes must be wrapped in quotes.
+      if (strpos($name, ',') !== FALSE || strpos($name, '"') !== FALSE) {
+        $n = '"' . str_replace('"', '""', $name) . '"';
+      }
+      $tag_matches[$prefix . $n] = check_plain($name);
+    }
+  }
+  drupal_json_output($tag_matches);
+}

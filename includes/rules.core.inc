@@ -24,6 +24,12 @@ class RulesEntityController extends EntityAPIControllerExportable {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
+      // Load possible tags.
+      $entity->tags = db_select('rules_tags')
+        ->fields('rules_tags', array('tag'))
+        ->condition('id', $entity->id)
+        ->execute()
+        ->fetchCol('tag');
       $entities[$entity->id] = $entity;
     }
     $queried_entities = $entities;
@@ -31,7 +37,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
   }
 
   /**
-   * Override to support having an event as condition.
+   * Override to support having events and tags as conditions.
    * @see EntityAPIController::applyConditions($entities, $conditions)
    * @see rules_query_rules_config_load_multiple_alter()
    */
@@ -49,6 +55,17 @@ class RulesEntityController extends EntityAPIControllerExportable {
         }
       }
       unset($conditions['event'], $conditions['plugin']);
+    }
+    if (!empty($conditions['tags'])) {
+      foreach ($entities as $key => $entity) {
+        foreach ($conditions['tags'] as $tag) {
+          if (in_array($tag, $entity->tags)) {
+            continue 2;
+          }
+        }
+        unset($entities[$key]);
+      }
+      unset($conditions['tags']);
     }
     return parent::applyConditions($entities, $conditions);
   }
@@ -75,7 +92,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
     // Create an empty configuration, re-set basic keys and import.
     $config = rules_plugin_factory($export['PLUGIN']);
     $config->name = $name;
-    foreach (array('label', 'active', 'weight') as $key) {
+    foreach (array('label', 'active', 'weight', 'tags') as $key) {
       if (isset($export[strtoupper($key)])) {
         $config->$key = $export[strtoupper($key)];
       }
@@ -90,6 +107,93 @@ class RulesEntityController extends EntityAPIControllerExportable {
     }
     $config->import($export);
     return $config;
+  }
+
+  public function save($rules_config, DatabaseTransaction $transaction = NULL) {
+    $transaction = isset($transaction) ? $transaction : db_transaction();
+
+    $return = parent::save($rules_config, $transaction);
+    $this->storeTags($rules_config);
+    if ($rules_config instanceof RulesTriggerableInterface) {
+      $this->storeEvents($rules_config);
+    }
+    return $return;
+  }
+
+  /**
+   * Save tagging information to the rules_tags table.
+   */
+  protected function storeTags($rules_config) {
+    db_delete('rules_tags')
+      ->condition('id', $rules_config->id)
+      ->execute();
+    if (!empty($rules_config->tags)) {
+      foreach ($rules_config->tags as $tag) {
+        db_insert('rules_tags')
+          ->fields(array('id', 'tag'), array($rules_config->id, $tag))
+          ->execute();
+      }
+    }
+  }
+
+  /**
+   * Save event information to the rules_trigger table.
+   */
+  protected function storeEvents(RulesTriggerableInterface $rules_config) {
+    db_delete('rules_trigger')
+      ->condition('id', $rules_config->id)
+      ->execute();
+    foreach ($rules_config->events() as $event) {
+      db_insert('rules_trigger')
+        ->fields(array(
+        'id' => $rules_config->id,
+        'event' => $event,
+      ))
+      ->execute();
+    }
+  }
+
+  /**
+   * Overridden to support tags and events in $conditions.
+   * @see EntityAPIControllerExportable::buildQuery()
+   */
+  protected function buildQuery($ids, $conditions = array(), $revision_id = FALSE) {
+    $query = parent::buildQuery($ids, $conditions, $revision_id);
+    $query_conditions =& $query->conditions();
+    foreach ($query_conditions as &$condition) {
+      // Support using 'tags' => array('tag1', 'tag2') as condition.
+      if ($condition['field'] == 'base.tags') {
+        $query->join('rules_tags', 'rt', 'base.id = rt.id');
+        $condition['field'] = 'rt.tag';
+      }
+      // Support using 'event' => $name as condition.
+      if ($condition['field'] == 'base.event') {
+        $query->join('rules_trigger', 'tr', "base.id = tr.id");
+        $condition['field'] = 'tr.event';
+      }
+    }
+    return $query;
+  }
+
+  /**
+   * Overridden to also delete tags and events.
+   * @see EntityAPIControllerExportable::delete()
+   */
+  public function delete($ids, DatabaseTransaction $transaction = NULL) {
+    $transaction = isset($transaction) ? $transaction : db_transaction();
+    // Use entity-load as ids may be the names as well as the ids.
+    $configs = $ids ? entity_load('rules_config', $ids) : array();
+    if ($configs) {
+      foreach ($configs as $config) {
+        db_delete('rules_trigger')
+          ->condition('id', $config->id)
+          ->execute();
+        db_delete('rules_tags')
+          ->condition('id', $config->id)
+          ->execute();
+      }
+    }
+    return parent::delete($ids, $transaction);
   }
 }
 
@@ -969,7 +1073,7 @@ abstract class RulesPlugin extends RulesExtendable {
    *
    * @see rules_import()
    */
-  public function export($prefix = '',$php = FALSE) {
+  public function export($prefix = '', $php = FALSE) {
     $export = $this->exportToArray();
     return $this->isRoot() ? $this->returnExport($export, $prefix, $php) : $export;
   }
@@ -1029,6 +1133,9 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     if (isset($this->active) && !$this->active) {
       $export_cfg[$this->name]['ACTIVE'] = FALSE;
+    }
+    if (!empty($this->tags)) {
+      $export_cfg[$this->name]['TAGS'] = $this->tags;
     }
     if ($modules = $this->dependencies()) {
       $export_cfg[$this->name]['REQUIRES'] = $modules;

@@ -88,3 +88,18 @@ function rules_admin_menu() {
   );
   return $items;
 }
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Since the overview forms are GET forms, we don't want them to send a wide
+ * variety of information. We need to use hook_form_alter() because the
+ * properties are added after form creation.
+ */
+function rules_admin_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'rules_admin_reaction_overview' || $form_id == 'rules_admin_components_overview') {
+    $form['form_build_id']['#access'] = FALSE;
+    $form['form_token']['#access'] = FALSE;
+    $form['form_id']['#access'] = FALSE;
+  }
+}
