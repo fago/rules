@@ -10,7 +10,7 @@
 
 .rules-elements-table ul.action-links {
   margin: 0px;
-  padding-left: 0px;
+  padding: 0;
 }
 
 .rules-elements-table ul.rules-operations li {
@@ -86,7 +86,7 @@ ul.rules-operations-add li {
 }
 
 .rules-parameter-label {
-  font-style: italic; 
+  font-style: italic;
 }
 
 #rules-plugin-add-help {
@@ -142,4 +142,3 @@ ul.rules-autocomplete .ui-corner-all {
 * html ul.rule-autocomplete{
   height: 23em;
 }
-
