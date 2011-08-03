@@ -342,6 +342,7 @@ class RulesDataUIListText extends RulesDataUIText {
 
     if ($form[$name]['#type'] == 'textarea') {
       // Fix up the value to be an array during after build.
+      $form[$name]['#delimiter'] = "\n";
       $form[$name]['#after_build'][] = 'rules_ui_list_textarea_after_build';
       $form[$name]['#pre_render'][] = 'rules_ui_list_textarea_pre_render';
       $form[$name]['#default_value'] = !empty($settings[$name]) ? implode("\n", $settings[$name]) : NULL;
