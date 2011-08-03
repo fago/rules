@@ -717,12 +717,12 @@ class RulesTestCase extends DrupalWebTestCase {
    */
   function testAbortOnNULLValues() {
     $rule = rule(array('node' => array('type' => 'node')));
-    $rule->action('drupal_message', array('message:select' => 'node:type'));
+    $rule->action('drupal_message', array('message:select' => 'node:log'));
     $rule->integrityCheck();
 
     // Test the rule.
     $node = $this->drupalCreateNode();
-    $node->type = NULL;
+    $node->log = NULL;
     $rule->execute($node);
 
     $text = RulesLog::logger()->render();
