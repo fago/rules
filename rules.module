@@ -385,7 +385,7 @@ function rules_unwrap_data(array $data, $info = array()) {
       try {
         $data[$key] = $entry->value($options);
       }
-      catch (Exception $e) {
+      catch (EntityMetadataWrapperException $e) {
         // Getting the data value failed.
         throw new RulesException($e->getMessage());
       }
