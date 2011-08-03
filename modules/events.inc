@@ -151,5 +151,18 @@ function rules_system_log_get_message($log_entry) {
 }
 
 /**
+ * Gets all view modes of an entity for an entity_view event.
+ */
+function rules_get_entity_view_modes($name, $var_info) {
+  // Read the entity type from a special key out of the variable info.
+  $entity_type = $var_info['options list entity type'];
+  $info = entity_get_info($entity_type);
+  foreach ($info['view modes'] as $mode => $mode_info) {
+    $modes[$mode] = $mode_info['label'];
+  }
+  return $modes;
+}
+
+/**
  * @}
  */

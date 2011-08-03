@@ -68,8 +68,8 @@
  *     action. All types declared in hook_rules_data_info() may be specified, as
  *     well as an array of possible types. Also lists and lists of a given type
  *     can be specified by using the notating list<integer> as introduced by
- *     the entity metadata module. The special keyword '*' can be used when all
- *     types should be allowed. Required.
+ *     the entity metadata module, see hook_entity_property_info(). The special
+ *     keyword '*' can be used when all types should be allowed. Required.
  *   - bundles: (optional) An array of bundle names. When the specified type is
  *     set to a single entity type, this may be used to restrict the allowed
  *     bundles.
@@ -242,15 +242,23 @@ function hook_rules_condition_info() {
  *     described by a sub-array with the possible attributes:
  *     - label: The label of the variable. Start capitalized. Required.
  *     - type: The rules data type of the variable. All types declared in
- *       hook_rules_data_info() may be specified. Types may be parametrized e.g.
- *       the types node<page> or list<integer> are valid.
+ *       hook_rules_data_info() or supported by hook_entity_property_info() may
+ *       be specified.
+ *     - bundle: (optional) If the type is an entity type, the bundle of the
+ *       entity.
+ *     - description: (optional) A description for the variable.
+ *     - 'options list': (optional) A callback that returns an array of possible
+ *       values for this variable as specified for entity properties at
+ *       hook_entity_property_info().
  *     - 'skip save': If the variable is saved after the event has occured
  *       anyway, set this to TRUE. So rules won't save the variable a second
  *       time. Optional, defaults to FALSE.
  *     - handler: A handler to load the actual variable value. This is useful
  *       for lazy loading variables. The handler gets all so far available
  *       variables passed in the order as defined. Optional. Also see
- *       http://drupal.org/node/298554.
+ *       http://drupal.org/node/884554.
+ *       Note that for lazy-loading entities just the entity id may be passed
+ *       as variable value, so a handler is not necesary in that case.
  *
  *  @see rules_invoke_event()
  */
@@ -275,7 +283,7 @@ function hook_rules_event_info() {
       'label' => t('Content is going to be viewed'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('viewed content')) + array(
-        'build_mode' => array('type' => 'string', 'label' => t('view mode')),
+        'view_mode' => array('type' => 'text', 'label' => t('view mode')),
       ),
     ),
     'node_delete' => array(
