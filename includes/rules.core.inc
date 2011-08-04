@@ -2233,7 +2233,8 @@ class RulesLog {
     $output = array();
     while ($line < count($this->log)) {
       if ($output && !empty($this->log[$line][4])) {
-        // The next entry stems from another evaluated set, add in its log messages here
+        // The next entry stems from another evaluated set, add in its log
+        // messages here.
         $vars['head'] = t($this->log[$line][0], $this->log[$line][1]);
         $vars['log'] = $this->renderHelper($line);
         $output[] = theme('rules_debug_element', $vars);
@@ -2248,7 +2249,7 @@ class RulesLog {
         $output[] = $msg;
 
         if (isset($this->log[$line][4]) && !$this->log[$line][4]) {
-          // This was the last log entry of this set
+          // This was the last log entry of this set.
           return theme('item_list', array('items' => $output));
         }
       }

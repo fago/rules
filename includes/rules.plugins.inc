@@ -208,9 +208,11 @@ class Rule extends RulesActionContainer {
   }
 
   public function evaluate(RulesState $state) {
-    rules_log('Evaluating rule %label.', array('%label' => $this->label));
+    rules_log('Evaluating conditions of rule %label.', array('%label' => $this->label));
     if ($this->conditions->evaluate($state)) {
+      rules_log('Rule %label fires.', array('%label' => $this->label), RulesLog::INFO, TRUE);
       parent::evaluate($state);
+      rules_log('Rule %label has fired.', array('%label' => $this->label), RulesLog::INFO, FALSE);
     }
   }
 
