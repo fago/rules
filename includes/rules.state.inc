@@ -133,11 +133,13 @@ class RulesState {
    *
    * @param $name
    *   The name of the variable to return.
+   *
+   * @return
+   *   The variable or a EntityMetadataWrapper containing the variable.
+   *
    * @throws RulesException
    *   Throws a RulesException in case we have info about the requested
    *   variable, but it is not defined.
-   * @return
-   *   The variable or a EntityMetadataWrapper containing the variable.
    */
   public function &get($name) {
     if (!array_key_exists($name, $this->variables)) {
@@ -267,10 +269,12 @@ class RulesState {
    *
    * @param $selector
    *   The selector string, e.g. "node:author:mail".
-   * @throws RulesException
-   *   Throws a RulesException in case the selector cannot be applied.
+   *
    * @return EntityMetadataWrapper
    *   The wrapper for the given selector.
+   *
+   * @throws RulesException
+   *   Throws a RulesException in case the selector cannot be applied.
    */
   public function applyDataSelector($selector) {
     $parts = explode(':', str_replace('-', '_', $selector), 2);
@@ -290,6 +294,11 @@ class RulesState {
           throw new RulesException('Unable to apply data selector %selector. The specified variable is not a list or a structure: %wrapper.', array('%selector' => $selector, '%wrapper' => $wrapper));
         }
       }
+      // Try accessing the data value immediately, so we can provide a
+      // reasonable error message in case it fails. If the wrapper wraps an
+      // entity make sure to not issue an eventually unnecessary entity_load()
+      // though.
+      $wrapper->value(array('identifier' => TRUE));
     }
     catch (EntityMetadataWrapperException $e) {
       // In case of an exception, re-throw it.

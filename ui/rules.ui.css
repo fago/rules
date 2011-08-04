@@ -114,6 +114,15 @@ div.rules-debug-log-head {
   padding-left: 2em;
 }
 
+.rules-debug-log .rules-debug-warn {
+  color: #df0101;
+}
+
+.rules-debug-log .rules-debug-error {
+  font-weight: bold;
+  color: #df0101;
+}
+
 #rules-filter-form {
   margin-bottom: 1.5em;
 }

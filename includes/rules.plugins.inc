@@ -563,28 +563,34 @@ class RulesLoop extends RulesActionContainer {
   }
 
   public function evaluate(RulesState $state) {
-    $param_info = $this->pluginParameterInfo();
-    $list = $this->getArgument('list', $param_info['list'], $state);
-    $item_var_info = $this->listItemInfo();
-    $item_var_name = $this->settings['item:var'];
+    try {
+      $param_info = $this->pluginParameterInfo();
+      $list = $this->getArgument('list', $param_info['list'], $state);
+      $item_var_info = $this->listItemInfo();
+      $item_var_name = $this->settings['item:var'];
 
-    if (isset($this->settings['list:select'])) {
-      rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
-    }
+      if (isset($this->settings['list:select'])) {
+        rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
+      }
 
-    // Loop over the list and evaluate the children for each list item.
-    foreach ($list as $key => $item) {
-      // Use a separate state so variables are available in the loop only.
-      $state2 = clone $state;
-      $state2->addVariable($item_var_name, $list[$key], $item_var_info);
-      parent::evaluate($state2);
+      // Loop over the list and evaluate the children for each list item.
+      foreach ($list as $key => $item) {
+        // Use a separate state so variables are available in the loop only.
+        $state2 = clone $state;
+        $state2->addVariable($item_var_name, $list[$key], $item_var_info);
+        parent::evaluate($state2);
 
-      // Update variables from parent scope.
-      foreach ($state->variables as $var_key => &$var_value) {
-        if (array_key_exists($var_key, $state2->variables)) {
-          $var_value = $state2->variables[$var_key];
+        // Update variables from parent scope.
+        foreach ($state->variables as $var_key => &$var_value) {
+          if (array_key_exists($var_key, $state2->variables)) {
+            $var_value = $state2->variables[$var_key];
+          }
         }
       }
+    }
+    catch (RulesException $e) {
+      rules_log($e->msg, $e->args, $e->severity);
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
     }
   }
 

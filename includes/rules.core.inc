@@ -571,7 +571,7 @@ abstract class RulesPlugin extends RulesExtendable {
         $state->addVariable($name, $args[$name], $info);
       }
       elseif (empty($info['optional']) && $info['type'] != 'hidden') {
-        throw new RulesException('Argument %name is missing.', array('%name' => $name), $this);
+        throw new RulesException('Argument %name is missing.', array('%name' => $name), $this, RulesLog::ERROR);
       }
     }
     return $state;
@@ -776,6 +776,25 @@ abstract class RulesPlugin extends RulesExtendable {
       return check_plain((string) $arg);
     }
     return $arg;
+  }
+
+  /**
+   * Gets the right arguments for executing the element.
+   *
+   * @throws RulesException
+   *   If case an argument cannot be retrieved an exception is thrown.
+   */
+  protected function getExecutionArguments(RulesState $state) {
+    $param_info = $this->pluginParameterInfo();
+    foreach ($param_info as $name => $info) {
+      $args[$name] = $this->getArgument($name, $info, $state);
+    }
+    // Append the settings and the execution state. Faces will append $this.
+    $args['settings'] = $this->settings;
+    $args['state'] = $state;
+    // Make the wrapped variables for the arguments available in the state.
+    $state->currentArguments = $args;
+    return rules_unwrap_data($args, $param_info);
   }
 
   /**
@@ -1365,24 +1384,14 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     catch (RulesException $e) {
       rules_log($e->msg, $e->args, $e->severity);
-      rules_log('Unable to execute %name.', array('%name' => $this->getPluginName()));
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
     }
-  }
-
-  /**
-   * Gets the right arguments for executing this.
-   */
-  protected function getExecutionArguments(RulesState $state) {
-    $param_info = $this->pluginParameterInfo();
-    foreach ($param_info as $name => $info) {
-      $args[$name] = $this->getArgument($name, $info, $state);
+    // Catch wrapper exceptions that might occur due to failures loading an
+    // entity or similar.
+    catch (EntityMetadataWrapperException $e) {
+      rules_log('Unable to get a data value. Error: !error', array('!error' => $e->getMessage()), RulesLog::WARN);
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
     }
-    // Append the settings and the execution state. Faces will append $this.
-    $args['settings'] = $this->settings;
-    $args['state'] = $state;
-    // Make the wrapped variables for the arguments available in the state.
-    $state->currentArguments = $args;
-    return rules_unwrap_data($args, $param_info);
   }
 
   public function __sleep() {
@@ -1509,8 +1518,12 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
  * Interface for objects that can be used as action.
  */
 interface RulesActionInterface {
+
   /**
    * @return As specified.
+   *
+   * @throws RulesException
+   *   Throws an exception if not all necessary arguments have been provided.
    */
   public function execute();
 }
@@ -1522,6 +1535,9 @@ interface RulesConditionInterface {
 
   /**
    * @return Boolean.
+   *
+   * @throws RulesException
+   *   Throws an exception if not all necessary arguments have been provided.
    */
   public function execute();
 
@@ -2226,7 +2242,8 @@ class RulesLog {
         $formatted_diff = round(($this->log[$line][3] - $startTime) * 1000, 3) .' ms';
         $msg = $formatted_diff .' '. t($this->log[$line][0], $this->log[$line][1]);
         if ($this->log[$line][2] >= RulesLog::WARN) {
-          $msg = '<strong>'. $msg .'</strong>';
+          $level = $this->log[$line][2] == RulesLog::WARN ? 'warn' : 'error';
+          $msg = '<span class="rules-debug-' . $level . '">'. $msg .'</span>';
         }
         $output[] = $msg;
 
