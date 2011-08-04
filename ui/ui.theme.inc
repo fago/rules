@@ -204,11 +204,26 @@ function theme_rules_data_selector_help($variables) {
 function theme_rules_log($variables) {
   $element = $variables['element'];
   drupal_add_css(drupal_get_path('module', 'rules') . '/ui/rules.ui.css');
+  // Add jquery ui core css and functions, which are needed for the icons.
+  drupal_add_library('system', 'ui');
+  drupal_add_js(drupal_get_path('module', 'rules') . '/ui/rules.debug.js');
 
   $output = '<div class="rules-debug-log">';
-  $output .= '<h3>' . t('Rules evaluation log') . '</h3>';
+
+  $output .= '<h3 class="rules-debug-log-head">';
+  $output .= '<span class="rules-debug-open-main rules-debug-collapsible-link">';
+  $output .= '<span unselectable="on" class="ui-icon ui-icon-triangle-1-e rules-debug-icon-open">&nbsp;</span>';
+  $output .= t('Rules evaluation log');
+  $output .= '</span>';
+  $output .= '</span>';
+  $output .= '<span class="rules-debug-open-all rules-debug-collapsible-link">-' . t('Open all') . '-<span>';
+  $output .= '</h3>';
+
+  $output .= '<div>';
   $output .= $element['#children'];
   $output .= '</div>';
+  $output .= '</div>';
+
   return $output;
 }
 
@@ -239,5 +254,19 @@ function theme_rules_autocomplete($variables) {
   $output .= '<input' . drupal_attributes($element['#attributes']) . ' />';
   $output .= '</div>';
 
+  return $output;
+}
+
+/**
+ * Theme rules debug log elements.
+ */
+function theme_rules_debug_element($variables) {
+  $output = '<div class="rules-debug-block">';
+  $output .= '<div class="rules-debug-log-head rules-debug-open rules-debug-collapsible-link">"';
+  $output .= '<span unselectable="on" class="ui-icon ui-icon-triangle-1-e rules-debug-icon-open">&nbsp;</span>';
+  $output .= $variables['head'];
+  $output .= '</div>';
+  $output .= $variables['log'];
+  $output .= '</div>';
   return $output;
 }

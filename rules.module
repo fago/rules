@@ -877,6 +877,10 @@ function rules_theme() {
       'render element' => 'element',
       'file' => 'ui/ui.theme.inc',
     ),
+    'rules_debug_element' => array(
+      'render element' => 'element',
+      'file' => 'ui/ui.theme.inc',
+    ),
   );
 }
 
@@ -892,6 +896,9 @@ function rules_permission() {
       'title' => t('Bypass Rules access control'),
       'description' => t('Use any data property, Rules action or input evaluation system regardless of permission restrictions.'),
       'restrict access' => TRUE,
+    ),
+    'access rules debug' => array(
+      'title' => t('Access the Rules debug log'),
     ),
   );
 }
@@ -938,6 +945,16 @@ function rules_menu_add_element_title($array) {
 }
 
 /**
+ * Returns the current region for the debug log.
+ */
+function rules_debug_log_region() {
+  // If there is no setting for the current theme use the default theme setting.
+  global $theme_key;
+  $theme_default = variable_get('theme_default', 'bartik');
+  return variable_get('rules_debug_region_' . $theme_key, variable_get('rules_debug_region_' . $theme_default, 'help'));
+}
+
+/**
  * Implements hook_page_build() to add the rules debug log to the page bottom.
  */
 function rules_page_build(&$page) {
@@ -949,7 +966,7 @@ function rules_page_build(&$page) {
   }
 
   if (isset($_SESSION['rules_debug'])) {
-    $region = variable_get('rules_debug_region', 'help');
+    $region = rules_debug_log_region();
     foreach ($_SESSION['rules_debug'] as $log) {
       $page[$region]['rules_debug'][] = array(
         '#markup' => $log,
@@ -958,17 +975,25 @@ function rules_page_build(&$page) {
     }
     unset($_SESSION['rules_debug']);
   }
+
   if (rules_show_debug_output()) {
-    $logger = RulesLog::logger();
-    $region = variable_get('rules_debug_region', 'help');
-    if ($log = $logger->render()) {
-      $page[$region]['rules_debug'][] = array(
-        '#markup' => $log,
-      );
-      $page[$region]['rules_debug']['#theme_wrappers'] = array('rules_log');
-      $logger->clear();
-    }
+    $region = rules_debug_log_region();
+    $page[$region]['rules_debug']['#pre_render'] = array('rules_debug_log_pre_render');
   }
+}
+
+/**
+ * Pre-render callback for the debug log, which renders and then clears it.
+ */
+function rules_debug_log_pre_render($elements) {
+  $logger = RulesLog::logger();
+  if ($log = $logger->render()) {
+    $logger = RulesLog::logger();
+    $logger->clear();
+    $elements[] = array('#markup' => $log);
+    $elements['#theme_wrappers'] = array('rules_log');
+  }
+  return $elements;
 }
 
 /**
@@ -995,8 +1020,11 @@ function rules_drupal_goto_alter(&$path, &$options, &$http_response_code) {
  * Returns whether the debug log should be shown.
  */
 function rules_show_debug_output() {
+  if (variable_get('rules_debug', FALSE) && user_access('access rules debug')) {
+    return TRUE;
+  }
   // For performance avoid unnecessary auto-loading of the RulesLog class.
-  return variable_get('rules_debug', FALSE) || (class_exists('RulesLog', FALSE) && RulesLog::logger()->hasErrors() && user_access('administer rules'));
+  return (class_exists('RulesLog', FALSE) && RulesLog::logger()->hasErrors() && user_access('administer rules'));
 }
 
 /**

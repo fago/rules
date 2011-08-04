@@ -2201,7 +2201,9 @@ class RulesLog {
     $line = 0;
     $output = array();
     while (isset($this->log[$line])) {
-      $output[] = $this->renderHelper($line);
+      $vars['head'] = t($this->log[$line][0], $this->log[$line][1]);
+      $vars['log'] = $this->renderHelper($line);
+      $output[] = theme('rules_debug_element', $vars);
       $line++;
     }
     return implode('', $output);
@@ -2216,7 +2218,9 @@ class RulesLog {
     while ($line < count($this->log)) {
       if ($output && !empty($this->log[$line][4])) {
         // The next entry stems from another evaluated set, add in its log messages here
-        $output[] = $this->renderHelper($line);
+        $vars['head'] = t($this->log[$line][0], $this->log[$line][1]);
+        $vars['log'] = $this->renderHelper($line);
+        $output[] = theme('rules_debug_element', $vars);
       }
       else {
         $formatted_diff = round(($this->log[$line][3] - $startTime) * 1000, 3) .' ms';
