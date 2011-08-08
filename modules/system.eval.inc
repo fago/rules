@@ -24,7 +24,12 @@ function rules_action_drupal_message($message, $status, $repeat) {
 function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
   // Don't let administrators lock them out from Rules administration pages.
   if (isset($_GET['q']) && strpos($_GET['q'], 'admin/config/workflow/rules') === 0) {
-    rules_log('Prevented page redirect action on Rules administration page.', array(), RulesLog::WARN);
+    rules_log('Skipped page redirect on Rules administration page.', array(), RulesLog::WARN);
+    return;
+  }
+  // Do not redirect during batch processing.
+  if (($batch = batch_get()) && isset($batch['current_set'])) {
+    rules_log('Skipped page redirect during batch processing.');
     return;
   }
 
