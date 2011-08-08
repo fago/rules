@@ -168,8 +168,13 @@ function rules_get_rule_set($set_name, $reset = FALSE) {
         rules_sort_children($set['rules']);
         cache_set('set_'. $name, $set, 'cache_rules');
       }
-      //get all inactive sets and store them to speed up later calls
-      variable_set('rules_inactive_sets', array_diff(array_keys(rules_get_rule_sets()), array_keys($sets)));
+      // Get all inactive sets and store them to speed up later calls.
+      $inactive_sets = array_diff(array_keys(rules_get_rule_sets()), array_keys($sets));
+      // If the inactive sets have changed, update the variable.
+      if ($inactive_sets != variable_get('rules_inactive_sets', array())) {
+        variable_set('rules_inactive_sets', $inactive_sets);
+      }
+
       _rules_get_rule_set_initialize($sets);
     }
   }
