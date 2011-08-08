@@ -364,7 +364,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       $this->settingsFormSubmit($form, $form_state);
     }
     $this->element->save();
-    drupal_set_message(t('Your changes have been saved.'));
   }
 
   /**

@@ -66,6 +66,7 @@ function rules_ui_form_rules_config_validate($form, &$form_state) {
  */
 function rules_ui_form_edit_rules_config_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
+  drupal_set_message(t('Your changes have been saved.'));
   if (empty($form_state['redirect'])) {
     $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['rules_element']);
   }
@@ -374,6 +375,7 @@ function rules_ui_edit_element_validate($form, &$form_state) {
  */
 function rules_ui_edit_element_submit($form, &$form_state) {
   $form_state['rules_element']->form_submit($form, $form_state);
+  drupal_set_message(t('Your changes have been saved.'));
   if (empty($form_state['redirect'])) {
     $form_state['redirect'] = RulesPluginUI::defaultRedirect($form_state['rules_element']);
   }

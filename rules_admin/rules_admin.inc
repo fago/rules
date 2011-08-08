@@ -286,5 +286,6 @@ function rules_admin_add_component_validate($form, &$form_state) {
 function rules_admin_add_component_submit($form, &$form_state) {
   $rules_config = $form_state['rules_config'];
   $rules_config->form_submit($form, $form_state);
+  drupal_set_message(t('Your changes have been saved.'));
   $form_state['redirect'] = RulesPluginUI::path($rules_config->name);
 }
