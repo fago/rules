@@ -995,7 +995,7 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
 
     // Ensure the rule was evaluated a second time
     $text = RulesLog::logger()->render();
-    $msg = RulesTestCase::t('Evaluating rule %rule 1', array('rule 1'));
+    $msg = RulesTestCase::t('Evaluating conditions of rule %rule 1', array('rule 1'));
     $pos = strpos($text, $msg);
     $pos = ($pos !== FALSE) ? strpos($text, $msg, $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, "Recursion prevented.");
@@ -1067,10 +1067,10 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
 
     //debug(RulesLog::logger()->render());
     $text = RulesLog::logger()->render();
-    $pos = strpos($text, RulesTestCase::t('Evaluating rule %rule 1', array('rule 1')));
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 2', array('rule 2')), $pos) : FALSE;
+    $pos = strpos($text, RulesTestCase::t('Evaluating conditions of rule %rule 1', array('rule 1')));
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating conditions of rule %rule 2', array('rule 2')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Saved %node_loaded of type %node.', array('node_loaded', 'node')), $pos) : FALSE;
-    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating rule %rule 1', array('rule 1')), $pos) : FALSE;
+    $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Evaluating conditions of rule %rule 1', array('rule 1')), $pos) : FALSE;
     $pos = ($pos !== FALSE) ? strpos($text, RulesTestCase::t('Not evaluating reaction rule %rule 2 to prevent recursion', array('rule 2')), $pos) : FALSE;
     $this->assertTrue($pos !== FALSE, 'Rule1 was triggered on the event caused by Rule2.');
   }
