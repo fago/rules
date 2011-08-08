@@ -22,6 +22,12 @@ function rules_action_drupal_message($message, $status, $repeat) {
  * @see rules_drupal_goto_alter()
  */
 function rules_action_drupal_goto($url, $force = FALSE, $destination = FALSE) {
+  // Don't let administrators lock them out from Rules administration pages.
+  if (isset($_GET['q']) && strpos($_GET['q'], 'admin/config/workflow/rules') === 0) {
+    rules_log('Prevented page redirect action on Rules administration page.', array(), RulesLog::WARN);
+    return;
+  }
+
   // Keep the current destination parameter if there is one set.
   if ($destination) {
     $url .= strpos($url, '?') === FALSE ? '?' : '&';
