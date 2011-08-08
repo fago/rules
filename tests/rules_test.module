@@ -24,7 +24,12 @@ function rules_test_entity_property_info_alter(&$info) {
   $properties['reference'] = array(
     'label' => t("Referenced entity"),
     'getter callback' => 'rules_test_get_referenced_entity',
-    'type' => 'node',
+    'type' => 'entity',
+  );
+  $properties['ref_nodes'] = array(
+    'label' => t("Referenced nodes"),
+    'getter callback' => 'rules_test_get_referenced_node',
+    'type' => 'list<node>',
   );
 }
 
@@ -34,6 +39,14 @@ function rules_test_entity_property_info_alter(&$info) {
 function rules_test_get_referenced_entity($node) {
   // For testing purposes we just return the node itself as property value.
   return entity_metadata_wrapper('node', $node);
+}
+
+/**
+ * Getter callback to get the referenced-node list-property.
+ */
+function rules_test_get_referenced_node($node) {
+  // For testing purposes we just return the node itself as property value.
+  return array($node->nid);
 }
 
 function rules_test_no_access($op) {

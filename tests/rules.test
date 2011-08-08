@@ -488,7 +488,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->condition('entity_is_of_type', array('entity:select' => 'node:reference', 'type' => 'node'))
          ->condition('data_is', array('data:select' => 'node:reference:type', 'value' => 'page'))
-         ->action('drupal_message', array('message' => 'worked'));
+         ->action('rules_node_page_make_sticky_action', array('node:select' => 'node:reference'));
     $rule->integrityCheck();
     $rule->execute($node);
 
@@ -507,9 +507,28 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule->integrityCheck();
     $rule->execute($node);
 
+    // Test asserting metadata on a derived property being a list item.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('node_is_of_type', array('node:select' => 'node:ref-nodes:0', 'type' => array('article')))
+         ->action('data_set', array('data:select' => 'node:ref-nodes:0:field-tags', 'value' => array()));
+    $rule->integrityCheck();
+    $rule->execute($node);
+
     // Give green lights if there were no exceptions and check rules-log errors.
     $this->pass('Rules asserting metadata on a derived property pass integrity checks.');
     RulesLog::logger()->checkLog();
+
+    // Make sure assertions of a one list item are not valid for another item.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('node_is_of_type', array('node:select' => 'node:ref-nodes:0', 'type' => array('article')))
+         ->action('data_set', array('data:select' => 'node:ref-nodes:1:field-tags', 'value' => array()));
+    try {
+      $rule->integrityCheck();
+      $this->fail('Assertion of a list item is not valid for another item.');
+    }
+    catch (RulesException $e) {
+      $this->pass('Assertion of a list item is not valid for another item.');
+    }
   }
 
   /**

@@ -553,10 +553,19 @@ class RulesData  {
     $info = $wrapper->info();
 
     if (!empty($info['rules assertion'])) {
+      $assertion = $info['rules assertion'];
+
+      // In case there are list-wrappers pass through the assertions of the item
+      // but make sure we only apply the assertions for the list items for
+      // which the conditions are executed.
+      if (isset($info['parent']) && $info['parent'] instanceof EntityListWrapper) {
+        $assertion = isset($assertion[$info['name']]) ? $assertion[$info['name']] : array();
+      }
+
       // Support specifying multiple bundles, whereas the added properties are
       // the intersection of the bundle properties.
-      if (isset($info['rules assertion']['#info']['bundle'])) {
-        $bundles = (array) $info['rules assertion']['#info']['bundle'];
+      if (isset($assertion['#info']['bundle'])) {
+        $bundles = (array) $assertion['#info']['bundle'];
         foreach ($bundles as $bundle) {
           $properties[] = isset($property_info['bundles'][$bundle]['properties']) ? $property_info['bundles'][$bundle]['properties'] : array();
         }
@@ -564,26 +573,26 @@ class RulesData  {
         $property_info['properties'] += count($properties) > 1 ? call_user_func_array('array_intersect_key', $properties) : reset($properties);
       }
       // Support adding directly asserted property info.
-      if (isset($info['rules assertion']['#info']['property info'])) {
-        $property_info['properties'] += $info['rules assertion']['#info']['property info'];
+      if (isset($assertion['#info']['property info'])) {
+        $property_info['properties'] += $assertion['#info']['property info'];
       }
 
       // Pass through any rules assertion of properties to their info, so any
       // derived wrappers apply it.
-      foreach (element_children($info['rules assertion']) as $key) {
-        $property_info['properties'][$key]['rules assertion'] = $info['rules assertion'][$key];
+      foreach (element_children($assertion) as $key) {
+        $property_info['properties'][$key]['rules assertion'] = $assertion[$key];
         $property_info['properties'][$key]['property info alter'] = array('RulesData', 'applyMetadataAssertions');
 
         // Apply any 'type' and 'bundle' assertion directly to the propertyinfo.
-        if (isset($info['rules assertion'][$key]['#info']['type'])) {
-          $type = $info['rules assertion'][$key]['#info']['type'];
+        if (isset($assertion[$key]['#info']['type'])) {
+          $type = $assertion[$key]['#info']['type'];
           // Support asserting a type in case of generic entity references only.
           if ($property_info['properties'][$key]['type'] == 'entity' && entity_get_info($type)) {
             $property_info['properties'][$key]['type'] = $type;
           }
         }
-        if (isset($info['rules assertion'][$key]['#info']['bundle'])) {
-          $bundle = (array) $info['rules assertion'][$key]['#info']['bundle'];
+        if (isset($assertion[$key]['#info']['bundle'])) {
+          $bundle = (array) $assertion[$key]['#info']['bundle'];
           // Add any single bundle directly to the variable info, so the
           // property fits as argument for parameters requiring the bundle.
           if (count($bundle) == 1) {
