@@ -485,40 +485,57 @@ class RulesData  {
    * @see RulesData::applyMetadataAssertions()
    */
   public static function addMetadataAssertions($var_info, $assertions) {
-    foreach ($assertions as $selector => $data) {
-      // Convert the selector back to underscores, such it maches the varname.
+    foreach ($assertions as $selector => $assertion) {
+      // Convert the selector back to underscores, such it matches the varname.
       $selector = str_replace('-', '_', $selector);
-      // For now only support assertions for variables
-      if (strpos($selector, ':') === FALSE && isset($var_info[$selector])) {
-        // Allow conditions to specialize data types via assertions.
-        if (isset($data['type'])) {
-          // Make sure the data type is more special than the current one.
-          if (RulesData::typesMatch($data, $var_info[$selector])) {
-            $var_info[$selector]['type'] = $data['type'];
-          }
-          unset($data['type']);
+
+      $parts = explode(':', $selector);
+      if (isset($var_info[$parts[0]])) {
+        // Apply the selector to determine the right target array. We build an
+        // array like
+        // $var_info['rules assertion']['property1']['property2']['#info'] = ..
+        $target = &$var_info[$parts[0]]['rules assertion'];
+        foreach (array_slice($parts, 1) as $part) {
+          $target = &$target[$part];
         }
 
-        $var_info[$selector]['rules assertion']['#info'] = isset($var_info[$selector]['rules assertion']['#info']) ? rules_update_array($var_info[$selector]['rules assertion']['#info'], $data) : $data;
+        // In case the assertion is directly for a variable, we have to modify
+        // the variable info directly. In case the asserted property is nested
+        // the info-has to be altered by RulesData::applyMetadataAssertions()
+        // before the child-wrapper is created.
+        if (count($parts) == 1) {
+          // Support asserting a type in case of generic entity references only.
+          if (isset($assertion['type']) && $var_info[$parts[0]]['type'] == 'entity') {
+            if (entity_get_info($assertion['type'])) {
+              $var_info[$parts[0]]['type'] = $assertion['type'];
+            }
+            unset($assertion['type']);
+          }
+          // Add any single bundle directly to the variable info, so the
+          // variable fits as argument for parameters requiring the bundle.
+          if (isset($assertion['bundle']) && count($bundles = (array) $assertion['bundle']) == 1) {
+            $var_info[$parts[0]]['bundle'] = reset($bundles);
+          }
+        }
+
+        // Add the assertions, but merge them with any previously added
+        // assertions if necessary.
+        $target['#info'] = isset($target['#info']) ? rules_update_array($target['#info'], $assertion) : $assertion;
+
         // Add in a callback that the entity metadata wrapper pick up for
         // altering the property info, such that we can add in the assertions.
-        $var_info[$selector] += array('property info alter' => array('RulesData', 'applyMetadataAssertions'));
-
-        // Add any single bundle directly to the variable info, so it can be
-        // used for type checking.
-        if (isset($data['bundle']) && count($bundles = (array) $data['bundle']) == 1) {
-          $var_info[$selector]['bundle'] = reset($bundles);
-        }
+        $var_info[$parts[0]] += array('property info alter' => array('RulesData', 'applyMetadataAssertions'));
 
         // In case there is a VARNAME_unchanged variable as it is used in update
         // hooks, assume the assertions are valid for the unchanged variable
         // too.
-        if (isset($var_info[$selector . '_unchanged'])) {
-          $var_info[$selector . '_unchanged']['rules assertion'] = $var_info[$selector]['rules assertion'];
-          $var_info[$selector . '_unchanged']['property info alter'] = array('RulesData', 'applyMetadataAssertions');
+        if (isset($var_info[$parts[0] . '_unchanged'])) {
+          $name = $parts[0] . '_unchanged';
+          $var_info[$name]['rules assertion'] = $var_info[$parts[0]]['rules assertion'];
+          $var_info[$name]['property info alter'] = array('RulesData', 'applyMetadataAssertions');
 
-          if (isset($var_info[$selector]['bundle']) && !isset($var_info[$selector . '_unchanged']['bundle'])) {
-            $var_info[$selector . '_unchanged']['bundle'] = $var_info[$selector]['bundle'];
+          if (isset($var_info[$parts[0]]['bundle']) && !isset($var_info[$name]['bundle'])) {
+            $var_info[$name]['bundle'] = $var_info[$parts[0]]['bundle'];
           }
         }
       }
@@ -550,9 +567,29 @@ class RulesData  {
       if (isset($info['rules assertion']['#info']['property info'])) {
         $property_info['properties'] += $info['rules assertion']['#info']['property info'];
       }
-      // Pass through any rules assertion of properties to their info.
+
+      // Pass through any rules assertion of properties to their info, so any
+      // derived wrappers apply it.
       foreach (element_children($info['rules assertion']) as $key) {
         $property_info['properties'][$key]['rules assertion'] = $info['rules assertion'][$key];
+        $property_info['properties'][$key]['property info alter'] = array('RulesData', 'applyMetadataAssertions');
+
+        // Apply any 'type' and 'bundle' assertion directly to the propertyinfo.
+        if (isset($info['rules assertion'][$key]['#info']['type'])) {
+          $type = $info['rules assertion'][$key]['#info']['type'];
+          // Support asserting a type in case of generic entity references only.
+          if ($property_info['properties'][$key]['type'] == 'entity' && entity_get_info($type)) {
+            $property_info['properties'][$key]['type'] = $type;
+          }
+        }
+        if (isset($info['rules assertion'][$key]['#info']['bundle'])) {
+          $bundle = (array) $info['rules assertion'][$key]['#info']['bundle'];
+          // Add any single bundle directly to the variable info, so the
+          // property fits as argument for parameters requiring the bundle.
+          if (count($bundle) == 1) {
+            $property_info['properties'][$key]['bundle'] = reset($bundle);
+          }
+        }
       }
     }
     return $property_info;

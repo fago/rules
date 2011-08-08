@@ -59,6 +59,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $log = RulesLog::logger()->get();
     $last = array_pop($log);
     $last = array_pop($log);
+    $last = array_pop($log);
     $this->assertEqual($last[0], 'action called', 'Action called');
     RulesLog::logger()->checkLog();
 
@@ -481,6 +482,33 @@ class RulesTestCase extends DrupalWebTestCase {
     $node = $this->drupalCreateNode(array('type' => 'page', 'sticky' => 0));
     $rule->execute($node);
     $this->assertTrue($node->sticky, 'Rule with asserted metadata executed.');
+
+
+    // Test asserting metadata on a derived property, i.e. not a variable.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('entity_is_of_type', array('entity:select' => 'node:reference', 'type' => 'node'))
+         ->condition('data_is', array('data:select' => 'node:reference:type', 'value' => 'page'))
+         ->action('drupal_message', array('message' => 'worked'));
+    $rule->integrityCheck();
+    $rule->execute($node);
+
+    // Test asserting an entity field.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('entity_has_field', array('entity:select' => 'node:reference', 'field' => 'field_tags'))
+         ->action('data_set', array('data:select' => 'node:reference:field-tags', 'value' => array()));
+    $rule->integrityCheck();
+    $rule->execute($node);
+
+    // Make sure an asserted bundle can be used as argument.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('entity_is_of_type', array('entity:select' => 'node:reference', 'type' => 'node'))
+         ->condition('node_is_of_type', array('node:select' => 'node:reference', 'type' => array('page')))
+         ->action('rules_node_page_make_sticky_action', array('node:select' => 'node:reference'));
+    $rule->integrityCheck();
+    $rule->execute($node);
+
+    // Give green lights if there were no exceptions and check rules-log errors.
+    $this->pass('Rules asserting metadata on a derived property pass integrity checks.');
     RulesLog::logger()->checkLog();
   }
 
@@ -490,6 +518,7 @@ class RulesTestCase extends DrupalWebTestCase {
   function testLoops() {
     // Test passing the list parameter as argument to ensure that is working
     // generally for plugin container too.
+    drupal_get_messages(NULL, TRUE);
     $loop = rules_loop();
     $loop->action('drupal_message', array('message' => 'test'));
     $arg_info = $loop->parameterInfo();
