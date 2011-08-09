@@ -903,7 +903,7 @@ abstract class RulesPlugin extends RulesExtendable {
     // Keep the id always as we need it for the recursion prevention.
     $array = drupal_map_assoc(array('parent', 'id', 'elementId', 'weight', 'settings'));
     // Keep properties related to configurations if they are there.
-    foreach (array('name', 'module', 'status', 'label', 'recursion') as $key) {
+    foreach (array('name', 'module', 'status', 'label', 'recursion', 'tags') as $key) {
       if (isset($this->$key)) {
         $array[$key] = $key;
       }
