@@ -209,7 +209,7 @@ function rules_action_data_set_validate(RulesAbstractPlugin $element) {
   $element->settings += array('data:select' => NULL);
   $info = $element->applyDataSelector($element->settings['data:select'])->info();
   if (strpos($element->settings['data:select'], ':') !== FALSE && empty($info['setter callback'])) {
-    throw new RulesException("The selected data property doesn't support writing.", array(), array($element, 'parameter', 'data'));
+    throw new RulesIntegrityException(t("The selected data property doesn't support writing."), array($element, 'parameter', 'data'));
   }
 }
 
@@ -265,7 +265,7 @@ function rules_action_data_calc_form_alter(&$form, &$form_state, $options, Rules
  */
 function rules_action_create_type_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
+    throw new RulesIntegrityException(t('Invalid type specified.'), array($element, 'parameter', 'type'));
   }
 }
 

@@ -52,7 +52,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     return $return;
   }
   else {
-    throw new RulesException('Unable to get the component %name', array('%name' => $info['#config_name']), $element);
+    throw new RulesEvaluationException('Unable to get the component %name', array('%name' => $info['#config_name']), $element);
   }
 }
 
@@ -117,7 +117,7 @@ class RulesURIInputEvaluator extends RulesDataInputEvaluator {
     elseif (valid_url($uri)) {
       return $uri;
     }
-    throw new RulesException('Input evaluation generated an invalid URI.', array(), NULL, RulesLog::WARN);
+    throw new RulesEvaluationException('Input evaluation generated an invalid URI.', array(), NULL, RulesLog::WARN);
   }
 }
 

@@ -178,7 +178,7 @@ function rules_action_entity_createfetch_access(RulesAbstractPlugin $element) {
  */
 function rules_action_entity_fetch_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
+    throw new RulesEvaluationException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
 }
 
@@ -187,10 +187,10 @@ function rules_action_entity_fetch_validate($element) {
  */
 function rules_action_entity_query_validate($element) {
   if (!isset($element->settings['type'])) {
-    throw new RulesException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
+    throw new RulesEvaluationException('Invalid type specified.', array(), array($element, 'parameter', 'type'));
   }
   if (!isset($element->settings['property'])) {
-    throw new RulesException('Invalid property specified.', array(), array($element, 'parameter', 'property'));
+    throw new RulesEvaluationException('Invalid property specified.', array(), array($element, 'parameter', 'property'));
   }
 }
 

@@ -93,7 +93,7 @@ function rules_scheduler_action_schedule($args, $element) {
     ));
   }
   else {
-    throw new RulesException('Unable to get the component %name', array('%name' => $args['component']), $element);
+    throw new RulesEvaluationException('Unable to get the component %name', array('%name' => $args['component']), $element);
   }
 }
 
@@ -173,7 +173,7 @@ function rules_scheduler_action_delete_validate($element) {
   if (empty($element->settings['task']) && empty($element->settings['task:select']) &&
       empty($element->settings['component']) && empty($element->settings['component:select'])) {
 
-    throw new RulesException(t('You have to specify at least either a component or a task identifier.'), array(), $element);
+    throw new RulesIntegrityException(t('You have to specify at least either a component or a task identifier.'), $element);
   }
 }
 

@@ -8,7 +8,7 @@
  * Extender for the node data type.
  */
 function rules_test_custom_node_save($object) {
-  throw new RulesException('Custom save method invoked.');
+  throw new RulesEvaluationException('Custom save method invoked.');
 }
 
 

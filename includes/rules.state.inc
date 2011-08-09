@@ -137,9 +137,9 @@ class RulesState {
    * @return
    *   The variable or a EntityMetadataWrapper containing the variable.
    *
-   * @throws RulesException
-   *   Throws a RulesException in case we have info about the requested
-   *   variable, but it is not defined.
+   * @throws RulesEvaluationException
+   *   Throws a RulesEvaluationException in case we have info about the
+   *   requested variable, but it is not defined.
    */
   public function &get($name) {
     if (!array_key_exists($name, $this->variables)) {
@@ -149,11 +149,11 @@ class RulesState {
         $this->variables[$name] = rules_wrap_data($data, $this->info[$name]);
         $this->info[$name]['handler'] = FALSE;
         if (!isset($data)) {
-          throw new RulesException('Unable to load variable %name, aborting.', array('%name' => $name), NULL, RulesLog::INFO);
+          throw new RulesEvaluationException('Unable to load variable %name, aborting.', array('%name' => $name), NULL, RulesLog::INFO);
         }
       }
       else {
-        throw new RulesException('Unable to get variable %name, it is not defined.', array('%name' => $name));
+        throw new RulesEvaluationException('Unable to get variable %name, it is not defined.', array('%name' => $name));
       }
     }
     return $this->variables[$name];
@@ -273,8 +273,8 @@ class RulesState {
    * @return EntityMetadataWrapper
    *   The wrapper for the given selector.
    *
-   * @throws RulesException
-   *   Throws a RulesException in case the selector cannot be applied.
+   * @throws RulesEvaluationException
+   *   Throws a RulesEvaluationException in case the selector cannot be applied.
    */
   public function applyDataSelector($selector) {
     $parts = explode(':', str_replace('-', '_', $selector), 2);
@@ -283,7 +283,7 @@ class RulesState {
       return $wrapper;
     }
     elseif (!$wrapper instanceof EntityMetadataWrapper) {
-      throw new RulesException('Unable to apply data selector %selector. The specified variable is not wrapped correctly.', array('%selector' => $selector));
+      throw new RulesEvaluationException('Unable to apply data selector %selector. The specified variable is not wrapped correctly.', array('%selector' => $selector));
     }
     try {
       foreach (explode(':', $parts[1]) as $name) {
@@ -291,7 +291,7 @@ class RulesState {
           $wrapper = $wrapper->get($name);
         }
         else {
-          throw new RulesException('Unable to apply data selector %selector. The specified variable is not a list or a structure: %wrapper.', array('%selector' => $selector, '%wrapper' => $wrapper));
+          throw new RulesEvaluationException('Unable to apply data selector %selector. The specified variable is not a list or a structure: %wrapper.', array('%selector' => $selector, '%wrapper' => $wrapper));
         }
       }
       // Try accessing the data value immediately, so we can provide a
@@ -302,7 +302,7 @@ class RulesState {
     }
     catch (EntityMetadataWrapperException $e) {
       // In case of an exception, re-throw it.
-      throw new RulesException('Unable to apply data selector %selector: %error', array('%selector' => $selector, '%error' => $e->getMessage()));
+      throw new RulesEvaluationException('Unable to apply data selector %selector: %error', array('%selector' => $selector, '%error' => $e->getMessage()));
     }
     return $wrapper;
   }
