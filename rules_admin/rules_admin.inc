@@ -133,26 +133,44 @@ function rules_admin_components_overview($form, &$form_state, $base_path) {
  * Rules settings form.
  */
 function rules_admin_settings($form, &$form_state) {
-  $link = t('Access the Rules debug log');
-  $form['rules_debug_log'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Debug log settings'),
-    '#description' => t('Once the debug log is enabled, it appears every time a rule is evaluated. It is only visible for users having the permission <a href="!url">%link</a>.', array('%link' => $link, '!url' => url('admin/people/permissions', array('fragment' => 'module-rules')))),
-    '#collapsible' => FALSE,
-  );
-  $form['rules_debug_log']['rules_debug'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Debug rules evaluation'),
-    '#default_value' => variable_get('rules_debug', FALSE),
-    '#description' => t('If activated debugging information is shown when rules are evaluated.'),
+  $form['rules_log_errors'] = array(
+    '#type' => 'radios',
+    '#title' => t('Logging of Rules evaluation errors'),
+    '#options' => array(
+      RulesLog::WARN => t('Log all warnings and errors'),
+      RulesLog::ERROR => t('Log errors only'),
+    ),
+    '#default_value' => variable_get('rules_log_errors', RulesLog::WARN),
+    '#description' => t('Evaluations errors are logged to the system log.'),
   );
 
-  $form['rules_debug_log']['regions'] = array(
+  $form['debug'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Debugging'),
+  );
+  $form['debug']['rules_debug_log'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Log debug information to the system log'),
+    '#default_value' => variable_get('rules_debug_log', 0),
+  );
+  $form['debug']['rules_debug'] = array(
+    '#type' => 'radios',
+    '#title' => t('Show debug information'),
+    '#default_value' => variable_get('rules_debug', 0),
+    '#options' => array(
+      0 => t('Never'),
+      RulesLog::WARN => t('In case of errors'),
+      RulesLog::INFO => t('Always'),
+    ),
+    '#description' => t('Debug information is only shown when rules are evaluated and is visible for users having the permission <a href="!url">%link</a>.', array('%link' => t('Access the Rules debug log'), '!url' => url('admin/people/permissions', array('fragment' => 'module-rules')))),
+  );
+
+  $form['debug']['regions'] = array(
     '#type' => 'container',
     '#states' => array(
       // Hide the regions settings when the debug log is disabled.
       'invisible' => array(
-        'input[name="rules_debug"]' => array('checked' => FALSE),
+        'input[name="rules_debug"]' => array('value' => '0'),
       ),
     ),
   );
@@ -160,7 +178,7 @@ function rules_admin_settings($form, &$form_state) {
   $theme_default = variable_get('theme_default', 'bartik');
   $admin_theme = variable_get('admin_theme', 'seven');
 
-  $form['rules_debug_log']['regions']['rules_debug_region_' . $theme_default] = array(
+  $form['debug']['regions']['rules_debug_region_' . $theme_default] = array(
     '#type' => 'select',
     '#title' => t('Default theme region'),
     '#description' => t("The region, where the debug log should be displayed on the default theme %theme. For other themes, Rules will try to display the log on the same region, or hide it in case it doesn't exist.", array('%theme' => $theme_default)),
@@ -168,7 +186,7 @@ function rules_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('rules_debug_region_' . $theme_default, 'help'),
   );
 
-  $form['rules_debug_log']['regions']['rules_debug_region_' . $admin_theme] = array(
+  $form['debug']['regions']['rules_debug_region_' . $admin_theme] = array(
     '#type' => 'select',
     '#title' => t('Admin theme region'),
     '#description' => t('The region, where the debug log should be displayed on the admin theme %theme.', array('%theme' => $admin_theme)),

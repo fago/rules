@@ -30,8 +30,9 @@ function rules_scheduler_cron() {
   }
 
   if (!empty($task_created)) {
-    // Register shutdown callback for logging the rules log to the watchdog.
-    drupal_register_shutdown_function('rules_scheduler_keep_log');
+    // hook_exit() is not invoked for cron runs, so register it as shutdown
+    // callback for logging the rules log to the watchdog.
+    drupal_register_shutdown_function('rules_exit');
     // Clear the log before running tasks via the queue to avoid logging
     // unrelated logs from previous cron-operations.
     RulesLog::logger()->clear();
@@ -56,27 +57,13 @@ function rules_scheduler_run_task(array $task) {
   if ($component = rules_get_cache('comp_' . $task['config'])) {
     $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
     $replacements['%identifier'] = $task['identifier'] ? $task['identifier'] : t('without identifier');
-    rules_log('Scheduled evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, TRUE);
+    rules_log('Scheduled evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, TRUE);
     $state = unserialize($task['state']);
     $state->restoreBlocks();
     // Finally evaluate the component with the given state.
     $component->evaluate($state);
-    rules_log('Finished evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, FALSE);
     $state->cleanUp();
-  }
-}
-
-/**
- * Shutdown callback that cares about keeping rules log.
- *
- * @todo Add setting for the severity of appeared messages to log.
- *
- * @see rules_scheduler_cron()
- */
-function rules_scheduler_keep_log() {
-  // Log the rules log to the system log.
-  if ($log = RulesLog::logger()->render()) {
-    watchdog('rules scheduler', 'Scheduled component evaluation: !log', array('!log' => $log), WATCHDOG_NOTICE);
   }
 }
 

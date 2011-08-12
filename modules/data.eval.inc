@@ -192,7 +192,7 @@ function rules_action_data_create($args, $element) {
     }
   }
   else {
-    throw new RulesEvaluationException('Unable to create @data, no creation callback found.', array('@data' => $type), $element);
+    throw new RulesEvaluationException('Unable to create @data, no creation callback found.', array('@data' => $type), $element, RulesLog::ERROR);
   }
 }
 

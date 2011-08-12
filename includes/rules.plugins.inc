@@ -16,7 +16,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
    * Execute the callback and update/save data as specified by the action.
    */
   protected function executeCallback(array $args, RulesState $state = NULL) {
-    rules_log('Evaluating the action %name.', array('%name' => $this->elementName));
+    rules_log('Evaluating the action %name.', array('%name' => $this->elementName), RulesLog::INFO, $this);
     $return = $this->__call('execute', empty($this->info['named parameter']) ? $args : array($args));
     // Get the (partially) wrapped arguments.
     $args = $state->currentArguments;
@@ -27,7 +27,7 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
         if (!$state->varInfo($name) && isset($this->info['provides'][$name])) {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
           $state->addVariable($var_name, $data, $this->info['provides'][$name]);
-          rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']));
+          rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']), RulesLog::INFO, $this);
           if (!empty($this->info['provides'][$name]['save']) && $state->variables[$var_name] instanceof EntityMetadataWrapper) {
             $state->saveChanges($var_name, $state->variables[$var_name]);
           }
@@ -92,7 +92,7 @@ class RulesCondition extends RulesAbstractPlugin implements RulesConditionInterf
 
   protected function executeCallback(array $args, RulesState $state = NULL) {
     $return = (bool) $this->__call('execute', empty($this->info['named parameter']) ? $args : array($args));
-    rules_log('The condition %name evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'));
+    rules_log('The condition %name evaluated to %bool', array('%name' => $this->elementName, '%bool' => $return ? 'TRUE' : 'FALSE'), RulesLog::INFO, $this);
     return $this->negate ? !$return : $return;
   }
 
@@ -208,11 +208,11 @@ class Rule extends RulesActionContainer {
   }
 
   public function evaluate(RulesState $state) {
-    rules_log('Evaluating conditions of rule %label.', array('%label' => $this->label));
+    rules_log('Evaluating conditions of rule %label.', array('%label' => $this->label), RulesLog::INFO, $this);
     if ($this->conditions->evaluate($state)) {
-      rules_log('Rule %label fires.', array('%label' => $this->label), RulesLog::INFO, TRUE);
+      rules_log('Rule %label fires.', array('%label' => $this->label), RulesLog::INFO, $this, TRUE);
       parent::evaluate($state);
-      rules_log('Rule %label has fired.', array('%label' => $this->label), RulesLog::INFO, FALSE);
+      rules_log('Rule %label has fired.', array('%label' => $this->label), RulesLog::INFO, $this, FALSE);
     }
   }
 
@@ -222,7 +222,7 @@ class Rule extends RulesActionContainer {
    * @see RulesPlugin::evaluate()
    */
   public function fire(RulesState $state) {
-    rules_log('Firing rule %label.', array('%label' => $this->label));
+    rules_log('Firing rule %label.', array('%label' => $this->label), RulesLog::INFO, $this);
     parent::evaluate($state);
   }
 
@@ -377,7 +377,7 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   public function evaluate(RulesState $state) {
     // Implement recursion prevention for reaction rules.
     if ($state->isBlocked($this)) {
-      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO);
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', array('%label' => $this->label(), '@plugin' => $this->plugin()), RulesLog::INFO, $this);
     }
     $state->block($this);
     $copy = clone $state;
@@ -572,7 +572,7 @@ class RulesLoop extends RulesActionContainer {
       $item_var_name = $this->settings['item:var'];
 
       if (isset($this->settings['list:select'])) {
-        rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']));
+        rules_log('Looping over the list items of %selector', array('%selector' => $this->settings['list:select']), RulesLog::INFO, $this);
       }
 
       // Loop over the list and evaluate the children for each list item.
@@ -592,7 +592,7 @@ class RulesLoop extends RulesActionContainer {
     }
     catch (RulesEvaluationException $e) {
       rules_log($e->msg, $e->args, $e->severity);
-      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN, $this);
     }
   }
 
@@ -674,12 +674,12 @@ class RulesEventSet extends RulesRuleSet {
   }
 
   public function executeByArgs($args = array()) {
-    rules_log('Reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, TRUE);
+    rules_log('Reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, NULL, TRUE);
     $state = $this->setUpState($args);
     module_invoke_all('rules_config_execute', $this);
     $this->evaluate($state);
     $state->cleanUp($this);
-    rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, FALSE);
+    rules_log('Finished reacting on event %label.', array('%label' => $this->info['label']), RulesLog::INFO, NULL, FALSE);
   }
 
   public function rebuildCache(&$itemInfo, &$cache) {

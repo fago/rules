@@ -18,6 +18,7 @@ class RulesSchedulerTestCase extends DrupalWebTestCase {
   function setUp() {
     parent::setUp('rules_scheduler');
     RulesLog::logger()->clear();
+    variable_set('rules_debug_log', 1);
   }
 
   /**

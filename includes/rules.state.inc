@@ -153,7 +153,7 @@ class RulesState {
         }
       }
       else {
-        throw new RulesEvaluationException('Unable to get variable %name, it is not defined.', array('%name' => $name));
+        throw new RulesEvaluationException('Unable to get variable %name, it is not defined.', array('%name' => $name), NULL, RulesLog::ERROR);
       }
     }
     return $this->variables[$name];

@@ -174,16 +174,30 @@ function rules_action_set($variables, $provides = array()) {
  *   An array of placeholder arguments as used by t().
  * @param $priority
  *   A priority as defined by the RulesLog class.
- * @param $scope
- *   Optionally this may be used to denote the beginning (TRUE) or the end
- *   (FALSE) of a new execution scope.
+ * @param RulesPlugin $element
+ *  (optional) The RulesElement causing the log entry.
+ * @param boolean $scope
+ *  (optional) This may be used to denote the beginning (TRUE) or the end
+ *  (FALSE) of a new execution scope.
  */
-function rules_log($msg, $args = array(), $priority = RulesLog::INFO, $scope = NULL) {
+function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugin $element = NULL, $scope = NULL) {
   static $logger;
+  if ($priority >= variable_get('rules_log_errors', RulesLog::WARN)) {
+    $link = NULL;
+    if (isset($element) && isset($element->root()->name)) {
+      $link = l(t('edit configuration'), RulesPluginUI::path($element->root()->name, 'edit', $element));
+    }
+    watchdog('rules', $msg, $args, $priority == RulesLog::WARN ? WATCHDOG_WARNING : WATCHDOG_ERROR, $link);
+  }
+  // Do nothing in case debugging is totally disabled.
+  if (!variable_get('rules_debug_log', FALSE) && !variable_get('rules_debug', FALSE)) {
+    return;
+  }
   if (!isset($logger)) {
     $logger = RulesLog::logger();
   }
-  $logger->log($msg, $args, $priority, $scope);
+  $path = isset($element) ? RulesPluginUI::path($element->root()->name, 'edit', $element) : NULL;
+  $logger->log($msg, $args, $priority, $scope, $path);
 }
 
 /**
@@ -991,6 +1005,10 @@ function rules_debug_log_pre_render($elements) {
     $logger->clear();
     $elements[] = array('#markup' => $log);
     $elements['#theme_wrappers'] = array('rules_log');
+    // Log the rules log to the system log if enabled.
+    if (variable_get('rules_debug_log', FALSE)) {
+      watchdog('rules', 'Rules debug information: !log', array('!log' => $log), WATCHDOG_NOTICE);
+    }
   }
   return $elements;
 }
@@ -1019,11 +1037,11 @@ function rules_drupal_goto_alter(&$path, &$options, &$http_response_code) {
  * Returns whether the debug log should be shown.
  */
 function rules_show_debug_output() {
-  if (variable_get('rules_debug', FALSE) && user_access('access rules debug')) {
+  if (variable_get('rules_debug', FALSE) == RulesLog::INFO && user_access('access rules debug')) {
     return TRUE;
   }
   // For performance avoid unnecessary auto-loading of the RulesLog class.
-  return (class_exists('RulesLog', FALSE) && RulesLog::logger()->hasErrors() && user_access('administer rules'));
+  return variable_get('rules_debug', FALSE) == RulesLog::WARN && user_access('access rules debug') && class_exists('RulesLog', FALSE) && RulesLog::logger()->hasErrors();
 }
 
 /**
@@ -1035,6 +1053,10 @@ function rules_exit() {
       // Keep the log in the session so we can show it on the next page.
       $_SESSION['rules_debug'][] = $log;
     }
+  }
+  // Log the rules log to the system log if enabled.
+  if (variable_get('rules_debug_log', FALSE) && $log = RulesLog::logger()->render()) {
+    watchdog('rules', 'Rules debug information: !log', array('!log' => $log), WATCHDOG_NOTICE);
   }
 }
 

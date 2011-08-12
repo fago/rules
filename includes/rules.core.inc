@@ -360,7 +360,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $parent->children[] = $this;
     }
     else {
-      throw new RulesEvaluationException('The given container is incompatible with this element.', array(), $this);
+      throw new RulesEvaluationException('The given container is incompatible with this element.', array(), $this, RulesLog::ERROR);
     }
   }
 
@@ -369,7 +369,7 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   public function root() {
     $element = $this;
-    while (!empty($element->parent)) {
+    while (!$element->isRoot()) {
       $element = $element->parent;
     }
     return $element;
@@ -379,7 +379,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns whether the element is the root of the configuration.
    */
   public function isRoot() {
-    return empty($this->parent);
+    return empty($this->parent) || isset($this->name);
   }
 
   /**
@@ -758,7 +758,7 @@ abstract class RulesPlugin extends RulesExtendable {
       $arg = $state->get($name);
     }
     elseif (empty($info['optional']) && $info['type'] != 'hidden') {
-      throw new RulesEvaluationException('Required parameter %name is missing.', array('%name' => $name), $this);
+      throw new RulesEvaluationException('Required parameter %name is missing.', array('%name' => $name), $this, RulesLog::ERROR);
     }
     else {
       $arg = isset($info['default value']) ? $info['default value'] : NULL;
@@ -1354,7 +1354,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
 
   public function executeByArgs($args = array()) {
     $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
-    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, $this, TRUE);
     $this->processSettings();
     // If there is no element info, just pass through the passed arguments.
     // That way we support executing actions without any info at all.
@@ -1371,7 +1371,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $return = $this->executeCallback($args, $state);
     }
     $state->cleanUp();
-    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, $this, FALSE);
     return $return;
   }
 
@@ -1389,13 +1389,13 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     }
     catch (RulesEvaluationException $e) {
       rules_log($e->msg, $e->args, $e->severity);
-      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN, $this);
     }
     // Catch wrapper exceptions that might occur due to failures loading an
     // entity or similar.
     catch (EntityMetadataWrapperException $e) {
       rules_log('Unable to get a data value. Error: !error', array('!error' => $e->getMessage()), RulesLog::WARN);
-      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN);
+      rules_log('Unable to evaluate %name.', array('%name' => $this->getPluginName()), RulesLog::WARN, $this);
     }
   }
 
@@ -1667,7 +1667,7 @@ interface RulesOptimizationInterface {
 class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
 
   public function execute() {
-    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.");
+    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.", array(), $this->element, RulesLog::ERROR);
   }
 
   /**
@@ -1829,7 +1829,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    */
   public function executeByArgs($args = array()) {
     $replacements = array('%label' => $this->label(), '@plugin' => $this->itemName);
-    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    rules_log('Executing @plugin %label.', $replacements, RulesLog::INFO, $this, TRUE);
     $this->processSettings();
     $state = $this->setUpState($args);
 
@@ -1846,7 +1846,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
     $state->unblock($this);
     $state->cleanUp();
-    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, $this, FALSE);
     return $return;
   }
 
@@ -2176,9 +2176,9 @@ class RulesLog {
    *
    * @see rules_log()
    */
-  public function log($msg, $args = array(), $logLevel = self::INFO, $scope = NULL) {
+  public function log($msg, $args = array(), $logLevel = self::INFO, $scope = NULL, $path = NULL) {
     if ($logLevel >= $this->logLevel) {
-      $this->log[] = array($msg, $args, $logLevel, microtime(TRUE), $scope);
+      $this->log[] = array($msg, $args, $logLevel, microtime(TRUE), $scope, $path);
     }
   }
 
@@ -2241,6 +2241,9 @@ class RulesLog {
         // The next entry stems from another evaluated set, add in its log
         // messages here.
         $vars['head'] = t($this->log[$line][0], $this->log[$line][1]);
+        if (isset($this->log[$line][5])) {
+          $vars['link'] = '[' . l('edit', $this->log[$line][5]) . ']';
+        }
         $vars['log'] = $this->renderHelper($line);
         $output[] = theme('rules_debug_element', $vars);
       }
@@ -2250,6 +2253,9 @@ class RulesLog {
         if ($this->log[$line][2] >= RulesLog::WARN) {
           $level = $this->log[$line][2] == RulesLog::WARN ? 'warn' : 'error';
           $msg = '<span class="rules-debug-' . $level . '">'. $msg .'</span>';
+        }
+        if (isset($this->log[$line][5]) && !isset($this->log[$line][4])) {
+          $msg .= ' [' . l('edit', $this->log[$line][5]) . ']';
         }
         $output[] = $msg;
 

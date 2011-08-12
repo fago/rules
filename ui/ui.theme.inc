@@ -228,6 +228,24 @@ function theme_rules_log($variables) {
 }
 
 /**
+ * Theme rules debug log elements.
+ * @ingroup themeable
+ */
+function theme_rules_debug_element($variables) {
+  $output = '<div class="rules-debug-block">';
+  $output .= '<div class="rules-debug-log-head rules-debug-open rules-debug-collapsible-link">"';
+  $output .= '<span unselectable="on" class="ui-icon ui-icon-triangle-1-e rules-debug-icon-open">&nbsp;</span>';
+  $output .= $variables['head'];
+  if (isset($variables['link'])) {
+    $output .= ' ' . $variables['link'];
+  }
+  $output .= '</div>';
+  $output .= $variables['log'];
+  $output .= '</div>';
+  return $output;
+}
+
+/**
  * Themes rules autocomplete forms.
  * @ingroup themeable
  */
@@ -254,19 +272,5 @@ function theme_rules_autocomplete($variables) {
   $output .= '<input' . drupal_attributes($element['#attributes']) . ' />';
   $output .= '</div>';
 
-  return $output;
-}
-
-/**
- * Theme rules debug log elements.
- */
-function theme_rules_debug_element($variables) {
-  $output = '<div class="rules-debug-block">';
-  $output .= '<div class="rules-debug-log-head rules-debug-open rules-debug-collapsible-link">"';
-  $output .= '<span unselectable="on" class="ui-icon ui-icon-triangle-1-e rules-debug-icon-open">&nbsp;</span>';
-  $output .= $variables['head'];
-  $output .= '</div>';
-  $output .= $variables['log'];
-  $output .= '</div>';
   return $output;
 }

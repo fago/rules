@@ -23,10 +23,10 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
     $replacements = array('%label' => $component->label(), '@plugin' => $component->plugin());
     // Handle recursion prevention.
     if ($state->isBlocked($component)) {
-      return rules_log('Not evaluating @plugin %label to prevent recursion.', $replacements, RulesLog::INFO);
+      return rules_log('Not evaluating @plugin %label to prevent recursion.', $replacements, RulesLog::INFO, $component);
     }
     $state->block($component);
-    rules_log('Evaluating @plugin %label.', $replacements, RulesLog::INFO, TRUE);
+    rules_log('Evaluating @plugin %label.', $replacements, RulesLog::INFO, $component, TRUE);
     module_invoke_all('rules_config_execute', $component);
 
     // Manually create a new evaluation state and evaluate the component.
@@ -48,7 +48,7 @@ function rules_element_invoke_component($arguments, RulesPlugin $element) {
 
     // Cleanup the state, what saves not mergable variables now.
     $new_state->cleanup();
-    rules_log('Finished evaluation of @plugin %label.', $replacements, RulesLog::INFO, FALSE);
+    rules_log('Finished evaluation of @plugin %label.', $replacements, RulesLog::INFO, $component, FALSE);
     return $return;
   }
   else {
