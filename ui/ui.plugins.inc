@@ -59,12 +59,13 @@ class RulesRuleUI extends RulesActionContainerUI {
    * Applies the values of the form to the rule configuration.
    */
   function form_extract_values($form, &$form_state) {
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
     // Run condition and action container value extraction.
     if (isset($form['conditions'])) {
       $this->conditions->extender('RulesConditionContainerUI')->form_extract_values($form['conditions'], $form_state);
     }
-    if (!empty($form_state['values']['label'])) {
-      $this->element->label = $form_state['values']['label'];
+    if (!empty($form_values['label'])) {
+      $this->element->label = $form_values['label'];
     }
     parent::form_extract_values($form, $form_state);
   }
@@ -143,9 +144,10 @@ class RulesReactionRuleUI extends RulesRuleUI {
   }
 
   public function settingsFormExtractValues($form, &$form_state) {
+    $form_values = RulesPluginUI::getFormStateValues($form['settings'], $form_state);
     parent::settingsFormExtractValues($form, $form_state);
-    $this->rule->active = $form_state['values']['active'];
-    $this->rule->weight = $form_state['values']['weight'];
+    $this->rule->active = $form_values['active'];
+    $this->rule->weight = $form_values['weight'];
   }
 }
 
@@ -198,9 +200,10 @@ class RulesLoopUI extends RulesActionContainerUI {
 
   function form_extract_values($form, &$form_state) {
     parent::form_extract_values($form, $form_state);
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
 
-    $this->element->settings['item:var'] = $form_state['values']['item']['var'];
-    $this->element->settings['item:label'] = $form_state['values']['item']['label'];
+    $this->element->settings['item:var'] = $form_values['item']['var'];
+    $this->element->settings['item:label'] = $form_values['item']['label'];
   }
 
   public function form_validate($form, &$form_state) {

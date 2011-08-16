@@ -166,6 +166,30 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   }
 
   /**
+   * Returns the form values for the given form, possible being only a part of the whole form.
+   *
+   * In case the form is embedded somewhere, this function figures out the
+   * location of its form values and returns them for further use.
+   *
+   * @param $form
+   *   A form array, or an array of form elements to get the value for.
+   * @param $form_state
+   *   The form state as usual.
+   */
+  public static function &getFormStateValues($form, &$form_state) {
+    $values = NULL;
+    if (isset($form_state['values'])) {
+      // Assume the top level if parents are not yet set.
+      $form += array('#parents' => array());
+      $values = &$form_state['values'];
+      foreach ($form['#parents'] as $parent) {
+        $values = &$values[$parent];
+      }
+    }
+    return $values;
+  }
+
+  /**
    * Implements RulesPluginUIInterface.
    * Generates the element edit form.
    *
@@ -307,10 +331,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public function form_validate($form, &$form_state) {
     $this->form_extract_values($form, $form_state);
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
 
-    if (isset($form_state['values']['provides'])) {
+    if (isset($form_values['provides'])) {
       $vars = $this->element->availableVariables();
-      foreach ($form_state['values']['provides'] as $name => $values) {
+      foreach ($form_values['provides'] as $name => $values) {
         if (isset($vars[$values['var']])) {
           form_error($form['provides'][$name]['var'], t('The variable name %name is already taken.', array('%name' => $values['var'])));
         }
@@ -340,13 +365,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    */
   public function form_extract_values($form, &$form_state) {
     $this->element->settings = array();
-    if (isset($form_state['values']['parameter'])) {
-      foreach ($form_state['values']['parameter'] as $name => $values) {
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
+    if (isset($form_values['parameter'])) {
+      foreach ($form_values['parameter'] as $name => $values) {
         $this->element->settings += $values['settings'];
       }
     }
-    if (isset($form_state['values']['provides'])) {
-      foreach ($form_state['values']['provides'] as $name => $values) {
+    if (isset($form_values['provides'])) {
+      foreach ($form_values['provides'] as $name => $values) {
         $this->element->settings[$name . ':label'] = $values['label'];
         $this->element->settings[$name . ':var'] = $values['var'];
       }
@@ -370,13 +396,15 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Adds the configuration settings form (label, tags, description, ..).
    */
   public function settingsForm(&$form, &$form_state) {
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
     // Add the settings in a separate fieldset below.
     $form['settings'] = array(
       '#type' => 'fieldset',
       '#title' => t('Settings'),
       '#collapsible' => TRUE,
-      '#collapsed' => empty($form_state['values']['vars']['more']),
+      '#collapsed' => empty($form_values['settings']['vars']['more']),
       '#weight' => 5,
+      '#tree' => TRUE,
     );
     $form['settings']['label'] = array(
       '#type' => 'textfield',
@@ -452,18 +480,18 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   }
 
   public function settingsFormExtractValues($form, &$form_state) {
-    $this->element->label = $form_state['values']['label'];
-
+    $form_values = RulesPluginUI::getFormStateValues($form['settings'], $form_state);
+    $this->element->label = $form_values['label'];
     // If the name was changed we have to redirect to the URL that contains
     // the new name, instead of rebuilding on the old URL with the old name
-    if ($form['settings']['name']['#default_value'] != $form_state['values']['name']) {
+    if ($form['settings']['name']['#default_value'] != $form_values['name']) {
       $module = isset($this->element->module) ? $this->element->module : 'rules';
-      $this->element->name = $module . '_' . $form_state['values']['name'];
+      $this->element->name = $module . '_' . $form_values['name'];
       $form_state['redirect'] = RulesPluginUI::path($this->element->name);
     }
-    $this->element->tags = empty($form_state['values']['tags']) ? array() : drupal_explode_tags($form_state['values']['tags']);
+    $this->element->tags = empty($form_values['tags']) ? array() : drupal_explode_tags($form_values['tags']);
 
-    if (isset($form_state['values']['vars']['items'])) {
+    if (isset($form_values['vars']['items'])) {
       $vars = &$this->element->componentVariables();
       $vars = array();
       if ($this->element instanceof RulesActionContainer) {
@@ -471,8 +499,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $provides = array();
       }
 
-      usort($form_state['values']['vars']['items'], 'rules_element_sort_helper');
-      foreach ($form_state['values']['vars']['items'] as $item) {
+      usort($form_values['vars']['items'], 'rules_element_sort_helper');
+      foreach ($form_values['vars']['items'] as $item) {
         if ($item['type'] && $item['name'] && $item['label']) {
           $vars[$item['name']] = array('label' => $item['label'], 'type' => $item['type']);
           if (!$item['usage'][0]) {
@@ -484,13 +512,18 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         }
       }
       // Disable FAPI persistence for the variable form so renumbering works.
-      unset($form_state['input']['vars']);
+      $input = &$form_state['input'];
+      foreach ($form['settings']['#parents'] as $parent) {
+        $input = &$input[$parent];
+      }
+      unset($input['vars']);
     }
   }
 
   public function settingsFormValidate($form, &$form_state) {
-    if ($form['settings']['name']['#default_value'] != $form_state['values']['name'] && rules_config_load($this->element->name)) {
-      form_set_error('name', t('The machine-readable name %name is already taken.', array('%name' => $form_state['values']['name'])));
+    $form_values = RulesPluginUI::getFormStateValues($form['settings'], $form_state);
+    if ($form['settings']['name']['#default_value'] != $form_values['name'] && rules_config_load($this->element->name)) {
+      form_error($form['settings']['name'], t('The machine-readable name %name is already taken.', array('%name' => $form_values['name'])));
     }
   }
 
@@ -767,8 +800,9 @@ class RulesAbstractPluginUI extends RulesPluginUI {
 
   public function form_extract_values($form, &$form_state) {
     parent::form_extract_values($form, $form_state);
-    if ($this->element instanceof RulesCondition && isset($form_state['values']['negate'])) {
-      $this->element->negate($form_state['values']['negate']);
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
+    if ($this->element instanceof RulesCondition && isset($form_values['negate'])) {
+      $this->element->negate($form_values['negate']);
     }
   }
 }
@@ -838,11 +872,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
    */
   public function form_extract_values($form, &$form_state) {
     parent::form_extract_values($form, $form_state);
-    // Get the right form values.
-    $values = $form_state['values'];
-    foreach ($form['#parents'] as $key) {
-      $values = isset($values[$key]) ? $values[$key] : NULL;
-    }
+    $values = RulesPluginUI::getFormStateValues($form, $form_state);
     // Now apply the new hierarchy.
     if (isset($values['elements'])) {
       foreach ($values['elements'] as $id => $data) {
@@ -966,8 +996,9 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
 
   public function form_extract_values($form, &$form_state) {
     parent::form_extract_values($form, $form_state);
-    if (isset($form_state['values']['negate'])) {
-      $this->element->negate($form_state['values']['negate']);
+    $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
+    if (isset($form_values['negate'])) {
+      $this->element->negate($form_values['negate']);
     }
   }
 }
