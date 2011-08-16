@@ -354,7 +354,8 @@ function rules_core_action_execute($object, $settings, $element, &$state) {
   $info['action_name']($object, $settings);
 
   if (isset($settings['auto_save']) && $settings['auto_save']) {
-    $argument_name = array_shift(array_keys($info['arguments']));
+    $keys = array_keys($info['arguments']);
+    $argument_name = array_shift($keys);
     return array($argument_name => $object);
   }
 }
