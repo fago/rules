@@ -9,10 +9,6 @@
 
 /**
  * Controller handling the features integration.
- *
- * @todo: Add in dependencies and allow actions/conditions to pipe through
- *   further dependencies + use that to gather dependencies of invoked
- *   components.
  */
 class RulesFeaturesController extends EntityDefaultFeaturesController {
 
