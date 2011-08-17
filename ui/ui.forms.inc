@@ -563,10 +563,6 @@ function rules_ui_import_form_submit($form, &$form_state) {
  */
 function rules_data_selection_process($element, &$form_state, $form) {
   $element['#autocomplete_path'] .= '/' . $form['#build_id'];
-  // Workaround for problems with jquery css in seven theme.
-  if ($GLOBALS['theme'] == 'seven') {
-    drupal_add_css(drupal_get_path('module', 'rules') . '/ui/rules.ui.seven.css');
-  }
   $form_state['cache'] = TRUE;
   return $element;
 }

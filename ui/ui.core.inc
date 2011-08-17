@@ -769,6 +769,11 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     form_load_include($form_state, 'inc', 'rules', 'ui/ui.forms');
     // Add our own css.
     $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.css';
+    // Workaround for problems with jquery css in seven theme and the core
+    // autocomplete.
+    if ($GLOBALS['theme'] == 'seven') {
+      $form['#attached']['css'][] = drupal_get_path('module', 'rules') . '/ui/rules.ui.seven.css';
+    }
 
     // Specify the wrapper div used by #ajax.
     $form['#prefix'] = '<div id="rules-form-wrapper">';

@@ -85,3 +85,11 @@
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
+
+/**
+ * Fix the position of the core-autocomplete popup when shown in the settings
+ * fieldset.
+ */
+.form-item-settings-tags {
+  position: relative;
+}
