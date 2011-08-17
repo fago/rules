@@ -30,6 +30,11 @@ class RulesEntityController extends EntityAPIControllerExportable {
         ->condition('id', $entity->id)
         ->execute()
         ->fetchCol('tag');
+      $entity->dependencies = db_select('rules_dependencies')
+        ->fields('rules_dependencies', array('module'))
+        ->condition('id', $entity->id)
+        ->execute()
+        ->fetchCol('module');
       $entities[$entity->id] = $entity;
     }
     $queried_entities = $entities;
@@ -104,6 +109,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
           return FALSE;
         }
       }
+      $config->dependencies = $export['REQUIRES'];
     }
     $config->import($export);
     return $config;
@@ -117,6 +123,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
     if ($rules_config instanceof RulesTriggerableInterface) {
       $this->storeEvents($rules_config);
     }
+    $this->storeDependencies($rules_config);
     return $return;
   }
 
@@ -150,6 +157,22 @@ class RulesEntityController extends EntityAPIControllerExportable {
         'event' => $event,
       ))
       ->execute();
+    }
+  }
+
+  protected function storeDependencies($rules_config) {
+    db_delete('rules_dependencies')
+      ->condition('id', $rules_config->id)
+      ->execute();
+    if (!empty($rules_config->dependencies)) {
+      foreach ($rules_config->dependencies as $dependency) {
+        db_insert('rules_dependencies')
+          ->fields(array(
+          'id' => $rules_config->id,
+          'module' => $dependency,
+        ))
+        ->execute();
+      }
     }
   }
 
@@ -189,6 +212,9 @@ class RulesEntityController extends EntityAPIControllerExportable {
           ->condition('id', $config->id)
           ->execute();
         db_delete('rules_tags')
+          ->condition('id', $config->id)
+          ->execute();
+        db_delete('rules_dependencies')
           ->condition('id', $config->id)
           ->execute();
       }
@@ -613,7 +639,10 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Returns an array of required modules.
+   * Calculates an array of required modules.
+   *
+   * You can use $this->dependencies to access dependencies for saved
+   * configurations.
    */
   public function dependencies() {
     $this->processSettings();
@@ -691,8 +720,11 @@ abstract class RulesPlugin extends RulesExtendable {
   public function integrityCheck() {
     // First process the settings if not done yet.
     $this->processSettings();
-    // Check dependencies.
-    foreach ($this->dependencies() as $module) {
+    // Check dependencies using the pre-calculated dependencies stored in
+    // $this->dependencies. Fail back to calculation them on the fly, e.g.
+    // during creation.
+    $dependencies = empty($this->dependencies) ? $this->dependencies() : $this->dependencies;
+    foreach ($dependencies as $module) {
       if (!module_exists($module)) {
         throw new RulesDependencyException(t('Missing required module %name.', array('%name' => $module)));
       }
@@ -720,19 +752,22 @@ abstract class RulesPlugin extends RulesExtendable {
   protected function checkParameterSettings() {
     foreach ($this->pluginParameterInfo() as $name => $info) {
       if (isset($info['restriction']) && $info['restriction'] == 'selector' && isset($this->settings[$name])) {
-        throw new RulesIntegrityException(t("%plugin: The parameter %name may only be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name)), array($this, 'parameter', $name));
+        throw new RulesIntegrityException(t("The parameter %name may only be configured using a selector.", array('%name' => $name)), array($this, 'parameter', $name));
       }
       elseif (isset($info['restriction']) && $info['restriction'] == 'input' && isset($this->settings[$name . ':select'])) {
-        throw new RulesIntegrityException(t("%plugin: The parameter %name may not be configured using a selector.", array('%plugin' => $this->getPluginName(), '%name' => $name)), array($this, 'parameter', $name));
+        throw new RulesIntegrityException(t("The parameter %name may not be configured using a selector.", array('%name' => $name)), array($this, 'parameter', $name));
       }
-      if ($arg_info = $this->getArgumentInfo($name)) {
+      elseif (!empty($this->settings[$name . ':select']) && !$this->applyDataSelector($this->settings[$name . ':select'])) {
+        throw new RulesIntegrityException(t("Data selector %selector for parameter %name is invalid.", array('%selector' => $this->settings[$name . ':select'], '%name' => $name)), array($this, 'parameter', $name));
+      }
+      elseif ($arg_info = $this->getArgumentInfo($name)) {
         // If we have enough metadata, check whether the types match.
         if (!RulesData::typesMatch($arg_info, $info)) {
-          throw new RulesIntegrityException(t("%plugin: The data type of the configured argument does not match the parameter's %name requirement.", array('%plugin' => $this->getPluginName(), '%name' => $name)), array($this, 'parameter', $name));
+          throw new RulesIntegrityException(t("The data type of the configured argument does not match the parameter's %name requirement.", array('%name' => $name)), array($this, 'parameter', $name));
         }
       }
       elseif (!$this->isRoot() && !isset($this->settings[$name]) && empty($info['optional']) && $info['type'] != 'hidden') {
-        throw new RulesIntegrityException(t('%plugin: Missing configuration for parameter %name.', array('%plugin' => $this->getPluginName(), '%name' => $name)), array($this, 'parameter', $name));
+        throw new RulesIntegrityException(t('Missing configuration for parameter %name.', array('%name' => $name)), array($this, 'parameter', $name));
       }
       //TODO: Make sure used values are allowed. (key/value pairs + allowed values)
     }
@@ -808,6 +843,7 @@ abstract class RulesPlugin extends RulesExtendable {
    *
    * @param $selector
    *   The selector string, e.g. "node:author:mail".
+   *
    * @return EntityMetadataWrapper
    *   An empty wrapper for the given selector or FALSE if the selector couldn't
    *   be applied.
@@ -871,9 +907,16 @@ abstract class RulesPlugin extends RulesExtendable {
       return $this->parent->save($name, $module);
     }
     else {
-      // Make sure all element settings are processed before we save.
-      $this->processSettings();
-
+      // In case the config is not dirty, pre-calculate the dependencies for
+      // later checking. Note that this also triggers processing settings if
+      // necessary.
+      // @see rules_modules_enabled()
+      // However, this operation depends on a fully built Rules-cache, so skip
+      // it when entities in code are imported to the database.
+      // @see _rules_rebuild_cache()
+      if (empty($this->dirty) && empty($this->is_rebuild)) {
+        $this->dependencies = $this->dependencies();
+      }
       $this->plugin = $this->itemName;
       $this->name = isset($name) ? $name : $this->name;
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
@@ -1178,16 +1221,29 @@ abstract class RulesPlugin extends RulesExtendable {
     parent::rebuildCache($itemInfo, $cache);
     if (!empty($this->itemInfo['component'])) {
       // Just move each component into the cache.
-      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName));
+      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName, 'dirty' => 0));
 
       foreach ($components as $id => $component) {
-        // Clone the component to avoid modules getting the to be cached
-        // version from the static loading cache.
-        $component = clone $component;
-        $component->optimize();
-        // Allow modules to alter the cached component.
-        drupal_alter('rules_component', $this->itemName, $component);
-        rules_set_cache('comp_' . $component->name, $component);
+        try {
+          $component->integrityCheck();
+          // Clone the component to avoid modules getting the to be cached
+          // version from the static loading cache.
+          $component = clone $component;
+          $component->optimize();
+          // Allow modules to alter the cached component.
+          drupal_alter('rules_component', $this->itemName, $component);
+          rules_set_cache('comp_' . $component->name, $component);
+        }
+        catch (RulesIntegrityException $e) {
+          // Mark the component as dirty and do not cache it.
+          $component->dirty = TRUE;
+          db_update('rules_config')
+            ->fields(array('dirty' => 1))
+            ->condition('id', $component->id)
+            ->execute();
+          $variables = array('%component' => $component->label(), '%name' => $component->name, '!message' => $e->getMessage());
+          watchdog('rules', 'The component %component (%name) fails the integrity check and cannot be executed. Error: !message', $variables, WATCHDOG_ERROR);
+        }
       }
     }
   }
@@ -1258,6 +1314,14 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     elseif (!$this->infoLoaded && isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
       $this->setUp();
     }
+  }
+
+  /**
+   * Returns the label of the element.
+   */
+  public function label() {
+    $info = $this->info();
+    return isset($info['label']) ? $info['label'] : t('Unkown @plugin "@name"', array('@name' => $this->elementName, '@plugin' => $this->plugin()));
   }
 
   public function access() {

@@ -100,6 +100,7 @@ class RulesReactionRuleUI extends RulesRuleUI {
     );
     $form['events']['table']['#attributes']['class'][] = 'rules-elements-table';
     foreach ($this->rule->events() as $event_name) {
+      $event_info += array($event_name => array('label' => t('Unkown event "!event_name"', array('!event_name' => $event_name))));
       $form['events']['table']['#rows'][$event_name] = array(
         check_plain($event_info[$event_name]['label']),
         '<span class="rules_rule_event">' . l(t('delete'), RulesPluginUI::path($this->rule->name, 'delete/event/' . $event_name)) . '</span>',

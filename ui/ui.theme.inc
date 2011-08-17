@@ -118,7 +118,8 @@ function theme_rules_content_group($variables) {
   $output = array_filter($output);
   $heading = !empty($element['#caption']) ? "<span class='rules-content-heading'>" . $element['#caption'] . ': </span>' : '';
   if (!empty($output)) {
-    return '<div class="rules-element-content-group">' . $heading . implode(', ', $output) . '</div>';
+    $element['#attributes']['class'][] = 'rules-element-content-group';
+    return '<div' . drupal_attributes($element['#attributes']) . '>' . $heading . implode(', ', $output) . '</div>';
   }
 }
 

@@ -201,25 +201,29 @@ function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugi
 }
 
 /**
- * Fetches module definitions for the given name
+ * Fetches module definitions for the given hook name.
+ *
  * Used for collecting events, rules, actions and condtions from other modules.
  *
  * @param $hook
  *   The hook of the definitions to get from invoking hook_rules_{$hook}.
  */
 function rules_fetch_data($hook) {
-  $data = array();
-  foreach (module_implements('rules_' . $hook) as $module) {
-    $result = call_user_func($module . '_rules_' . $hook);
-    if (isset($result) && is_array($result)) {
-      foreach ($result as $name => $item) {
-        $item += array('module' => $module);
-        $data[$name] = $item;
+  $data = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($data[$hook])) {
+    foreach (module_implements('rules_' . $hook) as $module) {
+      $result = call_user_func($module . '_rules_' . $hook);
+      if (isset($result) && is_array($result)) {
+        foreach ($result as $name => $item) {
+          $item += array('module' => $module);
+          $data[$hook][$name] = $item;
+        }
       }
     }
+    drupal_alter('rules_'. $hook, $data[$hook]);
   }
-  drupal_alter('rules_'. $hook, $data);
-  return $data;
+  return $data[$hook];
 }
 
 /**
@@ -260,9 +264,18 @@ function &rules_get_cache($cid = 'data') {
 }
 
 /**
- * Rebuilds the main rules cache ('data') and invokes rebuildCache() methods on
- * all mentioned class, which in turn rebuild their own caches or update the
- * main cache.
+ * Rebuilds the rules cache.
+ *
+ * This rebuilds the rules 'data' cache and invokes rebuildCache() methods on
+ * all plugin classes, which in turn rebuild their own caches or update the
+ * main cache. The cache is rebuilt in the order the plugins are defined.
+ *
+ * Note that building the action/condition info cache triggers loading of all
+ * components, thus depends on entity-loading and so syncing entities in code
+ * to the database.
+ *
+ * @see rules_rules_plugin_info()
+ * @see entity_defaults_rebuild()
  */
 function _rules_rebuild_cache(&$cache) {
   foreach(array('data_info', 'plugin_info') as $hook) {
@@ -313,6 +326,7 @@ function rules_clear_cache($immediate = FALSE) {
   variable_del('rules_empty_sets');
   if ($immediate) {
     drupal_static_reset('rules_get_cache');
+    drupal_static_reset('rules_fetch_data');
     entity_get_controller('rules_config')->resetCache();
   }
 }
@@ -733,7 +747,7 @@ function rules_invoke_event() {
   unset($args[0]);
   // For invoking the rules event we directly acccess the global $conf. This is
   // fast without having to introduce another static cache.
-  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+  if (!defined('MAINTENANCE_MODE') && !isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
     $event->executeByArgs($args);
   }
 }
@@ -760,7 +774,7 @@ function rules_invoke_event_by_args($event_name, $args = array()) {
 
   // For invoking the rules event we directly acccess the global $conf. This is
   // fast without having to introduce another static cache.
-  if (!isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+  if (!defined('MAINTENANCE_MODE') && !isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
     $event->executeByArgs($args);
   }
 }
@@ -774,7 +788,8 @@ function rules_invoke_event_by_args($event_name, $args = array()) {
  *   Pass further parameters as required for the invoked component.
  *
  * @return
- *   The variables as provided by the component.
+ *   An array of variables as provided by the component, or FALSE in case the
+ *   component could not be executed.
  */
 function rules_invoke_component() {
   $args = func_get_args();
@@ -782,6 +797,7 @@ function rules_invoke_component() {
   if ($component = rules_get_cache('comp_' . $name)) {
     return $component->executeByArgs($args);
   }
+  return FALSE;
 }
 
 /**
@@ -794,6 +810,7 @@ function rules_invoke_component() {
  *   The key used for the comparison.
  * @param $value
  *   The value to compare the array's entry to.
+ *
  * @return array
  *   The filtered array.
  */
@@ -1087,6 +1104,37 @@ function rules_element_info() {
  * Implements hook_modules_enabled().
  */
 function rules_modules_enabled($modules) {
+  // Re-enable Rules configurations that are dirty, because they require one of
+  // the enabled the modules.
+  $query = db_select('rules_dependencies', 'rd');
+  $query->join('rules_config', 'rc', 'rd.id = rc.id');
+  $query->fields('rd', array('id'))
+        ->condition('rd.module', $modules, 'IN')
+        ->condition('rc.dirty', 1);
+  $ids = $query->execute()->fetchCol();
+
+  // If there are some configurations that might work again, re-check all dirty
+  // configurations as others might work again too, e.g. consider a rule that is
+  // dirty because it requires a dirty component.
+  if ($ids) {
+    $rules_configs = rules_config_load_multiple(FALSE, array('dirty' => 1));
+    foreach ($rules_configs as $rules_config) {
+      try {
+        $rules_config->integrityCheck();
+        // If no exceptions were thrown we can set the configuration back to OK.
+        db_update('rules_config')
+          ->fields(array('dirty' => 0))
+          ->condition('id', $rules_config->id)
+          ->execute();
+        if ($rules_config->active) {
+          drupal_set_message(t('All dependencies for the Rules configuration %config are met again, so it has been re-activated.', array('%config' => $rules_config->label())));
+        }
+      }
+      catch (RulesIntegrityException $e) {
+        // The rule is still dirty, so do nothing.
+      }
+    }
+  }
   rules_clear_cache();
 }
 
@@ -1094,8 +1142,35 @@ function rules_modules_enabled($modules) {
  * Implements hook_modules_disabled().
  */
 function rules_modules_disabled($modules) {
+  // Disable Rules configurations that depend on one of the disabled modules.
+  $query = db_select('rules_dependencies', 'rd');
+  $query->join('rules_config', 'rc', 'rd.id = rc.id');
+  $query->fields('rd', array('id'))
+        ->distinct()
+        ->condition('rd.module', $modules, 'IN')
+        ->condition('rc.dirty', 0);
+  $ids = $query->execute()->fetchCol();
+
+  if (!empty($ids)) {
+    db_update('rules_config')
+      ->fields(array('dirty' => 1))
+      ->condition('id', $ids, 'IN')
+      ->execute();
+    // Tell the user about enabled rules that have been marked as dirty.
+    $count = db_select('rules_config', 'r')
+      ->fields('r')
+      ->condition('id', $ids, 'IN')
+      ->condition('active', 1)
+      ->execute()->rowCount();
+    if ($count > 0) {
+      $message = format_plural($count,
+        '1 Rules configuration requires some of the disabled modules to function and cannot be executed any more.',
+        '@count Rules configuration require some of the disabled modules to function and cannot be executed any more.'
+      );
+      drupal_set_message($message, 'warning');
+    }
+  }
   rules_clear_cache();
-  //TODO: Disable configs with now broken dependencies?
 }
 
 /**

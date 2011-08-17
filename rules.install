@@ -74,6 +74,13 @@ function rules_schema() {
         'size' => 'tiny',
         'description' => 'The exportable status of the entity.',
       ),
+      'dirty' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => 'Dirty configurations fail the integrity check, e.g. due to missing dependencies.',
+      ),
       'module' => array(
         'description' => 'The name of the providing module if the entity has been defined in code.',
         'type' => 'varchar',
@@ -133,6 +140,29 @@ function rules_schema() {
       ),
     ),
     'primary key' => array('id', 'tag'),
+    'foreign keys' => array(
+      'id' => array('rules_config' => 'id'),
+    ),
+  );
+  $schema['rules_dependencies'] = array(
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The primary identifier of the configuration.',
+      ),
+      'module' => array(
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => TRUE,
+        'description' => 'The name of the module that is required for the configuration.',
+      ),
+    ),
+    'primary key' => array('id', 'module'),
+    'indexes' => array(
+      'module' => array('module'),
+    ),
     'foreign keys' => array(
       'id' => array('rules_config' => 'id'),
     ),
@@ -320,5 +350,45 @@ function rules_update_7204() {
       ),
     );
     db_create_table('rules_tags', $schema['rules_tags']);
+  }
+}
+
+/**
+ * Add the rules_dependencies table and the rules_config.dirty column.
+ */
+function rules_update_7205() {
+  if (!db_table_exists('rules_dependencies')) {
+    $schema['rules_dependencies'] = array(
+      'fields' => array(
+        'id' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'The primary identifier of the configuration.',
+        ),
+        'module' => array(
+          'type' => 'varchar',
+          'length' => '255',
+          'not null' => TRUE,
+          'description' => 'The name of the module that is required for the configuration.',
+        ),
+      ),
+      'primary key' => array('id', 'module'),
+      'indexes' => array(
+        'module' => array('module'),
+      ),
+      'foreign keys' => array(
+        'id' => array('rules_config' => 'id'),
+      ),
+    );
+    db_create_table('rules_dependencies', $schema['rules_dependencies']);
+  }
+  if (!db_field_exists('rules_config', 'dirty')) {
+    db_add_field('rules_config', 'dirty', array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0,
+      'size' => 'tiny',
+    ));
   }
 }

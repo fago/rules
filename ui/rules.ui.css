@@ -69,6 +69,10 @@ ul.rules-operations-add li {
   margin: 1em 0;
 }
 
+.rules-content-group-integrity-error {
+  color: #df0101;
+}
+
 .rules-debug-log {
   font: 81.3% "Lucida Grande","Lucida Sans Unicode",sans-serif;
   background-color: #eeeeee;

@@ -77,11 +77,63 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
-   * Test getting dependencies.
+   * Test handling dependencies.
    */
   function testdependencies() {
     $action = rules_action('rules_node_publish_action');
     $this->assertEqual($action->dependencies(), array('rules_test'), 'Providing module is returned as dependency.');
+
+    // Test handling unmet dependencies.
+    $rule = rules_config_load('rules_export_test');
+    $this->assertTrue(in_array('comment', $rule->dependencies) && !$rule->dirty, 'Dependencies have been imported.');
+
+    // Remove the required comment module and make sure the rule is dirty then.
+    module_disable(array('comment'));
+    rules_clear_cache(TRUE);
+    $rule = rules_config_load('rules_export_test');
+    $this->assertTrue($rule->dirty, 'Rule has been marked as dirty');
+
+    // Now try re-enabling.
+    module_enable(array('comment'));
+    rules_clear_cache(TRUE);
+    $rule = rules_config_load('rules_export_test');
+    $this->assertTrue(!$rule->dirty, 'Rule has been marked as not dirty again.');
+
+    // Test it with components.
+    module_enable(array('path'));
+    $action_set = rules_action_set(array('node' => array('type' => 'node')));
+    $action_set->action('node_path_alias');
+    $action_set->save('rules_test_alias');
+
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->action('component_rules_test_alias');
+    $rule->integrityCheck();
+    $rule->save('rules_test_rule');
+    rules_clear_cache(TRUE);
+
+    $rule = rules_config_load('rules_test_rule');
+    $component = rules_config_load('rules_test_alias');
+    $this->assertTrue(in_array('path', $component->dependencies) && !$rule->dirty && !$component->dirty, 'Component has path module dependency.');
+
+    // Now disable path module and make sure both configs are marked as dirty.
+    module_disable(array('path'));
+    rules_clear_cache(TRUE);
+    $rule = rules_config_load('rules_test_rule');
+    $component = rules_config_load('rules_test_alias');
+
+    $node = NULL;
+    $result = rules_invoke_component('rules_test_alias', $node);
+    $this->assertTrue($result === FALSE, 'Unable to execute a dirty component.');
+
+    $this->assertTrue($component->dirty, 'Component has been marked as dirty');
+    $this->assertTrue($rule->dirty, 'Rule has been marked as dirty');
+
+    module_enable(array('path'));
+    rules_clear_cache(TRUE);
+    $rule = rules_config_load('rules_test_rule');
+    $component = rules_config_load('rules_test_alias');
+    $this->assertTrue(!$component->dirty, 'Component has been marked as not dirty again.');
+    $this->assertTrue(!$rule->dirty, 'Rule has been marked as not dirty again.');
   }
 
   /**
@@ -325,9 +377,10 @@ class RulesTestCase extends DrupalWebTestCase {
          ->execute($node->nid);
 
     RulesLog::logger()->checkLog();
-    $msg = drupal_get_messages();
+    $msg = drupal_get_messages('status');
+    $last_msg = array_pop($msg['status']);
     $wrapper = entity_metadata_wrapper('node', $node);
-    $this->assertEqual($msg['status'][0], $wrapper->body->value->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
+    $this->assertEqual($last_msg, $wrapper->body->value->value(array('sanitize' => TRUE)), 'Data selector for getting parameter applied.');
 
     // Get a "reference" on the same object as returned by node_load().
     $node = node_load($node->nid);

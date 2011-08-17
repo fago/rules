@@ -36,6 +36,9 @@ interface RulesPluginUIInterface {
    *      restrict the actions that are available to for adding.
    *    - 'restrict events': Optionally set an array of event names to restrict
    *      the events that are available for adding.
+   *
+   *  @todo
+   *    Implement the 'restrict *' options.
    */
   public function form(&$form, &$form_state, $options = array());
 
@@ -617,7 +620,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       }
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
         $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
-        $element = call_user_func(array($this->getDataTypeClass($parameter['type']), $method), $this->element->settings[$name], $name, $parameter, $this->element);
+        $class = $this->getDataTypeClass($parameter['type']);
+        if (method_exists($class, $method)) {
+          $element = call_user_func(array($class, $method), $this->element->settings[$name], $name, $parameter, $this->element);
+        }
       }
       // Only add parameters that are really configured / not default.
       if ($element) {
@@ -640,7 +646,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         '#theme' => 'rules_content_group',
       );
     }
-
+    // Add integrity exception messages if there are any for this element.
+    try {
+      $this->element->integrityCheck();
+    }
+    catch (RulesIntegrityException $e) {
+      $content['description']['integrity'] = array(
+        '#theme' => 'rules_content_group',
+        '#caption' => t('Error'),
+        '#attributes' => array('class' => array('rules-content-group-integrity-error')),
+        'error' => array(
+          '#markup' => filter_xss($e->getMessage()),
+        ),
+      );
+    }
     $content['#suffix'] = '</div>';
     $content['#type'] = 'container';
     $content['#attributes']['class'][] = 'rules-element-content';
@@ -927,18 +946,19 @@ class RulesContainerPluginUI extends RulesPluginUI {
         '#theme' => 'rules_content_group',
         '#weight' => -4,
         'machine_name' => array(
-          '#markup' => t('Machine name: ') . $this->element->name,
+          '#markup' => t('Machine name') . ': ' . $this->element->name,
         ),
         'weight' => array(
           '#access' => $this->element instanceof RulesTriggerableInterface,
-          '#markup' => t('Weight: ') . $this->element->weight,
+          '#markup' => t('Weight') . ': ' . $this->element->weight,
         ),
       );
       if (!empty($this->element->tags)) {
         $content['description']['tags'] = array(
           '#theme' => 'rules_content_group',
+          '#caption' => t('Tags'),
           'tags' => array(
-            '#markup' => t('Tags: ') . implode(', ', $this->element->tags),
+            '#markup' => implode(', ', $this->element->tags),
           ),
         );
       }

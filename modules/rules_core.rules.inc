@@ -253,6 +253,38 @@ function rules_element_invoke_component_operations(RulesPlugin $element) {
 }
 
 /**
+ * Validate callback to make sure the invoked component exists and is not dirty.
+ *
+ * @see rules_scheduler_action_schedule_validate()
+ */
+function rules_element_invoke_component_validate(RulesPlugin $element) {
+  $recursion = &drupal_static(__FUNCTION__, array());
+
+  // Bail out in case of recursive checks to avoid infinite loops. This is
+  // necessary when handling components that directly or indirectly call itself.
+  if (!empty($recursion[$element->root()->name])) {
+    return;
+  }
+  $recursion[$element->root()->name] = TRUE;
+
+  $info = $element->info();
+  $component = rules_config_load($info['#config_name']);
+  if (!$component) {
+    unset($recursion[$element->root()->name]);
+    throw new RulesIntegrityException(t('The component %config does not exist.', array('%config' => $info['#config_name'])), $element);
+  }
+  try {
+    $component->integrityCheck();
+  }
+  catch (RulesIntegrityException $e) {
+    unset($recursion[$element->root()->name]);
+    throw new RulesIntegrityException(t('The component %config fails the integrity check. Error: !message', array('%config' => $info['#config_name'], '!message' => $e->getMessage())), $element);
+  }
+
+  unset($recursion[$element->root()->name]);
+}
+
+/**
  * Implements the features export callback of the RulesPluginFeaturesIntegrationInterace.
  */
 function rules_element_invoke_component_features_export(&$export, &$pipe, $module_name = '', $element) {
