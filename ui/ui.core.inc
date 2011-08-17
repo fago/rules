@@ -750,7 +750,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     $data = $items ? $items : rules_fetch_data($item_type . '_info');
     foreach ($data as $name => $info) {
       // Verfiy the current user has access to use it.
-      if (!empty($info['access callback']) && !call_user_func($info['access callback'], $item_type, $name)) {
+      if (!user_access('bypass rules access') && !empty($info['access callback']) && !call_user_func($info['access callback'], $item_type, $name)) {
         continue;
       }
       if (!empty($info['group'])) {
