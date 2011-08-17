@@ -39,7 +39,7 @@ function rules_admin_reaction_overview($form, &$form_state, $base_path) {
   $form['filter']['event'] = array(
     '#type' => 'select',
     '#title' => t('Filter by event'),
-    '#options' => array(0 => t('<All>')) + RulesPluginUI::getOptions('event_info'),
+    '#options' => array(0 => t('<All>')) + RulesPluginUI::getOptions('event'),
     '#default_value' => $event,
   );
   $form['filter']['tag'] = array(
@@ -221,6 +221,7 @@ function rules_admin_add_reaction_rule($form, &$form_state, $base_path) {
   }
   // Incorporate the form to add the first event.
   $form['settings'] += rules_ui_add_event(array(), $form_state, $rules_config, $base_path);
+  $form['settings']['event']['#tree'] = FALSE;
   unset($form['settings']['help']);
 
   unset($form['settings']['submit']);

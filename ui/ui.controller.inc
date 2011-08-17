@@ -27,8 +27,8 @@ class RulesUIController {
       'title arguments' => array('Editing !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_form_edit_rules_config', $base_count + 1, $base_path),
-      'access arguments' => array('administer rules'),
-      'description' => 'Manage reaction rules and rule components.',
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'type' => MENU_VISIBLE_IN_BREADCRUMB,
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -42,7 +42,8 @@ class RulesUIController {
       'title arguments' => array(array($base_count + 4)),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_add_element', $base_count + 1, $base_count + 4, $base_count + 3, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'load arguments' => array($base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -52,7 +53,8 @@ class RulesUIController {
       'title arguments' => array('Adding event to !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_add_event', $base_count + 1, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'load arguments' => array($base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -62,7 +64,8 @@ class RulesUIController {
       'title' => 'Remove event',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_remove_event', $base_count + 1, $base_count + 4, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'description' => 'Remove an event from a reaction rule.',
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -72,7 +75,8 @@ class RulesUIController {
       'title arguments' => array('Editing !plugin "!label"', $base_count + 3),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_edit_element', $base_count + 1, $base_count + 3, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'load arguments' => array($base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -80,7 +84,8 @@ class RulesUIController {
     $items[$base_path . '/manage/%rules_config/autocomplete'] = array(
       'page callback' => 'rules_ui_form_data_selection_auto_completion',
       'page arguments' => array($base_count + 3, $base_count + 4, $base_count + 5),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'type' => MENU_CALLBACK,
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -90,7 +95,8 @@ class RulesUIController {
       'title arguments' => array('Editing !plugin "!label"', $base_count + 3),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_delete_element', $base_count + 1, $base_count + 3, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'load arguments' => array($base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
@@ -98,7 +104,8 @@ class RulesUIController {
     $items[$base_path . '/manage/%rules_config/%'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_form_rules_config_confirm_op', $base_count + 1, $base_count + 2, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
     );
@@ -107,7 +114,8 @@ class RulesUIController {
       'title arguments' => array('Cloning !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_form_clone_rules_config', $base_count + 1, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
     );
@@ -116,7 +124,8 @@ class RulesUIController {
       'title arguments' => array('Export of !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_form_export_rules_config', $base_count + 1, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('view', $base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
     );
@@ -125,7 +134,8 @@ class RulesUIController {
       'title arguments' => array('Executing !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('rules_ui_form_execute_rules_config', $base_count + 1, $base_path),
-      'access arguments' => array('administer rules'),
+      'access callback' => 'rules_config_access',
+      'access arguments' => array('update', $base_count + 1),
       'file' => 'ui/ui.forms.inc',
       'file path' => drupal_get_path('module', 'rules'),
     );
@@ -135,7 +145,8 @@ class RulesUIController {
         'title arguments' => array('Schedule !plugin "!label"', $base_count + 1),
         'page callback' => 'drupal_get_form',
         'page arguments' => array('rules_scheduler_schedule_form', $base_count + 1, $base_path),
-        'access arguments' => array('administer rules'),
+        'access callback' => 'rules_config_access',
+        'access arguments' => array('update', $base_count + 1),
         'file' => 'rules_scheduler.admin.inc',
         'file path' => drupal_get_path('module', 'rules_scheduler'),
       );
@@ -196,7 +207,9 @@ class RulesUIController {
 
     $rows = array();
     foreach ($entities as $id => $entity) {
-      $rows[] = $this->overviewTableRow($conditions, $id, $entity, $options);
+      if (user_access('bypass rules access') || $entity->access()) {
+        $rows[] = $this->overviewTableRow($conditions, $id, $entity, $options);
+      }
     }
     // Assemble the right table header.
     $header = array(t('Name'), t('Event'), t('Plugin'), t('Status'), array('data' => t('Operations')));

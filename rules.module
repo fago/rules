@@ -921,10 +921,11 @@ function rules_permission() {
   return array(
     'administer rules' => array(
       'title' => t('Administer rule configurations'),
+      'description' => t('Administer rule configurations including events, conditions and actions for which the user has sufficient access permissions.'),
     ),
     'bypass rules access' => array(
       'title' => t('Bypass Rules access control'),
-      'description' => t('Use any data property, Rules action or input evaluation system regardless of permission restrictions.'),
+      'description' => t('Control all configurations regardless of permission restrictions of events, conditions or actions.'),
       'restrict access' => TRUE,
     ),
     'access rules debug' => array(
@@ -1174,12 +1175,18 @@ function rules_modules_disabled($modules) {
 }
 
 /**
- * Access callback for rules configurations.
+ * Access callback for dealing with Rules configurations.
  *
  * @see entity_access()
  */
-function rules_config_access($op, $rules_config, $account = NULL) {
-  return user_access('administer rules', $account);
+function rules_config_access($op, $rules_config = NULL, $account = NULL) {
+  if (user_access('bypass rules access', $account)) {
+    return TRUE;
+  }
+  if (!isset($rules_config) || (isset($account) && $account->uid != $GLOBALS['user']->uid)) {
+    return FALSE;
+  }
+  return user_access('administer rules', $account) && ($op == 'view' || $rules_config->access());
 }
 
 /**

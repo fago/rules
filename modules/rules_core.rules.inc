@@ -201,6 +201,7 @@ function rules_rules_core_condition_info() {
     'group' => t('Components'),
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
+    'access callback' => 'rules_element_invoke_component_access_callback',
   );
   $items = array();
   foreach (rules_get_components(FALSE, 'condition') as $name => $config) {
@@ -224,6 +225,7 @@ function rules_rules_core_action_info() {
     'group' => t('Components'),
     'base' => 'rules_element_invoke_component',
     'named parameter' => TRUE,
+    'access callback' => 'rules_element_invoke_component_access_callback',
   );
   $items = array();
   foreach (rules_get_components(FALSE, 'action') as $name => $config) {
@@ -291,6 +293,17 @@ function rules_element_invoke_component_features_export(&$export, &$pipe, $modul
   // Add the used component to the pipe.
   $info = $element->info();
   $pipe['rules_config'][] = $info['#config_name'];
+}
+
+/**
+ * Access callback for the invoke component condition/action.
+ */
+function rules_element_invoke_component_access_callback($type, $name) {
+  // Only allow access to the action/condition if the user has access to the
+  // component.
+  // Cut of the leading 'component_' from the action name.
+  $component = rules_config_load(substr($name, 10));
+  return $component && $component->access();
 }
 
 /**

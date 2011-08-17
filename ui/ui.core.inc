@@ -349,7 +349,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
     // Make sure the current user really has access to configure this element
     // as well as the used input evaluators and data processors.
-    if (!user_access('bypass rules access') && !$this->element->access()) {
+    if (!user_access('bypass rules access') && !$this->element->root()->access()) {
       form_set_error('', t('Access violation! You have insufficient access permissions to edit this configuration.'));
     }
     try {
@@ -540,7 +540,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   public function getVariableForm($name = '', $info = array(), $provided = FALSE) {
     $form['type'] = array(
       '#type' => 'select',
-      '#options' => array(0 => '--') + RulesPluginUI::getOptions('data_info'),
+      '#options' => array(0 => '--') + RulesPluginUI::getOptions('data'),
       '#default_value' => isset($info['type']) ? $info['type'] : 0,
     );
     $form['label'] = array(
@@ -735,14 +735,24 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Returns an array of options to use with a select for the items specified
    * in the given hook.
    *
-   * @param $hook
-   *   The hook to use to fetch data, or an array of data to use.
+   * @param $item_type
+   *   The item type to get options for. One of 'data', 'event', 'condition' and
+   *   'action'.
+   * @param $items
+   *   (optional) An array of items to restrict the options to.
+   *
+   * @return
+   *   An array of options.
    */
-  public static function getOptions($hook) {
+  public static function getOptions($item_type, $items = NULL) {
     $sorted_data = array();
     $ungrouped = array();
-    $data = !is_array($hook) ? rules_fetch_data($hook) : $hook;
+    $data = $items ? $items : rules_fetch_data($item_type . '_info');
     foreach ($data as $name => $info) {
+      // Verfiy the current user has access to use it.
+      if (!empty($info['access callback']) && !call_user_func($info['access callback'], $item_type, $name)) {
+        continue;
+      }
       if (!empty($info['group'])) {
         $sorted_data[drupal_ucfirst($info['group'])][$name] = drupal_ucfirst($info['label']);
       }

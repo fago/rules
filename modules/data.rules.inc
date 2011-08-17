@@ -366,7 +366,7 @@ function rules_action_data_list_add_positions() {
  * Options list callback for variable add action.
  */
 function rules_data_action_variable_add_options() {
-  return RulesPluginUI::getOptions('data_info');
+  return RulesPluginUI::getOptions('data');
 }
 
 /**

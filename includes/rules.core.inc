@@ -656,8 +656,16 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Whether the currently logged in user has access to configure (or to change)
-   * this configuration.
+   * Whether the currently logged in user has access to all configured elements.
+   *
+   * Note that this only checks whether the current user has permission to all
+   * configured elements, but not whether a user has access to configure Rule
+   * configurations in general. Use rules_config_access() for that.
+   *
+   * Use this to determine access permissions for configuring or triggering the
+   * execution of certain configurations independent of the Rules UI.
+   *
+   * @see rules_config_access()
    */
   public function access() {
     $this->processSettings();
@@ -1325,8 +1333,9 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   }
 
   public function access() {
+    $info = $this->info();
     $this->loadBasicInclude();
-    if (!empty($this->info['access callback']) && !call_user_func($this->info['access callback'], $this->itemName, $this->getElementName())) {
+    if (!empty($info['access callback']) && !call_user_func($info['access callback'], $this->itemName, $this->getElementName())) {
       return FALSE;
     }
     return parent::access() && $this->__call('access');
@@ -1657,9 +1666,9 @@ interface RulesPluginImplInterface {
   public function validate();
 
   /**
-   * Processes $settings independent from a form submission in order to prepare
-   * element execution. Processing results may be stored and accessed on
-   * execution time in $settings.
+   * Processes settings independent from a form submission.
+   *
+   * Processing results may be stored and accessed on execution time in $settings.
    */
   public function process();
 
@@ -1675,8 +1684,13 @@ interface RulesPluginImplInterface {
   public function info_alter(&$element_info);
 
   /**
-   * Checks whether the user has access to configure this element or rule
-   * configuration.
+   * Checks whether the user has access to configure this element.
+   *
+   * Note that this only covers access for already created elements. In order to
+   * control access for creating or using elements specify an 'access callback'
+   * in the element's info array.
+   *
+   * @see hook_rules_action_info()
    */
   public function access();
 
