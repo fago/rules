@@ -1,5 +1,5 @@
 name = Rules Scheduler
-description = Schedule the execution of rule components using actions.
+description = Schedule the execution of Rules components using actions.
 dependencies[] = rules
 package = Rules
 core = 7.x
