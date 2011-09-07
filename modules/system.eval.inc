@@ -81,8 +81,6 @@ function rules_action_mail($to, $subject, $message, $from = NULL, $settings, Rul
   $params = array(
     'subject' => $subject,
     'message' => $message,
-    'action' => $element,
-    'state' => $state,
   );
   // Set a unique key for this mail.
   $name = isset($element->root()->name) ? $element->root()->name : 'unnamed';
