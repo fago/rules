@@ -24,12 +24,14 @@ class RulesAction extends RulesAbstractPlugin implements RulesActionInterface {
     if (is_array($return)) {
       foreach ($return as $name => $data) {
         // Add provided variables.
-        if (!$state->varInfo($name) && isset($this->info['provides'][$name])) {
+        if (isset($this->info['provides'][$name])) {
           $var_name = isset($this->settings[$name . ':var']) ? $this->settings[$name . ':var'] : $name;
-          $state->addVariable($var_name, $data, $this->info['provides'][$name]);
-          rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']), RulesLog::INFO, $this);
-          if (!empty($this->info['provides'][$name]['save']) && $state->variables[$var_name] instanceof EntityMetadataWrapper) {
-            $state->saveChanges($var_name, $state->variables[$var_name]);
+          if (!$state->varInfo($var_name)) {
+            $state->addVariable($var_name, $data, $this->info['provides'][$name]);
+            rules_log('Added the provided variable %name of type %type', array('%name' => $var_name, '%type' => $this->info['provides'][$name]['type']), RulesLog::INFO, $this);
+            if (!empty($this->info['provides'][$name]['save']) && $state->variables[$var_name] instanceof EntityMetadataWrapper) {
+              $state->saveChanges($var_name, $state->variables[$var_name]);
+            }
           }
         }
         // Support updating variables by returning the values.
