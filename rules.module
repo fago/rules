@@ -698,7 +698,7 @@ function rules_config_update_dirty_flag($rules_config, $update = TRUE) {
     $rules_config->dirty = FALSE;
     if ($was_dirty) {
       $variables = array('%label' => $rules_config->label(), '%name' => $rules_config->name, '@plugin' => $rules_config->plugin());
-      watchdog('rules', 'The @plugin %label (%name) passes the integrity check and is going to be executed again.', $variables, WATCHDOG_INFO);
+      watchdog('rules', 'The @plugin %label (%name) was marked dirty, but passes the integrity check now and is active again.', $variables, WATCHDOG_INFO);
     }
   }
   catch (RulesIntegrityException $e) {

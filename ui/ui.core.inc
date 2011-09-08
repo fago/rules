@@ -649,6 +649,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     // Add integrity exception messages if there are any for this element.
     try {
       $this->element->integrityCheck();
+      // A configuration is still marked as dirty, but already works again.
+      if (!empty($this->element->dirty)) {
+        rules_config_update_dirty_flag($this->element);
+        $variables = array('%label' => $this->element->label(), '%name' => $this->element->name, '@plugin' => $this->element->plugin());
+        drupal_set_message(t('The @plugin %label (%name) was marked dirty, but passes the integrity check now and is active again.', $variables));
+        rules_clear_cache();
+      }
     }
     catch (RulesIntegrityException $e) {
       $content['description']['integrity'] = array(
@@ -659,7 +666,13 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
           '#markup' => filter_xss($e->getMessage()),
         ),
       );
+      // Also make sure the rule is marked as dirty.
+      if (empty($this->element->dirty)) {
+        rules_config_update_dirty_flag($this->element);
+        rules_clear_cache();
+      }
     }
+
     $content['#suffix'] = '</div>';
     $content['#type'] = 'container';
     $content['#attributes']['class'][] = 'rules-element-content';
