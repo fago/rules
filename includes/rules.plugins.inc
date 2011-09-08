@@ -695,25 +695,15 @@ class RulesEventSet extends RulesRuleSet {
         'variables' => isset($info['arguments']) ? $info['arguments'] : array(),
       );
       // Add all rules associated with this event to an EventSet for caching.
-      if ($rules = rules_config_load_multiple(FALSE, array('event' => $name, 'active' => TRUE, 'dirty' => 0))) {
+      if ($rules = rules_config_load_multiple(FALSE, array('event' => $name, 'active' => TRUE))) {
         $event = new RulesEventSet($info);
         $event->name = $name;
         foreach ($rules as $rule) {
-          try {
-            $rule->integrityCheck();
+          rules_config_update_dirty_flag($rule);
+          if (!$rule->dirty) {
             // Clone the rule to avoid modules getting the changed version from
             // the static cache.
             $event->rule(clone $rule);
-          }
-          catch (RulesIntegrityException $e) {
-            // Mark the rule as dirty and do not cache it.
-            $rule->dirty = TRUE;
-            db_update('rules_config')
-              ->fields(array('dirty' => 1))
-              ->condition('id', $rule->id)
-              ->execute();
-            $variables = array('%rule' => $rule->label(), '%name' => $rule->name, '!message' => $e->getMessage());
-            watchdog('rules', 'The rule %rule (%name) fails the integrity check and cannot be executed. Error: !message', $variables, WATCHDOG_ERROR);
           }
         }
         if ($event->children) {

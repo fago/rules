@@ -915,16 +915,21 @@ abstract class RulesPlugin extends RulesExtendable {
       return $this->parent->save($name, $module);
     }
     else {
-      // In case the config is not dirty, pre-calculate the dependencies for
-      // later checking. Note that this also triggers processing settings if
-      // necessary.
-      // @see rules_modules_enabled()
+      // Update the dirty flag before saving.
       // However, this operation depends on a fully built Rules-cache, so skip
       // it when entities in code are imported to the database.
       // @see _rules_rebuild_cache()
-      if (empty($this->dirty) && empty($this->is_rebuild)) {
-        $this->dependencies = $this->dependencies();
+      if (empty($this->is_rebuild)) {
+        rules_config_update_dirty_flag($this, FALSE);
+        // In case the config is not dirty, pre-calculate the dependencies for
+        // later checking. Note that this also triggers processing settings if
+        // necessary.
+        // @see rules_modules_enabled()
+        if (empty($this->dirty)) {
+          $this->dependencies = $this->dependencies();
+        }
       }
+
       $this->plugin = $this->itemName;
       $this->name = isset($name) ? $name : $this->name;
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
@@ -1229,11 +1234,11 @@ abstract class RulesPlugin extends RulesExtendable {
     parent::rebuildCache($itemInfo, $cache);
     if (!empty($this->itemInfo['component'])) {
       // Just move each component into the cache.
-      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName, 'dirty' => 0));
+      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName));
 
       foreach ($components as $id => $component) {
-        try {
-          $component->integrityCheck();
+        rules_config_update_dirty_flag($component);
+        if (!$component->dirty) {
           // Clone the component to avoid modules getting the to be cached
           // version from the static loading cache.
           $component = clone $component;
@@ -1241,16 +1246,6 @@ abstract class RulesPlugin extends RulesExtendable {
           // Allow modules to alter the cached component.
           drupal_alter('rules_component', $this->itemName, $component);
           rules_set_cache('comp_' . $component->name, $component);
-        }
-        catch (RulesIntegrityException $e) {
-          // Mark the component as dirty and do not cache it.
-          $component->dirty = TRUE;
-          db_update('rules_config')
-            ->fields(array('dirty' => 1))
-            ->condition('id', $component->id)
-            ->execute();
-          $variables = array('%component' => $component->label(), '%name' => $component->name, '!message' => $e->getMessage());
-          watchdog('rules', 'The component %component (%name) fails the integrity check and cannot be executed. Error: !message', $variables, WATCHDOG_ERROR);
         }
       }
     }

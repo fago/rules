@@ -686,6 +686,38 @@ function rules_config_delete(array $ids) {
 }
 
 /**
+ * Ensures the configuration's 'dirty' flag is up to date.
+ *
+ * @param $update
+ *   Whether the dirty flag is also updated in the database if necessary.
+ */
+function rules_config_update_dirty_flag($rules_config, $update = TRUE) {
+  $was_dirty = !empty($rules_config->dirty);
+  try {
+    $rules_config->integrityCheck();
+    $rules_config->dirty = FALSE;
+    if ($was_dirty) {
+      $variables = array('%label' => $rules_config->label(), '%name' => $rules_config->name, '@plugin' => $rules_config->plugin());
+      watchdog('rules', 'The @plugin %label (%name) passes the integrity check and is going to be executed again.', $variables, WATCHDOG_INFO);
+    }
+  }
+  catch (RulesIntegrityException $e) {
+    $rules_config->dirty = TRUE;
+    if (!$was_dirty) {
+      $variables = array('%label' => $rules_config->label(), '%name' => $rules_config->name, '!message' => $e->getMessage(), '@plugin' => $rules_config->plugin());
+      watchdog('rules', 'The @plugin %label (%name) fails the integrity check and cannot be executed. Error: !message', $variables, WATCHDOG_ERROR);
+    }
+  }
+  // Save the updated dirty flag to the database.
+  if ($was_dirty != $rules_config->dirty) {
+    db_update('rules_config')
+      ->fields(array('dirty' => (int) $rules_config->dirty))
+      ->condition('id', $rules_config->id)
+      ->execute();
+  }
+}
+
+/**
  * Invokes a hook and the associated rules event.
  *
  * Calling this function does the same as calling module_invoke_all() and
