@@ -73,7 +73,7 @@ class RulesTestCase extends DrupalWebTestCase {
 
     // Test getting dependencies and the integrity check.
     $rule->integrityCheck();
-    $this->assertTrue($rule->dependencies() === array(), 'Dependencies correctly returned.');
+    $this->assertTrue($rule->dependencies() === array('rules_test'), 'Dependencies correctly returned.');
   }
 
   /**
@@ -104,6 +104,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $action_set = rules_action_set(array('node' => array('type' => 'node')));
     $action_set->action('node_path_alias');
     $action_set->save('rules_test_alias');
+    rules_clear_cache(TRUE);
 
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->action('component_rules_test_alias');
@@ -130,6 +131,10 @@ class RulesTestCase extends DrupalWebTestCase {
 
     module_enable(array('path'));
     rules_clear_cache(TRUE);
+
+    // Trigger rebuilding the cache, so configs are checked again.
+    rules_get_cache();
+
     $rule = rules_config_load('rules_test_rule');
     $component = rules_config_load('rules_test_alias');
     $this->assertTrue(!$component->dirty, 'Component has been marked as not dirty again.');
@@ -831,23 +836,6 @@ class RulesTestCase extends DrupalWebTestCase {
     $msg = RulesTestCase::t('The variable or parameter %message is empty.', array('message'));
     $this->assertTrue(strpos($text, $msg) !== FALSE, 'Evaluation aborted due to an empty argument value.');
   }
-}
-
-function rules_test_condition_true($settings, $state, $element) {
-  if (!$element instanceof RulesCondition) {
-    throw new Exception('Rules element has not been passed to condition.');
-  }
-  rules_log('condition true called');
-  return TRUE;
-}
-
-function rules_test_condition_false() {
-  rules_log('condition false called');
-  return FALSE;
-}
-
-function rules_test_action() {
-  rules_log('action called');
 }
 
 /**

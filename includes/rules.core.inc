@@ -1324,7 +1324,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
    */
   public function label() {
     $info = $this->info();
-    return isset($info['label']) ? $info['label'] : t('Unkown @plugin "@name"', array('@name' => $this->elementName, '@plugin' => $this->plugin()));
+    return isset($info['label']) ? $info['label'] : t('@plugin "@name"', array('@name' => $this->elementName, '@plugin' => $this->plugin()));
   }
 
   public function access() {
@@ -1340,6 +1340,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // Do the usual integrity check first so the implementation's validation
     // handler can rely on that already.
     parent::integrityCheck();
+    // Make sure the element is known.
+    $this->forceSetUp();
+    if (!isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
+      throw new RulesIntegrityException(t('Unkown @plugin %name.', array('@plugin' => $this->plugin(), '%name' => $this->elementName)));
+    }
     $this->validate();
     return $this;
   }
@@ -1434,9 +1439,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       $return = $this->returnVariables($state, $result);
     }
     else {
-      $state = new RulesState();
-      module_invoke_all('rules_config_execute', $this);
-      $return = $this->executeCallback($args, $state);
+      rules_log('Unable to execute @plugin %label.', $replacements, RulesLog::ERROR, $this);
     }
     $state->cleanUp();
     rules_log('Finished executing of @plugin %label.', $replacements, RulesLog::INFO, $this, FALSE);

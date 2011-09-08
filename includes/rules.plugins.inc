@@ -229,8 +229,9 @@ class Rule extends RulesActionContainer {
   }
 
   public function integrityCheck() {
+    parent::integrityCheck();
     $this->conditions->integrityCheck();
-    return parent::integrityCheck();
+    return $this;
   }
 
   public function access() {
