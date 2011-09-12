@@ -396,7 +396,7 @@ function rules_ui_add_event($form, &$form_state, RulesReactionRule $rules_config
     '#type' => 'select',
     '#title' => t('React on event'),
     '#options' => RulesPluginUI::getOptions('event', $events),
-    '#description' => t('Whenever the event occurrs, rule evaluation is triggered.'),
+    '#description' => t('Whenever the event occurs, rule evaluation is triggered.'),
   );
   $form['submit'] = array(
     '#type' => 'submit',
