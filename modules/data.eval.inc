@@ -233,7 +233,8 @@ function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
     default:
     case '==':
-      return $data == $value || is_array($value) && in_array($data, $value);
+      // In case both values evaluate to FALSE, do a type-safe comparison.
+      return (!$data && !$value) ? $data === $value : $data == $value;
     case '<':
       return $data < $value;
     case '>':
