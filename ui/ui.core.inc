@@ -621,9 +621,9 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
         $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
         $class = $this->getDataTypeClass($parameter['type']);
-        if (method_exists($class, $method)) {
-          $element = call_user_func(array($class, $method), $this->element->settings[$name], $name, $parameter, $this->element);
-        }
+        // We cannot use method_exists() here as it would trigger a PHP bug,
+        // @see http://drupal.org/node/1258284
+        $element = call_user_func(array($class, $method), $this->element->settings[$name], $name, $parameter, $this->element);
       }
       // Only add parameters that are really configured / not default.
       if ($element) {
