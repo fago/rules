@@ -5,6 +5,12 @@
  * Rules base classes and interfaces needed for any rule evaluation.
  */
 
+// This is not necessary as the classes are autoloaded via the registry. However
+// it saves some possible update headaches until the registry is rebuilt.
+// @todo
+//   Remove for a future release.
+require_once dirname(__FILE__) . '/faces.inc';
+
 /**
  * Make sure loaded rule configs are instantiated right.
  */

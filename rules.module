@@ -4,20 +4,6 @@
  * @file Rules engine module
  */
 
-// Add the rules autoloader, which cares about auto-loading the faces include.
-// @see http://drupal.org/project/faces
-spl_autoload_register('rules_autoload');
-
-/**
- * Autoload API includes. Note that the code registry autoload is used only
- * by the providing API module.
- */
-function rules_autoload($class) {
-  if (stripos($class, 'faces') === 0) {
-    module_load_include('inc', 'rules', 'includes/faces');
-  }
-}
-
 /**
  * Implements hook_init().
  */

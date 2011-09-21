@@ -392,3 +392,10 @@ function rules_update_7205() {
     ));
   }
 }
+
+/**
+ * Flush all caches.
+ */
+function rules_update_7206() {
+  // The update system is going to flush all caches anyway, so nothing to do.
+}
