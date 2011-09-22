@@ -602,7 +602,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
       $attributes = array();
       if (!$last_part || strpos($selector, $string) === 0) {
         $attributes['class'][] = 'rules-dsac-item';
-        $attributes['title'] = isset($info['description']) ? check_plain($info['description']) : '';
+        $attributes['title'] = isset($info['description']) ? strip_tags($info['description']) : '';
         if ($selector[strlen($selector) - 1] == ':') {
           $attributes['class'][] = 'rules-dsac-group';
           $text = check_plain($selector) . '... (' . check_plain($info['label']) . ')';
