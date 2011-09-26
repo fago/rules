@@ -209,7 +209,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
 
     // We use $form_state['element_settings'] to store the settings of both
     // parameter modes. That way one can switch between the parameter modes
-    // without loosing the settings of those.
+    // without losing the settings of those.
     $form_state += array('element_settings' => $this->element->settings);
     $settings = $this->element->settings + $form_state['element_settings'];
 

@@ -250,7 +250,7 @@ function hook_rules_condition_info() {
  *     - 'options list': (optional) A callback that returns an array of possible
  *       values for this variable as specified for entity properties at
  *       hook_entity_property_info().
- *     - 'skip save': If the variable is saved after the event has occured
+ *     - 'skip save': If the variable is saved after the event has occurred
  *       anyway, set this to TRUE. So rules won't save the variable a second
  *       time. Optional, defaults to FALSE.
  *     - handler: A handler to load the actual variable value. This is useful
@@ -258,7 +258,7 @@ function hook_rules_condition_info() {
  *       variables passed in the order as defined. Optional. Also see
  *       http://drupal.org/node/884554.
  *       Note that for lazy-loading entities just the entity id may be passed
- *       as variable value, so a handler is not necesary in that case.
+ *       as variable value, so a handler is not necessary in that case.
  *
  *  @see rules_invoke_event()
  */

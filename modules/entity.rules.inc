@@ -242,7 +242,7 @@ function rules_action_entity_query_property_options_list(RulesAbstractPlugin $el
 }
 
 /**
- * Returns the options list specified for the choosen property.
+ * Returns the options list specified for the chosen property.
  */
 function rules_action_entity_query_value_options_list(RulesAbstractPlugin $element) {
   // Get the possible values for the selected property.

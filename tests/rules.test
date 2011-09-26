@@ -1755,7 +1755,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     watchdog('php', 'test %message', array('%message' => 'message'));
     $msg = drupal_get_messages();
-    $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occured and log entry properties can be used.');
+    $this->assertEqual(array_pop($msg['status']), t('test %message', array('%message' => 'message')), 'Watchdog event occurred and log entry properties can be used.');
   }
 
   /**

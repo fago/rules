@@ -718,7 +718,7 @@ function rules_ui_element_duration_multipliers() {
 function rules_ui_element_duration_value($element, $input = FALSE) {
   // This runs before child elements are processed, so we cannot calculate the
   // value here. But we have to make sure the value is an array, so the form
-  // API is able to proccess the children to set their values in the array. Thus
+  // API is able to process the children to set their values in the array. Thus
   // once the form API has finished processing the element, the value is an
   // array containing the child element values. Then finally the after build
   // callback converts it back to the numeric value and sets that.
