@@ -162,15 +162,17 @@ function rules_ui_form_execute_rules_config_submit($form, &$form_state) {
  * Gets the confirmation question for valid operations, or else FALSE.
  */
 function rules_ui_confirm_operations($op, $rules_config) {
+  $vars = array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label());
+
   switch ($op) {
     case 'enable':
-      return t('Are you sure you want to enable the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+      return array(t('Are you sure you want to enable the %plugin %label?', $vars), '');
     case 'disable':
-      return t('Are you sure you want to disable the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+      return array(t('Are you sure you want to disable the %plugin %label?', $vars), '');
     case 'revert':
-      return t('Are you sure you want to revert the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+      return array(t('Are you sure you want to revert the %plugin %label?', $vars), t('This action cannot be undone.'));
     case 'delete':
-      return t('Are you sure you want to delete the %plugin %label?', array('%plugin' => $rules_config->plugin(), '%label' => $rules_config->label()));
+      return array(t('Are you sure you want to delete the %plugin %label?', $vars), t('This action cannot be undone.'));
     default:
       return FALSE;
   }
@@ -180,10 +182,10 @@ function rules_ui_confirm_operations($op, $rules_config) {
  * Confirmation form for applying the operation to the config.
  */
 function rules_ui_form_rules_config_confirm_op($form, &$form_state, $rules_config, $op, $base_path) {
-  if ($confirm_question = rules_ui_confirm_operations($op, $rules_config)) {
+  if (list($confirm_question, $description) = rules_ui_confirm_operations($op, $rules_config)) {
     RulesPluginUI::$basePath = $base_path;
     $form_state += array('rules_config' => $rules_config, 'op' => $op);
-    return confirm_form($form, $confirm_question, $base_path, t('This action cannot be undone.'), t('Confirm'), t('Cancel'));
+    return confirm_form($form, $confirm_question, $base_path, $description, t('Confirm'), t('Cancel'));
   }
   else {
     drupal_not_found();
