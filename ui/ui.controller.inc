@@ -255,7 +255,7 @@ class RulesUIController {
       $events = array();
       if ($config instanceof RulesTriggerableInterface) {
         foreach ($config->events() as $event_name) {
-          $this->event_info += array($event_name => array('label' => t('Unkown event "!event_name"', array('!event_name' => $event_name))));
+          $this->event_info += array($event_name => array('label' => t('Unknown event "!event_name"', array('!event_name' => $event_name))));
           $events[] = check_plain($this->event_info[$event_name]['label']);
         }
       }

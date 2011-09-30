@@ -1349,7 +1349,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
     // Make sure the element is known.
     $this->forceSetUp();
     if (!isset($this->cache[$this->itemName . '_info'][$this->elementName])) {
-      throw new RulesIntegrityException(t('Unkown @plugin %name.', array('@plugin' => $this->plugin(), '%name' => $this->elementName)));
+      throw new RulesIntegrityException(t('Unknown @plugin %name.', array('@plugin' => $this->plugin(), '%name' => $this->elementName)));
     }
     $this->validate();
     return $this;
