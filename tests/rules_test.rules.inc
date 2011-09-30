@@ -42,6 +42,18 @@ function rules_test_rules_condition_info() {
     'label' => t('Test condition returning false'),
     'group' => t('Rules test'),
   );
+  // A condition for testing passing entities wrapped.
+  $items['rules_test_condition_node_wrapped'] = array(
+    'label' => t('Content is published'),
+    'parameter' => array(
+      'node' => array(
+        'type' => 'node',
+        'label' => t('Content'),
+        'wrapped' => TRUE,
+      ),
+    ),
+    'group' => t('Node'),
+  );
   return $items;
 }
 
@@ -62,6 +74,13 @@ function rules_test_condition_true($settings, $state, $element) {
 function rules_test_condition_false() {
   rules_log('condition false called');
   return FALSE;
+}
+
+/**
+ * Condition implementation receiving the node wrapped.
+ */
+function rules_test_condition_node_wrapped($wrapper) {
+  return $wrapper instanceof EntityMetadataWrapper;
 }
 
 /**

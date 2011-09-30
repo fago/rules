@@ -415,6 +415,39 @@ class RulesTestCase extends DrupalWebTestCase {
     catch (RulesIntegrityException $e) {
       $this->pass("Validation error correctly detected: ". $e);
     }
+
+    // Test auto creation of nested data structures, like the node body field.
+    // I.e. if $node->body is not set, it is automatically initialized to an
+    // empty array, so that the nested value can be set and the wrappers do not
+    // complain about missing parent data structures.
+    $rule = rule();
+    $rule->action('entity_create', array(
+      'type' => 'node',
+      'param_type' => 'page',
+      'param_title' => 'foo',
+      'param_author' => $GLOBALS['user'],
+    ));
+    $rule->action('data_set', array('data:select' => 'entity_created:body:value', 'value' => 'test content'))
+         ->execute();
+    try {
+      RulesLog::logger()->checkLog();
+      $this->pass('Auto creation of nested data structures.');
+    }
+    catch (Exception $e) {
+      $this->fail('Auto creation of nested data structures.');
+    }
+
+    // Make sure variables that are passed wrapped work.
+    $result = rules_condition('rules_test_condition_node_wrapped')->execute($node->nid);
+    $this->assertTrue($result, 'Condition receiving wrapped parameter.');
+
+    // Make sure wrapped parameters are checked for containing NULL values.
+    $rule = rule(array('node' => array('type' => 'node', 'optional' => TRUE)));
+    $rule->condition('rules_test_condition_node_wrapped', array('node:select' => 'node'));
+    $rule->execute(entity_metadata_wrapper('node'));
+    $text = RulesLog::logger()->render();
+    $msg = RulesTestCase::t('The variable or parameter %node is empty.', array('node'));
+    $this->assertTrue(strpos($text, $msg) !== FALSE, 'Evaluation aborted due to an empty argument value.');
   }
 
   /**

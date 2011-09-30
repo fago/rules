@@ -392,18 +392,32 @@ function rules_unwrap_data(array $data, $info = array()) {
   foreach ($data as $key => $entry) {
     // If it's a wrapper, unwrap unless specified otherwise.
     if ($entry instanceof EntityMetadataWrapper) {
-      if (isset($info[$key]) && (!empty($info[$key]['wrapped']) || (is_string($info[$key]['type']) && !empty($cache['data_info'][$info[$key]['type']]['is wrapped'])))) {
-        continue;
+      if (!isset($info[$key]['allow null'])) {
+        $info[$key]['allow null'] = FALSE;
       }
-      $options = (isset($info[$key]) ? $info[$key] : array()) + array('decode' => empty($info[$key]['sanitize']));
+      if (!isset($info[$key]['wrapped'])) {
+        // By default, do not unwrap special data types that are always wrapped.
+        $info[$key]['wrapped'] = (isset($info[$key]['type']) && is_string($info[$key]['type']) && !empty($cache['data_info'][$info[$key]['type']]['is wrapped']));
+      }
+      // Activate the decode option by default if 'sanitize' is not enabled, so
+      // any text is either sanitized or decoded.
+      // @see EntityMetadataWrapper::value()
+      $options = $info[$key] + array('decode' => empty($info[$key]['sanitize']));
+
       try {
-        $data[$key] = $entry->value($options);
+        if (!($info[$key]['allow null'] && $info[$key]['wrapped'])) {
+          $value = $entry->value($options);
+
+          if (!$info[$key]['wrapped']) {
+            $data[$key] = $value;
+          }
+          if (!$info[$key]['allow null'] && !isset($value)) {
+            throw new RulesEvaluationException('The variable or parameter %name is empty.', array('%name' => $key));
+          }
+        }
       }
       catch (EntityMetadataWrapperException $e) {
         throw new RulesEvaluationException('Unable to get the data value for the variable or parameter %name. Error: !error', array('%name' => $key, '!error' => $e->getMessage()));
-      }
-      if (!isset($data[$key]) && empty($info[$key]['allow null'])) {
-        throw new RulesEvaluationException('The variable or parameter %name is empty.', array('%name' => $key));
       }
     }
   }

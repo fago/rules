@@ -294,11 +294,6 @@ class RulesState {
           throw new RulesEvaluationException('Unable to apply data selector %selector. The specified variable is not a list or a structure: %wrapper.', array('%selector' => $selector, '%wrapper' => $wrapper));
         }
       }
-      // Try accessing the data value immediately, so we can provide a
-      // reasonable error message in case it fails. If the wrapper wraps an
-      // entity make sure to not issue an eventually unnecessary entity_load()
-      // though.
-      $wrapper->value(array('identifier' => TRUE));
     }
     catch (EntityMetadataWrapperException $e) {
       // In case of an exception, re-throw it.
