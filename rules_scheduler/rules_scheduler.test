@@ -35,7 +35,6 @@ class RulesSchedulerTestCase extends DrupalWebTestCase {
                      ->action('node_unpublish', array('node:select' => 'node1'))
                );
     $set->integrityCheck()->save('rules_test_set_2');
-    rules_clear_cache(TRUE);
 
     // Use different names for the variables to ensure they are properly mapped.
     $rule = rule(array(
@@ -84,7 +83,6 @@ class RulesSchedulerTestCase extends DrupalWebTestCase {
       'param_node1:select' => 'node',
     ));
     $rule->save();
-    rules_clear_cache(TRUE);
 
     // Create a node, what triggers the rule.
     $node = $this->drupalCreateNode(array('title' => 'The title.', 'status' => 1));

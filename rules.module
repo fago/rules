@@ -302,19 +302,13 @@ function rules_flush_caches() {
 
 /**
  * Clears the rule set cache
- *
- * @param $immediate
- *   If FALSE, the static cache will be kept until the next page
- *   load. If set to TRUE static caches will be cleared too.
  */
-function rules_clear_cache($immediate = FALSE) {
+function rules_clear_cache() {
   cache_clear_all('*', 'cache_rules', TRUE);
   variable_del('rules_empty_sets');
-  if ($immediate) {
-    drupal_static_reset('rules_get_cache');
-    drupal_static_reset('rules_fetch_data');
-    entity_get_controller('rules_config')->resetCache();
-  }
+  drupal_static_reset('rules_get_cache');
+  drupal_static_reset('rules_fetch_data');
+  entity_get_controller('rules_config')->resetCache();
 }
 
 /**
