@@ -229,7 +229,7 @@ function rules_admin_add_reaction_rule($form, &$form_state, $base_path) {
 
   $form_state += array('rules_config' => $rules_config);
   $form['#validate'][] = 'rules_ui_edit_element_validate';
-  $form['#validate'][] = 'rules_ui_add_event_validate';
+  $form['#submit'][] = 'rules_ui_add_event_apply';
   $form['#submit'][] = 'rules_ui_edit_element_submit';
   return $form;
 }

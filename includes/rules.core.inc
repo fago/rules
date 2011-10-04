@@ -441,6 +441,7 @@ abstract class RulesPlugin extends RulesExtendable {
 
   /**
    * Gets the element map helper object, which helps mapping elements to ids.
+   *
    * @return RulesElementMap
    */
   public function elementMap() {
@@ -449,6 +450,15 @@ abstract class RulesPlugin extends RulesExtendable {
       $config->map = new RulesElementMap($config);
     }
     return $config->map;
+  }
+
+  /**
+   * Do a deep clone.
+   */
+  public function __clone() {
+    // Make sure the element map is cleared.
+    // @see self::elementMap()
+    unset($this->map);
   }
 
   /**
@@ -1960,6 +1970,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
    * By default we do a deep clone.
    */
   public function __clone() {
+    parent::__clone();
     foreach ($this->children as $key => $child) {
       $this->children[$key] = clone $child;
       $this->children[$key]->parent = $this;

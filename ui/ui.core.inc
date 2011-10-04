@@ -352,12 +352,6 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     if (!user_access('bypass rules access') && !$this->element->root()->access()) {
       form_set_error('', t('Access violation! You have insufficient access permissions to edit this configuration.'));
     }
-    try {
-      $this->element->integrityCheck();
-    }
-    catch (RulesIntegrityException $e) {
-      form_set_error(implode('][', $e->keys), t('The integrity check failed with the following error message: "!message"', array('!message' => $e->getMessage())));
-    }
     if (!empty($form['settings'])) {
       $this->settingsFormValidate($form, $form_state);
     }
@@ -850,6 +844,17 @@ class RulesAbstractPluginUI extends RulesPluginUI {
     $form_values = RulesPluginUI::getFormStateValues($form, $form_state);
     if ($this->element instanceof RulesCondition && isset($form_values['negate'])) {
       $this->element->negate($form_values['negate']);
+    }
+  }
+
+  public function form_validate($form, &$form_state) {
+    parent::form_validate($form, $form_state);
+    // Validate the edited element and throw validation errors if it fails.
+    try {
+      $this->element->integrityCheck();
+    }
+    catch (RulesIntegrityException $e) {
+      form_set_error(implode('][', $e->keys), $e->getMessage());
     }
   }
 }
