@@ -22,6 +22,22 @@ class RulesEntityController extends EntityAPIControllerExportable {
    */
   protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
     // Retrieve stdClass records and turn them in rules objects stored in 'data'
+    $ids = array_keys($queried_entities);
+    $result = db_select('rules_tags')
+      ->fields('rules_tags', array('id', 'tag'))
+      ->condition('id', $ids, 'IN')
+      ->execute();
+    foreach ($result as $row) {
+      $tags[$row->id][] = $row->tag;
+    }
+    $result = db_select('rules_dependencies')
+      ->fields('rules_dependencies', array('id', 'module'))
+      ->condition('id', $ids, 'IN')
+      ->execute();
+    foreach ($result as $row) {
+      $modules[$row->id][] = $row->module;
+    }
+
     $entities = array();
     foreach ($queried_entities as $record) {
       $entity = $record->data;
@@ -30,17 +46,9 @@ class RulesEntityController extends EntityAPIControllerExportable {
         $entity->$field = $record->$field;
       }
       unset($entity->data, $entity->plugin);
-      // Load possible tags.
-      $entity->tags = db_select('rules_tags')
-        ->fields('rules_tags', array('tag'))
-        ->condition('id', $entity->id)
-        ->execute()
-        ->fetchCol('tag');
-      $entity->dependencies = db_select('rules_dependencies')
-        ->fields('rules_dependencies', array('module'))
-        ->condition('id', $entity->id)
-        ->execute()
-        ->fetchCol('module');
+      // Add any tags or dependencies.
+      $entity->dependencies = isset($modules[$entity->id]) ? $modules[$entity->id] : array();
+      $entity->tags = isset($tags[$entity->id]) ? $tags[$entity->id] : array();
       $entities[$entity->id] = $entity;
     }
     $queried_entities = $entities;
