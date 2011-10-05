@@ -760,7 +760,7 @@ function rules_invoke_all() {
  *   Pass parameters for the variables provided by this event, as defined in
  *   hook_rules_event_info(). Example given:
  *   @code
- *     rules_invoke_event('node_insert', $node);
+ *     rules_invoke_event('node_view', $node, $view_mode);
  *   @endcode
  *
  * @see rules_invoke_event_by_args()
@@ -790,7 +790,7 @@ function rules_invoke_event() {
  *   passed parameters has to match the order of the specified variables.
  *   Example given:
  *   @code
- *     rules_invoke_event('node_insert', array('node' => $node));
+ *     rules_invoke_event_by_args('node_view', array('node' => $node, 'view_mode' => $view_mode));
  *   @endcode
  *
  * @see rules_invoke_event()
