@@ -1247,3 +1247,57 @@ function rules_menu() {
   );
   return $items;
 }
+
+/**
+ * Helper function to keep track of external documentation pages for Rules.
+ *
+ * @param $topic
+ *   The topic key for used for identifying help pages.
+ *
+ * @return
+ *   Either a URL for the given page, or the full list of external help pages.
+ */
+function rules_external_help($topic = NULL) {
+  $help = array(
+    'rules' =>                'http://drupal.org/node/298480',
+    'terminology' =>          'http://drupal.org/node/1299990',
+    'condition-components' => 'http://drupal.org/node/1300034',
+    'data-selection' =>       'http://drupal.org/node/1300042',
+    'chained-tokens' =>       'http://drupal.org/node/1300042',
+    'loops' =>                'http://drupal.org/node/1300058',
+    'components' =>           'http://drupal.org/node/1300024',
+    'component-types' =>      'http://drupal.org/node/1300024',
+    'variables' =>            'http://drupal.org/node/1300024',
+    'scheduler' =>            'http://drupal.org/node/1300068',
+    'coding' =>               'http://drupal.org/node/878720',
+  );
+
+  if (isset($topic)) {
+    return isset($help[$topic]) ? $help[$topic] : FALSE;
+  }
+  return $help;
+}
+
+/**
+ * Implements hook_help().
+ */
+function rules_help($path, $arg) {
+  // Only enable the help if the admin module is active.
+  if ($path == 'admin/help#rules' && module_exists('rules_admin')) {
+
+    $output['header'] = array(
+      '#markup' => t('Rules documentation is kept online. Please use the links below for more information about Rules. Feel free to contribute to improving the online documentation!'),
+    );
+    // Build a list of essential Rules help pages, formatted as a bullet list.
+    $link_list['rules'] = l(t('Rules introduction'), rules_external_help('rules'));
+    $link_list['terminology'] = l(t('Rules terminology'), rules_external_help('terminology'));
+    $link_list['scheduler'] = l(t('Rules Scheduler'), rules_external_help('scheduler'));
+    $link_list['coding'] = l(t('Coding for Rules'), rules_external_help('coding'));
+
+    $output['topic-list'] = array(
+      '#markup' => theme('item_list', array('items' => $link_list)),
+    );
+    return render($output);
+  }
+}
+

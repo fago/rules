@@ -434,12 +434,19 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       '#title' => t('Tags'),
       '#default_value' => isset($this->element->tags) ? drupal_implode_tags($this->element->tags) : '',
       '#autocomplete_path' => 'admin/config/workflow/rules/autocomplete_tags',
-      '#description' => t('Tags associated with this configuration. Enter a comma-separated list of words.'),
+      '#description' => t('Tags associated with this configuration, used for filtering in the admin interface. Separate multiple tags with commas.'),
     );
 
     // Show a form for editing variables for components.
     if (($plugin_info = $this->element->pluginInfo()) && !empty($plugin_info['component'])) {
-      $description = $this->element->hasStatus(ENTITY_IN_CODE) ? t('The variables used by the component. They can not be edited for configurations that are provided in code.') : t('Defines the variables the component uses. Variables can be used as <em>parameter</em>, so that the caller has to specify suiting arguments. Also, action components may <em>provide</em> some variables to the caller. For each variable you have to specify a certain data type, a label and a unique machine readable name containing only lowercase alphanumeric characters and underscores.');
+      if ($this->element->hasStatus(ENTITY_IN_CODE)) {
+        $description = t('The variables used by the component. They can not be edited for configurations that are provided in code.');
+      }
+      else {
+        $description = t('Variables are normally input <em>parameters</em> for the component – data that should be available for the component to act on. Additionaly, action components may <em>provide</em> variables back to the caller. Each variable must have a specified data type, a label and a unique machine readable name containing only lowercase alphanumeric characters and underscores. See <a href="@url">the online documentation</a> for more information about variables.',
+          array('@url' => rules_external_help('variables'))
+        );
+      }
       $form['settings']['vars'] = array(
         '#prefix' => '<div id="rules-component-variables">',
         '#suffix' => '</div>',
@@ -1034,7 +1041,11 @@ class RulesConditionContainerUI extends RulesContainerPluginUI {
         '#type' => 'container',
         '#id' => 'rules-plugin-add-help',
         'content' => array(
-          '#markup' => t('You are about to add a new @plugin to the @config-plugin %label.', array('@plugin' => $this->element->plugin(), '@config-plugin' => $config->plugin(), '%label' => $config->label())),
+          '#markup' => t('You are about to add a new @plugin to the @config-plugin %label. Use indentation to make conditions a part of this logic group. See <a href="@url">the online documentation</a> for more information on condition sets.',
+            array('@plugin' => $this->element->plugin(),
+                  '@config-plugin' => $config->plugin(),
+                  '%label' => $config->label(),
+                  '@url' => rules_external_help('condition-components'))),
         ),
       );
     }

@@ -195,6 +195,8 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
       '#title' => t('Replacement patterns'),
       '#collapsible' => TRUE,
       '#collapsed' => TRUE,
+      '#description' => t('Note that token replacements containing chained objects – such as [node:author:uid] – are not listed here, but are still available. The <em>data selection</em> input mode may help you find more complex replacement patterns. See <a href="@url">the online documentation</a> for more information about complex replacement patterns.',
+        array('@url' => rules_external_help('chained-tokens'))),
     );
     $token_info = token_info();
     foreach ($var_info as $name => $info) {

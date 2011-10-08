@@ -29,6 +29,13 @@ function rules_admin_reaction_overview($form, &$form_state, $base_path) {
     $conditions['event'] = $event;
     $collapsed = FALSE;
   }
+  $form['help'] = array(
+    '#type' => 'markup',
+    '#markup' => t('Reaction rules, listed below, react on selected events on the site. Each reaction rule may fire any number of <em>actions</em>, and may have any number of <em>conditions</em> that must be met for the actions to be executed. You can also set up <a href="@url1">components</a> – stand-alone sets of Rules configuration that can be used in Rules and other parts of your site. See <a href="@url2">the online documentation</a> for an introduction on how to use Rules.',
+      array('@url1' => url('admin/config/workflow/rules/components'),
+            '@url2' => rules_external_help('rules'))),
+  );
+
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -95,6 +102,11 @@ function rules_admin_components_overview($form, &$form_state, $base_path) {
     $conditions['plugin'] = $plugin;
     $collapsed = FALSE;
   }
+  $form['help'] = array(
+    '#type' => 'markup',
+    '#markup' => t('Components are stand-alone sets of Rules configuration that can be used by Rules and other modules on your site. Components are for example useful if you want to use the same conditions, actions or rules in multiple places, or call them from your custom module. You may also export each component separately. See <a href="@url2">the online documentation</a> for more information about how to use components.',
+      array('@url' => rules_external_help('components'))),
+  );
   $form['filter'] = array(
     '#type' => 'fieldset',
     '#title' => t('Filter'),
@@ -245,7 +257,8 @@ function rules_admin_add_component($form, &$form_state, $base_path) {
     '#type' => 'select',
     '#title' => t('Component plugin'),
     '#options' => rules_admin_component_options(),
-    '#description' => t('Choose which kind of component to create.'),
+    '#description' => t('Choose which kind of component to create. Each component type is described in <a href="@url">the online documentation</a>.',
+      array('@url' => rules_external_help('component-types'))),
     '#weight' => -2,
     '#default_value' => isset($form_state['values']['plugin_name']) ? $form_state['values']['plugin_name'] : '',
   );

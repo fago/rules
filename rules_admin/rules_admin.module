@@ -103,3 +103,19 @@ function rules_admin_form_alter(&$form, &$form_state, $form_id) {
     $form['form_id']['#access'] = FALSE;
   }
 }
+
+/**
+ * Implements hook_system_info_alter().
+ *
+ * Adds configuration links for Rules and Rules Scheduler in the modules list.
+ * (This is done by the Rules UI module, without which there would be no
+ * configuration pages to visit.)
+ */
+function rules_admin_system_info_alter(&$info, $file, $type) {
+  if ($file->name == 'rules') {
+    $info['configure'] = 'admin/config/workflow/rules';
+  }
+  if ($file->name == 'rules_scheduler') {
+    $info['configure'] = 'admin/config/workflow/rules/schedule';
+  }
+}

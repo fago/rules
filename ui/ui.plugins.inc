@@ -180,7 +180,7 @@ class RulesLoopUI extends RulesActionContainerUI {
     $form['item'] = array(
       '#type' => 'fieldset',
       '#title' => t('Current list item'),
-      '#description' => t('A variable which holds the current list item.'),
+      '#description' => t('The variable used for holding each list item in the loop. This variable will be available inside the loop only.'),
       '#tree' => TRUE,
     );
     $form['item']['label'] = array(

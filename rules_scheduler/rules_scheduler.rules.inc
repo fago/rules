@@ -23,6 +23,7 @@ function rules_scheduler_rules_action_info() {
         'label' => t('Component'),
         'options list' => 'rules_scheduler_component_options_list',
         'restriction' => 'input',
+        'description' => 'Select the component to schedule. Only components containing actions are available – no condition sets.',
       ),
       'date' => array(
         'type' => 'date',
@@ -31,7 +32,7 @@ function rules_scheduler_rules_action_info() {
       'identifier' => array(
         'type' => 'text',
         'label' => t('Identifier'),
-        'description' => t('User provided string to identify the task. Any existing tasks for this component with the same identifier will be replaced.'),
+        'description' => t('A string used for identifying this task. Any existing tasks for this component with the same identifier will be replaced.'),
         'optional' => TRUE,
       ),
       // Further needed parameter by the component are added during processing.
@@ -149,7 +150,9 @@ function rules_scheduler_action_schedule_validate(RulesPlugin $element) {
  * Help for the schedule action.
  */
 function rules_scheduler_action_schedule_help() {
-  return t("The evaluation of the component is going to be scheduled with the help of cron. Therefore make sure cron is configured correctly by checking your site's !status.", array('!status' => l('Status report', 'admin/reports/status'))) .' '. t('Note that the scheduling time accuracy depends on your configured cron interval.');
+  return t("Note that component evaluation is triggered by <em>cron</em> – make sure cron is configured correctly by checking your site's !status. The scheduling time accuracy depends on your configured cron interval. See <a href='@url'>the online documentation</a> for more information on how to schedule evaluation of components.",
+    array('!status' => l('Status report', 'admin/reports/status'),
+          '@url' => rules_external_help('scheduler')));
 }
 
 /**

@@ -542,7 +542,8 @@ class RulesLoop extends RulesActionContainer {
       'type' => 'list',
       'restriction' => 'selector',
       'label' => t('List'),
-      'description' => t('The list to loop over.'),
+      'description' => t('The list to loop over. The loop will step through each item in the list, allowing further actions on them. See <a href="@url"> the online handbook</a> for more information on how to use loops.',
+        array('@url' => rules_external_help('loops'))),
     );
     return $info;
   }
