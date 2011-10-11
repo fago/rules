@@ -265,7 +265,7 @@ function rules_system_evaluator_info() {
   return array(
     'token' => array(
       'class' => 'RulesTokenEvaluator',
-      'type' => array('text', 'uri'),
+      'type' => array('text', 'uri', 'list<text>', 'list<uri>'),
       'weight' => 0,
      ),
   );

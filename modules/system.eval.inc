@@ -149,6 +149,7 @@ function rules_mail($key, &$message, $params) {
 class RulesTokenEvaluator extends RulesDataInputEvaluator {
 
   public function prepare($text, $var_info) {
+    $text = is_array($text) ? implode('', $text) : $text;
     // Skip this evaluator if there are no tokens.
     $this->setting = token_scan($text) ? TRUE : NULL;
   }
@@ -166,7 +167,9 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
 
     $replacements = array();
     $data = array();
-    foreach (token_scan($text) as $var_name => $tokens) {
+    // We also support replacing tokens in a list of textual values.
+    $whole_text = is_array($text) ? implode('', $text) : $text;
+    foreach (token_scan($whole_text) as $var_name => $tokens) {
       $var_name = str_replace('-', '_', $var_name);
       if (isset($var_info[$var_name]) && ($token_type = _rules_system_token_map_type($var_info[$var_name]['type']))) {
         // We have to key $data with the type token uses for the variable.
@@ -184,8 +187,15 @@ class RulesTokenEvaluator extends RulesDataInputEvaluator {
       $function($replacements, $data, $options);
     }
 
+    // Actually apply the replacements.
     $tokens = array_keys($replacements);
     $values = array_values($replacements);
+    if (is_array($text)) {
+      foreach ($text as $i => $text_item) {
+        $text[$i] = str_replace($tokens, $values, $text_item);
+      }
+      return $text;
+    }
     return str_replace($tokens, $values, $text);
   }
 

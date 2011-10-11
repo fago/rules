@@ -727,6 +727,15 @@ class RulesTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
     $msg = drupal_get_messages();
     $this->assertEqual(array_pop($msg['status']), 'Title: ' . check_plain('<b>The body & nothing.</b>'), 'Token input evaluator applied.');
+
+    // Test token replacements on a list of text values.
+    $component = rules_action_set(array('var' => array('type' => 'list<text>', 'label' => 'var')), array('var'));
+    $component->save('rules_test_input');
+
+    $action = rules_action('component_rules_test_input', array('var' => array('uid: [site:current-user:uid]')));
+    list($var) = $action->execute();
+    $uid = $GLOBALS['user']->uid;
+    $this->assertEqual(array("uid: $uid"), $var, 'Token replacements on a list of values applied.');
   }
 
   /**
