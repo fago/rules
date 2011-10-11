@@ -9,7 +9,7 @@ Maintainers:
 The Rules module allows site administrators to define conditionally executed
 actions based on occurring events (ECA-rules).
 
-Poject homepage: http://drupal.org/project/rules
+Project homepage: http://drupal.org/project/rules
 
 
 Installation
