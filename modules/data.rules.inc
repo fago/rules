@@ -82,6 +82,7 @@ function rules_data_action_info() {
         'description' => t('The data list, to which an item is to be added.'),
         'restriction' => 'selector',
         'allow null' => TRUE,
+        'save' => TRUE,
       ),
       'item' => array(
         'type' => 'unknown',
@@ -117,6 +118,7 @@ function rules_data_action_info() {
         'label' => t('List', array(), array('context' => 'data_types')),
         'description' => t('The data list for which an item is to be removed.'),
         'restriction' => 'selector',
+        'save' => TRUE,
       ),
       'item' => array(
         'type' => 'unknown',
