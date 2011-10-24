@@ -1306,6 +1306,17 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $this->assertTrue(rules_condition('list_contains')->execute($list, 'foo'), 'Condition "List item contains" evaluates to TRUE');
     //debug(RulesLog::logger()->render());
 
+    // Test data_is condition with IN operation.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('data_is', array('data:select' => 'node:title', 'op' => 'IN', 'value' => array('foo', 'bar')));
+    $rule->action('data_set', array('data:select' => 'node:title', 'value' => 'bar'));
+    $rule->integrityCheck();
+
+    $node = $this->drupalCreateNode(array('title' => 'foo'));
+    $rule->execute($node);
+    $this->assertEqual($node->title, 'bar', "Data comparision using IN operation evaluates to TRUE.");
+
+
     // Test Condition: Data is empty.
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->condition('data_is_empty', array('data:select' => 'node:title'));

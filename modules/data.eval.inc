@@ -239,8 +239,11 @@ function rules_condition_data_is($data, $op, $value) {
       return $data < $value;
     case '>':
       return $data > $value;
+      // Note: This is deprecated by the text comparison condition and IN below.
     case 'contains':
       return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
+    case 'IN':
+      return is_array($value) && in_array($data, $value);
   }
 }
 
@@ -251,10 +254,10 @@ function rules_condition_data_is($data, $op, $value) {
  * evaluated elements can make use of this information.
  */
 function rules_condition_data_is_info_alter(&$element_info, RulesAbstractPlugin $element) {
-  $element->settings += array('data:select' => NULL);
+  $element->settings += array('data:select' => NULL, 'op' => '==');
   if ($wrapper = $element->applyDataSelector($element->settings['data:select'])) {
     $info = $wrapper->info();
-    $element_info['parameter']['value']['type'] = $wrapper->type();
+    $element_info['parameter']['value']['type'] = $element->settings['op'] == 'IN' ? 'list<' . $wrapper->type() . '>' : $wrapper->type();
     $element_info['parameter']['value']['options list']  = !empty($info['options list']) ? 'rules_data_selector_options_list' : FALSE;
   }
 }
