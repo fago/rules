@@ -765,7 +765,7 @@ function hook_default_rules_configuration() {
        ->action('drupal_message', array('message' => 'A node has been updated.'));
 
   $configs['rules_test_default_1'] = $rule;
-  return $config;
+  return $configs;
 }
 
 /**
