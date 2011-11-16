@@ -96,6 +96,8 @@
  *     already sanitized argument. If enabled, any user specified value won't be
  *     sanitized itself, but replacements applied by input evaluators are as
  *     well as values retrieved from selected data sources.
+ *   - cleaning callback: (optional) A callback that input evaluators may use
+ *     to clean inserted replacements; e.g. this is used by the token evaluator.
  *   - wrapped: (optional) Set this to TRUE in case the data should be passed
  *     wrapped. This only applies to wrapped data types, e.g. entities.
  *  Each 'provides' array may contain the following properties:

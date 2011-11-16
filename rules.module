@@ -897,6 +897,28 @@ function rules_array_key($array) {
 }
 
 /**
+ * Clean replacements so they are URL friendly.
+ *
+ * Can be used as 'cleaning callback' for action or condition parameters.
+ *
+ * @param $replacements
+ *   An array of token replacements that need to be "cleaned" for use in the URL.
+ * @param $data
+ *   An array of objects used to generate the replacements.
+ * @param $options
+ *   An array of options used to generate the replacements.
+ *
+ * @see rules_path_action_info()
+ */
+function rules_path_clean_replacement_values(&$replacements, $data = array(), $options = array()) {
+  // Include path.eval.inc which contains path cleaning functions.
+  module_load_include('inc', 'rules', 'modules/path.eval');
+  foreach ($replacements as $token => $value) {
+    $replacements[$token] = rules_clean_path($value);
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function rules_theme() {

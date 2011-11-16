@@ -208,6 +208,34 @@ function rules_admin_settings($form, &$form_state) {
   if (db_table_exists('rules_rules')) {
     drupal_set_message(t('There are left over rule configurations from a previous Rules 1.x installation. Proceed to the <a href="!url">upgrade page</a> to convert them and consult the README.txt for more details.', array('!url' => url('admin/config/workflow/rules/upgrade'))), 'warning');
   }
+
+  if (module_exists('path')) {
+
+    // Present a list of available path cleaning callbacks.
+    // @see rules_clean_path()
+    $options = array(
+      'rules_path_default_cleaning_method' => t('Rules (built in)'),
+    );
+    if (module_exists('ctools')) {
+      $options['rules_path_clean_ctools'] = t('CTools');
+    }
+    if (module_exists('pathauto')) {
+      $options['rules_path_clean_pathauto'] = t('Pathauto');
+      $pathauto_help = t("Note that Pathauto's URL path cleaning method can be configured at <a href='!url'>admin/config/search/path/settings</a>.", array('!url' => url('admin/config/search/path/settings')));
+    }
+    else {
+      $pathauto_help = t('Install the <a href="http://drupal.org/project/pathauto">Pathauto module</a> in order to get a configurable URL path cleaning method.');
+    }
+
+    $form['path']['rules_path_cleaning_callback'] = array(
+      '#type' => 'select',
+      '#title' => t('URL path cleaning method'),
+      '#description' => t('Choose the path cleaning method to be applied when generating URL path aliases.') . ' ' . $pathauto_help,
+      '#default_value' => variable_get('rules_path_cleaning_callback', 'rules_path_default_cleaning_method'),
+      '#options' => $options,
+    );
+
+  }
   return system_settings_form($form);
 }
 
