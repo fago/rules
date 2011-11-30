@@ -104,7 +104,7 @@ function rules_admin_components_overview($form, &$form_state, $base_path) {
   }
   $form['help'] = array(
     '#type' => 'markup',
-    '#markup' => t('Components are stand-alone sets of Rules configuration that can be used by Rules and other modules on your site. Components are for example useful if you want to use the same conditions, actions or rules in multiple places, or call them from your custom module. You may also export each component separately. See <a href="@url2">the online documentation</a> for more information about how to use components.',
+    '#markup' => t('Components are stand-alone sets of Rules configuration that can be used by Rules and other modules on your site. Components are for example useful if you want to use the same conditions, actions or rules in multiple places, or call them from your custom module. You may also export each component separately. See <a href="@url">the online documentation</a> for more information about how to use components.',
       array('@url' => rules_external_help('components'))),
   );
   $form['filter'] = array(
