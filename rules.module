@@ -167,8 +167,16 @@ function rules_action_set($variables, $provides = array()) {
  *  (FALSE) of a new execution scope.
  */
 function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugin $element = NULL, $scope = NULL) {
-  static $logger;
-  if ($priority >= variable_get('rules_log_errors', RulesLog::WARN)) {
+  static $logger, $settings;
+
+  // Statically cache the variable settings as this is called very often.
+  if (!isset($settings)) {
+    $settings['rules_log_errors'] = variable_get('rules_log_errors', RulesLog::WARN);
+    $settings['rules_debug_log'] = variable_get('rules_debug_log', FALSE);
+    $settings['rules_debug'] = variable_get('rules_debug', FALSE);
+  }
+
+  if ($priority >= $settings['rules_log_errors']) {
     $link = NULL;
     if (isset($element) && isset($element->root()->name)) {
       $link = l(t('edit configuration'), RulesPluginUI::path($element->root()->name, 'edit', $element));
@@ -176,7 +184,7 @@ function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugi
     watchdog('rules', $msg, $args, $priority == RulesLog::WARN ? WATCHDOG_WARNING : WATCHDOG_ERROR, $link);
   }
   // Do nothing in case debugging is totally disabled.
-  if (!variable_get('rules_debug_log', FALSE) && !variable_get('rules_debug', FALSE)) {
+  if (!$settings['rules_debug_log'] && !$settings['rules_debug']) {
     return;
   }
   if (!isset($logger)) {
