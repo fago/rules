@@ -216,12 +216,12 @@ function rules_fetch_data($hook) {
  * Gets a rules cache entry.
  */
 function &rules_get_cache($cid = 'data') {
-  static $cache;
-
-  if (!isset($cache)) {
-    // Speed up multiple calls by using drupal_static only for initializing.
-    $cache = &drupal_static(__FUNCTION__, array());
+  // Make use of the fast, advanced drupal static pattern.
+  static $drupal_static_fast;
+  if (!isset($drupal_static_fast)) {
+    $drupal_static_fast['cache'] = &drupal_static(__FUNCTION__, array());
   }
+  $cache = &$drupal_static_fast['cache'];
 
   if (!isset($cache[$cid])) {
     // The main 'data' cache includes translated strings, so each language is
