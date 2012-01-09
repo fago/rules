@@ -190,7 +190,7 @@ function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugi
   if (!isset($logger)) {
     $logger = RulesLog::logger();
   }
-  $path = isset($element) ? RulesPluginUI::path($element->root()->name, 'edit', $element) : NULL;
+  $path = isset($element) && isset($element->root()->name) ? RulesPluginUI::path($element->root()->name, 'edit', $element) : NULL;
   $logger->log($msg, $args, $priority, $scope, $path);
 }
 
