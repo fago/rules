@@ -422,7 +422,7 @@ class RulesDataUIEntity extends RulesDataUIText {
       }
       $form[$name]['#title'] = t('@entity identifier', array('@entity' => $entity_info['label']));
       $entity_label = strtolower($entity_info['label'][0]) . substr($entity_info['label'], 1);
-      $form[$name]['#description'] = t('Specify an identfier of a @entity.', array('@entity' => $entity_label));
+      $form[$name]['#description'] = t('Specify an identifier of a @entity.', array('@entity' => $entity_label));
     }
     return $form;
   }
@@ -481,9 +481,8 @@ class RulesDataUIListEntity extends RulesDataUIListInteger {
       }
       $form[$name]['#title'] = t('@entity identifiers', array('@entity' => $entity_info['label']));
       $entity_label = strtolower($entity_info['label'][0]) . substr($entity_info['label'], 1);
-      $form[$name]['#description'] = t('Specify a comma-separated list of identfiers of @entity entities.', array('@entity' => $entity_label));
+      $form[$name]['#description'] = t('Specify a comma-separated list of identifiers of @entity entities.', array('@entity' => $entity_label));
     }
     return $form;
   }
 }
-
