@@ -639,8 +639,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * element.
    */
   public function availableVariables() {
-    $vars = RulesState::defaultVariables();
-    return !$this->isRoot() ? $this->parent->stateVariables($this) : $vars;
+    return !$this->isRoot() ? $this->parent->stateVariables($this) : RulesState::defaultVariables();
   }
 
   /**
