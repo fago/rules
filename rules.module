@@ -580,6 +580,7 @@ function rules_entity_info() {
       ),
       'static cache' => TRUE,
       'bundles' => array(),
+      'configuration' => TRUE,
       'exportable' => TRUE,
       'export' => array(
         'default hook' => 'default_rules_configuration',
@@ -1330,4 +1331,3 @@ function rules_help($path, $arg) {
     return render($output);
   }
 }
-
