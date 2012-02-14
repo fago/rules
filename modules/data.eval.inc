@@ -283,6 +283,20 @@ function rules_condition_data_list_contains($list, $item, $settings, $state) {
  * Condition: Data value is empty.
  */
 function rules_condition_data_is_empty($data) {
+  // Note that some primitive variables might not be wrapped at all.
+  if ($data instanceof EntityMetadataWrapper) {
+    try {
+      // We cannot use the dataAvailable() method from the wrapper because it
+      // is protected, so we catch possible exceptions with the value() method.
+      $value = $data->value();
+      return empty($value);
+    }
+    catch (EntityMetadataWrapperException $e) {
+      // An exception means that the wrapper is somehow broken and we treat
+      // that as empty.
+      return TRUE;
+    }
+  }
   return empty($data);
 }
 

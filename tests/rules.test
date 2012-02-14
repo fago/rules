@@ -1335,6 +1335,17 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     $rule->execute($node);
     $this->assertEqual($node->title, 'foo', "Data is empty condition evaluates to FALSE for node with title 'foo', action is not executed.");
 
+    // Data is empty condition evaluates to TRUE for the parent of a
+    // not existing term in the tags field of the node.
+    $rule = rule(array('node' => array('type' => 'node')));
+    $rule->condition('node_is_of_type', array('type' => array('article')));
+    $rule->condition('data_is_empty', array('data:select' => 'node:field-tags:0:parent'));
+    $rule->action('data_set', array('data:select' => 'node:title', 'value' => 'bar'));
+    $rule->integrityCheck();
+    $node = $this->drupalCreateNode(array('title' => 'foo', 'type' => 'article'));
+    $rule->execute($node);
+    $this->assertEqual($node->title, 'bar', "Data is empty condition evaluates to TRUE for not existing data structures");
+
     // Test Action: Calculate a value.
     $rule = rule(array('node' => array('type' => 'node')));
     $rule->action('data_calc', array('input_1:select' => 'node:nid', 'op' => '*', 'input_2' => 2));

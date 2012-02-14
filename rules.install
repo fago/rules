@@ -406,3 +406,10 @@ function rules_update_7206() {
 function rules_update_7207() {
   // The update system is going to flush all caches anyway, so nothing to do.
 }
+
+/**
+ * Flush all caches to update the data_is_empty condition info.
+ */
+function rules_update_7208() {
+  // The update system is going to flush all caches anyway, so nothing to do.
+}

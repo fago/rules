@@ -451,6 +451,7 @@ function rules_data_condition_info() {
           'label' => t('Data to check'),
           'description' => t('The data to be checked to be empty, specified by using a data selector, e.g. "node:author:name".'),
           'allow null' => TRUE,
+          'wrapped' => TRUE,
         ),
       ),
       'group' => t('Data'),
