@@ -380,6 +380,11 @@ abstract class RulesPlugin extends RulesExtendable {
    */
   protected $elementId = NULL;
 
+  /**
+   * Static cache for availableVariables().
+   */
+  protected $availableVariables;
+
 
   /**
    * Sets a new parent element.
@@ -391,6 +396,7 @@ abstract class RulesPlugin extends RulesExtendable {
     if (isset($this->parent) && ($key = array_search($this, $this->parent->children)) !== FALSE) {
       // Remove element from any previous parent.
       unset($this->parent->children[$key]);
+      $this->parent->resetInternalCache();
     }
     // Make sure the interface matches the type of the container.
     if (($parent instanceof RulesActionContainer && $this instanceof RulesActionInterface) ||
@@ -398,6 +404,7 @@ abstract class RulesPlugin extends RulesExtendable {
 
       $this->parent = $parent;
       $parent->children[] = $this;
+      $this->parent->resetInternalCache();
     }
     else {
       throw new RulesEvaluationException('The given container is incompatible with this element.', array(), $this, RulesLog::ERROR);
@@ -635,11 +642,18 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
-   * Returns info about variables available to be used as arguments for this
-   * element.
+   * Returns info about variables available to be used as arguments for this element.
+   *
+   * As this is called very often, e.g. during integrity checks, we statically
+   * cache the results.
+   *
+   * @see RulesPlugin::resetInternalCache()
    */
   public function availableVariables() {
-    return !$this->isRoot() ? $this->parent->stateVariables($this) : RulesState::defaultVariables();
+    if (!isset($this->availableVariables)) {
+      $this->availableVariables = !$this->isRoot() ? $this->parent->stateVariables($this) : RulesState::defaultVariables();
+    }
+    return $this->availableVariables;
   }
 
   /**
@@ -1252,6 +1266,7 @@ abstract class RulesPlugin extends RulesExtendable {
    * enabling the re-used based on the cache.
    *
    * @see rules_invoke_component()
+   * @see rules_get_cache()
    */
   public function rebuildCache(&$itemInfo, &$cache) {
     parent::rebuildCache($itemInfo, $cache);
@@ -1272,6 +1287,23 @@ abstract class RulesPlugin extends RulesExtendable {
         }
       }
     }
+  }
+
+  /**
+   * Resets any internal static caches.
+   *
+   * This function does not reset regular caches as retrieved via
+   * rules_get_cache(). Usually, it's invoked automatically when a Rules
+   * configuration is modified.
+   *
+   * Static caches are reset for the element and any elements down the tree. To
+   * clear static caches of the whole configuration, invoke the function at the
+   * root.
+   *
+   * @see RulesPlugin::availableVariables()
+   */
+  public function resetInternalCache() {
+    $this->availableVariables = NULL;
   }
 }
 
@@ -1375,6 +1407,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   public function processSettings($force = FALSE) {
     // Process if not done yet.
     if ($force || !empty($this->settings['#_needs_processing'])) {
+      $this->resetInternalCache();
       // In case the element implements the info alteration callback, (re-)run
       // the alteration so that any settings depending info alterations are
       // applied.
@@ -1873,11 +1906,18 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function availableVariables() {
-    $vars = parent::availableVariables();
-    if ($this->isRoot() && isset($this->info['variables'])) {
-      $vars += $this->info['variables'];
+    if (!isset($this->availableVariables)) {
+      if ($this->isRoot()) {
+        $this->availableVariables = RulesState::defaultVariables();
+        if (isset($this->info['variables'])) {
+          $this->availableVariables += $this->info['variables'];
+        }
+      }
+      else {
+        $this->availableVariables = $this->parent->stateVariables($this);
+      }
     }
-    return $vars;
+    return $this->availableVariables;
   }
 
   /**
@@ -2017,6 +2057,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
         $child->sortChildren(TRUE);
       }
     }
+    $this->resetInternalCache();
   }
 
   protected function exportChildren($key = NULL) {
@@ -2073,6 +2114,13 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
       $child = rules_plugin_factory($plugin);
       $child->setParent($this);
       $child->import($child_export);
+    }
+  }
+
+  public function resetInternalCache() {
+    $this->availableVariables = NULL;
+    foreach ($this->children as $child) {
+      $child->resetInternalCache();
     }
   }
 }

@@ -335,6 +335,11 @@ class Rule extends RulesActionContainer {
     }
     return $provides;
   }
+
+  public function resetInternalCache() {
+    parent::resetInternalCache();
+    $this->conditions->resetInternalCache();
+  }
 }
 
 /**
@@ -420,23 +425,29 @@ class RulesReactionRule extends Rule implements RulesTriggerableInterface {
   }
 
   public function availableVariables() {
-    if (isset($this->parent)) {
-      // Return the event variables provided by the event set, once cached.
-      return $this->parent->stateVariables();
-    }
-    //TODO: Once we have event_info caching make use of it.
-    $event_info = rules_fetch_data('event_info');
-    $events = array_intersect($this->events, array_keys($event_info));
-    foreach ($events as $event) {
-      $event_info[$event] += array('variables' => array());
-      if (!isset($vars)) {
-        $vars = $event_info[$event]['variables'];
+    if (!isset($this->availableVariables)) {
+      if (isset($this->parent)) {
+        // Return the event variables provided by the event set, once cached.
+        $this->availableVariables = $this->parent->stateVariables();
       }
       else {
-        $vars = array_intersect_key($vars, $event_info[$event]['variables']);
+        // The intersection of the variables provided by the events are
+        // available.
+        $event_info = rules_fetch_data('event_info');
+        $events = array_intersect($this->events, array_keys($event_info));
+        foreach ($events as $event) {
+          $event_info[$event] += array('variables' => array());
+          if (isset($this->availableVariables)) {
+            $this->availableVariables = array_intersect_key($this->availableVariables, $event_info[$event]['variables']);
+          }
+          else {
+            $this->availableVariables = $event_info[$event]['variables'];
+          }
+        }
+        $this->availableVariables = isset($this->availableVariables) ? RulesState::defaultVariables() + $this->availableVariables : RulesState::defaultVariables();
       }
     }
-    return parent::availableVariables() + (isset($vars) ? $vars : array());
+    return $this->availableVariables;
   }
 
   public function __sleep() {
