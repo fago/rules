@@ -316,6 +316,7 @@ function rules_clear_cache() {
   variable_del('rules_empty_sets');
   drupal_static_reset('rules_get_cache');
   drupal_static_reset('rules_fetch_data');
+  drupal_static_reset('rules_config_update_dirty_flag');
   entity_get_controller('rules_config')->resetCache();
 }
 
@@ -689,16 +690,28 @@ function rules_config_delete(array $ids) {
 }
 
 /**
- * Ensures the configuration's 'dirty' flag is up to date.
+ * Ensures the configuration's 'dirty' flag is up to date by running an integrity check.
  *
  * @param $update
- *   Whether the dirty flag is also updated in the database if necessary.
+ *   (optional) Whether the dirty flag is also updated in the database if
+ *   necessary. Defaults to TRUE.
  */
 function rules_config_update_dirty_flag($rules_config, $update = TRUE) {
+  // Keep a log of already check configurations to avoid repetitive checks on
+  // oftent used components.
+  // @see rules_element_invoke_component_validate()
+  $checked = &drupal_static(__FUNCTION__, array());
+  if (!empty($checked[$rules_config->name])) {
+    return;
+  }
+  $checked[$rules_config->name] = TRUE;
+
   $was_dirty = !empty($rules_config->dirty);
   try {
-    $rules_config->integrityCheck();
+    // First set the rule to dirty, so any repetitive checks give green light
+    // for this configuration.
     $rules_config->dirty = FALSE;
+    $rules_config->integrityCheck();
     if ($was_dirty) {
       $variables = array('%label' => $rules_config->label(), '%name' => $rules_config->name, '@plugin' => $rules_config->plugin());
       watchdog('rules', 'The @plugin %label (%name) was marked dirty, but passes the integrity check now and is active again.', $variables, WATCHDOG_INFO);

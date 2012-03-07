@@ -120,11 +120,14 @@ class RulesTestCase extends DrupalWebTestCase {
     $rule = rules_config_load('rules_test_rule');
     $component = rules_config_load('rules_test_alias');
 
-    $node = NULL;
+    $this->assertTrue($component->dirty, 'Component has been marked as dirty');
+    $node = $this->drupalCreateNode();
     $result = rules_invoke_component('rules_test_alias', $node);
     $this->assertTrue($result === FALSE, 'Unable to execute a dirty component.');
 
-    $this->assertTrue($component->dirty, 'Component has been marked as dirty');
+    // When the rule is evaluated, the broken component is detected and the
+    // rule should be marked as dirty too.
+    $rule->execute($node);
     $this->assertTrue($rule->dirty, 'Rule has been marked as dirty');
 
     module_enable(array('path'));

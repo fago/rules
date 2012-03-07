@@ -712,7 +712,10 @@ class RulesEventSet extends RulesRuleSet {
         $event = new RulesEventSet($info);
         $event->name = $name;
         foreach ($rules as $rule) {
-          rules_config_update_dirty_flag($rule);
+          // If a rule is marked as dirty, check if this still applies.
+          if ($rule->dirty) {
+            rules_config_update_dirty_flag($rule);
+          }
           if (!$rule->dirty) {
             // Clone the rule to avoid modules getting the changed version from
             // the static cache.
@@ -741,5 +744,14 @@ class RulesEventSet extends RulesRuleSet {
 
   protected function stateVariables($element = NULL) {
     return $this->availableVariables();
+  }
+
+  /**
+   * Do not save since this class is for caching purposes only.
+   *
+   * @see RulesPlugin::save()
+   */
+  public function save($name = NULL, $module = 'rules') {
+    return FALSE;
   }
 }

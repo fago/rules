@@ -1275,7 +1275,10 @@ abstract class RulesPlugin extends RulesExtendable {
       $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName));
 
       foreach ($components as $id => $component) {
-        rules_config_update_dirty_flag($component);
+        // If a component is marked as dirty, check if this still applies.
+        if ($component->dirty) {
+          rules_config_update_dirty_flag($component);
+        }
         if (!$component->dirty) {
           // Clone the component to avoid modules getting the to be cached
           // version from the static loading cache.
@@ -1799,7 +1802,7 @@ interface RulesOptimizationInterface {
 class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
 
   public function execute() {
-    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.", array(), $this->element, RulesLog::ERROR);
+    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.", array(), $this->object, RulesLog::ERROR);
   }
 
   /**
@@ -2461,10 +2464,19 @@ class RulesEvaluationException extends RulesException {
     $this->msg = $msg;
     $this->args = $args;
     $this->severity = $severity;
+    // If an error happened, run the integrity check on the rules configuration
+    // and mark it as dirty if it the check fails.
+    if ($severity == RulesLog::ERROR && isset($this->element)) {
+      $rules_config = $this->element->root();
+      rules_config_update_dirty_flag($rules_config);
+      // If we discovered a broken configuration, exclude it in future.
+      if ($rules_config->dirty) {
+        rules_clear_cache();
+      }
+    }
     // @todo fix _drupal_decode_exception() to use __toString() and override it.
     $this->message = t($this->msg, $this->args);
   }
-
 }
 
 /**
