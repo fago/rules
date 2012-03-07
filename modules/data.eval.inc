@@ -233,8 +233,12 @@ function rules_condition_data_is($data, $op, $value) {
   switch ($op) {
     default:
     case '==':
-      // In case both values evaluate to FALSE, do a type-safe comparison.
-      return (!$data && !$value) ? $data === $value : $data == $value;
+      // In case both values evaluate to FALSE, further differentiate between
+      // NULL values and values evaluating to FALSE.
+      if (!$data && !$value) {
+        return (isset($data) && isset($value)) || (!isset($data) && !isset($value));
+      }
+      return $data == $value;
     case '<':
       return $data < $value;
     case '>':
