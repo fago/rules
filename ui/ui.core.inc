@@ -282,7 +282,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Actually generates the parameter form for the given data type.
    */
   protected function getParameterForm($name, $info, $settings, &$mode) {
-    $class = $this->getDataTypeClass($info['type']);
+    $class = $this->getDataTypeClass($info['type'], $info);
     $supports_input_mode = in_array('RulesDataDirectInputFormInterface', class_implements($class));
 
     // Init the mode.
@@ -297,8 +297,18 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         $mode = $info['restriction'];
       }
       else {
-        $mode = call_user_func(array($class, 'getDefaultMode'));
+        // Allow the parameter to define the 'default mode' and fallback to the
+        // data type default.
+        $mode = !empty($info['default mode']) ? $info['default mode'] : call_user_func(array($class, 'getDefaultMode'));
       }
+    }
+
+    // For translatable parameters, pre-populate an internal translation source
+    // key so data type forms or input evaluators (i18n) may produce suiting
+    // help.
+    if (drupal_multilingual() && !empty($info['translatable'])) {
+      $parameter = $this->element->pluginParameterInfo();
+      $info['custom translation language'] = !empty($parameter['language']);
     }
 
     // Add the parameter form.
@@ -655,9 +665,14 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * Returns the name of class for the given data type.
    *
    * @param $data_type
-   *  The name of the data typ
+   *   The name of the data typ
+   * @param $parameter_info
+   *   (optional) An array of info about the to be configured parameter.
    */
-  public function getDataTypeClass($data_type) {
+  public function getDataTypeClass($data_type, $parameter_info = array()) {
+    if (!empty($parameter_info['ui class'])) {
+      return $parameter_info['ui class'];
+    }
     $cache = rules_get_cache();
     $data_info = $cache['data_info'];
     return (is_string($data_type) && isset($data_info[$data_type]['ui class'])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
@@ -693,7 +708,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
       }
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
         $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
-        $class = $this->getDataTypeClass($parameter['type']);
+        $class = $this->getDataTypeClass($parameter['type'], $parameter);
         // We cannot use method_exists() here as it would trigger a PHP bug,
         // @see http://drupal.org/node/1258284
         $element = call_user_func(array($class, $method), $this->element->settings[$name], $name, $parameter, $this->element);
@@ -959,7 +974,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
     $form['elements']['#attributes']['class'][] = 'rules-container-plugin';
 
     // Recurse over all element childrens or use the provided iterator.
-    $iterator = isset($iterator) ? $iterator : new RecursiveIteratorIterator($this->element, RecursiveIteratorIterator::SELF_FIRST);
+    $iterator = isset($iterator) ? $iterator : $this->element->elements();
     $root_depth = $this->element->depth();
     foreach ($iterator as $key => $child) {
       $id = $child->elementId();

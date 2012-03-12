@@ -1,0 +1,9 @@
+name = Rules translation
+description = Allows translating rules.
+dependencies[] = rules
+dependencies[] = i18n_string
+package = Multilingual - Internationalization
+core = 7.x
+files[] = rules_i18n.i18n.inc
+files[] = rules_i18n.rules.inc
+files[] = rules_i18n.test

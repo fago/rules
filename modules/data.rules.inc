@@ -222,6 +222,7 @@ function rules_action_data_set_form_alter(&$form, &$form_state, $options, RulesA
   if (!empty($options['init']) && !isset($form_state['rules_element_step'])) {
     $form['negate']['#access'] = FALSE;
     unset($form['parameter']['value']);
+    unset($form['parameter']['language']);
     $form['submit'] = array(
       '#type' => 'submit',
       '#value' => t('Continue'),

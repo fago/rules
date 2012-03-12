@@ -70,6 +70,7 @@ class RulesTestCase extends DrupalWebTestCase {
     $it = new RecursiveIteratorIterator($rule->conditions());
     $this->assertEqual(iterator_count($it), 6, 'Iterated over all conditions');
     $this->assertEqual(iterator_count($rule->actions()), 1, 'Iterated over all actions');
+    $this->assertEqual(iterator_count($rule->elements()), 10, 'Iterated over all rule elements.');
 
     // Test getting dependencies and the integrity check.
     $rule->integrityCheck();

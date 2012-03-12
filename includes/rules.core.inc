@@ -460,6 +460,23 @@ abstract class RulesPlugin extends RulesExtendable {
   }
 
   /**
+   * Iterate over all elements nested below the current element.
+   *
+   * This helper can be used to recursively iterate over all elements of a
+   * configuration. To iterate over the children only, just regulary iterate
+   * over the object.
+   *
+   * @param $mode
+   *   (optional) The iteration mode used. See
+   *   RecursiveIteratorIterator::construct(). Defaults to SELF_FIRST.
+   *
+   * @return RecursiveIteratorIterator
+   */
+  public function elements($mode = RecursiveIteratorIterator::SELF_FIRST) {
+    return new RecursiveIteratorIterator($this, $mode);
+  }
+
+  /**
    * Do a deep clone.
    */
   public function __clone() {
@@ -822,12 +839,34 @@ abstract class RulesPlugin extends RulesExtendable {
    * Returns the argument as configured in the element settings for the
    * parameter $name described with $info.
    *
+   * @param $name
+   *   The name of the parameter for which to get the argument.
+   * @param $info
+   *   Info about the parameter.
+   * @param RulesState $state
+   *   The current evaluation state.
+   * @param $langcode
+   *   (optional) The language code used to get the argument value if the
+   *   argument value should be translated. By default (NULL) the current
+   *   interface language will be used.
+   *
+   * @return
+   *   The argument, possibly wrapped.
+   *
    * @throws RulesEvaluationException
    *   In case the argument cannot be retrieved an exception is thrown.
    */
-  protected function getArgument($name, $info, RulesState $state) {
+  protected function getArgument($name, $info, RulesState $state, $langcode = NULL) {
+    // Only apply the langcode if the parameter has been marked translatable.
+    if (empty($info['translatable'])) {
+      $langcode = LANGUAGE_NONE;
+    }
+    elseif (!isset($langcode)) {
+      $langcode = $GLOBALS['language']->language;
+    }
+
     if (!empty($this->settings[$name . ':select'])) {
-      $arg = $state->applyDataSelector($this->settings[$name . ':select']);
+      $arg = $state->applyDataSelector($this->settings[$name . ':select'], $langcode);
     }
     elseif (isset($this->settings[$name])) {
       $arg = rules_wrap_data($this->settings[$name], $info);
@@ -854,6 +893,10 @@ abstract class RulesPlugin extends RulesExtendable {
     if (!empty($this->settings[$name . ':process'])) {
       // For processing, make sure the data is unwrapped now.
       $return = rules_unwrap_data(array($arg), array($info));
+      // @todo for Drupal 8: Refactor to add the name and language code as
+      // separate parameter to process().
+      $info['#name'] = $name;
+      $info['#langcode'] = $langcode;
       return isset($return[0]) ? $this->settings[$name . ':process']->process($return[0], $info, $state, $this) : NULL;
     }
     // Support passing already sanitized values.
@@ -870,16 +913,24 @@ abstract class RulesPlugin extends RulesExtendable {
    *   If case an argument cannot be retrieved an exception is thrown.
    */
   protected function getExecutionArguments(RulesState $state) {
-    $param_info = $this->pluginParameterInfo();
-    foreach ($param_info as $name => $info) {
-      $args[$name] = $this->getArgument($name, $info, $state);
+    $parameters = $this->pluginParameterInfo();
+    // If there is language parameter, get its value first so it can be used
+    // for getting other translatable values.
+    $langcode = NULL;
+    if (isset($parameters['language'])) {
+      $lang_arg = $this->getArgument('language', $parameters['language'], $state);
+      $langcode = $lang_arg instanceof EntityMetadataWrapper ? $lang_arg->value() : $lang_arg;
+    }
+    // Now get all arguments.
+    foreach ($parameters as $name => $info) {
+      $args[$name] = $name == 'language' ? $lang_arg : $this->getArgument($name, $info, $state, $langcode);
     }
     // Append the settings and the execution state. Faces will append $this.
     $args['settings'] = $this->settings;
     $args['state'] = $state;
     // Make the wrapped variables for the arguments available in the state.
     $state->currentArguments = $args;
-    return rules_unwrap_data($args, $param_info);
+    return rules_unwrap_data($args, $parameters);
   }
 
   /**
