@@ -77,7 +77,7 @@ function rules_i18n_action_t($text) {
 }
 
 /**
- * Implemetns the form_alter callback for the "Translate a text" action to set a default selector.
+ * Implements the form_alter callback for the "Translate a text" action to set a default selector.
  */
 function rules_i18n_action_t_form_alter(&$form, &$form_state, $options, $element) {
   if (isset($form['parameter']['language']['settings']['language:select']) && empty($element->settings['language:select'])) {
