@@ -239,16 +239,21 @@ function &rules_get_cache($cid = 'data') {
     if ($get = cache_get($cid . $cid_suffix, 'cache_rules')) {
       $cache[$cid] = $get->data;
     }
-    elseif (!isset($cache['data']) && $cid != 'data') {
-      // Cache hasn't been initialized yet, do that by retrieving 'data' cache.
-      rules_get_cache('data');
-      return rules_get_cache($cid);
-    }
-    elseif (!isset($cache['data'])) {
+    elseif ($cid === 'data') {
       // There is no 'data' cache so we need to rebuild it. Make sure subsequent
       // cache gets of the main 'data' cache during rebuild get the interim
       // cache by passing in the reference of the static cache variable.
       _rules_rebuild_cache($cache['data']);
+    }
+    elseif (strpos($cid, 'comp_') === 0) {
+      $cache[$cid] = FALSE;
+      _rules_rebuild_component_cache();
+      return $cache[$cid];
+    }
+    elseif (strpos($cid, 'event_') === 0) {
+      $cache[$cid] = FALSE;
+      RulesEventSet::rebuildEventCache();
+      return $cache[$cid];
     }
     else {
       $cache[$cid] = FALSE;
@@ -261,8 +266,8 @@ function &rules_get_cache($cid = 'data') {
  * Rebuilds the rules cache.
  *
  * This rebuilds the rules 'data' cache and invokes rebuildCache() methods on
- * all plugin classes, which in turn rebuild their own caches or update the
- * main cache. The cache is rebuilt in the order the plugins are defined.
+ * all plugin classes, which allows plugins to add their own data to the cache.
+ * The cache is rebuilt in the order the plugins are defined.
  *
  * Note that building the action/condition info cache triggers loading of all
  * components, thus depends on entity-loading and so syncing entities in code
@@ -282,6 +287,32 @@ function _rules_rebuild_cache(&$cache) {
   }
   $cid_suffix = ':' . $GLOBALS['language']->language;
   cache_set('data' . $cid_suffix, $cache, 'cache_rules');
+}
+
+/**
+ * Cache components to allow efficient usage via rules_invoke_component().
+ *
+ * @see rules_invoke_component()
+ * @see rules_get_cache()
+ */
+function _rules_rebuild_component_cache() {
+  $components = rules_get_components();
+
+  foreach ($components as $id => $component) {
+    // If a component is marked as dirty, check if this still applies.
+    if ($component->dirty) {
+      rules_config_update_dirty_flag($component);
+    }
+    if (!$component->dirty) {
+      // Clone the component to avoid modules getting the to be cached
+      // version from the static loading cache.
+      $component = clone $component;
+      $component->optimize();
+      // Allow modules to alter the cached component.
+      drupal_alter('rules_component', $component->plugin, $component);
+      rules_set_cache('comp_' . $component->name, $component);
+    }
+  }
 }
 
 /**

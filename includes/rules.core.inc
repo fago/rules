@@ -974,7 +974,31 @@ abstract class RulesPlugin extends RulesExtendable {
       $this->data = $this;
       $return = entity_get_controller('rules_config')->save($this);
       unset($this->data);
-      rules_clear_cache();
+
+      // Care about clearing necessary caches.
+      if (!empty($this->is_rebuild)) {
+        rules_clear_cache();
+      }
+      else {
+        $plugin_info = $this->pluginInfo();
+        if (!empty($plugin_info['component'])) {
+          // When component variables changes rebuild the complete cache so the
+          // changes to the provided action/condition take affect.
+          if (empty($this->original) || $this->componentVariables() != $this->original->componentVariables()) {
+            rules_clear_cache();
+          }
+          // Clear components cached for evaluation.
+          cache_clear_all('comp_', 'cache_rules', TRUE);
+        }
+        elseif ($this->plugin == 'reaction rule') {
+          // Clear event sets cached for evaluation.
+          cache_clear_all('event_', 'cache_rules', TRUE);
+          variable_del('rules_empty_sets');
+        }
+        drupal_static_reset('rules_get_cache');
+        drupal_static_reset('rules_config_update_dirty_flag');
+      }
+
       return $return;
     }
   }
@@ -1262,37 +1286,6 @@ abstract class RulesPlugin extends RulesExtendable {
     };
     $export_cfg[$this->name] += $export;
     return $php ? entity_var_export($export_cfg, $prefix) : entity_var_json_export($export_cfg, $prefix);
-  }
-
-  /**
-   * If the plugin is a component, cache all configurations of the plugin for
-   * enabling the re-used based on the cache.
-   *
-   * @see rules_invoke_component()
-   * @see rules_get_cache()
-   */
-  public function rebuildCache(&$itemInfo, &$cache) {
-    parent::rebuildCache($itemInfo, $cache);
-    if (!empty($this->itemInfo['component'])) {
-      // Just move each component into the cache.
-      $components = rules_config_load_multiple(FALSE, array('plugin' => $this->itemName));
-
-      foreach ($components as $id => $component) {
-        // If a component is marked as dirty, check if this still applies.
-        if ($component->dirty) {
-          rules_config_update_dirty_flag($component);
-        }
-        if (!$component->dirty) {
-          // Clone the component to avoid modules getting the to be cached
-          // version from the static loading cache.
-          $component = clone $component;
-          $component->optimize();
-          // Allow modules to alter the cached component.
-          drupal_alter('rules_component', $this->itemName, $component);
-          rules_set_cache('comp_' . $component->name, $component);
-        }
-      }
-    }
   }
 
   /**

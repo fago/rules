@@ -297,7 +297,10 @@ function rules_admin_settings_integrity_check_submit($form, &$form_state) {
 function rules_admin_settings_cache_rebuild_submit($form, &$form_state) {
   $start = microtime(TRUE);
   rules_clear_cache();
+  // Manually trigger cache rebuilding of all caches.
   rules_get_cache();
+  _rules_rebuild_component_cache();
+  RulesEventSet::rebuildEventCache();
   drupal_set_message(t('Rules cache rebuilt in %duration seconds.', array(
     '%duration' => round(microtime(TRUE) - $start, 2),
   )));
