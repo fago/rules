@@ -111,7 +111,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
     // Create an empty configuration, re-set basic keys and import.
     $config = rules_plugin_factory($export['PLUGIN']);
     $config->name = $name;
-    foreach (array('label', 'active', 'weight', 'tags') as $key) {
+    foreach (array('label', 'active', 'weight', 'tags', 'access_exposed') as $key) {
       if (isset($export[strtoupper($key)])) {
         $config->$key = $export[strtoupper($key)];
       }
@@ -1257,6 +1257,9 @@ abstract class RulesPlugin extends RulesExtendable {
     if ($modules = $this->dependencies()) {
       $export_cfg[$this->name]['REQUIRES'] = $modules;
     }
+    if (!empty($this->access_exposed)) {
+      $export_cfg[$this->name]['ACCESS_EXPOSED'] = $this->access_exposed;
+    };
     $export_cfg[$this->name] += $export;
     return $php ? entity_var_export($export_cfg, $prefix) : entity_var_json_export($export_cfg, $prefix);
   }

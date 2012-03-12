@@ -988,7 +988,7 @@ function rules_theme() {
  * Implements hook_permission().
  */
 function rules_permission() {
-  return array(
+  $perms = array(
     'administer rules' => array(
       'title' => t('Administer rule configurations'),
       'description' => t('Administer rule configurations including events, conditions and actions for which the user has sufficient access permissions.'),
@@ -1002,6 +1002,30 @@ function rules_permission() {
       'title' => t('Access the Rules debug log'),
     ),
   );
+
+  // Fetch all components to generate the access keys.
+  $conditions['plugin'] = array_keys(rules_filter_array(rules_fetch_data('plugin_info'), 'component', TRUE));
+  $conditions['access_exposed'] = 1;
+  $components = entity_load('rules_config', FALSE, $conditions);
+  $perms += rules_permissions_by_component($components);
+
+  return $perms;
+}
+
+/**
+ * Helper function to get all the permissions for components that have access exposed.
+ */
+function rules_permissions_by_component(array $components = array()) {
+  $perms = array();
+  foreach ($components as $component) {
+    $perms += array(
+      "use Rules component $component->name" => array(
+        'title' => t('Use Rules component %component', array('%component' => $component->label())),
+        'description' => t('Controls access for using the component %component via the provided action or condition. <a href="@component-edit-url">Edit this component.</a>', array('%component' => $component->label(), '@component-edit-url' => url(RulesPluginUI::path($component->name)))),
+      ),
+    );
+  }
+  return $perms;
 }
 
 /**

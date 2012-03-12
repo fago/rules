@@ -340,6 +340,36 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Test custom access for using component actions/conditions.
+   */
+  function testRuleComponentAccess() {
+    // Create a normal user.
+    $normal_user = $this->drupalCreateUser();
+    // Create a role for granting access to the rule component.
+    $this->normal_role = $this->drupalCreateRole(array(), 'test_role');
+    $normal_user->roles[$this->normal_role] = 'test_role';
+    user_save($normal_user, array('roles' => $normal_user->roles));
+    // Create an 'action set' rule component making use of a permission.
+    $action_set = rules_action_set(array('node' => array('type' => 'node')));
+    $action_set->access_exposed = TRUE;
+    $action_set->save('rules_test_roles');
+
+    // Set the global user to be the current one as access is checked for the
+    // global user.
+    global $user;
+    $user = user_load($normal_user->uid);
+    $this->assertFalse(rules_action('component_rules_test_roles')->access(), 'Authenticated user without the correct role can\'t use the rule component.');
+
+    // Assign the role that will have permissions for the rule component.
+    user_role_change_permissions($this->normal_role, array('use Rules component rules_test_roles' => TRUE));
+    $this->assertTrue(rules_action('component_rules_test_roles')->access(), 'Authenticated user with the correct role can use the rule component.');
+
+    // Reset global user to anonyous.
+    $user = user_load(0);
+    $this->assertFalse(rules_action('component_rules_test_roles')->access(), 'Anonymous user can\'t use the rule component.');
+  }
+
+  /**
    * Test passing arguments by reference to an action.
    */
   function testPassingByReference() {

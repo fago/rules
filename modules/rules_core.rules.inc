@@ -286,11 +286,19 @@ function rules_element_invoke_component_features_export(&$export, &$pipe, $modul
  * Access callback for the invoke component condition/action.
  */
 function rules_element_invoke_component_access_callback($type, $name) {
-  // Only allow access to the action/condition if the user has access to the
-  // component.
   // Cut of the leading 'component_' from the action name.
   $component = rules_config_load(substr($name, 10));
-  return $component && $component->access();
+
+  if (!$component) {
+    // Missing component.
+    return FALSE;
+  }
+  // If access is not exposed for this component, default to component access.
+  if (empty($component->access_exposed)) {
+    return $component->access();
+  }
+  // Apply the permissions.
+  return user_access('bypass rules access') || user_access("use Rules component $component->name");
 }
 
 /**

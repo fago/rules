@@ -598,7 +598,8 @@ function rules_condition_data_is_form_alter(&$form, &$form_state, $options, Rule
  * Provides configuration help for the data_is condition.
  */
 function rules_condition_data_is_help() {
-  return array('#markup' => t('Compare two data values of the same type with each other.'));}
+  return array('#markup' => t('Compare two data values of the same type with each other.'));
+}
 
 /**
  * Options list callback for condition data_is.
