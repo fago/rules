@@ -51,6 +51,13 @@ function rules_action_data_set_info_alter(&$element_info, $element) {
  * Action: Calculate a value.
  */
 function rules_action_data_calc($input1, $op, $input2, $settings, $state, $element) {
+  $info = $element->pluginParameterInfo();
+  // Make sure to apply date offsets intelligently.
+  if ($info['input_1']['type'] == 'date' && $info['input_2']['type'] == 'duration') {
+    $input2 = ($op == '-') ? $input2 * -1 : $input2;
+    return array('result' => (int) RulesDateOffsetProcessor::applyOffset($input1, $input2));
+  }
+
   switch ($op) {
     case '+':
       $result = $input1 + $input2;
@@ -68,7 +75,7 @@ function rules_action_data_calc($input1, $op, $input2, $settings, $state, $eleme
   if (isset($result)) {
     // Ensure results are valid integer values if necessary.
     $var_info = rules_array_key($element->providesVariables());
-    if (in_array($var_info['type'], array('integer', 'date', 'duration'))) {
+    if ($var_info['type'] == 'integer') {
       $result = (int) $result;
     }
     return array('result' => $result);
