@@ -170,7 +170,9 @@ class RulesDateOffsetProcessor extends RulesDataProcessor {
 
       // Apply the offset using the DateTime::modify and convert it back to a
       // timestamp.
-      return date_create("@$timestamp")->modify("$months months $days days $sec seconds")->format('U');
+      $date = date_create("@$timestamp");
+      $date->modify("$months months $days days $sec seconds");
+      return $date->format('U');
     }
     else {
       return $timestamp + $offset;
