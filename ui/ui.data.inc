@@ -69,6 +69,23 @@ class RulesDataUI {
         array('@url' => rules_external_help('data-selection'))),
     );
 
+    $cache = rules_get_cache();
+    $form['types_help'] = array(
+      '#theme' => 'rules_settings_help',
+      '#heading' => t('Data types'),
+    );
+    if ($info['type'] == '*') {
+      $type_labels[] = t('any');
+    }
+    else {
+      $types = is_array($info['type']) ? $info['type'] : array($info['type']);
+      $type_labels = array();
+      foreach ($types as $type) {
+        $type_labels[] = drupal_ucfirst(isset($cache['data_info'][$type]['label']) ? $cache['data_info'][$type]['label'] : $type);
+      }
+    }
+    $form['types_help']['#text'] = format_plural(count($type_labels), 'Select data of the type %types.', 'Select data of the types %types.', array('%types' => implode(', ', $type_labels)));
+
     if (!empty($info['translatable'])) {
       if ($info['custom translation language']) {
         $text = t('If a multilingual data source (i.e. a translatable field) is given, the argument is translated to the configured language.');
