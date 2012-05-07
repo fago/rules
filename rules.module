@@ -136,7 +136,7 @@ function rules_loop($settings = array(), $variables = NULL) {
  *   The names of variables which should be provided to the caller. See rule().
  * @return RulesRuleSet
  */
-function rules_rule_set($variables, $provides = array()) {
+function rules_rule_set($variables = array(), $provides = array()) {
   return rules_plugin_factory('rule set', $variables, $provides);
 }
 
@@ -149,7 +149,7 @@ function rules_rule_set($variables, $provides = array()) {
  *   The names of variables which should be provided to the caller. See rule().
  * @return RulesActionSet
  */
-function rules_action_set($variables, $provides = array()) {
+function rules_action_set($variables = array(), $provides = array()) {
   return rules_plugin_factory('action set', $variables, $provides);
 }
 

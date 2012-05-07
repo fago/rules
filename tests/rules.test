@@ -1396,6 +1396,41 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     list($result) = $action_set->execute(REQUEST_TIME);
     $this->assertEqual($result, REQUEST_TIME + 3600, 'Used data calculation action to move a date by an hour.');
 
+    // Test data type conversion action.
+    $set = rules_action_set(array('result' => array('type' => 'text', 'parameter' => FALSE)), array('result'));
+    $set->action('data_convert', array('type' => 'text', 'value:select' => 'site:login-url'));
+    $set->action('data_set', array('data:select' => 'result', 'value:select' => 'conversion_result'));
+    list($result) = $set->execute();
+    $set->integrityCheck();
+    $this->assertEqual($result, url('user', array('absolute' => TRUE)), 'Converted URI to text.');
+
+    $set = rules_action_set(array(
+      'result' => array('type' => 'integer', 'parameter' => FALSE),
+      'source' => array('type' => 'text'),
+    ), array('result'));
+    $set->action('data_convert', array('type' => 'integer', 'value:select' => 'source'));
+    $set->action('data_set', array('data:select' => 'result', 'value:select' => 'conversion_result'));
+    list($result) = $set->execute('9.4');
+    $this->assertEqual($result, 9, 'Converted decimal to integer using rounding.');
+
+    $set = rules_action_set(array(
+      'result' => array('type' => 'integer', 'parameter' => FALSE),
+      'source' => array('type' => 'text'),
+    ), array('result'));
+    $set->action('data_convert', array('type' => 'integer', 'value:select' => 'source', 'rounding_behavior' => 'down'));
+    $set->action('data_set', array('data:select' => 'result', 'value:select' => 'conversion_result'));
+    list($result) = $set->execute('9.6');
+    $this->assertEqual($result, 9, 'Converted decimal to integer using roundin behavio down.');
+
+    $set = rules_action_set(array(
+      'result' => array('type' => 'integer', 'parameter' => FALSE),
+      'source' => array('type' => 'text'),
+    ), array('result'));
+    $set->action('data_convert', array('type' => 'integer', 'value:select' => 'source', 'rounding_behavior' => 'up'));
+    $set->action('data_set', array('data:select' => 'result', 'value:select' => 'conversion_result'));
+    list($result) = $set->execute('9.4');
+    $this->assertEqual($result, 10, 'Converted decimal to integer using rounding behavior up.');
+
     // Test text matching condition.
     $result = rules_condition('text_matches')->execute('my-text', 'text', 'contains');
     $result2 = rules_condition('text_matches')->execute('my-text', 'tex2t', 'contains');

@@ -176,6 +176,75 @@ function rules_action_variable_add_info_alter(&$element_info, RulesAbstractPlugi
 }
 
 /**
+ * Action: Convert a value.
+ */
+function rules_action_data_convert($arguments, RulesPlugin $element, $state) {
+
+  $value_info = $element->getArgumentInfo('value');
+  $from_type = $value_info['type'];
+  $target_type = $arguments['type'];
+
+  // First apply the rounding behavior if given.
+  if (isset($arguments['rounding_behavior'])) {
+    switch ($arguments['rounding_behavior']) {
+      case 'up':
+        $arguments['value'] = ceil($arguments['value']);
+        break;
+      case 'down':
+        $arguments['value'] = floor($arguments['value']);
+        break;
+      default:
+      case 'round':
+        $arguments['value'] = round($arguments['value']);
+        break;
+    }
+  }
+
+  switch ($target_type) {
+    case 'decimal':
+      $result = floatval($arguments['value']);
+      break;
+    case 'integer':
+      $result = intval($arguments['value']);
+      break;
+    case 'text':
+      $result = strval($arguments['value']);
+      break;
+  }
+
+  return array('conversion_result' => $result);
+}
+
+/**
+ * Info alteration callback for variable add action.
+ */
+function rules_action_data_convert_info_alter(&$element_info, RulesAbstractPlugin $element) {
+
+  if (isset($element->settings['type']) && $type = $element->settings['type']) {
+    $element_info['provides']['conversion_result']['type'] = $type;
+
+    if ($type != 'integer') {
+      // Only support the rounding behavior option for integers.
+      unset($element_info['parameter']['rounding_behavior']);
+    }
+
+    // Configure compatible source-types:
+    switch ($type) {
+      case 'integer':
+        $sources = array('decimal', 'text', 'token', 'uri', 'date', 'duration', 'boolean');
+        break;
+      case 'decimal':
+        $sources = array('integer', 'text', 'token', 'uri', 'date', 'duration', 'boolean');
+        break;
+      case 'text':
+        $sources = array('integer', 'decimal', 'token', 'uri', 'date', 'duration', 'boolean');
+        break;
+    }
+    $element_info['parameter']['value']['type'] = $sources;
+  }
+}
+
+/**
  * Action: Create data.
  */
 function rules_action_data_create($args, $element) {

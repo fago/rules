@@ -192,7 +192,68 @@ function rules_data_action_info() {
       ),
     );
   }
+  $return['data_convert'] = array(
+    'label' => t('Convert data type'),
+    'parameter' => array(
+      'type' => array(
+        'type' => 'token',
+        'label' => t('Target type'),
+        'description' => t('The data type to convert a value to.'),
+        'options list' => 'rules_action_data_convert_types_options',
+        'restriction' => 'input',
+      ),
+      'value' => array(
+        'type' => array('decimal', 'integer', 'text'),
+        'label' => t('Value to convert'),
+        'default mode' => 'selector',
+      ),
+      // For to-integer conversion only.
+      'rounding_behavior' => array(
+        'type' => 'token',
+        'label' => t('Rounding behavior'),
+        'description' => t('The rounding behavior the conversion should use.'),
+        'options list' => 'rules_action_data_convert_rounding_behavior_options',
+        'restriction' => 'input',
+        'default value' => 'round',
+        'optional' => TRUE,
+      ),
+    ),
+    'provides' => array(
+      'conversion_result' => array(
+        'type' => 'unknown',
+        'label' => t('Conversion result'),
+      ),
+    ),
+    'group' => t('Data'),
+    'base' => 'rules_action_data_convert',
+    'named parameter' => TRUE,
+    'callbacks' => array(
+      'form_alter' => 'rules_action_type_form_alter',
+    ),
+  );
   return $return;
+}
+
+/**
+ * Data conversation action: Options list callback for the target type.
+ */
+function rules_action_data_convert_types_options(RulesPlugin $element, $param_name) {
+  return array(
+    'decimal' => t('Decimal'),
+    'integer' => t('Integer'),
+    'text' => t('Text'),
+  );
+}
+
+/**
+ * Data conversation action: Options list callback for rounding behavior.
+ */
+function rules_action_data_convert_rounding_behavior_options(RulesPlugin $element, $param_name) {
+  return array(
+    'down' => t('Always down (9.5 -> 9)'),
+    'round' => t('Round, half up (9.5 -> 10)'),
+    'up' => t('Always up (9.5 -> 10)'),
+  );
 }
 
 /**
