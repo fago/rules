@@ -198,15 +198,19 @@ class RulesEntityController extends EntityAPIControllerExportable {
     $query = parent::buildQuery($ids, $conditions, $revision_id);
     $query_conditions =& $query->conditions();
     foreach ($query_conditions as &$condition) {
-      // Support using 'tags' => array('tag1', 'tag2') as condition.
-      if ($condition['field'] == 'base.tags') {
-        $query->join('rules_tags', 'rt', 'base.id = rt.id');
-        $condition['field'] = 'rt.tag';
-      }
-      // Support using 'event' => $name as condition.
-      if ($condition['field'] == 'base.event') {
-        $query->join('rules_trigger', 'tr', "base.id = tr.id");
-        $condition['field'] = 'tr.event';
+      // One entry in $query_conditions is a string with key '#conjunction'.
+      // @see QueryConditionInterface::conditions().
+      if (is_array($condition)) {
+        // Support using 'tags' => array('tag1', 'tag2') as condition.
+        if ($condition['field'] == 'base.tags') {
+          $query->join('rules_tags', 'rt', 'base.id = rt.id');
+          $condition['field'] = 'rt.tag';
+        }
+        // Support using 'event' => $name as condition.
+        if ($condition['field'] == 'base.event') {
+          $query->join('rules_trigger', 'tr', "base.id = tr.id");
+          $condition['field'] = 'tr.event';
+        }
       }
     }
     return $query;
