@@ -90,7 +90,8 @@ function rules_i18n_rules_config_update($rules_config, $original = NULL) {
 
   // i18n_object() uses a static cache per config, so bypass it to wrap the
   // original entity.
-  $old_i18n_object = new RulesI18nStringObjectWrapper('rules_config', $original);
+  $object_key = i18n_object_key('rules_config', $original);
+  $old_i18n_object = new RulesI18nStringObjectWrapper('rules_config', $object_key, $original);
   $old_strings = $old_i18n_object->get_strings(array('empty' => TRUE));
 
   // Note: For the strings to have updated values, the updated entity needs to
