@@ -125,7 +125,7 @@ function rules_i18n_rules_evaluator_info() {
 class RulesI18nStringEvaluator extends RulesDataInputEvaluator {
 
   public static function access() {
-    return user_access('translate interface');
+    return user_access('translate admin strings');
   }
 
   public function prepare($text, $var_info, $param_info = NULL) {
@@ -161,17 +161,18 @@ class RulesI18nStringEvaluator extends RulesDataInputEvaluator {
    * Translate the value.
    *
    * If the element provides a language parameter, we are using this target
-   * language provided via $options['language'].
+   * language provided via $options['language']. Sanitizing is handled by Rules,
+   * so disable that for i18n.
    */
   public function evaluate($value, $options, RulesState $state) {
     $langcode = isset($options['language']) ? $options['language']->language : NULL;
     if (is_array($value)) {
       foreach ($value as $key => $text) {
-        $value[$key] = entity_i18n_string($options['i18n context'] . ':' . $key, $text, $langcode);
+        $value[$key] = i18n_string($options['i18n context'] . ':' . $key, $text, array('langcode' => $langcode, 'sanitize' => FALSE));
       }
     }
     else {
-      $value = entity_i18n_string($options['i18n context'], $value, $langcode);
+      $value = i18n_string($options['i18n context'], $value, array('langcode' => $langcode, 'sanitize' => FALSE));
     }
     return $value;
   }
