@@ -414,8 +414,9 @@ function hook_rules_data_info() {
  *     components (see below).
  *   - class: The implementation class. Has to extend the RulesPlugin class.
  *   - embeddable: A container class in which elements of those plugin may be
- *     embedded or FALSE to disallow embedding. Common classes that are used
- *     here are RulesConditionContainer and RulesActionContainer.
+ *     embedded via the UI or FALSE to disallow embedding it via the UI. This
+ *     has no implications on the API level though. Common classes that are
+ *     used here are RulesConditionContainer and RulesActionContainer.
  *   - component: If set to TRUE, the rules admin UI will list elements of those
  *     plugin in the components UI and allows the creation of new components
  *     based upon this plugin. Optional.
