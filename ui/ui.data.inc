@@ -87,11 +87,11 @@ class RulesDataUI {
     $form['types_help']['#text'] = format_plural(count($type_labels), 'Select data of the type %types.', 'Select data of the types %types.', array('%types' => implode(', ', $type_labels)));
 
     if (!empty($info['translatable'])) {
-      if ($info['custom translation language']) {
-        $text = t('If a multilingual data source (i.e. a translatable field) is given, the argument is translated to the configured language.');
+      if (empty($info['custom translation language'])) {
+        $text = t('If a multilingual data source (i.e. a translatable field) is given, the argument is translated to the current interface language.');
       }
       else {
-        $text = t('If a multilingual data source (i.e. a translatable field) is given, the argument is translated to the current interface language.');
+        $text = t('If a multilingual data source (i.e. a translatable field) is given, the argument is translated to the configured language.');
       }
       $form['translation'] = array(
         '#theme' => 'rules_settings_help',
