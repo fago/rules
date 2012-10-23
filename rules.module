@@ -1406,3 +1406,45 @@ function rules_help($path, $arg) {
     return render($output);
   }
 }
+
+/**
+ * Implements hook_token_info().
+ */
+function rules_token_info() {
+  $cache = rules_get_cache();
+  $data_info = $cache['data_info'];
+
+  $types = array('text', 'integer', 'uri', 'token', 'decimal', 'date', 'duration');
+
+  foreach ($types as $type) {
+    $token_type = $data_info[$type]['token type'];
+
+    $token_info['types'][$token_type] = array(
+      'name' => $data_info[$type]['label'],
+      'description' => t('Tokens related to %label Rules variables.', array('%label' => $data_info[$type]['label'])),
+      'needs-data' => $token_type,
+    );
+    $token_info['tokens'][$token_type]['value'] = array(
+      'name' => t("Value"),
+      'description' => t('The value of the variable.'),
+    );
+  }
+  return $token_info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function rules_tokens($type, $tokens, $data, $options = array()) {
+  // Handle replacements of primitive variable types.
+  if (substr($type, 0, 6) == 'rules_' && !empty($data[$type])) {
+    // Leverage entity tokens token processor by passing on as struct.
+    $info['property info']['value'] = array(
+      'type' => substr($type, 6),
+      'label' => '',
+    );
+    // Entity tokens uses metadata wrappers as values for 'struct' types.
+    $wrapper = entity_metadata_wrapper('struct', array('value' => $data[$type]), $info);
+    return entity_token_tokens('struct', $tokens, array('struct' => $wrapper), $options);
+  }
+}

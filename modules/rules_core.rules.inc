@@ -27,11 +27,13 @@ function rules_rules_core_data_info() {
     'text' => array(
       'label' => t('text'),
       'ui class' => 'RulesDataUIText',
+      'token type' => 'rules_text',
     ),
-   'token' => array(
+    'token' => array(
       'label' => t('text token'),
       'parent' => 'text',
       'ui class' => 'RulesDataUITextToken',
+      'token type' => 'rules_token',
     ),
     // A formatted text as used by entity metadata.
     'text_formatted' => array(
@@ -40,49 +42,55 @@ function rules_rules_core_data_info() {
       'wrap' => TRUE,
       'property info' => entity_property_text_formatted_info(),
     ),
-   'decimal' => array(
+    'decimal' => array(
       'label' => t('decimal number'),
       'parent' => 'text',
       'ui class' => 'RulesDataUIDecimal',
+      'token type' => 'rules_decimal',
     ),
-   'integer' => array(
+    'integer' => array(
       'label' => t('integer'),
       'class' => 'RulesIntegerWrapper',
       'parent' => 'decimal',
       'ui class' => 'RulesDataUIInteger',
+      'token type' => 'rules_integer',
     ),
-   'date' => array(
+    'date' => array(
       'label' => t('date'),
       'ui class' => 'RulesDataUIDate',
+      'token type' => 'rules_date',
     ),
-   'duration' => array(
+    'duration' => array(
       'label' => t('duration'),
       'parent' => 'integer',
       'ui class' => 'RulesDataUIDuration',
+      'token type' => 'rules_duration',
     ),
-   'boolean' => array(
+    'boolean' => array(
       'label' => t('truth value'),
       'ui class' => 'RulesDataUIBoolean',
+      'token type' => 'rules_boolean',
     ),
-   'uri' => array(
+    'uri' => array(
       'label' => t('URI'),
       'parent' => 'text',
       // Clean inserted tokens with "rawurlencode".
       'cleaning callback' => 'rawurlencode',
       'ui class' => 'RulesDataUIURI',
+      'token type' => 'rules_uri',
     ),
-   'list' => array(
+    'list' => array(
       'label' => t('list', array(), array('context' => 'data_types')),
       'wrap' => TRUE,
       'group' => t('List', array(), array('context' => 'data_types')),
     ),
-   'list<text>' => array(
+    'list<text>' => array(
       'label' => t('list of text'),
       'ui class' => 'RulesDataUIListText',
       'wrap' => TRUE,
       'group' => t('List', array(), array('context' => 'data_types')),
     ),
-   'list<integer>' => array(
+    'list<integer>' => array(
       'label' => t('list of integer'),
       'ui class' => 'RulesDataUIListInteger',
       'wrap' => TRUE,
@@ -94,7 +102,7 @@ function rules_rules_core_data_info() {
       'wrap' => TRUE,
       'group' => t('List', array(), array('context' => 'data_types')),
     ),
-   'entity' => array(
+    'entity' => array(
       'label' => t('any entity'),
       'group' => t('Entity'),
       'is wrapped' => TRUE,
