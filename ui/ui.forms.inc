@@ -616,7 +616,7 @@ function rules_ui_form_data_selection_auto_completion($parameter, $form_build_id
         else {
           $text = check_plain($selector) . ' (' . check_plain($info['label']) . ')';
         }
-        $matches[$selector] = "<div" . drupal_attributes($attributes) . ">$text</div";
+        $matches[$selector] = "<div" . drupal_attributes($attributes) . ">$text</div>";
       }
     }
   }
