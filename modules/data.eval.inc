@@ -74,7 +74,8 @@ function rules_action_data_calc($input1, $op, $input2, $settings, $state, $eleme
   }
   if (isset($result)) {
     // Ensure results are valid integer values if necessary.
-    $var_info = rules_array_key($element->providesVariables());
+    $variables = $element->providesVariables();
+    $var_info = reset($variables);
     if ($var_info['type'] == 'integer') {
       $result = (int) $result;
     }
