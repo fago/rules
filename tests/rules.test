@@ -1455,6 +1455,53 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   function testEntityIntegration() {
     global $user;
 
+    // Test entiy_is_of_bundle condition.
+    $page = $this->drupalCreateNode(array('type' => 'page'));
+    $article = $this->drupalCreateNode(array('type' => 'article'));
+
+    $result = rules_condition('entity_is_of_bundle', array(
+      'type' => 'node',
+      'bundle' => array('article'),
+    ))->execute(entity_metadata_wrapper('node', $page));
+    $this->assertFalse($result, 'Entity is of bundle condition has not been met.');
+    $result = rules_condition('entity_is_of_bundle', array(
+      'type' => 'node',
+      'bundle' => array('article'),
+    ))->execute(entity_metadata_wrapper('node', $article));
+    $this->assertTrue($result, 'Entity is of bundle condition has been met.');
+
+    // Also test a full rule so the integrity check must work.
+    $term_wrapped = entity_property_values_create_entity('taxonomy_term', array(
+      'name' => $this->randomName(),
+      'vocabulary' => 1,
+    ))->save();
+    $rule = rule(array(
+      'node' => array('type' => 'node'),
+    ));
+    $rule->condition('entity_is_of_bundle', array(
+      'entity:select' => 'node',
+      'bundle' => array('article'),
+    ));
+    $rule->action('data_set', array('data:select' => 'node:field_tags', 'value' => array($term_wrapped->getIdentifier())));
+    $rule->integrityCheck();
+    $rule->execute($article);
+    $this->assertEqual($term_wrapped->getIdentifier(), $article->field_tags[LANGUAGE_NONE][0]['tid'], 'Entity is of bundle condition has been met.');
+
+    // Test again using an entity variable.
+    $article = $this->drupalCreateNode(array('type' => 'article'));
+    $rule = rule(array(
+      'entity' => array('type' => 'entity'),
+    ));
+    $rule->condition('entity_is_of_bundle', array(
+      'entity:select' => 'entity',
+      'type' => 'node',
+      'bundle' => array('article'),
+    ));
+    $rule->action('data_set', array('data:select' => 'entity:field_tags', 'value' => array($term_wrapped->getIdentifier())));
+    $rule->integrityCheck();
+    $rule->execute(entity_metadata_wrapper('node', $article));
+    $this->assertEqual($term_wrapped->getIdentifier(), $article->field_tags[LANGUAGE_NONE][0]['tid'], 'Entity is of bundle condition has been met.');
+
     // Test CRUD actions.
     $action = rules_action('entity_create', array(
       'type' => 'node',

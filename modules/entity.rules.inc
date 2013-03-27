@@ -269,6 +269,23 @@ function rules_entity_type_options($key = NULL) {
 }
 
 /**
+ * Options list callback for getting a list of possible entity bundles.
+ *
+ * @param $element
+ *   The element to return options for.
+ */
+function rules_entity_bundle_options(RulesAbstractPlugin $element) {
+  $bundles = array();
+  if (isset($element->settings['type'])) {
+    $entity_info = entity_get_info($element->settings['type']);
+    foreach ($entity_info['bundles'] as $bundle_name => $bundle_info) {
+      $bundles[$bundle_name] = $bundle_info['label'];
+    }
+  }
+  return $bundles;
+}
+
+/**
  * Entity actions access callback.
  *
  * Returns TRUE if at least one type is available for configuring the action.
@@ -348,6 +365,32 @@ function rules_entity_condition_info() {
       'group' => t('Entities'),
       'base' => 'rules_condition_entity_is_of_type',
     ),
+    'entity_is_of_bundle' => array(
+      'label' => t('Entity is of bundle'),
+      'parameter' => array(
+        'entity' => array(
+          'type' => 'entity',
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity for which to evaluate the condition.'),
+        ),
+        'type' => array(
+          'type' => 'token',
+          'label' => t('Entity type'),
+          'description' => t('The type of the checked entity.'),
+          'options list' => 'rules_entity_action_type_options',
+          'restriction' => 'input',
+        ),
+        'bundle' => array(
+          'type' => 'list<text>',
+          'label' => t('Entity bundle'),
+          'description' => t('The condition is met if the entity is of one of the selected bundles.'),
+          'options list' => 'rules_entity_bundle_options',
+          'restriction' => 'input',
+        ),
+      ),
+      'group' => t('Entities'),
+      'base' => 'rules_condition_entity_is_of_type_bundle',
+    ),
   );
 }
 
@@ -393,6 +436,81 @@ function rules_condition_entity_has_field_assertions($element) {
 function rules_condition_entity_is_of_type_assertions($element) {
   if ($type = $element->settings['type']) {
     return array('entity' => array('type' => $type));
+  }
+}
+
+/**
+ * Assert the selected entity type and bundle.
+ */
+function rules_condition_entity_is_of_type_bundle_assertions($element) {
+  if ($bundle = $element->settings['bundle']) {
+    $assertions = array();
+    $assertions['entity']['type'] = $element->settings['type'];
+    $assertions['entity']['bundle'] = $bundle;
+    return $assertions;
+  }
+}
+
+/**
+ * Process callback for the condition entity_is_of_type_bundle.
+ */
+function rules_condition_entity_is_of_type_bundle_process(RulesAbstractPlugin $element) {
+  // If we know the entity type, auto-populate it.
+  if (($info = $element->getArgumentInfo('entity')) && $info['type'] != 'entity') {
+    $element->settings['type'] = $info['type'];
+  }
+}
+
+/**
+ * Form alter callback for the condition entity_is_of_type_bundle.
+ *
+ * Use multiple steps to configure the condition as the needed bundle field list
+ * depends on the selected entity type.
+ */
+function rules_condition_entity_is_of_type_bundle_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+  if (empty($element->settings['entity:select'])) {
+    $step = 1;
+  }
+  elseif (empty($element->settings['type'])) {
+    $step = 2;
+  }
+  else {
+    $step = 3;
+  }
+
+  $form['reload'] = array(
+    '#weight' => $form['submit']['#weight'] + 1,
+    '#type' => 'submit',
+    '#name' => 'reload',
+    '#value' => $step != 3 ? t('Continue') : t('Reload form'),
+    '#limit_validation_errors' => array(array('parameter', 'entity'), array('parameter', 'type')),
+    '#submit' => array('rules_form_submit_rebuild'),
+    '#ajax' => rules_ui_form_default_ajax('fade'),
+    '#attributes' => array('class' => array('rules-hide-js')),
+  );
+  // Use ajax and trigger as the reload button.
+  $form['parameter']['type']['settings']['type']['#ajax'] = $form['reload']['#ajax'] + array(
+    'event' => 'change',
+    'trigger_as' => array('name' => 'reload'),
+  );
+
+  switch ($step) {
+    case 1:
+      $form['reload']['#limit_validation_errors'] = array(array('parameter', 'entity'));
+      unset($form['parameter']['type']);
+      unset($form['reload']['#attributes']['class']);
+      // NO break;
+    case 2:
+      $form['negate']['#access'] = FALSE;
+      unset($form['parameter']['bundle']);
+      unset($form['submit']);
+      break;
+    case 3:
+      if (($info = $element->getArgumentInfo('entity')) && $info['type'] != 'entity') {
+        // Hide the entity type parameter if not needed.
+        unset($form['parameter']['type']);
+      }
+      break;
   }
 }
 
