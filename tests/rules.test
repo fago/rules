@@ -1930,8 +1930,11 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     // Test sending mail to all users of a role. First make sure there is a
     // custom role and a user for it.
     $user = $this->drupalCreateUser(array('administer nodes'));
-    $roles = array_keys($user->roles);
-    rules_action('mail_to_users_of_role', $settings + array('roles' => $roles))->execute();
+    $roles = $user->roles;
+    // Remove the authenticate role so we only use the new role created by
+    // drupalCreateUser().
+    unset($roles[DRUPAL_AUTHENTICATED_RID]);
+    rules_action('mail_to_users_of_role', $settings + array('roles' => array_keys($roles)))->execute();
     $this->assertMail('to', $user->mail, 'Mail to users of a role has been sent.');
 
     // Test reacting on new log entries and make sure the log entry is usable.
