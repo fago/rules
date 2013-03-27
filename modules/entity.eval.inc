@@ -161,6 +161,6 @@ function rules_condition_entity_is_of_type($wrapper, $type) {
 /**
  * Condition: Entity is of type and bundle.
  */
-function rules_condition_entity_is_of_type_bundle($wrapper, $type, $bundles) {
+function rules_condition_entity_is_of_bundle($wrapper, $type, $bundles) {
   return $wrapper->type() == $type && in_array($wrapper->getBundle(), $bundles);
 }

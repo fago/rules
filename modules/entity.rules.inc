@@ -389,7 +389,7 @@ function rules_entity_condition_info() {
         ),
       ),
       'group' => t('Entities'),
-      'base' => 'rules_condition_entity_is_of_type_bundle',
+      'base' => 'rules_condition_entity_is_of_bundle',
     ),
   );
 }
@@ -442,7 +442,7 @@ function rules_condition_entity_is_of_type_assertions($element) {
 /**
  * Assert the selected entity type and bundle.
  */
-function rules_condition_entity_is_of_type_bundle_assertions($element) {
+function rules_condition_entity_is_of_bundle_assertions($element) {
   if ($bundle = $element->settings['bundle']) {
     $assertions = array();
     $assertions['entity']['type'] = $element->settings['type'];
@@ -452,9 +452,9 @@ function rules_condition_entity_is_of_type_bundle_assertions($element) {
 }
 
 /**
- * Process callback for the condition entity_is_of_type_bundle.
+ * Process callback for the condition entity_is_of_bundle.
  */
-function rules_condition_entity_is_of_type_bundle_process(RulesAbstractPlugin $element) {
+function rules_condition_entity_is_of_bundle_process(RulesAbstractPlugin $element) {
   // If we know the entity type, auto-populate it.
   if (($info = $element->getArgumentInfo('entity')) && $info['type'] != 'entity') {
     $element->settings['type'] = $info['type'];
@@ -462,12 +462,12 @@ function rules_condition_entity_is_of_type_bundle_process(RulesAbstractPlugin $e
 }
 
 /**
- * Form alter callback for the condition entity_is_of_type_bundle.
+ * Form alter callback for the condition entity_is_of_bundle.
  *
  * Use multiple steps to configure the condition as the needed bundle field list
  * depends on the selected entity type.
  */
-function rules_condition_entity_is_of_type_bundle_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
+function rules_condition_entity_is_of_bundle_form_alter(&$form, &$form_state, $options, RulesAbstractPlugin $element) {
   if (empty($element->settings['entity:select'])) {
     $step = 1;
   }
