@@ -141,14 +141,14 @@ function rules_action_entity_delete($wrapper, $settings, $state, $element) {
  * Condition: Entity is new.
  */
 function rules_condition_entity_is_new($wrapper, $settings, $state, $element) {
-  return !$wrapper->getIdentifier() || !empty($entity->is_new);
+  return !$wrapper->getIdentifier() || !empty($wrapper->value()->is_new);
 }
 
 /**
  * Condition: Entity has field.
  */
 function rules_condition_entity_has_field($wrapper, $field_name, $settings, $state) {
-  return isset($wrapper->$field_name) || isset($entity->$field_name);
+  return isset($wrapper->$field_name) || isset($wrapper->value()->$field_name);
 }
 
 /**
