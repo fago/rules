@@ -164,3 +164,11 @@ function rules_condition_entity_is_of_type($wrapper, $type) {
 function rules_condition_entity_is_of_bundle($wrapper, $type, $bundles) {
   return $wrapper->type() == $type && in_array($wrapper->getBundle(), $bundles);
 }
+
+/**
+ * Condition: User has access to field.
+ */
+function rules_condition_entity_field_access(EntityDrupalWrapper $wrapper, $field_name, $op, $account = NULL) {
+  $field = field_info_field($field_name);
+  return !empty($field) && field_access($op, $field, $wrapper->type(), $wrapper->value(), $account = NULL);
+}

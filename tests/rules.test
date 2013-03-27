@@ -1455,10 +1455,14 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
   function testEntityIntegration() {
     global $user;
 
-    // Test entiy_is_of_bundle condition.
     $page = $this->drupalCreateNode(array('type' => 'page'));
     $article = $this->drupalCreateNode(array('type' => 'article'));
 
+    $result = rules_condition('entity_field_access')
+      ->execute(entity_metadata_wrapper('node', $article), 'field_tags');
+    $this->assertTrue($result);
+
+    // Test entiy_is_of_bundle condition.
     $result = rules_condition('entity_is_of_bundle', array(
       'type' => 'node',
       'bundle' => array('article'),

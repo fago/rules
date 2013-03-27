@@ -391,6 +391,43 @@ function rules_entity_condition_info() {
       'group' => t('Entities'),
       'base' => 'rules_condition_entity_is_of_bundle',
     ),
+    'entity_field_access' => array(
+      'label' => t('User has field access'),
+      'parameter' => array(
+        'entity' => array(
+          'type' => 'entity',
+          'label' => t('Entity'),
+          'description' => t('Specifies the entity for which to evaluate the condition.'),
+          'restriction' => 'selector',
+          'wrapped' => TRUE,
+        ),
+        'field' => array(
+          'type' => 'token',
+          'label' => t('Field name'),
+          'description' => t('The name of the field to check for.'),
+          'options list' => 'rules_condition_entity_has_field_options',
+          'restriction' => 'input',
+        ),
+        'op' => array(
+          'type' => 'text',
+          'label' => t('Access operation'),
+          'options list' => 'rules_condition_entity_field_access_op_options',
+          'restriction' => 'input',
+          'optional' => TRUE,
+          'default value' => 'view',
+        ),
+        'account' => array(
+          'type' => 'user',
+          'label' => t('User account'),
+          'description' => t('Specifies the user account for which to check access. If left empty, the currently logged in user will be used.'),
+          'restriction' => 'selector',
+          'optional' => TRUE,
+          'default value' => NULL,
+        ),
+      ),
+      'group' => t('Entities'),
+      'base' => 'rules_condition_entity_field_access',
+    ),
   );
 }
 
@@ -410,6 +447,16 @@ function rules_condition_entity_has_field_options(RulesAbstractPlugin $element) 
     $options[$field_name] = $field_name;
   }
   return $options;
+}
+
+/**
+ * Returns options for choosing a field_access() operation.
+ */
+function rules_condition_entity_field_access_op_options(RulesAbstractPlugin $element) {
+  return array(
+    'view' => t('View'),
+    'edit' => t('Edit'),
+  );
 }
 
 /**
