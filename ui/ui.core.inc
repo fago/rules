@@ -1087,7 +1087,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
           '#theme' => 'rules_content_group',
           '#caption' => t('Tags'),
           'tags' => array(
-            '#markup' => implode(', ', $this->element->tags),
+            '#markup' => check_plain(drupal_implode_tags($this->element->tags)),
           ),
         );
       }
