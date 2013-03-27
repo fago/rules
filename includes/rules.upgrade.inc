@@ -190,8 +190,8 @@ function rules_upgrade_convert_rule_set($name, $cfg_old) {
   $config = rules_plugin_factory('rule set');
   $config->name = $name;
   foreach (array('label', 'weight') as $key) {
-    if (isset($element[$key])) {
-      $target->$key = $element[$key];
+    if (isset($cfg_old[$key])) {
+      $config->$key = $cfg_old[$key];
     }
   }
   if (isset($cfg_old['arguments'])) {
