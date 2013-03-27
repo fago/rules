@@ -128,7 +128,8 @@ function rules_schema() {
     ),
     'primary key' => array('id', 'event'),
     'foreign keys' => array(
-      'id' => array('rules_config' => 'id'),
+      'table' => 'rules_config',
+      'columns' => array('id' => 'id'),
     ),
   );
   $schema['rules_tags'] = array(
@@ -148,7 +149,8 @@ function rules_schema() {
     ),
     'primary key' => array('id', 'tag'),
     'foreign keys' => array(
-      'id' => array('rules_config' => 'id'),
+      'table' => 'rules_config',
+      'columns' => array('id' => 'id'),
     ),
   );
   $schema['rules_dependencies'] = array(
@@ -171,7 +173,8 @@ function rules_schema() {
       'module' => array('module'),
     ),
     'foreign keys' => array(
-      'id' => array('rules_config' => 'id'),
+      'table' => 'rules_config',
+      'columns' => array('id' => 'id'),
     ),
   );
   $schema['cache_rules'] = drupal_get_schema_unprocessed('system', 'cache');
@@ -269,7 +272,8 @@ function rules_update_7200() {
     ),
     'primary key' => array('id', 'event'),
     'foreign keys' => array(
-      'id' => array('rules_config' => 'id'),
+      'table' => 'rules_config',
+      'columns' => array('id' => 'id'),
     ),
   );
   db_create_table('rules_config', $schema['rules_config']);
@@ -353,7 +357,8 @@ function rules_update_7204() {
       ),
       'primary key' => array('id', 'tag'),
       'foreign keys' => array(
-        'id' => array('rules_config' => 'id'),
+        'table' => 'rules_config',
+        'columns' => array('id' => 'id'),
       ),
     );
     db_create_table('rules_tags', $schema['rules_tags']);
@@ -385,7 +390,8 @@ function rules_update_7205() {
         'module' => array('module'),
       ),
       'foreign keys' => array(
-        'id' => array('rules_config' => 'id'),
+        'table' => 'rules_config',
+        'columns' => array('id' => 'id'),
       ),
     );
     db_create_table('rules_dependencies', $schema['rules_dependencies']);
