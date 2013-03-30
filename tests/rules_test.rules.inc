@@ -242,3 +242,30 @@ class RulesTestTypeWrapper extends RulesIdentifiableDataWrapper implements Rules
     node_save($this->value());
   }
 }
+
+/**
+ * Implements hook_rules_plugin_info().
+ */
+function rules_test_rules_plugin_info() {
+  return array(
+    'rules test container' => array(
+      'label' => t('Test container'),
+      'class' => 'RulesTestContainer',
+      'embeddable' => 'RulesActionContainer',
+    ),
+  );
+}
+
+/**
+ * Test container plugin.
+ */
+class RulesTestContainer extends RulesContainerPlugin {
+  protected $itemName = 'rules test container';
+
+  /**
+   * Evaluate the element on a given rules evaluation state.
+   */
+  public function evaluate(RulesState $state) {
+    // Do nothing.
+  }
+}

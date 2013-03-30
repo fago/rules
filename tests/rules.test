@@ -84,6 +84,9 @@ class RulesTestCase extends DrupalWebTestCase {
     $action = rules_action('rules_node_publish_action');
     $this->assertEqual($action->dependencies(), array('rules_test'), 'Providing module is returned as dependency.');
 
+    $container = new RulesTestContainer();
+    $this->assertEqual($container->dependencies(), array('rules_test'), 'Providing module for container plugin is returned as dependency.');
+
     // Test handling unmet dependencies.
     $rule = rules_config_load('rules_export_test');
     $this->assertTrue(in_array('comment', $rule->dependencies) && !$rule->dirty, 'Dependencies have been imported.');

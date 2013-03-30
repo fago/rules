@@ -1937,7 +1937,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
   }
 
   public function dependencies() {
-    $modules = array();
+    $modules = array_flip(parent::dependencies());
     foreach ($this->children as $child) {
       $modules += array_flip($child->dependencies());
     }
