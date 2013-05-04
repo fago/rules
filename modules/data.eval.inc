@@ -71,6 +71,12 @@ function rules_action_data_calc($input1, $op, $input2, $settings, $state, $eleme
     case '/':
       $result = $input1 / $input2;
       break;
+    case 'min':
+      $result = min($input1, $input2);
+      break;
+    case 'max':
+      $result = max($input1, $input2);
+      break;
   }
   if (isset($result)) {
     // Ensure results are valid integer values if necessary.
