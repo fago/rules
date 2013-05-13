@@ -991,7 +991,7 @@ class RulesContainerPluginUI extends RulesPluginUI {
       $form['elements'][$id]['weight'] = array(
         '#type' => 'weight',
         '#default_value' => $child->weight,
-        '#delta' => 20,
+        '#delta' => 50,
       );
       $form['elements'][$id]['parent_id'] = array(
         '#type' => 'hidden',

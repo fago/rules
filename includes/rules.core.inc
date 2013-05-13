@@ -2104,7 +2104,7 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
 
     // Fix up the weights afterwards to be unique integers.
     foreach (array_values($this->children) as $i => $child) {
-      $child->weight = $i * 2;
+      $child->weight = $i;
     }
 
     if ($deep) {
