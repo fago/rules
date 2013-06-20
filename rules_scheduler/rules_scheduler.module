@@ -60,8 +60,11 @@ function rules_scheduler_run_task(array $task) {
     rules_log('Scheduled evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, TRUE);
     $state = unserialize($task['state']);
     $state->restoreBlocks();
+    // Block the config to prevent any future recursion.
+    $state->block($component);
     // Finally evaluate the component with the given state.
     $component->evaluate($state);
+    $state->unblock($component);
     rules_log('Finished evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, FALSE);
     $state->cleanUp();
   }
