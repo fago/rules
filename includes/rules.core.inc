@@ -210,6 +210,8 @@ class RulesEntityController extends EntityAPIControllerExportable {
         if ($condition['field'] == 'base.event') {
           $query->join('rules_trigger', 'tr', "base.id = tr.id");
           $condition['field'] = 'tr.event';
+          // Use like operator to support % wildcards also.
+          $condition['operator'] = 'LIKE';
         }
       }
     }
@@ -1742,17 +1744,44 @@ interface RulesConditionInterface {
 interface RulesTriggerableInterface {
 
   /**
-   * Returns a reference on the array of event names associated with this
-   * object.
+   * Returns the array of (configured) event names associated with this object.
    */
-  public function &events();
+  public function events();
+
+  /**
+   * Removes an event from the rule configuration.
+   *
+   * @param $event
+   *   The name of the (configured) event to remove.
+   * @return RulesTriggerableInterface
+   *   The object instance itself, to allow chaining.
+   */
+  public function removeEvent($event_name);
 
   /**
    * Adds the specified event.
    *
+   * @param string $event_name
+   *   The base name of the event to add.
+   * @param array $settings
+   *   (optional) The event settings. If there are no event settings, pass an
+   *   empty array (default).
+   *
    * @return RulesTriggerableInterface
    */
-  public function event($event);
+  public function event($event_name, array $settings = array());
+
+  /**
+   * Gets the event settings associated with the given (configured) event.
+   *
+   * @param $event_name
+   *   The (configured) event's name.
+   *
+   * @return array|null
+   *   The array of event settings, or NULL if there are no settings.
+   */
+  public function getEventSettings($event_name);
+
 }
 
 /**
@@ -2176,6 +2205,17 @@ abstract class RulesContainerPlugin extends RulesPlugin implements IteratorAggre
     $this->availableVariables = NULL;
     foreach ($this->children as $child) {
       $child->resetInternalCache();
+    }
+  }
+
+  /**
+   * Overrides optimize().
+   */
+  public function optimize() {
+    parent::optimize();
+    // Now let the children optimize itself.
+    foreach ($this as $element) {
+      $element->optimize();
     }
   }
 }

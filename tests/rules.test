@@ -1057,7 +1057,6 @@ class RulesTestDataCase extends DrupalWebTestCase {
   }
 }
 
-
 /**
  * Test triggering rules.
  */
@@ -1097,14 +1096,13 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
     $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
     $this->assertEqual($result->fetchField(), 'node_presave', 'Associated event has been saved.');
     // Try updating.
-    $events =& $rule->events();
-    unset($events[0]);
-    $events[] = 'node_insert';
-    $events[] = 'node_update';
+    $rule->removeEvent('node_presave');
+    $rule->event('node_insert');
+    $rule->event('node_update');
     $rule->active = FALSE;
     $rule->integrityCheck()->save();
     $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
-    $this->assertEqual($result->fetchCol(), array_values($events), 'Updated associated events.');
+    $this->assertEqual($result->fetchCol(), array_values($rule->events()), 'Updated associated events.');
     // Try deleting.
     $rule->delete();
     $result = db_query("SELECT event FROM {rules_trigger} WHERE id = :id", array(':id' => $rule->id));
@@ -1253,6 +1251,33 @@ class RulesTriggerTestCase extends DrupalWebTestCase {
 
     $msg = drupal_get_messages();
     $this->assertEqual($msg['status'][0], 'A node has been updated.', 'Default rule has been triggered.');
+  }
+
+  /**
+   * Tests creating and triggering a reaction rule with event settings.
+   */
+  function testEventSettings() {
+    $rule = rules_reaction_rule();
+    $rule->event('node_presave', array('bundle' => 'article'))
+      ->condition('data_is_empty', array('data:select' => 'node:field-tags'))
+      ->action('node_publish', array('node:select' => 'node'));
+    $rule->integrityCheck()->save();
+
+    $node = $this->drupalCreateNode(array('type' => 'page', 'status' => 0));
+    $this->assertEqual($node->status, 0, 'Rule has not been triggered.');
+    $node = $this->drupalCreateNode(array('type' => 'article', 'status' => 0));
+    $this->assertEqual($node->status, 1, 'Rule has been triggered.');
+    RulesLog::logger()->checkLog();
+
+    // Make sure an invalid bundle raises integrity problems.
+    $rule->event('node_presave', array('bundle' => 'invalid'));
+    try {
+      $rule->integrityCheck();
+      $this->fail('Integrity check failed.');
+    }
+    catch (RulesIntegrityException $e) {
+      $this->pass('Integrity check failed: ' . $e);
+    }
   }
 }
 

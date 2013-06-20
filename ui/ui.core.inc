@@ -569,7 +569,7 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
     if ($form['settings']['name']['#default_value'] != $form_values['name']) {
       $module = isset($this->element->module) ? $this->element->module : 'rules';
       $this->element->name = $module . '_' . $form_values['name'];
-      $form_state['redirect'] = RulesPluginUI::path($this->element->name);
+      $form_state['redirect'] = RulesPluginUI::path($this->element->name, 'edit', $this->element);
     }
     $this->element->tags = empty($form_values['tags']) ? array() : drupal_explode_tags($form_values['tags']);
 

@@ -244,13 +244,18 @@ function hook_rules_condition_info() {
  *   - group: A group for this element, used for grouping the events in the
  *     interface. Should start with a capital letter and be translated.
  *     Required.
- *   - 'access callback': An callback, which has to return whether the
+ *   - class: (optional) An event handler class implementing the
+ *     RulesEventHandlerInterface. If none is specified the
+ *     RulesEventDefaultHandler class will be used. While the default event
+ *     handler has no settings, custom event handlers may be implemented to
+ *     to make an event configurable. See RulesEventHandlerInterface.
+ *   - access callback: (optional) An callback, which has to return whether the
  *     currently logged in user is allowed to configure rules for this event.
  *     Access should be only granted, if the user at least may access all the
- *     variables provided by the event. Optional.
- *   - help: A help text for rules reaction on this event.
- *   - variables: An array describing all variables that are available for
- *     elements reaction on this event. Optional. Each variable has to be
+ *     variables provided by the event.
+ *   - help: (optional) A help text for rules reaction on this event.
+ *   - variables: (optional) An array describing all variables that are
+ *     available for elements reacting on this event. Each variable has to be
  *     described by a sub-array with the possible attributes:
  *     - label: The label of the variable. Start capitalized. Required.
  *     - type: The rules data type of the variable. All types declared in
@@ -262,12 +267,12 @@ function hook_rules_condition_info() {
  *     - 'options list': (optional) A callback that returns an array of possible
  *       values for this variable as specified for entity properties at
  *       hook_entity_property_info().
- *     - 'skip save': If the variable is saved after the event has occurred
- *       anyway, set this to TRUE. So rules won't save the variable a second
- *       time. Optional, defaults to FALSE.
- *     - handler: A handler to load the actual variable value. This is useful
- *       for lazy loading variables. The handler gets all so far available
- *       variables passed in the order as defined. Optional. Also see
+ *     - 'skip save': (optional) If the variable is saved after the event has
+ *       occurred anyway, set this to TRUE. So rules won't save the variable a
+ *       second time. Defaults to FALSE.
+ *     - handler: (optional) A handler to load the actual variable value. This
+ *       is useful for lazy loading variables. The handler gets all so far
+ *       available variables passed in the order as defined. Also see
  *       http://drupal.org/node/884554.
  *       Note that for lazy-loading entities just the entity id may be passed
  *       as variable value, so a handler is not necessary in that case.

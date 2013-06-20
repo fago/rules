@@ -250,12 +250,19 @@ function &rules_get_cache($cid = 'data') {
     elseif (strpos($cid, 'comp_') === 0) {
       $cache[$cid] = FALSE;
       _rules_rebuild_component_cache();
-      return $cache[$cid];
     }
     elseif (strpos($cid, 'event_') === 0) {
       $cache[$cid] = FALSE;
-      RulesEventSet::rebuildEventCache();
-      return $cache[$cid];
+      // Always rebuild the event cache on cache miss for a base event name as
+      // this may not happen with a complete cache. For a configurable event
+      // check whether we have rules for the event first.
+      if (strpos($cid, '--') === FALSE || rules_config_load_multiple(FALSE, array('plugin' => 'reaction rule', 'active' => TRUE, 'event' => substr($cid, 6)))) {
+        RulesEventSet::rebuildEventCache();
+      }
+      else {
+        // Cache if there are no rules for a configurable event.
+        rules_set_cache($cid, FALSE);
+      }
     }
     else {
       $cache[$cid] = FALSE;
@@ -322,7 +329,7 @@ function _rules_rebuild_component_cache() {
  *
  * In addition to calling cache_set(), this function makes sure the cache item
  * is immediately available via rules_get_cache() by keeping all cache items
- * in memory. That way we can garantuee rules_get_cache() is able to retrieve
+ * in memory. That way we can guarantee rules_get_cache() is able to retrieve
  * any cache item, even if all cache gets fail.
  *
  * @see rules_get_cache()
@@ -458,6 +465,67 @@ function rules_unwrap_data(array $data, $info = array()) {
     }
   }
   return $data;
+}
+
+/**
+ * Gets event info for a given event.
+ *
+ * @param string $event_name
+ *   A (configured) event name.
+ *
+ * @return array
+ *   An array of event info. If the event is unknown, a suiting info array is
+ *   generated and returned
+ */
+function rules_get_event_info($event_name) {
+  $base_event_name = rules_get_event_base_name($event_name);
+  $events = rules_fetch_data('event_info');
+  if (isset($events[$base_event_name])) {
+    return $events[$base_event_name] + array('name' => $base_event_name);
+  }
+  return array(
+    'label' => t('Unknown event "!event_name"', array('!event_name' => $base_event_name)),
+    'name' => $base_event_name,
+  );
+}
+
+/**
+ * Returns the base name of a configured event name.
+ *
+ * For a configured event name like node_view--article the base event name
+ * node_view is returned.
+ *
+ * @return string
+ *   The event base name.
+ */
+function rules_get_event_base_name($event_name) {
+  // Cut off any suffix from a configured event name.
+  if (strpos($event_name, '--') !== FALSE) {
+    $parts = explode('--', $event_name, 2);
+    return $parts[0];
+  }
+  return $event_name;
+}
+
+/**
+ * Returns the rule event handler for the given event.
+ *
+ * Events having no settings are handled via the class RulesEventSettingsNone.
+ *
+ * @param string $event_name
+ *   The event name (base or configured).
+ * @param array $settings
+ *   (optional) An array of event settings to set on the handler.
+ *
+ * @return RulesEventHandlerInterface
+ *   The event handler.
+ */
+function rules_get_event_handler($event_name, array $settings = NULL) {
+  $event_name = rules_get_event_base_name($event_name);
+  $event_info = rules_get_event_info($event_name);
+  $class = !empty($event_info['class']) ? $event_info['class'] : 'RulesEventDefaultHandler';
+  $handler = new $class($event_name, $event_info);
+  return isset($settings) ? $handler->setSettings($settings) : $handler;
 }
 
 /**

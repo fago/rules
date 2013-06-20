@@ -52,7 +52,7 @@ class RulesUIController {
       'title callback' => 'rules_get_title',
       'title arguments' => array('Adding event to !plugin "!label"', $base_count + 1),
       'page callback' => 'drupal_get_form',
-      'page arguments' => array('rules_ui_add_event', $base_count + 1, $base_path),
+      'page arguments' => array('rules_ui_add_event_page', $base_count + 1, $base_path),
       'access callback' => 'rules_config_access',
       'access arguments' => array('update', $base_count + 1),
       'load arguments' => array($base_count + 1),
@@ -257,8 +257,8 @@ class RulesUIController {
       $events = array();
       if ($config instanceof RulesTriggerableInterface) {
         foreach ($config->events() as $event_name) {
-          $this->event_info += array($event_name => array('label' => t('Unknown event "!event_name"', array('!event_name' => $event_name))));
-          $events[] = check_plain($this->event_info[$event_name]['label']);
+          $event_handler = rules_get_event_handler($event_name, $config->getEventSettings($event_name));
+          $events[] = $event_handler->summary();
         }
       }
       $row[] = implode(", ", $events);

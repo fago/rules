@@ -24,18 +24,21 @@ function rules_node_event_info() {
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('created content')),
       'access callback' => 'rules_node_integration_access',
+      'class' => 'RulesNodeEventHandler',
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('updated content'), TRUE),
       'access callback' => 'rules_node_integration_access',
+      'class' => 'RulesNodeEventHandler',
     ),
     'node_presave' => array(
       'label' => t('Before saving content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('saved content'), TRUE),
       'access callback' => 'rules_node_integration_access',
+      'class' => 'RulesNodeEventHandler',
     ),
     'node_view' => array(
       'label' => t('Content is viewed'),
@@ -51,12 +54,14 @@ function rules_node_event_info() {
         ),
       ),
       'access callback' => 'rules_node_integration_access',
+      'class' => 'RulesNodeEventHandler',
     ),
     'node_delete' => array(
       'label' => t('After deleting content'),
       'group' => t('Node'),
       'variables' => rules_events_node_variables(t('deleted content')),
       'access callback' => 'rules_node_integration_access',
+      'class' => 'RulesNodeEventHandler',
     ),
   );
   // Specify that on presave the node is saved anyway.
@@ -166,6 +171,22 @@ function rules_node_integration_access($type, $name) {
  */
 function rules_node_admin_access() {
   return user_access('administer nodes');
+}
+
+
+/**
+ * Event handler support node bundle event settings.
+ */
+class RulesNodeEventHandler extends RulesEventHandlerEntityBundle {
+
+  /**
+   * Returns the label to use for the bundle property.
+   *
+   * @return string
+   */
+  protected function getBundlePropertyLabel() {
+    return t('type');
+  }
 }
 
 /**

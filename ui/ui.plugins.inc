@@ -91,7 +91,6 @@ class RulesReactionRuleUI extends RulesRuleUI {
       '#access' => empty($options['init']),
     );
 
-    $event_info = rules_fetch_data('event_info');
     $form['events']['table'] = array(
       '#theme' => 'table',
       '#caption' => 'Events',
@@ -100,9 +99,10 @@ class RulesReactionRuleUI extends RulesRuleUI {
     );
     $form['events']['table']['#attributes']['class'][] = 'rules-elements-table';
     foreach ($this->rule->events() as $event_name) {
-      $event_info += array($event_name => array('label' => t('Unknown event "!event_name"', array('!event_name' => $event_name))));
+      $event_handler = rules_get_event_handler($event_name, $this->rule->getEventSettings($event_name));
+
       $form['events']['table']['#rows'][$event_name] = array(
-        check_plain($event_info[$event_name]['label']),
+        $event_handler->summary(),
         '<span class="rules_rule_event">' . l(t('delete'), RulesPluginUI::path($this->rule->name, 'delete/event/' . $event_name)) . '</span>',
       );
     }
