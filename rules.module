@@ -253,16 +253,7 @@ function &rules_get_cache($cid = 'data') {
     }
     elseif (strpos($cid, 'event_') === 0) {
       $cache[$cid] = FALSE;
-      // Always rebuild the event cache on cache miss for a base event name as
-      // this may not happen with a complete cache. For a configurable event
-      // check whether we have rules for the event first.
-      if (strpos($cid, '--') === FALSE || rules_config_load_multiple(FALSE, array('plugin' => 'reaction rule', 'active' => TRUE, 'event' => substr($cid, 6)))) {
-        RulesEventSet::rebuildEventCache();
-      }
-      else {
-        // Cache if there are no rules for a configurable event.
-        rules_set_cache($cid, FALSE);
-      }
+      RulesEventSet::rebuildEventCache();
     }
     else {
       $cache[$cid] = FALSE;
@@ -344,7 +335,6 @@ function rules_set_cache($cid, $data) {
  * Implements hook_flush_caches().
  */
 function rules_flush_caches() {
-  variable_del('rules_empty_sets');
   return array('cache_rules');
 }
 
@@ -353,7 +343,7 @@ function rules_flush_caches() {
  */
 function rules_clear_cache() {
   cache_clear_all('*', 'cache_rules', TRUE);
-  variable_del('rules_empty_sets');
+  variable_del('rules_event_whitelist');
   drupal_static_reset('rules_get_cache');
   drupal_static_reset('rules_fetch_data');
   drupal_static_reset('rules_config_update_dirty_flag');
@@ -895,9 +885,11 @@ function rules_invoke_event() {
   $args = func_get_args();
   $event_name = $args[0];
   unset($args[0]);
-  // For invoking the rules event we directly acccess the global $conf. This is
-  // fast without having to introduce another static cache.
-  if (!defined('MAINTENANCE_MODE') && !isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+  // We maintain a whitelist of configured events to reduces the number of cache
+  // reads. We access it directly via the global $conf as this is fast without
+  // having to introduce another static cache. Then, if the whitelist is unset,
+  // we ignore it so cache rebuilding is triggered.
+  if (!defined('MAINTENANCE_MODE') && (!isset($conf['rules_event_whitelist']) || isset($conf['rules_event_whitelist'][$event_name])) && $event = rules_get_cache('event_' . $event_name)) {
     $event->executeByArgs($args);
   }
 }
@@ -922,9 +914,11 @@ function rules_invoke_event() {
 function rules_invoke_event_by_args($event_name, $args = array()) {
   global $conf;
 
-  // For invoking the rules event we directly acccess the global $conf. This is
-  // fast without having to introduce another static cache.
-  if (!defined('MAINTENANCE_MODE') && !isset($conf['rules_empty_sets'][$event_name]) && $event = rules_get_cache('event_' . $event_name)) {
+  // We maintain a whitelist of configured events to reduces the number of cache
+  // reads. We access it directly via the global $conf as this is fast without
+  // having to introduce another static cache. Then, if the whitelist is unset,
+  // we ignore it so cache rebuilding is triggered.
+  if (!defined('MAINTENANCE_MODE') && (!isset($conf['rules_event_whitelist']) || isset($conf['rules_event_whitelist'][$event_name])) && $event = rules_get_cache('event_' . $event_name)) {
     $event->executeByArgs($args);
   }
 }

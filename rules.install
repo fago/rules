@@ -18,7 +18,7 @@ function rules_install() {
  * Implements hook_uninstall().
  */
 function rules_uninstall() {
-  variable_del('rules_empty_sets');
+  variable_del('rules_event_whitelist');
   variable_del('rules_debug');
 }
 
@@ -439,4 +439,11 @@ function rules_update_7209() {
     'size' => 'tiny',
     'description' => 'Whether to use a permission to control access for using components.',
   ));
+}
+
+/**
+ * Deletes the unused rules_empty_sets variable.
+ */
+function rules_update_7210() {
+  variable_del('rules_empty_sets');
 }
