@@ -4,6 +4,15 @@
  * @file Includes any rules integration provided by the module.
  */
 
+/**
+ * Implements hook_rules_event_info().
+ */
+function rules_test_rules_event_info() {
+  return array('rules_test_event' => array(
+    'label' => t('Test event'),
+    'class' => 'RulesTestEventHandler',
+  ));
+}
 
 /**
  * Implements hook_rules_file_info().
@@ -268,4 +277,39 @@ class RulesTestContainer extends RulesContainerPlugin {
   public function evaluate(RulesState $state) {
     // Do nothing.
   }
+}
+
+/**
+ * Test event handler class.
+ */
+class RulesTestEventHandler extends RulesEventDefaultHandler implements RulesEventDispatcherInterface {
+
+  /**
+   * Name of the variable in which to store the state of the event handler.
+   *
+   * @var string
+   */
+  protected $variableName = 'rules_test_event_handler_watch';
+
+  /**
+   * Implements RulesEventDispatcherInterface::startWatching().
+   */
+  public function startWatching() {
+    variable_set($this->variableName, TRUE);
+  }
+
+  /**
+   * Implements RulesEventDispatcherInterface::stopWatching().
+   */
+  public function stopWatching() {
+    variable_set($this->variableName, FALSE);
+  }
+
+  /**
+   * Implements RulesEventDispatcherInterface::isWatching().
+   */
+  public function isWatching() {
+    return (bool) variable_get($this->variableName);
+  }
+
 }

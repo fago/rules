@@ -8,6 +8,7 @@ files[] = rules_scheduler.module
 files[] = rules_scheduler.install
 files[] = rules_scheduler.rules.inc
 files[] = rules_scheduler.test
+files[] = includes/rules_scheduler.handler.inc
 files[] = includes/rules_scheduler.views_default.inc
 files[] = includes/rules_scheduler.views.inc
 files[] = includes/rules_scheduler_views_filter.inc

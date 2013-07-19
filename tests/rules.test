@@ -2012,3 +2012,70 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
     RulesLog::logger()->checkLog();
   }
 }
+
+/**
+ * Test event dispatcher functionality.
+ */
+class RulesEventDispatcherTestCase extends DrupalWebTestCase {
+
+  static function getInfo() {
+    return array(
+      'name' => 'Rules event dispatchers',
+      'description' => 'Tests event dispatcher functionality.',
+      'group' => 'Rules',
+    );
+  }
+
+  function setUp() {
+    parent::setUp('rules', 'rules_test');
+  }
+
+  /**
+   * Tests start and stop functionality.
+   */
+  public function testStartAndStop() {
+    $handler = rules_get_event_handler('rules_test_event');
+    $rule = rules_reaction_rule();
+    $rule->event('rules_test_event');
+
+    // The handler should not yet be watching.
+    $this->assertFalse($handler->isWatching());
+
+    // Once saved, the event cache rebuild should start the watcher.
+    $rule->save();
+    RulesEventSet::rebuildEventCache();
+    $this->assertTrue($handler->isWatching());
+
+    // Deleting should stop the watcher.
+    $rule->delete();
+    $this->assertFalse($handler->isWatching());
+  }
+
+  /**
+   * Tests start and stop functionality when used with multiple events.
+   */
+  public function testStartAndStopMultiple() {
+    $handler = rules_get_event_handler('rules_test_event');
+
+    // Initially, the task handler should not be watching.
+    $this->assertFalse($handler->isWatching());
+
+    // Set up five rules that all use the same event.
+    $rules = array();
+    foreach (array(1, 2, 3, 4, 5) as $key) {
+      $rules[$key] = rules_reaction_rule();
+      $rules[$key]->event('rules_test_event');
+      $rules[$key]->save();
+    }
+
+    // Once saved, the event cache rebuild should start the watcher.
+    RulesEventSet::rebuildEventCache();
+    $this->assertTrue($handler->isWatching());
+
+    // It should continue watching until all events are deleted.
+    foreach ($rules as $key => $rule) {
+      $rule->delete();
+      $this->assertEqual($key !== 5, $handler->isWatching());
+    }
+  }
+}

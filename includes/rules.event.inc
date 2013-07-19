@@ -125,6 +125,46 @@ interface RulesEventHandlerInterface {
    *   variable info array as value.
    */
   public function availableVariables();
+
+  /**
+   * Returns the base name of the event the event handler belongs to.
+   *
+   * @return string
+   *   The name of the event the event handler belongs to.
+   */
+  public function getEventName();
+
+  /**
+   * Returns the info array of the event the event handler belongs to.
+   *
+   * @return string
+   *   The info array of the event the event handler belongs to.
+   */
+  public function getEventInfo();
+}
+
+/**
+ * Interface for event dispatchers.
+ */
+interface RulesEventDispatcherInterface extends RulesEventHandlerInterface {
+
+  /**
+   * Starts the event watcher.
+   */
+  public function startWatching();
+
+  /**
+   * Stops the event watcher.
+   */
+  public function stopWatching();
+
+  /**
+   * Returns whether the event dispatcher is currently active.
+   *
+   * @return bool
+   *   TRUE if the event dispatcher is currently active, FALSE otherwise.
+   */
+  public function isWatching();
 }
 
 /**
@@ -198,6 +238,20 @@ abstract class RulesEventHandlerBase implements RulesEventHandlerInterface {
    */
   public function availableVariables() {
     return isset($this->eventInfo['variables']) ? $this->eventInfo['variables'] : array();
+  }
+
+  /**
+   * Implements RulesEventHandlerInterface::getEventName()
+   */
+  public function getEventName() {
+    return $this->eventName;
+  }
+
+  /**
+   * Implements RulesEventHandlerInterface::getEventInfo()
+   */
+  public function getEventInfo() {
+    return $this->eventInfo;
   }
 }
 

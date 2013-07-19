@@ -1,0 +1,6 @@
+name = "Rules Scheduler Tests"
+description = "Support module for the Rules Scheduler tests."
+package = Testing
+core = 7.x
+files[] = rules_scheduler_test.inc
+hidden = TRUE

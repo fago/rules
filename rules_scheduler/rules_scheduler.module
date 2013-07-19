@@ -15,6 +15,7 @@ function rules_scheduler_cron() {
   $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
     ->fields('r')
     ->condition('date', time(), '<=')
+    ->orderBy('date')
     ->range(0, 1000)
     ->execute();
 
@@ -22,10 +23,8 @@ function rules_scheduler_cron() {
   foreach ($result as $task) {
     // Add the task to the queue and remove the entry afterwards.
     if ($queue->createItem($task)) {
-      db_delete('rules_scheduler')
-        ->condition('tid', $task['tid'])
-        ->execute();
       $task_created = TRUE;
+      rules_scheduler_task_handler($task)->afterTaskQueued();
     }
   }
 
@@ -52,22 +51,25 @@ function rules_scheduler_cron_queue_info() {
 
 /**
  * Queue worker callback for running a single task.
+ *
+ * @param array $task
+ *   The task to process.
  */
 function rules_scheduler_run_task(array $task) {
-  if ($component = rules_get_cache('comp_' . $task['config'])) {
-    $replacements = array('%label' => $component->label(), '%plugin' => $component->plugin());
-    $replacements['%identifier'] = $task['identifier'] ? $task['identifier'] : t('without identifier');
-    rules_log('Scheduled evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, TRUE);
-    $state = unserialize($task['state']);
-    $state->restoreBlocks();
-    // Block the config to prevent any future recursion.
-    $state->block($component);
-    // Finally evaluate the component with the given state.
-    $component->evaluate($state);
-    $state->unblock($component);
-    rules_log('Finished evaluation of %plugin %label, task %identifier.', $replacements, RulesLog::INFO, $component, FALSE);
-    $state->cleanUp();
-  }
+  rules_scheduler_task_handler($task)->runTask();
+}
+
+/**
+ * Returns the task handler for a given task.
+ *
+ * @param array $task
+ *   A task (queue item) array.
+ * @return RulesSchedulerTaskHandlerInterface
+ *   The task handler.
+ */
+function rules_scheduler_task_handler(array $task) {
+  $class = !empty($task['handler']) ? $task['handler'] : 'RulesSchedulerDefaultTaskHandler';
+  return new $class($task);
 }
 
 /**
@@ -138,11 +140,18 @@ function rules_scheduler_task_delete($tid) {
  *   An array representing the task with the following keys:
  *   - config: The machine readable name of the to be scheduled component.
  *   - date: Timestamp when the component should be executed.
- *   - state: An rules evaluation state to use for scheduling.
+ *   - state: (deprecated) Rules evaluation state to use for scheduling.
+ *   - data: Any additional data to store with the task.
+ *   - handler: The name of the task handler class.
  *   - identifier: User provided string to identify the task per scheduled
  *   configuration.
  */
 function rules_scheduler_schedule_task($task) {
+  // Map the deprecated 'state' property into 'data'.
+  if (isset($task['state'])) {
+    $task['data'] = $task['state'];
+    unset($task['state']);
+  }
   if (!empty($task['identifier'])) {
     // If there is a task with the same identifier and component, we replace it.
     db_delete('rules_scheduler')

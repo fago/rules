@@ -132,12 +132,35 @@ class RulesEntityController extends EntityAPIControllerExportable {
   public function save($rules_config, DatabaseTransaction $transaction = NULL) {
     $transaction = isset($transaction) ? $transaction : db_transaction();
 
+    // Load the stored entity, if any.
+    if (!isset($rules_config->original) && $rules_config->{$this->idKey}) {
+      $rules_config->original = entity_load_unchanged($this->entityType, $rules_config->{$this->idKey});
+    }
+    $original = isset($rules_config->original) ? $rules_config->original : NULL;
+
     $return = parent::save($rules_config, $transaction);
     $this->storeTags($rules_config);
     if ($rules_config instanceof RulesTriggerableInterface) {
       $this->storeEvents($rules_config);
     }
     $this->storeDependencies($rules_config);
+
+    // See if there are any events that have been removed.
+    if ($original && $rules_config->plugin == 'reaction rule') {
+      foreach (array_diff($original->events(), $rules_config->events()) as $event_name) {
+        // Check if the event handler implements the event dispatcher interface.
+        $handler = rules_get_event_handler($event_name, $rules_config->getEventSettings($event_name));
+        if (!$handler instanceof RulesEventDispatcherInterface) {
+          continue;
+        }
+
+        // Only stop an event dispatcher if there are no rules for it left.
+        if (!rules_config_load_multiple(FALSE, array('event' => $event_name, 'plugin' => 'reaction rule', 'active' => TRUE)) && $handler->isWatching()) {
+          $handler->stopWatching();
+        }
+      }
+    }
+
     return $return;
   }
 
@@ -239,7 +262,36 @@ class RulesEntityController extends EntityAPIControllerExportable {
           ->execute();
       }
     }
-    return parent::delete($ids, $transaction);
+    $return = parent::delete($ids, $transaction);
+
+    // Stop event dispatchers when deleting the last rule of an event set.
+    $processed = array();
+    foreach ($configs as $config) {
+      if ($config->getPluginName() != 'reaction rule') {
+        continue;
+      }
+
+      foreach ($config->events() as $event_name) {
+        // Only process each event once.
+        if (!empty($processed[$event_name])) {
+          continue;
+        }
+        $processed[$event_name] = TRUE;
+
+        // Check if the event handler implements the event dispatcher interface.
+        $handler = rules_get_event_handler($event_name, $config->getEventSettings($event_name));
+        if (!$handler instanceof RulesEventDispatcherInterface) {
+          continue;
+        }
+
+        // Only stop an event dispatcher if there are no rules for it left.
+        if ($handler->isWatching() && !rules_config_load_multiple(FALSE, array('event' => $event_name, 'plugin' => 'reaction rule', 'active' => TRUE))) {
+          $handler->stopWatching();
+        }
+      }
+    }
+
+    return $return;
   }
 }
 
