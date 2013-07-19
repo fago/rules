@@ -1260,6 +1260,10 @@ function rules_show_debug_output() {
  * Implements hook_exit().
  */
 function rules_exit() {
+  // Bail out if this is cached request and modules are not loaded.
+  if (!module_exists('rules') || !module_exists('user')) {
+    return;
+  }
   if (rules_show_debug_output()) {
     if ($log = RulesLog::logger()->render()) {
       // Keep the log in the session so we can show it on the next page.
