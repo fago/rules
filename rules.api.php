@@ -712,7 +712,7 @@ function hook_rules_config_insert($config) {
  *   The rules configuration that is being inserted or updated.
  */
 function hook_rules_config_presave($config) {
-  if ($config->id && $config->module == 'yours') {
+  if ($config->id && $config->owner == 'your_module') {
     // Add custom condition.
     $config->conditon(/* Your condition */);
   }

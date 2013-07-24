@@ -17,7 +17,18 @@ require_once dirname(__FILE__) . '/faces.inc';
 class RulesEntityController extends EntityAPIControllerExportable {
 
   /**
-   * Overriden.
+   * Overridden.
+   *
+   * @see EntityAPIController::create()
+   */
+  public function create(array $values = array()) {
+    // Default to rules as owning module.
+    $values += array('owner' => 'rules');
+    return parent::create($values);
+  }
+
+  /**
+   * Overridden.
    * @see DrupalDefaultEntityController::attachLoad()
    */
   protected function attachLoad(&$queried_entities, $revision_id = FALSE) {
@@ -1079,7 +1090,15 @@ abstract class RulesPlugin extends RulesExtendable {
 
       $this->plugin = $this->itemName;
       $this->name = isset($name) ? $name : $this->name;
+      // Module stores the module via which the rule is configured and is used
+      // for generating machine names with the right prefix. However, for
+      // default configurations 'module' points to the module providing the
+      // default configuration, so the module via which the rules is configured
+      // is stored in the "owner" property.
+      // @todo: For Drupal 8 use "owner" for generating machine names also and
+      // module only for the modules providing default configurations.
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
+      $this->owner = !isset($this->owner) || $module != 'rules' ? $module : $this->module;
       $this->ensureNameExists();
       $this->data = $this;
       $return = entity_get_controller('rules_config')->save($this);
@@ -1135,7 +1154,9 @@ abstract class RulesPlugin extends RulesExtendable {
     // Keep the id always as we need it for the recursion prevention.
     $array = drupal_map_assoc(array('parent', 'id', 'elementId', 'weight', 'settings'));
     // Keep properties related to configurations if they are there.
-    foreach (array('name', 'module', 'status', 'label', 'recursion', 'tags') as $key) {
+    $info = entity_get_info('rules_config');
+    $fields = array_merge($info['schema_fields_sql']['base table'], array('recursion', 'tags'));
+    foreach ($fields as $key) {
       if (isset($this->$key)) {
         $array[$key] = $key;
       }

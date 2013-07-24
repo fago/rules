@@ -192,6 +192,10 @@ class RulesUIController {
       'show events' => isset($conditions['plugin']) && $conditions['plugin'] == 'reaction rule',
       'show execution op' => !(isset($conditions['plugin']) && $conditions['plugin'] == 'reaction rule'),
     );
+    // By default show only configurations owned by rules.
+    $conditions += array(
+      'owner' => 'rules',
+    );
     if (!empty($options['base path'])) {
       RulesPluginUI::$basePath = $options['base path'];
     }
