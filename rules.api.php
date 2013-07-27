@@ -973,5 +973,37 @@ function hook_rules_ui_menu_alter(&$items, $base_path, $base_count) {
 }
 
 /**
+ * Control access to Rules configurations.
+ *
+ * Modules may implement this hook if they want to have a say in whether or not
+ * a given user has access to perform a given operation on a Rules
+ * configuration.
+ *
+ * @param $op
+ *   The operation being performed. One of 'view', 'create', 'update' or
+ *   'delete'.
+ * @param $rules_config
+ *   (optional) A Rules configuration to check access for. If nothing is given,
+ *   access for all Rules configurations is determined.
+ * @param $account
+ *   (optional) The user to check for. If no account is passed, access is
+ *   determined for the current user.
+ * @return boolean
+ *   Return TRUE to grant access, FALSE to explicitly deny access. Return NULL
+ *   or nothing to not affect the operation.
+ *   Access is granted as soon as a module grants access and no one denies
+ *   access. Thus if no module explicitly grants access, access will be denied.
+ *
+ * @see rules_config_access()
+ */
+function hook_rules_config_access($op, $rules_config = NULL, $account = NULL) {
+  // Instead of returning FALSE return nothing, so others still can grant
+  // access.
+  if (isset($rules_config) && $rules_config->owner == 'mymodule' && user_access('my modules permission')) {
+    return TRUE;
+  }
+}
+
+/**
  * @}
  */

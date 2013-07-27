@@ -1381,10 +1381,32 @@ function rules_config_access($op, $rules_config = NULL, $account = NULL) {
   if (user_access('bypass rules access', $account)) {
     return TRUE;
   }
-  if (!isset($rules_config) || (isset($account) && $account->uid != $GLOBALS['user']->uid)) {
+  // Allow modules to grant / deny access.
+  $access = module_invoke_all('rules_config_access', $op, $rules_config, $account);
+
+  // Only grant access if at least one module granted access and no one denied
+  // access.
+  if (in_array(FALSE, $access, TRUE)) {
     return FALSE;
   }
-  return user_access('administer rules', $account) && ($op == 'view' || $rules_config->access());
+  elseif (in_array(TRUE, $access, TRUE)) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_rules_config_access().
+ */
+function rules_rules_config_access($op, $profile = NULL, $account = NULL) {
+  // Instead of returning FALSE return nothing, so others still can grant
+  // access.
+  if (!isset($rules_config) || (isset($account) && $account->uid != $GLOBALS['user']->uid)) {
+    return;
+  }
+  if (user_access('administer rules', $account) && ($op == 'view' || $rules_config->access())) {
+    return TRUE;
+  }
 }
 
 /**
