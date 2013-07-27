@@ -117,6 +117,11 @@ function rules_rules_core_data_info() {
         'group' => t('Entity'),
         'ui class' => empty($info['exportable']) ? 'RulesDataUIEntity' : 'RulesDataUIEntityExportable',
       );
+      // If this entity type serves as bundle for another one, provide an
+      // options list for selecting a bundle entity.
+      if (!empty($info['bundle of'])) {
+        $return[$type]['ui class'] =  'RulesDataUIBundleEntity';
+      }
     }
   }
 

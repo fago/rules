@@ -343,7 +343,9 @@ function hook_rules_event_info() {
  *     configuration UI to configure parameters of this type. The given class
  *     must extend RulesDataUI and may implement the
  *     RulesDataDirectInputFormInterface in order to allow the direct data input
- *     configuration mode. Defaults to RulesDataUI.
+ *     configuration mode. For supporting selecting values from options lists,
+ *     the UI class may implement RulesDataInputOptionsListInterface also.
+ *     Defaults to RulesDataUI.
  *   - wrap: (optional) If set to TRUE, the data is wrapped internally using
  *     wrappers provided by the entity API module. This is required for entities
  *     and data structures to support selecting a property via the data selector

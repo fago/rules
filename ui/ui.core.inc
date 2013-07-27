@@ -671,15 +671,20 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
    * @param $data_type
    *   The name of the data typ
    * @param $parameter_info
-   *   (optional) An array of info about the to be configured parameter.
+   *   (optional) An array of info about the to be configured parameter. If
+   *   given, this array is complemented with data type defaults also.
    */
-  public function getDataTypeClass($data_type, $parameter_info = array()) {
-    if (!empty($parameter_info['ui class'])) {
-      return $parameter_info['ui class'];
-    }
+  public function getDataTypeClass($data_type, &$parameter_info = array()) {
     $cache = rules_get_cache();
     $data_info = $cache['data_info'];
-    return (is_string($data_type) && isset($data_info[$data_type]['ui class'])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
+    // Add in data-type defaults.
+    if (empty($parameter_info['ui class'])) {
+      $parameter_info['ui class'] = (is_string($data_type) && isset($data_info[$data_type]['ui class'])) ? $data_info[$data_type]['ui class'] : 'RulesDataUI';
+    }
+    if (is_subclass_of($parameter_info['ui class'], 'RulesDataInputOptionsListInterface')) {
+      $parameter_info['options list'] = array($parameter_info['ui class'], 'optionsList');
+    }
+    return $parameter_info['ui class'];
   }
 
   /**
@@ -711,8 +716,8 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
         );
       }
       elseif (isset($this->element->settings[$name]) && (!isset($parameter['default value']) || $parameter['default value'] != $this->element->settings[$name])) {
-        $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
         $class = $this->getDataTypeClass($parameter['type'], $parameter);
+        $method = empty($parameter['options list']) ? 'render' : 'renderOptionsLabel';
         // We cannot use method_exists() here as it would trigger a PHP bug,
         // @see http://drupal.org/node/1258284
         $element = call_user_func(array($class, $method), $this->element->settings[$name], $name, $parameter, $this->element);
