@@ -11,6 +11,7 @@ files[] = includes/rules.processor.inc
 files[] = includes/rules.plugins.inc
 files[] = includes/rules.state.inc
 files[] = includes/rules.dispatcher.inc
+files[] = modules/node.eval.inc
 files[] = modules/php.eval.inc
 files[] = modules/rules_core.eval.inc
 files[] = modules/system.eval.inc

@@ -213,6 +213,26 @@ class RulesTestCase extends DrupalWebTestCase {
   }
 
   /**
+   * Tests making use of class based actions.
+   */
+  function testClassBasedActions() {
+    $cache = rules_get_cache();
+    $this->assertTrue(!empty($cache['action_info']['rules_test_class_action']), 'Action has been discovered.');
+    $action = rules_action('rules_test_class_action');
+
+    $parameters = $action->parameterInfo();
+    $this->assertTrue($parameters['node'], 'Action parameter needs a value.');
+
+    $node = $this->drupalCreateNode();
+    $action->execute($node);
+    $log = RulesLog::logger()->get();
+    $last = array_pop($log);
+    $last = array_pop($log);
+    $this->assertEqual($last[0], 'Action called with node ' . $node->nid, 'Action called');
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
    * Tests CRUD functionality.
    */
   function testRulesCRUD() {

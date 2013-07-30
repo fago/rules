@@ -1469,6 +1469,15 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
       // @see self::forceSetup().
       $this->infoLoaded = TRUE;
 
+      // Register the defined class, if any.
+      if (isset($this->info['class'])) {
+        $this->faces['RulesPluginImplInterface'] = 'RulesPluginImplInterface';
+        $face_methods = get_class_methods('RulesPluginImplInterface');
+        $class_info = array(1 => $this->info['class']);
+        foreach ($face_methods as $method) {
+          $this->facesMethods[$method] = $class_info;
+        }
+      }
       // Add in per-plugin implementation callbacks if any.
       if (!empty($this->info['faces_cache'])) {
         foreach ($this->info['faces_cache'] as $face => $data) {
@@ -1690,7 +1699,15 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         'callbacks' => array(),
       );
       unset($info['arguments'], $info['new variables']);
-      $info['callbacks'] += array('execute' => $info['base']);
+
+      if (function_exists($info['base'])) {
+        $info['callbacks'] += array('execute' => $info['base']);
+      }
+
+      // We do not need to build a faces cache for RulesPluginHandlerInterface,
+      // which gets added in automatically as its a parent of
+      // RulesPluginImplInterface.
+      unset($this->faces['RulesPluginHandlerInterface']);
 
       // Build up the per plugin implementation faces cache.
       foreach ($this->faces as $interface) {
@@ -1701,6 +1718,11 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
           if (isset($info['callbacks'][$method]) && ($function = $info['callbacks'][$method])) {
             $methods[$method][0] = $function;
             $file_names[$method] = $this->getFileName($function, $includes);
+          }
+          // Note that this skips RulesPluginImplInterface, which is not
+          // implemented by plugin handlers.
+          elseif (isset($info['class']) && is_subclass_of($info['class'], $interface)) {
+            $methods[$method][1] = $info['class'];
           }
           elseif (function_exists($function = $info['base'] . '_' . $method)) {
             $methods[$method][0] = $function;
@@ -1734,7 +1756,7 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
   /**
    * Make sure all supported destinations are included.
    */
-  protected static function includeFiles() {
+  public static function includeFiles() {
     static $included;
 
     if (!isset($included)) {
@@ -1742,6 +1764,20 @@ abstract class RulesAbstractPlugin extends RulesPlugin {
         // rules.inc are already included thanks to the rules_hook_info() group.
         foreach (self::getIncludeFiles($module, FALSE) as $name) {
           module_load_include('inc', $module, $name);
+        }
+      }
+      $dirs = array();
+      foreach (module_implements('rules_directory') as $module) {
+        // Include all files once, so the discovery can find them.
+        $result = module_invoke($module, 'rules_directory');
+        if (!is_array($result)) {
+          $result = array($module => $result);
+        }
+        $dirs += $result;
+      }
+      foreach ($dirs as $module => $directory) {
+        foreach (glob(drupal_get_path('module', $module) . "/$directory/*.{inc,php}", GLOB_BRACE) as $filename) {
+          include_once $filename;
         }
       }
       $included = TRUE;
@@ -1858,15 +1894,9 @@ interface RulesTriggerableInterface {
 }
 
 /**
- * Provides the interface used for implementing an abstract plugin by using
- * the Faces extension mechanism.
+ * Provides the base interface for implementing abstract plugins via classes.
  */
-interface RulesPluginImplInterface {
-
-  /**
-   * Execute the action or condition making use of the parameters as specified.
-   */
-  public function execute();
+interface RulesPluginHandlerInterface {
 
   /**
    * Validates $settings independent from a form submission.
@@ -1933,6 +1963,49 @@ interface RulesPluginImplInterface {
 }
 
 /**
+ * Interface for implementing conditions via classes.
+ *
+ * In addition to the interface an execute() and a static getInfo() method must
+ * be implemented. The static getInfo() method has to return the info as
+ * returned by hook_rules_condition_info() but including an additional 'name'
+ * key, specifying the plugin name.
+ * The execute method is the equivalent to the usual execution callback and
+ * gets the parameters passed as specified in the info array.
+ *
+ * See RulesNodeConditionType for an example and rules_discover_plugins()
+ * for information about class discovery.
+ */
+interface RulesConditionHandlerInterface extends RulesPluginHandlerInterface {}
+
+/**
+ * Interface for implementing actions via classes.
+ *
+ * In addition to the interface an execute() and a static getInfo() method must
+ * be implemented. The static getInfo() method has to return the info as
+ * returned by hook_rules_action_info() but including an additional 'name' key,
+ * specifying the plugin name.
+ * The execute method is the equivalent to the usual execution callback and
+ * gets the parameters passed as specified in the info array.
+ *
+ * See RulesNodeConditionType for an example and rules_discover_plugins()
+ * for information about class discovery.
+ */
+interface RulesActionHandlerInterface extends RulesPluginHandlerInterface {}
+
+/**
+ *
+ * Provides the interface used for implementing an abstract plugin by using
+ * the Faces extension mechanism.
+ */
+interface RulesPluginImplInterface extends RulesPluginHandlerInterface {
+
+  /**
+   * Execute the action or condition making use of the parameters as specified.
+   */
+  public function execute();
+}
+
+/**
  * Interface for optimizing evaluation.
  *
  * @see RulesContainerPlugin::optimize()
@@ -1945,18 +2018,21 @@ interface RulesOptimizationInterface {
 }
 
 /**
- * Class providing default implementations of the methods of the RulesPluginImplInterface.
- *
- * If a plugin implementation does not provide a function for a method, the
- * default method of this class will be invoked.
- *
- * @see RulesPluginImplInterface
- * @see RulesAbstractPlugin
+ * Base class for implementing abstract plugins via classes.
  */
-class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginImplInterface {
+abstract class RulesPluginHandlerBase extends FacesExtender implements RulesPluginHandlerInterface {
 
-  public function execute() {
-    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.", array(), $this->object, RulesLog::ERROR);
+  /**
+   * @var RulesAbstractPlugin
+   */
+  protected $element;
+
+  /**
+   * Overridden to provide $this->element to make the code more meaningful.
+   */
+  public function __construct(FacesExtendable $object) {
+    $this->object = $object;
+    $this->element = $object;
   }
 
   /**
@@ -1972,6 +2048,32 @@ class RulesAbstractPluginDefaults extends FacesExtender implements RulesPluginIm
   public function dependencies() {}
   public function form_alter(&$form, $form_state, $options) {}
   public function assertions() {}
+}
+
+/**
+ * Base class for implementing conditions via classes.
+ */
+abstract class RulesConditionHandlerBase extends RulesPluginHandlerBase implements RulesConditionHandlerInterface {}
+
+/**
+ * Base class for implementing actions via classes.
+ */
+abstract class RulesActionHandlerBase extends RulesPluginHandlerBase implements RulesActionHandlerInterface {}
+
+/**
+ * Class providing default implementations of the methods of the RulesPluginImplInterface.
+ *
+ * If a plugin implementation does not provide a function for a method, the
+ * default method of this class will be invoked.
+ *
+ * @see RulesPluginImplInterface
+ * @see RulesAbstractPlugin
+ */
+class RulesAbstractPluginDefaults extends RulesPluginHandlerBase implements RulesPluginImplInterface {
+
+  public function execute() {
+    throw new RulesEvaluationException($this->object->getPluginName() .": Execution implementation is missing.", array(), $this->object, RulesLog::ERROR);
+  }
 }
 
 /**

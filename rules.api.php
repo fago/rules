@@ -30,6 +30,10 @@
  * placed into the file MODULENAME.rules.inc, which gets automatically included
  * when the hook is invoked.
  *
+ * However, as an alternative to implementing this hook, class based plugin
+ * handlers may be provided by implementing RulesActionHandlerInterface. See
+ * the interface for details.
+ *
  * @return
  *   An array of information about the module's provided rules actions.
  *   The array contains a sub-array for each action, with the action name as
@@ -171,6 +175,27 @@ function hook_rules_file_info() {
 }
 
 /**
+ * Specifies directories for class-based plugin handler discovery.
+ *
+ * Implementing this hook is not a requirement, it is just one option to load
+ * the files containing the classes during discovery - see
+ * rules_discover_plugins().
+ *
+ * @return string|array
+ *   A directory relative to the module directory, which holds the files
+ *   containing rules plugin handlers, or multiple directories keyed by the
+ *   module the directory is contained in.
+ *   All files in those directories having a 'php' or 'inc' file extension will
+ *   be loaded during discovery. Optionally, wildcards ('*') may be used to
+ *   match multiple directories.
+ *
+ * @see rules_discover_plugins()
+ */
+function hook_rules_directory() {
+  return 'lib/Drupal/fluxtwitter/Rules/*';
+}
+
+/**
  * The execution callback for an action.
  *
  * It should be placed in any file included by your module or in a file
@@ -203,6 +228,10 @@ function rules_action_execution_callback($node, $title, $settings) {
  * placed into the file MODULENAME.rules.inc, which gets automatically included
  * when the hook is invoked.
  *
+ * However, as an alternative to implementing this hook, class based plugin
+ * handlers may be provided by implementing RulesConditionHandlerInterface. See
+ * the interface for details.
+ *
  * Adding conditions works exactly the same way as adding actions, with the
  * exception that conditions can't provide variables and cannot save parameters.
  * Thus the 'provides' attribute is not supported. Furthermore the condition
@@ -233,6 +262,10 @@ function hook_rules_condition_info() {
  * This function call has to happen outside of MODULENAME.rules.inc,
  * usually it's invoked directly from the providing module but wrapped by a
  * module_exists('rules') check.
+ *
+ * However, as an alternative to implementing this hook, class based event
+ * handlers may be provided by implementing RulesEventHandlerInterface. See
+ * the interface for details.
  *
  * @return
  *   An array of information about the module's provided rules events. The array

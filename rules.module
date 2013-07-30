@@ -206,6 +206,11 @@ function rules_log($msg, $args = array(), $priority = RulesLog::INFO, RulesPlugi
  */
 function rules_fetch_data($hook) {
   $data = &drupal_static(__FUNCTION__, array());
+  static $discover = array(
+    'action_info' => 'RulesActionHandlerInterface',
+    'condition_info' => 'RulesConditionHandlerInterface',
+    'event_info' => 'RulesEventHandlerInterface',
+  );
 
   if (!isset($data[$hook])) {
     foreach (module_implements('rules_' . $hook) as $module) {
@@ -217,9 +222,75 @@ function rules_fetch_data($hook) {
         }
       }
     }
+    // Support class discovery.
+    if (isset($discover[$hook])) {
+      $data[$hook] += rules_discover_plugins($discover[$hook]);
+    }
     drupal_alter('rules_'. $hook, $data[$hook]);
   }
   return $data[$hook];
+}
+
+/**
+ * Discover plugin implementations.
+ *
+ * Class based plugin handlers must be loaded when rules caches are rebuilt,
+ * such that they get discovered properly. You have the following options:
+ *  - Put it into a regular module file (discouraged)
+ *  - Put it into your module.rules.inc file
+ *  - Put it in any file and declare it using hook_rules_file_info()
+ *  - Put it in any file and declare it using hook_rules_directory()
+ *
+ * In addition to that, the class must be loadable via regular class
+ * auto-loading, thus put the file holding the class in your info file or use
+ * another class-loader.
+ *
+ * @param string $class
+ *   The class or interface the plugins must implement. For a plugin to be
+ *   discovered it must have a static getInfo() method also.
+ *
+ * @return array
+ *   An info-hook style array containing info about discovered plugins.
+ *
+ * @see RulesActionHandlerInterface
+ * @see RulesConditionHandlerInterface
+ * @see RulesEventHandlerInterface
+ */
+function rules_discover_plugins($class) {
+  // Make sure all files possibly holding plugins are included.
+  RulesAbstractPlugin::includeFiles();
+
+  $items = array();
+  foreach (get_declared_classes() as $plugin_class) {
+    if (is_subclass_of($plugin_class, $class) && method_exists($plugin_class, 'getInfo')) {
+      $info = call_user_func(array($plugin_class, 'getInfo'));
+      $info['class'] = $plugin_class;
+      $info['module'] = _rules_discover_module($plugin_class);
+      $items[$info['name']] = $info;
+    }
+  }
+  return $items;
+}
+
+/**
+ * Determines the module providing the given class.
+ */
+function _rules_discover_module($class) {
+  $paths = &drupal_static(__FUNCTION__);
+
+  if (!isset($paths)) {
+    // Build up a map of modules keyed by their directory.
+    foreach (system_list('module_enabled') as $name => $module_info) {
+      $paths[dirname($module_info->filename)] = $name;
+    }
+  }
+  // Go up the path until we match a module up.
+  $reflection = new ReflectionClass($class);
+  $file_path = str_replace(DRUPAL_ROOT . '/', '', $reflection->getFileName());
+  while (!isset($paths[$file_path]) && strpos($file_path, DIRECTORY_SEPARATOR) !== FALSE) {
+    $file_path = dirname($file_path);
+  }
+  return isset($paths[$file_path]) ? $paths[$file_path] : FALSE;
 }
 
 /**
@@ -688,7 +759,7 @@ function rules_entity_info() {
  * Implementation of hook_hook_info().
  */
 function rules_hook_info() {
-  foreach(array('plugin_info', 'data_info', 'condition_info', 'action_info', 'event_info', 'file_info', 'evaluator_info', 'data_processor_info') as $hook) {
+  foreach(array('plugin_info', 'rules_directory', 'data_info', 'condition_info', 'action_info', 'event_info', 'file_info', 'evaluator_info', 'data_processor_info') as $hook) {
     $hooks['rules_' . $hook] = array(
       'group' => 'rules',
     );

@@ -89,51 +89,6 @@ function rules_events_node_variables($node_label, $update = FALSE) {
 }
 
 /**
- * Implements hook_rules_condition_info() on behalf of the node module.
- */
-function rules_node_condition_info() {
-  $defaults = array(
-    'parameter' => array(
-      'node' => array('type' => 'node', 'label' => t('Content')),
-    ),
-    'group' => t('Node'),
-    'access callback' => 'rules_node_integration_access',
-  );
-  $items['node_is_of_type'] = $defaults + array(
-    'label' => t('Content is of type'),
-    'help' => t('Evaluates to TRUE if the given content is of one of the selected content types.'),
-    'base' => 'rules_condition_node_is_of_type',
-  );
-  $items['node_is_of_type']['parameter']['type'] = array(
-    'type' => 'list<text>',
-    'label' => t('Content types'),
-    'options list' => 'node_type_get_names',
-    'description' => t('The content type(s) to check for.'),
-    'restriction' => 'input',
-  );
-  $items['node_is_published'] = $defaults + array(
-    'label' => t('Content is published'),
-    'base' => 'rules_condition_node_is_published',
-  );
-  $items['node_is_sticky'] = $defaults + array(
-    'label' => t('Content is sticky'),
-    'base' => 'rules_condition_node_is_sticky',
-  );
-  $items['node_is_promoted'] = $defaults + array(
-    'label' => t('Content is promoted to frontpage'),
-    'base' => 'rules_condition_node_is_promoted',
-  );
-  return $items;
-}
-
-/**
- * Provides the content type of a node as asserted metadata.
- */
-function rules_condition_node_is_of_type_assertions($element) {
-  return array('node' => array('bundle' => $element->settings['type']));
-}
-
-/**
  * Implements hook_rules_action_info() on behalf of the node module.
  */
 function rules_node_action_info() {

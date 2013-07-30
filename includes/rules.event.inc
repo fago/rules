@@ -28,6 +28,10 @@
  * rules_invoke_event('node_view', $node, $view_mode);
  * @endcode
  *
+ * Rules event handlers have to be declared using the 'class' key in
+ * hook_rules_event_info(), or may be discovered automatically, see
+ * rules_discover_plugins() for details.
+ *
  * @see RulesEventHandlerBase
  * @see RulesEventDefaultHandler
  */
