@@ -1398,7 +1398,7 @@ function rules_config_access($op, $rules_config = NULL, $account = NULL) {
 /**
  * Implements hook_rules_config_access().
  */
-function rules_rules_config_access($op, $profile = NULL, $account = NULL) {
+function rules_rules_config_access($op, $rules_config = NULL, $account = NULL) {
   // Instead of returning FALSE return nothing, so others still can grant
   // access.
   if (!isset($rules_config) || (isset($account) && $account->uid != $GLOBALS['user']->uid)) {
