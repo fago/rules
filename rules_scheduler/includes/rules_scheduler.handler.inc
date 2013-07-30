@@ -74,6 +74,9 @@ interface RulesSchedulerTaskHandlerInterface {
   /**
    * Processes a queue item.
    *
+   * @throws RulesEvaluationException
+   *   If there are any problems executing the task.
+   *
    * @see rules_scheduler_run_task()
    */
   public function runTask();

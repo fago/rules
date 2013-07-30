@@ -56,7 +56,13 @@ function rules_scheduler_cron_queue_info() {
  *   The task to process.
  */
 function rules_scheduler_run_task(array $task) {
-  rules_scheduler_task_handler($task)->runTask();
+  try {
+    rules_scheduler_task_handler($task)->runTask();
+  }
+  catch (RulesEvaluationException $e) {
+    rules_log($e->msg, $e->args, $e->severity);
+    rules_log('Unable to execute task with identifier %id scheduled on date %date.', array('%id' => $task['identifier'], '%date' => format_date($task['date'])), RulesLog::ERROR);
+  }
 }
 
 /**
@@ -64,11 +70,18 @@ function rules_scheduler_run_task(array $task) {
  *
  * @param array $task
  *   A task (queue item) array.
+ *
+ * @throws RulesEvaluationException
+ *   If the task handler class is missing.
+ *
  * @return RulesSchedulerTaskHandlerInterface
  *   The task handler.
  */
 function rules_scheduler_task_handler(array $task) {
   $class = !empty($task['handler']) ? $task['handler'] : 'RulesSchedulerDefaultTaskHandler';
+  if (!class_exists($class)) {
+    throw new RulesEvaluationException('Missing task handler implementation %class.', array('%class' => $class), NULL, RulesLog::ERROR);
+  }
   return new $class($task);
 }
 
