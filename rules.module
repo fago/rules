@@ -1607,3 +1607,24 @@ function rules_tokens($type, $tokens, $data, $options = array()) {
     return entity_token_tokens('struct', $tokens, array('struct' => $wrapper), $options);
   }
 }
+
+/**
+ * Helper function that retrieves a metadata wrapper with all properties.
+ *
+ * Note that without this helper, bundle-specific properties aren't added.
+ */
+function rules_get_entity_metadata_wrapper_all_properties(RulesAbstractPlugin $element) {
+  return entity_metadata_wrapper($element->settings['type'], NULL, array(
+    'property info alter' => 'rules_entity_metadata_wrapper_all_properties_callback',
+  ));
+}
+
+/**
+ * Callback that returns a metadata wrapper with all properties.
+ */
+function rules_entity_metadata_wrapper_all_properties_callback(EntityMetadataWrapper $wrapper, $property_info) {
+  $info = $wrapper->info();
+  $properties = entity_get_all_property_info($info['type']);
+  $property_info['properties'] += $properties;
+  return $property_info;
+}

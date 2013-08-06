@@ -227,7 +227,7 @@ function rules_action_entity_query_value_options_list(RulesAbstractPlugin $eleme
   // Get the possible values for the selected property.
   $element->settings += array('type' => NULL, 'property' => NULL);
   if ($element->settings['type'] && $element->settings['property']) {
-    $wrapper = entity_metadata_wrapper($element->settings['type']);
+    $wrapper = rules_get_entity_metadata_wrapper_all_properties($element);
 
     if (isset($wrapper->{$element->settings['property']}) && $property = $wrapper->{$element->settings['property']}) {
       return $property->optionsList('view');
