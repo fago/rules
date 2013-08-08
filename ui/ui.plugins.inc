@@ -101,9 +101,29 @@ class RulesReactionRuleUI extends RulesRuleUI {
     foreach ($this->rule->events() as $event_name) {
       $event_handler = rules_get_event_handler($event_name, $this->rule->getEventSettings($event_name));
 
+      $event_operations = array(
+        '#theme' => 'links__rules',
+        '#attributes' => array(
+          'class' => array(
+            'rules-operations',
+            'action-links',
+            'rules_rule_event',
+          ),
+        ),
+        '#links' => array(
+          'delete_event' => array(
+            'title' => t('delete'),
+            'href' => RulesPluginUI::path($this->rule->name, 'delete/event/' . $event_name),
+            'query' => drupal_get_destination(),
+          ),
+        ),
+      );
+
       $form['events']['table']['#rows'][$event_name] = array(
-        $event_handler->summary(),
-        '<span class="rules_rule_event">' . l(t('delete'), RulesPluginUI::path($this->rule->name, 'delete/event/' . $event_name)) . '</span>',
+        'data' => array(
+          $event_handler->summary(),
+          array('data' => $event_operations),
+        ),
       );
     }
 
