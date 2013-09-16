@@ -284,13 +284,19 @@ function _rules_discover_module($class) {
       $paths[dirname($module_info->filename)] = $name;
     }
   }
-  // Go up the path until we match a module up.
+
+  // Retrieve the class file and convert its absolute path to a regular Drupal
+  // path relative to the installation root.
   $reflection = new ReflectionClass($class);
-  $file_path = str_replace(DRUPAL_ROOT . '/', '', $reflection->getFileName());
-  while (!isset($paths[$file_path]) && strpos($file_path, DIRECTORY_SEPARATOR) !== FALSE) {
-    $file_path = dirname($file_path);
+  $path = str_replace(realpath(DRUPAL_ROOT) . DIRECTORY_SEPARATOR, '', realpath(dirname($reflection->getFileName())));
+  $path = DIRECTORY_SEPARATOR != '/' ? str_replace(DIRECTORY_SEPARATOR, '/', $path) : $path;
+
+  // Go up the path until we match a module up.
+  $parts = explode('/', $path);
+  while (!isset($paths[$path]) && array_pop($parts)) {
+    $path = dirname($path);
   }
-  return isset($paths[$file_path]) ? $paths[$file_path] : FALSE;
+  return isset($paths[$path]) ? $paths[$path] : FALSE;
 }
 
 /**
