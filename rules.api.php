@@ -156,6 +156,60 @@ function hook_rules_action_info() {
 }
 
 /**
+ * Define categories for Rules items, e.g. actions, conditions or events.
+ *
+ * Categories are similar to the previously used 'group' key in e.g.
+ * hook_rules_action_info(), but have a machine name and some more optional
+ * keys like a weight, or an icon.
+ *
+ * For best compatibility, modules may keep using the 'group' key for referring
+ * to categories. However, if a 'group' key and a 'category' is given the group
+ * will be treated as grouping in the given category (e.g. group "paypal" in
+ * category "commerce payment").
+ *
+ * @return
+ *   An array of information about the module's provided categories.
+ *   The array contains a sub-array for each category, with the category name as
+ *   the key. Names may only contain lowercase alpha-numeric characters
+ *   and underscores and should be prefixed with the providing module name.
+ *   Possible attributes for each sub-array are:
+ *   - label: The label of the category. Start capitalized. Required.
+ *   - weight: (optional) A weight for sorting the category. Defaults to 0.
+ *   - equals group: (optional) For BC, categories may be defined that equal
+ *     a previsouly used 'group'.
+ *   - icon: (optional) The file path of an icon to use, relative to the module
+ *     or specified icon path. The icon should be a transparent SVG containing
+ *     no colors (only #fff). See https://drupal.org/node/2090265 for
+ *     instructions on how to create a suiting icon.
+ *     Note that the icon is currently not used by Rules, however other UIs
+ *     building upon Rules (like fluxkraft) do, and future releases of Rules
+ *     might do as well. Consequently, the definition of an icon is optional.
+ *     However, if both an icon font and icon is given, the icon is preferred.
+ *   - icon path: (optional) The base path for the icon. Defaults to the
+ *     providing module's directory.
+ *   - icon font class: (optional) An icon font class referring to a suiting
+ *     icon. Icon font class names should map to the ones as defined by Font
+ *     Awesome, while themes might want to choose to provide another icon font.
+ *     See http://fortawesome.github.io/Font-Awesome/cheatsheet/.
+ *   - icon background color: (optional) The color used as icon background.
+ *     Should have a high contrast to white. Defaults to #ddd.
+ */
+function hook_rules_category_info() {
+  return array(
+    'rules_data' => array(
+      'label' => t('Data'),
+      'equals group' => t('Data'),
+      'weight' => -50,
+    ),
+    'fluxtwitter' => array(
+      'label' => t('Twitter'),
+      'icon font class' => 'icon-twitter',
+      'icon font background color' => '#30a9fd',
+    ),
+  );
+}
+
+/**
  * Specify files containing rules integration code.
  *
  * All files specified in that hook will be included when rules looks for

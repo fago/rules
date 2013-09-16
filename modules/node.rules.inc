@@ -8,6 +8,18 @@
  */
 
 /**
+ * Implements hook_rules_category_info() on behalf of the node module.
+ */
+function rules_node_category_info() {
+  return array(
+    'node' => array(
+      'label' => t('Node'),
+      'equals group' => t('Node'),
+    ),
+  );
+}
+
+/**
  * Implements hook_rules_file_info() on behalf of the node module.
  */
 function rules_node_file_info() {
@@ -21,28 +33,28 @@ function rules_node_event_info() {
   $items = array(
     'node_insert' => array(
       'label' => t('After saving new content'),
-      'group' => t('Node'),
+      'category' => 'node',
       'variables' => rules_events_node_variables(t('created content')),
       'access callback' => 'rules_node_integration_access',
       'class' => 'RulesNodeEventHandler',
     ),
     'node_update' => array(
       'label' => t('After updating existing content'),
-      'group' => t('Node'),
+      'category' => 'node',
       'variables' => rules_events_node_variables(t('updated content'), TRUE),
       'access callback' => 'rules_node_integration_access',
       'class' => 'RulesNodeEventHandler',
     ),
     'node_presave' => array(
       'label' => t('Before saving content'),
-      'group' => t('Node'),
+      'category' => 'node',
       'variables' => rules_events_node_variables(t('saved content'), TRUE),
       'access callback' => 'rules_node_integration_access',
       'class' => 'RulesNodeEventHandler',
     ),
     'node_view' => array(
       'label' => t('Content is viewed'),
-      'group' => t('Node'),
+      'category' => 'node',
       'help' => t("Note that if drupal's page cache is enabled, this event won't be generated for pages served from cache."),
       'variables' => rules_events_node_variables(t('viewed content')) + array(
         'view_mode' => array(
@@ -58,7 +70,7 @@ function rules_node_event_info() {
     ),
     'node_delete' => array(
       'label' => t('After deleting content'),
-      'group' => t('Node'),
+      'category' => 'node',
       'variables' => rules_events_node_variables(t('deleted content')),
       'access callback' => 'rules_node_integration_access',
       'class' => 'RulesNodeEventHandler',
@@ -96,7 +108,7 @@ function rules_node_action_info() {
     'parameter' => array(
       'node' => array('type' => 'node', 'label' => t('Content'), 'save' => TRUE),
     ),
-    'group' => t('Node'),
+    'category' => 'node',
     'access callback' => 'rules_node_admin_access',
   );
   // Add support for hand-picked core actions.

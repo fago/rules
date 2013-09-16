@@ -842,47 +842,10 @@ class RulesPluginUI extends FacesExtender implements RulesPluginUIInterface {
   }
 
   /**
-   * Returns an array of options to use with a select for the items specified
-   * in the given hook.
-   *
-   * @param $item_type
-   *   The item type to get options for. One of 'data', 'event', 'condition' and
-   *   'action'.
-   * @param $items
-   *   (optional) An array of items to restrict the options to.
-   *
-   * @return
-   *   An array of options.
+   * @see RulesUICategory::getOptions()
    */
   public static function getOptions($item_type, $items = NULL) {
-    $sorted_data = array();
-    $ungrouped = array();
-    $data = $items ? $items : rules_fetch_data($item_type . '_info');
-    foreach ($data as $name => $info) {
-      // Verfiy the current user has access to use it.
-      if (!user_access('bypass rules access') && !empty($info['access callback']) && !call_user_func($info['access callback'], $item_type, $name)) {
-        continue;
-      }
-      if (!empty($info['group'])) {
-        $sorted_data[drupal_ucfirst($info['group'])][$name] = drupal_ucfirst($info['label']);
-      }
-      else {
-        $ungrouped[$name] = drupal_ucfirst($info['label']);
-      }
-    }
-    asort($ungrouped);
-    foreach ($sorted_data as $key => $choices) {
-      asort($choices);
-      $sorted_data[$key] = $choices;
-    }
-    ksort($sorted_data);
-    // Always move the 'Components' group down it it exists.
-    if (isset($sorted_data[t('Components')])) {
-      $copy = $sorted_data[t('Components')];
-      unset($sorted_data[t('Components')]);
-      $sorted_data[t('Components')] = $copy;
-    }
-    return $ungrouped + $sorted_data;
+    return RulesUICategory::getOptions($item_type, $items = NULL);
   }
 
   public static function formDefaults(&$form, &$form_state) {
@@ -1175,4 +1138,138 @@ class RulesActionContainerUI extends RulesContainerPluginUI {
     $form['elements']['#attributes']['class'][] = 'rules-action-container';
     $form['elements']['#caption'] = t('Actions');
   }
+}
+
+/**
+ * Class holding category related methods.
+ */
+class RulesUICategory {
+
+  /**
+   * Gets info about all available categories, or about a specific category.
+   *
+   * @return array
+   */
+  public static function getInfo($category = NULL) {
+    $data = rules_fetch_data('category_info');
+    if (isset($category)) {
+      return $data[$category];
+    }
+    return $data;
+  }
+
+  /**
+   * Returns a group label, e.g. as usable for opt-groups in a select list.
+   *
+   * @param array $item_info
+   *   The info-array of an item, e.g. an entry of hook_rules_action_info().
+   * @param bool $in_category
+   *   (optional) Whether group labels for grouping inside a category should be
+   *   return. Defaults to FALSE.
+   *
+   * @return string|boolean
+   *   The group label to use, or FALSE if none can be found.
+   */
+  public static function getItemGroup($item_info, $in_category = FALSE) {
+    if (isset($item_info['category']) && !$in_category) {
+      return self::getCategory($item_info, 'label');
+    }
+    else if (!empty($item_info['group'])) {
+      return $item_info['group'];
+    }
+    return FALSE;
+  }
+
+  /**
+   * Gets the category for the given item info array.
+   *
+   * @param array $item_info
+   *   The info-array of an item, e.g. an entry of hook_rules_action_info().
+   * @param string|null $key
+   *   (optional) The key of the category info to return, e.g. 'label'. If none
+   *   is given the whole info array is returned.
+   *
+   * @return array|mixed|false
+   *   Either the whole category info array or the value of the given key. If
+   *   no category can be found, FALSE is returned.
+   */
+  public static function getCategory($item_info, $key = NULL) {
+    if (isset($item_info['category'])) {
+      $info = self::getInfo($item_info['category']);
+      return isset($key) ? $info[$key] : $info;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Returns an array of options to use with a select for the items specified
+   * in the given hook.
+   *
+   * @param $item_type
+   *   The item type to get options for. One of 'data', 'event', 'condition' and
+   *   'action'.
+   * @param $items
+   *   (optional) An array of items to restrict the options to.
+   *
+   * @return
+   *   An array of options.
+   */
+  public static function getOptions($item_type, $items = NULL) {
+    $sorted_data = array();
+    $ungrouped = array();
+    $data = $items ? $items : rules_fetch_data($item_type . '_info');
+    foreach ($data as $name => $info) {
+      // Verfiy the current user has access to use it.
+      if (!user_access('bypass rules access') && !empty($info['access callback']) && !call_user_func($info['access callback'], $item_type, $name)) {
+        continue;
+      }
+      if ($group = RulesUICategory::getItemGroup($info)) {
+        $sorted_data[drupal_ucfirst($group)][$name] = drupal_ucfirst($info['label']);
+      }
+      else {
+        $ungrouped[$name] = drupal_ucfirst($info['label']);
+      }
+    }
+    asort($ungrouped);
+    foreach ($sorted_data as $key => $choices) {
+      asort($choices);
+      $sorted_data[$key] = $choices;
+    }
+
+    // Sort the grouped data by category weights, defaulting to weight 0 for
+    // groups without a respective category.
+    $sorted_groups = array();
+    foreach (array_keys($sorted_data) as $label) {
+      $sorted_groups[$label] = array('weight' => 0, 'label' => $label);
+    }
+    // Add in category weights.
+    foreach (RulesUICategory::getInfo() as $info) {
+      if (isset($sorted_groups[$info['label']])) {
+        $sorted_groups[$info['label']] = $info;
+      }
+    }
+    uasort($sorted_groups, '_rules_ui_sort_categories');
+
+    // Now replace weights with group content.
+    foreach ($sorted_groups as $group => $weight) {
+      $sorted_groups[$group] = $sorted_data[$group];
+    }
+    return $ungrouped + $sorted_groups;
+  }
+}
+
+/**
+ * Helper for sorting categories.
+ */
+function _rules_ui_sort_categories($a, $b) {
+  // @see element_sort()
+  $a_weight = isset($a['weight']) ? $a['weight'] : 0;
+  $b_weight = isset($b['weight']) ? $b['weight'] : 0;
+  if ($a_weight == $b_weight) {
+    // @see element_sort_by_title()
+    $a_title = isset($a['label']) ? $a['label'] : '';
+    $b_title = isset($b['label']) ? $b['label'] : '';
+    return strnatcasecmp($a_title, $b_title);
+  }
+  return ($a_weight < $b_weight) ? -1 : 1;
 }

@@ -8,6 +8,19 @@
  */
 
 /**
+ * Implements hook_rules_category_info() on behalf of the pseudo data module.
+ */
+function rules_data_category_info() {
+  return array(
+    'rules_data' => array(
+      'label' => t('Data'),
+      'equals group' => t('Data'),
+      'weight' => -50,
+    ),
+  );
+}
+
+/**
  * Implements hook_rules_file_info() on behalf of the pseudo data module.
  * @see rules_core_modules()
  */

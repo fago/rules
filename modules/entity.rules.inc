@@ -16,6 +16,19 @@ function rules_entity_file_info() {
 }
 
 /**
+ * Implements hook_rules_category_info() on behalf of the pseudo entity module.
+ */
+function rules_entity_category_info() {
+  return array(
+    'rules_entity' => array(
+      'label' => t('Entities'),
+      'equals group' => t('Entities'),
+      'weight' => -50,
+    ),
+  );
+}
+
+/**
  * Implements hook_rules_action_info() on behalf of the entity module.
  * @see rules_core_modules()
  */

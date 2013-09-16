@@ -9,6 +9,19 @@
  */
 
 /**
+ * Implements hook_rules_category_info() on behalf of the rules_core.
+ */
+function rules_rules_core_category_info() {
+  return array(
+    'rules_components' => array(
+      'label' => t('Components'),
+      'equals group' => t('Components'),
+      'weight' => 50,
+    ),
+  );
+}
+
+/**
  * Implements hook_rules_file_info() on behalf of the pseudo rules_core module.
  *
  * @see rules_core_modules()

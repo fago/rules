@@ -18,7 +18,7 @@ abstract class RulesNodeConditionBase extends RulesConditionHandlerBase {
       'parameter' => array(
         'node' => array('type' => 'node', 'label' => t('Content')),
       ),
-      'group' => t('Node'),
+      'category' => 'node',
       'access callback' => 'rules_node_integration_access',
     );
   }
