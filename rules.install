@@ -468,3 +468,12 @@ function rules_update_7211() {
     'default' => 'rules',
   ));
 }
+
+/**
+ * Make sure registry gets rebuilt to avoid upgrade troubles.
+ */
+function rules_update_7212() {
+  // Make sure module information gets refreshed and registry is rebuilt.
+  drupal_static_reset('system_rebuild_module_data');
+  registry_rebuild();
+}
