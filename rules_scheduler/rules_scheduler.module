@@ -11,24 +11,7 @@ define('RULES_SCHEDULER_PATH', 'admin/config/workflow/rules/schedule');
  * Implements hook_cron().
  */
 function rules_scheduler_cron() {
-  // Limit adding tasks to 1000 per cron run.
-  $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
-    ->fields('r')
-    ->condition('date', time(), '<=')
-    ->orderBy('date')
-    ->range(0, 1000)
-    ->execute();
-
-  $queue = DrupalQueue::get('rules_scheduler_tasks');
-  foreach ($result as $task) {
-    // Add the task to the queue and remove the entry afterwards.
-    if ($queue->createItem($task)) {
-      $task_created = TRUE;
-      rules_scheduler_task_handler($task)->afterTaskQueued();
-    }
-  }
-
-  if (!empty($task_created)) {
+  if (rules_scheduler_queue_tasks()) {
     // hook_exit() is not invoked for cron runs, so register it as shutdown
     // callback for logging the rules log to the watchdog.
     drupal_register_shutdown_function('rules_exit');
@@ -173,6 +156,33 @@ function rules_scheduler_schedule_task($task) {
       ->execute();
   }
   drupal_write_record('rules_scheduler', $task);
+}
+
+/**
+ * Queue tasks that are ready for execution.
+ *
+ * @return boolean
+ *   Returns TRUE if any queue items where created, otherwise FALSE.
+ */
+function rules_scheduler_queue_tasks() {
+  $items_created = FALSE;
+  // Limit adding tasks to 1000 per cron run.
+  $result = db_select('rules_scheduler', 'r', array('fetch' => PDO::FETCH_ASSOC))
+    ->fields('r')
+    ->condition('date', time(), '<=')
+    ->orderBy('date')
+    ->range(0, 1000)
+    ->execute();
+
+  $queue = DrupalQueue::get('rules_scheduler_tasks');
+  foreach ($result as $task) {
+    // Add the task to the queue and remove the entry afterwards.
+    if ($queue->createItem($task)) {
+      $items_created = TRUE;
+      rules_scheduler_task_handler($task)->afterTaskQueued();
+    }
+  }
+  return $items_created;
 }
 
 /**
