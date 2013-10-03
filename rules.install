@@ -460,13 +460,15 @@ function rules_update_7210() {
  */
 function rules_update_7211() {
   // Create a owner column.
-  db_add_field('rules_config', 'owner', array(
-    'description' => 'The name of the module via which the rule has been configured.',
-    'type' => 'varchar',
-    'length' => 255,
-    'not null' => TRUE,
-    'default' => 'rules',
-  ));
+  if (!db_field_exists('rules_config', 'owner')) {
+    db_add_field('rules_config', 'owner', array(
+      'description' => 'The name of the module via which the rule has been configured.',
+      'type' => 'varchar',
+      'length' => 255,
+      'not null' => TRUE,
+      'default' => 'rules',
+    ));
+  }
 }
 
 /**
