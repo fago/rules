@@ -122,7 +122,7 @@ class RulesEntityController extends EntityAPIControllerExportable {
     // Create an empty configuration, re-set basic keys and import.
     $config = rules_plugin_factory($export['PLUGIN']);
     $config->name = $name;
-    foreach (array('label', 'active', 'weight', 'tags', 'access_exposed') as $key) {
+    foreach (array('label', 'active', 'weight', 'tags', 'access_exposed', 'owner') as $key) {
       if (isset($export[strtoupper($key)])) {
         $config->$key = $export[strtoupper($key)];
       }
@@ -1098,7 +1098,9 @@ abstract class RulesPlugin extends RulesExtendable {
       // @todo: For Drupal 8 use "owner" for generating machine names also and
       // module only for the modules providing default configurations.
       $this->module = !isset($this->module) || $module != 'rules' ? $module : $this->module;
-      $this->owner = !isset($this->owner) || $module != 'rules' ? $module : $this->module;
+      if (!isset($this->owner)) {
+        $this->owner = 'rules';
+      }
       $this->ensureNameExists();
       $this->data = $this;
       $return = entity_get_controller('rules_config')->save($this);
@@ -1405,6 +1407,9 @@ abstract class RulesPlugin extends RulesExtendable {
     }
     if (isset($this->active) && !$this->active) {
       $export_cfg[$this->name]['ACTIVE'] = FALSE;
+    }
+    if (!empty($this->owner)) {
+      $export_cfg[$this->name]['OWNER'] = $this->owner;
     }
     if (!empty($this->tags)) {
       $export_cfg[$this->name]['TAGS'] = $this->tags;
