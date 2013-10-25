@@ -479,3 +479,24 @@ function rules_update_7212() {
   drupal_static_reset('system_rebuild_module_data');
   registry_rebuild();
 }
+
+/**
+ * Recover the "owner" property for broken configurations.
+ */
+function rules_update_7213() {
+  $rows= db_select('rules_config', 'c')
+    ->fields('c')
+    ->condition('status', ENTITY_OVERRIDDEN)
+    ->condition('owner', 'rules', '<>')
+    ->execute()
+    ->fetchAllAssoc('id');
+
+  foreach ($rows as $id => $row) {
+    if ($row->module == $row->owner) {
+      db_update('rules_config')
+        ->condition('id', $id)
+        ->fields(array('owner' => 'rules'))
+        ->execute();
+    }
+  }
+}
