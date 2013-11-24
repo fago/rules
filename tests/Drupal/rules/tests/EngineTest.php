@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\tests;
 
+use Drupal\rules\Plugin\Action\Rule;
+use Drupal\rules_test\Plugin\Condition\TestConditionTrue;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -25,7 +27,12 @@ class EngineTest extends UnitTestCase {
     );
   }
 
+  /**
+   * Tests creating a rule and iterating over the rule elements.
+   */
   public function testRuleCreation() {
-    $this->fail('foo');
+    // Create a test rule, we don't care about plugin information.
+    $rule = new Rule(array(), 'test', array());
+    $condition = new TestConditionTrue();
   }
 }
