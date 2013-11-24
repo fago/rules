@@ -2,16 +2,21 @@
 
 /**
  * @file
- * Contains Drupal\rules\Engine\Rule.
+ * Contains Drupal\rules\Plugin\rules\Rule.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Plugin\rules;
 
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Condition\ConditionInterface;
 
 /**
  * Container for consitions and actions.
+ *
+ * @Rules(
+ *   id = "rules_rule",
+ *   label = @Translation("Rule executing actions when conditions are met.")
+ * )
  */
 class Rule implements ActionInterface {
 

@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\tests;
 
-use Drupal\rules\Plugin\Action\Rule;
+use Drupal\rules\Plugin\rules\Rule;
 use Drupal\rules\Plugin\RulesPluginManager;
 use Drupal\rules_test\Plugin\Condition\TestConditionTrue;
 use Drupal\Tests\UnitTestCase;
@@ -32,7 +32,7 @@ class RulesEngineTest extends UnitTestCase {
    * Tests creating a rule and iterating over the rule elements.
    */
   public function testRuleCreation() {
-    $plugin_manager = new RulesPluginManager();
+    $plugin_manager = new RulesPluginManager(new \ArrayObject() );
     $rule = new Rule(array(), 'test', array());
     $rule->condition(new TestConditionTrue())
       ->condition(new TestConditionTrue());
