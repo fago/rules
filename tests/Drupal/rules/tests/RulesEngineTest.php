@@ -2,19 +2,20 @@
 
 /**
  * @file
- * Contains Drupal\rules\tests\EngineTest.
+ * Contains Drupal\rules\tests\RulesEngineTest.
  */
 
 namespace Drupal\rules\tests;
 
 use Drupal\rules\Plugin\Action\Rule;
+use Drupal\rules\Plugin\RulesPluginManager;
 use Drupal\rules_test\Plugin\Condition\TestConditionTrue;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests the core rules engine functionality.
  */
-class EngineTest extends UnitTestCase {
+class RulesEngineTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
@@ -31,8 +32,9 @@ class EngineTest extends UnitTestCase {
    * Tests creating a rule and iterating over the rule elements.
    */
   public function testRuleCreation() {
-    // Create a test rule, we don't care about plugin information.
+    $plugin_manager = new RulesPluginManager();
     $rule = new Rule(array(), 'test', array());
-    $condition = new TestConditionTrue();
+    $rule->condition(new TestConditionTrue())
+      ->condition(new TestConditionTrue());
   }
 }
