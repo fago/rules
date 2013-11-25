@@ -23,7 +23,7 @@ class TestConditionFalse extends RulesConditionContainer {
   /**
    * {@inheritdoc}
    */
-  public function execute() {
+  public function evaluate() {
     return FALSE;
   }
 

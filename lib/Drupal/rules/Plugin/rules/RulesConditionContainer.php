@@ -9,7 +9,6 @@ namespace Drupal\rules\Plugin\rules;
 
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
-use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\rules\RulesConditionInterface;
 
 /**
@@ -42,19 +41,16 @@ abstract class RulesConditionContainer extends ConditionPluginBase implements Ru
 
   }
 
-  public function evaluate() {
-
-  }
-
   public function getFormId() {
 
   }
 
-  public function setExecutableManager(ExecutableManagerInterface $executableManager) {
-    // We need to return ourselves here because ConditionManager::createInstance()
-    // uses the return value of this function to return as plugin. Which is so
-    // wrong and not specified on the interface!
-    return $this;
+  public function execute() {
+    if (isset($this->executableManager)) {
+      return $this->executableManager->execute($this);
+    }
+    $result = $this->evaluate();
+    return $this->isNegated() ? !$result : $result;
   }
 
   /**

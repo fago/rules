@@ -20,9 +20,9 @@ class RulesOr extends RulesConditionContainer {
   /**
    * {@inheritdoc}
    */
-  public function execute() {
+  public function evaluate() {
     foreach ($this->conditions as $condition) {
-      if ($condition->execute() xor $condition->isNegated()) {
+      if ($condition->execute()) {
         return TRUE;
       }
     }

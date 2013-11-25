@@ -40,7 +40,7 @@ class Rule implements ActionInterface {
   public function execute() {
     // Evaluate conditions, if they pass execute actions.
     foreach ($this->conditions as $condition) {
-      if (!$condition->execute() && !$condition->isNegated()) {
+      if (!$condition->execute()) {
         // If a condition returns FALSE stop here.
         return;
       }
