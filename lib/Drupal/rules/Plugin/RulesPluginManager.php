@@ -7,11 +7,8 @@
 
 namespace Drupal\rules\Plugin;
 
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Plugin manager for all Rules plugins.

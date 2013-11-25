@@ -20,6 +20,13 @@ use Drupal\rules\RulesConditionInterface;
  */
 class TestConditionTrue implements RulesConditionInterface {
 
+  /**
+   * Indicates whether this condition should be negated.
+   *
+   * @var bool
+   */
+  protected $negated = FALSE;
+
   public function evaluate() {
     
   }
@@ -29,11 +36,12 @@ class TestConditionTrue implements RulesConditionInterface {
   }
 
   public function negate() {
+    $this->negated = TRUE;
     return $this;
   }
 
   public function isNegated() {
-
+    return $this->negated;
   }
 
   public function getFormId() {
@@ -45,7 +53,10 @@ class TestConditionTrue implements RulesConditionInterface {
   }
 
   public function setExecutableManager(ExecutableManagerInterface $executableManager) {
-    
+    // We need to return ourselves here because ConditionManager::createInstance()
+    // uses the return value of this function to return as plugin. Which is so
+    // wrong and not specified on the interface!
+    return $this;
   }
 
   public function submitForm(array &$form, array &$form_state) {
