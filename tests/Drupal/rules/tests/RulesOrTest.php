@@ -35,7 +35,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr();
+    $or = new RulesOr(array(), 'test', array());
     $or->condition($this->trueCondition);
     $result = $or->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
@@ -47,7 +47,7 @@ class RulesOrTest extends RulesTestBase {
   public function testemptyOr() {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr();
+    $or = new RulesOr(array(), 'test', array());
     $result = $or->execute();
     $this->assertTrue($result, 'Empty OR returns TRUE.');
   }
@@ -62,7 +62,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr();
+    $or = new RulesOr(array(), 'test', array());
     $or->condition($this->trueCondition);
     $or->condition($this->trueCondition);
     $result = $or->execute();
@@ -79,7 +79,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr();
+    $or = new RulesOr(array(), 'test', array());
     $or->condition($this->falseCondition);
     $or->condition($this->falseCondition);
     $result = $or->execute();
