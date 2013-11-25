@@ -34,8 +34,20 @@ class Rule implements ActionInterface {
    */
   protected $actions = array();
 
+  /**
+   * {@inheritdoc}
+   */
   public function execute() {
     // Evaluate conditions, if they pass execute actions.
+    foreach ($this->conditions as $condition) {
+      if (!$condition->execute()) {
+        // If a condition returns FALSE stop here.
+        return;
+      }
+    }
+    foreach ($this->actions as $action) {
+      $action->execute();
+    }
   }
 
   /**
@@ -48,7 +60,7 @@ class Rule implements ActionInterface {
    *   The current rule object for chaining.
    */
   public function condition(ConditionInterface $condition) {
-    $conditions[] = $condition;
+    $this->conditions[] = $condition;
     return $this;
   }
 
