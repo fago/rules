@@ -22,9 +22,7 @@ class RulesAnd extends RulesConditionContainer {
    */
   public function execute() {
     foreach ($this->conditions as $condition) {
-      $result = $condition->execute();
-      $negated = $condition->isNegated();
-      if (($result && $negated) || (!$result && !$negated)) {
+      if (!($condition->execute() xor $condition->isNegated())) {
         return FALSE;
       }
     }
