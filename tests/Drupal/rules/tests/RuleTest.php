@@ -7,7 +7,8 @@
 
 namespace Drupal\rules\tests;
 
-use Drupal\rules\Engine\Rule;
+use Drupal\rules\Plugin\rules\Rule;
+use Drupal\rules\Plugin\rules\RulesOr;
 use Drupal\rules_test\Plugin\Condition\TestConditionTrue;
 use Drupal\Tests\UnitTestCase;
 
@@ -33,7 +34,11 @@ class RuleTest extends UnitTestCase {
   public function testRuleCreation() {
     // Create a test rule, we don't care about plugin information.
     $rule = new Rule(array(), 'test', array());
+    //$negated_condition = new TestConditionTrue();
+    //$negated_condition->negate();
     $rule->condition(new TestConditionTrue())
-      ->condition(new TestConditionTrue());
+      ->condition(new TestConditionTrue())
+      ->condition((new RulesOr())
+        ->condition(((new TestConditionTrue())->negate())));
   }
 }

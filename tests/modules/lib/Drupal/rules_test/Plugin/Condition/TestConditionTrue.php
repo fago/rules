@@ -7,7 +7,8 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\Core\Condition\ConditionInterface;
+use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\rules\RulesConditionInterface;
 
 /**
  * Provides an always TRUE test condition.
@@ -17,10 +18,7 @@ use Drupal\Core\Condition\ConditionInterface;
  *   label = @Translation("Test condition returning true")
  * )
  */
-class TestConditionTrue implements ConditionInterface {
-  public function buildForm(array $form, array &$form_state) {
-
-  }
+class TestConditionTrue implements RulesConditionInterface {
 
   public function evaluate() {
     
@@ -30,15 +28,23 @@ class TestConditionTrue implements ConditionInterface {
     return TRUE;
   }
 
-  public function getFormId() {
-    
+  public function negate() {
+    return $this;
   }
 
   public function isNegated() {
 
   }
 
-  public function setExecutableManager(\Drupal\Core\Executable\ExecutableManagerInterface $executableManager) {
+  public function getFormId() {
+
+  }
+
+  public function buildForm(array $form, array &$form_state) {
+
+  }
+
+  public function setExecutableManager(ExecutableManagerInterface $executableManager) {
     
   }
 
