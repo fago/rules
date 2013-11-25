@@ -73,7 +73,14 @@ class RulesAnd implements ConditionInterface {
   }
 
   public function execute() {
-
+    foreach ($this->conditions as $condition) {
+      if (!$condition->execute() && !$condition->isNegated()) {
+        return FALSE;
+      }
+    }
+    // An empty AND should return FALSE, otherwise all conditions evaluated to
+    // TRUE and we return TRUE.
+    return !empty($this->conditions);
   }
 
 }
