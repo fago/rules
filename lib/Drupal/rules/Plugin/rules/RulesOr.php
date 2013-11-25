@@ -36,7 +36,7 @@ class RulesOr implements ConditionInterface {
    *   The current rule object for chaining.
    */
   public function condition(ConditionInterface $condition) {
-    $conditions[] = $condition;
+    $this->conditions[] = $condition;
     return $this;
   }
 
@@ -72,8 +72,18 @@ class RulesOr implements ConditionInterface {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function execute() {
-
+    foreach ($this->conditions as $condition) {
+      if ($condition->execute() && !$condition->isNegated()) {
+        return TRUE;
+      }
+    }
+    // An empty OR should return TRUE, otherwise all conditions evaluated to
+    // FALSE and we return FALSE.
+    return empty($this->conditions);
   }
 
 }
