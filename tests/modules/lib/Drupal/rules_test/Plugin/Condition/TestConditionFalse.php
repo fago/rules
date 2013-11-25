@@ -45,7 +45,10 @@ class TestConditionFalse implements RulesConditionInterface {
   }
 
   public function setExecutableManager(ExecutableManagerInterface $executableManager) {
-
+    // We need to return ourselves here because ConditionManager::createInstance()
+    // uses the return value of this function to return as plugin. Which is so
+    // wrong and not specified on the interface!
+    return $this;
   }
 
   public function submitForm(array &$form, array &$form_state) {

@@ -35,7 +35,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd();
+    $and = new RulesAnd(array(), 'test', array());
     $and->condition($this->trueCondition);
     $result = $and->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
@@ -47,7 +47,7 @@ class RulesAndTest extends RulesTestBase {
   public function testemptyAnd() {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd();
+    $and = new RulesAnd(array(), 'test', array());
     $result = $and->execute();
     $this->assertFalse($result, 'Empty AND returns FALSE.');
   }
@@ -62,7 +62,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd();
+    $and = new RulesAnd(array(), 'test', array());
     $and->condition($this->trueCondition);
     $and->condition($this->trueCondition);
     $result = $and->execute();
@@ -79,7 +79,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd();
+    $and = new RulesAnd(array(), 'test', array());
     $and->condition($this->falseCondition);
     $and->condition($this->falseCondition);
     $result = $and->execute();

@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\RulesLog;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
@@ -60,8 +61,11 @@ class RulesEngineTest extends DrupalUnitTestBase {
         ->condition($false_condition)
         ->condition($and
           ->condition($false_condition)
-          ->condition($negated_condition)));
+          ->condition($negated_condition)
+          ->negate()));
     $rule->action($action);
     $rule->execute();
+    $log = RulesLog::logger()->get();
+    print_r($log);
   }
 }

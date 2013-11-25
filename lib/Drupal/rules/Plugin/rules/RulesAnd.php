@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\rules;
 
 use Drupal\Core\Condition\ConditionInterface;
+use Drupal\Core\Condition\ConditionPluginBase;
 
 /**
  * Container for consitions and actions.
@@ -17,7 +18,7 @@ use Drupal\Core\Condition\ConditionInterface;
  *   label = @Translation("A logical And condition")
  * )
  */
-class RulesAnd implements ConditionInterface {
+class RulesAnd extends ConditionPluginBase {
 
   /**
    * List of conditions that are evaluated.
