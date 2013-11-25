@@ -9,11 +9,13 @@ namespace Drupal\rules\Plugin\rules;
 
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
+use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\rules\RulesConditionInterface;
 
 /**
  * Container for conditions.
  */
-abstract class RulesConditionContainer extends ConditionPluginBase {
+abstract class RulesConditionContainer extends ConditionPluginBase implements RulesConditionInterface {
 
   /**
    * List of conditions that are evaluated.
@@ -48,35 +50,23 @@ abstract class RulesConditionContainer extends ConditionPluginBase {
 
   }
 
-  public function isNegated() {
-
+  public function setExecutableManager(ExecutableManagerInterface $executableManager) {
+    // We need to return ourselves here because ConditionManager::createInstance()
+    // uses the return value of this function to return as plugin. Which is so
+    // wrong and not specified on the interface!
+    return $this;
   }
 
-  public function setExecutableManager(\Drupal\Core\Executable\ExecutableManagerInterface $executableManager) {
-
-  }
-
-  public function submitForm(array &$form, array &$form_state) {
-
+  /**
+   * {@inheritdoc}
+   */
+  public function negate($negate = TRUE) {
+    $this->configuration['negate'] = $negate;
+    return $this;
   }
 
   public function summary() {
 
-  }
-
-  public function validateForm(array &$form, array &$form_state) {
-
-  }
-
-  public function execute() {
-    foreach ($this->conditions as $condition) {
-      if (!$condition->execute() && !$condition->isNegated()) {
-        return FALSE;
-      }
-    }
-    // An empty AND should return FALSE, otherwise all conditions evaluated to
-    // TRUE and we return TRUE.
-    return !empty($this->conditions);
   }
 
 }

@@ -58,6 +58,30 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(FALSE));
 
+    $this->negatedTrueCondition = $this->getMockBuilder('Drupal\Core\Condition\ConditionPluginBase')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->negatedTrueCondition->expects($this->any())
+      ->method('execute')
+      ->will($this->returnValue(TRUE));
+
+    $this->negatedTrueCondition->expects($this->any())
+      ->method('isNegated')
+      ->will($this->returnValue(TRUE));
+
+    $this->negatedFalseCondition = $this->getMockBuilder('Drupal\Core\Condition\ConditionPluginBase')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->negatedFalseCondition->expects($this->any())
+      ->method('execute')
+      ->will($this->returnValue(FALSE));
+
+    $this->negatedFalseCondition->expects($this->any())
+      ->method('isNegated')
+      ->will($this->returnValue(TRUE));
+
     $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionBase')
       ->disableOriginalConstructor()
       ->getMock();

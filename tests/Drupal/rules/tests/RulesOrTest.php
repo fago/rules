@@ -85,4 +85,36 @@ class RulesOrTest extends RulesTestBase {
     $result = $or->execute();
     $this->assertFalse($result, 'Two false conditions return FALSE.');
   }
+
+  /**
+   * Tests one negated condition.
+   */
+  public function testNegatedCondition() {
+    // The method on the test condition must be called once.
+    $this->negatedTrueCondition->expects($this->once())
+      ->method('execute');
+
+    // Create a test rule, we don't care about plugin information in the
+    // constructor.
+    $or = new RulesOr(array(), 'test', array());
+    $or->condition($this->negatedTrueCondition);
+    $result = $or->execute();
+    $this->assertFalse($result, 'Negated condition returns FALSE.');
+  }
+
+  /**
+   * Tests one negated FALSE condition.
+   */
+  public function testNegatedFalseCondition() {
+    // The method on the test condition must be called once.
+    $this->negatedFalseCondition->expects($this->once())
+      ->method('execute');
+
+    // Create a test rule, we don't care about plugin information in the
+    // constructor.
+    $or = new RulesOr(array(), 'test', array());
+    $or->condition($this->negatedFalseCondition);
+    $result = $or->execute();
+    $this->assertTrue($result, 'Negated false condition returns TRUE.');
+  }
 }

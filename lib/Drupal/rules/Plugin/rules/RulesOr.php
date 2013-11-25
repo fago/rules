@@ -24,7 +24,7 @@ class RulesOr extends RulesConditionContainer {
    */
   public function execute() {
     foreach ($this->conditions as $condition) {
-      if ($condition->execute() && !$condition->isNegated()) {
+      if ($condition->execute() xor $condition->isNegated()) {
         return TRUE;
       }
     }
