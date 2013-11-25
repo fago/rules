@@ -66,6 +66,6 @@ class RulesEngineTest extends DrupalUnitTestBase {
     $rule->action($action);
     $rule->execute();
     $log = RulesLog::logger()->get();
-    print_r($log);
+    $this->assertEqual($log[0][0], 'action called');
   }
 }
