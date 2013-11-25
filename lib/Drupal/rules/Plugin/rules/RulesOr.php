@@ -7,12 +7,10 @@
 
 namespace Drupal\rules\Plugin\rules;
 
-use Drupal\Core\Condition\ConditionInterface;
-
 /**
  * Evaluates a group of conditions with a logical OR.
  *
- * @Rules(
+ * @RulesElement(
  *   id = "rules_or",
  *   label = @Translation("A logical Or condition")
  * )

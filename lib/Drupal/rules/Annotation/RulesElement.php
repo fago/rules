@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Annotation\Rules.
+ * Contains \Drupal\rules\Annotation\RulesElement.
  */
 
 namespace Drupal\rules\Annotation;
@@ -14,7 +14,7 @@ use Drupal\Component\Annotation\Plugin;
  *
  * @Annotation
  */
-class Rules extends Plugin {
+class RulesElement extends Plugin {
 
   /**
    * The plugin ID.

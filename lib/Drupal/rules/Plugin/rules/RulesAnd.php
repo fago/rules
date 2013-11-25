@@ -10,7 +10,7 @@ namespace Drupal\rules\Plugin\rules;
 /**
  * Evaluates a group of conditions with a logical AND.
  *
- * @Rules(
+ * @RulesElement(
  *   id = "rules_and",
  *   label = @Translation("A logical And condition")
  * )
@@ -22,6 +22,8 @@ class RulesAnd extends RulesConditionContainer {
    */
   public function execute() {
     foreach ($this->conditions as $condition) {
+      // @todo this is obscure, a consdition plugin should include the negated
+      // state in its execution implementation.
       if (!($condition->execute() xor $condition->isNegated())) {
         return FALSE;
       }

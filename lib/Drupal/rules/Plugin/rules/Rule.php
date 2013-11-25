@@ -13,7 +13,7 @@ use Drupal\Core\Condition\ConditionInterface;
 /**
  * Container for consitions and actions.
  *
- * @Rules(
+ * @RulesElement(
  *   id = "rules_rule",
  *   label = @Translation("Rule executing actions when conditions are met.")
  * )

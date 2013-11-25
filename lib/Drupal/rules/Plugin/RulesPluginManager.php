@@ -25,9 +25,9 @@ class RulesPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler) {
-    $plugin_definition_annotation_name = 'Drupal\rules\Annotation\Rules';
+    $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesElement';
     parent::__construct('Plugin/rules', $namespaces, $plugin_definition_annotation_name);
-    $this->alterInfo($module_handler, 'rules_plugins');
+    $this->alterInfo($module_handler, 'rules_element');
   }
 
 }
