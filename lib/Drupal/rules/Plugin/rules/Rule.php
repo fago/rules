@@ -27,6 +27,13 @@ class Rule implements ActionInterface {
    */
   protected $conditions = array();
 
+  /**
+   * List of actions that get executed if the conditions are met.
+   *
+   * @var array
+   */
+  protected $actions = array();
+
   public function execute() {
     // Evaluate conditions, if they pass execute actions.
   }
@@ -42,6 +49,20 @@ class Rule implements ActionInterface {
    */
   public function condition(ConditionInterface $condition) {
     $conditions[] = $condition;
+    return $this;
+  }
+
+  /**
+   * Adds an action.
+   *
+   * @param \Drupal\Core\Action\ActionInterface $action
+   *   The action object to add.
+   *
+   * @return \Drupal\rules\Plugin\rules\Rule
+   *   The current rule object for chaining.
+   */
+  public function action(ActionInterface $action) {
+    $this->actions[] = $action;
     return $this;
   }
 

@@ -8,7 +8,10 @@
 namespace Drupal\rules\tests;
 
 use Drupal\rules\Plugin\rules\Rule;
+use Drupal\rules\Plugin\rules\RulesAnd;
 use Drupal\rules\Plugin\rules\RulesOr;
+use Drupal\rules_test\Plugin\Action\TestAction;
+use Drupal\rules_test\Plugin\Condition\TestConditionFalse;
 use Drupal\rules_test\Plugin\Condition\TestConditionTrue;
 use Drupal\Tests\UnitTestCase;
 
@@ -39,6 +42,11 @@ class RuleTest extends UnitTestCase {
     $rule->condition(new TestConditionTrue())
       ->condition(new TestConditionTrue())
       ->condition((new RulesOr())
-        ->condition(((new TestConditionTrue())->negate())));
+        ->condition((new TestConditionTrue())->negate())
+        ->condition(new TestConditionFalse())
+        ->condition(new RulesAnd())
+          ->condition(new TestConditionFalse())
+          ->condition((new TestConditionTrue())->negate()));
+    $rule->action(new TestAction());
   }
 }
