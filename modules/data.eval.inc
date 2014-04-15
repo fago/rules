@@ -368,6 +368,20 @@ function rules_condition_data_list_contains($list, $item, $settings, $state) {
 }
 
 /**
+* Condition: List count comparison.
+*/
+function rules_condition_data_list_count_is($list, $op = '==', $value) {
+  switch ($op) {
+    case '==':
+      return count($list) == $value;
+    case '<';
+      return count($list) < $value;
+    case '>';
+      return count($list) > $value;
+  }
+}
+
+/**
  * Condition: Data value is empty.
  */
 function rules_condition_data_is_empty($data) {
