@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\rules;
 
+use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Condition\ConditionInterface;
 
@@ -18,7 +19,7 @@ use Drupal\Core\Condition\ConditionInterface;
  *   label = @Translation("Rule executing actions when conditions are met.")
  * )
  */
-class Rule implements ActionInterface {
+class Rule extends PluginBase implements ActionInterface {
 
   /**
    * List of conditions that must be met before actions are executed.
