@@ -32,7 +32,7 @@ before_script:
   - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes core-quick-drupal --core=drupal-8.x --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/rules --enable=simpletest rules
 
   # reference and enable rules in build site
-  - ln -s $(readlink -e $(cd -)) rules/drupal/sites/all/modules/rules
+  - ln -s $(readlink -e $(cd -)) rules/drupal/modules
   - cd rules/drupal
   - drush --yes pm-enable rules
 
