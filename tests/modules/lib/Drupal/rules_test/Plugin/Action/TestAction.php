@@ -8,6 +8,7 @@
 namespace Drupal\rules_test\Plugin\Action;
 
 use Drupal\Core\Action\ActionInterface;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\rules\RulesLog;
 
 /**
@@ -18,7 +19,7 @@ use Drupal\rules\RulesLog;
  *   label = @Translation("Test action logging.")
  * )
  */
-class TestAction implements ActionInterface {
+class TestAction extends PluginBase implements ActionInterface {
 
   
   public function execute() {

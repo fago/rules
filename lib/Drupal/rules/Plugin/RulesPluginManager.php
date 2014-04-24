@@ -26,8 +26,8 @@ class RulesPluginManager extends DefaultPluginManager {
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler) {
     $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesElement';
-    parent::__construct('Plugin/rules', $namespaces, $plugin_definition_annotation_name);
-    $this->alterInfo($module_handler, 'rules_element');
+    parent::__construct('Plugin/rules', $namespaces, $module_handler, $plugin_definition_annotation_name);
+    $this->alterInfo('rules_element');
   }
 
 }
