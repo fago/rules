@@ -11,6 +11,9 @@ mysql:
 
 before_install:
   - sudo apt-get update > /dev/null
+  # Always update Composer to the recent version, otherwise the drush
+  # installation fails.
+  - composer selfupdate
 
 install:
   # install php packages required for running a web server from drush
@@ -24,20 +27,34 @@ install:
   - composer global require drush/drush:dev-master
 
 before_script:
+  # Remember the current rules test directory for later use in the Drupal
+  # installation.
+  - TESTDIR=$(pwd)
   # navigate out of module directory to prevent blown stack by recursive module lookup
-  - cd ../..
+  - cd ..
 
   # create new site, stubbing sendmail path with true to prevent delivery errors and manually resolving drush path
   - mysql -e 'create database rules'
-  - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes core-quick-drupal --core=drupal-8.x --profile=testing --no-server --db-url=mysql://root:@127.0.0.1/rules --enable=simpletest rules
+  # Download Drupal 8 core.
+  - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes dl drupal-8.x-dev
+  - cd drupal-8.x-dev
+  # Install Drupal.
+  - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/rules testing
 
   # reference and enable rules in build site
-  - ln -s $(readlink -e $(cd -)) rules/drupal/modules
-  - cd rules/drupal
-  - drush --yes pm-enable rules
+  - ln -s $TESTDIR modules/rules
+  - drush --yes pm-enable simpletest rules
+
+  # Switch to core directory where we will execute PHPUnit.
+  - cd core
 
   # start a web server on port 8080, run in the background; wait for initialization
-  - drush runserver 127.0.0.1:8080 &
-  - until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
+  # This fails currently because there is a missing drush dependency.
+  #- drush runserver 127.0.0.1:8080 &
+  #- until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
 
-script: drush test-run 'Rules' --uri=http://127.0.0.1:8080
+script:
+  # Run the Simpletests.
+  - drush test-run 'Rules' --uri=http://127.0.0.1:8080
+  # Run the PHPUnit tests.
+  - ./vendor/bin/phpunit ../modules/rules
