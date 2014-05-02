@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\rules\tests\RulesOrTest.
+ * Contains Drupal\rules\Tests\RulesOrTest.
  */
 
-namespace Drupal\rules\tests;
+namespace Drupal\rules\Tests;
 
 use Drupal\rules\Plugin\rules\RulesOr;
 
