@@ -20,7 +20,7 @@ interface RulesConditionInterface extends ConditionInterface {
    * @param bool $negate
    *   TRUE to indicate that the conditon should be negated, FALSE otherwise.
    *
-   * @return \Drupal\rules\RulesConditionInterface
+   * @return $this
    *   The current condition object for chaining.
    */
   public function negate($negate = TRUE);

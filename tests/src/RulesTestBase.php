@@ -7,7 +7,8 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\rules\Rule;
+use Drupal\Core\Action\ActionInterface;
+use Drupal\rules\Engine\RulesConditionInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -18,21 +19,21 @@ abstract class RulesTestBase extends UnitTestCase {
   /**
    * A mocked condition that always evaluates to TRUE.
    *
-   * @var PHPUnit_Framework_MockObject_MockObject
+   * @var RulesConditionInterface
    */
   protected $trueCondition;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
-   * @var PHPUnit_Framework_MockObject_MockObject
+   * @var RulesConditionInterface
    */
   protected $falseCondition;
 
   /**
    * A mocked dummy action object.
    *
-   * @var PHPUnit_Framework_MockObject_MockObject
+   * @var ActionInterface
    */
   protected $testAction;
 
@@ -42,7 +43,7 @@ abstract class RulesTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMockBuilder('Drupal\rules\Plugin\rules\RulesConditionContainer')
+    $this->trueCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionContainer')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -50,7 +51,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMockBuilder('Drupal\rules\Plugin\rules\RulesConditionContainer')
+    $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionContainer')
       ->disableOriginalConstructor()
       ->getMock();
 

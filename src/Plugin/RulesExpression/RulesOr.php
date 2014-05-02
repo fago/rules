@@ -2,17 +2,18 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\rules\RulesOr.
+ * Contains Drupal\rules\Plugin\RulesExpression\RulesOr.
  */
 
-namespace Drupal\rules\Plugin\rules;
+namespace Drupal\rules\Plugin\RulesExpression;
+use Drupal\rules\Engine\RulesConditionContainer;
 
 /**
  * Evaluates a group of conditions with a logical OR.
  *
- * @RulesElement(
+ * @RulesExpression(
  *   id = "rules_or",
- *   label = @Translation("A logical Or condition")
+ *   label = @Translation("Condition set (OR)")
  * )
  */
 class RulesOr extends RulesConditionContainer {

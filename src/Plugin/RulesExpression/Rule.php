@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\rules\Rule.
+ * Contains Drupal\rules\Plugin\RulesExpression\Rule.
  */
 
-namespace Drupal\rules\Plugin\rules;
+namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Condition\ConditionInterface;
 
 /**
- * Container for consitions and actions.
+ * Defines a rule, executing actions when conditions are met.
  *
- * @RulesElement(
+ * @RulesExpression(
  *   id = "rules_rule",
- *   label = @Translation("Rule executing actions when conditions are met.")
+ *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
 class Rule extends PluginBase implements ActionInterface {
@@ -57,7 +57,7 @@ class Rule extends PluginBase implements ActionInterface {
    * @param ConditionInterface2 $condition
    *   The condition object.
    *
-   * @return \Drupal\rules\Plugin\Action\Rule
+   * @return \Drupal\rules\Plugin\RulesExpression\Rule
    *   The current rule object for chaining.
    */
   public function condition(ConditionInterface $condition) {
@@ -71,7 +71,7 @@ class Rule extends PluginBase implements ActionInterface {
    * @param \Drupal\Core\Action\ActionInterface $action
    *   The action object to add.
    *
-   * @return \Drupal\rules\Plugin\rules\Rule
+   * @return \Drupal\rules\Plugin\RulesExpression\Rule
    *   The current rule object for chaining.
    */
   public function action(ActionInterface $action) {
@@ -79,8 +79,11 @@ class Rule extends PluginBase implements ActionInterface {
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function executeMultiple(array $objects) {
-
+    // @todo: Implement.
   }
 
 }

@@ -2,17 +2,18 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\rules\RulesAnd.
+ * Contains Drupal\rules\Plugin\RulesExpression\RulesAnd.
  */
 
-namespace Drupal\rules\Plugin\rules;
+namespace Drupal\rules\Plugin\RulesExpression;
+use Drupal\rules\Engine\RulesConditionContainer;
 
 /**
  * Evaluates a group of conditions with a logical AND.
  *
- * @RulesElement(
+ * @RulesExpression(
  *   id = "rules_and",
- *   label = @Translation("A logical And condition")
+ *   label = @Translation("Condition set (AND)")
  * )
  */
 class RulesAnd extends RulesConditionContainer {

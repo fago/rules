@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\rules\RulesAnd;
+use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 
 /**
  * Tests the rules AND condition plugin.

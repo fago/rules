@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\rules\RulesOr;
+use Drupal\rules\Plugin\RulesExpression\RulesOr;
 
 /**
  * Tests the rules OR condition plugin.

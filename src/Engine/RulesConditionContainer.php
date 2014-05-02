@@ -2,14 +2,13 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\rules\RulesConditionContainer.
+ * Contains Drupal\rules\Engine\RulesConditionContainer.
  */
 
-namespace Drupal\rules\Plugin\rules;
+namespace Drupal\rules\Engine;
 
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
-use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
  * Container for conditions.
@@ -26,10 +25,10 @@ abstract class RulesConditionContainer extends ConditionPluginBase implements Ru
   /**
    * Add a condition.
    *
-   * @param ConditionInterface2 $condition
+   * @param \Drupal\Core\Condition\ConditionInterface $condition
    *   The condition object.
    *
-   * @return \Drupal\rules\Plugin\Action\Rule
+   * @return \Drupal\rules\Plugin\RulesExpression\Rule
    *   The current rule object for chaining.
    */
   public function condition(ConditionInterface $condition) {
@@ -37,14 +36,23 @@ abstract class RulesConditionContainer extends ConditionPluginBase implements Ru
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, array &$form_state) {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId() {
 
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function execute() {
     if (isset($this->executableManager)) {
       return $this->executableManager->execute($this);
@@ -61,8 +69,11 @@ abstract class RulesConditionContainer extends ConditionPluginBase implements Ru
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function summary() {
-
+    // @todo: Move to and implement at inheriting classes.
   }
 
 }

@@ -1,4 +1,4 @@
 services:
-  plugin.manager.rules:
-    class: Drupal\rules\Plugin\RulesPluginManager
+  plugin.manager.rules_expression:
+    class: Drupal\rules\Plugin\RulesExpressionPluginManager
     arguments: ['@container.namespaces', '@module_handler']

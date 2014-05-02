@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\rules\Rule;
+use Drupal\rules\Plugin\RulesExpression\Rule;
 
 /**
  * Tests the core rules engine functionality.

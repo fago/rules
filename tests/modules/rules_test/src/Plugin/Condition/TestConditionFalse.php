@@ -7,7 +7,7 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\rules\Plugin\rules\RulesConditionContainer;
+use Drupal\rules\Engine\RulesConditionContainer;
 use Drupal\rules\Engine\RulesConditionInterface;
 
 /**

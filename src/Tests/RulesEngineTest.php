@@ -38,7 +38,7 @@ class RulesEngineTest extends DrupalUnitTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->rulesManager = $this->container->get('plugin.manager.rules');
+    $this->rulesManager = $this->container->get('plugin.manager.rules_expression');
     $this->conditionManager = $this->container->get('plugin.manager.condition');
     $this->actionManager = $this->container->get('plugin.manager.action');
   }
