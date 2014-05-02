@@ -8,19 +8,11 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Engine\RulesLog;
-use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
  * Tests the rules engine functionality.
  */
-class RulesEngineTest extends DrupalUnitTestBase {
-
-  /**
-   * Modules to enable.
-   *
-   * @var array
-   */
-  public static $modules = array('rules', 'rules_test', 'system');
+class RulesEngineTest extends RulesDrupalTestBase {
 
   /**
    * {@inheritdoc}
@@ -34,38 +26,23 @@ class RulesEngineTest extends DrupalUnitTestBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-    $this->rulesManager = $this->container->get('plugin.manager.rules_expression');
-    $this->conditionManager = $this->container->get('plugin.manager.condition');
-    $this->actionManager = $this->container->get('plugin.manager.action');
-  }
-
-  /**
    * Tests creating a rule and iterating over the rule elements.
    */
   public function testRuleCreation() {
-    $rule = $this->rulesManager->createInstance('rules_rule');
-    $true_condition = $this->conditionManager->createInstance('rules_test_condition_true');
-    $false_condition = $this->conditionManager->createInstance('rules_test_condition_false');
-    $negated_condition = $this->conditionManager->createInstance('rules_test_condition_true')->negate();
-    $or = $this->rulesManager->createInstance('rules_or');
-    $and = $this->rulesManager->createInstance('rules_and');
-    $action = $this->actionManager->createInstance('rules_test_action');
-    $rule->condition($true_condition)
-      ->condition($true_condition)
-      ->condition($or
-        ->condition($negated_condition)
-        ->condition($false_condition)
-        ->condition($and
-          ->condition($false_condition)
-          ->condition($negated_condition)
+    $rule = $this->createRule();
+    $rule->condition($this->createCondition('rules_test_true'))
+      ->condition($this->createCondition('rules_test_true'))
+      ->condition($this->createExpression('rules_or')
+        ->condition($this->createCondition('rules_test_true')->negate())
+        ->condition($this->createCondition('rules_test_false'))
+        ->condition($this->createExpression('rules_and')
+          ->condition($this->createCondition('rules_test_false'))
+          ->condition($this->createCondition('rules_test_true')->negate())
           ->negate()));
-    $rule->action($action);
+    $rule->action($this->createAction('rules_test_log'));
     $rule->execute();
     $log = RulesLog::logger()->get();
     $this->assertEqual($log[0][0], 'action called');
   }
+
 }

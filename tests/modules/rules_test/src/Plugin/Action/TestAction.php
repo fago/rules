@@ -12,22 +12,27 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\rules\Engine\RulesLog;
 
 /**
- * Provides an always FALSE test condition.
+ * Provides an action writing something to the Rules log.
  *
  * @Action(
- *   id = "rules_test_action",
+ *   id = "rules_test_log",
  *   label = @Translation("Test action logging.")
  * )
  */
 class TestAction extends PluginBase implements ActionInterface {
 
-  
+  /**
+   * {@inheritdoc}
+   */
   public function execute() {
     RulesLog::logger()->log('action called');
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function executeMultiple(array $objects) {
-
+    // @todo: Implement in parent and remove.
   }
 
 }

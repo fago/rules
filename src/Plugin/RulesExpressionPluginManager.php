@@ -12,6 +12,8 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Plugin manager for all Rules expressions.
+ *
+ * @see \Drupal\rules\Engine\RulesExpressionInterface
  */
 class RulesExpressionPluginManager extends DefaultPluginManager {
 

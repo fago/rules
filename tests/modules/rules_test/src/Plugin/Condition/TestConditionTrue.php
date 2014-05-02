@@ -13,7 +13,7 @@ use Drupal\rules\Engine\RulesConditionContainer;
  * Provides an always TRUE test condition.
  *
  * @Condition(
- *   id = "rules_test_condition_true",
+ *   id = "rules_test_true",
  *   label = @Translation("Test condition returning true")
  * )
  */

@@ -8,13 +8,12 @@
 namespace Drupal\rules_test\Plugin\Condition;
 
 use Drupal\rules\Engine\RulesConditionContainer;
-use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
  * Provides an always FALSE test condition.
  *
  * @Condition(
- *   id = "rules_test_condition_false",
+ *   id = "rules_test_false",
  *   label = @Translation("Test condition returning false")
  * )
  */
