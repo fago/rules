@@ -5,7 +5,8 @@
  * Contains \Drupal\rules\RulesLog.
  */
 
-namespace Drupal\rules;
+namespace Drupal\rules\Engine;
+use Drupal\rules\Exception;
 
 /**
  * The rules default logging class.

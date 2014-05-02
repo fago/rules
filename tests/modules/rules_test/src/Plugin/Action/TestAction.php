@@ -9,7 +9,7 @@ namespace Drupal\rules_test\Plugin\Action;
 
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\rules\RulesLog;
+use Drupal\rules\Engine\RulesLog;
 
 /**
  * Provides an always FALSE test condition.

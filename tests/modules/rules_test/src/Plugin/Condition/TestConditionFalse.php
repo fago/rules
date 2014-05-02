@@ -8,7 +8,7 @@
 namespace Drupal\rules_test\Plugin\Condition;
 
 use Drupal\rules\Plugin\rules\RulesConditionContainer;
-use Drupal\rules\RulesConditionInterface;
+use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
  * Provides an always FALSE test condition.

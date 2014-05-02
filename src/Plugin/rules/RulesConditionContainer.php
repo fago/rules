@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\rules;
 
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
-use Drupal\rules\RulesConditionInterface;
+use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
  * Container for conditions.

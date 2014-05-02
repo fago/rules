@@ -7,11 +7,11 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\RulesLog;
+use Drupal\rules\Engine\RulesLog;
 use Drupal\simpletest\DrupalUnitTestBase;
 
 /**
- * Tests the core rules engine functionality.
+ * Tests the rules engine functionality.
  */
 class RulesEngineTest extends DrupalUnitTestBase {
 
@@ -27,8 +27,8 @@ class RulesEngineTest extends DrupalUnitTestBase {
    */
   public static function getInfo() {
     return array(
-      'name' => 'Rules Engine tests',
-      'description' => 'Test using the rules API to create and evaluate rules.',
+      'name' => 'Rules engine tests',
+      'description' => 'Test using the Rules API to create and evaluate rules.',
       'group' => 'Rules',
     );
   }
