@@ -17,7 +17,7 @@ use Drupal\Core\Condition\ConditionPluginBase;
  *   label = @Translation("User is blocked"),
  *   context = {
  *     "user" = {
- *       "label" = "The user",
+ *       "label" = @Translation("User"),
  *       "type" = "entity:user"
  *     }
  *   }
