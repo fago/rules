@@ -17,6 +17,7 @@ use Drupal\Core\Condition\ConditionPluginBase;
  *   label = @Translation("Node is published"),
  *   context = {
  *     "node" = {
+ *       "label" = @Translation("Node"),
  *       "type" = "entity:node"
  *     }
  *   }
