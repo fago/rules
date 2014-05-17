@@ -17,10 +17,7 @@ use Drupal\Core\Condition\ConditionPluginBase;
  *   label = @Translation("Node is published"),
  *   context = {
  *     "node" = {
- *       "type" = "entity",
- *       "constraints" = {
- *         "EntityType" = "node"
- *       }
+ *       "type" = "entity:node"
  *     }
  *   }
  * )
@@ -44,5 +41,4 @@ class NodeIsPublished extends ConditionPluginBase {
     $node = $this->getContextValue('node');
     return $node->isPublished();
   }
-
 }
