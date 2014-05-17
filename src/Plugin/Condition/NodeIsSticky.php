@@ -17,10 +17,7 @@ use Drupal\Core\Condition\ConditionPluginBase;
  *   label = @Translation("Node is sticky"),
  *   context = {
  *     "node" = {
- *       "type" = "entity",
- *       "constraints" = {
- *         "EntityType" = "node"
- *       }
+ *       "type" = "entity:node",
  *     }
  *   }
  * )
@@ -28,18 +25,18 @@ use Drupal\Core\Condition\ConditionPluginBase;
 class NodeIsSticky extends ConditionPluginBase {
 
   /**
-   * Implements \Drupal\Core\Executable\ExecutableInterface::summary().
+   * {@inheritdoc}
    */
   public function summary() {
     return t('Node is sticky');
   }
 
   /**
-   * Implements \Drupal\condition\ConditionInterface::evaluate().
+   * {@inheritdoc}
    */
   public function evaluate() {
     $node = $this->getContextValue('node');
-    return $node->sticky == 1;
+    return $node->isSticky();
   }
 
 }
