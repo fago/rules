@@ -48,7 +48,7 @@ class UserIsBlockedTest extends EntityUnitTestBase {
   /**
    * Returns an user object for testing.
    *
-   * @return \Drupal\user\UserInterface;
+   * @return \Drupal\user\UserInterface
    */
   protected function getUser($values = array()) {
     // @todo: Use an entity factory once we have on instead.
