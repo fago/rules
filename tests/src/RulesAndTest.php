@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Tests\RulesAndTest.
+ * Contains \Drupal\rules\Tests\RulesAndTest.
  */
 
 namespace Drupal\rules\Tests;
@@ -42,7 +42,7 @@ class RulesAndTest extends RulesTestBase {
   }
 
   /**
-   * Test an empty AND.
+   * Tests an empty AND.
    */
   public function testemptyAnd() {
     // Create a test rule, we don't care about plugin information in the

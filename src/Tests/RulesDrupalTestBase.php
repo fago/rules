@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Tests\RulesDrupalTestBase.
+ * Contains \Drupal\rules\Tests\RulesDrupalTestBase.
  */
 
 namespace Drupal\rules\Tests;
@@ -25,21 +25,21 @@ abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
   /**
    * The rules expression plugin manager.
    *
-   * @var RulesExpressionPluginManager
+   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
    */
   protected $rulesExpressionManager;
 
   /**
    * The condition plugin manager.
    *
-   * @var ConditionManager
+   * @var \Drupal\Core\Condition\ConditionManager
    */
   protected $conditionManager;
 
   /**
    * The rules action plugin manager.
    *
-   * @var ActionManager
+   * @var \Drupal\Core\Action\ActionManager
    */
   protected $actionManager;
 
@@ -63,7 +63,7 @@ abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
   /**
    * Creates a new rule.
    *
-   * @return Rule
+   * @return \Drupal\rules\Plugin\RulesExpression\Rule
    */
   protected function createRule() {
     return $this->rulesExpressionManager->createInstance('rules_rule');
@@ -75,7 +75,7 @@ abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
    * @param string $id
    *   The expression plugin id.
    *
-   * @return RulesExpressionInterface
+   * @return \Drupal\rules\Engine\RulesExpressionInterface
    */
   protected function createExpression($id) {
     return $this->rulesExpressionManager->createInstance($id);
@@ -87,7 +87,7 @@ abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
    * @param string $id
    *   The action plugin id.
    *
-   * @return ActionInterface
+   * @return \Drupal\Core\Action\ActionInterface
    */
   protected function createAction($id) {
     return $this->actionManager->createInstance($id);
@@ -99,7 +99,7 @@ abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
    * @param string $id
    *   The condition plugin id.
    *
-   * @return ConditionInterface
+   * @return \Drupal\Core\Condition\ConditionInterface
    */
   protected function createCondition($id) {
     return $this->conditionManager->createInstance($id);

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\Condition\NodeIsPubishedTest.
+ * Contains \Drupal\rules\Tests\Condition\NodeIsPublishedTest.
  */
 
 namespace Drupal\rules\Tests\Condition;
@@ -10,9 +10,9 @@ namespace Drupal\rules\Tests\Condition;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 
 /**
- * Tests the user is blocked condition.
+ * Tests the 'Node is published' condition.
  */
-class NodeIsPubishedTest extends EntityUnitTestBase {
+class NodeIsPublishedTest extends EntityUnitTestBase {
 
   /**
    * {@inheritdoc}
@@ -49,7 +49,11 @@ class NodeIsPubishedTest extends EntityUnitTestBase {
   /**
    * Returns a node object for testing.
    *
+   * @param array $values
+   *   An array of values to create the node with.
+   *
    * @return \Drupal\Node\NodeInterface
+   *   The created node.
    */
   protected function getNode($values = array()) {
     // @todo: Use an entity factory once we have on instead.

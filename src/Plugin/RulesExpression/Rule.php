@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\RulesExpression\Rule.
+ * Contains \Drupal\rules\Plugin\RulesExpression\Rule.
  */
 
 namespace Drupal\rules\Plugin\RulesExpression;
@@ -54,10 +54,10 @@ class Rule extends PluginBase implements ActionInterface {
   /**
    * Add a condition.
    *
-   * @param ConditionInterface2 $condition
+   * @param \Drupal\Core\Condition\ConditionInterface $condition
    *   The condition object.
    *
-   * @return \Drupal\rules\Plugin\RulesExpression\Rule
+   * @return $this
    *   The current rule object for chaining.
    */
   public function condition(ConditionInterface $condition) {
@@ -71,7 +71,7 @@ class Rule extends PluginBase implements ActionInterface {
    * @param \Drupal\Core\Action\ActionInterface $action
    *   The action object to add.
    *
-   * @return \Drupal\rules\Plugin\RulesExpression\Rule
+   * @return $this
    *   The current rule object for chaining.
    */
   public function action(ActionInterface $action) {

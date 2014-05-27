@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules_test\Plugin\Action\TestAction.
+ * Contains \Drupal\rules_test\Plugin\Action\TestAction.
  */
 
 namespace Drupal\rules_test\Plugin\Action;

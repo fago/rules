@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\RulesExpression\RulesAnd.
+ * Contains \Drupal\rules\Plugin\RulesExpression\RulesAnd.
  */
 
 namespace Drupal\rules\Plugin\RulesExpression;

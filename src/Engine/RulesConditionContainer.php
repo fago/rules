@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Engine\RulesConditionContainer.
+ * Contains \Drupal\rules\Engine\RulesConditionContainer.
  */
 
 namespace Drupal\rules\Engine;

@@ -2,13 +2,11 @@
 
 /**
  * @file
- * Contains Drupal\rules\Tests\RulesTestBase.
+ * Contains \Drupal\rules\Tests\RulesTestBase.
  */
 
 namespace Drupal\rules\Tests;
 
-use Drupal\Core\Action\ActionInterface;
-use Drupal\rules\Engine\RulesConditionInterface;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -19,21 +17,21 @@ abstract class RulesTestBase extends UnitTestCase {
   /**
    * A mocked condition that always evaluates to TRUE.
    *
-   * @var RulesConditionInterface
+   * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $trueCondition;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
-   * @var RulesConditionInterface
+   * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $falseCondition;
 
   /**
    * A mocked dummy action object.
    *
-   * @var ActionInterface
+   * @var \Drupal\Core\Action\ActionInterface
    */
   protected $testAction;
 

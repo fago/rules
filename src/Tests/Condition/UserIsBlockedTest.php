@@ -10,7 +10,7 @@ namespace Drupal\rules\Tests\Condition;
 use Drupal\system\Tests\Entity\EntityUnitTestBase;
 
 /**
- * Tests the user is blocked condition.
+ * Tests the 'User is blocked' condition.
  */
 class UserIsBlockedTest extends EntityUnitTestBase {
 
