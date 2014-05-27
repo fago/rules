@@ -5,4 +5,3 @@ package: Rules
 core: 8.x
 dependencies:
   - rules
-hidden: TRUE
