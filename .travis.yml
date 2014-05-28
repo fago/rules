@@ -54,7 +54,7 @@ before_script:
   #- until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
 
 script:
-  # Run the Simpletests.
-  - drush test-run 'Rules' --uri=http://127.0.0.1:8080
+  # Run the Simpletests for Rules.
+  - drush test-run 'Rules, Rules conditions' --uri=http://127.0.0.1:8080
   # Run the PHPUnit tests.
   - ./vendor/bin/phpunit ../modules/rules
