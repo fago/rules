@@ -17,7 +17,7 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('rules');
+  public static $modules = array('node', 'rules');
 
   /**
    * The condition manager.
@@ -25,6 +25,13 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
    * @var \Drupal\Core\Condition\ConditionManager
    */
   protected $conditionManager;
+
+  /**
+   * The node storage.
+   *
+   * @var \Drupal\node\NodeStorage
+   */
+  protected $nodeStorage;
 
   /**
    * {@inheritdoc}
@@ -43,25 +50,11 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
   public function setUp() {
     parent::setup();
     $this->conditionManager = $this->container->get('plugin.manager.condition', $this->container->get('container.namespaces'));
-    $this->nodeType = entity_create('node_type', array('type' => 'page'));
-  }
+    $this->nodeStorage = $this->entityManager->getStorage('node');
 
-  /**
-   * Returns a node object for testing.
-   *
-   * @param array $values
-   *   An array of values to create the node with.
-   *
-   * @return \Drupal\Node\NodeInterface
-   *   The created node.
-   */
-  protected function getNode($values = array()) {
-    // @todo: Use an entity factory once we have on instead.
-    return entity_create('node', $values + array(
-      'title' => $this->randomName(),
-      'type' => $this->nodeType->type,
-      'status' => 1,
-    ));
+    $this->entityManager->getStorage('node_type')
+      ->create(array('type' => 'page'))
+      ->save();
   }
 
   /**
@@ -69,13 +62,23 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
    */
   public function testConditionEvaluation() {
     // Test with a published node.
+    $node = $this->nodeStorage->create(array(
+      'type' => 'page',
+      'status' => 1,
+    ));
+
     $condition = $this->conditionManager->createInstance('rules_node_is_published')
-      ->setContextValue('node', $this->getNode(array('status' => 1)));
+      ->setContextValue('node', $node);
     $this->assertTrue($condition->execute());
 
     // Test with an unpublished node.
+    $node = $this->nodeStorage->create(array(
+      'type' => 'page',
+      'status' => 0,
+    ));
+
     $condition = $this->conditionManager->createInstance('rules_node_is_published')
-      ->setContextValue('node', $this->getNode(array('status' => 0)));
+      ->setContextValue('node', $node);
     $this->assertFalse($condition->execute());
   }
 
