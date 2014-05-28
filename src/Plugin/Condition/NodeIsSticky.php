@@ -17,10 +17,14 @@ use Drupal\Core\Condition\ConditionPluginBase;
  *   label = @Translation("Node is sticky"),
  *   context = {
  *     "node" = {
- *       "type" = "entity:node",
+ *       "label" = @Translation("Node"),
+ *       "type" = "entity:node"
  *     }
  *   }
  * )
+ *
+ * @todo: Add access callback information from Drupal 7.
+ * @todo: Add group information from Drupal 7.
  */
 class NodeIsSticky extends ConditionPluginBase {
 
