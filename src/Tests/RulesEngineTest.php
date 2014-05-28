@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Tests\RulesEngineTest.
+ * Contains \Drupal\rules\Tests\RulesEngineTest.
  */
 
 namespace Drupal\rules\Tests;

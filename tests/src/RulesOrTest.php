@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Tests\RulesOrTest.
+ * Contains \Drupal\rules\Tests\RulesOrTest.
  */
 
 namespace Drupal\rules\Tests;
@@ -42,7 +42,7 @@ class RulesOrTest extends RulesTestBase {
   }
 
   /**
-   * Test an empty OR.
+   * Tests an empty OR.
    */
   public function testemptyOr() {
     // Create a test rule, we don't care about plugin information in the

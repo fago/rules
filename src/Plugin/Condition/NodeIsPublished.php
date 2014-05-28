@@ -10,7 +10,7 @@ namespace Drupal\rules\Plugin\Condition;
 use Drupal\Core\Condition\ConditionPluginBase;
 
 /**
- * Provides a 'Node Is Published' condition.
+ * Provides a 'Node is published' condition.
  *
  * @Condition(
  *   id = "rules_node_is_published",

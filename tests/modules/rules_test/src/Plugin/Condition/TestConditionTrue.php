@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules_test\Plugin\Condition\TestConditionTrue.
+ * Contains \Drupal\rules_test\Plugin\Condition\TestConditionTrue.
  */
 
 namespace Drupal\rules_test\Plugin\Condition;
