@@ -34,13 +34,6 @@ class NodeIsStickyTest extends EntityUnitTestBase {
   protected $nodeStorage;
 
   /**
-   * The node type used for testing.
-   *
-   * @var \Drupal\node\Entity\NodeType
-   */
-  protected $nodeType;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -56,11 +49,12 @@ class NodeIsStickyTest extends EntityUnitTestBase {
    */
   public function setUp() {
     parent::setup();
-    $entity_manager = $this->container->get('entity.manager');
     $this->conditionManager = $this->container->get('plugin.manager.condition', $this->container->get('container.namespaces'));
-    $this->nodeStorage = $entity_manager->getStorage('node');
-    $this->nodeType = $entity_manager->getStorage('node_type')
-      ->create('node_type', array('type' => 'page'));
+    $this->nodeStorage = $this->entityManager->getStorage('node');
+
+    $this->entityManager->getStorage('node_type')
+      ->create(array('type' => 'page'))
+      ->save();
   }
 
   /**
@@ -69,7 +63,7 @@ class NodeIsStickyTest extends EntityUnitTestBase {
   public function testConditionEvaluation() {
     // Test with a sticky node.
     $node = $this->nodeStorage->create(array(
-      'type' => $this->nodeType->bundle(),
+      'type' => 'page',
       'sticky' => 1,
     ));
 
@@ -79,7 +73,7 @@ class NodeIsStickyTest extends EntityUnitTestBase {
 
     // Test with an non-sticky node.
     $node = $this->nodeStorage->create(array(
-      'type' => $this->nodeType->bundle(),
+      'type' => 'page',
       'sticky' => 0,
     ));
 
