@@ -47,7 +47,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('rules', 'rules_test', 'system');
+  public static $modules = ['rules', 'rules_test', 'system'];
 
   /**
    * {@inheritdoc}

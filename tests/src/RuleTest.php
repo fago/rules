@@ -18,11 +18,11 @@ class RuleTest extends RulesTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'Rule class tests',
       'description' => 'Test the Rule class',
       'group' => 'Rules',
-    );
+    ];
   }
 
   /**
@@ -35,7 +35,7 @@ class RuleTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $rule = new Rule(array(), 'test', array());
+    $rule = new Rule([], 'test', []);
     $rule->addCondition($this->trueCondition);
     $rule->addAction($this->testAction);
     $rule->execute();
@@ -51,7 +51,7 @@ class RuleTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $rule = new Rule(array(), 'test', array());
+    $rule = new Rule([], 'test', []);
     $rule->addCondition($this->falseCondition);
     $rule->addAction($this->testAction);
     $rule->execute();
@@ -67,7 +67,7 @@ class RuleTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $rule = new Rule(array(), 'test', array());
+    $rule = new Rule([], 'test', []);
     $rule->addCondition($this->trueCondition);
     $rule->addCondition($this->trueCondition);
     $rule->addAction($this->testAction);
@@ -84,7 +84,7 @@ class RuleTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $rule = new Rule(array(), 'test', array());
+    $rule = new Rule([], 'test', []);
     $rule->addCondition($this->trueCondition);
     $rule->addCondition($this->falseCondition);
     $rule->addAction($this->testAction);

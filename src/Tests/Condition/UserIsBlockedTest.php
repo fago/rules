@@ -17,7 +17,7 @@ class UserIsBlockedTest extends EntityUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('rules');
+  public static $modules = ['rules'];
 
   /**
    * The condition manager.
@@ -30,11 +30,11 @@ class UserIsBlockedTest extends EntityUnitTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'User is blocked condition test',
       'description' => 'Tests the user is blocked condition.',
       'group' => 'Rules conditions',
-    );
+    ];
   }
 
   /**
@@ -50,12 +50,12 @@ class UserIsBlockedTest extends EntityUnitTestBase {
    *
    * @return \Drupal\user\UserInterface
    */
-  protected function getUser($values = array()) {
+  protected function getUser($values = []) {
     // @todo: Use an entity factory once we have on instead.
-    return entity_create('user', $values + array(
+    return entity_create('user', $values + [
       'name' => $this->randomName(),
       'status' => 1,
-    ));
+    ]);
   }
 
   /**
@@ -64,12 +64,12 @@ class UserIsBlockedTest extends EntityUnitTestBase {
   public function testConditionEvaluation() {
     // Test with a non-blocked user.
     $condition = $this->conditionManager->createInstance('rules_user_is_blocked')
-      ->setContextValue('user', $this->getUser(array('status' => 1)));
+      ->setContextValue('user', $this->getUser(['status' => 1]));
     $this->assertFalse($condition->execute());
 
     // Test with a blocked user.
     $condition = $this->conditionManager->createInstance('rules_user_is_blocked')
-      ->setContextValue('user', $this->getUser(array('status' => 0)));
+      ->setContextValue('user', $this->getUser(['status' => 0]));
     $this->assertTrue($condition->execute());
   }
 

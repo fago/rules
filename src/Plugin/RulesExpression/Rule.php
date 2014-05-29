@@ -33,7 +33,7 @@ class Rule extends PluginBase implements RuleInterface {
    *
    * @var \Drupal\Core\Action\ActionInterface[]
    */
-  protected $actions = array();
+  protected $actions = [];
 
   /**
    * {@inheritdoc}
