@@ -36,7 +36,7 @@ class RulesAndTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $and = new RulesAnd(array(), 'test', array());
-    $and->condition($this->trueCondition);
+    $and->addCondition($this->trueCondition);
     $result = $and->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
   }
@@ -63,8 +63,8 @@ class RulesAndTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $and = new RulesAnd(array(), 'test', array());
-    $and->condition($this->trueCondition);
-    $and->condition($this->trueCondition);
+    $and->addCondition($this->trueCondition);
+    $and->addCondition($this->trueCondition);
     $result = $and->execute();
     $this->assertTrue($result, 'Two conditions returns TRUE.');
   }
@@ -80,8 +80,8 @@ class RulesAndTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $and = new RulesAnd(array(), 'test', array());
-    $and->condition($this->falseCondition);
-    $and->condition($this->falseCondition);
+    $and->addCondition($this->falseCondition);
+    $and->addCondition($this->falseCondition);
     $result = $and->execute();
     $this->assertFalse($result, 'Two false conditions return FALSE.');
   }

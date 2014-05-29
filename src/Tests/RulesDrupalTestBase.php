@@ -10,7 +10,6 @@ namespace Drupal\rules\Tests;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Condition\ConditionManager;
-use Drupal\Core\Entity\Query\ConditionInterface;
 use Drupal\rules\Annotation\RulesExpression;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
@@ -99,7 +98,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    * @param string $id
    *   The condition plugin id.
    *
-   * @return \Drupal\Core\Condition\ConditionInterface
+   * @return \Drupal\rules\Engine\RulesConditionInterface
    */
   protected function createCondition($id) {
     return $this->conditionManager->createInstance($id);

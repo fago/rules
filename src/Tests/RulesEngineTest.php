@@ -30,16 +30,16 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testRuleCreation() {
     $rule = $this->createRule();
-    $rule->condition($this->createCondition('rules_test_true'))
-      ->condition($this->createCondition('rules_test_true'))
-      ->condition($this->createExpression('rules_or')
-        ->condition($this->createCondition('rules_test_true')->negate())
-        ->condition($this->createCondition('rules_test_false'))
-        ->condition($this->createExpression('rules_and')
-          ->condition($this->createCondition('rules_test_false'))
-          ->condition($this->createCondition('rules_test_true')->negate())
+    $rule->addCondition($this->createCondition('rules_test_true'))
+      ->addCondition($this->createCondition('rules_test_true'))
+      ->addCondition($this->createExpression('rules_or')
+        ->addCondition($this->createCondition('rules_test_true')->negate())
+        ->addCondition($this->createCondition('rules_test_false'))
+        ->addCondition($this->createExpression('rules_and')
+          ->addCondition($this->createCondition('rules_test_false'))
+          ->addCondition($this->createCondition('rules_test_true')->negate())
           ->negate()));
-    $rule->action($this->createAction('rules_test_log'));
+    $rule->addAction($this->createAction('rules_test_log'));
     $rule->execute();
     $log = RulesLog::logger()->get();
     $this->assertEqual($log[0][0], 'action called');
