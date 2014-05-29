@@ -7,26 +7,31 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\Condition\ConditionPluginBase;
+use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\RulesConditionBase;
 
 /**
  * Provides a 'Node is sticky' condition.
  *
  * @Condition(
  *   id = "rules_node_is_sticky",
- *   label = @Translation("Node is sticky"),
- *   context = {
- *     "node" = {
- *       "label" = @Translation("Node"),
- *       "type" = "entity:node"
- *     }
- *   }
+ *   label = @Translation("Node is sticky")
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class NodeIsSticky extends ConditionPluginBase {
+class NodeIsSticky extends RulesConditionBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function contextDefinitions() {
+    $contexts['node'] = ContextDefinition::create('entity:node')
+      ->setLabel(t('Node'));
+
+    return $contexts;
+  }
 
   /**
    * {@inheritdoc}

@@ -7,26 +7,31 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\Condition\ConditionPluginBase;
+use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\RulesConditionBase;
 
 /**
  * Provides a 'Node is published' condition.
  *
  * @Condition(
  *   id = "rules_node_is_published",
- *   label = @Translation("Node is published"),
- *   context = {
- *     "node" = {
- *       "label" = @Translation("Node"),
- *       "type" = "entity:node"
- *     }
- *   }
+ *   label = @Translation("Node is published")
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class NodeIsPublished extends ConditionPluginBase {
+class NodeIsPublished extends RulesConditionBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function contextDefinitions() {
+    $contexts['node'] = ContextDefinition::create('entity:node')
+      ->setLabel(t('Node'));
+
+    return $contexts;
+  }
 
   /**
    * {@inheritdoc}
