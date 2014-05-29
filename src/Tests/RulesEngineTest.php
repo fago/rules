@@ -18,11 +18,11 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'Rules engine tests',
       'description' => 'Test using the Rules API to create and evaluate rules.',
       'group' => 'Rules',
-    );
+    ];
   }
 
   /**

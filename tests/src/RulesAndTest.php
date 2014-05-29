@@ -18,11 +18,11 @@ class RulesAndTest extends RulesTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'RulesAnd class tests',
       'description' => 'Test the RuleAnd class',
       'group' => 'Rules',
-    );
+    ];
   }
 
   /**
@@ -35,7 +35,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd(array(), 'test', array());
+    $and = new RulesAnd([], 'test', []);
     $and->addCondition($this->trueCondition);
     $result = $and->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
@@ -47,7 +47,7 @@ class RulesAndTest extends RulesTestBase {
   public function testemptyAnd() {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd(array(), 'test', array());
+    $and = new RulesAnd([], 'test', []);
     $result = $and->execute();
     $this->assertFalse($result, 'Empty AND returns FALSE.');
   }
@@ -62,7 +62,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd(array(), 'test', array());
+    $and = new RulesAnd([], 'test', []);
     $and->addCondition($this->trueCondition);
     $and->addCondition($this->trueCondition);
     $result = $and->execute();
@@ -79,7 +79,7 @@ class RulesAndTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $and = new RulesAnd(array(), 'test', array());
+    $and = new RulesAnd([], 'test', []);
     $and->addCondition($this->falseCondition);
     $and->addCondition($this->falseCondition);
     $result = $and->execute();

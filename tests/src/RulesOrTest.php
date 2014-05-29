@@ -18,11 +18,11 @@ class RulesOrTest extends RulesTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'RulesOr class tests',
       'description' => 'Test the RuleOr class',
       'group' => 'Rules',
-    );
+    ];
   }
 
   /**
@@ -35,7 +35,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr(array(), 'test', array());
+    $or = new RulesOr([], 'test', []);
     $or->addCondition($this->trueCondition);
     $result = $or->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
@@ -47,7 +47,7 @@ class RulesOrTest extends RulesTestBase {
   public function testemptyOr() {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr(array(), 'test', array());
+    $or = new RulesOr([], 'test', []);
     $result = $or->execute();
     $this->assertTrue($result, 'Empty OR returns TRUE.');
   }
@@ -62,7 +62,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr(array(), 'test', array());
+    $or = new RulesOr([], 'test', []);
     $or->addCondition($this->trueCondition);
     $or->addCondition($this->trueCondition);
     $result = $or->execute();
@@ -79,7 +79,7 @@ class RulesOrTest extends RulesTestBase {
 
     // Create a test rule, we don't care about plugin information in the
     // constructor.
-    $or = new RulesOr(array(), 'test', array());
+    $or = new RulesOr([], 'test', []);
     $or->addCondition($this->falseCondition);
     $or->addCondition($this->falseCondition);
     $result = $or->execute();

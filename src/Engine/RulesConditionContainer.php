@@ -19,7 +19,7 @@ abstract class RulesConditionContainer extends ConditionPluginBase implements Ru
    *
    * @var \Drupal\rules\Engine\RulesConditionInterface[]
    */
-  protected $conditions = array();
+  protected $conditions = [];
 
   /**
    * {@inheritdoc}

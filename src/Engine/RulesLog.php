@@ -31,7 +31,7 @@ class RulesLog {
     return self::$logger;
   }
 
-  protected $log = array();
+  protected $log = [];
   protected $logLevel, $line = 0;
 
   /**
@@ -50,9 +50,9 @@ class RulesLog {
    *
    * @see rules_log()
    */
-  public function log($msg, $args = array(), $logLevel = self::INFO, $scope = NULL, $path = NULL) {
+  public function log($msg, $args = [], $logLevel = self::INFO, $scope = NULL, $path = NULL) {
     if ($logLevel >= $this->logLevel) {
-      $this->log[] = array($msg, $args, $logLevel, microtime(TRUE), $scope, $path);
+      $this->log[] = [$msg, $args, $logLevel, microtime(TRUE), $scope, $path];
     }
   }
 
@@ -94,7 +94,7 @@ class RulesLog {
    */
   public function render() {
     $line = 0;
-    $output = array();
+    $output = [];
     while (isset($this->log[$line])) {
       $vars['head'] = t($this->log[$line][0], $this->log[$line][1]);
       $vars['log'] = $this->renderHelper($line);
@@ -109,7 +109,7 @@ class RulesLog {
    */
   protected function renderHelper(&$line = 0) {
     $startTime = isset($this->log[$line][3]) ? $this->log[$line][3] : 0;
-    $output = array();
+    $output = [];
     while ($line < count($this->log)) {
       if ($output && !empty($this->log[$line][4])) {
         // The next entry stems from another evaluated set, add in its log
@@ -135,18 +135,18 @@ class RulesLog {
 
         if (isset($this->log[$line][4]) && !$this->log[$line][4]) {
           // This was the last log entry of this set.
-          return theme('item_list', array('items' => $output));
+          return theme('item_list', ['items' => $output]);
         }
       }
       $line++;
     }
-    return theme('item_list', array('items' => $output));
+    return theme('item_list', ['items' => $output]);
   }
 
   /**
    * Clears the logged messages.
    */
   public function clear() {
-    $this->log = array();
+    $this->log = [];
   }
 }

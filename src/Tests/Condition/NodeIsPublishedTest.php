@@ -17,7 +17,7 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('node', 'rules');
+  public static $modules = ['node', 'rules'];
 
   /**
    * The condition manager.
@@ -37,11 +37,11 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'Node is published condition test',
       'description' => 'Tests the condition.',
       'group' => 'Rules conditions',
-    );
+    ];
   }
 
   /**
@@ -53,7 +53,7 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
     $this->nodeStorage = $this->entityManager->getStorage('node');
 
     $this->entityManager->getStorage('node_type')
-      ->create(array('type' => 'page'))
+      ->create(['type' => 'page'])
       ->save();
   }
 
@@ -62,20 +62,20 @@ class NodeIsPublishedTest extends EntityUnitTestBase {
    */
   public function testConditionEvaluation() {
     // Test with a published node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'status' => 1,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_published')
       ->setContextValue('node', $node);
     $this->assertTrue($condition->execute());
 
     // Test with an unpublished node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'status' => 0,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_published')
       ->setContextValue('node', $node);

@@ -17,7 +17,7 @@ class NodeIsStickyTest extends EntityUnitTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = array('node', 'rules');
+  public static $modules = ['node', 'rules'];
 
   /**
    * The condition manager.
@@ -37,11 +37,11 @@ class NodeIsStickyTest extends EntityUnitTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'Node is sticky condition test',
       'description' => 'Tests the node is sticky condition.',
       'group' => 'Rules conditions',
-    );
+    ];
   }
 
   /**
@@ -53,7 +53,7 @@ class NodeIsStickyTest extends EntityUnitTestBase {
     $this->nodeStorage = $this->entityManager->getStorage('node');
 
     $this->entityManager->getStorage('node_type')
-      ->create(array('type' => 'page'))
+      ->create(['type' => 'page'])
       ->save();
   }
 
@@ -62,20 +62,20 @@ class NodeIsStickyTest extends EntityUnitTestBase {
    */
   public function testConditionEvaluation() {
     // Test with a sticky node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'sticky' => 1,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_sticky')
       ->setContextValue('node', $node);
     $this->assertTrue($condition->execute());
 
     // Test with an non-sticky node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'sticky' => 0,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_sticky')
       ->setContextValue('node', $node);
