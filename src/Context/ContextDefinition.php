@@ -40,7 +40,7 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * @var array[]
    */
-  protected $constraints;
+  protected $constraints = [];
 
   /**
    * Creates a new context definition.

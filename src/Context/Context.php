@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Context;
 
+use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
@@ -39,6 +41,12 @@ class Context implements ContextInterface {
    * {@inheritdoc}
    */
   public function getContextValue() {
+    // Special case entities.
+    // @todo: Remove once entities do not implemented TypedDataInterface any
+    // more.
+    if ($this->contextData instanceof ContentEntityInterface) {
+      return $this->contextData;
+    }
     return $this->contextData->getValue();
   }
 
@@ -46,7 +54,12 @@ class Context implements ContextInterface {
    * {@inheritdoc}
    */
   public function setContextValue($value) {
-    return $this->setContextData(\Drupal::typedDataManager()->create($this->contextDefinition->getDataDefinition(), $value));
+    if ($value instanceof TypedDataInterface) {
+      return $this->setContextData($value);
+    }
+    else {
+      return $this->setContextData(\Drupal::typedDataManager()->create($this->contextDefinition->getDataDefinition(), $value));
+    }
   }
 
   /**
