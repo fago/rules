@@ -7,31 +7,24 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Condition\ConditionInterface;
 use Drupal\Core\Condition\ConditionPluginBase;
 
 /**
  * Container for conditions.
  */
-abstract class RulesConditionContainer extends ConditionPluginBase implements RulesConditionInterface {
+abstract class RulesConditionContainer extends ConditionPluginBase implements RulesConditionContainerInterface {
 
   /**
    * List of conditions that are evaluated.
    *
-   * @var array
+   * @var \Drupal\rules\Engine\RulesConditionInterface[]
    */
   protected $conditions = array();
 
   /**
-   * Add a condition.
-   *
-   * @param \Drupal\Core\Condition\ConditionInterface $condition
-   *   The condition object.
-   *
-   * @return \Drupal\rules\Plugin\RulesExpression\Rule
-   *   The current rule object for chaining.
+   * {@inheritdoc}
    */
-  public function condition(ConditionInterface $condition) {
+  public function addCondition(RulesConditionInterface $condition) {
     $this->conditions[] = $condition;
     return $this;
   }

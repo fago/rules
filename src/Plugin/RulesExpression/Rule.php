@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
-use Drupal\Core\Condition\ConditionInterface;
+use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
  * Defines a rule, executing actions when conditions are met.
@@ -19,19 +19,19 @@ use Drupal\Core\Condition\ConditionInterface;
  *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
-class Rule extends PluginBase implements ActionInterface {
+class Rule extends PluginBase implements RuleInterface {
 
   /**
    * List of conditions that must be met before actions are executed.
    *
-   * @var array
+   * @var \Drupal\rules\Engine\RulesConditionInterface[]
    */
   protected $conditions = array();
 
   /**
    * List of actions that get executed if the conditions are met.
    *
-   * @var array
+   * @var \Drupal\Core\Action\ActionInterface[]
    */
   protected $actions = array();
 
@@ -52,31 +52,33 @@ class Rule extends PluginBase implements ActionInterface {
   }
 
   /**
-   * Add a condition.
-   *
-   * @param \Drupal\Core\Condition\ConditionInterface $condition
-   *   The condition object.
-   *
-   * @return $this
-   *   The current rule object for chaining.
+   * {@inheritdoc}
    */
-  public function condition(ConditionInterface $condition) {
+  public function addCondition(RulesConditionInterface $condition) {
     $this->conditions[] = $condition;
     return $this;
   }
 
   /**
-   * Adds an action.
-   *
-   * @param \Drupal\Core\Action\ActionInterface $action
-   *   The action object to add.
-   *
-   * @return $this
-   *   The current rule object for chaining.
+   * {@inheritdoc}
    */
-  public function action(ActionInterface $action) {
+  public function getConditions() {
+    return $this->conditions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addAction(ActionInterface $action) {
     $this->actions[] = $action;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getActions() {
+    return $this->actions;
   }
 
   /**

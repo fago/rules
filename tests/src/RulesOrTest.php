@@ -36,7 +36,7 @@ class RulesOrTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $or = new RulesOr(array(), 'test', array());
-    $or->condition($this->trueCondition);
+    $or->addCondition($this->trueCondition);
     $result = $or->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
   }
@@ -63,8 +63,8 @@ class RulesOrTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $or = new RulesOr(array(), 'test', array());
-    $or->condition($this->trueCondition);
-    $or->condition($this->trueCondition);
+    $or->addCondition($this->trueCondition);
+    $or->addCondition($this->trueCondition);
     $result = $or->execute();
     $this->assertTrue($result, 'Two conditions returns TRUE.');
   }
@@ -80,8 +80,8 @@ class RulesOrTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $or = new RulesOr(array(), 'test', array());
-    $or->condition($this->falseCondition);
-    $or->condition($this->falseCondition);
+    $or->addCondition($this->falseCondition);
+    $or->addCondition($this->falseCondition);
     $result = $or->execute();
     $this->assertFalse($result, 'Two false conditions return FALSE.');
   }

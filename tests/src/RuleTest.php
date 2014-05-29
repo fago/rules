@@ -36,8 +36,8 @@ class RuleTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $rule = new Rule(array(), 'test', array());
-    $rule->condition($this->trueCondition);
-    $rule->action($this->testAction);
+    $rule->addCondition($this->trueCondition);
+    $rule->addAction($this->testAction);
     $rule->execute();
   }
 
@@ -52,8 +52,8 @@ class RuleTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $rule = new Rule(array(), 'test', array());
-    $rule->condition($this->falseCondition);
-    $rule->action($this->testAction);
+    $rule->addCondition($this->falseCondition);
+    $rule->addAction($this->testAction);
     $rule->execute();
   }
 
@@ -68,9 +68,9 @@ class RuleTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $rule = new Rule(array(), 'test', array());
-    $rule->condition($this->trueCondition);
-    $rule->condition($this->trueCondition);
-    $rule->action($this->testAction);
+    $rule->addCondition($this->trueCondition);
+    $rule->addCondition($this->trueCondition);
+    $rule->addAction($this->testAction);
     $rule->execute();
   }
 
@@ -85,9 +85,9 @@ class RuleTest extends RulesTestBase {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $rule = new Rule(array(), 'test', array());
-    $rule->condition($this->trueCondition);
-    $rule->condition($this->falseCondition);
-    $rule->action($this->testAction);
+    $rule->addCondition($this->trueCondition);
+    $rule->addCondition($this->falseCondition);
+    $rule->addAction($this->testAction);
     $rule->execute();
   }
 }
