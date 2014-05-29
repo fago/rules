@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 

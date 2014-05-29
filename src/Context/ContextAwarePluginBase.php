@@ -9,7 +9,6 @@ namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\TypedData\TypedDataInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
@@ -34,7 +33,7 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
   /**
    * Defines the needed context of this plugin.
    *
-   * @todo: This should be abstract.
+   * @todo: Can we make this abstract somehow?
    *
    * @return \Drupal\rules\Context\ContextDefinitionInterface[]
    *   The array of context definitions, keyed by context name.
