@@ -41,7 +41,7 @@ abstract class RulesTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionContainer')
+    $this->trueCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -49,7 +49,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionContainer')
+    $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
