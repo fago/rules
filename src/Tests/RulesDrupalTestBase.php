@@ -89,7 +89,9 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    * @return \Drupal\Core\Action\ActionInterface
    */
   protected function createAction($id) {
-    return $this->actionManager->createInstance($id);
+    $actionExpression = $this->rulesExpressionManager->createInstance('rules_action');
+    $actionExpression->setActionPluginId($id);
+    return $actionExpression;
   }
 
   /**
