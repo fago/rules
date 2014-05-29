@@ -15,12 +15,12 @@ use Drupal\rules\Annotation\RulesExpression;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
-use Drupal\simpletest\DrupalUnitTestBase;
+use Drupal\simpletest\KernelTestBase;
 
 /**
  * Base class for Rules Drupal unit tests.
  */
-abstract class RulesDrupalTestBase extends DrupalUnitTestBase {
+abstract class RulesDrupalTestBase extends KernelTestBase {
 
   /**
    * The rules expression plugin manager.
