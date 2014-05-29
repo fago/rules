@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Action\ActionInterface;
+use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
@@ -33,6 +34,17 @@ interface RuleInterface extends ActionInterface {
    *   The conditions of this rule.
    */
   public function getConditions();
+
+  /**
+   * Sets the condition container.
+   *
+   * @param \Drupal\rules\Engine\RulesConditionContainerInterface $conditions
+   *   The condition container to set.
+   *
+   * @return $this
+   *   The current rule object for chaining.
+   */
+  public function setConditions(RulesConditionContainerInterface $conditions);
 
   /**
    * Adds an action.

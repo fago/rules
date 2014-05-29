@@ -101,6 +101,10 @@ abstract class RulesTestBase extends UnitTestCase {
         'provider' => 'rules',
       ]));
 
+    // Set the condition container that would otherwise get initialized in the
+    // constructor.
+    $rule->setConditions($this->getMockAnd());
+
     return $rule;
   }
 
