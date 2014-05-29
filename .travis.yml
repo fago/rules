@@ -36,7 +36,7 @@ before_script:
   # create new site, stubbing sendmail path with true to prevent delivery errors and manually resolving drush path
   - mysql -e 'create database rules'
   # Download Drupal 8 core.
-  - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes dl drupal-8.x-dev
+  - wget -q -O - http://ftp.drupal.org/files/projects/drupal-8.x-dev.tar.gz | tar xz
   - cd drupal-8.x-dev
   # Install Drupal.
   - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/rules testing
