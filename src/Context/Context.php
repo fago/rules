@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Component\Plugin\Context\ContextInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
@@ -51,18 +50,14 @@ class Context implements ContextInterface {
   }
 
   /**
-   * Gets the context value as typed data object.
-   *
-   * @return \Drupal\Core\TypedData\TypedDataInterface
+   * {@inheritdoc}
    */
   public function getContextData() {
     return $this->getContextData;
   }
 
   /**
-   * Sets the context value as typed data object.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function setContextData(TypedDataInterface $data) {
     $this->contextData = $data;

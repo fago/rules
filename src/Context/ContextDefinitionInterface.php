@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\TypedData\DataDefinitionInterface;
-
 /**
  * Interface for context definitions.
  */
