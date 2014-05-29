@@ -1,13 +1,14 @@
 <?php
+
 /**
  * @file
- * 
+ * Contains \Drupal\rules\Context\ContextDefinition.
  */
 
 namespace Drupal\rules\Context;
 
 /**
- * Class ContextDefinition
+ * Defines a class for context definitions.
  */
 class ContextDefinition implements ContextDefinitionInterface {
 
@@ -29,12 +30,12 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * @var bool
    */
-  protected $isMultiple;
+  protected $isMultiple = FALSE;
 
   /**
    * @var bool
    */
-  protected $isRequired;
+  protected $isRequired = TRUE;
 
   /**
    * @var array[]
@@ -71,8 +72,24 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * {@inheritdoc}
    */
+  public function setDataType($data_type) {
+    $this->dataType = $data_type;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getLabel() {
     return $this->label;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLabel($label) {
+    $this->label = $label;
+    return $this;
   }
 
   /**
@@ -85,6 +102,14 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * {@inheritdoc}
    */
+  public function setDescription($description) {
+    $this->description = $description;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isMultiple() {
     return $this->isMultiple;
   }
@@ -92,8 +117,24 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * {@inheritdoc}
    */
+  public function setMultiple($multiple = TRUE) {
+    $this->isMultiple = $multiple;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isRequired() {
     return $this->isRequired;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setRequired($required = TRUE) {
+    $this->isRequired = $required;
+    return $this;
   }
 
   /**
@@ -115,6 +156,22 @@ class ContextDefinition implements ContextDefinitionInterface {
   /**
    * {@inheritdoc}
    */
+  public function setConstraints(array $constraints) {
+    $this->constraints = $constraints;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addConstraint($constraint_name, $options = NULL) {
+    $this->constraints[$constraint_name] = $options;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getDataDefinition() {
     // @todo: Setters are missing from the core data definition interfaces.
     if ($this->isMultiple()) {
@@ -125,7 +182,7 @@ class ContextDefinition implements ContextDefinitionInterface {
     }
     $definition->setLabel($this->getLabel())
       ->setDescription($this->getDescription())
-      ->setRequired($this->getRequired())
+      ->setRequired($this->isRequired())
       ->setConstraints($this->getConstraints());
     return $definition;
   }

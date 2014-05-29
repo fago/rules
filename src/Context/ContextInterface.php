@@ -15,7 +15,6 @@ use Drupal\Core\TypedData\TypedDataInterface;
  */
 interface ContextInterface extends CoreContextInterface {
 
-
   /**
    * Gets the context value as typed data object.
    *
@@ -30,5 +29,3 @@ interface ContextInterface extends CoreContextInterface {
    */
   public function setContextData(TypedDataInterface $data);
 }
-
-

@@ -21,6 +21,16 @@ interface ContextDefinitionInterface {
   public function getLabel();
 
   /**
+   * Sets the human readable label.
+   *
+   * @param string $label
+   *   The label to set.
+   *
+   * @return $this
+   */
+  public function setLabel($label);
+
+  /**
    * Returns a human readable description.
    *
    * @return string|null
@@ -29,7 +39,17 @@ interface ContextDefinitionInterface {
   public function getDescription();
 
   /**
-   * Returns the data type required by the context.
+   * Sets the human readable description.
+   *
+   * @param string|null $description
+   *   The description to set.
+   *
+   * @return $this
+   */
+  public function setDescription($description);
+
+  /**
+   * Returns the data type needed by the context.
    *
    * If the context is multiple-valued, this represents the type of each value.
    *
@@ -37,6 +57,16 @@ interface ContextDefinitionInterface {
    *   The data type.
    */
   public function getDataType();
+
+  /**
+   * Sets the data type needed by the context.
+   *
+   * @param string $data_type
+   *   The data type to set.
+   *
+   * @return $this
+   */
+  public function setDataType($data_type);
 
   /**
    * Returns whether the data is multi-valued, i.e. a list of data items.
@@ -50,6 +80,16 @@ interface ContextDefinitionInterface {
   public function isMultiple();
 
   /**
+   * Sets whether the data is multi-valued.
+   *
+   * @param bool $multiple
+   *   (optional) Whether the data is multi-valued. Defaults to TRUE.
+   *
+   * @return $this
+   */
+  public function setMultiple($multiple = TRUE);
+
+  /**
    * Determines whether the context is required.
    *
    * For required data a non-NULL value is mandatory.
@@ -58,6 +98,16 @@ interface ContextDefinitionInterface {
    *   Whether a data value is required.
    */
   public function isRequired();
+
+  /**
+   * Sets whether the data is required.
+   *
+   * @param bool $required
+   *   (optional) Whether the data is multi-valued. Defaults to TRUE.
+   *
+   * @return $this
+   */
+  public function setRequired($required = TRUE);
 
   /**
    * Returns an array of validation constraints.
@@ -70,6 +120,36 @@ interface ContextDefinitionInterface {
    *   \Symfony\Component\Validator\Constraint objects.
    */
   public function getConstraints();
+
+  /**
+   * Sets the array of validation constraints.
+   *
+   * NOTE: This will override any previously set constraints. In most cases
+   * ContextDefinitionInterface::addConstraint() should be used instead.
+   *
+   * @param array $constraints
+   *   The array of constraints. See
+   *   \Drupal\Core\TypedData\TypedDataManager::getConstraints() for details.
+   *
+   * @return $this
+   *
+   * @see \Drupal\rules\Context\ContextDefinitionInterface::addConstraint()
+   */
+  public function setConstraints(array $constraints);
+
+  /**
+   * Adds a validation constraint.
+   *
+   * See \Drupal\Core\TypedData\TypedDataManager::getConstraints() for details.
+   *
+   * @param string $constraint_name
+   *   The name of the constraint to add, i.e. its plugin id.
+   * @param array|null $options
+   *   The constraint options as required by the constraint plugin, or NULL.
+   *
+   * @return $this
+   */
+  public function addConstraint($constraint_name, $options = NULL);
 
   /**
    * Returns a validation constraint.

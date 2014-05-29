@@ -52,10 +52,11 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
    * {@inheritdoc}
    */
   public function getContextDefinition($name) {
-    if (empty($this->contextDefinitions[$name])) {
+    $definitions = $this->getContextDefinitions();
+    if (empty($definitions[$name])) {
       throw new ContextException("The $name context is not a valid context.");
     }
-    return $this->contextDefinitions[$name];
+    return $definitions[$name];
   }
 
   /**
