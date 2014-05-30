@@ -37,7 +37,7 @@ class NodeIsSticky extends RulesConditionBase {
    * {@inheritdoc}
    */
   public function summary() {
-    return t('Node is sticky');
+    return $this->t('Node is sticky');
   }
 
   /**
