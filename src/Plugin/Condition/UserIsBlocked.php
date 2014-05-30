@@ -37,7 +37,7 @@ class UserIsBlocked extends RulesConditionBase {
    * {@inheritdoc}
    */
   public function summary() {
-    return t('User is blocked');
+    return $this->t('User is blocked');
   }
 
   /**
