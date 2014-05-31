@@ -87,9 +87,9 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return array(
+    return [
       'id' => $this->getPluginId(),
-    ) + $this->configuration;
+    ] + $this->configuration;
   }
 
   /**
@@ -104,14 +104,14 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
   }
 
 }

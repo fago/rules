@@ -37,11 +37,11 @@ class NodeIsPromotedTest extends EntityUnitTestBase {
    * {@inheritdoc}
    */
   public static function getInfo() {
-    return array(
+    return [
       'name' => 'Node is promoted condition tests',
       'description' => 'Tests the node is promoted condition.',
       'group' => 'Rules conditions',
-    );
+    ];
   }
 
   /**
@@ -62,20 +62,20 @@ class NodeIsPromotedTest extends EntityUnitTestBase {
    */
   public function testConditionEvaluation() {
     // Test with a promoted node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'promote' => NODE_PROMOTED,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_promoted')
       ->setContextValue('node', $node);
     $this->assertTrue($condition->execute());
 
     // Test with an unpublished node.
-    $node = $this->nodeStorage->create(array(
+    $node = $this->nodeStorage->create([
       'type' => 'page',
       'promote' => NODE_NOT_PROMOTED,
-    ));
+    ]);
 
     $condition = $this->conditionManager->createInstance('rules_node_is_promoted')
       ->setContextValue('node', $node);

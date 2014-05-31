@@ -26,7 +26,7 @@ class Rule extends PluginBase implements RuleInterface {
    *
    * @var \Drupal\rules\Engine\RulesConditionInterface[]
    */
-  protected $conditions = array();
+  protected $conditions = [];
 
   /**
    * List of actions that get executed if the conditions are met.
