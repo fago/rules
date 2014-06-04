@@ -65,7 +65,7 @@ class Context implements ContextInterface {
    * {@inheritdoc}
    */
   public function getContextData() {
-    return $this->getContextData;
+    return $this->contextData;
   }
 
   /**
