@@ -63,6 +63,48 @@ abstract class RulesTestBase extends UnitTestCase {
   }
 
   /**
+   * Creates a rule with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
+   *   The mocked rule.
+   */
+  public function getMockRule(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\Rule')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $rule->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue('rules_rule'));
+
+    $rule->expects($this->any())
+      ->method('getBasePluginId')
+      ->will($this->returnValue('rules_rule'));
+
+    $rule->expects($this->any())
+      ->method('getDerivativeId')
+      ->will($this->returnValue(NULL));
+
+    $rule->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue([
+        'type' => '',
+        'id' => 'rules_rule',
+        'label' => 'A rule, executing actions when conditions are met.',
+        'class' => 'Drupal\rules\Plugin\RulesExpression\Rule',
+        'provider' => 'rules',
+      ]));
+
+    return $rule;
+  }
+
+  /**
    * Creates an 'and' condition container with the basic plugin methods mocked.
    *
    * @param array $methods
