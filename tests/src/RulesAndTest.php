@@ -44,7 +44,7 @@ class RulesAndTest extends RulesTestBase {
   /**
    * Tests an empty AND.
    */
-  public function testemptyAnd() {
+  public function testEmptyAnd() {
     // Create a test rule, we don't care about plugin information in the
     // constructor.
     $and = new RulesAnd([], 'test', []);
