@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\rules\Plugin\RulesExpression;
+
 use Drupal\rules\Engine\RulesConditionContainer;
 
 /**
