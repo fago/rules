@@ -61,4 +61,89 @@ abstract class RulesTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
   }
+
+  /**
+   * Creates an 'and' condition container with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   *   The mocked 'and' condition container.
+   */
+  public function getMockAnd(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesAnd')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $rule->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue('rules_and'));
+
+    $rule->expects($this->any())
+      ->method('getBasePluginId')
+      ->will($this->returnValue('rules_and'));
+
+    $rule->expects($this->any())
+      ->method('getDerivativeId')
+      ->will($this->returnValue(NULL));
+
+    $rule->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue([
+        'type' => '',
+        'id' => 'rules_and',
+        'label' => 'Condition set (AND).',
+        'class' => 'Drupal\rules\Plugin\RulesExpression\RulesAnd',
+        'provider' => 'rules',
+      ]));
+
+    return $rule;
+  }
+
+  /**
+   * Creates an 'or' condition container with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   *   The mocked 'or' condition container.
+   */
+  public function getMockOr(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesOr')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $rule->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue('rules_or'));
+
+    $rule->expects($this->any())
+      ->method('getBasePluginId')
+      ->will($this->returnValue('rules_or'));
+
+    $rule->expects($this->any())
+      ->method('getDerivativeId')
+      ->will($this->returnValue(NULL));
+
+    $rule->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue([
+        'type' => '',
+        'id' => 'rules_or',
+        'label' => 'Condition set (OR).',
+        'class' => 'Drupal\rules\Plugin\RulesExpression\RulesOr',
+        'provider' => 'rules',
+      ]));
+
+    return $rule;
+  }
+
 }

@@ -7,12 +7,17 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\RulesExpression\RulesAnd;
-
 /**
  * Tests the rules AND condition plugin.
  */
 class RulesAndTest extends RulesTestBase {
+
+  /**
+   * A mocked 'and' condition container.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpression\RulesAnd
+   */
+  protected $testRulesAnd;
 
   /**
    * {@inheritdoc}
@@ -33,9 +38,7 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $and = new RulesAnd([], 'test', []);
+    $and = $this->getMockAnd();
     $and->addCondition($this->trueCondition);
     $result = $and->execute();
     $this->assertTrue($result, 'Single condition returns TRUE.');
@@ -45,9 +48,7 @@ class RulesAndTest extends RulesTestBase {
    * Tests an empty AND.
    */
   public function testEmptyAnd() {
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $and = new RulesAnd([], 'test', []);
+    $and = $this->getMockAnd();
     $result = $and->execute();
     $this->assertFalse($result, 'Empty AND returns FALSE.');
   }
@@ -60,9 +61,7 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->exactly(2))
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $and = new RulesAnd([], 'test', []);
+    $and = $this->getMockAnd();
     $and->addCondition($this->trueCondition);
     $and->addCondition($this->trueCondition);
     $result = $and->execute();
@@ -77,9 +76,7 @@ class RulesAndTest extends RulesTestBase {
     $this->falseCondition->expects($this->once())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $and = new RulesAnd([], 'test', []);
+    $and = $this->getMockAnd();
     $and->addCondition($this->falseCondition);
     $and->addCondition($this->falseCondition);
     $result = $and->execute();
