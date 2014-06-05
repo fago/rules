@@ -31,10 +31,10 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    $rule = $this->getMockRule();
-    $rule->addCondition($this->trueCondition);
-    $rule->addAction($this->testAction);
-    $rule->execute();
+    $this->getMockRule()
+      ->addCondition($this->trueCondition)
+      ->addAction($this->testAction)
+      ->execute();
   }
 
   /**
@@ -45,10 +45,10 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $rule = $this->getMockRule();
-    $rule->addCondition($this->falseCondition);
-    $rule->addAction($this->testAction);
-    $rule->execute();
+    $this->getMockRule()
+      ->addCondition($this->falseCondition)
+      ->addAction($this->testAction)
+      ->execute();
   }
 
   /**
@@ -59,11 +59,11 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    $rule = $this->getMockRule();
-    $rule->addCondition($this->trueCondition);
-    $rule->addCondition($this->trueCondition);
-    $rule->addAction($this->testAction);
-    $rule->execute();
+    $this->getMockRule()
+      ->addCondition($this->trueCondition)
+      ->addCondition($this->trueCondition)
+      ->addAction($this->testAction)
+      ->execute();
   }
 
   /**
@@ -74,10 +74,10 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $rule = $this->getMockRule();
-    $rule->addCondition($this->trueCondition);
-    $rule->addCondition($this->falseCondition);
-    $rule->addAction($this->testAction);
-    $rule->execute();
+    $this->getMockRule()
+      ->addCondition($this->trueCondition)
+      ->addCondition($this->falseCondition)
+      ->addAction($this->testAction)
+      ->execute();
   }
 }

@@ -44,8 +44,7 @@ class RulesOrTest extends RulesTestBase {
    */
   public function testemptyOr() {
     $or = $this->getMockOr();
-    $result = $or->execute();
-    $this->assertTrue($result, 'Empty OR returns TRUE.');
+    $this->assertTrue($or->execute(), 'Empty OR returns TRUE.');
   }
 
   /**
@@ -56,11 +55,11 @@ class RulesOrTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $or = $this->getMockOr();
-    $or->addCondition($this->trueCondition);
-    $or->addCondition($this->trueCondition);
-    $result = $or->execute();
-    $this->assertTrue($result, 'Two conditions returns TRUE.');
+    $or = $this->getMockOr()
+      ->addCondition($this->trueCondition)
+      ->addCondition($this->trueCondition);
+
+    $this->assertTrue($or->execute(), 'Two conditions returns TRUE.');
   }
 
   /**
@@ -71,10 +70,10 @@ class RulesOrTest extends RulesTestBase {
     $this->falseCondition->expects($this->exactly(2))
       ->method('execute');
 
-    $or = $this->getMockOr();
-    $or->addCondition($this->falseCondition);
-    $or->addCondition($this->falseCondition);
-    $result = $or->execute();
-    $this->assertFalse($result, 'Two false conditions return FALSE.');
+    $or = $this->getMockOr()
+      ->addCondition($this->falseCondition)
+      ->addCondition($this->falseCondition);
+
+    $this->assertFalse($or->execute(), 'Two false conditions return FALSE.');
   }
 }

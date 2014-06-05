@@ -38,10 +38,10 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $and = $this->getMockAnd();
-    $and->addCondition($this->trueCondition);
-    $result = $and->execute();
-    $this->assertTrue($result, 'Single condition returns TRUE.');
+    $and = $this->getMockAnd()
+      ->addCondition($this->trueCondition);
+
+    $this->assertTrue($and->execute(), 'Single condition returns TRUE.');
   }
 
   /**
@@ -49,8 +49,7 @@ class RulesAndTest extends RulesTestBase {
    */
   public function testEmptyAnd() {
     $and = $this->getMockAnd();
-    $result = $and->execute();
-    $this->assertFalse($result, 'Empty AND returns FALSE.');
+    $this->assertFalse($and->execute(), 'Empty AND returns FALSE.');
   }
 
   /**
@@ -61,11 +60,11 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->exactly(2))
       ->method('execute');
 
-    $and = $this->getMockAnd();
-    $and->addCondition($this->trueCondition);
-    $and->addCondition($this->trueCondition);
-    $result = $and->execute();
-    $this->assertTrue($result, 'Two conditions returns TRUE.');
+    $and = $this->getMockAnd()
+      ->addCondition($this->trueCondition)
+      ->addCondition($this->trueCondition);
+
+    $this->assertTrue($and->execute(), 'Two conditions returns TRUE.');
   }
 
   /**
@@ -76,10 +75,10 @@ class RulesAndTest extends RulesTestBase {
     $this->falseCondition->expects($this->once())
       ->method('execute');
 
-    $and = $this->getMockAnd();
-    $and->addCondition($this->falseCondition);
-    $and->addCondition($this->falseCondition);
-    $result = $and->execute();
-    $this->assertFalse($result, 'Two false conditions return FALSE.');
+    $and = $this->getMockAnd()
+      ->addCondition($this->falseCondition)
+      ->addCondition($this->falseCondition);
+
+    $this->assertFalse($and->execute(), 'Two false conditions return FALSE.');
   }
 }
