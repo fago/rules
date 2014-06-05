@@ -52,6 +52,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
    */
   public function negate($negate = TRUE) {
     $this->configuration['negate'] = $negate;
+    return $this;
   }
 
   /**
