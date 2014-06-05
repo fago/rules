@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
+use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,7 +48,7 @@ class ActionExpression extends PluginBase implements ActionInterface, ContainerF
    * @param \Drupal\Core\Action\ActionManager $actionManager
    *   The action manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, \Drupal\Core\Action\ActionManager $actionManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ActionManager $actionManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->actionManager = $actionManager;
