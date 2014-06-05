@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Plugin\RulesExpression\Rule;
+
 /**
  * Tests the core rules engine functionality.
  *
@@ -26,7 +28,30 @@ class RuleTest extends RulesTestBase {
   }
 
   /**
-   * Tests that a rule is constructed with condition and action container.
+   * Tests the static create method.
+   *
+   * @covers ::create()
+   */
+  public function testStaticCreate() {
+    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $manager->expects($this->once())
+      ->method('createInstance')
+      ->with('rules_and');
+
+    $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+    $container->expects($this->once())
+      ->method('get')
+      ->with('plugin.manager.rules_expression')
+      ->will($this->returnValue($manager));
+
+    Rule::create($container, [], 'rules_rule', []);
+  }
+
+  /**
+   * Tests that a rule is constructed with an 'and' condition container.
    *
    * @covers ::__construct()
    */
@@ -54,6 +79,24 @@ class RuleTest extends RulesTestBase {
 
     $this->assertSame($and, $rule->getConditions());
     $this->assertSame($action_set, $rule->getActions());
+  }
+
+  /**
+   * Tests the condition container setter and getter.
+   *
+   * @covers ::setConditions()
+   * @covers ::getConditions()
+   */
+  public function testSetConditionsGetConditions() {
+    $rule = $this->getMockRule();
+
+    $or = $this->getMockOr();
+    $rule->setConditions($or);
+    $this->assertSame($or, $rule->getConditions());
+
+    $and = $this->getMockAnd();
+    $rule->setConditions($and);
+    $this->assertSame($and, $rule->getConditions());
   }
 
   /**
