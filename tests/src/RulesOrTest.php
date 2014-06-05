@@ -31,16 +31,16 @@ class RulesOrTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $or = $this->getMockOr();
-    $or->addCondition($this->trueCondition);
-    $result = $or->execute();
-    $this->assertTrue($result, 'Single condition returns TRUE.');
+    $or = $this->getMockOr()
+      ->addCondition($this->trueCondition);
+
+    $this->assertTrue($or->execute(), 'Single condition returns TRUE.');
   }
 
   /**
    * Tests an empty OR.
    */
-  public function testemptyOr() {
+  public function testEmptyOr() {
     $or = $this->getMockOr();
     $this->assertTrue($or->execute(), 'Empty OR returns TRUE.');
   }
