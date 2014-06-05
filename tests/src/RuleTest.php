@@ -51,7 +51,7 @@ class RuleTest extends RulesTestBase {
   }
 
   /**
-   * Tests that a rule is constructed with an 'and' condition container.
+   * Tests that a rule is constructed with condition and action container.
    *
    * @covers ::__construct()
    */
