@@ -28,10 +28,10 @@ interface RuleInterface extends ActionInterface {
   public function addCondition(RulesConditionInterface $condition);
 
   /**
-   * Returns the conditions of this rule.
+   * Returns the conditions container of this rule.
    *
-   * @return \Drupal\rules\Engine\RulesConditionInterface[]
-   *   The conditions of this rule.
+   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   *   The condition container of this rule.
    */
   public function getConditions();
 
