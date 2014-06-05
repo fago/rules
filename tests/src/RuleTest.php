@@ -37,9 +37,13 @@ class RuleTest extends RulesTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $manager->expects($this->once())
+    $manager->expects($this->at(0))
       ->method('createInstance')
       ->with('rules_and');
+
+    $manager->expects($this->at(1))
+      ->method('createInstance')
+      ->with('rules_action_set');
 
     $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
     $container->expects($this->once())
