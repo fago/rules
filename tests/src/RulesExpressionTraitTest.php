@@ -10,8 +10,9 @@ namespace Drupal\rules\Tests;
 /**
  * Tests \Drupal\rules\RulesExpressionTrait.
  *
- * @see \Drupal\rules\RulesExpressionTrait
  * @coversDefaultClass \Drupal\rules\RulesExpressionTrait
+ *
+ * @see \Drupal\rules\RulesExpressionTrait
  */
 class RulesExpressionTraitTest extends RulesTestBase {
 
@@ -90,6 +91,7 @@ class RulesExpressionTraitTest extends RulesTestBase {
   /**
    * Tests object creation using the convenience methods on the trait.
    *
+   * @covers ::createRulesExpression()
    * @covers ::createRulesRule()
    * @covers ::createRulesAnd()
    * @covers ::createRulesOr()
