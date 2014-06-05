@@ -9,6 +9,8 @@ namespace Drupal\rules\Tests;
 
 /**
  * Tests the core rules engine functionality.
+ *
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
  */
 class RuleTest extends RulesTestBase {
 
@@ -21,6 +23,30 @@ class RuleTest extends RulesTestBase {
       'description' => 'Test the Rule class',
       'group' => 'Rules',
     ];
+  }
+
+  /**
+   * Tests that a rule is constructed with an 'and' condition container.
+   *
+   * @covers ::__construct()
+   */
+  public function testConditionContainerOnConstruct() {
+    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $and = $this->getMockAnd();
+    $manager->expects($this->once())
+      ->method('createInstance')
+      ->with('rules_and')
+      ->will($this->returnValue($and));
+
+    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\Rule')
+      ->setMethods(NULL)
+      ->setConstructorArgs([[], 'rules_rule', [], $manager])
+      ->getMock();
+
+    $this->assertSame($and, $rule->getConditions());
   }
 
   /**
