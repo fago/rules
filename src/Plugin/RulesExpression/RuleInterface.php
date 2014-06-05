@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Action\ActionInterface;
+use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
 
@@ -60,9 +61,20 @@ interface RuleInterface extends ActionInterface {
   /**
    * Returns the actions of this rule.
    *
-   * @return \Drupal\Core\Action\ActionInterface[]
-   *   The actions of this rule.
+   * @return \Drupal\rules\Engine\RulesActionContainerInterface
+   *   The action container of this rule.
    */
   public function getActions();
+
+  /**
+   * Sets the action container.
+   *
+   * @param \Drupal\rules\Engine\RulesActionContainerInterface $actions
+   *   The action container to set.
+   *
+   * @return $this
+   *   The current rule object for chaining.
+   */
+  public function setActions(RulesActionContainerInterface $actions);
 
 }

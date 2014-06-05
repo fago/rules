@@ -104,6 +104,8 @@ abstract class RulesTestBase extends UnitTestCase {
     // Set the condition container that would otherwise get initialized in the
     // constructor.
     $rule->setConditions($this->getMockAnd());
+    // Same for the actions container.
+    $rule->setActions($this->getMockActionSet());
 
     return $rule;
   }
@@ -190,6 +192,48 @@ abstract class RulesTestBase extends UnitTestCase {
       ]));
 
     return $or;
+  }
+
+  /**
+   * Creates an action set with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Engine\RulesActionContainerInterface
+   *   The mocked action container.
+   */
+  public function getMockActionSet(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $action_set = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ActionSet')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $action_set->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue('rules_action_set'));
+
+    $action_set->expects($this->any())
+      ->method('getBasePluginId')
+      ->will($this->returnValue('rules_action_set'));
+
+    $action_set->expects($this->any())
+      ->method('getDerivativeId')
+      ->will($this->returnValue(NULL));
+
+    $action_set->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue([
+        'type' => '',
+        'id' => 'rules_action_set',
+        'label' => 'Action set',
+        'class' => 'Drupal\rules\Plugin\RulesExpression\ActionSet',
+        'provider' => 'rules',
+      ]));
+
+    return $action_set;
   }
 
 }

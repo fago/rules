@@ -10,6 +10,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
@@ -18,6 +19,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a rule, executing actions when conditions are met.
+ *
+ * Actions added to a rule can also be rules themselves, so it is possible to
+ * nest several rules into one rule. This is the functionality of so called
+ * "rule sets" in Drupal 7.
  *
  * @RulesExpression(
  *   id = "rules_rule",
@@ -36,9 +41,9 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
   /**
    * List of actions that get executed if the conditions are met.
    *
-   * @var \Drupal\Core\Action\ActionInterface[]
+   * @var \Drupal\rules\Engine\RulesActionContainerInterface
    */
-  protected $actions = [];
+  protected $actions;
 
   /**
    * Constructs a Rule object.
@@ -59,6 +64,7 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
     // conjunction (AND), meaning that all conditions in it must evaluate to
     // TRUE to fire the actions.
     $this->conditions = $expression_manager->createInstance('rules_and');
+    $this->actions = $expression_manager->createInstance('rules_action_set');
   }
 
   /**
@@ -82,9 +88,7 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
       // Do not run the actions if the conditions are not met.
       return;
     }
-    foreach ($this->actions as $action) {
-      $action->execute();
-    }
+    $this->actions->execute();
   }
 
   /**
@@ -114,7 +118,7 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
    * {@inheritdoc}
    */
   public function addAction(ActionInterface $action) {
-    $this->actions[] = $action;
+    $this->actions->addAction($action);
     return $this;
   }
 
@@ -123,6 +127,14 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
    */
   public function getActions() {
     return $this->actions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setActions(RulesActionContainerInterface $actions) {
+    $this->actions = $actions;
+    return $this;
   }
 
   /**
