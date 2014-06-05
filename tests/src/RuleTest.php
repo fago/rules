@@ -26,20 +26,26 @@ class RuleTest extends RulesTestBase {
   }
 
   /**
-   * Tests that a rule is constructed with an 'and' condition container.
+   * Tests that a rule is constructed with condition and action container.
    *
    * @covers ::__construct()
    */
-  public function testConditionContainerOnConstruct() {
+  public function testContainersOnConstruct() {
     $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
 
     $and = $this->getMockAnd();
-    $manager->expects($this->once())
+    $manager->expects($this->at(0))
       ->method('createInstance')
       ->with('rules_and')
       ->will($this->returnValue($and));
+
+    $action_set = $this->getMockActionSet();
+    $manager->expects($this->at(1))
+      ->method('createInstance')
+      ->with('rules_action_set')
+      ->will($this->returnValue($action_set));
 
     $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\Rule')
       ->setMethods(NULL)
@@ -47,6 +53,7 @@ class RuleTest extends RulesTestBase {
       ->getMock();
 
     $this->assertSame($and, $rule->getConditions());
+    $this->assertSame($action_set, $rule->getActions());
   }
 
   /**
