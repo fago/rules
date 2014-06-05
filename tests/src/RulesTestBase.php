@@ -57,7 +57,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionBase')
+    $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionInterface')
       ->disableOriginalConstructor()
       ->getMock();
   }

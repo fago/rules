@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesConditionContainer;
+use Drupal\rules\Engine\RulesExpressionInterface;
 
 /**
  * Evaluates a group of conditions with a logical OR.
@@ -17,7 +18,7 @@ use Drupal\rules\Engine\RulesConditionContainer;
  *   label = @Translation("Condition set (OR)")
  * )
  */
-class RulesOr extends RulesConditionContainer {
+class RulesOr extends RulesConditionContainer implements RulesExpressionInterface {
 
   /**
    * {@inheritdoc}

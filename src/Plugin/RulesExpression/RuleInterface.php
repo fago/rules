@@ -9,7 +9,6 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Action\ActionInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
-use Drupal\rules\Plugin\RulesExpression\Rule;
 
 /**
  * Defines an interface for rules.

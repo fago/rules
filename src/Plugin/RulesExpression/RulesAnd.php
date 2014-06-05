@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesConditionContainer;
+use Drupal\rules\Engine\RulesExpressionInterface;
 
 /**
  * Evaluates a group of conditions with a logical AND.
@@ -17,7 +18,7 @@ use Drupal\rules\Engine\RulesConditionContainer;
  *   label = @Translation("Condition set (AND)")
  * )
  */
-class RulesAnd extends RulesConditionContainer {
+class RulesAnd extends RulesConditionContainer implements RulesExpressionInterface {
 
   /**
    * {@inheritdoc}

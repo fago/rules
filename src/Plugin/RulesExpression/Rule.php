@@ -10,6 +10,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
+use Drupal\rules\Engine\RulesExpressionInterface;
 
 /**
  * Defines a rule, executing actions when conditions are met.
@@ -19,7 +20,7 @@ use Drupal\rules\Engine\RulesConditionInterface;
  *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
-class Rule extends PluginBase implements RuleInterface {
+class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface {
 
   /**
    * List of conditions that must be met before actions are executed.

@@ -10,6 +10,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Engine\RulesExpressionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -23,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable action.")
  * )
  */
-class ActionExpression extends PluginBase implements ActionInterface, ContainerFactoryPluginInterface {
+class ActionExpression extends PluginBase implements ActionInterface, ContainerFactoryPluginInterface, RulesExpressionInterface {
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -33,17 +34,12 @@ class ActionExpression extends PluginBase implements ActionInterface, ContainerF
   protected $actionManager;
 
   /**
-   * The action plugin ID used to execute.
-   *
-   * @var string
-   */
-  protected $actionId;
-
-  /**
    * Constructs an ActionExpression object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
+   *   Contains the following entries:
+   *   - action_id: The action plugin ID.
    * @param string $plugin_id
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
@@ -66,17 +62,16 @@ class ActionExpression extends PluginBase implements ActionInterface, ContainerF
     );
   }
 
-  public function setActionPluginId($id) {
-    $this->actionId = $id;
-  }
-
   /**
    * {@inheritdoc}
    */
   public function execute() {
-    $action = $this->actionManager->createInstance($this->actionId);
-    // @todo context mapping will happen here.
+    $action = $this->actionManager->createInstance($this->configuration['action_id']);
+    // @todo context mapping will happen here, we have to forward the context
+    // definitions from our plugin configuration to the action plugin.
     $action->execute();
+    // @todo Now that the action has been executed it can provide additional
+    // context which we will have to pass back to any parent expression.
   }
 
   /**
