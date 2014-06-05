@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Plugin\RulesExpression\Rule;
-
 /**
  * Tests the core rules engine functionality.
  */
@@ -33,9 +31,7 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $rule = new Rule([], 'test', []);
+    $rule = $this->getMockRule();
     $rule->addCondition($this->trueCondition);
     $rule->addAction($this->testAction);
     $rule->execute();
@@ -49,9 +45,7 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $rule = new Rule([], 'test', []);
+    $rule = $this->getMockRule();
     $rule->addCondition($this->falseCondition);
     $rule->addAction($this->testAction);
     $rule->execute();
@@ -65,9 +59,7 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $rule = new Rule([], 'test', []);
+    $rule = $this->getMockRule();
     $rule->addCondition($this->trueCondition);
     $rule->addCondition($this->trueCondition);
     $rule->addAction($this->testAction);
@@ -82,9 +74,7 @@ class RuleTest extends RulesTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    // Create a test rule, we don't care about plugin information in the
-    // constructor.
-    $rule = new Rule([], 'test', []);
+    $rule = $this->getMockRule();
     $rule->addCondition($this->trueCondition);
     $rule->addCondition($this->falseCondition);
     $rule->addAction($this->testAction);
