@@ -80,4 +80,22 @@ class RuleTest extends RulesTestBase {
     $rule->addAction($this->testAction);
     $rule->execute();
   }
+
+  /**
+   * Tests that nested rules are properly executed.
+   */
+  public function testNestedRules() {
+    $this->testAction->expects($this->once())
+      ->method('execute');
+
+    $nested = $this->getMockRule()
+      ->addCondition($this->trueCondition)
+      ->addAction($this->testAction);
+
+    $this->getMockRule()
+      ->addCondition($this->trueCondition)
+      ->addAction($nested)
+      ->execute();
+  }
+
 }
