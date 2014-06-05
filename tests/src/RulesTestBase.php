@@ -116,24 +116,24 @@ abstract class RulesTestBase extends UnitTestCase {
   public function getMockAnd(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
-    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesAnd')
+    $and = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesAnd')
       ->setMethods($methods)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $rule->expects($this->any())
+    $and->expects($this->any())
       ->method('getPluginId')
       ->will($this->returnValue('rules_and'));
 
-    $rule->expects($this->any())
+    $and->expects($this->any())
       ->method('getBasePluginId')
       ->will($this->returnValue('rules_and'));
 
-    $rule->expects($this->any())
+    $and->expects($this->any())
       ->method('getDerivativeId')
       ->will($this->returnValue(NULL));
 
-    $rule->expects($this->any())
+    $and->expects($this->any())
       ->method('getPluginDefinition')
       ->will($this->returnValue([
         'type' => '',
@@ -143,7 +143,7 @@ abstract class RulesTestBase extends UnitTestCase {
         'provider' => 'rules',
       ]));
 
-    return $rule;
+    return $and;
   }
 
   /**
@@ -158,24 +158,24 @@ abstract class RulesTestBase extends UnitTestCase {
   public function getMockOr(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
-    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesOr')
+    $or = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesOr')
       ->setMethods($methods)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $rule->expects($this->any())
+    $or->expects($this->any())
       ->method('getPluginId')
       ->will($this->returnValue('rules_or'));
 
-    $rule->expects($this->any())
+    $or->expects($this->any())
       ->method('getBasePluginId')
       ->will($this->returnValue('rules_or'));
 
-    $rule->expects($this->any())
+    $or->expects($this->any())
       ->method('getDerivativeId')
       ->will($this->returnValue(NULL));
 
-    $rule->expects($this->any())
+    $or->expects($this->any())
       ->method('getPluginDefinition')
       ->will($this->returnValue([
         'type' => '',
@@ -185,7 +185,7 @@ abstract class RulesTestBase extends UnitTestCase {
         'provider' => 'rules',
       ]));
 
-    return $rule;
+    return $or;
   }
 
 }
