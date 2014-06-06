@@ -9,6 +9,8 @@ namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\TypedData\TypedDataManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
@@ -31,14 +33,77 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
   protected $contextDefinitions;
 
   /**
+   * The typed data manager used for creating the data types of the context.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
+   * Constructs a new condition plugin instance.
+   *
+   * @param array $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin id.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->typedDataManager = $typed_data_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('typed_data_manager')
+    );
+  }
+
+  /**
+   * Gets the typed data manager.
+   *
+   * @return \Drupal\Core\TypedData\TypedDataManager
+   *   The typed data manager.
+   */
+  public function getTypedDataManager() {
+    return $this->typedDataManager;
+  }
+
+  /**
+   * Sets the typed data manager.
+   *
+   * @param \Drupal\Core\TypedData\TypedDataManager $typedDataManager
+   *   The typed data manager.
+   *
+   * @return $this
+   *   The current object for chaining.
+   */
+  public function setTypedDataManager(TypedDataManager $typedDataManager) {
+    $this->typedDataManager = $typedDataManager;
+    return $this;
+  }
+
+  /**
    * Defines the needed context of this plugin.
    *
    * @todo: Can we make this abstract somehow?
    *
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
+   *
    * @return \Drupal\rules\Context\ContextDefinitionInterface[]
    *   The array of context definitions, keyed by context name.
    */
-  public static function contextDefinitions() {
+  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
     return [];
   }
 
@@ -47,7 +112,7 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
    */
   public function getContextDefinitions() {
     if (!isset($this->contextDefinitions)) {
-      $this->contextDefinitions = static::contextDefinitions();
+      $this->contextDefinitions = static::contextDefinitions($this->typedDataManager);
     }
     return $this->contextDefinitions;
   }
@@ -80,7 +145,7 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
   public function getContext($name) {
     // Check for a valid context value.
     if (!isset($this->contexts[$name])) {
-      $this->contexts[$name] = new Context($this->getContextDefinition($name));
+      $this->contexts[$name] = new Context($this->getContextDefinition($name), $this->typedDataManager);
     }
     return $this->contexts[$name];
   }

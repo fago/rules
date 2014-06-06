@@ -9,6 +9,8 @@ namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\TypedData\TypedData;
+use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -42,11 +44,13 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
    *   The alias manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AliasManagerInterface $alias_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, AliasManagerInterface $alias_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
     $this->aliasManager = $alias_manager;
   }
 
@@ -58,6 +62,7 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('typed_data_manager'),
       $container->get('path.alias_manager')
     );
   }
@@ -65,11 +70,11 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public static function contextDefinitions() {
-    $contexts['path'] = ContextDefinition::create('string')
+  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
+    $contexts['path'] = ContextDefinition::create($typed_data_manager, 'string')
       ->setLabel(t('Path'));
 
-    $contexts['language'] = ContextDefinition::create('language')
+    $contexts['language'] = ContextDefinition::create($typed_data_manager, 'language')
       ->setLabel(t('Language'))
       ->setDescription(t('If specified, the language for which the URL alias applies.'))
       ->setRequired(FALSE);

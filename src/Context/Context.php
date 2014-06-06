@@ -9,6 +9,7 @@ namespace Drupal\rules\Context;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\TypedData\TypedDataManager;
 
 /**
  * A context class for Rules.
@@ -30,10 +31,23 @@ class Context implements ContextInterface {
   protected $contextDefinition;
 
   /**
-   * Sets the contextDefinition for us without needing to call the setter.
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
    */
-  public function __construct(ContextDefinitionInterface $context_definition) {
+  protected $typedDataManager;
+
+  /**
+   * Constructs a Context object.
+   *
+   * @param \Drupal\rules\Context\ContextDefinitionInterface $context_definition
+   *   The context definition.
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
+   */
+  public function __construct(ContextDefinitionInterface $context_definition, TypedDataManager $typed_data_manager) {
     $this->contextDefinition = $context_definition;
+    $this->typedDataManager = $typed_data_manager;
   }
 
   /**
@@ -57,7 +71,7 @@ class Context implements ContextInterface {
       return $this->setContextData($value);
     }
     else {
-      return $this->setContextData(\Drupal::typedDataManager()->create($this->contextDefinition->getDataDefinition(), $value));
+      return $this->setContextData($this->typedDataManager->create($this->contextDefinition->getDataDefinition(), $value));
     }
   }
 

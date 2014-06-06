@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 
@@ -26,8 +27,8 @@ class NodeIsPublished extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public static function contextDefinitions() {
-    $contexts['node'] = ContextDefinition::create('entity:node')
+  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
+    $contexts['node'] = ContextDefinition::create($typed_data_manager, 'entity:node')
       ->setLabel(t('Node'));
 
     return $contexts;

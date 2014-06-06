@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Context;
 
+use Drupal\Core\TypedData\TypedDataManager;
+
 /**
  * Defines a class for context definitions.
  */
@@ -43,22 +45,41 @@ class ContextDefinition implements ContextDefinitionInterface {
   protected $constraints = [];
 
   /**
+   * The typed data manager used for creating the data types of the context.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
    * Creates a new context definition.
    *
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
    * @param string $data_type
+   *   The data type for which to create the context definition. Defaults to
+   *   'any'.
    *
+   * @return static
+   *   The created context definition object.
    */
-  public static function create($data_type) {
-    return new static($data_type);
+  public static function create(TypedDataManager $typed_data_manager, $data_type = 'any') {
+    return new static(
+      $typed_data_manager,
+      $data_type
+    );
   }
 
   /**
-   * Constructs the object.
+   * Constructs a new context definition object.
    *
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
    * @param string $data_type
    *   The required data type.
    */
-  public function __construct($data_type = 'any') {
+  public function __construct(TypedDataManager $typed_data_manager, $data_type = 'any') {
+    $this->typedDataManager = $typed_data_manager;
     $this->dataType = $data_type;
   }
 
@@ -175,10 +196,10 @@ class ContextDefinition implements ContextDefinitionInterface {
   public function getDataDefinition() {
     // @todo: Setters are missing from the core data definition interfaces.
     if ($this->isMultiple()) {
-      $definition = \Drupal::typedDataManager()->createListDataDefinition($this->getDataType());
+      $definition = $this->typedDataManager->createListDataDefinition($this->getDataType());
     }
     else {
-      $definition = \Drupal::typedDataManager()->createDataDefinition($this->getDataType());
+      $definition = $this->typedDataManager->createDataDefinition($this->getDataType());
     }
     $definition->setLabel($this->getLabel())
       ->setDescription($this->getDescription())

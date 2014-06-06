@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,13 +45,15 @@ class ConditionExpression extends RulesConditionBase implements RulesExpressionI
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
    * @param \Drupal\Core\Condition\ConditionManager $conditionManager
    *   The condition manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, ConditionManager $conditionManager) {
     // Per default the result of this expression is not negated.
     $configuration += ['negate' => FALSE];
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
 
     $this->conditionManager = $conditionManager;
   }
@@ -59,7 +62,11 @@ class ConditionExpression extends RulesConditionBase implements RulesExpressionI
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($configuration, $plugin_id, $plugin_definition,
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('typed_data_manager'),
       $container->get('plugin.manager.condition')
     );
   }
