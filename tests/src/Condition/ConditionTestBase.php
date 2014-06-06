@@ -60,7 +60,36 @@ namespace Drupal\rules\Tests\Condition {
       // test implementation with a more specific typed data manager mock.
       $condition->setTypedDataManager($this->getMockTypedDataManager());
 
+      // Set the default string translation mock. This can be overridden in the
+      // test implementation with a more specific string translation mock.
+      $condition->setStringTranslation($this->getMockedStringTranslation());
+
       return $condition;
+    }
+
+    /**
+     * Creates a string translation with the basic translation methods mocked.
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     *   The mocked string translation.
+     *
+     * @see \Drupal\Core\StringTranslation\TranslationInterface
+     */
+    public function getMockedStringTranslation() {
+      $string_translation = $this->getMock('Drupal\Core\StringTranslation\TranslationInterface');
+      $string_translation->expects($this->any())
+        ->method('translate')
+        ->will($this->returnCallback(function ($string) {
+          return $string;
+        }));
+
+      $string_translation->expects($this->any())
+        ->method('formatPlural')
+        ->will($this->returnCallback(function($count, $one, $multiple) {
+          return $count == 1 ? $one : str_replace('@count', $count, $multiple);
+        }));
+
+      return $string_translation;
     }
 
     /**
