@@ -53,20 +53,6 @@ class RulesExpressionTraitTest extends RulesTestBase {
    */
   public function setUp() {
     $this->traitObject = $this->getObjectForTrait('\Drupal\rules\RulesExpressionTrait');
-
-    $this->expressionManager = $this->getMockBuilder('\Drupal\rules\Plugin\RulesExpressionPluginManager')
-      ->setMethods(['createInstance'])
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->expressionManager->expects($this->any())
-      ->method('createInstance')
-      ->will($this->returnCallback(function ($id) {
-        $type = ucfirst(substr($id, 6));
-        return $this->{"getMock$type"}();
-      }));
-
-    $this->traitObject->setRulesExpressionManager($this->expressionManager);
     $this->reflection = new \ReflectionClass($this->traitObject);
   }
 
@@ -74,18 +60,15 @@ class RulesExpressionTraitTest extends RulesTestBase {
    * Tests the the rules expression manager setter.
    *
    * @covers ::setRulesExpressionManager()
-   */
-  public function testSetRulesExpressionManager() {
-    $this->assertSame($this->traitObject, $this->traitObject->setRulesExpressionManager($this->expressionManager));
-  }
-
-  /**
-   * Tests the the rules expression manager getter.
-   *
    * @covers ::getRulesExpressionManager()
    */
-  public function testGetRulesExpressionManager() {
-    $this->assertSame($this->expressionManager, $this->traitObject->getRulesExpressionManager());
+  public function testSetAndGetRulesExpressionManager() {
+    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->assertSame($this->traitObject, $this->traitObject->setRulesExpressionManager($manager));
+    $this->assertSame($manager, $this->traitObject->getRulesExpressionManager());
   }
 
   /**
@@ -100,18 +83,30 @@ class RulesExpressionTraitTest extends RulesTestBase {
    *
    * @todo Test ::createRulesAction() and ::createRulesCondition().
    */
-  public function testConvenienceMethods($id, $method, $class) {
+  public function testConvenienceMethods($id, $method_name, $expected_object) {
+    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+      ->setMethods(['createInstance'])
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $manager->expects($this->any())
+      ->method('createInstance')
+      ->with($id, $this->anything())
+      ->will($this->returnValue($expected_object));
+
+    $this->traitObject->setRulesExpressionManager($manager);
+
     // Test the 'createRulesExpression' method.
-    $reflection = $this->reflection->getMethod('createRulesExpression');
-    $reflection->setAccessible(TRUE);
-    $object = $reflection->invokeArgs($this->traitObject, [$id]);
-    $this->assertInstanceOf($class, $object);
+    $method = $this->reflection->getMethod('createRulesExpression');
+    $method->setAccessible(TRUE);
+    $object = $method->invokeArgs($this->traitObject, [$id]);
+    $this->assertSame($expected_object, $object);
 
     // Test the specific convenience method (e.g. 'createRule').
-    $reflection = $this->reflection->getMethod($method);
-    $reflection->setAccessible(TRUE);
-    $object = $reflection->invoke($this->traitObject);
-    $this->assertInstanceOf($class, $object);
+    $method = $this->reflection->getMethod($method_name);
+    $method->setAccessible(TRUE);
+    $object = $method->invoke($this->traitObject);
+    $this->assertSame($expected_object, $object);
   }
 
   /**
@@ -119,9 +114,9 @@ class RulesExpressionTraitTest extends RulesTestBase {
    */
   public function convenienceMethodsDataProvider() {
     return [
-      ['rules_and', 'createRulesAnd', '\Drupal\rules\Plugin\RulesExpression\RulesAnd'],
-      ['rules_or', 'createRulesOr', '\Drupal\rules\Plugin\RulesExpression\RulesOr'],
-      ['rules_rule', 'createRulesRule', '\Drupal\rules\Plugin\RulesExpression\Rule'],
+      ['rules_and', 'createRulesAnd', $this->getMockAnd()],
+      ['rules_or', 'createRulesOr', $this->getMockOr()],
+      ['rules_rule', 'createRulesRule', $this->getMockRule()],
     ];
   }
 
