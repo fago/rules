@@ -71,8 +71,8 @@ class PathAliasExists extends RulesConditionBase implements ContainerFactoryPlug
    */
   public static function contextDefinitions(TypedDataManager $typed_data_manager) {
     $contexts['alias'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('URL alias'))
-      ->setDescription(t("Specify the URL alias to check for. For example, 'about' for an about page."));
+      ->setLabel(t('Path alias'))
+      ->setDescription(t("Specify the path alias to check for. For example, 'about' for an about page."));
 
     $contexts['language'] = ContextDefinition::create($typed_data_manager, 'language')
       ->setLabel(t('Language'))
@@ -86,7 +86,7 @@ class PathAliasExists extends RulesConditionBase implements ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('URL alias exists');
+    return $this->t('Path alias exists');
   }
 
   /**
