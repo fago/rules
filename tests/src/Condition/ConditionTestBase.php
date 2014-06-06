@@ -29,6 +29,11 @@ namespace Drupal\rules\Tests\Condition {
      *   (optional) The id of the condition plugin.
      * @param array $methods
      *   (optional) The methods to mock.
+     * @param bool $constructor
+     *   (optional) Whether to use the original constructor. Defaults to FALSE.
+     * @param array $arguments
+     *   (optional) The arguments to pass to the constructor. Defaults to an
+     *   empty array.
      *
      * @throws \LogicException
      *   If the given class does not implement RulesConditionInterface.
@@ -38,7 +43,7 @@ namespace Drupal\rules\Tests\Condition {
      *
      * @see \Drupal\rules\Engine\RulesConditionInterface
      */
-    public function getMockCondition($class, $id = '', array $methods = []) {
+    public function getMockCondition($class, $id = '', array $methods = [], $constructor = FALSE, $arguments = []) {
       $reflection = new \ReflectionClass($class);
       if (!$reflection->implementsInterface('\Drupal\rules\Engine\RulesConditionInterface')) {
         throw new \LogicException(sprintf('%s does not implement the RulesConditionInterface.', array('%class' => $class)));
@@ -47,18 +52,28 @@ namespace Drupal\rules\Tests\Condition {
       $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
       $condition = $this->getMockBuilder($class)
-        ->setMethods($methods)
-        ->disableOriginalConstructor()
-        ->getMock();
+        ->setMethods($methods);
+
+      if (empty($constructor)) {
+        // Disable the constructor unless specified otherwise.
+        $condition = $condition->disableOriginalConstructor()
+          ->getMock();
+
+        // Set the default typed data manager mock. This can be overridden in
+        // the test implementation with a more specific typed data manager mock.
+        // This is only necessary if we are not using the original constructor.
+        $condition->setTypedDataManager($this->getMockTypedDataManager());
+      }
+      else {
+        // Pass the given arguments to the constructor.
+        $condition = $condition->setConstructorArgs($arguments)
+          ->getMock();
+      }
 
       $this->expectsGetPluginId($condition, $id)
         ->expectsGetBasePluginId($condition, $id)
         ->expectsGetDerivativeId($condition, NULL)
         ->expectsGetPluginDefinition($condition, $id);
-
-      // Set the default typed data manager mock. This can be overridden in the
-      // test implementation with a more specific typed data manager mock.
-      $condition->setTypedDataManager($this->getMockTypedDataManager());
 
       // Set the default string translation mock. This can be overridden in the
       // test implementation with a more specific string translation mock.
