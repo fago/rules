@@ -286,27 +286,10 @@ abstract class RulesTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $condition->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue('rules_condition'));
-
-    $condition->expects($this->any())
-      ->method('getBasePluginId')
-      ->will($this->returnValue('rules_condition'));
-
-    $condition->expects($this->any())
-      ->method('getDerivativeId')
-      ->will($this->returnValue(NULL));
-
-    $condition->expects($this->any())
-      ->method('getPluginDefinition')
-      ->will($this->returnValue([
-        'type' => '',
-        'id' => 'rules_condition',
-        'label' => 'An executable condition',
-        'class' => 'Drupal\rules\Plugin\RulesExpression\ConditionExpression',
-        'provider' => 'rules',
-      ]));
+    $this->expectsGetPluginId($condition, 'rules_condition')
+      ->expectsGetDerivativeId($condition, NULL)
+      ->expectsGetBasePluginId($condition, 'rules_condition')
+      ->expectsGetPluginDefinition($condition, 'rules_condition', 'An executable condition');
 
     return $condition;
   }
