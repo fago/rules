@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\ConditionExpressionTest.
+ * Contains \Drupal\rules\Tests\RulesConditionTest.
  */
 
 namespace Drupal\rules\Tests;
 
 /**
- * Tests the condition expression functionality.
+ * Tests the Rules condition functionality.
  */
-class ConditionExpressionTest extends RulesTestBase {
+class RulesConditionTest extends RulesTestBase {
 
   /**
    * The mocked condition manager.
@@ -20,19 +20,19 @@ class ConditionExpressionTest extends RulesTestBase {
   protected $conditionManager;
 
   /**
-   * The mocked condition expression object.
+   * The mocked condition object.
    *
-   * @var \Drupal\rules\Plugin\RulesExpression\ConditionExpression
+   * @var \Drupal\rules\Plugin\RulesExpression\RulesCondition
    */
-  protected $expression;
+  protected $condition;
 
   /**
    * {@inheritdoc}
    */
   public static function getInfo() {
     return [
-      'name' => 'Condition Expression',
-      'description' => 'Tests the ConditionExpression class',
+      'name' => 'Rules Condition',
+      'description' => 'Tests the RulesCondition class',
       'group' => 'Rules',
     ];
   }
@@ -51,20 +51,19 @@ class ConditionExpressionTest extends RulesTestBase {
       ->method('createInstance')
       ->will($this->returnValue($this->trueCondition));
 
-    $this->expression = $this->getMockConditionExpression(['getContext']);
+    $this->condition = $this->getMockCondition(['getContext']);
 
-    // Inject a mocked condition manager into the condition expression class.
-    $property = new \ReflectionProperty($this->expression, 'conditionManager');
+    // Inject a mocked condition manager into the condition class.
+    $property = new \ReflectionProperty($this->condition, 'conditionManager');
     $property->setAccessible(TRUE);
-    $property->setValue($this->expression, $this->conditionManager);
+    $property->setValue($this->condition, $this->conditionManager);
   }
 
   /**
    * Tests that evaluate() correctly passes the context to the condition plugin.
    */
   public function testEvaluateWithContext() {
-    // Build some mocked context and definitions for our mock condition
-    // expression.
+    // Build some mocked context and definitions for our mock condition.
     $context_definition = $this->getMock('Drupal\rules\Context\ContextDefinitionInterface');
 
     $this->trueCondition->expects($this->once())
@@ -77,12 +76,12 @@ class ConditionExpressionTest extends RulesTestBase {
       ->method('setContext')
       ->with('test', $context);
 
-    $this->expression->expects($this->once())
+    $this->condition->expects($this->once())
       ->method('getContext')
       ->with('test')
       ->will($this->returnValue($context));
 
-    $this->assertTrue($this->expression->evaluate());
+    $this->assertTrue($this->condition->evaluate());
   }
 
   /**
@@ -95,7 +94,7 @@ class ConditionExpressionTest extends RulesTestBase {
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $context_definition]));
 
-    $this->assertSame($this->expression->getContextDefinitions(), ['test' => $context_definition]);
+    $this->assertSame($this->condition->getContextDefinitions(), ['test' => $context_definition]);
   }
 
 }

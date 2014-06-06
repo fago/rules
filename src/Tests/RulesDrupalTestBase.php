@@ -49,10 +49,10 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    * @return \Drupal\rules\Engine\RulesConditionInterface
    */
   protected function createCondition($id) {
-    $conditionExpression = $this->rulesExpressionManager->createInstance('rules_condition', array(
+    $condition = $this->rulesExpressionManager->createInstance('rules_condition', array(
       'condition_id' => $id,
     ));
-    return $conditionExpression;
+    return $condition;
   }
 
 }

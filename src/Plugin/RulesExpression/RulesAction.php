@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\RulesExpression\ActionExpression.
+ * Contains \Drupal\rules\Plugin\RulesExpression\RulesAction.
  */
 
 namespace Drupal\rules\Plugin\RulesExpression;
@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable action.")
  * )
  */
-class ActionExpression extends PluginBase implements ActionInterface, ContainerFactoryPluginInterface, RulesExpressionInterface {
+class RulesAction extends PluginBase implements ActionInterface, ContainerFactoryPluginInterface, RulesExpressionInterface {
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -35,7 +35,7 @@ class ActionExpression extends PluginBase implements ActionInterface, ContainerF
   protected $actionManager;
 
   /**
-   * Constructs an ActionExpression object.
+   * Constructs an RulesAction object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

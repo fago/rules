@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\RulesExpression\ConditionExpression.
+ * Contains \Drupal\rules\Plugin\RulesExpression\RulesCondition.
  */
 
 namespace Drupal\rules\Plugin\RulesExpression;
@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable condition.")
  * )
  */
-class ConditionExpression extends RulesConditionBase implements RulesExpressionInterface, ContainerFactoryPluginInterface {
+class RulesCondition extends RulesConditionBase implements RulesExpressionInterface, ContainerFactoryPluginInterface {
 
   /**
    * The condition manager used to instantiate the condition plugin.
@@ -35,7 +35,7 @@ class ConditionExpression extends RulesConditionBase implements RulesExpressionI
   protected $conditionManager;
 
   /**
-   * Constructs a ConditionExpression object.
+   * Constructs a RulesCondition object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
