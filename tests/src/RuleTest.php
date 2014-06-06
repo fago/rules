@@ -76,11 +76,7 @@ class RuleTest extends RulesTestBase {
       ->with('rules_action_set')
       ->will($this->returnValue($action_set));
 
-    $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\Rule')
-      ->setMethods(NULL)
-      ->setConstructorArgs([[], 'rules_rule', [], $manager])
-      ->getMock();
-
+    $rule = new Rule([], 'rules_rule', [], $manager);
     $this->assertSame($and, $rule->getConditions());
     $this->assertSame($action_set, $rule->getActions());
   }
