@@ -104,6 +104,20 @@ class RuleTest extends RulesTestBase {
   }
 
   /**
+   * Tests the condition container setter and getter.
+   *
+   * @covers ::setActions()
+   * @covers ::getActions()
+   */
+  public function testSetActionsGetActions() {
+    $rule = $this->getMockRule();
+
+    $action_set = $this->getMockActionSet();
+    $rule->setActions($action_set);
+    $this->assertSame($action_set, $rule->getActions());
+  }
+
+  /**
    * Tests that an action fires if a condition passes.
    */
   public function testActionExecution() {
