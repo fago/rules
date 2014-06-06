@@ -58,9 +58,10 @@ class DrupalMessage extends RulesActionBase {
     // flag in the context definition.
     $message = check_plain($this->getContextValue('message'));
     $type = $this->getContextValue('type');
-    // @todo How do we get an optional context value? There is no hasContext()
-    // method.
     $repeat = $this->getContextValue('repeat');
+    if (!$repeat) {
+      $repeat = FALSE;
+    }
     // @todo This should be an injectable service, so that we can write a proper
     // unit test.
     drupal_set_message($message, $type, $repeat);
