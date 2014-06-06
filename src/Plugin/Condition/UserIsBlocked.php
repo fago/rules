@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 
@@ -26,8 +27,8 @@ class UserIsBlocked extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public static function contextDefinitions() {
-    $contexts['user'] = ContextDefinition::create('entity:user')
+  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
+    $contexts['user'] = ContextDefinition::create($typed_data_manager, 'entity:user')
       ->setLabel(t('User'));
 
     return $contexts;
