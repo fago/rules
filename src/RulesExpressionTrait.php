@@ -76,7 +76,7 @@ trait RulesExpressionTrait {
    * @param string $id
    *   The action plugin id.
    *
-   * @return \Drupal\Core\Action\ActionInterface
+   * @return \Drupal\rules\Engine\RulesActionInterface;
    *   The created action.
    */
   protected function createRulesAction($id) {

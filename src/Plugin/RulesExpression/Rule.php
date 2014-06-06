@@ -7,10 +7,11 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Action\ActionInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\TypedData\TypedDataManager;
+use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
+use Drupal\rules\Engine\RulesActionInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
@@ -29,7 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
-class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface, ContainerFactoryPluginInterface {
+class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInterface, ContainerFactoryPluginInterface {
 
   /**
    * List of conditions that must be met before actions are executed.
@@ -54,11 +55,13 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
+   *   The typed data manager.
    * @param \Drupal\rules\Plugin\RulesExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, RulesExpressionPluginManager $expression_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
 
     // Per default the outer condition container of a rule is initialized as
     // conjunction (AND), meaning that all conditions in it must evaluate to
@@ -75,6 +78,7 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('typed_data_manager'),
       $container->get('plugin.manager.rules_expression')
     );
   }
@@ -117,7 +121,7 @@ class Rule extends PluginBase implements RuleInterface, RulesExpressionInterface
   /**
    * {@inheritdoc}
    */
-  public function addAction(ActionInterface $action) {
+  public function addAction(RulesActionInterface $action) {
     $this->actions->addAction($action);
     return $this;
   }
