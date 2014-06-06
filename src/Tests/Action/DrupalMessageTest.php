@@ -49,7 +49,7 @@ class DrupalMessageTest extends EntityUnitTestBase {
    * Tests the action execution.
    */
   public function testActionExecution() {
-    $action = $this->actionManager->createInstance('drupal_message')
+    $action = $this->actionManager->createInstance('rules_drupal_message')
       ->setContextValue('message', 'test message')
       ->setContextValue('type', 'status')
       ->setContextValue('repeat', FALSE);
@@ -62,7 +62,7 @@ class DrupalMessageTest extends EntityUnitTestBase {
    * Make sure that the action works if the optional repeat flag is not set.
    */
   public function testOptionalRepeat() {
-    $action = $this->actionManager->createInstance('drupal_message')
+    $action = $this->actionManager->createInstance('rules_drupal_message')
       ->setContextValue('message', 'test message')
       ->setContextValue('type', 'status');
 

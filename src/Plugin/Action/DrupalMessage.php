@@ -12,10 +12,10 @@ use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesActionBase;
 
 /**
- * Provides an action to show a message on the site.
+ * Provides a 'Show a message on the site' action.
  *
  * @Action(
- *   id = "drupal_message",
+ *   id = "rules_drupal_message",
  *   label = @Translation("Show a message on the site")
  * )
  *
