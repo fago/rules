@@ -31,7 +31,7 @@ abstract class RulesTestBase extends UnitTestCase {
   /**
    * A mocked dummy action object.
    *
-   * @var \Drupal\Core\Action\ActionInterface
+   * @var \Drupal\rules\Engine\RulesActionInterface
    */
   protected $testAction;
 
@@ -41,9 +41,7 @@ abstract class RulesTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
 
     $this->trueCondition->expects($this->any())
       ->method('execute')
@@ -53,9 +51,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
@@ -65,9 +61,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesActionInterface');
   }
 
   /**

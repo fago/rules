@@ -7,9 +7,9 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Action\ActionInterface;
+use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
+use Drupal\rules\Engine\RulesActionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
 
 /**
@@ -20,19 +20,19 @@ use Drupal\rules\Engine\RulesExpressionInterface;
  *   label = @Translation("Action set")
  * )
  */
-class ActionSet extends PluginBase implements RulesActionContainerInterface, RulesExpressionInterface {
+class ActionSet extends RulesActionBase implements RulesActionContainerInterface, RulesExpressionInterface {
 
   /**
    * List of actions that will be executed.
    *
-   * @var \Drupal\Core\Action\ActionInterface[]
+   * @var \Drupal\rules\Engine\RulesActionInterface[]
    */
   protected $actions = [];
 
   /**
    * {@inheritdoc}
    */
-  public function addAction(ActionInterface $action) {
+  public function addAction(RulesActionInterface $action) {
     $this->actions[] = $action;
     return $this;
   }

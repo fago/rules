@@ -7,8 +7,8 @@
 
 namespace Drupal\rules_test\Plugin\Action;
 
-use Drupal\Core\Action\ActionInterface;
-use Drupal\Core\Plugin\PluginBase;
+use Drupal\rules\Engine\RulesActionBase;
+use Drupal\rules\Engine\RulesActionInterface;
 use Drupal\rules\Engine\RulesLog;
 
 /**
@@ -19,7 +19,7 @@ use Drupal\rules\Engine\RulesLog;
  *   label = @Translation("Test action logging.")
  * )
  */
-class TestAction extends PluginBase implements ActionInterface {
+class TestAction extends RulesActionBase implements RulesActionInterface {
 
   /**
    * {@inheritdoc}
