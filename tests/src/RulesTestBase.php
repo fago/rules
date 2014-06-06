@@ -49,12 +49,20 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
+    $this->trueCondition->expects($this->any())
+      ->method('evaluate')
+      ->will($this->returnValue(TRUE));
+
     $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
+      ->will($this->returnValue(FALSE));
+
+    $this->falseCondition->expects($this->any())
+      ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
     $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionInterface')
@@ -259,6 +267,48 @@ abstract class RulesTestBase extends UnitTestCase {
       ->will($this->returnValue($other + $defaults));
 
     return $this;
+  }
+
+  /**
+   * Creates a condition expression with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Plugin\RulesExpression\ConditionExpression
+   *   The mocked condition expression.
+   */
+  public function getMockConditionExpression(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $condition = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ConditionExpression')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $condition->expects($this->any())
+      ->method('getPluginId')
+      ->will($this->returnValue('rules_condition'));
+
+    $condition->expects($this->any())
+      ->method('getBasePluginId')
+      ->will($this->returnValue('rules_condition'));
+
+    $condition->expects($this->any())
+      ->method('getDerivativeId')
+      ->will($this->returnValue(NULL));
+
+    $condition->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue([
+        'type' => '',
+        'id' => 'rules_condition',
+        'label' => 'An executable condition',
+        'class' => 'Drupal\rules\Plugin\RulesExpression\ConditionExpression',
+        'provider' => 'rules',
+      ]));
+
+    return $condition;
   }
 
 }

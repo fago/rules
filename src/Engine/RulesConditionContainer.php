@@ -7,12 +7,10 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Condition\ConditionPluginBase;
-
 /**
  * Container for conditions.
  */
-abstract class RulesConditionContainer extends ConditionPluginBase implements RulesConditionContainerInterface {
+abstract class RulesConditionContainer extends RulesConditionBase implements RulesConditionContainerInterface {
 
   /**
    * List of conditions that are evaluated.

@@ -78,10 +78,14 @@ class ConditionExpression extends RulesConditionBase implements RulesExpressionI
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);
-    // @todo context mapping will happen here, we have to forward the context
-    // definitions from our plugin configuration to the condition plugin.
+    // We have to forward the context values from our configuration to the
+    // condition plugin.
+    $contexts = $condition->getContextDefinitions();
+    foreach ($contexts as $name => $context) {
+      $condition->setContext($name, $this->getContext($name));
+    }
     $result = $condition->evaluate();
-    // @todo Now that the action has been executed it can provide additional
+    // @todo Now that the condition has been executed it can provide additional
     // context which we will have to pass back to any parent expression.
     return $result;
   }
@@ -93,6 +97,18 @@ class ConditionExpression extends RulesConditionBase implements RulesExpressionI
     // @todo A condition expression has no summary. Or should we forward this to
     //   the condition plugin?
     return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getContextDefinitions() {
+    if (!isset($this->contextDefinitions)) {
+      // Pass up the context definitions from the condition plugin.
+      $condition = $this->conditionManager->createInstance($this->configuration['condition_id']);
+      $this->contextDefinitions = $condition->getContextDefinitions();
+    }
+    return $this->contextDefinitions;
   }
 
 }

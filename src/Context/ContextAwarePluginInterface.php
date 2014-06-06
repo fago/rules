@@ -59,6 +59,16 @@ interface ContextAwarePluginInterface extends CoreContextAwarePluginInterface {
   public function getContext($name);
 
   /**
+   * Set a context on this plugin.
+   *
+   * @param string $name
+   *   The name of the context in the plugin configuration.
+   * @param \Drupal\rules\Context\ContextInterface $context
+   *   The context object to set.
+   */
+  public function setContext($name, ContextInterface $context);
+
+  /**
    * Validates the set values for the defined contexts.
    *
    * @return \Symfony\Component\Validator\ConstraintViolationListInterface
