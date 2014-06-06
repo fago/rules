@@ -79,27 +79,10 @@ abstract class RulesTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $rule->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue('rules_rule'));
-
-    $rule->expects($this->any())
-      ->method('getBasePluginId')
-      ->will($this->returnValue('rules_rule'));
-
-    $rule->expects($this->any())
-      ->method('getDerivativeId')
-      ->will($this->returnValue(NULL));
-
-    $rule->expects($this->any())
-      ->method('getPluginDefinition')
-      ->will($this->returnValue([
-        'type' => '',
-        'id' => 'rules_rule',
-        'label' => 'A rule, executing actions when conditions are met.',
-        'class' => 'Drupal\rules\Plugin\RulesExpression\Rule',
-        'provider' => 'rules',
-      ]));
+    $this->expectsGetPluginId($rule, 'rules_rule')
+      ->expectsGetDerivativeId($rule, NULL)
+      ->expectsGetBasePluginId($rule, 'rules_rule')
+      ->expectsGetPluginDefinition($rule, 'rules_rule', 'A rule, executing actions when conditions are met.');
 
     // Set the condition container that would otherwise get initialized in the
     // constructor.
@@ -127,27 +110,10 @@ abstract class RulesTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $and->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue('rules_and'));
-
-    $and->expects($this->any())
-      ->method('getBasePluginId')
-      ->will($this->returnValue('rules_and'));
-
-    $and->expects($this->any())
-      ->method('getDerivativeId')
-      ->will($this->returnValue(NULL));
-
-    $and->expects($this->any())
-      ->method('getPluginDefinition')
-      ->will($this->returnValue([
-        'type' => '',
-        'id' => 'rules_and',
-        'label' => 'Condition set (AND).',
-        'class' => 'Drupal\rules\Plugin\RulesExpression\RulesAnd',
-        'provider' => 'rules',
-      ]));
+    $this->expectsGetPluginId($and, 'rules_and')
+      ->expectsGetDerivativeId($and, NULL)
+      ->expectsGetBasePluginId($and, 'rules_and')
+      ->expectsGetPluginDefinition($and, 'rules_and', 'Condition set (AND)');
 
     return $and;
   }
@@ -169,27 +135,10 @@ abstract class RulesTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $or->expects($this->any())
-      ->method('getPluginId')
-      ->will($this->returnValue('rules_or'));
-
-    $or->expects($this->any())
-      ->method('getBasePluginId')
-      ->will($this->returnValue('rules_or'));
-
-    $or->expects($this->any())
-      ->method('getDerivativeId')
-      ->will($this->returnValue(NULL));
-
-    $or->expects($this->any())
-      ->method('getPluginDefinition')
-      ->will($this->returnValue([
-        'type' => '',
-        'id' => 'rules_or',
-        'label' => 'Condition set (OR).',
-        'class' => 'Drupal\rules\Plugin\RulesExpression\RulesOr',
-        'provider' => 'rules',
-      ]));
+    $this->expectsGetPluginId($or, 'rules_or')
+      ->expectsGetDerivativeId($or, NULL)
+      ->expectsGetBasePluginId($or, 'rules_or')
+      ->expectsGetPluginDefinition($or, 'rules_or', 'Condition set (OR)');
 
     return $or;
   }
@@ -206,34 +155,110 @@ abstract class RulesTestBase extends UnitTestCase {
   public function getMockActionSet(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
-    $action_set = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ActionSet')
+    $actions = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ActionSet')
       ->setMethods($methods)
       ->disableOriginalConstructor()
       ->getMock();
 
-    $action_set->expects($this->any())
+    $this->expectsGetPluginId($actions, 'rules_action_set')
+      ->expectsGetDerivativeId($actions, NULL)
+      ->expectsGetBasePluginId($actions, 'rules_action_set')
+      ->expectsGetPluginDefinition($actions, 'rules_action_set', 'Rules Action');
+
+    return $actions;
+  }
+
+  /**
+   * Sets the mocked plugin to expect calls to 'getPluginId'.
+   *
+   * @param \PHPUnit_Framework_MockObject_MockObject $plugin
+   *   The mocked plugin instance.
+   * @param string $id
+   *   (optional) The id of the plugin. Defaults to an empty string.
+   *
+   * @return $this
+   *   The current object for chaining.
+   */
+  protected function expectsGetPluginId(\PHPUnit_Framework_MockObject_MockObject $plugin, $id = '') {
+    $plugin->expects($this->any())
       ->method('getPluginId')
-      ->will($this->returnValue('rules_action_set'));
+      ->will($this->returnValue($id));
 
-    $action_set->expects($this->any())
+    return $this;
+  }
+
+  /**
+   * Sets the mocked plugin to expect calls to 'getBasePluginId'.
+   *
+   * @param \PHPUnit_Framework_MockObject_MockObject $plugin
+   *   The mocked plugin instance.
+   * @param string $id
+   *   (optional) The base id of the plugin. Defaults to an empty string.
+   *
+   * @return $this
+   *   The current object for chaining.
+   */
+  protected function expectsGetBasePluginId(\PHPUnit_Framework_MockObject_MockObject $plugin, $id = '') {
+    $plugin->expects($this->any())
       ->method('getBasePluginId')
-      ->will($this->returnValue('rules_action_set'));
+      ->will($this->returnValue($id));
 
-    $action_set->expects($this->any())
+    return $this;
+  }
+
+  /**
+   * Sets the mocked plugin to expect calls to 'getDerivativeId'.
+   *
+   * @param \PHPUnit_Framework_MockObject_MockObject $plugin
+   *   The mocked plugin instance.
+   * @param string $id
+   *   (optional) The derivative id of the plugin. Defaults to NULL.
+   *
+   * @return $this
+   *   The current object for chaining.
+   */
+  protected function expectsGetDerivativeId(\PHPUnit_Framework_MockObject_MockObject $plugin, $id = NULL) {
+    $plugin->expects($this->any())
       ->method('getDerivativeId')
       ->will($this->returnValue(NULL));
 
-    $action_set->expects($this->any())
-      ->method('getPluginDefinition')
-      ->will($this->returnValue([
-        'type' => '',
-        'id' => 'rules_action_set',
-        'label' => 'Action set',
-        'class' => 'Drupal\rules\Plugin\RulesExpression\ActionSet',
-        'provider' => 'rules',
-      ]));
+    return $this;
+  }
 
-    return $action_set;
+  /**
+   * Sets the mocked plugin to expect calls to 'getPluginDefinition'.
+   *
+   * @param \PHPUnit_Framework_MockObject_MockObject $plugin
+   *   The mocked plugin instance.
+   * @param string $id
+   *   (optional) The id of the plugin. Defaults to an empty string.
+   * @param string $label
+   *   (optional) The label of the plugin. Defaults to NULL.
+   * @param string $provider
+   *   (optional) The name of the providing module. Defaults to 'rules'.
+   * @param array $other
+   *   (optional) Any other values to set as the plugin definition.
+   *
+   * @return $this
+   *   The current object for chaining.
+   */
+  protected function expectsGetPluginDefinition(\PHPUnit_Framework_MockObject_MockObject $plugin, $id = '', $label = NULL, $provider = 'rules', array $other = []) {
+    $defaults = [
+      'type' => '',
+      'id' => $id,
+      'class' => get_class($plugin),
+      'provider' => $provider,
+    ];
+
+    if (isset($label)) {
+      $definition['label'] = $label;
+    }
+
+    $plugin->expects($this->any())
+      ->method('getPluginDefinition')
+      ->will($this->returnValue($other + $defaults));
+
+    return $this;
   }
 
 }
