@@ -51,7 +51,7 @@ class RulesConditionTest extends RulesTestBase {
       ->method('createInstance')
       ->will($this->returnValue($this->trueCondition));
 
-    $this->condition = $this->getMockCondition(['getContext']);
+    $this->condition = $this->getMockConditionExpression(['getContext']);
 
     // Inject a mocked condition manager into the condition class.
     $property = new \ReflectionProperty($this->condition, 'conditionManager');
