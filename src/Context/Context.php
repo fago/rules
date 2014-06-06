@@ -54,6 +54,9 @@ class Context implements ContextInterface {
    * {@inheritdoc}
    */
   public function getContextValue() {
+    if (!isset($this->contextData)) {
+      return NULL;
+    }
     // Special case entities.
     // @todo: Remove once entities do not implemented TypedDataInterface any
     // more.
