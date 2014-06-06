@@ -79,10 +79,10 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
    */
   public function getContext($name) {
     // Check for a valid context value.
-    if (!isset($this->context[$name])) {
-      $this->context[$name] = new Context($this->getContextDefinition($name));
+    if (!isset($this->contexts[$name])) {
+      $this->contexts[$name] = new Context($this->getContextDefinition($name));
     }
-    return $this->context[$name];
+    return $this->contexts[$name];
   }
 
   /**
@@ -91,7 +91,7 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
   public function getContextValues() {
     $values = [];
     foreach ($this->getContextDefinitions() as $name => $definition) {
-      $values[$name] = isset($this->context[$name]) ? $this->context[$name]->getContextValue() : NULL;
+      $values[$name] = isset($this->contexts[$name]) ? $this->contexts[$name]->getContextValue() : NULL;
     }
     return $values;
   }
