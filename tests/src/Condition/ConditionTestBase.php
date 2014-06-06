@@ -38,7 +38,7 @@ namespace Drupal\rules\Tests\Condition {
      * @throws \LogicException
      *   If the given class does not implement RulesConditionInterface.
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\rules\Engine\RulesConditionInterface
      *   The mocked condition plugin.
      *
      * @see \Drupal\rules\Engine\RulesConditionInterface
@@ -77,7 +77,7 @@ namespace Drupal\rules\Tests\Condition {
 
       // Set the default string translation mock. This can be overridden in the
       // test implementation with a more specific string translation mock.
-      $condition->setStringTranslation($this->getMockedStringTranslation());
+      $condition->setStringTranslation($this->getMockStringTranslation());
 
       return $condition;
     }
@@ -85,12 +85,12 @@ namespace Drupal\rules\Tests\Condition {
     /**
      * Creates a string translation with the basic translation methods mocked.
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\StringTranslation\TranslationInterface
      *   The mocked string translation.
      *
      * @see \Drupal\Core\StringTranslation\TranslationInterface
      */
-    public function getMockedStringTranslation() {
+    public function getMockStringTranslation() {
       $string_translation = $this->getMock('Drupal\Core\StringTranslation\TranslationInterface');
       $string_translation->expects($this->any())
         ->method('translate')
@@ -113,7 +113,7 @@ namespace Drupal\rules\Tests\Condition {
      * @param array $methods
      *   (optional) The methods to mock.
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
      *   The mocked typed data manager
      *
      * @see \Drupal\Core\TypedData\TypedDataManager
