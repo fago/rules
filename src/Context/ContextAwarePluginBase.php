@@ -153,6 +153,13 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
   /**
    * {@inheritdoc}
    */
+  public function setContext($name, ContextInterface $context) {
+    $this->context[$name] = $context;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getContextValues() {
     $values = [];
     foreach ($this->getContextDefinitions() as $name => $definition) {

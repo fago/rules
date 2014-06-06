@@ -49,12 +49,20 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
+    $this->trueCondition->expects($this->any())
+      ->method('evaluate')
+      ->will($this->returnValue(TRUE));
+
     $this->falseCondition = $this->getMockBuilder('Drupal\rules\Engine\RulesConditionInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
+      ->will($this->returnValue(FALSE));
+
+    $this->falseCondition->expects($this->any())
+      ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
     $this->testAction = $this->getMockBuilder('Drupal\Core\Action\ActionInterface')
@@ -259,6 +267,31 @@ abstract class RulesTestBase extends UnitTestCase {
       ->will($this->returnValue($other + $defaults));
 
     return $this;
+  }
+
+  /**
+   * Creates a condition expression with the basic plugin methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \Drupal\rules\Plugin\RulesExpression\ConditionExpression
+   *   The mocked condition expression.
+   */
+  public function getMockConditionExpression(array $methods = []) {
+    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
+
+    $condition = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ConditionExpression')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->expectsGetPluginId($condition, 'rules_condition')
+      ->expectsGetDerivativeId($condition, NULL)
+      ->expectsGetBasePluginId($condition, 'rules_condition')
+      ->expectsGetPluginDefinition($condition, 'rules_condition', 'An executable condition');
+
+    return $condition;
   }
 
 }
