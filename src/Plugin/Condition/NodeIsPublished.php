@@ -38,7 +38,7 @@ class NodeIsPublished extends RulesConditionBase {
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Node is published.');
+    return $this->t('Node is published');
   }
 
   /**
