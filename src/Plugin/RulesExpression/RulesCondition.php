@@ -35,7 +35,7 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionInterf
   protected $conditionManager;
 
   /**
-   * Constructs a RulesCondition object.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

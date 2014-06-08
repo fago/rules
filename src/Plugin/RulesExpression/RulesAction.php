@@ -16,7 +16,7 @@ use Drupal\rules\Engine\RulesExpressionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines an executable action expression.
+ * Provides an executable action expression.
  *
  * This plugin is used to wrap action plugins and is responsible to setup all
  * the context necessary, instantiate the action plugin and to execute it.
@@ -36,7 +36,7 @@ class RulesAction extends RulesActionBase implements RulesActionInterface, Conta
   protected $actionManager;
 
   /**
-   * Constructs an RulesAction object.
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
