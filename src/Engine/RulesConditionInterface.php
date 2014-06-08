@@ -19,10 +19,9 @@ interface RulesConditionInterface extends ConditionInterface, ContextAwarePlugin
    * Negates the result after evaluating this condition.
    *
    * @param bool $negate
-   *   TRUE to indicate that the conditon should be negated, FALSE otherwise.
+   *   TRUE to indicate that the condition should be negated, FALSE otherwise.
    *
    * @return $this
-   *   The current condition object for chaining.
    */
   public function negate($negate = TRUE);
 

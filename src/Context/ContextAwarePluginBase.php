@@ -85,7 +85,6 @@ abstract class ContextAwarePluginBase extends PluginBase implements ContextAware
    *   The typed data manager.
    *
    * @return $this
-   *   The current object for chaining.
    */
   public function setTypedDataManager(TypedDataManager $typedDataManager) {
     $this->typedDataManager = $typedDataManager;

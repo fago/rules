@@ -19,7 +19,6 @@ interface RulesConditionContainerInterface extends RulesConditionInterface {
    *   The condition object.
    *
    * @return $this
-   *   The current condition object for chaining.
    */
   public function addCondition(RulesConditionInterface $condition);
 

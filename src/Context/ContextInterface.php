@@ -25,6 +25,9 @@ interface ContextInterface extends CoreContextInterface {
   /**
    * Sets the context value as typed data object.
    *
+   * @param \Drupal\Core\TypedData\TypedDataInterface $data
+   *   The context data.
+   *
    * @return $this
    */
   public function setContextData(TypedDataInterface $data);

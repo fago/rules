@@ -13,13 +13,12 @@ namespace Drupal\rules\Engine;
 interface RulesActionContainerInterface extends RulesActionInterface {
 
   /**
-   * Adds a action.
+   * Adds an action.
    *
    * @param \Drupal\rules\Engine\RulesActionInterface $action
    *   The action object.
    *
    * @return $this
-   *   The current action container object for chaining.
    */
   public function addAction(RulesActionInterface $action);
 

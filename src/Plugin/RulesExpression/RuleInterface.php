@@ -12,7 +12,7 @@ use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
 
 /**
- * Defines an interface for rules.
+ * Defines a rule.
  */
 interface RuleInterface extends RulesActionContainerInterface {
 
@@ -23,7 +23,6 @@ interface RuleInterface extends RulesActionContainerInterface {
    *   The condition object.
    *
    * @return $this
-   *   The current rule object for chaining.
    */
   public function addCondition(RulesConditionInterface $condition);
 
@@ -42,7 +41,6 @@ interface RuleInterface extends RulesActionContainerInterface {
    *   The condition container to set.
    *
    * @return $this
-   *   The current rule object for chaining.
    */
   public function setConditions(RulesConditionContainerInterface $conditions);
 
@@ -61,7 +59,6 @@ interface RuleInterface extends RulesActionContainerInterface {
    *   The action container to set.
    *
    * @return $this
-   *   The current rule object for chaining.
    */
   public function setActions(RulesActionContainerInterface $actions);
 

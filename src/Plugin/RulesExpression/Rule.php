@@ -19,7 +19,7 @@ use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines a rule, executing actions when conditions are met.
+ * Provides a rule, executing actions when conditions are met.
  *
  * Actions added to a rule can also be rules themselves, so it is possible to
  * nest several rules into one rule. This is the functionality of so called
@@ -47,7 +47,7 @@ class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInte
   protected $actions;
 
   /**
-   * Constructs a Rule object.
+   * Constructs a new class instance..
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

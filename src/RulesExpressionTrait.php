@@ -38,7 +38,6 @@ trait RulesExpressionTrait {
    *   The rules expression manager.
    *
    * @return $this
-   *   The current object for chaining.
    */
   public function setRulesExpressionManager(RulesExpressionPluginManager $expression_manager) {
     $this->rulesExpressionManager = $expression_manager;
