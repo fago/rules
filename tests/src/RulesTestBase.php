@@ -78,17 +78,24 @@ abstract class RulesTestBase extends UnitTestCase {
    * @see \Drupal\Core\TypedData\TypedDataManager
    */
   public function getMockTypedDataManager(array $methods = []) {
-    $methods += ['createDataDefinition', 'createInstance'];
+    $methods += ['createDataDefinition', 'createListDataDefinition', 'createInstance'];
 
     $typed_data_manager = $this->getMockBuilder('Drupal\Core\TypedData\TypedDataManager')
       ->setMethods($methods)
       ->disableOriginalConstructor()
       ->getMock();
 
-    // This can be overridden in the test implementation to return a more
-    // specific data definition.
+    // These can be overridden in the test implementation to return more
+    // specific data definitions.
     $typed_data_manager->expects($this->any())
       ->method('createDataDefinition')
+      ->with($this->anything())
+      ->will($this->returnCallback(function ($data) {
+        return DataDefinition::create($data);
+      }));
+
+    $typed_data_manager->expects($this->any())
+      ->method('createListDataDefinition')
       ->with($this->anything())
       ->will($this->returnCallback(function ($data) {
         return DataDefinition::create($data);

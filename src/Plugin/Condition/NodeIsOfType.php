@@ -27,11 +27,12 @@ class NodeIsOfType extends RulesConditionBase {
   public static function contextDefinitions(TypedDataManager $typed_data_manager) {
     $contexts['node'] = ContextDefinition::create($typed_data_manager, 'entity:node')
       ->setLabel(t('Node'));
-    // @todo: Add node_type to column entity
+
     $contexts['types'] = ContextDefinition::create($typed_data_manager, 'string')
       ->setMultiple()
-      ->setLabel(t('Content Types'))
+      ->setLabel(t('Content types'))
       ->setDescription(t('Check for the the allowed node types.'));
+
     return $contexts;
   }
 
