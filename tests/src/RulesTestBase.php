@@ -308,29 +308,4 @@ abstract class RulesTestBase extends UnitTestCase {
     return $this;
   }
 
-  /**
-   * Creates a condition expression with the basic plugin methods mocked.
-   *
-   * @param array $methods
-   *   (optional) The methods to mock.
-   *
-   * @return \Drupal\rules\Plugin\RulesExpression\RulesCondition
-   *   The mocked condition expression.
-   */
-  public function getMockConditionExpression(array $methods = []) {
-    $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
-
-    $condition = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesCondition')
-      ->setMethods($methods)
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->expectsGetPluginId($condition, 'rules_condition')
-      ->expectsGetDerivativeId($condition, NULL)
-      ->expectsGetBasePluginId($condition, 'rules_condition')
-      ->expectsGetPluginDefinition($condition, 'rules_condition', 'An executable condition');
-
-    return $condition;
-  }
-
 }
