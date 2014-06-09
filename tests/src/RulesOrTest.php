@@ -7,10 +7,26 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Plugin\RulesExpression\RulesOr;
+
 /**
  * Tests the rules OR condition plugin.
  */
 class RulesOrTest extends RulesTestBase {
+
+  /**
+   * The typed data manger.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
+   * The 'or' condition container being tested.
+   *
+   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   */
+  protected $or;
 
   /**
    * {@inheritdoc}
@@ -23,6 +39,13 @@ class RulesOrTest extends RulesTestBase {
     ];
   }
 
+  public function setUp() {
+    parent::setUp();
+
+    $this->typedDataManager = $this->getMockTypedDataManager();
+    $this->or = new RulesOr([], '', [], $this->typedDataManager);
+  }
+
   /**
    * Tests one condition.
    */
@@ -31,18 +54,19 @@ class RulesOrTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $or = $this->getMockOr()
-      ->addCondition($this->trueCondition);
-
-    $this->assertTrue($or->execute(), 'Single condition returns TRUE.');
+    $this->or->addCondition($this->trueCondition);
+    $this->assertTrue($this->or->execute(), 'Single condition returns TRUE.');
   }
 
   /**
    * Tests an empty OR.
    */
   public function testEmptyOr() {
-    $or = $this->getMockOr();
-    $this->assertTrue($or->execute(), 'Empty OR returns TRUE.');
+    $property = new \ReflectionProperty($this->or, 'conditions');
+    $property->setAccessible(TRUE);
+
+    $this->assertEmpty($property->getValue($this->or));
+    $this->assertTrue($this->or->execute(), 'Empty OR returns TRUE.');
   }
 
   /**
@@ -53,11 +77,10 @@ class RulesOrTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $or = $this->getMockOr()
-      ->addCondition($this->trueCondition)
+    $this->or->addCondition($this->trueCondition)
       ->addCondition($this->trueCondition);
 
-    $this->assertTrue($or->execute(), 'Two conditions returns TRUE.');
+    $this->assertTrue($this->or->execute(), 'Two conditions returns TRUE.');
   }
 
   /**
@@ -68,10 +91,9 @@ class RulesOrTest extends RulesTestBase {
     $this->falseCondition->expects($this->exactly(2))
       ->method('execute');
 
-    $or = $this->getMockOr()
-      ->addCondition($this->falseCondition)
+    $this->or->addCondition($this->falseCondition)
       ->addCondition($this->falseCondition);
 
-    $this->assertFalse($or->execute(), 'Two false conditions return FALSE.');
+    $this->assertFalse($this->or->execute(), 'Two false conditions return FALSE.');
   }
 }
