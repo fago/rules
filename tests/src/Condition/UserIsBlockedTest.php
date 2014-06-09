@@ -89,7 +89,12 @@ class UserIsBlockedTest extends ConditionTestBase {
    * @covers ::getContextValue()
    */
   public function testContextValue() {
-    $user = $this->getMockBuilder('Drupal\user\Entity\UserInterface');
+    // We can't mock the UserInterface because there is a bug in PHPUnit below
+    // version 3.8 that causes mocking of interfaces that extend \Traversable
+    // to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
+    $user = $this->getMockBuilder('Drupal\user\Entity\User')
+      ->disableOriginalConstructor()
+      ->getMock();
 
     // Test setting and getting the context value.
     $this->assertSame($this->condition, $this->condition->setContextValue('user', $user));

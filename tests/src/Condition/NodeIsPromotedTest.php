@@ -89,7 +89,12 @@ class NodeIsPromotedTest extends ConditionTestBase {
    * @covers ::getContextValue()
    */
   public function testContextValue() {
-    $node = $this->getMockBuilder('Drupal\node\Entity\NodeInterface');
+    // We can't mock the NodeInterface because there is a bug in PHPUnit below
+    // version 3.8 that causes mocking of interfaces that extend \Traversable
+    // to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
+    $node = $this->getMockBuilder('Drupal\node\Entity\Node')
+      ->disableOriginalConstructor()
+      ->getMock();
 
     // Test setting and getting the context value.
     $this->assertSame($this->condition, $this->condition->setContextValue('node', $node));
