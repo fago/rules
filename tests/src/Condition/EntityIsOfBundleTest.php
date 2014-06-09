@@ -138,6 +138,8 @@ class EntityIsOfBundleTest extends ConditionTestBase {
 
   /**
    * Tests evaluating the condition.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
