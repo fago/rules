@@ -7,10 +7,26 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Plugin\RulesExpression\ActionSet;
+
 /**
  * Tests the action set functionality.
  */
 class ActionSetTest extends RulesTestBase {
+
+  /**
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
+   * The action set being tested.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpression\ActionSet
+   */
+  protected $actionSet;
 
   /**
    * {@inheritdoc}
@@ -23,6 +39,13 @@ class ActionSetTest extends RulesTestBase {
     ];
   }
 
+  public function setUp() {
+    parent::setUp();
+
+    $this->typedDataManager = $this->getMockTypedDataManager();
+    $this->actionSet = new ActionSet([], '', [], $this->typedDataManager);
+  }
+
   /**
    * Tests that an action in the set fires.
    */
@@ -31,9 +54,7 @@ class ActionSetTest extends RulesTestBase {
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    $this->getMockActionSet()
-      ->addAction($this->testAction)
-      ->execute();
+    $this->actionSet->addAction($this->testAction)->execute();
   }
 
   /**
@@ -44,8 +65,7 @@ class ActionSetTest extends RulesTestBase {
     $this->testAction->expects($this->exactly(2))
       ->method('execute');
 
-    $this->getMockActionSet()
-      ->addAction($this->testAction)
+    $this->actionSet->addAction($this->testAction)
       ->addAction($this->testAction)
       ->execute();
   }
@@ -58,12 +78,11 @@ class ActionSetTest extends RulesTestBase {
     $this->testAction->expects($this->exactly(2))
       ->method('execute');
 
-    $inner_set = $this->getMockActionSet()
+    $inner = $this->getMockActionSet()
       ->addAction($this->testAction);
 
-    $this->getMockActionSet()
-      ->addAction($this->testAction)
-      ->addAction($inner_set)
+    $this->actionSet->addAction($this->testAction)
+      ->addAction($inner)
       ->execute();
   }
 
