@@ -11,13 +11,17 @@ use Drupal\rules\Plugin\Condition\EntityIsOfBundle;
 
 /**
  * Tests the 'Entity is of bundle' condition.
+ *
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfBundle
+ *
+ * @see \Drupal\rules\Plugin\Condition\EntityIsOfBundle
  */
 class EntityIsOfBundleTest extends ConditionTestBase {
 
   /**
    * The condition to be tested.
    *
-   * @var \Drupal\rules\Plugin\Condition\EntityIsOfBundle
+   * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
 

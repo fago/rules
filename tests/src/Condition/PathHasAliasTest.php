@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\rules\Tests\Condition;
+
 use Drupal\rules\Plugin\Condition\PathHasAlias;
 
 /**
@@ -20,7 +21,7 @@ class PathHasAliasTest extends ConditionTestBase {
   /**
    * The condition to be tested.
    *
-   * @var \Drupal\rules\Plugin\Condition\PathHasAlias
+   * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
 

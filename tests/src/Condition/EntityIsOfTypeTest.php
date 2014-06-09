@@ -11,13 +11,17 @@ use Drupal\rules\Plugin\Condition\EntityIsOfType;
 
 /**
  * Tests the 'Entity is of type' condition.
+ *
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfType
+ *
+ * @see \Drupal\rules\Plugin\Condition\EntityIsOfType
  */
 class EntityIsOfTypeTest extends ConditionTestBase {
 
   /**
    * The condition to be tested.
    *
-   * @var \Drupal\rules\Plugin\Condition\EntityIsOfType
+   * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
 
