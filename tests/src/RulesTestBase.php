@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\TypedData\Plugin\DataType\Any;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -62,6 +64,49 @@ abstract class RulesTestBase extends UnitTestCase {
       ->will($this->returnValue(FALSE));
 
     $this->testAction = $this->getMock('Drupal\rules\Engine\RulesActionInterface');
+  }
+
+  /**
+   * Creates a typed data manager with the basic data type methods mocked.
+   *
+   * @param array $methods
+   *   (optional) The methods to mock.
+   *
+   * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
+   *   The mocked typed data manager
+   *
+   * @see \Drupal\Core\TypedData\TypedDataManager
+   */
+  public function getMockTypedDataManager(array $methods = []) {
+    $methods += ['createDataDefinition', 'createInstance'];
+
+    $typed_data_manager = $this->getMockBuilder('Drupal\Core\TypedData\TypedDataManager')
+      ->setMethods($methods)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    // This can be overridden in the test implementation to return a more
+    // specific data definition.
+    $typed_data_manager->expects($this->any())
+      ->method('createDataDefinition')
+      ->with($this->anything())
+      ->will($this->returnCallback(function ($data) {
+        return DataDefinition::create($data);
+      }));
+
+    $typed_data_manager->expects($this->any())
+      ->method('createInstance')
+      ->with($this->anything())
+      ->will($this->returnCallback(function ($definition, $configuration) {
+        // We don't care for validation in our condition plugin tests. Therefore
+        // we wrap all the data in a simple 'any' data type. That way we can use
+        // all the data setters and getters without running into any problems or
+        // needless complexity and mocking.
+        // @see \Drupal\Core\TypedData\TypedDataManager::createInstance.
+        return new Any($definition, $configuration['name'], $configuration['parent']);
+      }));
+
+    return $typed_data_manager;
   }
 
   /**
