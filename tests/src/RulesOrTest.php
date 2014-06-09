@@ -39,6 +39,9 @@ class RulesOrTest extends RulesTestBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 

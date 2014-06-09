@@ -17,6 +17,41 @@ use Drupal\rules\Plugin\RulesExpression\Rule;
 class RuleTest extends RulesTestBase {
 
   /**
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
+   * The rules expression plugin manager.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   */
+  protected $expressionManager;
+
+  /**
+   * The rule being tested.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpression\RuleInterface
+   */
+  protected $rule;
+
+  /**
+   * The primary condition container of the rule.
+   *
+   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   */
+  protected $conditions;
+
+  /**
+   * The primary action container of the rule.
+   *
+   * @var \Drupal\rules\Engine\RulesActionContainerInterface
+   */
+  protected $actions;
+
+  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -28,69 +63,39 @@ class RuleTest extends RulesTestBase {
   }
 
   /**
-   * Tests the static create method.
-   *
-   * @covers ::create()
+   * {@inheritdoc}
    */
-  public function testStaticCreate() {
-    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+  public function setUp() {
+    parent::setUp();
+
+    $this->typedDataManager = $this->getMockTypedDataManager();
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $manager->expects($this->at(0))
+    $this->conditions = $this->getMockAnd();
+    $this->expressionManager->expects($this->at(0))
       ->method('createInstance')
-      ->with('rules_and');
+      ->with('rules_and')
+      ->will($this->returnValue($this->conditions));
 
-    $manager->expects($this->at(1))
+    $this->actions = $this->getMockActionSet();
+    $this->expressionManager->expects($this->at(1))
       ->method('createInstance')
-      ->with('rules_action_set');
+      ->with('rules_action_set')
+      ->will($this->returnValue($this->actions));
 
-    $typed_data = $this->getMockBuilder('Drupal\Core\TypedData\TypedDataManager')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
-    $container->expects($this->at(0))
-      ->method('get')
-      ->with('typed_data_manager')
-      ->will($this->returnValue($typed_data));
-    $container->expects($this->at(1))
-      ->method('get')
-      ->with('plugin.manager.rules_expression')
-      ->will($this->returnValue($manager));
-
-    Rule::create($container, [], 'rules_rule', []);
+    $this->rule = new Rule([], 'rules_rule', [], $this->typedDataManager, $this->expressionManager);
   }
 
   /**
-   * Tests that a rule is constructed with condition and action container.
+   * Tests that a rule is constructed with condition and action containers.
    *
    * @covers ::__construct()
    */
   public function testContainersOnConstruct() {
-    $manager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $and = $this->getMockAnd();
-    $manager->expects($this->at(0))
-      ->method('createInstance')
-      ->with('rules_and')
-      ->will($this->returnValue($and));
-
-    $action_set = $this->getMockActionSet();
-    $manager->expects($this->at(1))
-      ->method('createInstance')
-      ->with('rules_action_set')
-      ->will($this->returnValue($action_set));
-
-    $typed_data = $this->getMockBuilder('Drupal\Core\TypedData\TypedDataManager')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $rule = new Rule([], 'rules_rule', [], $typed_data, $manager);
-    $this->assertSame($and, $rule->getConditions());
-    $this->assertSame($action_set, $rule->getActions());
+    $this->assertSame($this->conditions, $this->rule->getConditions());
+    $this->assertSame($this->actions, $this->rule->getActions());
   }
 
   /**
@@ -100,15 +105,13 @@ class RuleTest extends RulesTestBase {
    * @covers ::getConditions()
    */
   public function testSetConditionsGetConditions() {
-    $rule = $this->getMockRule();
-
     $or = $this->getMockOr();
-    $rule->setConditions($or);
-    $this->assertSame($or, $rule->getConditions());
+    $this->rule->setConditions($or);
+    $this->assertSame($or, $this->rule->getConditions());
 
     $and = $this->getMockAnd();
-    $rule->setConditions($and);
-    $this->assertSame($and, $rule->getConditions());
+    $this->rule->setConditions($and);
+    $this->assertSame($and, $this->rule->getConditions());
   }
 
   /**
@@ -118,51 +121,52 @@ class RuleTest extends RulesTestBase {
    * @covers ::getActions()
    */
   public function testSetActionsGetActions() {
-    $rule = $this->getMockRule();
-
     $action_set = $this->getMockActionSet();
-    $rule->setActions($action_set);
-    $this->assertSame($action_set, $rule->getActions());
+    $this->rule->setActions($action_set);
+    $this->assertSame($action_set, $this->rule->getActions());
   }
 
   /**
    * Tests that an action fires if a condition passes.
+   *
+   * @covers ::execute()
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    $this->getMockRule()
-      ->addCondition($this->trueCondition)
+    $this->rule->addCondition($this->trueCondition)
       ->addAction($this->testAction)
       ->execute();
   }
 
   /**
    * Tests that an action does not fire if a condition fails.
+   *
+   * @covers ::execute()
    */
   public function testConditionFails() {
     // The execute method on the action must never be called.
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $this->getMockRule()
-      ->addCondition($this->falseCondition)
+    $this->rule->addCondition($this->falseCondition)
       ->addAction($this->testAction)
       ->execute();
   }
 
   /**
    * Tests that an action fires if a condition passes.
+   *
+   * @covers ::execute()
    */
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
     $this->testAction->expects($this->once())
       ->method('execute');
 
-    $this->getMockRule()
-      ->addCondition($this->trueCondition)
+    $this->rule->addCondition($this->trueCondition)
       ->addCondition($this->trueCondition)
       ->addAction($this->testAction)
       ->execute();
@@ -170,14 +174,15 @@ class RuleTest extends RulesTestBase {
 
   /**
    * Tests that an action does not fire if a condition fails.
+   *
+   * @covers ::execute()
    */
   public function testTwoConditionsFalse() {
     // The execute method on the action must never be called.
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $this->getMockRule()
-      ->addCondition($this->trueCondition)
+    $this->rule->addCondition($this->trueCondition)
       ->addCondition($this->falseCondition)
       ->addAction($this->testAction)
       ->execute();
@@ -185,6 +190,8 @@ class RuleTest extends RulesTestBase {
 
   /**
    * Tests that nested rules are properly executed.
+   *
+   * @covers ::execute()
    */
   public function testNestedRules() {
     $this->testAction->expects($this->once())
@@ -194,8 +201,7 @@ class RuleTest extends RulesTestBase {
       ->addCondition($this->trueCondition)
       ->addAction($this->testAction);
 
-    $this->getMockRule()
-      ->addCondition($this->trueCondition)
+    $this->rule->addCondition($this->trueCondition)
       ->addAction($nested)
       ->execute();
   }
