@@ -7,17 +7,17 @@
 
 namespace Drupal\rules\Tests\Condition;
 
-use Drupal\rules\Plugin\Condition\EntityIsOfBundle;
+use Drupal\rules\Plugin\Condition\EntityIsOfType;
 
 /**
- * Tests the 'Entity is of bundle' condition.
+ * Tests the 'Entity is of type' condition.
  */
-class EntityIsOfBundleTest extends ConditionTestBase {
+class EntityIsOfTypeTest extends ConditionTestBase {
 
   /**
    * The condition to be tested.
    *
-   * @var \Drupal\rules\Plugin\Condition\EntityIsOfBundle
+   * @var \Drupal\rules\Plugin\Condition\EntityIsOfType
    */
   protected $condition;
 
@@ -33,8 +33,8 @@ class EntityIsOfBundleTest extends ConditionTestBase {
    */
   public static function getInfo() {
     return [
-      'name' => 'Entity is of bundle condition test',
-      'description' => 'Tests whether an entity is of a particular [type and] bundle.',
+      'name' => 'Entity is of type condition test',
+      'description' => 'Tests that an entity is of a particular type.',
       'group' => 'Rules conditions',
     ];
   }
@@ -46,11 +46,7 @@ class EntityIsOfBundleTest extends ConditionTestBase {
     parent::setUp();
 
     $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->condition = new EntityIsOfBundle([], '', [], $this->typedDataManager);
+    $this->condition = new EntityIsOfType([], '', [], $this->typedDataManager);
     $this->condition->setStringTranslation($this->getMockStringTranslation());
   }
 
@@ -90,18 +86,7 @@ class EntityIsOfBundleTest extends ConditionTestBase {
     // Test the specific context definition properties.
     $this->assertEquals('Type', $definition->getLabel());
     $this->assertEquals('string', $definition->getDataType());
-    $this->assertEquals('The type of the evaluated entity.', $definition->getDescription());
-
-    // Test that the 'bundle' context is properly defined.
-    $language = $this->condition->getContext('bundle');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $language);
-    $definition = $language->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Bundle', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertEquals('The bundle of the evaluated entity.', $definition->getDescription());
+    $this->assertEquals('The entity type specified by the condition.', $definition->getDescription());
   }
 
   /**
@@ -110,7 +95,7 @@ class EntityIsOfBundleTest extends ConditionTestBase {
    * @covers ::summary()
    */
   public function testSummary() {
-    $this->assertEquals('Entity is of bundle', $this->condition->summary());
+    $this->assertEquals('Entity is of type', $this->condition->summary());
   }
 
   /**
@@ -125,41 +110,30 @@ class EntityIsOfBundleTest extends ConditionTestBase {
     $this->assertSame($this->condition, $this->condition->setContextValue('entity', $entity));
     $this->assertSame($entity, $this->condition->getContextValue('entity'));
 
-    $this->assertSame($this->condition, $this->condition->setContextValue('bundle', 'my-bundle'));
-    $this->assertSame('my-bundle', $this->condition->getContextValue('bundle'));
-
     $this->assertSame($this->condition, $this->condition->setContextValue('type', 'my-entity-type'));
     $this->assertSame('my-entity-type', $this->condition->getContextValue('type'));
   }
 
   /**
    * Tests evaluating the condition.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->exactly(3))
+    $entity->expects($this->exactly(2))
       ->method('getEntityTypeId')
       ->will($this->returnValue('node'));
 
-    $entity->expects($this->exactly(3))
-      ->method('bundle')
-      ->will($this->returnValue('page'));
-
-    // Add the test node to our context as the evaluated entity, along with
-    // explicit entity type and bundle strings.
-    // First, test with values that should evaluate TRUE.
+    // Add the test node to our context as the evaluated entity, along with an
+    // explicit entity type string.
+    // First, test with a value that should evaluate TRUE.
     $this->condition->setContextValue('entity', $entity)
-      ->setContextValue('type', 'node')
-      ->setContextValue('bundle', 'page');
-
+      ->setContextValue('type', 'node');
     $this->assertTrue($this->condition->evaluate());
 
     // Then test with values that should evaluate FALSE.
-    $this->condition->setContextValue('bundle', 'article');
-    $this->assertFalse($this->condition->evaluate());
-
-    $this->condition->setContextValue('type', 'taxonomy_term')
-      ->setContextValue('bundle', 'page');
+    $this->condition->setContextValue('type', 'taxonomy_term');
     $this->assertFalse($this->condition->evaluate());
   }
 }
