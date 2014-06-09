@@ -18,18 +18,18 @@ use Drupal\rules\Plugin\Condition\PathAliasExists;
 class PathAliasExistsTest extends ConditionTestBase {
 
   /**
+   * The condition to be tested.
+   *
+   * @var \Drupal\rules\Plugin\Condition\PathAliasExists
+   */
+  protected $condition;
+
+  /**
    * The mocked alias manager.
    *
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasManagerInterface
    */
   protected $aliasManager;
-
-  /**
-   * The mocked condition to be tested.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\rules\Plugin\Condition\PathHasAlias
-   */
-  protected $condition;
 
   /**
    * The mocked typed data manager.

@@ -15,9 +15,9 @@ use Drupal\rules\Plugin\Condition\EntityIsOfBundle;
 class EntityIsOfBundleTest extends ConditionTestBase {
 
   /**
-   * The mocked condition to be tested.
+   * The condition to be tested.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\rules\Plugin\Condition\PathHasAlias
+   * @var \Drupal\rules\Plugin\Condition\EntityIsOfBundle
    */
   protected $condition;
 
