@@ -7,17 +7,36 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Plugin\RulesExpression\RulesAnd;
+
 /**
  * Tests the rules AND condition plugin.
  */
 class RulesAndTest extends RulesTestBase {
 
   /**
-   * A mocked 'and' condition container.
+   * The typed data manger.
    *
-   * @var \Drupal\rules\Plugin\RulesExpression\RulesAnd
+   * @var \Drupal\Core\TypedData\TypedDataManager
    */
-  protected $testRulesAnd;
+  protected $typedDataManager;
+
+  /**
+   * The 'and' condition container being tested.
+   *
+   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   */
+  protected $and;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    $this->typedDataManager = $this->getMockTypedDataManager();
+    $this->and = new RulesAnd([], '', [], $this->typedDataManager);
+  }
 
   /**
    * {@inheritdoc}
@@ -38,18 +57,19 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->once())
       ->method('execute');
 
-    $and = $this->getMockAnd()
-      ->addCondition($this->trueCondition);
-
-    $this->assertTrue($and->execute(), 'Single condition returns TRUE.');
+    $this->and->addCondition($this->trueCondition);
+    $this->assertTrue($this->and->execute(), 'Single condition returns TRUE.');
   }
 
   /**
    * Tests an empty AND.
    */
   public function testEmptyAnd() {
-    $and = $this->getMockAnd();
-    $this->assertFalse($and->execute(), 'Empty AND returns FALSE.');
+    $property = new \ReflectionProperty($this->and, 'conditions');
+    $property->setAccessible(TRUE);
+
+    $this->assertEmpty($property->getValue($this->and));
+    $this->assertFalse($this->and->execute(), 'Empty AND returns FALSE.');
   }
 
   /**
@@ -60,11 +80,10 @@ class RulesAndTest extends RulesTestBase {
     $this->trueCondition->expects($this->exactly(2))
       ->method('execute');
 
-    $and = $this->getMockAnd()
-      ->addCondition($this->trueCondition)
+    $this->and->addCondition($this->trueCondition)
       ->addCondition($this->trueCondition);
 
-    $this->assertTrue($and->execute(), 'Two conditions returns TRUE.');
+    $this->assertTrue($this->and->execute(), 'Two conditions returns TRUE.');
   }
 
   /**
@@ -75,10 +94,9 @@ class RulesAndTest extends RulesTestBase {
     $this->falseCondition->expects($this->once())
       ->method('execute');
 
-    $and = $this->getMockAnd()
-      ->addCondition($this->falseCondition)
+    $this->and->addCondition($this->falseCondition)
       ->addCondition($this->falseCondition);
 
-    $this->assertFalse($and->execute(), 'Two false conditions return FALSE.');
+    $this->assertFalse($this->and->execute(), 'Two false conditions return FALSE.');
   }
 }
