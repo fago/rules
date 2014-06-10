@@ -44,7 +44,7 @@ class UserHasRoleTest extends ConditionTestBase {
    */
   public static function getInfo() {
     return [
-      'name' => 'User has role(s( condition test',
+      'name' => 'User has role(s) condition test',
       'description' => 'Tests the user has role(s) condition.',
       'group' => 'Rules conditions',
     ];
@@ -140,12 +140,13 @@ class UserHasRoleTest extends ConditionTestBase {
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
-    // Set-up a mock object with roles 'authenticated' and 'editor', but not 'administrator'.
+    // Set-up a mock object with roles 'authenticated' and 'editor', but not
+    // 'administrator'.
     $this->account = $this->getMockBuilder('Drupal\user\Entity\User')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->account->expects($this->any())
+    $this->account->expects($this->exactly(7))
       ->method('getRoles')
       ->will($this->returnValue(['authenticated', 'editor']));
 
@@ -172,7 +173,8 @@ class UserHasRoleTest extends ConditionTestBase {
     $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
 
-    // User doesn't have the administrator role, but has the authenticated, should succeed.
+    // User doesn't have the administrator role, but has the authenticated,
+    // should succeed.
     $this->condition->setContextValue('roles', ['authenticated', 'administrator']);
     $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
