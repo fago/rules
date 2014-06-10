@@ -12,7 +12,7 @@ use Drupal\rules\Plugin\Condition\EntityHasField;
 /**
  * Tests the 'Entity has field' condition.
  *
- * @coversDefaultClass \Drupal\rules\Plugin\Condition\ EntityHasField
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
  *
  * @see \Drupal\rules\Plugin\Condition\ EntityHasField
  */
