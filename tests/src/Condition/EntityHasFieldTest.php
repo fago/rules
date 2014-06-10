@@ -50,10 +50,6 @@ class EntityHasFieldTest extends ConditionTestBase {
     parent::setUp();
 
     $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
-
     $this->condition = new EntityHasField([], '', [], $this->typedDataManager);
     $this->condition->setStringTranslation($this->getMockStringTranslation());
   }
