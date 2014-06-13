@@ -58,13 +58,16 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   /**
    * Creates a new condition.
    *
-   * @param array $configuration
-   *   The configuration array to create the plugin instance with.
+   * @param string $id
+   *   The condition plugin id.
    *
    * @return \Drupal\rules\Engine\RulesConditionInterface
    */
-  protected function createCondition(array $configuration) {
-    return $this->rulesExpressionManager->createInstance('rules_condition', $configuration);
+  protected function createCondition($id) {
+    $condition = $this->rulesExpressionManager->createInstance('rules_condition', array(
+      'condition_id' => $id,
+    ));
+    return $condition;
   }
 
 }
