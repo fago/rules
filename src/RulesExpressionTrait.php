@@ -62,11 +62,14 @@ trait RulesExpressionTrait {
   /**
    * Creates a new rule.
    *
+   * @param array $configuration
+   *   The configuration array to create the plugin instance with.
+   *
    * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
    *   The created rule.
    */
-  protected function createRulesRule() {
-    return $this->createRulesExpression('rules_rule');
+  protected function createRulesRule(array $configuration = array()) {
+    return $this->createRulesExpression('rules_rule', $configuration);
   }
 
   /**

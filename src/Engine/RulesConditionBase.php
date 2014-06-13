@@ -116,4 +116,11 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function summary() {
+    return '';
+  }
+
 }

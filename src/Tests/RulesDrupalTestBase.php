@@ -25,6 +25,20 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   protected $conditionManager;
 
   /**
+   * The rules expression plugin manager.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   */
+  protected $rulesExpressionManager;
+
+  /**
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManager
+   */
+  protected $typedDataManager;
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -38,21 +52,19 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
     parent::setUp();
     $this->rulesExpressionManager = $this->container->get('plugin.manager.rules_expression');
     $this->conditionManager = $this->container->get('plugin.manager.condition');
+    $this->typedDataManager = $this->container->get('typed_data_manager');
   }
 
   /**
    * Creates a new condition.
    *
-   * @param string $id
-   *   The condition plugin id.
+   * @param array $configuration
+   *   The configuration array to create the plugin instance with.
    *
    * @return \Drupal\rules\Engine\RulesConditionInterface
    */
-  protected function createCondition($id) {
-    $condition = $this->rulesExpressionManager->createInstance('rules_condition', array(
-      'condition_id' => $id,
-    ));
-    return $condition;
+  protected function createCondition(array $configuration) {
+    return $this->rulesExpressionManager->createInstance('rules_condition', $configuration);
   }
 
 }

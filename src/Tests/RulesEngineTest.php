@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 
 /**
@@ -64,6 +65,39 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     // Test that the action logged something.
     $log = RulesLog::logger()->get();
+    $this->assertEqual($log[0][0], 'action called');
+  }
+
+  /**
+   * Tests passing a string context to a condition.
+   */
+  public function testContextPassing() {
+    $rule = $this->createRulesRule(array(
+      'context' => array(
+        'test' => ContextDefinition::create($this->typedDataManager, 'string')
+          ->setLabel('Test string'),
+      )
+    ));
+
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', array(
+      'condition_id' => 'rules_test_string_condition',
+      'parameter mapping' => array(
+        'text:select' => 'test',
+      ),
+    )));
+
+    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->setContextValue('test', 'test value');
+
+    // Clear the log from any stale entries that are bleeding over from previous
+    // tests.
+    $logger = RulesLog::logger();
+    $logger->clear();
+
+    $rule->execute();
+
+    // Test that the action logged something.
+    $log = $logger->get();
     $this->assertEqual($log[0][0], 'action called');
   }
 

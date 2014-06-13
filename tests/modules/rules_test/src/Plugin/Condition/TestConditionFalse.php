@@ -7,7 +7,7 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\rules\Engine\RulesConditionContainer;
+use Drupal\rules\Engine\RulesConditionBase;
 
 /**
  * Provides an always FALSE test condition.
@@ -17,7 +17,7 @@ use Drupal\rules\Engine\RulesConditionContainer;
  *   label = @Translation("Test condition returning false")
  * )
  */
-class TestConditionFalse extends RulesConditionContainer {
+class TestConditionFalse extends RulesConditionBase {
 
   /**
    * {@inheritdoc}
