@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\EntityHasField;
 
 /**
@@ -26,13 +27,6 @@ class EntityHasFieldTest extends ConditionTestBase {
   protected $condition;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -49,48 +43,13 @@ class EntityHasFieldTest extends ConditionTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new EntityHasField([], '', [], $this->typedDataManager);
+    $this->condition = new EntityHasField([], '', ['context' => [
+      'entity' => new ContextDefinition('entity'),
+      'field' => new ContextDefinition('string'),
+    ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests that the dependencies are properly set in the constructor.
-   *
-   * @covers ::__construct()
-   */
-  public function testConstructor() {
-    $this->assertSame($this->typedDataManager, $this->condition->getTypedDataManager());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'entity' context is properly defined.
-    $context = $this->condition->getContext('entity');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Entity', $definition->getLabel());
-    $this->assertEquals('entity', $definition->getDataType());
-    $this->assertEquals('Specifies the entity for which to evaluate the condition.', $definition->getDescription());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'field' context is properly defined.
-    $context = $this->condition->getContext('field');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Field', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertEquals('The name of the field to check for.', $definition->getDescription());
+    $this->condition->setTypedDataManager($this->getMockTypedDataManager());
   }
 
   /**
@@ -103,29 +62,12 @@ class EntityHasFieldTest extends ConditionTestBase {
   }
 
   /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValues() {
-    // Test setting and getting context values.
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $this->assertSame($this->condition, $this->condition->setContextValue('entity', $entity));
-    $this->assertSame($entity, $this->condition->getContextValue('entity'));
-
-    $this->assertSame($this->condition, $this->condition->setContextValue('field', 'my-field'));
-    $this->assertSame('my-field', $this->condition->getContextValue('field'));
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
     $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
-
     $entity->expects($this->exactly(2))
       ->method('hasField')
       ->will($this->returnValueMap([
@@ -136,11 +78,11 @@ class EntityHasFieldTest extends ConditionTestBase {
     $this->condition->setContextValue('entity', $entity);
 
     // Test with an existing field.
-    $this->condition->setContextValue('field', 'existing-field');
+    $this->condition->setContextValue('field', $this->getMockTypedData('existing-field'));
     $this->assertTrue($this->condition->evaluate());
 
     // Test with a non-existing field.
-    $this->condition->setContextValue('field', 'non-existing-field');
+    $this->condition->setContextValue('field', $this->getMockTypedData('non-existing-field'));
     $this->assertFalse($this->condition->evaluate());
   }
 }

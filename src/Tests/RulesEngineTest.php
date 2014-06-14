@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Context\ContextDefinition;
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 
 /**
@@ -84,19 +84,14 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests passing a string context to a condition.
    */
   public function testContextPassing() {
-    $rule = $this->createRulesRule(array(
-      'context_definitions' => array(
-        'test' => ContextDefinition::create($this->typedDataManager, 'string')
-          ->setLabel('Test string'),
-      )
-    ));
+    $rule = $this->createRulesRule(['context_definitions' => [
+      'test' => new ContextDefinition('string', t('Test string')),
+    ]]);
 
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', array(
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
-      'parameter_mapping' => array(
-        'text:select' => 'test',
-      ),
-    )));
+      'parameter_mapping' => ['text:select' => 'test'],
+    ]));
 
     $rule->addAction($this->createRulesAction('rules_test_log'));
     $rule->setContextValue('test', 'test value');

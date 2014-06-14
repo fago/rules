@@ -7,8 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Action\ActionInterface;
-use Drupal\rules\Context\ContextAwarePluginInterface;
 
 /**
  * Extends the core ActionInterface to provide context.

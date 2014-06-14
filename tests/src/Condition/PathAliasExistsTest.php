@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\PathAliasExists;
 
 /**
@@ -33,13 +34,6 @@ class PathAliasExistsTest extends ConditionTestBase {
   protected $aliasManager;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * A mocked language object (english).
    *
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Language\LanguageInterface
@@ -63,12 +57,15 @@ class PathAliasExistsTest extends ConditionTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
     $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->condition = new PathAliasExists([], '', [], $this->typedDataManager, $this->aliasManager);
+    $this->condition = new PathAliasExists([], '', ['context' => [
+      'alias' => new ContextDefinition('string'),
+      'language' => new ContextDefinition('language', FALSE),
+    ]], $this->aliasManager);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
 
     $this->englishLanguage = $this->getMock('Drupal\Core\Language\LanguageInterface');
@@ -87,38 +84,6 @@ class PathAliasExistsTest extends ConditionTestBase {
     $property->setAccessible(TRUE);
 
     $this->assertSame($this->aliasManager, $property->getValue($this->condition));
-    $this->assertSame($this->typedDataManager, $this->condition->getTypedDataManager());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'alias' context is properly defined.
-    $alias = $this->condition->getContext('alias');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $alias);
-    $definition = $alias->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Path alias', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertEquals("Specify the path alias to check for. For example, 'about' for an about page.", $definition->getDescription());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'language' is properly defined.
-    $language = $this->condition->getContext('language');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $language);
-    $definition = $language->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Language', $definition->getLabel());
-    $this->assertEquals('language', $definition->getDataType());
-    $this->assertEquals('If specified, the language for which the URL alias applies.', $definition->getDescription());
-    $this->assertFalse($definition->isRequired());
   }
 
   /**
@@ -128,20 +93,6 @@ class PathAliasExistsTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('Path alias exists', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValues() {
-    // Test setting and getting context values.
-    $this->assertSame($this->condition, $this->condition->setContextValue('alias', 'my-alias'));
-    $this->assertSame('my-alias', $this->condition->getContextValue('alias'));
-    $this->assertSame($this->condition, $this->condition->setContextValue('language', $this->englishLanguage));
-    $this->assertSame($this->englishLanguage, $this->condition->getContextValue('language'));
   }
 
   /**
@@ -161,13 +112,13 @@ class PathAliasExistsTest extends ConditionTestBase {
       ->will($this->returnValue('path-with-alias'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('alias', 'alias-for-path');
+    $this->condition->setContextValue('alias', $this->getMockTypedData('alias-for-path'));
 
     // Test without language context set.
     $this->assertTrue($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->getMockTypedData($this->englishLanguage));
     $this->assertTrue($this->condition->evaluate());
   }
 
@@ -188,13 +139,13 @@ class PathAliasExistsTest extends ConditionTestBase {
       ->will($this->returnValue('alias-for-path-that-does-not-exist'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('alias', 'alias-for-path-that-does-not-exist');
+    $this->condition->setContextValue('alias', $this->getMockTypedData('alias-for-path-that-does-not-exist'));
 
     // Test without language context set.
     $this->assertFalse($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->getMockTypedData($this->englishLanguage));
     $this->assertFalse($this->condition->evaluate());
   }
 

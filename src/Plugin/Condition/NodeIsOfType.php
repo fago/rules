@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 
 /**
@@ -16,25 +14,20 @@ use Drupal\rules\Engine\RulesConditionBase;
  *
  * @Condition(
  *   id = "rules_node_is_of_type",
- *   label = @Translation("Node is of type")
+ *   label = @Translation("Node is of type"),
+ *   context = {
+ *     "node" = @ContextDefinition("entity:node",
+ *       label = @Translation("Node")
+ *     ),
+ *     "types" = @ContextDefinition("string",
+ *       label = @Translation("Content types"),
+ *       description = @Translation("Check for the the allowed node types."),
+ *       multiple = TRUE
+ *     )
+ *   }
  * )
  */
 class NodeIsOfType extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['node'] = ContextDefinition::create($typed_data_manager, 'entity:node')
-      ->setLabel(t('Node'));
-
-    $contexts['types'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setMultiple()
-      ->setLabel(t('Content types'))
-      ->setDescription(t('Check for the the allowed node types.'));
-
-    return $contexts;
-  }
 
   /**
    * {@inheritdoc}

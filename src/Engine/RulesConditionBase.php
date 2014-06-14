@@ -7,17 +7,13 @@
 
 namespace Drupal\rules\Engine;
 
-use \Drupal\Core\Executable\ExecutableManagerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use \Drupal\Core\StringTranslation\StringTranslationTrait;
-use \Drupal\rules\Context\ContextAwarePluginBase;
+use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\Core\Plugin\ContextAwarePluginBase;
 
 /**
  * Base class for rules conditions.
  */
-abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface, ContainerFactoryPluginInterface {
-
-  use StringTranslationTrait;
+abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface {
 
   /**
    * The condition manager to proxy execute calls through.

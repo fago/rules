@@ -15,13 +15,6 @@ use Drupal\rules\Plugin\RulesExpression\RulesOr;
 class RulesOrTest extends RulesTestBase {
 
   /**
-   * The typed data manger.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * The 'or' condition container being tested.
    *
    * @var \Drupal\rules\Engine\RulesConditionContainerInterface
@@ -45,8 +38,7 @@ class RulesOrTest extends RulesTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->or = new RulesOr([], '', [], $this->typedDataManager);
+    $this->or = new RulesOr([], '', []);
   }
 
   /**

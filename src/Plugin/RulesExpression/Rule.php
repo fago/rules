@@ -50,7 +50,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   protected $actions;
 
   /**
-   * Constructs a new class instance..
+   * Constructs a new class instance.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -58,22 +58,22 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
-   *   The typed data manager.
    * @param \Drupal\rules\Plugin\RulesExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, RulesExpressionPluginManager $expression_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
+    // @todo: This needs to be removed again and we need to add proper derivative handling for Rules.
+    if (isset($configuration['context_definitions'])) {
+      $plugin_definition['context'] = $configuration['context_definitions'];
+    }
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     // Per default the outer condition container of a rule is initialized as
     // conjunction (AND), meaning that all conditions in it must evaluate to
     // TRUE to fire the actions.
     $this->conditions = $expression_manager->createInstance('rules_and');
     $this->actions = $expression_manager->createInstance('rules_action_set');
-    if (isset($configuration['context_definitions'])) {
-      $this->contextDefinitions = $configuration['context_definitions'];
-    }
   }
 
   /**
@@ -84,7 +84,6 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('typed_data_manager'),
       $container->get('plugin.manager.rules_expression')
     );
   }

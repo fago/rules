@@ -7,50 +7,30 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an 'Entity is of type' condition.
  *
  * @Condition(
  *   id = "rules_entity_is_of_type",
- *   label = @Translation("Entity is of type")
+ *   label = @Translation("Entity is of type"),
+ *   context = {
+ *     "entity" = @ContextDefinition("entity",
+ *       label = @Translation("Entity"),
+ *       description = @Translation("Specifies the entity for which to evaluate the condition.")
+ *     ),
+ *     "type" = @ContextDefinition("string",
+ *       label = @Translation("Type"),
+ *       description = @Translation("The entity type specified by the condition.")
+ *     )
+ *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7?
  * @todo: Add group information from Drupal 7?
  */
 class EntityIsOfType extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('typed_data_manager')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['entity'] = ContextDefinition::create($typed_data_manager, 'entity')
-      ->setLabel(t('Entity'))
-      ->setDescription(t('Specifies the entity for which to evaluate the condition.'));
-
-    $contexts['type'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('Type'))
-      ->setDescription(t('The entity type specified by the condition.'));
-
-    return $contexts;
-  }
 
   /**
    * {@inheritdoc}

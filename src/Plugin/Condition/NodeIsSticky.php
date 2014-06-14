@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 
 /**
@@ -16,23 +14,18 @@ use Drupal\rules\Engine\RulesConditionBase;
  *
  * @Condition(
  *   id = "rules_node_is_sticky",
- *   label = @Translation("Node is sticky")
+ *   label = @Translation("Node is sticky"),
+ *   context = {
+ *     "node" = @ContextDefinition("entity:node",
+ *       label = @Translation("Node")
+ *     )
+ *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
 class NodeIsSticky extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['node'] = ContextDefinition::create($typed_data_manager, 'entity:node')
-      ->setLabel(t('Node'));
-
-    return $contexts;
-  }
 
   /**
    * {@inheritdoc}

@@ -9,9 +9,6 @@ namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\TypedData\TypedData;
-use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,7 +17,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Condition(
  *   id = "rules_path_has_alias",
- *   label = @Translation("Path has alias")
+ *   label = @Translation("Path has alias"),
+ *   context = {
+ *     "path" = @ContextDefinition("string",
+ *       label = @Translation("Path")
+ *     ),
+ *     "language" = @ContextDefinition("language",
+ *       label = @Translation("Language"),
+ *       description = @Translation("If specified, the language for which the URL alias applies."),
+ *       required = FALSE
+ *     )
+ *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7.
@@ -44,13 +51,11 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
-   *   The typed data manager.
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
    *   The alias manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, AliasManagerInterface $alias_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AliasManagerInterface $alias_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->aliasManager = $alias_manager;
   }
 
@@ -62,24 +67,8 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('typed_data_manager'),
       $container->get('path.alias_manager')
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['path'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('Path'));
-
-    $contexts['language'] = ContextDefinition::create($typed_data_manager, 'language')
-      ->setLabel(t('Language'))
-      ->setDescription(t('If specified, the language for which the URL alias applies.'))
-      ->setRequired(FALSE);
-
-    return $contexts;
   }
 
   /**

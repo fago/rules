@@ -12,4 +12,4 @@ namespace Drupal\rules\Engine;
  *
  * This class can be used to catch all exceptions thrown by Rules.
  */
-abstract class RulesException extends Exception {}
+abstract class RulesException extends \Exception {}

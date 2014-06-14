@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\rules\Context\Context;
+use Drupal\Core\Plugin\Context\ContextInterface;
 
 /**
  * The rules evaluation state.
@@ -27,7 +27,7 @@ class RulesState {
   /**
    * The known variables.
    *
-   * @var \Drupal\rules\Context\Context[]
+   * @var \Drupal\Core\Plugin\Context\ContextInterface[]
    */
   protected $variables = [];
 
@@ -39,7 +39,7 @@ class RulesState {
   /**
    * Creates a new RulesState object.
    *
-   * @param \Drupal\rules\Context\Context[] $contexts
+   * @param \Drupal\Core\Plugin\Context\ContextInterface[] $contexts
    *   Context variables to initialize this state with (optional).
    */
   public function __construct($contexts = []) {
@@ -52,10 +52,10 @@ class RulesState {
    *
    * @param string $name
    *   The varible name.
-   * @param \Drupal\rules\Context\Context $context
+   * @param \Drupal\Core\Plugin\Context\ContextInterface $context
    *   The variable wrapped as context.
    */
-  public function addVariable($name, Context $context) {
+  public function addVariable($name, ContextInterface $context) {
     $this->variables[$name] = $context;
   }
 
@@ -65,7 +65,7 @@ class RulesState {
    * @param string $name
    *   The name of the variable to return.
    *
-   * @return \Drupal\rules\Context\Context
+   * @return \Drupal\Core\Plugin\Context\ContextInterface
    *   The variable wrapped as context.
    *
    * @throws RulesEvaluationException
