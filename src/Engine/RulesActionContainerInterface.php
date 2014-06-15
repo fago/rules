@@ -10,16 +10,16 @@ namespace Drupal\rules\Engine;
 /**
  * Defines a common interface for action containers.
  */
-interface RulesActionContainerInterface extends RulesActionInterface {
+interface RulesActionContainerInterface extends RulesExpressionInterface {
 
   /**
    * Adds an action.
    *
-   * @param \Drupal\rules\Engine\RulesActionInterface $action
+   * @param \Drupal\rules\Engine\RulesExpressionInterface $action
    *   The action object.
    *
    * @return $this
    */
-  public function addAction(RulesActionInterface $action);
+  public function addAction(RulesExpressionInterface $action);
 
 }

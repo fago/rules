@@ -12,7 +12,9 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionInterface;
+use Drupal\rules\Engine\RulesExpressionBase;
 use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,6 +29,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class RulesAction extends RulesActionBase implements RulesActionInterface, ContainerFactoryPluginInterface, RulesExpressionInterface {
+
+  use RulesExpressionBase;
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -70,7 +74,7 @@ class RulesAction extends RulesActionBase implements RulesActionInterface, Conta
   /**
    * {@inheritdoc}
    */
-  public function execute() {
+  public function executeWithState(RulesState $state) {
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
     // @todo context mapping will happen here, we have to forward the context
     // definitions from our plugin configuration to the action plugin.

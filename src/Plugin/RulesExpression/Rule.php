@@ -14,7 +14,9 @@ use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesActionInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesConditionInterface;
+use Drupal\rules\Engine\RulesExpressionBase;
 use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -30,7 +32,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
-class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInterface, ContainerFactoryPluginInterface {
+class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPluginInterface {
+
+  use RulesExpressionBase;
 
   /**
    * List of conditions that must be met before actions are executed.
@@ -68,6 +72,9 @@ class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInte
     // TRUE to fire the actions.
     $this->conditions = $expression_manager->createInstance('rules_and');
     $this->actions = $expression_manager->createInstance('rules_action_set');
+    if (isset($configuration['context_definitions'])) {
+      $this->contextDefinitions = $configuration['context_definitions'];
+    }
   }
 
   /**
@@ -86,19 +93,19 @@ class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInte
   /**
    * {@inheritdoc}
    */
-  public function execute() {
+  public function executeWithState(RulesState $state) {
     // Evaluate the rule's conditions.
-    if (!$this->conditions->execute()) {
+    if (!$this->conditions->executeWithState($state)) {
       // Do not run the actions if the conditions are not met.
       return;
     }
-    $this->actions->execute();
+    $this->actions->executeWithState($state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addCondition(RulesConditionInterface $condition) {
+  public function addCondition(RulesExpressionInterface $condition) {
     $this->conditions->addCondition($condition);
     return $this;
   }
@@ -121,7 +128,7 @@ class Rule extends RulesActionBase implements RuleInterface, RulesExpressionInte
   /**
    * {@inheritdoc}
    */
-  public function addAction(RulesActionInterface $action) {
+  public function addAction(RulesExpressionInterface $action) {
     $this->actions->addAction($action);
     return $this;
   }

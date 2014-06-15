@@ -55,7 +55,7 @@ class RulesOrTest extends RulesTestBase {
   public function testOneCondition() {
     // The method on the test condition must be called once.
     $this->trueCondition->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->or->addCondition($this->trueCondition);
     $this->assertTrue($this->or->execute(), 'Single condition returns TRUE.');
@@ -78,7 +78,7 @@ class RulesOrTest extends RulesTestBase {
   public function testTwoConditions() {
     // The method on the test condition must be called once.
     $this->trueCondition->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->or->addCondition($this->trueCondition)
       ->addCondition($this->trueCondition);
@@ -92,7 +92,7 @@ class RulesOrTest extends RulesTestBase {
   public function testTwoFalseConditions() {
     // The method on the test condition must be called once.
     $this->falseCondition->expects($this->exactly(2))
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->or->addCondition($this->falseCondition)
       ->addCondition($this->falseCondition);

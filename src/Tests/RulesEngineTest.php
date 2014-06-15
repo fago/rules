@@ -27,6 +27,18 @@ class RulesEngineTest extends RulesDrupalTestBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+
+    // Clear the log from any stale entries that are bleeding over from previous
+    // tests.
+    $logger = RulesLog::logger();
+    $logger->clear();
+  }
+
+  /**
    * Tests creating a rule and iterating over the rule elements.
    */
   public function testRuleCreation() {
@@ -73,7 +85,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testContextPassing() {
     $rule = $this->createRulesRule(array(
-      'context' => array(
+      'context_definitions' => array(
         'test' => ContextDefinition::create($this->typedDataManager, 'string')
           ->setLabel('Test string'),
       )
@@ -81,7 +93,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', array(
       'condition_id' => 'rules_test_string_condition',
-      'parameter mapping' => array(
+      'parameter_mapping' => array(
         'text:select' => 'test',
       ),
     )));
@@ -89,15 +101,10 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $rule->addAction($this->createRulesAction('rules_test_log'));
     $rule->setContextValue('test', 'test value');
 
-    // Clear the log from any stale entries that are bleeding over from previous
-    // tests.
-    $logger = RulesLog::logger();
-    $logger->clear();
-
     $rule->execute();
 
     // Test that the action logged something.
-    $log = $logger->get();
+    $log = RulesLog::logger()->get();
     $this->assertEqual($log[0][0], 'action called');
   }
 

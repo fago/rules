@@ -20,6 +20,6 @@ interface RulesConditionContainerInterface extends RulesConditionInterface {
    *
    * @return $this
    */
-  public function addCondition(RulesConditionInterface $condition);
+  public function addCondition(RulesExpressionInterface $condition);
 
 }

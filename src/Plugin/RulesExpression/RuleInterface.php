@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
-use Drupal\rules\Engine\RulesConditionInterface;
+use Drupal\rules\Engine\RulesExpressionInterface;
 
 /**
  * Defines a rule.
@@ -19,12 +19,12 @@ interface RuleInterface extends RulesActionContainerInterface {
   /**
    * Adds a condition.
    *
-   * @param \Drupal\rules\Engine\RulesConditionInterface $condition
+   * @param \Drupal\rules\Engine\RulesExpressionInterface $condition
    *   The condition object.
    *
    * @return $this
    */
-  public function addCondition(RulesConditionInterface $condition);
+  public function addCondition(RulesExpressionInterface $condition);
 
   /**
    * Returns the conditions container of this rule.

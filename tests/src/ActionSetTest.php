@@ -52,7 +52,7 @@ class ActionSetTest extends RulesTestBase {
   public function testActionExecution() {
     // The method on the test action must be called once.
     $this->testAction->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->actionSet->addAction($this->testAction)->execute();
   }
@@ -63,7 +63,7 @@ class ActionSetTest extends RulesTestBase {
   public function testTwoActionExecution() {
     // The method on the test action must be called twice.
     $this->testAction->expects($this->exactly(2))
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->actionSet->addAction($this->testAction)
       ->addAction($this->testAction)
@@ -76,7 +76,7 @@ class ActionSetTest extends RulesTestBase {
   public function testNestedActionExecution() {
     // The method on the test action must be called twice.
     $this->testAction->expects($this->exactly(2))
-      ->method('execute');
+      ->method('executeWithState');
 
     $inner = $this->getMockActionSet()
       ->addAction($this->testAction);

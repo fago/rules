@@ -19,21 +19,21 @@ abstract class RulesTestBase extends UnitTestCase {
   /**
    * A mocked condition that always evaluates to TRUE.
    *
-   * @var \Drupal\rules\Engine\RulesConditionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionInterface
    */
   protected $trueCondition;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
-   * @var \Drupal\rules\Engine\RulesConditionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionInterface
    */
   protected $falseCondition;
 
   /**
    * A mocked dummy action object.
    *
-   * @var \Drupal\rules\Engine\RulesActionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionInterface
    */
   protected $testAction;
 
@@ -43,27 +43,35 @@ abstract class RulesTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
+    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
 
     $this->trueCondition->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
     $this->trueCondition->expects($this->any())
+      ->method('executeWithState')
+      ->will($this->returnValue(TRUE));
+
+    $this->trueCondition->expects($this->any())
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
+    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(FALSE));
 
     $this->falseCondition->expects($this->any())
+      ->method('executeWithState')
+      ->will($this->returnValue(FALSE));
+
+    $this->falseCondition->expects($this->any())
       ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesActionInterface');
+    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
   }
 
   /**

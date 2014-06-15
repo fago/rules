@@ -25,13 +25,6 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   protected $conditionManager;
 
   /**
-   * The rules expression plugin manager.
-   *
-   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
-   */
-  protected $rulesExpressionManager;
-
-  /**
    * The typed data manager.
    *
    * @var \Drupal\Core\TypedData\TypedDataManager

@@ -22,7 +22,7 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * {@inheritdoc}
    */
-  public function addCondition(RulesConditionInterface $condition) {
+  public function addCondition(RulesExpressionInterface $condition) {
     $this->conditions[] = $condition;
     return $this;
   }

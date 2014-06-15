@@ -9,8 +9,9 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
-use Drupal\rules\Engine\RulesActionInterface;
+use Drupal\rules\Engine\RulesExpressionBase;
 use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesState;
 
 /**
  * Holds a set of actions and executes all of them.
@@ -20,19 +21,21 @@ use Drupal\rules\Engine\RulesExpressionInterface;
  *   label = @Translation("Action set")
  * )
  */
-class ActionSet extends RulesActionBase implements RulesActionContainerInterface, RulesExpressionInterface {
+class ActionSet extends RulesActionBase implements RulesActionContainerInterface {
+
+  use RulesExpressionBase;
 
   /**
    * List of actions that will be executed.
    *
-   * @var \Drupal\rules\Engine\RulesActionInterface[]
+   * @var \Drupal\rules\Engine\RulesExpressionInterface[]
    */
   protected $actions = [];
 
   /**
    * {@inheritdoc}
    */
-  public function addAction(RulesActionInterface $action) {
+  public function addAction(RulesExpressionInterface $action) {
     $this->actions[] = $action;
     return $this;
   }
@@ -40,9 +43,9 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
   /**
    * {@inheritdoc}
    */
-  public function execute() {
+  public function executeWithState(RulesState $state) {
     foreach ($this->actions as $action) {
-      $action->execute();
+      $action->executeWithState($state);
     }
   }
 

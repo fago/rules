@@ -12,6 +12,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -74,14 +75,7 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionInterf
   /**
    * {@inheritdoc}
    */
-  public function execute() {
-    return $this->evaluate();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function evaluate() {
+  public function executeWithState(RulesState $state) {
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);
@@ -89,12 +83,34 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionInterf
     // condition plugin.
     $contexts = $condition->getContextDefinitions();
     foreach ($contexts as $name => $context) {
-      $condition->setContext($name, $this->getContext($name));
+      // Check if a data selector is configured that maps to the state.
+      if (isset($this->configuration['parameter_mapping'][$name . ':select'])) {
+        // @todo This only works for simple data selctors like "node", implement
+        // chained data selectors that reference nested data structures like
+        // "node:author:name".
+        $state_variable = $state->getVariable($this->configuration['parameter_mapping'][$name . ':select']);
+      }
+      else {
+        // Check if the state has a variable with the same name.
+        $state_variable = $state->getVariable($name);
+      }
+      if ($state_variable !== NULL) {
+        $condition->setContext($name, $state_variable);
+      }
     }
     $result = $condition->evaluate();
     // @todo Now that the condition has been executed it can provide additional
     // context which we will have to pass back to any parent expression.
     return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function evaluate() {
+    $contexts = $this->getContexts();
+    $state = new RulesState($contexts);
+    return $this->executeWithState($state);
   }
 
   /**
@@ -112,6 +128,8 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionInterf
   public function getContextDefinitions() {
     if (!isset($this->contextDefinitions)) {
       // Pass up the context definitions from the condition plugin.
+      // @todo do not always create plugin instances here, the instance should
+      // be reused. Maybe that is what plugin bags are for?
       $condition = $this->conditionManager->createInstance($this->configuration['condition_id']);
       $this->contextDefinitions = $condition->getContextDefinitions();
     }

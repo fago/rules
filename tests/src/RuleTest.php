@@ -134,7 +134,7 @@ class RuleTest extends RulesTestBase {
   public function testActionExecution() {
     // The method on the test action must be called once.
     $this->testAction->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->rule->addCondition($this->trueCondition)
       ->addAction($this->testAction)
@@ -164,7 +164,7 @@ class RuleTest extends RulesTestBase {
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
     $this->testAction->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $this->rule->addCondition($this->trueCondition)
       ->addCondition($this->trueCondition)
@@ -195,7 +195,7 @@ class RuleTest extends RulesTestBase {
    */
   public function testNestedRules() {
     $this->testAction->expects($this->once())
-      ->method('execute');
+      ->method('executeWithState');
 
     $nested = $this->getMockRule()
       ->addCondition($this->trueCondition)
