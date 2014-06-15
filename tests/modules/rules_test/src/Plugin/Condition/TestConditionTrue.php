@@ -26,4 +26,12 @@ class TestConditionTrue extends RulesConditionBase {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function summary() {
+    // We don't caare about summaries for test condition plugins.
+    return '';
+  }
+
 }

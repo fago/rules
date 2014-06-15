@@ -39,4 +39,12 @@ class TestTextCondition extends RulesConditionBase {
     return $text == 'test value';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function summary() {
+    // We don't caare about summaries for test condition plugins.
+    return '';
+  }
+
 }
