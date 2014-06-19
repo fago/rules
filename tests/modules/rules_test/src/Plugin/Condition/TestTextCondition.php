@@ -43,7 +43,7 @@ class TestTextCondition extends RulesConditionBase {
    * {@inheritdoc}
    */
   public function summary() {
-    // We don't caare about summaries for test condition plugins.
+    // We don't care about summaries for test condition plugins.
     return '';
   }
 
