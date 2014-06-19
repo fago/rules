@@ -63,7 +63,7 @@ This module comes with PHPUnit and Simpletest tests. You need a working Drupal 8
 PHPUnit:
 
     $ cd /path/to/drupal-8/core
-    $ ./vendor/bin/phpunit ../modules/rules
+    $ ./vendor/phpunit/phpunit/phpunit ../modules/rules
 
 Simpletest using drush:
 
