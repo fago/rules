@@ -11,11 +11,10 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
-use Drupal\rules\Engine\RulesActionInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
-use Drupal\rules\Engine\RulesConditionInterface;
 use Drupal\rules\Engine\RulesExpressionBase;
-use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesExpressionActionInterface;
+use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -105,7 +104,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addCondition(RulesExpressionInterface $condition) {
+  public function addCondition(RulesExpressionConditionInterface $condition) {
     $this->conditions->addCondition($condition);
     return $this;
   }
@@ -128,7 +127,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addAction(RulesExpressionInterface $action) {
+  public function addAction(RulesExpressionActionInterface $action) {
     $this->actions->addAction($action);
     return $this;
   }

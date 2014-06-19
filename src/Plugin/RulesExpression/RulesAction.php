@@ -11,9 +11,8 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesActionBase;
-use Drupal\rules\Engine\RulesActionInterface;
+use Drupal\rules\Engine\RulesExpressionActionInterface;
 use Drupal\rules\Engine\RulesExpressionBase;
-use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Engine\RulesState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable action.")
  * )
  */
-class RulesAction extends RulesActionBase implements RulesActionInterface, ContainerFactoryPluginInterface, RulesExpressionInterface {
+class RulesAction extends RulesActionBase implements ContainerFactoryPluginInterface, RulesExpressionActionInterface {
 
   use RulesExpressionBase;
 

@@ -10,7 +10,7 @@ namespace Drupal\rules\Engine;
 /**
  * Defines a common interface for condition containers.
  */
-interface RulesConditionContainerInterface extends RulesConditionInterface {
+interface RulesConditionContainerInterface extends RulesConditionInterface, RulesExpressionConditionInterface {
 
   /**
    * Adds a condition.
@@ -20,6 +20,6 @@ interface RulesConditionContainerInterface extends RulesConditionInterface {
    *
    * @return $this
    */
-  public function addCondition(RulesExpressionInterface $condition);
+  public function addCondition(RulesExpressionConditionInterface $condition);
 
 }
