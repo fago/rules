@@ -61,4 +61,4 @@ script:
   # Run the Simpletests for Rules.
   - drush test-run 'Rules, Rules conditions' --uri=http://127.0.0.1:8080
   # Run the PHPUnit tests.
-  - ./vendor/bin/phpunit ../modules/rules
+  - ./vendor/phpunit/phpunit/phpunit ../modules/rules
