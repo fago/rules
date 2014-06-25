@@ -19,13 +19,6 @@ use Drupal\rules\Plugin\Condition\UserHasRole;
 class UserHasRoleTest extends ConditionTestBase {
 
   /**
-   * The mocked user account.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\user\Entity\User
-   */
-  protected $account;
-
-  /**
    * The condition that is being tested.
    *
    * @var \Drupal\rules\Engine\RulesConditionInterface
@@ -116,12 +109,7 @@ class UserHasRoleTest extends ConditionTestBase {
    * @covers ::getContextValue()
    */
   public function testContextValue() {
-    // We can't mock the UserInterface because there is a bug in PHPUnit below
-    // version 3.8 that causes mocking of interfaces that extend \Traversable
-    // to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
-    $user = $this->getMockBuilder('Drupal\user\Entity\User')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $user = $this->getMock('Drupal\user\UserInterface');
 
     // Test setting and getting the context value.
     $this->assertSame($this->condition, $this->condition->setContextValue('user', $user));
@@ -142,15 +130,12 @@ class UserHasRoleTest extends ConditionTestBase {
   public function testConditionEvaluation() {
     // Set-up a mock object with roles 'authenticated' and 'editor', but not
     // 'administrator'.
-    $this->account = $this->getMockBuilder('Drupal\user\Entity\User')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->account->expects($this->exactly(7))
+    $account = $this->getMock('Drupal\user\UserInterface');
+    $account->expects($this->exactly(7))
       ->method('getRoles')
       ->will($this->returnValue(['authenticated', 'editor']));
 
-    $this->condition->setContextValue('user', $this->account);
+    $this->condition->setContextValue('user', $account);
 
     // First test the default AND condition with both roles the user has.
     $this->condition->setContextValue('roles', ['authenticated', 'editor']);

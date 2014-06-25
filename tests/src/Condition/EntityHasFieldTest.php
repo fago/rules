@@ -124,12 +124,7 @@ class EntityHasFieldTest extends ConditionTestBase {
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
-    // We can't mock the ContentEntityInterface because there is a bug in PHPUnit below
-    // version 3.8 that causes mocking of interfaces that extend \Traversable
-    // to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
-    $entity = $this->getMocKBuilder('Drupal\Core\Entity\ContentEntityBase')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
 
     $entity->expects($this->exactly(2))
       ->method('hasField')

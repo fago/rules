@@ -163,10 +163,7 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
     $this->assertSame($this->condition, $this->condition->setContextValue('op', 'edit'));
     $this->assertSame('edit', $this->condition->getContextValue('op'));
 
-    // We can't mock the ContentEntityInterface because there is a bug in PHPUnit below
-    // version 3.8 that causes mocking of interfaces that extend \Traversable
-    // to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
-    $user = $this->getMockBuilder('Drupal\user\Entity\User')->disableOriginalConstructor()->getMock();
+    $user = $this->getMock('Drupal\user\UserInterface');
     $this->assertSame($this->condition, $this->condition->setContextValue('account', $user));
     $this->assertSame($user, $this->condition->getContextValue('account'));
   }
@@ -177,12 +174,9 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
-    // We can't mock the interfaces of these classes because there is a bug in
-    // PHPUnit below version 3.8 that causes mocking of interfaces that extend
-    // \Traversable to fail. @see https://github.com/sebastianbergmann/phpunit-mock-objects/issues/103
-    $account = $this->getMockBuilder('Drupal\user\Entity\User')->disableOriginalConstructor()->getMock();
-    $entity = $this->getMocKBuilder('Drupal\Core\Entity\ContentEntityBase')->disableOriginalConstructor()->getMock();
-    $items = $this->getMocKBuilder('Drupal\Core\Field\FieldItemList')->disableOriginalConstructor()->getMock();
+    $account = $this->getMock('Drupal\user\UserInterface');
+    $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
+    $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
 
     $entity->expects($this->exactly(3))
       ->method('hasField')
