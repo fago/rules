@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesConditionContainer;
-use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Engine\RulesState;
 
 /**
@@ -19,7 +18,7 @@ use Drupal\rules\Engine\RulesState;
  *   label = @Translation("Condition set (OR)")
  * )
  */
-class RulesOr extends RulesConditionContainer implements RulesExpressionInterface {
+class RulesOr extends RulesConditionContainer {
 
   /**
    * {@inheritdoc}

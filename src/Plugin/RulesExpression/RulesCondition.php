@@ -11,7 +11,7 @@ use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesConditionBase;
-use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesState;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable condition.")
  * )
  */
-class RulesCondition extends RulesConditionBase implements RulesExpressionInterface, ContainerFactoryPluginInterface {
+class RulesCondition extends RulesConditionBase implements RulesExpressionConditionInterface, ContainerFactoryPluginInterface {
 
   /**
    * The condition manager used to instantiate the condition plugin.

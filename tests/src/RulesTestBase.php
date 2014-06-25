@@ -19,21 +19,21 @@ abstract class RulesTestBase extends UnitTestCase {
   /**
    * A mocked condition that always evaluates to TRUE.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionConditionInterface
    */
   protected $trueCondition;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionConditionInterface
    */
   protected $falseCondition;
 
   /**
    * A mocked dummy action object.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionInterface
+   * @var \Drupal\rules\Engine\RulesExpressionActionInterface
    */
   protected $testAction;
 
@@ -43,7 +43,7 @@ abstract class RulesTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
+    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionConditionInterface');
 
     $this->trueCondition->expects($this->any())
       ->method('execute')
@@ -57,7 +57,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
+    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionConditionInterface');
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
@@ -71,7 +71,7 @@ abstract class RulesTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesExpressionInterface');
+    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesExpressionActionInterface');
   }
 
   /**
