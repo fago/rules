@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsOfType;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Node is sticky' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\NodeIsOfType;
  *
  * @see \Drupal\rules\Plugin\Condition\NodeIsOfType
  */
-class NodeIsOfTypeTest extends ConditionTestBase {
+class NodeIsOfTypeTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

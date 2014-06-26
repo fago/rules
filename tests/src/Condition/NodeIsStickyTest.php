@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsSticky;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Node is sticky' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\NodeIsSticky;
  *
  * @see \Drupal\rules\Plugin\Condition\NodeIsSticky
  */
-class NodeIsStickyTest extends ConditionTestBase {
+class NodeIsStickyTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

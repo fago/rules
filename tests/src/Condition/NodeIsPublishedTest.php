@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsPublished;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Node is published' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\NodeIsPublished;
  *
  * @see \Drupal\rules\Plugin\Condition\NodeIsPublished
  */
-class NodeIsPublishedTest extends ConditionTestBase {
+class NodeIsPublishedTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

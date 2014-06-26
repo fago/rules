@@ -82,7 +82,7 @@ abstract class RulesTestBase extends UnitTestCase {
    * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataInterface
    *   The mocked typed data object with the given value set.
    */
-  public function getMockTypedData($value) {
+  protected function getMockTypedData($value) {
     $typed_data = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
 
     $typed_data->expects($this->any())
@@ -103,7 +103,7 @@ abstract class RulesTestBase extends UnitTestCase {
    *
    * @see \Drupal\Core\TypedData\TypedDataManager
    */
-  public function getMockTypedDataManager(array $methods = []) {
+  protected function getMockTypedDataManager(array $methods = []) {
     $methods += ['createDataDefinition', 'createListDataDefinition', 'createInstance'];
 
     $typed_data_manager = $this->getMockBuilder('Drupal\Core\TypedData\TypedDataManager')
@@ -143,6 +143,31 @@ abstract class RulesTestBase extends UnitTestCase {
   }
 
   /**
+   * Creates a string translation with the basic translation methods mocked.
+   *
+   * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\StringTranslation\TranslationInterface
+   *   The mocked string translation.
+   *
+   * @see \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected function getMockStringTranslation() {
+    $string_translation = $this->getMock('Drupal\Core\StringTranslation\TranslationInterface');
+    $string_translation->expects($this->any())
+      ->method('translate')
+      ->will($this->returnCallback(function ($string) {
+        return $string;
+      }));
+
+    $string_translation->expects($this->any())
+      ->method('formatPlural')
+      ->will($this->returnCallback(function($count, $one, $multiple) {
+        return $count == 1 ? $one : str_replace('@count', $count, $multiple);
+      }));
+
+    return $string_translation;
+  }
+
+  /**
    * Creates a rule with the basic plugin methods mocked.
    *
    * @param array $methods
@@ -151,7 +176,7 @@ abstract class RulesTestBase extends UnitTestCase {
    * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
    *   The mocked rule.
    */
-  public function getMockRule(array $methods = []) {
+  protected function getMockRule(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
     $rule = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\Rule')
@@ -182,7 +207,7 @@ abstract class RulesTestBase extends UnitTestCase {
    * @return \Drupal\rules\Engine\RulesConditionContainerInterface
    *   The mocked 'and' condition container.
    */
-  public function getMockAnd(array $methods = []) {
+  protected function getMockAnd(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
     $and = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesAnd')
@@ -207,7 +232,7 @@ abstract class RulesTestBase extends UnitTestCase {
    * @return \Drupal\rules\Engine\RulesConditionContainerInterface
    *   The mocked 'or' condition container.
    */
-  public function getMockOr(array $methods = []) {
+  protected function getMockOr(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
     $or = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\RulesOr')
@@ -232,7 +257,7 @@ abstract class RulesTestBase extends UnitTestCase {
    * @return \Drupal\rules\Engine\RulesActionContainerInterface
    *   The mocked action container.
    */
-  public function getMockActionSet(array $methods = []) {
+  protected function getMockActionSet(array $methods = []) {
     $methods += ['getPluginId', 'getBasePluginId', 'getDerivativeId', 'getPluginDefinition'];
 
     $actions = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpression\ActionSet')

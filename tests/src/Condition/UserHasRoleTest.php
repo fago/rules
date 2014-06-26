@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasRole;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'User has role(s)' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\UserHasRole;
  *
  * @see \Drupal\rules\Plugin\Condition\UserHasRole
  */
-class UserHasRoleTest extends ConditionTestBase {
+class UserHasRoleTest extends RulesTestBase {
 
   /**
    * The condition that is being tested.

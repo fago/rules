@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserIsBlocked;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'User is blocked' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\UserIsBlocked;
  *
  * @see \Drupal\rules\Plugin\Condition\UserIsBlocked
  */
-class UserIsBlockedTest extends ConditionTestBase {
+class UserIsBlockedTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

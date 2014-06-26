@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsPromoted;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Node is promoted' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\NodeIsPromoted;
  *
  * @see \Drupal\rules\Plugin\Condition\NodeIsPromoted
  */
-class NodeIsPromotedTest extends ConditionTestBase {
+class NodeIsPromotedTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

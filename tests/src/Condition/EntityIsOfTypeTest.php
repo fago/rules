@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\EntityIsOfType;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Entity is of type' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\EntityIsOfType;
  *
  * @see \Drupal\rules\Plugin\Condition\EntityIsOfType
  */
-class EntityIsOfTypeTest extends ConditionTestBase {
+class EntityIsOfTypeTest extends RulesTestBase {
 
   /**
    * The condition to be tested.

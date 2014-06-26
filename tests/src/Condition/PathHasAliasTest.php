@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\PathHasAlias;
+use Drupal\rules\Tests\RulesTestBase;
 
 /**
  * Tests the 'Path has alias' condition.
@@ -17,7 +18,7 @@ use Drupal\rules\Plugin\Condition\PathHasAlias;
  *
  * @see \Drupal\rules\Plugin\Condition\PathHasAlias
  */
-class PathHasAliasTest extends ConditionTestBase {
+class PathHasAliasTest extends RulesTestBase {
 
   /**
    * The condition to be tested.
