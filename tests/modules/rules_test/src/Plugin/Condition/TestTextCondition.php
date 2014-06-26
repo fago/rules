@@ -16,20 +16,15 @@ use Drupal\rules\Engine\RulesConditionBase;
  *
  * @Condition(
  *   id = "rules_test_string_condition",
- *   label = @Translation("Test condition using a string")
+ *   label = @Translation("Test condition using a string"),
+ *   context = {
+ *     "text" = @ContextDefinition("string",
+ *       label = @Translation("Text to compare")
+ *     )
+ *   }
  * )
  */
 class TestTextCondition extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['text'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('Text to compare'));
-
-    return $contexts;
-  }
 
   /**
    * {@inheritdoc}

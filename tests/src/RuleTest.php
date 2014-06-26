@@ -17,13 +17,6 @@ use Drupal\rules\Plugin\RulesExpression\Rule;
 class RuleTest extends RulesTestBase {
 
   /**
-   * The typed data manager.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * The rules expression plugin manager.
    *
    * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
@@ -68,7 +61,6 @@ class RuleTest extends RulesTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
     $this->expressionManager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
@@ -85,7 +77,7 @@ class RuleTest extends RulesTestBase {
       ->with('rules_action_set')
       ->will($this->returnValue($this->actions));
 
-    $this->rule = new Rule([], 'rules_rule', [], $this->typedDataManager, $this->expressionManager);
+    $this->rule = new Rule([], 'rules_rule', [], $this->expressionManager);
   }
 
   /**

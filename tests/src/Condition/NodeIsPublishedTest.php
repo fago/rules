@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsPublished;
 
 /**
@@ -26,13 +27,6 @@ class NodeIsPublishedTest extends ConditionTestBase {
   protected $condition;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -49,27 +43,11 @@ class NodeIsPublishedTest extends ConditionTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new NodeIsPublished([], '', [], $this->typedDataManager);
+    $this->condition = new NodeIsPublished([], '', ['context' => [
+      'node' => new ContextDefinition('entity:node'),
+    ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'node' context is properly defined.
-    $context = $this->condition->getContext('node');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Node', $definition->getLabel());
-    $this->assertEquals('entity:node', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
   }
 
   /**
@@ -79,20 +57,6 @@ class NodeIsPublishedTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('Node is published', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValue() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
-
-    // Test setting and getting the context value.
-    $this->assertSame($this->condition, $this->condition->setContextValue('node', $node));
-    $this->assertSame($node, $this->condition->getContextValue('node'));
   }
 
   /**
@@ -111,7 +75,7 @@ class NodeIsPublishedTest extends ConditionTestBase {
       ->will($this->returnValue(FALSE));
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $node);
+    $this->condition->setContextValue('node', $this->getMockTypedData($node));
 
     // Test evaluation. The first invocation should return TRUE, the second
     // should return FALSE.

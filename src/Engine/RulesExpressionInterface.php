@@ -7,8 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Executable\ExecutableInterface;
-use Drupal\rules\Context\ContextAwarePluginInterface;
 
 /**
  * Defines the interface for Rules expressions.

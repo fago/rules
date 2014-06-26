@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Language\Language;
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
 
 /**
@@ -25,13 +26,6 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
 
   /**
    * The mocked entity access handler.
@@ -71,69 +65,14 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
       ->with($this->anything())
       ->will($this->returnValue($this->entityAccess));
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new UserHasEntityFieldAccess([], '', [], $this->typedDataManager, $this->entityManager);
+    $this->condition = new UserHasEntityFieldAccess([], '', ['context' => [
+      'entity' => new ContextDefinition('entity'),
+      'field' => new ContextDefinition('string'),
+      'operation' => new ContextDefinition('string'),
+      'user' => new ContextDefinition('entity:user'),
+    ]], $this->entityManager);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests that the dependencies are properly set in the constructor.
-   *
-   * @covers ::__construct()
-   */
-  public function testConstructor() {
-    $this->assertSame($this->typedDataManager, $this->condition->getTypedDataManager());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'entity' context is properly defined.
-    $context = $this->condition->getContext('entity');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Entity', $definition->getLabel());
-    $this->assertEquals('entity', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'field' context is properly defined.
-    $context = $this->condition->getContext('field');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Field name', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'op' context is properly defined.
-    $context = $this->condition->getContext('op');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Operation', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'account' context is properly defined.
-    $context = $this->condition->getContext('account');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('User', $definition->getLabel());
-    $this->assertEquals('entity:user', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
   }
 
   /**
@@ -143,29 +82,6 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('User has access to field on entity', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValues() {
-    // Test setting and getting context values.
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $this->assertSame($this->condition, $this->condition->setContextValue('entity', $entity));
-    $this->assertSame($entity, $this->condition->getContextValue('entity'));
-
-    $this->assertSame($this->condition, $this->condition->setContextValue('field', 'my-field'));
-    $this->assertSame('my-field', $this->condition->getContextValue('field'));
-
-    $this->assertSame($this->condition, $this->condition->setContextValue('op', 'edit'));
-    $this->assertSame('edit', $this->condition->getContextValue('op'));
-
-    $user = $this->getMock('Drupal\user\UserInterface');
-    $this->assertSame($this->condition, $this->condition->setContextValue('account', $user));
-    $this->assertSame($user, $this->condition->getContextValue('account'));
   }
 
   /**
@@ -194,9 +110,9 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
       ->with('potato-field')
       ->will($this->returnValue($items));
 
-    $this->condition->setContextValue('entity', $entity)
-      ->setContextValue('field', 'potato-field')
-      ->setContextValue('account', $account);
+    $this->condition->setContextValue('entity', $this->getMockTypedData($entity))
+      ->setContextValue('field', $this->getMockTypedData('potato-field'))
+      ->setContextValue('user', $this->getMockTypedData($account));
 
     $this->entityAccess->expects($this->exactly(3))
       ->method('access')
@@ -216,11 +132,11 @@ class UserHasEntityFieldAccessTest extends ConditionTestBase {
     // Test with 'view', 'edit' and 'delete'. Both 'view' and 'edit' will have
     // general entity access, but the 'potato-field' should deny access for the
     // 'edit' operation. Hence, 'edit' and 'delete' should return FALSE.
-    $this->condition->setContextValue('op', 'view');
+    $this->condition->setContextValue('operation', $this->getMockTypedData('view'));
     $this->assertTrue($this->condition->evaluate());
-    $this->condition->setContextValue('op', 'edit');
+    $this->condition->setContextValue('operation', $this->getMockTypedData('edit'));
     $this->assertFalse($this->condition->evaluate());
-    $this->condition->setContextValue('op', 'delete');
+    $this->condition->setContextValue('operation', $this->getMockTypedData('delete'));
     $this->assertFalse($this->condition->evaluate());
   }
 }

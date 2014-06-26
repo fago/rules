@@ -46,15 +46,13 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
-   *   The typed data manager.
    * @param \Drupal\Core\Condition\ConditionManager $conditionManager
    *   The condition manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, ConditionManager $conditionManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager) {
     // Per default the result of this expression is not negated.
     $configuration += ['negate' => FALSE];
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->conditionManager = $conditionManager;
   }
@@ -67,7 +65,6 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('typed_data_manager'),
       $container->get('plugin.manager.condition')
     );
   }

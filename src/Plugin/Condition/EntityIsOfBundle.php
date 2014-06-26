@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 
 /**
@@ -16,32 +14,27 @@ use Drupal\rules\Engine\RulesConditionBase;
  *
  * @Condition(
  *   id = "rules_entity_is_of_bundle",
- *   label = @Translation("Entity is of bundle")
+ *   label = @Translation("Entity is of bundle"),
+ *   context = {
+ *     "entity" = @ContextDefinition("entity",
+ *       label = @Translation("Entity"),
+ *       description = @Translation("Specifies the entity for which to evaluate the condition.")
+ *     ),
+ *     "type" = @ContextDefinition("string",
+ *       label = @Translation("Type"),
+ *       description = @Translation("The type of the evaluated entity.")
+ *     ),
+ *     "bundle" = @ContextDefinition("string",
+ *       label = @Translation("Bundle"),
+ *       description = @Translation("The bundle of the evaluated entity.")
+ *     )
+ *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7?
  * @todo: Add group information from Drupal 7?
  */
 class EntityIsOfBundle extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function contextDefinitions(TypedDataManager $typed_data_manager) {
-    $contexts['entity'] = ContextDefinition::create($typed_data_manager, 'entity')
-      ->setLabel(t('Entity'))
-      ->setDescription(t('Specifies the entity for which to evaluate the condition.'));
-
-    $contexts['type'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('Type'))
-      ->setDescription(t('The type of the evaluated entity.'));
-
-    $contexts['bundle'] = ContextDefinition::create($typed_data_manager, 'string')
-      ->setLabel(t('Bundle'))
-      ->setDescription(t('The bundle of the evaluated entity.'));
-
-    return $contexts;
-  }
 
   /**
    * {@inheritdoc}

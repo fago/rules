@@ -7,16 +7,12 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use \Drupal\Core\StringTranslation\StringTranslationTrait;
-use \Drupal\rules\Context\ContextAwarePluginBase;
+use Drupal\Core\Plugin\ContextAwarePluginBase;
 
 /**
  * Base class for rules actions.
  */
-abstract class RulesActionBase extends ContextAwarePluginBase implements RulesActionInterface, ContainerFactoryPluginInterface {
-
-  use StringTranslationTrait;
+abstract class RulesActionBase extends ContextAwarePluginBase implements RulesActionInterface {
 
   /**
    * The plugin configuration.

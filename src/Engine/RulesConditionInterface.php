@@ -7,8 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionInterface;
-use Drupal\rules\Context\ContextAwarePluginInterface;
 
 /**
  * Extends the core ConditionInterface to provide a negate() method.

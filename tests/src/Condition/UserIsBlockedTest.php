@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserIsBlocked;
 
 /**
@@ -26,14 +27,6 @@ class UserIsBlockedTest extends ConditionTestBase {
   protected $condition;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -50,27 +43,11 @@ class UserIsBlockedTest extends ConditionTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new UserIsBlocked([], '', [], $this->typedDataManager);
+    $this->condition = new UserIsBlocked([], '', ['context' => [
+      'user' => new ContextDefinition('entity:user'),
+    ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'user' context is properly defined.
-    $context = $this->condition->getContext('user');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('User', $definition->getLabel());
-    $this->assertEquals('entity:user', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
   }
 
   /**
@@ -80,20 +57,6 @@ class UserIsBlockedTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('User is blocked', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValue() {
-    $user = $this->getMock('Drupal\user\UserInterface');
-
-    // Test setting and getting the context value.
-    $this->assertSame($this->condition, $this->condition->setContextValue('user', $user));
-    $this->assertSame($user, $this->condition->getContextValue('user'));
   }
 
   /**
@@ -112,7 +75,7 @@ class UserIsBlockedTest extends ConditionTestBase {
       ->will($this->returnValue(FALSE));
 
     // Set the user context value.
-    $this->condition->setContextValue('user', $user);
+    $this->condition->setContextValue('user', $this->getMockTypedData($user));
 
     // Test evaluation. The first invocation should return TRUE, the second
     // should return FALSE.

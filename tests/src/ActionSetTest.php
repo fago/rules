@@ -15,13 +15,6 @@ use Drupal\rules\Plugin\RulesExpression\ActionSet;
 class ActionSetTest extends RulesTestBase {
 
   /**
-   * The typed data manager.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * The action set being tested.
    *
    * @var \Drupal\rules\Plugin\RulesExpression\ActionSet
@@ -39,11 +32,13 @@ class ActionSetTest extends RulesTestBase {
     ];
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->actionSet = new ActionSet([], '', [], $this->typedDataManager);
+    $this->actionSet = new ActionSet([], '', []);
   }
 
   /**

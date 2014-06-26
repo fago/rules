@@ -75,6 +75,24 @@ abstract class RulesTestBase extends UnitTestCase {
   }
 
   /**
+   * Creates a typed data mock with a given value.
+   *
+   * @param mixed $value
+   *   The value to set in the mocked typed data object.
+   * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataInterface
+   *   The mocked typed data object with the given value set.
+   */
+  public function getMockTypedData($value) {
+    $typed_data = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
+
+    $typed_data->expects($this->any())
+      ->method('getValue')
+      ->will($this->returnValue($value));
+
+    return $typed_data;
+  }
+
+  /**
    * Creates a typed data manager with the basic data type methods mocked.
    *
    * @param array $methods

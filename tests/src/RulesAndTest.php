@@ -15,13 +15,6 @@ use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 class RulesAndTest extends RulesTestBase {
 
   /**
-   * The typed data manger.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * The 'and' condition container being tested.
    *
    * @var \Drupal\rules\Engine\RulesConditionContainerInterface
@@ -34,8 +27,7 @@ class RulesAndTest extends RulesTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->and = new RulesAnd([], '', [], $this->typedDataManager);
+    $this->and = new RulesAnd([], '', []);
   }
 
   /**

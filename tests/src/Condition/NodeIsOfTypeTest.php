@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsOfType;
 
 /**
@@ -26,13 +27,6 @@ class NodeIsOfTypeTest extends ConditionTestBase {
   protected $condition;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -49,40 +43,12 @@ class NodeIsOfTypeTest extends ConditionTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new NodeIsOfType([], '', [], $this->typedDataManager);
+    $this->condition = new NodeIsOfType([], '', ['context' => [
+      'node' => new ContextDefinition('entity:node'),
+      'types' => new ContextDefinition('string', NULL, TRUE, TRUE),
+    ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'node' context is properly defined.
-    $context = $this->condition->getContext('node');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Node', $definition->getLabel());
-    $this->assertEquals('entity:node', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'types' context is properly defined.
-    $context = $this->condition->getContext('types');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Content types', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertEquals('Check for the the allowed node types.', $definition->getDescription());
-    $this->assertTrue($definition->isMultiple());
-    $this->assertTrue($definition->isRequired());
   }
 
   /**
@@ -92,25 +58,6 @@ class NodeIsOfTypeTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('Node is of type', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValue() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
-    $types = ['page', 'article'];
-
-    // Test setting and getting the context value.
-    $this->assertSame($this->condition, $this->condition->setContextValue('node', $node));
-    $this->assertSame($node, $this->condition->getContextValue('node'));
-
-    // Test setting and getting the context value.
-    $this->assertSame($this->condition, $this->condition->setContextValue('types', $types));
-    $this->assertSame($types, $this->condition->getContextValue('types'));
   }
 
   /**
@@ -125,14 +72,14 @@ class NodeIsOfTypeTest extends ConditionTestBase {
       ->will($this->returnValue('page'));
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $node);
+    $this->condition->setContextValue('node', $this->getMockTypedData($node));
 
     // Test evaluation with a list that contains the actual node type.
-    $this->condition->setContextValue('types', ['page', 'article']);
+    $this->condition->setContextValue('types', $this->getMockTypedData(['page', 'article']));
     $this->assertTrue($this->condition->evaluate());
 
     // Test with a list that does not contain the actual node type.
-    $this->condition->setContextValue('types', ['apple', 'banana']);
+    $this->condition->setContextValue('types', $this->getMockTypedData(['apple', 'banana']));
     $this->assertFalse($this->condition->evaluate());
   }
 

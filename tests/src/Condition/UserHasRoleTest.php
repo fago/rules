@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests\Condition;
 
+use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasRole;
 
 /**
@@ -26,13 +27,6 @@ class UserHasRoleTest extends ConditionTestBase {
   protected $condition;
 
   /**
-   * The mocked typed data manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataManager
-   */
-  protected $typedDataManager;
-
-  /**
    * {@inheritdoc}
    */
   public static function getInfo() {
@@ -48,49 +42,14 @@ class UserHasRoleTest extends ConditionTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->typedDataManager = $this->getMockTypedDataManager();
-    $this->condition = new UserHasRole([], '', [], $this->typedDataManager);
+
+    $this->condition = new UserHasRole([], '', ['context' => [
+      'user' => new ContextDefinition('entity:user'),
+      'roles' => new ContextDefinition('entity:role', NULL, TRUE, TRUE),
+      'operation' => new ContextDefinition('string'),
+    ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
-  }
-
-  /**
-   * Tests the context definitions.
-   *
-   * @covers ::contextDefinitions()
-   */
-  public function testContextDefinition() {
-    // Test that the 'user' context is properly defined.
-    $context = $this->condition->getContext('user');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('User', $definition->getLabel());
-    $this->assertEquals('entity:user', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'roles' context is properly defined.
-    $context = $this->condition->getContext('roles');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Roles', $definition->getLabel());
-    $this->assertEquals('user:roles', $definition->getDataType());
-    $this->assertTrue($definition->isRequired());
-
-    // Test that the 'operation' context is properly defined.
-    $context = $this->condition->getContext('operation');
-    $this->assertInstanceOf('Drupal\rules\Context\ContextInterface', $context);
-    $definition = $context->getContextDefinition();
-    $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $definition);
-
-    // Test the specific context definition properties.
-    $this->assertEquals('Match roles', $definition->getLabel());
-    $this->assertEquals('string', $definition->getDataType());
-    $this->assertFalse($definition->isRequired());
   }
 
   /**
@@ -100,26 +59,6 @@ class UserHasRoleTest extends ConditionTestBase {
    */
   public function testSummary() {
     $this->assertEquals('User has role(s)', $this->condition->summary());
-  }
-
-  /**
-   * Tests context value setting and getting.
-   *
-   * @covers ::setContextValue()
-   * @covers ::getContextValue()
-   */
-  public function testContextValue() {
-    $user = $this->getMock('Drupal\user\UserInterface');
-
-    // Test setting and getting the context value.
-    $this->assertSame($this->condition, $this->condition->setContextValue('user', $user));
-    $this->assertSame($user, $this->condition->getContextValue('user'));
-
-    // Test setting and getting context values.
-    $this->assertSame($this->condition, $this->condition->setContextValue('operation', 'OR'));
-    $this->assertSame('OR', $this->condition->getContextValue('operation'));
-    $this->assertSame($this->condition, $this->condition->setContextValue('roles', ['authenticated', 'editor']));
-    $this->assertSame(['authenticated', 'editor'], $this->condition->getContextValue('roles'));
   }
 
   /**
@@ -137,37 +76,65 @@ class UserHasRoleTest extends ConditionTestBase {
 
     $this->condition->setContextValue('user', $account);
 
+    $authenticated = $this->getMockRole('authenticated');
+    $editor = $this->getMockRole('editor');
+    $administrator = $this->getMockRole('administrator');
+
+    $this->condition->setContextValue('user', $this->getMockTypedData($account));
+
     // First test the default AND condition with both roles the user has.
-    $this->condition->setContextValue('roles', ['authenticated', 'editor']);
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $editor]));
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, this should fail.
-    $this->condition->setContextValue('roles', ['authenticated', 'administrator']);
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $administrator]));
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, should succeed.
-    $this->condition->setContextValue('roles', ['authenticated']);
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated]));
     $this->assertTrue($this->condition->evaluate());
 
     // A role the user doesn't have.
-    $this->condition->setContextValue('roles', ['administrator']);
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$administrator]));
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, the user has with OR condition, should succeed.
-    $this->condition->setContextValue('roles', ['authenticated']);
-    $this->condition->setContextValue('operation', 'OR');
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated]));
+    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, but has the authenticated,
     // should succeed.
-    $this->condition->setContextValue('roles', ['authenticated', 'administrator']);
-    $this->condition->setContextValue('operation', 'OR');
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $administrator]));
+    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role. This should fail.
-    $this->condition->setContextValue('roles', ['administrator']);
-    $this->condition->setContextValue('operation', 'OR');
+    $this->condition->setContextValue('roles', $this->getMockTypedData([$administrator]));
+    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
     $this->assertFalse($this->condition->evaluate());
+  }
+
+  /**
+   * Creates a mocked user role.
+   *
+   * @param $id
+   *   The machine-readable name of the mocked role.
+   *
+   * @return \PHPUnit_Framework_MockObject_MockBuilder|\Drupal\user\RoleInterface
+   *   The mocked role.
+   */
+  protected function getMockRole($id) {
+    $role = $this->getMockBuilder('Drupal\user\Entity\Role')
+      ->disableOriginalConstructor()
+      ->setMethods(['id'])
+      ->getMock();
+
+    $role->expects($this->any())
+      ->method('id')
+      ->will($this->returnValue($id));
+
+    return $role;
   }
 
 }
