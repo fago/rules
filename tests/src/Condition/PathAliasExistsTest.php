@@ -64,7 +64,7 @@ class PathAliasExistsTest extends RulesTestBase {
 
     $this->condition = new PathAliasExists([], '', ['context' => [
       'alias' => new ContextDefinition('string'),
-      'language' => new ContextDefinition('language', FALSE),
+      'language' => new ContextDefinition('language', NULL, FALSE),
     ]], $this->aliasManager);
 
     $this->condition->setStringTranslation($this->getMockStringTranslation());
