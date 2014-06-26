@@ -55,7 +55,7 @@ trait RulesExpressionTrait {
    * @return \Drupal\rules\Engine\RulesExpressionInterface
    *   The created Rules expression.
    */
-  protected function createRulesExpression($id, array $configuration = array()) {
+  protected function createRulesExpression($id, array $configuration = []) {
     return $this->rulesExpressionManager->createInstance($id, $configuration);
   }
 
@@ -68,7 +68,7 @@ trait RulesExpressionTrait {
    * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
    *   The created rule.
    */
-  protected function createRulesRule(array $configuration = array()) {
+  protected function createRulesRule(array $configuration = []) {
     return $this->createRulesExpression('rules_rule', $configuration);
   }
 
@@ -82,9 +82,9 @@ trait RulesExpressionTrait {
    *   The created action.
    */
   protected function createRulesAction($id) {
-    return $this->createRulesExpression('rules_action', array(
+    return $this->createRulesExpression('rules_action', [
       'action_id' => $id,
-    ));
+    ]);
   }
 
   /**
@@ -97,9 +97,9 @@ trait RulesExpressionTrait {
    *   The created condition.
    */
   protected function createRulesCondition($id) {
-    return $this->createRulesExpression('rules_condition', array(
+    return $this->createRulesExpression('rules_condition', [
       'condition_id' => $id,
-    ));
+    ]);
   }
 
   /**
