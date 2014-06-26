@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;

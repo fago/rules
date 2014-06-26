@@ -7,7 +7,6 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesConditionBase;
 

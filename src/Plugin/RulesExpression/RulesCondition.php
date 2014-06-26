@@ -9,7 +9,6 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesState;
