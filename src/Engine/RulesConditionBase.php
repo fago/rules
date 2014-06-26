@@ -122,7 +122,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   }
 
   /**
-   * @todo move to an interface.
+   * {@inheritdoc}
    */
   public function setProvidedValue($name, $value) {
     $this->getProvided($name)->setContextValue($value);
@@ -130,7 +130,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   }
 
   /**
-   * @todo move to an interface.
+   * {@inheritdoc}
    */
   public function getProvided($name) {
     // Check for a valid context value.
@@ -141,7 +141,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   }
 
   /**
-   * @todo move to an interface.
+   * {@inheritdoc}
    */
   public function getProvidedDefinition($name) {
     $definition = $this->getPluginDefinition();
@@ -152,7 +152,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   }
 
   /**
-   * @todo move to an interface.
+   * {@inheritdoc}
    */
   public function getProvidedDefinitions() {
     $definition = $this->getPluginDefinition();

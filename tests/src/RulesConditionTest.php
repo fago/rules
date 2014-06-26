@@ -80,6 +80,10 @@ class RulesConditionTest extends RulesTestBase {
       ->method('setContext')
       ->with('test', $context);
 
+    $this->trueCondition->expects($this->once())
+      ->method('getProvidedDefinitions')
+      ->will($this->returnValue([]));
+
     $this->conditionManager->expects($this->exactly(2))
       ->method('createInstance')
       ->will($this->returnValue($this->trueCondition));
