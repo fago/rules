@@ -103,4 +103,28 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $this->assertEqual($log[0][0], 'action called');
   }
 
+  /**
+   * Tests that a condition can provide a value and another one can consume it.
+   */
+  public function testProvidedVariables() {
+    $rule = $this->createRulesRule();
+
+    // The first condition provides a "provided_text" variable.
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+      'condition_id' => 'rules_test_provider',
+    ]));
+    // The secound condition consumes the variable.
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+      'condition_id' => 'rules_test_string_condition',
+      'parameter_mapping' => ['text:select' => 'provided_text'],
+    ]));
+
+    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->execute();
+
+    // Test that the action logged something.
+    $log = RulesLog::logger()->get();
+    $this->assertEqual($log[0][0], 'action called');
+  }
+
 }

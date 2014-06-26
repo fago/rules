@@ -94,8 +94,14 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
       // @todo check if the context is required.
     }
     $result = $condition->evaluate();
-    // @todo Now that the condition has been executed it can provide additional
-    // context which we will have to pass back to any parent expression.
+
+    // Now that the condition has been executed it can provide additional
+    // context which we will have to pass back in the evaluation state.
+    $provides = $condition->getProvidedDefinitions();
+    foreach ($provides as $name => $provided_definition) {
+      $state->addVariable($name, $condition->getProvided($name));
+    }
+
     return $result;
   }
 

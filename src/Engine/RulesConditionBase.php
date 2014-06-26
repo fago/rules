@@ -7,7 +7,9 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
 
 /**
@@ -28,6 +30,13 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
    * @var array
    */
   protected $configuration;
+
+  /**
+   * The data objects that are provided by this condition.
+   *
+   * @var \Drupal\Component\Plugin\Context\ContextInterface[]
+   */
+  protected $provided;
 
   /**
    * {@inheritdoc}
@@ -110,6 +119,44 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
    */
   public function calculateDependencies() {
     return [];
+  }
+
+  /**
+   * @todo move to an interface.
+   */
+  public function setProvidedValue($name, $value) {
+    $this->getProvided($name)->setContextValue($value);
+    return $this;
+  }
+
+  /**
+   * @todo move to an interface.
+   */
+  public function getProvided($name) {
+    // Check for a valid context value.
+    if (!isset($this->provided[$name])) {
+      $this->provided[$name] = new Context($this->getProvidedDefinition($name));
+    }
+    return $this->provided[$name];
+  }
+
+  /**
+   * @todo move to an interface.
+   */
+  public function getProvidedDefinition($name) {
+    $definition = $this->getPluginDefinition();
+    if (empty($definition['provides'][$name])) {
+      throw new ContextException(sprintf("The %s provided context is not valid.", $name));
+    }
+    return $definition['provides'][$name];
+  }
+
+  /**
+   * @todo move to an interface.
+   */
+  public function getProvidedDefinitions() {
+    $definition = $this->getPluginDefinition();
+    return !empty($definition['provides']) ? $definition['provides'] : array();
   }
 
 }
