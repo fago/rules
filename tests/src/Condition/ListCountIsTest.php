@@ -46,9 +46,10 @@ class ListCountIsTest extends RulesTestBase {
 
     $this->condition = new ListCountIs([], '', ['context' => [
       'list' => new ContextDefinition('list'),
-      'op' => new ContextDefinition('string'),
+      'operator' => new ContextDefinition('string'),
       'value' => new ContextDefinition('integer'),
     ]]);
+
     $this->condition->setStringTranslation($this->getMockStringTranslation());
   }
 
@@ -70,49 +71,49 @@ class ListCountIsTest extends RulesTestBase {
     // Test that the list count is greater than 2.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([1,2,3,4]))
-      ->setContextValue('op', $this->getMockTypedData('>'))
+      ->setContextValue('operator', $this->getMockTypedData('>'))
       ->setContextValue('value', $this->getMockTypedData('2'));
     $this->assertTrue($condition->evaluate());
 
     // Test that the list count is less than 4.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([1,2,3]))
-      ->setContextValue('op', $this->getMockTypedData('<'))
+      ->setContextValue('operator', $this->getMockTypedData('<'))
       ->setContextValue('value', $this->getMockTypedData('4'));
     $this->assertTrue($condition->evaluate());
 
     // Test that the list count is equal to 3.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([1,2,3]))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData('3'));
     $this->assertTrue($condition->evaluate());
 
     // Test that the list count is equal to 0.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([]))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData('0'));
     $this->assertTrue($condition->evaluate());
 
     // Test that the list count is not less than 2.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([1,2]))
-      ->setContextValue('op', $this->getMockTypedData('<'))
+      ->setContextValue('operator', $this->getMockTypedData('<'))
       ->setContextValue('value', $this->getMockTypedData('2'));
     $this->assertFalse($condition->evaluate());
 
     // Test that list count is not greater than 5.
     $condition = $this->condition
       ->setContextValue('list',$this->getMockTypedData([1,2,3]))
-      ->setContextValue('op', $this->getMockTypedData('>'))
+      ->setContextValue('operator', $this->getMockTypedData('>'))
       ->setContextValue('value', $this->getMockTypedData('5'));
     $this->assertFalse($condition->evaluate());
 
     // Test that the list count is not equal to 0.
     $condition = $this->condition
       ->setContextValue('list', $this->getMockTypedData([1,2,3]))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData('0'));
     $this->assertFalse($condition->evaluate());
   }
