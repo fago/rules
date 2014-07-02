@@ -9,14 +9,14 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\rules\Context\ProvidedContextTrait;
+use Drupal\rules\Context\RulesContextTrait;
 
 /**
  * Base class for rules conditions.
  */
 abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface {
 
-  use ProvidedContextTrait;
+  use RulesContextTrait;
 
   /**
    * The condition manager to proxy execute calls through.

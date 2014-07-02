@@ -8,14 +8,14 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\rules\Context\ProvidedContextTrait;
+use Drupal\rules\Context\RulesContextTrait;
 
 /**
  * Base class for rules actions.
  */
 abstract class RulesActionBase extends ContextAwarePluginBase implements RulesActionInterface {
 
-  use ProvidedContextTrait;
+  use RulesContextTrait;
 
   /**
    * The plugin configuration.
