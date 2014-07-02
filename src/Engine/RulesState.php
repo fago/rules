@@ -50,7 +50,7 @@ class RulesState {
    */
   public function __construct($contexts = []) {
     $this->variables = $contexts;
-    // @todo Initialize the gloabl "site" variable.
+    // @todo Initialize the global "site" variable.
   }
 
   /**
