@@ -51,17 +51,8 @@ class DrupalMessage extends RulesActionBase {
     // flag in the context definition.
     $message = String::checkPlain($this->getContextValue('message'));
     $type = $this->getContextValue('type');
-    $repeat = $this->getContextValue('repeat');
-    if (!$repeat) {
-      $repeat = FALSE;
-    }
-    // @todo This should be an injectable service, so that we can write a proper
-    // unit test.
+    $repeat = (bool) $this->getContextValue('repeat');
     drupal_set_message($message, $type, $repeat);
-  }
-
-  public function executeMultiple(array $objects) {
-    // @todo: Remove this once it is removed from the interface.
   }
 
 }

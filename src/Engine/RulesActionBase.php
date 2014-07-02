@@ -52,4 +52,11 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function executeMultiple(array $objects) {
+    // @todo: Remove this once it is removed from the interface.
+  }
+
 }
