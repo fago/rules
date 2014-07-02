@@ -75,11 +75,16 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
    */
   public function executeWithState(RulesState $state) {
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
-    // @todo context mapping will happen here, we have to forward the context
-    // definitions from our plugin configuration to the action plugin.
+
+    // We have to forward the context values from our configuration to the
+    // action plugin.
+    $this->mapContext($action, $state);
+
     $action->execute();
-    // @todo Now that the action has been executed it can provide additional
-    // context which we will have to pass back to any parent expression.
+
+    // Now that the action has been executed it can provide additional
+    // context which we will have to pass back in the evaluation state.
+    $this->mapProvidedContext($action, $state);
   }
 
   /**
