@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
+use Drupal\rules\Engine\RulesState;
 
 /**
  * Tests the rules engine functionality.
@@ -125,6 +126,26 @@ class RulesEngineTest extends RulesDrupalTestBase {
     // Test that the action logged something.
     $log = RulesLog::logger()->get();
     $this->assertEqual($log[0][0], 'action called');
+  }
+
+  /**
+   * Tests that provided variables can be renamed with configuration.
+   */
+  public function testRenamingOfProvidedVariables() {
+    $rule = $this->createRulesRule();
+
+    // The condition provides a "provided_text" variable.
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+      'condition_id' => 'rules_test_provider',
+      // Expose the variable as 'newname'.
+      'provides_mapping' => ['provided_text' => 'newname'],
+    ]));
+
+    $state = new RulesState();
+    $rule->executeWithState($state);
+    // Check that the newly named variable exists and has the provided value.
+    $variable = $state->getVariable('newname');
+    $this->assertEqual($variable->getContextValue(), 'test value');
   }
 
 }

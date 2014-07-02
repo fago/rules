@@ -99,7 +99,15 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
     // context which we will have to pass back in the evaluation state.
     $provides = $condition->getProvidedDefinitions();
     foreach ($provides as $name => $provided_definition) {
-      $state->addVariable($name, $condition->getProvided($name));
+
+      // Avoid name collisions in the rules state: provided variables can be
+      // renamed.
+      if (isset($this->configuration['provides_mapping'][$name])) {
+        $state->addVariable($this->configuration['provides_mapping'][$name], $condition->getProvided($name));
+      }
+      else {
+        $state->addVariable($name, $condition->getProvided($name));
+      }
     }
 
     return $result;
