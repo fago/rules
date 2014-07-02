@@ -77,22 +77,21 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
     ]);
     // We have to forward the context values from our configuration to the
     // condition plugin.
-    $contexts = $condition->getContextDefinitions();
-    foreach ($contexts as $name => $context) {
+    $context_definitions = $condition->getContextDefinitions();
+    foreach ($context_definitions as $name => $definition) {
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['parameter_mapping'][$name . ':select'])) {
-        // @todo This only works for simple data selctors like "node", implement
-        // chained data selectors that reference nested data structures like
-        // "node:author:name".
-        $state_variable = $state->getVariable($this->configuration['parameter_mapping'][$name . ':select']);
+        $typed_data = $state->applyDataSelector($this->configuration['parameter_mapping'][$name . ':select']);
+        $condition->setContextValue($name, $typed_data);
       }
       else {
         // Check if the state has a variable with the same name.
         $state_variable = $state->getVariable($name);
+        if ($state_variable) {
+          $condition->setContext($name, $state_variable);
+        }
       }
-      if ($state_variable !== NULL) {
-        $condition->setContext($name, $state_variable);
-      }
+      // @todo check if the context is required.
     }
     $result = $condition->evaluate();
     // @todo Now that the condition has been executed it can provide additional
