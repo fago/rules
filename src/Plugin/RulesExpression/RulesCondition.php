@@ -80,8 +80,8 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
     $context_definitions = $condition->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
       // Check if a data selector is configured that maps to the state.
-      if (isset($this->configuration['parameter_mapping'][$name . ':select'])) {
-        $typed_data = $state->applyDataSelector($this->configuration['parameter_mapping'][$name . ':select']);
+      if (isset($this->configuration['context_mapping'][$name . ':select'])) {
+        $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name . ':select']);
         $condition->setContextValue($name, $typed_data);
       }
       else {

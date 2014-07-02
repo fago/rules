@@ -90,7 +90,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
-      'parameter_mapping' => ['text:select' => 'test'],
+      'context_mapping' => ['text:select' => 'test'],
     ]));
 
     $rule->addAction($this->createRulesAction('rules_test_log'));
@@ -116,7 +116,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     // The secound condition consumes the variable.
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
-      'parameter_mapping' => ['text:select' => 'provided_text'],
+      'context_mapping' => ['text:select' => 'provided_text'],
     ]));
 
     $rule->addAction($this->createRulesAction('rules_test_log'));
