@@ -16,7 +16,7 @@ use Drupal\rules\Tests\RulesTestBase;
  *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
  *
- * @see \Drupal\rules\Plugin\Condition\ EntityHasField
+ * @see \Drupal\rules\Plugin\Condition\EntityHasField
  */
 class EntityHasFieldTest extends RulesTestBase {
 

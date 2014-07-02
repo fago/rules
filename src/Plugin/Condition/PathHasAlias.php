@@ -43,7 +43,7 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
   protected $aliasManager;
 
   /**
-   * Constructs a PathAliasExists object.
+   * Constructs a PathHasAlias object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
