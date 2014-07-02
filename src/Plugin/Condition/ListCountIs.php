@@ -20,7 +20,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  *       label = @Translation("List"),
  *       description = @Translation("A multi value data element to have its count compared, specified by using a data selector, eg 'node:author:roles'.")
  *     ),
- *     "op" = @ContextDefinition("string",
+ *     "operator" = @ContextDefinition("string",
  *       label = @Translation("Operator"),
  *       description = @Translation("The comparison operator.")
  *     ),
@@ -52,10 +52,10 @@ class ListCountIs extends RulesConditionBase {
    */
   public function evaluate() {
     $list = $this->getContextValue('list');
-    $op = $this->getContextValue('op');
+    $operator = $this->getContextValue('operator');
     $value = $this->getContextValue('value');
 
-    switch ($op) {
+    switch ($operator) {
       case '==':
         return count($list) == $value;
       case '<';
