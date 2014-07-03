@@ -8,7 +8,15 @@
 namespace Drupal\rules\Context;
 
 /**
- * Extends the core ConditionInterface with negation and provided context.
+ * Interface for defining provided context aware plugins.
+ *
+ * Provided context aware plugins can specify an array of provided definitions
+ * keyed by provided context name at the plugin definition under the "provides"
+ * key.
+ *
+ * Provided context is a set of variables that are "produced" by the plugin.
+ * Example: an action plugin that loads a user would add the user object as
+ * provided context variable.
  */
 interface ProvidedContextPluginInterface {
 
