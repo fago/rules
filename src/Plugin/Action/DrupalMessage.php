@@ -40,7 +40,7 @@ class DrupalMessage extends RulesActionBase {
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Show a message on the site.');
+    return $this->t('Show a message on the site');
   }
 
   /**

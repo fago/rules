@@ -58,6 +58,15 @@ namespace Drupal\rules\Tests\Action {
     }
 
     /**
+     * Tests the summary.
+     *
+     * @covers ::summary()
+     */
+    public function testSummary() {
+      $this->assertEquals('Show a message on the site', $this->action->summary());
+    }
+
+    /**
      * Tests the action execution.
      *
      * @covers ::execute()
