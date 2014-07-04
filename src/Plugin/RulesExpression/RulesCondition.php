@@ -7,8 +7,10 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
+use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Context\ProvidedContextPluginInterface;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesState;
@@ -75,40 +77,16 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);
+
     // We have to forward the context values from our configuration to the
     // condition plugin.
-    $context_definitions = $condition->getContextDefinitions();
-    foreach ($context_definitions as $name => $definition) {
-      // Check if a data selector is configured that maps to the state.
-      if (isset($this->configuration['context_mapping'][$name . ':select'])) {
-        $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name . ':select']);
-        $condition->setContextValue($name, $typed_data);
-      }
-      else {
-        // Check if the state has a variable with the same name.
-        $state_variable = $state->getVariable($name);
-        if ($state_variable) {
-          $condition->setContext($name, $state_variable);
-        }
-      }
-      // @todo check if the context is required.
-    }
+    $this->mapContext($condition, $state);
+
     $result = $condition->evaluate();
 
     // Now that the condition has been executed it can provide additional
     // context which we will have to pass back in the evaluation state.
-    $provides = $condition->getProvidedDefinitions();
-    foreach ($provides as $name => $provided_definition) {
-
-      // Avoid name collisions in the rules state: provided variables can be
-      // renamed.
-      if (isset($this->configuration['provides_mapping'][$name])) {
-        $state->addVariable($this->configuration['provides_mapping'][$name], $condition->getProvided($name));
-      }
-      else {
-        $state->addVariable($name, $condition->getProvided($name));
-      }
-    }
+    $this->mapProvidedContext($condition, $state);
 
     return $result;
   }

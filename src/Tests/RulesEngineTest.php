@@ -148,4 +148,38 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $this->assertEqual($variable->getContextValue(), 'test value');
   }
 
+  /**
+   * Tests that mulitple actions can consume and provide context variables.
+   */
+  public function testActionProvidedContext() {
+    $rule = $this->createRulesRule();
+
+    // The condition provides a "provided_text" variable.
+    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+      'condition_id' => 'rules_test_provider',
+    ]));
+
+    // The action provides a "concatenated" variable.
+    $rule->addAction($this->rulesExpressionManager->createInstance('rules_action', [
+      'action_id' => 'rules_test_string',
+      'context_mapping' => ['text:select' => 'provided_text'],
+    ]));
+
+    // Add the same action again which will provide a "concatenated2" variable
+    // now.
+    $rule->addAction($this->rulesExpressionManager->createInstance('rules_action', [
+      'action_id' => 'rules_test_string',
+      'context_mapping' => ['text:select' => 'concatenated'],
+      'provides_mapping' => ['concatenated' => 'concatenated2'],
+    ]));
+
+    $state = new RulesState();
+    $rule->executeWithState($state);
+    // Check that the created variables exists and have the provided values.
+    $concatenated = $state->getVariable('concatenated');
+    $this->assertEqual($concatenated->getContextValue(), 'test valuetest value');
+    $concatenated2 = $state->getVariable('concatenated2');
+    $this->assertEqual($concatenated2->getContextValue(), 'test valuetest valuetest valuetest value');
+  }
+
 }
