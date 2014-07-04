@@ -105,7 +105,7 @@ class ListCountIsTest extends RulesTestBase {
 
     // Test that list count is not greater than 5.
     $condition = $this->condition
-      ->setContextValue('list',$this->getMockTypedData([1,2,3]))
+      ->setContextValue('list', $this->getMockTypedData([1,2,3]))
       ->setContextValue('operator', $this->getMockTypedData('>'))
       ->setContextValue('value', $this->getMockTypedData('5'));
     $this->assertFalse($condition->evaluate());

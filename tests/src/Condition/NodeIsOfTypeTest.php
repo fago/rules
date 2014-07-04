@@ -85,4 +85,3 @@ class NodeIsOfTypeTest extends RulesTestBase {
   }
 
 }
-

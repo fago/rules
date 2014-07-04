@@ -85,4 +85,3 @@ class NodeIsStickyTest extends RulesTestBase {
   }
 
 }
-

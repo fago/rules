@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a 'Path alias exists' condition.
  *
- *  @Condition(
+ * @Condition(
  *   id = "rules_path_alias_exists",
  *   label = @Translation("Path alias exists"),
  *   context = {

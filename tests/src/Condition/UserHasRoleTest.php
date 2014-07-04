@@ -119,7 +119,7 @@ class UserHasRoleTest extends RulesTestBase {
   /**
    * Creates a mocked user role.
    *
-   * @param $id
+   * @param string $id
    *   The machine-readable name of the mocked role.
    *
    * @return \PHPUnit_Framework_MockObject_MockBuilder|\Drupal\user\RoleInterface

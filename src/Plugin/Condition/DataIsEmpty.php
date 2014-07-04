@@ -13,7 +13,7 @@ use Drupal\rules\Engine\RulesConditionBase;
 /**
  * Provides a 'Data value is empty' condition.
  *
- *  @Condition(
+ * @Condition(
  *   id = "rules_data_is_empty",
  *   label = @Translation("Data value is empty"),
  *   context = {

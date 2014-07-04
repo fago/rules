@@ -11,7 +11,7 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 
 /**
- * Tests the rules engine with node integration
+ * Tests the rules engine with node integration.
  */
 class NodeIntegrationTest extends RulesDrupalTestBase {
 

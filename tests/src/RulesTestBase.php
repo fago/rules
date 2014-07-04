@@ -79,6 +79,7 @@ abstract class RulesTestBase extends UnitTestCase {
    *
    * @param mixed $value
    *   The value to set in the mocked typed data object.
+   *
    * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\TypedData\TypedDataInterface
    *   The mocked typed data object with the given value set.
    */

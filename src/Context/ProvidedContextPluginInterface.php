@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Context\ProvidedContextPluginInterface
+ * Contains \Drupal\rules\Context\ProvidedContextPluginInterface.
  */
 
 namespace Drupal\rules\Context;

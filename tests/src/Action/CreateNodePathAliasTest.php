@@ -117,6 +117,7 @@ class CreateNodePathAliasTest extends RulesTestBase {
    * Creates a mock node.
    *
    * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\node\NodeInterface
+   *   The mocked node object.
    */
   protected function getMockNode() {
     $language = $this->getMock('Drupal\Core\language\LanguageInterface');

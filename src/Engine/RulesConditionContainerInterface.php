@@ -15,7 +15,7 @@ interface RulesConditionContainerInterface extends RulesConditionInterface, Rule
   /**
    * Adds a condition.
    *
-   * @param \Drupal\rules\Engine\RulesConditionInterface $condition
+   * @param \Drupal\rules\Engine\RulesExpressionConditionInterface $condition
    *   The condition object.
    *
    * @return $this

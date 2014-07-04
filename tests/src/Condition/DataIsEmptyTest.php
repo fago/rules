@@ -74,7 +74,7 @@ class DataIsEmptyTest extends RulesTestBase {
       ->method('isEmpty')
       ->will($this->returnValue(FALSE));
 
-    // Test a ComplexDataInterface object
+    // Test a ComplexDataInterface object.
     $this->condition->setContextValue('data', $this->getMockTypedData($node));
     $this->assertTrue($this->condition->evaluate());
     $this->assertFalse($this->condition->evaluate());
