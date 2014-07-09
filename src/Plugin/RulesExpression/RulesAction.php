@@ -9,7 +9,6 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
 use Drupal\rules\Engine\RulesExpressionBase;
@@ -49,13 +48,11 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\TypedData\TypedDataManager $typed_data_manager
-   *   The typed data manager.
    * @param \Drupal\Core\Action\ActionManager $actionManager
    *   The action manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, TypedDataManager $typed_data_manager, ActionManager $actionManager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $typed_data_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ActionManager $actionManager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->actionManager = $actionManager;
   }
@@ -65,7 +62,6 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
-      $container->get('typed_data_manager'),
       $container->get('plugin.manager.action')
     );
   }
