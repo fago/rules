@@ -18,8 +18,7 @@ use Drupal\rules\Engine\RulesDataProcessorInterface;
  *
  * @RulesDataProcessor(
  *   id = "rules_numeric_offset",
- *   label = @Translation("Apply numeric offset"),
- *   types = {"integer", "float"}
+ *   label = @Translation("Apply numeric offset")
  * )
  */
 class NumericOffset extends PluginBase implements RulesDataProcessorInterface {
