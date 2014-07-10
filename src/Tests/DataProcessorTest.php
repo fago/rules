@@ -7,9 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
-use Drupal\rules\Engine\RulesState;
 
 /**
  * Test the data processor plugins during Rules evaluation.
@@ -60,14 +58,15 @@ class DataProcessorTest extends RulesDrupalTestBase {
           ],
         ],
       ],
-    ])->setContextValue('message', 0);
+    ])->setContextValue('message', 1)
+      ->setContextValue('type', 'status');
     $rule->addAction($action);
     $rule->execute();
 
     $messages = drupal_set_message();
-    // The original value was 0 and the processor adds 1, so the result should
-    // be 1.
-    $this->assertEqual($messages['status'][0], '1');
+    // The original value was 1 and the processor adds 1, so the result should
+    // be 2.
+    $this->assertEqual($messages['status'][0], '2');
   }
 
 }
