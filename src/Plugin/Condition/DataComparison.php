@@ -20,7 +20,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  *       label = @Translation("Data to compare"),
  *       description = @Translation("The data to be checked to be empty, specified by using a data selector, e.g. 'node:uid:entity:name:value'.")
  *     ),
- *     "op" = @ContextDefinition("string",
+ *     "operator" = @ContextDefinition("string",
  *       label = @Translation("Operator"),
  *       description = @Translation("The comparison operator."),
  *       required = FALSE
@@ -50,10 +50,10 @@ class DataComparison extends RulesConditionBase {
    */
   public function evaluate() {
     $data = $this->getContextValue('data');
-    $op = $this->getContext('op')->getContextData() ? $this->getContextValue('op') : '==';
+    $operator = $this->getContext('operator')->getContextData() ? $this->getContextValue('operator') : '==';
     $value = $this->getContextValue('value');
     
-    switch ($op) {
+    switch ($operator) {
       case '<':
         return $data < $value;
 
@@ -66,7 +66,6 @@ class DataComparison extends RulesConditionBase {
       case 'IN':
         return is_array($value) && in_array($data, $value);
 
-      case '==':
       default:
         // In case both values evaluate to FALSE, further differentiate between
         // NULL values and values evaluating to FALSE.

@@ -46,7 +46,7 @@ class DataComparisonTest extends RulesTestBase {
 
     $this->condition = new DataComparison([], '', ['context' => [
       'data' => new ContextDefinition(),
-      'op' => new ContextDefinition('string', NULL, FALSE),
+      'operator' => new ContextDefinition('string', NULL, FALSE),
       'value' => new ContextDefinition(),
     ]]);
     $this->condition->setStringTranslation($this->getMockStringTranslation());
@@ -85,7 +85,7 @@ class DataComparisonTest extends RulesTestBase {
     // is '==', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Llama'))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData('Llama'));
     $this->assertTrue($this->condition->evaluate());
 
@@ -93,7 +93,7 @@ class DataComparisonTest extends RulesTestBase {
     // operator is '==', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Kitten'))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData('Llama'));
     $this->assertFalse($this->condition->evaluate());
 
@@ -101,7 +101,7 @@ class DataComparisonTest extends RulesTestBase {
     // is '==', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(FALSE))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData(FALSE));
     $this->assertTrue($this->condition->evaluate());
 
@@ -109,7 +109,7 @@ class DataComparisonTest extends RulesTestBase {
     // and the operator is '==', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(TRUE))
-      ->setContextValue('op', $this->getMockTypedData('=='))
+      ->setContextValue('operator', $this->getMockTypedData('=='))
       ->setContextValue('value', $this->getMockTypedData(FALSE));
     $this->assertFalse($this->condition->evaluate());
   }
@@ -124,7 +124,7 @@ class DataComparisonTest extends RulesTestBase {
     // is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Big Llama'))
-      ->setContextValue('op', $this->getMockTypedData('contains'))
+      ->setContextValue('operator', $this->getMockTypedData('contains'))
       ->setContextValue('value', $this->getMockTypedData('Llama'));
     $this->assertTrue($this->condition->evaluate());
 
@@ -132,7 +132,7 @@ class DataComparisonTest extends RulesTestBase {
     // the operator is 'contains', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Big Kitten'))
-      ->setContextValue('op', $this->getMockTypedData('contains'))
+      ->setContextValue('operator', $this->getMockTypedData('contains'))
       ->setContextValue('value', $this->getMockTypedData('Big Kitten'));
     $this->assertTrue($this->condition->evaluate());
 
@@ -140,7 +140,7 @@ class DataComparisonTest extends RulesTestBase {
     // is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Llama', 'Kitten']))
-      ->setContextValue('op', $this->getMockTypedData('contains'))
+      ->setContextValue('operator', $this->getMockTypedData('contains'))
       ->setContextValue('value', $this->getMockTypedData('Llama'));
     $this->assertTrue($this->condition->evaluate());
 
@@ -148,7 +148,7 @@ class DataComparisonTest extends RulesTestBase {
     // operator is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Kitten']))
-      ->setContextValue('op', $this->getMockTypedData('contains'))
+      ->setContextValue('operator', $this->getMockTypedData('contains'))
       ->setContextValue('value', $this->getMockTypedData(['Llama']));
     $this->assertFalse($this->condition->evaluate());
   }
@@ -162,7 +162,7 @@ class DataComparisonTest extends RulesTestBase {
     // Test that when the data string is 'IN' the value array, TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Llama'))
-      ->setContextValue('op', $this->getMockTypedData('IN'))
+      ->setContextValue('operator', $this->getMockTypedData('IN'))
       ->setContextValue('value', $this->getMockTypedData(['Llama', 'Kitten']));
     $this->assertTrue($this->condition->evaluate());
 
@@ -170,7 +170,7 @@ class DataComparisonTest extends RulesTestBase {
     // is 'IN', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Llama']))
-      ->setContextValue('op', $this->getMockTypedData('IN'))
+      ->setContextValue('operator', $this->getMockTypedData('IN'))
       ->setContextValue('value', $this->getMockTypedData(['Kitten']));
     $this->assertFalse($this->condition->evaluate());
   }
@@ -185,7 +185,7 @@ class DataComparisonTest extends RulesTestBase {
     // TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(1))
-      ->setContextValue('op', $this->getMockTypedData('<'))
+      ->setContextValue('operator', $this->getMockTypedData('<'))
       ->setContextValue('value', $this->getMockTypedData(2));
     $this->assertTrue($this->condition->evaluate());
 
@@ -193,7 +193,7 @@ class DataComparisonTest extends RulesTestBase {
     // FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(2))
-      ->setContextValue('op', $this->getMockTypedData('<'))
+      ->setContextValue('operator', $this->getMockTypedData('<'))
       ->setContextValue('value', $this->getMockTypedData(1));
     $this->assertFalse($this->condition->evaluate());
   }
@@ -208,7 +208,7 @@ class DataComparisonTest extends RulesTestBase {
     // TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(2))
-      ->setContextValue('op', $this->getMockTypedData('>'))
+      ->setContextValue('operator', $this->getMockTypedData('>'))
       ->setContextValue('value', $this->getMockTypedData(1));
     $this->assertTrue($this->condition->evaluate());
 
@@ -216,7 +216,7 @@ class DataComparisonTest extends RulesTestBase {
     // FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(1))
-      ->setContextValue('op', $this->getMockTypedData('>'))
+      ->setContextValue('operator', $this->getMockTypedData('>'))
       ->setContextValue('value', $this->getMockTypedData(2));
     $this->assertFalse($this->condition->evaluate());
   }
