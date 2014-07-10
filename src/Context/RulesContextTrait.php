@@ -73,17 +73,20 @@ trait RulesContextTrait {
   protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {
     $context_definitions = $plugin->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
+
+      // First check if we can forward a context directly set on this plugin.
+      try {
+        $context = $this->getContext($name);
+        $plugin->setContext($name, $context);
+      }
+      // A context exception means that there is no context with the given name,
+      // so we catch it and continue with the context mapping below.
+      catch (ContextException $e) {}
+
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name . ':select'])) {
         $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name . ':select']);
         $plugin->setContextValue($name, $typed_data);
-      }
-      else {
-        // Check if the state has a variable with the same name.
-        $state_variable = $state->getVariable($name);
-        if ($state_variable) {
-          $plugin->setContext($name, $state_variable);
-        }
       }
       // @todo check if the context is required.
     }
