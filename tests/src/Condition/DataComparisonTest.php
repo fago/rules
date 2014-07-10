@@ -63,10 +63,26 @@ class DataComparisonTest extends RulesTestBase {
 
   /**
    * Tests evaluating the condition with the "equals" operator.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluationOperatorEquals() {
+    // Test that when a boolean data does not equal a boolean value
+    // and the operator is not set - should fallback to '=='.
+    $this->condition
+      ->setContextValue('data', $this->getMockTypedData(TRUE))
+      ->setContextValue('value', $this->getMockTypedData(FALSE));
+    $this->assertFalse($this->condition->evaluate());
+
+    // Test that when both data and value are false booleans
+    // and the operator is not set - should fallback to '=='.
+    $this->condition
+      ->setContextValue('data', $this->getMockTypedData(FALSE))
+      ->setContextValue('value', $this->getMockTypedData(FALSE));
+    $this->assertTrue($this->condition->evaluate());
+
     // Test that when the data string equals the value string and the operator
-    // is '==', TRUE is returned
+    // is '==', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Llama'))
       ->setContextValue('op', $this->getMockTypedData('=='))
@@ -74,7 +90,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when the data string does not equal the value string and the
-    // operator is '==', FALSE is returned
+    // operator is '==', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Kitten'))
       ->setContextValue('op', $this->getMockTypedData('=='))
@@ -82,7 +98,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertFalse($this->condition->evaluate());
 
     // Test that when both data and value are false booleans and the operator
-    // is '==', TRUE is returned
+    // is '==', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(FALSE))
       ->setContextValue('op', $this->getMockTypedData('=='))
@@ -90,7 +106,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when a boolean data does not equal a boolean value
-    // and the operator is '==', FALSE is returned
+    // and the operator is '==', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(TRUE))
       ->setContextValue('op', $this->getMockTypedData('=='))
@@ -100,10 +116,12 @@ class DataComparisonTest extends RulesTestBase {
 
   /**
    * Tests evaluating the condition with the "contains" operator.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluationOperatorContains() {
     // Test that when the data string contains the value string, and the operator
-    // is 'CONTAINS', TRUE is returned
+    // is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Big Llama'))
       ->setContextValue('op', $this->getMockTypedData('contains'))
@@ -111,7 +129,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when the data string does not contain the value string, and
-    // the operator is 'contains', TRUE is returned
+    // the operator is 'contains', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Big Kitten'))
       ->setContextValue('op', $this->getMockTypedData('contains'))
@@ -119,7 +137,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when a data array contains the value string, and the operator 
-    // is 'CONTAINS', TRUE is returned
+    // is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Llama', 'Kitten']))
       ->setContextValue('op', $this->getMockTypedData('contains'))
@@ -127,7 +145,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when a data array does not contain the value array, and the
-    // operator is 'CONTAINS', TRUE is returned
+    // operator is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Kitten']))
       ->setContextValue('op', $this->getMockTypedData('contains'))
@@ -137,9 +155,11 @@ class DataComparisonTest extends RulesTestBase {
 
   /**
    * Tests evaluating the condition with the "IN" operator.
+   *
+   * @covers ::evaluate()
    */
-  public function testConditionEvaluationOperatorIN() {
-    // Test that when the data string is 'IN' the value array, TRUE is returned
+  public function testConditionEvaluationOperatorIn() {
+    // Test that when the data string is 'IN' the value array, TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData('Llama'))
       ->setContextValue('op', $this->getMockTypedData('IN'))
@@ -147,7 +167,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when the data array is not in the value array, and the operator
-    // is 'IN', FALSE is returned
+    // is 'IN', FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Llama']))
       ->setContextValue('op', $this->getMockTypedData('IN'))
@@ -157,10 +177,12 @@ class DataComparisonTest extends RulesTestBase {
 
   /**
    * Tests evaluating the condition with the "is less than" operator.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluationOperatorLessThan() {
     // Test that when data is less than value and operator is '<',
-    // TRUE is returned
+    // TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(1))
       ->setContextValue('op', $this->getMockTypedData('<'))
@@ -168,7 +190,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when data is greater than value and operator is '<',
-    // FALSE is returned
+    // FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(2))
       ->setContextValue('op', $this->getMockTypedData('<'))
@@ -178,10 +200,12 @@ class DataComparisonTest extends RulesTestBase {
 
   /**
    * Tests evaluating the condition with the "is greater than" operator.
+   *
+   * @covers ::evaluate()
    */
   public function testConditionEvaluationOperatorGreaterThan() {
     // Test that when data is greater than value and operator is '>',
-    // TRUE is returned
+    // TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(2))
       ->setContextValue('op', $this->getMockTypedData('>'))
@@ -189,7 +213,7 @@ class DataComparisonTest extends RulesTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test that when data is less than value and operator is '>',
-    // FALSE is returned
+    // FALSE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(1))
       ->setContextValue('op', $this->getMockTypedData('>'))

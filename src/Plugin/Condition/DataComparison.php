@@ -55,63 +55,26 @@ class DataComparison extends RulesConditionBase {
     
     switch ($op) {
       case '<':
-        return $this->isLessThan($data, $value);
+        return $data < $value;
 
       case '>':
-        return $this->isGreaterThan($data, $value);
+        return $data > $value;
 
       case 'contains':
-        return $this->contains($data, $value);
+        return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
 
       case 'IN':
-        return $this->isOneOf($data, $value);
+        return is_array($value) && in_array($data, $value);
 
       case '==':
       default:
-        return $this->equals($data, $value);
+        // In case both values evaluate to FALSE, further differentiate between
+        // NULL values and values evaluating to FALSE.
+        if (!$data && !$value) {
+          return (isset($data) && isset($value)) || (!isset($data) && !isset($value));
+        }
+        return $data == $value;
     }
-  }
-
-  /**
-   * Evaluates the "isLessThan" condition.
-   */
-  protected function isLessThan($data, $value) {
-    return $data < $value;
-  }
-
-  /**
-   * Evaluates the "isGreaterThan" condition.
-   */
-  protected function isGreaterThan($data, $value) {
-    return $data > $value;
-  }
-
-  /**
-   * Evaluates the "contains" condition.
-   *
-   * Note: This is deprecated by the text comparison condition and IN below.
-   */
-  protected function contains($data, $value) {
-    return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
-  }
-
-  /**
-   * Evaluates the "IN" condition.
-   */
-  protected function isOneOf($data, $value) {
-    return is_array($value) && in_array($data, $value);
-  }
-
-  /**
-   * Evaluates the "equals" condition.
-   */
-  protected function equals($data, $value) {
-    // In case both values evaluate to FALSE, further differentiate between
-    // NULL values and values evaluating to FALSE.
-    if (!$data && !$value) {
-      return (isset($data) && isset($value)) || (!isset($data) && !isset($value));
-    }
-    return $data == $value;
   }
 
 }
