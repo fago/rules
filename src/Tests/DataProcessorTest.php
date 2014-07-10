@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Engine\RulesLog;
-
 /**
  * Test the data processor plugins during Rules evaluation.
  */
@@ -23,18 +21,6 @@ class DataProcessorTest extends RulesDrupalTestBase {
       'description' => 'Test the data processor plugins during Rules evaluation.',
       'group' => 'Rules',
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Clear the log from any stale entries that are bleeding over from previous
-    // tests.
-    $logger = RulesLog::logger();
-    $logger->clear();
   }
 
   /**
