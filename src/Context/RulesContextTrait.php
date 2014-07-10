@@ -75,8 +75,13 @@ trait RulesContextTrait {
     foreach ($context_definitions as $name => $definition) {
 
       // First check if we can forward a context directly set on this plugin.
-      $context = $this->getContext($name);
-      $plugin->setContext($name, $context);
+      try {
+        $context = $this->getContext($name);
+        $plugin->setContext($name, $context);
+      }
+      // A context exception means that there is no context with the given name,
+      // so we catch it and continue with the context mapping below.
+      catch (ContextException $e) {}
 
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name . ':select'])) {
