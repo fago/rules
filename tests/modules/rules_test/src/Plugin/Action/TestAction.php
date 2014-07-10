@@ -27,11 +27,4 @@ class TestAction extends RulesActionBase {
     RulesLog::logger()->log('action called');
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function executeMultiple(array $objects) {
-    // @todo: Implement in parent and remove.
-  }
-
 }

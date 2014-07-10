@@ -49,11 +49,4 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
     }
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function executeMultiple(array $objects) {
-    // @todo Revisit if we actually want this method.
-  }
-
 }

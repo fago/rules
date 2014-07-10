@@ -145,11 +145,4 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
     return $this;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function executeMultiple(array $objects) {
-    // @todo: Implement.
-  }
-
 }
