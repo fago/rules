@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Action\DeleteEntity;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Delete entity' action.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Action\DeleteEntity
- *
- * @see \Drupal\rules\Plugin\Action\DeleteEntity
+ * @group rules_action
  */
 class DeleteEntityTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class DeleteEntityTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesActionInterface
    */
   protected $action;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Delete entity',
-      'description' => 'Tests the delete entity action.',
-      'group' => 'Rules actions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

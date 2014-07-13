@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\EntityHasField;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Entity has field' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
- *
- * @see \Drupal\rules\Plugin\Condition\EntityHasField
+ * @group rules_conditions
  */
 class EntityHasFieldTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class EntityHasFieldTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Entity is of bundle condition test',
-      'description' => 'Tests whether an entity is of a particular [type and] bundle.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

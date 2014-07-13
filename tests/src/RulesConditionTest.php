@@ -9,8 +9,10 @@ namespace Drupal\rules\Tests;
 
 use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 
+
 /**
- * Tests the Rules condition functionality.
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesCondition
+ * @group rules
  */
 class RulesConditionTest extends RulesTestBase {
 
@@ -27,17 +29,6 @@ class RulesConditionTest extends RulesTestBase {
    * @var \Drupal\rules\Plugin\RulesExpression\RulesCondition
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Rules Condition',
-      'description' => 'Tests the RulesCondition class',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

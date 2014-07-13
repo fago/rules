@@ -8,22 +8,10 @@
 namespace Drupal\rules\Tests;
 
 /**
- * Tests the abstract rules condition container.
- *
  * @coversDefaultClass \Drupal\rules\Engine\RulesConditionContainer
+ * @group rules
  */
 class RulesConditionContainerTest extends RulesTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'RulesConditionContainer class tests',
-      'description' => 'Test the abstract RulesConditionContainer class',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * Creates a mocked condition container.

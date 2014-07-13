@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\PathAliasExists;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Path alias exists' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\PathAliasExists
- *
- * @see \Drupal\rules\Plugin\Condition\PathAliasExists
+ * @group rules_conditions
  */
 class PathAliasExistsTest extends RulesTestBase {
 
@@ -40,17 +37,6 @@ class PathAliasExistsTest extends RulesTestBase {
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Language\LanguageInterface
    */
   protected $englishLanguage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Path alias exists condition test',
-      'description' => 'Tests the condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

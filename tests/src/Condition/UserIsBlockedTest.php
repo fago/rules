@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\UserIsBlocked;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'User is blocked' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserIsBlocked
- *
- * @see \Drupal\rules\Plugin\Condition\UserIsBlocked
+ * @group rules_conditions
  */
 class UserIsBlockedTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class UserIsBlockedTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'User is blocked condition test',
-      'description' => 'Tests the user is blocked condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

@@ -12,20 +12,11 @@ use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
 
 /**
- * Tests the rules engine functionality.
+ * Test using the Rules API to create and evaluate rules.
+ *
+ * @group rules
  */
 class RulesEngineTest extends RulesDrupalTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Rules engine tests',
-      'description' => 'Test using the Rules API to create and evaluate rules.',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

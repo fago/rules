@@ -8,11 +8,8 @@
 namespace Drupal\rules\Tests;
 
 /**
- * Tests \Drupal\rules\RulesExpressionTrait.
- *
  * @coversDefaultClass \Drupal\rules\RulesExpressionTrait
- *
- * @see \Drupal\rules\RulesExpressionTrait
+ * @group rules
  */
 class RulesExpressionTraitTest extends RulesTestBase {
 
@@ -36,17 +33,6 @@ class RulesExpressionTraitTest extends RulesTestBase {
    * @var \Drupal\rules\Plugin\RulesExpressionPluginManager.
    */
   protected $expressionManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Rules expression trait',
-      'description' => 'Tests the rules expression trait.',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

@@ -12,11 +12,8 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'List count comparison' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\ListCountIs
- *
- * @see \Drupal\rules\Plugin\Condition\ListCountIs
+ * @group rules_conditions
  */
 class ListCountIsTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class ListCountIsTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'List count comparision test',
-      'description' => 'Tests the list count comparison condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

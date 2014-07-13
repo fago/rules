@@ -12,11 +12,8 @@ namespace Drupal\rules\Tests\Action {
   use Drupal\rules\Tests\RulesTestBase;
 
   /**
-   * Tests the 'Show message on the site' action.
-   *
    * @coversDefaultClass \Drupal\rules\Plugin\Action\DrupalMessage
-   *
-   * @see \Drupal\rules\Plugin\Action\DrupalMessage
+   * @group rules_action
    */
   class DrupalMessageTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ namespace Drupal\rules\Tests\Action {
      * @var \Drupal\rules\Engine\RulesActionInterface
      */
     protected $action;
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getInfo() {
-      return [
-        'name' => 'Show message action tests',
-        'description' => 'Tests the show message on the site action.',
-        'group' => 'Rules actions',
-      ];
-    }
 
     /**
      * {@inheritdoc}

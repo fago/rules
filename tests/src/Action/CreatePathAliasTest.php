@@ -13,11 +13,8 @@ use Drupal\rules\Plugin\Action\CreatePathAlias;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Create any path alias' action.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Action\CreatePathAlias
- *
- * @see \Drupal\rules\Plugin\Action\CreatePathAlias
+ * @group rules_action
  */
 class CreatePathAliasTest extends RulesTestBase {
 
@@ -34,17 +31,6 @@ class CreatePathAliasTest extends RulesTestBase {
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasStorageInterface
    */
   protected $aliasStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Create any path alias',
-      'description' => 'Tests the create any path alias action.',
-      'group' => 'Rules actions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

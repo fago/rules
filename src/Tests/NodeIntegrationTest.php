@@ -11,7 +11,9 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 
 /**
- * Tests the rules engine with node integration.
+ * Test using the Rules API with nodes.
+ *
+ * @group rules
  */
 class NodeIntegrationTest extends RulesDrupalTestBase {
 
@@ -21,17 +23,6 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * @var array
    */
   public static $modules = ['node', 'field', 'text', 'entity', 'user'];
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Node integration',
-      'description' => 'Test using the Rules API with nodes.',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

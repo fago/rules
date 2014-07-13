@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\NodeIsSticky;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Node is sticky' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsSticky
- *
- * @see \Drupal\rules\Plugin\Condition\NodeIsSticky
+ * @group rules_conditions
  */
 class NodeIsStickyTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class NodeIsStickyTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Node is sticky condition tests',
-      'description' => 'Tests the node is sticky condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

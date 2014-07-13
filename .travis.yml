@@ -48,9 +48,6 @@ before_script:
   - ln -s $TESTDIR modules/rules
   - drush --yes pm-enable simpletest rules
 
-  # Switch to core directory where we will execute PHPUnit.
-  - cd core
-
   # Start a web server on port 8080, run in the background; wait for
   # initialization. This is temporarly disabled since there are no web tests
   # yet.
@@ -59,6 +56,6 @@ before_script:
 
 script:
   # Run the Simpletests for Rules.
-  - drush test-run 'Rules, Rules conditions' --uri=http://127.0.0.1:8080
+  - php ./core/scripts/run-tests.sh --php `which php` --concurrency 12 --url http://127.0.0.1:8080 --verbose --color "rules"
   # Run the PHPUnit tests.
-  - ./vendor/phpunit/phpunit/phpunit ../modules/rules
+  - ./core/vendor/phpunit/phpunit/phpunit -c ./core/phpunit.xml.dist ./modules/rules
