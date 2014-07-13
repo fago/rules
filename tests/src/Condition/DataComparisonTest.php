@@ -12,11 +12,8 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Data comparison' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataComparison
- *
- * @see \Drupal\rules\Plugin\Condition\DataComparison
+ * @group rules_conditions
  */
 class DataComparisonTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class DataComparisonTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Data comparison condition tests',
-      'description' => 'Tests that data comparisons are true.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

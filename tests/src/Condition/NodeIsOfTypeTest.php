@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\NodeIsOfType;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Node is sticky' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsOfType
- *
- * @see \Drupal\rules\Plugin\Condition\NodeIsOfType
+ * @group rules_conditions
  */
 class NodeIsOfTypeTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class NodeIsOfTypeTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Node is of type condition test',
-      'description' => 'Tests the condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

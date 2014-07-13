@@ -10,7 +10,8 @@ namespace Drupal\rules\Tests;
 use Drupal\rules\Plugin\RulesExpression\ActionSet;
 
 /**
- * Tests the action set functionality.
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\ActionSet
+ * @group rules
  */
 class ActionSetTest extends RulesTestBase {
 
@@ -20,17 +21,6 @@ class ActionSetTest extends RulesTestBase {
    * @var \Drupal\rules\Plugin\RulesExpression\ActionSet
    */
   protected $actionSet;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Action set tests',
-      'description' => 'Tests the ActionSet class',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

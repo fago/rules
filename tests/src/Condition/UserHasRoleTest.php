@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\UserHasRole;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'User has role(s)' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
- *
- * @see \Drupal\rules\Plugin\Condition\UserHasRole
+ * @group rules_conditions
  */
 class UserHasRoleTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class UserHasRoleTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'User has role(s) condition test',
-      'description' => 'Tests the user has role(s) condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

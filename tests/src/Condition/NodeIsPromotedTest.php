@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\NodeIsPromoted;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Node is promoted' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPromoted
- *
- * @see \Drupal\rules\Plugin\Condition\NodeIsPromoted
+ * @group rules_conditions
  */
 class NodeIsPromotedTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class NodeIsPromotedTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Node is promoted condition tests',
-      'description' => 'Tests the node is promoted condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

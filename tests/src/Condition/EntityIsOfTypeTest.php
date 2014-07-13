@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\EntityIsOfType;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Entity is of type' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfType
- *
- * @see \Drupal\rules\Plugin\Condition\EntityIsOfType
+ * @group rules_conditions
  */
 class EntityIsOfTypeTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class EntityIsOfTypeTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Entity is of type condition test',
-      'description' => 'Tests that an entity is of a particular type.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

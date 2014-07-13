@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Action\CreateNodePathAlias;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Show message on the site' action.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Action\CreateNodePathAlias
- *
- * @see \Drupal\rules\Plugin\Action\CreateNodePathAlias
+ * @group rules_actions
  */
 class CreateNodePathAliasTest extends RulesTestBase {
 
@@ -33,17 +30,6 @@ class CreateNodePathAliasTest extends RulesTestBase {
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasStorageInterface
    */
   protected $aliasStorage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Create node path alias',
-      'description' => 'Tests the create node path alias action.',
-      'group' => 'Rules actions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

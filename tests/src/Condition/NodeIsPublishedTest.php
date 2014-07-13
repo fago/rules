@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\NodeIsPublished;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Node is published' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPublished
- *
- * @see \Drupal\rules\Plugin\Condition\NodeIsPublished
+ * @group rules_conditions
  */
 class NodeIsPublishedTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class NodeIsPublishedTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Node is published condition tests',
-      'description' => 'Tests the node is published condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

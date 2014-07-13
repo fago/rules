@@ -9,19 +9,10 @@ namespace Drupal\rules\Tests;
 
 /**
  * Test the data processor plugins during Rules evaluation.
+ *
+ * @group rules
  */
 class DataProcessorTest extends RulesDrupalTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Data processor tests',
-      'description' => 'Test the data processor plugins during Rules evaluation.',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * Tests that the numeric offset plugin works.

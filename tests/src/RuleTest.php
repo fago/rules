@@ -10,9 +10,8 @@ namespace Drupal\rules\Tests;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 
 /**
- * Tests the core rules engine functionality.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
+ * @group rules
  */
 class RuleTest extends RulesTestBase {
 
@@ -43,17 +42,6 @@ class RuleTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesActionContainerInterface
    */
   protected $actions;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Rule class tests',
-      'description' => 'Test the Rule class',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

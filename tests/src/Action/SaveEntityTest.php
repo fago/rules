@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Action\SaveEntity;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Save entity' action.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Action\SaveEntity
- *
- * @see \Drupal\rules\Plugin\Action\SaveEntity
+ * @group rules_action
  */
 class SaveEntityTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class SaveEntityTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesActionInterface
    */
   protected $action;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Save entity',
-      'description' => 'Tests the save entity action.',
-      'group' => 'Rules actions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

@@ -10,7 +10,8 @@ namespace Drupal\rules\Tests;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 
 /**
- * Tests the rules AND condition plugin.
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesAnd
+ * @group rules
  */
 class RulesAndTest extends RulesTestBase {
 
@@ -28,17 +29,6 @@ class RulesAndTest extends RulesTestBase {
     parent::setUp();
 
     $this->and = new RulesAnd([], '', []);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'RulesAnd class tests',
-      'description' => 'Test the RuleAnd class',
-      'group' => 'Rules',
-    ];
   }
 
   /**

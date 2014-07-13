@@ -10,7 +10,8 @@ namespace Drupal\rules\Tests;
 use Drupal\rules\Plugin\RulesExpression\RulesOr;
 
 /**
- * Tests the rules OR condition plugin.
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesOr
+ * @group rules
  */
 class RulesOrTest extends RulesTestBase {
 
@@ -20,17 +21,6 @@ class RulesOrTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionContainerInterface
    */
   protected $or;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'RulesOr class tests',
-      'description' => 'Test the RuleOr class',
-      'group' => 'Rules',
-    ];
-  }
 
   /**
    * {@inheritdoc}

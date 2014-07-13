@@ -12,11 +12,8 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Data is empty' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataIsEmpty
- *
- * @see \Drupal\rules\Plugin\Condition\DataIsEmpty
+ * @group rules_conditions
  */
 class DataIsEmptyTest extends RulesTestBase {
 
@@ -26,17 +23,6 @@ class DataIsEmptyTest extends RulesTestBase {
    * @var \Drupal\rules\Engine\RulesConditionInterface
    */
   protected $condition;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Data value is empty condition tests',
-      'description' => 'Tests the data value is empty condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

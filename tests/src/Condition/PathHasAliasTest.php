@@ -12,11 +12,8 @@ use Drupal\rules\Plugin\Condition\PathHasAlias;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'Path has alias' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\PathHasAlias
- *
- * @see \Drupal\rules\Plugin\Condition\PathHasAlias
+ * @group rules_conditions
  */
 class PathHasAliasTest extends RulesTestBase {
 
@@ -40,17 +37,6 @@ class PathHasAliasTest extends RulesTestBase {
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Language\LanguageInterface
    */
   protected $englishLanguage;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Path has alias condition test',
-      'description' => 'Tests the condition.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}

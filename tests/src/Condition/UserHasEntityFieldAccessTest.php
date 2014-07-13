@@ -13,11 +13,8 @@ use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
 use Drupal\rules\Tests\RulesTestBase;
 
 /**
- * Tests the 'User has entity field access' condition.
- *
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
- *
- * @see \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
+ * @group rules_conditions
  */
 class UserHasEntityFieldAccessTest extends RulesTestBase {
 
@@ -41,17 +38,6 @@ class UserHasEntityFieldAccessTest extends RulesTestBase {
    * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getInfo() {
-    return [
-      'name' => 'Entity is of bundle condition test',
-      'description' => 'Tests whether an entity is of a particular [type and] bundle.',
-      'group' => 'Rules conditions',
-    ];
-  }
 
   /**
    * {@inheritdoc}
