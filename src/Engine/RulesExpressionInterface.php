@@ -26,6 +26,9 @@ interface RulesExpressionInterface extends ExecutableInterface, ContextAwarePlug
    * @return null|bool
    *   The expression may return a boolean value after execution, this is used
    *   by conditions that return their evaluation result.
+   *
+   * @throws \Drupal\rules\Engine\RulesEvaluationException
+   *   In case the Rules expression triggers errors during execution.
    */
   public function executeWithState(RulesState $state);
 

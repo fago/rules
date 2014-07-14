@@ -61,15 +61,20 @@ class RulesConditionTest extends RulesTestBase {
   public function testEvaluateWithContext() {
     // Build some mocked context and definitions for our mock condition.
     $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
+    $context->expects($this->once())
+      ->method('getContextValue')
+      ->will($this->returnValue('value'));
+
     $this->condition->setContext('test', $context);
 
     $this->trueCondition->expects($this->exactly(2))
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
+    // Make sure that the context value is set as expected.
     $this->trueCondition->expects($this->once())
-      ->method('setContext')
-      ->with('test', $context);
+      ->method('setContextValue')
+      ->with('test', 'value');
 
     $this->trueCondition->expects($this->once())
       ->method('getProvidedDefinitions')

@@ -9,7 +9,9 @@ namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Component\Utility\String;
 use Drupal\Core\Plugin\Context\Context;
+use Drupal\rules\Engine\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 
 /**
@@ -65,30 +67,41 @@ trait RulesContextTrait {
   /**
    * Maps variables from rules state into the plugin context.
    *
-   * @param \Drupal\rules\Context\ContextAwarePluginInterface $plugin
+   * @param \Drupal\Component\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin that is populated with context values.
-   * @param \Drupal\rules\Context\RulesState $state
+   * @param \Drupal\rules\Engine\RulesState $state
    *   The Rules state containing available variables.
+   *
+   * @throws \Drupal\rules\Engine\RulesEvaluationException
+   *   In case a required context is missing for the plugin.
    */
   protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {
     $context_definitions = $plugin->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
 
+      $context_value = NULL;
       // First check if we can forward a context directly set on this plugin.
       try {
-        $context = $this->getContext($name);
-        $plugin->setContext($name, $context);
+        $context_value = $this->getContextValue($name);
       }
       // A context exception means that there is no context with the given name,
       // so we catch it and continue with the context mapping below.
       catch (ContextException $e) {}
 
+      if ($context_value) {
+        $plugin->setContextValue($name, $context_value);
+      }
       // Check if a data selector is configured that maps to the state.
-      if (isset($this->configuration['context_mapping'][$name . ':select'])) {
+      elseif (isset($this->configuration['context_mapping'][$name . ':select'])) {
         $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name . ':select']);
         $plugin->setContextValue($name, $typed_data);
       }
-      // @todo check if the context is required.
+      elseif ($definition->isRequired()) {
+        throw new RulesEvaluationException(String::format('Required context @name is missing for plugin @plugin.', [
+          '@name' => $name,
+          '@plugin' => $plugin->getPluginId(),
+        ]));
+      }
     }
   }
 
@@ -97,7 +110,7 @@ trait RulesContextTrait {
    *
    * @param ProvidedContextPluginInterface $plugin
    *   The plugin where the context values are extracted.
-   * @param \Drupal\rules\Context\RulesState $state
+   * @param \Drupal\rules\Engine\RulesState $state
    *   The Rules state where the context variables are added.
    */
   protected function mapProvidedContext(ProvidedContextPluginInterface $plugin, RulesState $state) {
