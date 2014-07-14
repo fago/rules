@@ -27,6 +27,13 @@ trait RulesContextTrait {
   protected $provided;
 
   /**
+   * The data processor plugin manager used to process context variables.
+   *
+   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
+   */
+  protected $processorManager;
+
+  /**
    * @see \Drupal\rules\Context\ProvidedContextPlugininterface
    */
   public function setProvidedValue($name, $value) {
@@ -124,6 +131,22 @@ trait RulesContextTrait {
       }
       else {
         $state->addVariable($name, $plugin->getProvided($name));
+      }
+    }
+  }
+
+  /**
+   * Process data context on the plugin, usually before it gets executed.
+   *
+   * @param \Drupal\Component\Plugin\ContextAwarePluginInterface $plugin
+   *   The plugin to process the context data on.
+   */
+  protected function processData(ContextAwarePluginInterface $plugin) {
+    if (isset($this->configuration['processor_mapping'])) {
+      foreach ($this->configuration['processor_mapping'] as $name => $settings) {
+        $data_processor = $this->processorManager->createInstance($settings['plugin'], $settings['configuration']);
+        $new_value = $data_processor->process($plugin->getContextValue($name));
+        $plugin->setContextValue($name, $new_value);
       }
     }
   }

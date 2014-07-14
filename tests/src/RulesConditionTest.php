@@ -24,6 +24,13 @@ class RulesConditionTest extends RulesTestBase {
   protected $conditionManager;
 
   /**
+   * The mocked data processor manager.
+   *
+   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
+   */
+  protected $processorManager;
+
+  /**
    * The condition object being tested.
    *
    * @var \Drupal\rules\Plugin\RulesExpression\RulesCondition
@@ -52,7 +59,11 @@ class RulesConditionTest extends RulesTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->condition = new RulesCondition(['condition_id' => 'rules_or'], '', [], $this->conditionManager);
+    $this->processorManager = $this->getMockBuilder('Drupal\rules\Plugin\RulesDataProcessorManager')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->condition = new RulesCondition(['condition_id' => 'rules_or'], '', [], $this->conditionManager, $this->processorManager);
   }
 
   /**
@@ -101,6 +112,67 @@ class RulesConditionTest extends RulesTestBase {
       ->will($this->returnValue($this->trueCondition));
 
     $this->assertSame($this->condition->getContextDefinitions(), ['test' => $context_definition]);
+  }
+
+  /**
+   * Tests that context values get data processed with processor mappings.
+   */
+  public function testDataProcessor() {
+    $condition = new RulesCondition([
+      'condition_id' => 'rules_or',
+      'processor_mapping' => [
+        'test' => [
+          // We don't care about the data processor plugin name and
+          // configuration since we will use a mock anyway.
+          'plugin' => 'foo',
+          'configuration' => [],
+        ]
+      ]
+    ], '', [], $this->conditionManager, $this->processorManager);
+
+    // Build some mocked context and definitions for our mock condition.
+    $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
+
+    $condition->setContext('test', $context);
+
+    $this->trueCondition->expects($this->exactly(2))
+      ->method('getContextDefinitions')
+      ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
+
+    $this->trueCondition->expects($this->once())
+      ->method('setContext')
+      ->with('test', $context);
+
+    $this->trueCondition->expects($this->once())
+      ->method('getProvidedDefinitions')
+      ->will($this->returnValue([]));
+
+    // Mock some original old value that will be replaced by the data processor.
+    $this->trueCondition->expects($this->once())
+      ->method('getContextValue')
+      ->with('test')
+      ->will($this->returnValue('old_value'));
+
+    // The outcome of the data processor needs to get set on the condition.
+    $this->trueCondition->expects($this->once())
+      ->method('setContextValue')
+      ->with('test', 'new_value');
+
+    $this->conditionManager->expects($this->exactly(2))
+      ->method('createInstance')
+      ->will($this->returnValue($this->trueCondition));
+
+    $data_processor = $this->getMock('Drupal\rules\Engine\RulesDataProcessorInterface');
+    $data_processor->expects($this->once())
+      ->method('process')
+      ->with('old_value')
+      ->will($this->returnValue('new_value'));
+
+    $this->processorManager->expects($this->once())
+      ->method('createInstance')
+      ->will($this->returnValue($data_processor));
+
+    $this->assertTrue($condition->evaluate());
   }
 
 }

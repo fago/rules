@@ -12,6 +12,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,13 +48,16 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The plugin implementation definition.
    * @param \Drupal\Core\Condition\ConditionManager $conditionManager
    *   The condition manager.
+   * @param \Drupal\rules\Plugin\RulesDataProcessorManager $processor_manager
+   *   The data processor plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, RulesDataProcessorManager $processor_manager) {
     // Per default the result of this expression is not negated.
     $configuration += ['negate' => FALSE];
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->conditionManager = $conditionManager;
+    $this->processorManager = $processor_manager;
   }
 
   /**
@@ -64,7 +68,8 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.condition')
+      $container->get('plugin.manager.condition'),
+      $container->get('plugin.manager.rules_data_processor')
     );
   }
 
@@ -79,6 +84,10 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
     // We have to forward the context values from our configuration to the
     // condition plugin.
     $this->mapContext($condition, $state);
+
+    // Send the context values through configured data processors before
+    // evaluating the condition.
+    $this->processData($condition);
 
     $result = $condition->evaluate();
 

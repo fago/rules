@@ -39,13 +39,6 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
   protected $actionManager;
 
   /**
-   * The data processor plugin manager used to process context variables.
-   *
-   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
-   */
-  protected $processorManager;
-
-  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -90,13 +83,7 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
 
     // Send the context value through configured data processor before executing
     // the action.
-    if (isset($this->configuration['processor_mapping'])) {
-      foreach ($this->configuration['processor_mapping'] as $name => $settings) {
-        $data_processor = $this->processorManager->createInstance($settings['plugin'], $settings['configuration']);
-        $new_value = $data_processor->process($action->getContextValue($name));
-        $action->setContextValue($name, $new_value);
-      }
-    }
+    $this->processData($action);
 
     $action->execute();
 
