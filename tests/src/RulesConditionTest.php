@@ -140,10 +140,6 @@ class RulesConditionTest extends RulesTestBase {
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
     $this->trueCondition->expects($this->once())
-      ->method('setContext')
-      ->with('test', $context);
-
-    $this->trueCondition->expects($this->once())
       ->method('getProvidedDefinitions')
       ->will($this->returnValue([]));
 
