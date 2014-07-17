@@ -62,4 +62,12 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
     // @todo: Remove this once it is removed from the interface.
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function autoSaveContext() {
+    // Per default no context parameters will be auto saved.
+    return [];
+  }
+
 }

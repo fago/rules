@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
+use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
@@ -86,6 +87,11 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
     $this->processData($action);
 
     $action->execute();
+
+    $auto_saves = $action->autoSaveContext();
+    foreach ($auto_saves as $context_name) {
+      // @todo Mark parameter contexts for auto saving in the Rules state.
+    }
 
     // Now that the action has been executed it can provide additional
     // context which we will have to pass back in the evaluation state.

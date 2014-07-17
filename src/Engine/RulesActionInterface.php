@@ -16,4 +16,13 @@ use Drupal\rules\Context\ProvidedContextPluginInterface;
  */
 interface RulesActionInterface extends ActionInterface, ContextAwarePluginInterface, ProvidedContextPluginInterface {
 
+  /**
+   * Returns a list of context names that should be auto-saved after execution.
+   *
+   * @return array
+   *   A subset of context names as specified in the context definition of this
+   *   action.
+   */
+  public function autoSaveContext();
+
 }
