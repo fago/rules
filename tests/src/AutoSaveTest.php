@@ -48,6 +48,10 @@ class AutoSaveTest extends RulesTestBase {
       ->method('getProvidedDefinitions')
       ->willReturn([]);
 
+    $this->testAction->expects($this->once())
+      ->method('autoSaveContext')
+      ->willReturn(['entity']);
+
     $action = new RulesAction([
       'action_id' => 'test',
     ], 'test', [], $action_manager, $processor_manager);
@@ -56,10 +60,18 @@ class AutoSaveTest extends RulesTestBase {
     $entity->expects($this->once())
       ->method('save');
 
+    $typed_data = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
+    $typed_data->expects($this->once())
+      ->method('getValue')
+      ->willReturn($entity);
+
     $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
     $context->expects($this->once())
       ->method('getContextValue')
       ->willReturn($entity);
+    $context->expects($this->once())
+      ->method('getContextData')
+      ->willReturn($typed_data);
 
     $action->setContext('entity', $context);
 

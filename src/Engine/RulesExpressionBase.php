@@ -19,6 +19,8 @@ trait RulesExpressionBase {
     $contexts = $this->getContexts();
     $state = new RulesState($contexts);
     $this->executeWithState($state);
+    // Save specifically registered variables in the end after execution.
+    $state->autoSave();
   }
 
 }

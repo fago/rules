@@ -90,7 +90,13 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
 
     $auto_saves = $action->autoSaveContext();
     foreach ($auto_saves as $context_name) {
-      // @todo Mark parameter contexts for auto saving in the Rules state.
+      // Mark parameter contexts for auto saving in the Rules state.
+      if (isset($this->configuration['context_mapping'][$context_name . ':select'])) {
+        $state->saveChangesLater($this->configuration['context_mapping'][$context_name . ':select']);
+      }
+      else {
+        $state->saveChangesLater($context_name);
+      }
     }
 
     // Now that the action has been executed it can provide additional

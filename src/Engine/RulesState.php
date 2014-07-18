@@ -38,6 +38,13 @@ class RulesState {
   protected $variables = [];
 
   /**
+   * Holds variables for auto-saving later.
+   *
+   * @var array
+   */
+  protected $saveLater = [];
+
+  /**
    * Variable for saving currently blocked configs for serialization.
    */
   protected $currentlyBlocked;
@@ -162,6 +169,34 @@ class RulesState {
     }
 
     return $typed_data;
+  }
+
+  /**
+   * Mark a variable to be saved later when the execution is finished.
+   *
+   * @param string $selector
+   *   The data selector that sepcifies the target object to be saved. Example:
+   *   node:uid:entity.
+   */
+  public function saveChangesLater($selector) {
+    $this->saveLater[$selector] = TRUE;
+  }
+
+  /**
+   * Saves all variables that have been marked for auto saving.
+   */
+  public function autoSave() {
+    // Make changes permanent.
+    foreach ($this->saveLater as $selector => $flag) {
+      $typed_data = $this->applyDataSelector($selector);
+      // The returned data can be NULL, only save it if we actually have
+      // something here.
+      if ($typed_data) {
+        // Things that can be saved must be entities, right?
+        $entity = $typed_data->getValue();
+        $entity->save();
+      }
+    }
   }
 
 }
