@@ -93,7 +93,8 @@ trait RulesContextTrait {
       }
       // A context exception means that there is no context with the given name,
       // so we catch it and continue with the context mapping below.
-      catch (ContextException $e) {}
+      catch (ContextException $e) {
+      }
 
       if ($context_value) {
         $plugin->setContextValue($name, $context_value);

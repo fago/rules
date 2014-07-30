@@ -122,7 +122,7 @@ class DataComparisonTest extends RulesTestBase {
       ->setContextValue('value', $this->getMockTypedData('Big Kitten'));
     $this->assertTrue($this->condition->evaluate());
 
-    // Test that when a data array contains the value string, and the operator 
+    // Test that when a data array contains the value string, and the operator
     // is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', $this->getMockTypedData(['Llama', 'Kitten']))

@@ -23,7 +23,7 @@ class RulesLog {
    * @return RulesLog
    *   Returns the rules logger instance.
    */
-  static function logger($log_level = self::INFO) {
+  public static function logger($log_level = self::INFO) {
     if (!isset(self::$logger)) {
       $class = __CLASS__;
       self::$logger = new $class($log_level);
@@ -32,7 +32,8 @@ class RulesLog {
   }
 
   protected $log = [];
-  protected $logLevel, $line = 0;
+  protected $logLevel;
+  protected $line = 0;
 
   /**
    * This is a singleton.
@@ -59,7 +60,7 @@ class RulesLog {
   /**
    * Checks the log and throws an exception if there were any problems.
    */
-  function checkLog($logLevel = self::WARN) {
+  public function checkLog($logLevel = self::WARN) {
     foreach ($this->log as $entry) {
       if ($entry[2] >= $logLevel) {
         throw new Exception($this->render());

@@ -52,7 +52,7 @@ class DataComparison extends RulesConditionBase {
     $data = $this->getContextValue('data');
     $operator = $this->getContext('operator')->getContextData() ? $this->getContextValue('operator') : '==';
     $value = $this->getContextValue('value');
-    
+
     switch ($operator) {
       case '<':
         return $data < $value;

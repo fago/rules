@@ -33,10 +33,9 @@ use Drupal\rules\Engine\RulesConditionBase;
  *
  * @todo: Add access callback information from Drupal 7?
  * @todo: Add group information from Drupal 7?
- *
  * @todo: set ContextDefinition default value
  * @todo: set ContextDefinition options list
- + @todo: set ContextDefinition restriction
+ * @todo: set ContextDefinition restriction
  */
 class ListCountIs extends RulesConditionBase {
 
@@ -58,10 +57,14 @@ class ListCountIs extends RulesConditionBase {
     switch ($operator) {
       case '==':
         return count($list) == $value;
+
       case '<';
         return count($list) < $value;
+
       case '>';
         return count($list) > $value;
+
     }
   }
+
 }
