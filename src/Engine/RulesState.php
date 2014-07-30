@@ -192,9 +192,8 @@ class RulesState {
       // The returned data can be NULL, only save it if we actually have
       // something here.
       if ($typed_data) {
-        // Things that can be saved must be entities, right?
-        $entity = $typed_data->getValue();
-        $entity->save();
+        // Things that can be saved must have a save() method, right?
+        $typed_data->save();
       }
     }
   }

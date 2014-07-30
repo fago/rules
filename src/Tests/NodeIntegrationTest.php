@@ -37,6 +37,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $this->installSchema('system', array('sequences'));
     $this->installEntitySchema('user');
+    $this->installEntitySchema('node');
   }
 
   /**
@@ -82,6 +83,39 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     // Test that the action logged something.
     $log = RulesLog::logger()->get();
     $this->assertEqual($log[0][0], 'action called');
+  }
+
+  /**
+   * Tests that a node is automatically saved after being changed in an action.
+   */
+  public function testNodeAutoSave() {
+    $entity_manager = $this->container->get('entity.manager');
+    $node_type = $entity_manager->getStorage('node_type')
+      ->create(['type' => 'page']);
+    $node_type->save();
+    $node = $entity_manager->getStorage('node')
+      ->create([
+        'title' => 'test',
+        'type' => 'page',
+      ]);
+
+    // We use the rules_test_node action plugin which marks its node context for
+    // auto saving.
+    // @see \Drupal\rules_test\Plugin\Action\TestNodeAction
+    $action = $this->rulesExpressionManager->createInstance('rules_action', [
+      'action_id' => 'rules_test_node',
+      'context_definitions' => [
+        'node' => new ContextDefinition('entity:node', 'Node'),
+        'title' => new ContextDefinition('string', 'Title'),
+      ],
+      // We don't need a context mapping here, the action will just pick the
+      // contexts with the same names.
+    ]);
+    $action->setContextValue('node', $node);
+    $action->setContextValue('title', 'new title');
+    $action->execute();
+
+    $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been saved.');
   }
 
 }
