@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
 use Drupal\rules\Context\RulesContextTrait;
 
@@ -58,7 +59,7 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, array &$form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // @todo: Figure out whether this is useful to Rules somehow.
     return $form;
   }
@@ -66,14 +67,14 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   /**
    * {@inheritdoc}
    */
-  public function validateConfigurationForm(array &$form, array &$form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     // @todo: Figure out whether this is useful to Rules somehow.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, array &$form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     // @todo: Figure out whether this is useful to Rules somehow.
   }
 
