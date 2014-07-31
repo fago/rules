@@ -34,6 +34,13 @@ use Drupal\rules\Engine\RulesActionBase;
 class SaveEntity extends RulesActionBase {
 
   /**
+   * Flag that indicates if the entity should be auto-saved later.
+   *
+   * @var bool
+   */
+  protected $saveLater = TRUE;
+
+  /**
    * {@inheritdoc}
    */
   public function summary() {
@@ -44,13 +51,23 @@ class SaveEntity extends RulesActionBase {
    * {@inheritdoc}
    */
   public function execute() {
-    // @todo Mark the entity for saving later once that feature is implemented in the Rules state.
-    if (!$immediate = (bool) $this->getContextValue('immediate')) {
-      return;
+    // We only need to do something here if the immediate flag is set, otherwise
+    // the entity will be auto-saved after the execution.
+    if ((bool) $this->getContextValue('immediate')) {
+      $entity = $this->getContextValue('entity');
+      $entity->save();
+      $this->saveLater = FALSE;
     }
+  }
 
-    $entity = $this->getContextValue('entity');
-    $entity->save();
+  /**
+   * {@inheritdoc}
+   */
+  public function autoSaveContext() {
+    if ($this->saveLater) {
+      return ['entity'];
+    }
+    return [];
   }
 
 }
