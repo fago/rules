@@ -62,6 +62,7 @@ class SaveEntityTest extends RulesTestBase {
       ->setContextValue('immediate', $this->getMockTypedData(TRUE));
 
     $this->action->execute();
+    $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the entity has been saved already.');
   }
 
   /**
@@ -76,6 +77,8 @@ class SaveEntityTest extends RulesTestBase {
 
     $this->action->setContextValue('entity', $this->getMockTypedData($entity));
     $this->action->execute();
+
+    $this->assertEquals($this->action->autoSaveContext(), ['entity'], 'Action returns the entity context name for auto saving.');
   }
 
 }
