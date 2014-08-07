@@ -32,6 +32,13 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   protected $typedDataManager;
 
   /**
+   * The action plugin manager.
+   *
+   * @var \Drupal\Core\Action\ActionManager
+   */
+  protected $actionManager;
+
+  /**
    * Modules to enable.
    *
    * @var array
@@ -45,6 +52,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
     parent::setUp();
     $this->rulesExpressionManager = $this->container->get('plugin.manager.rules_expression');
     $this->conditionManager = $this->container->get('plugin.manager.condition');
+    $this->actionManager = $this->container->get('plugin.manager.action');
     $this->typedDataManager = $this->container->get('typed_data_manager');
   }
 
