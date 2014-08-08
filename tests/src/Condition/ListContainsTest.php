@@ -11,13 +11,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\rules\Plugin\Condition\ListContains;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\ListContains
  * @group rules_conditions
  */
-class ListContainsTest extends RulesTestBase {
+class ListContainsTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -31,14 +31,7 @@ class ListContainsTest extends RulesTestBase {
    */
   public function setUp() {
     parent::setUp();
-
-    $this->condition = new ListContains([], '', ['context' => [
-      'list' => new ContextDefinition('list'),
-      'item' => new ContextDefinition(),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
-    $this->condition->setTypedDataManager($this->getMockTypedDataManager());
+    $this->condition = $this->conditionManager->createInstance('rules_list_contains');
   }
 
   /**
@@ -60,15 +53,15 @@ class ListContainsTest extends RulesTestBase {
     $list = array('One','Two','Three','Four');
 
     // Test that the list contains 'Two'.
-    $condition = $this->condition
+    $this->condition
       ->setContextValue('list', $list)
       ->setContextValue('item', 'Two');
-    $this->assertTrue($condition->evaluate());
+    $this->assertTrue($this->condition->evaluate());
 
     // Test that the list doesn't contain 'Five'.
-    $condition = $this->condition
+    $this->condition
       ->setContextValue('list', $list)
       ->setContextValue('item', 'Five');
-    $this->assertFalse($condition->evaluate());
+    $this->assertFalse($this->condition->evaluate());
   }
 }
