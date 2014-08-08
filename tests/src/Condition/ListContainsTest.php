@@ -56,16 +56,19 @@ class ListContainsTest extends RulesTestBase {
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
-    // Test that the list contains '2'.
+
+    $list = array('One','Two','Three','Four');
+
+    // Test that the list contains 'Two'.
     $condition = $this->condition
-      ->setContextValue('list', $this->getMockTypedData([1,2,3,4]))
-      ->setContextValue('item', $this->getMockTypedData('2'));
+      ->setContextValue('list', $list)
+      ->setContextValue('item', 'Two');
     $this->assertTrue($condition->evaluate());
 
-    // Test that the list doesn't contain '5'.
+    // Test that the list doesn't contain 'Five'.
     $condition = $this->condition
-      ->setContextValue('list', $this->getMockTypedData([1,2,3,4]))
-      ->setContextValue('item', $this->getMockTypedData('5'));
+      ->setContextValue('list', $list)
+      ->setContextValue('item', 'Five');
     $this->assertFalse($condition->evaluate());
   }
 }
