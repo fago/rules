@@ -10,13 +10,13 @@ namespace Drupal\rules\Tests\Condition;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
  * @group rules_conditions
  */
-class UserHasEntityFieldAccessTest extends RulesTestBase {
+class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.
@@ -28,7 +28,7 @@ class UserHasEntityFieldAccessTest extends RulesTestBase {
   /**
    * The mocked entity access handler.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityAccessControllerInterface
+   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityAccessControlHandlerInterface
    */
   protected $entityAccess;
 
@@ -45,10 +45,10 @@ class UserHasEntityFieldAccessTest extends RulesTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControllerInterface');
+    $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
     $this->entityManager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
     $this->entityManager->expects($this->any())
-      ->method('getAccessController')
+      ->method('getAccessControlHandler')
       ->with($this->anything())
       ->will($this->returnValue($this->entityAccess));
 

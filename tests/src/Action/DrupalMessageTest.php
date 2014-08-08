@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Action {
 
   use Drupal\Core\Plugin\Context\ContextDefinition;
   use Drupal\rules\Plugin\Action\DrupalMessage;
-  use Drupal\rules\Tests\RulesTestBase;
+  use Drupal\rules\Tests\RulesUnitTestBase;
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\Action\DrupalMessage
    * @group rules_action
    */
-  class DrupalMessageTest extends RulesTestBase {
+  class DrupalMessageTest extends RulesUnitTestBase {
 
     /**
      * The action to be tested.

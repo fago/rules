@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasRole;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
  * @group rules_conditions
  */
-class UserHasRoleTest extends RulesTestBase {
+class UserHasRoleTest extends RulesUnitTestBase {
 
   /**
    * The condition that is being tested.

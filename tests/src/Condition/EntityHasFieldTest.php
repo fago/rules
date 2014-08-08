@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\EntityHasField;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
  * @group rules_conditions
  */
-class EntityHasFieldTest extends RulesTestBase {
+class EntityHasFieldTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

@@ -11,7 +11,7 @@ namespace Drupal\rules\Tests;
  * @coversDefaultClass \Drupal\rules\RulesExpressionTrait
  * @group rules
  */
-class RulesExpressionTraitTest extends RulesTestBase {
+class RulesExpressionTraitTest extends RulesUnitTestBase {
 
   /**
    * A reflection of self::$traitObject.

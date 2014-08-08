@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\rules\Plugin\Condition\DataIsEmpty;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataIsEmpty
  * @group rules_conditions
  */
-class DataIsEmptyTest extends RulesTestBase {
+class DataIsEmptyTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

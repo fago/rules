@@ -11,7 +11,7 @@ namespace Drupal\rules\Tests;
  * @coversDefaultClass \Drupal\rules\Engine\RulesConditionContainer
  * @group rules
  */
-class RulesConditionContainerTest extends RulesTestBase {
+class RulesConditionContainerTest extends RulesUnitTestBase {
 
   /**
    * Creates a mocked condition container.
