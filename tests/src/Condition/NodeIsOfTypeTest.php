@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsOfType;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsOfType
  * @group rules_conditions
  */
-class NodeIsOfTypeTest extends RulesTestBase {
+class NodeIsOfTypeTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

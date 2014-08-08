@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\EntityIsOfBundle;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfBundle
  * @group rules_conditions
  */
-class EntityIsOfBundleTest extends RulesTestBase {
+class EntityIsOfBundleTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

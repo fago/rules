@@ -13,7 +13,7 @@ use Drupal\rules\Plugin\RulesExpression\Rule;
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
  * @group rules
  */
-class RuleTest extends RulesTestBase {
+class RuleTest extends RulesUnitTestBase {
 
   /**
    * The rules expression plugin manager.

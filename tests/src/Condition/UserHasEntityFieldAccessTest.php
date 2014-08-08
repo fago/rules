@@ -10,13 +10,13 @@ namespace Drupal\rules\Tests\Condition;
 use Drupal\Core\Language\Language;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
  * @group rules_conditions
  */
-class UserHasEntityFieldAccessTest extends RulesTestBase {
+class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

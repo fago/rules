@@ -11,7 +11,7 @@ namespace Drupal\rules\Tests;
  * @coversDefaultClass \Drupal\rules\Context\RulesContextTrait
  * @group rules
  */
-class RulesContextTraitTest extends RulesTestBase {
+class RulesContextTraitTest extends RulesUnitTestBase {
 
   /**
    * The mocked condition manager.

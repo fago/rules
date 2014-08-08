@@ -13,7 +13,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * Provides a 'Data comparison' condition.
  *
  * @Condition(
- *   id = "rules_data_is",
+ *   id = "rules_data_comparison",
  *   label = @Translation("Data comparison"),
  *   context = {
  *     "data" = @ContextDefinition("any",

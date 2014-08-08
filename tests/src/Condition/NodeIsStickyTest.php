@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsSticky;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsSticky
  * @group rules_conditions
  */
-class NodeIsStickyTest extends RulesTestBase {
+class NodeIsStickyTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.

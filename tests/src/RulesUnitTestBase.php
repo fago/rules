@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\RulesTestBase.
+ * Contains \Drupal\rules\Tests\RulesUnitTestBase.
  */
 
 namespace Drupal\rules\Tests;
@@ -14,7 +14,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Helper class with mock objects.
  */
-abstract class RulesTestBase extends UnitTestCase {
+abstract class RulesUnitTestBase extends UnitTestCase {
 
   /**
    * A mocked condition that always evaluates to TRUE.

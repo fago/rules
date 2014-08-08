@@ -14,7 +14,7 @@ use Drupal\rules\Plugin\RulesExpression\RulesCondition;
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesCondition
  * @group rules
  */
-class RulesConditionTest extends RulesTestBase {
+class RulesConditionTest extends RulesUnitTestBase {
 
   /**
    * The mocked condition manager.

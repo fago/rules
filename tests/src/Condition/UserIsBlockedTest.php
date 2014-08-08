@@ -9,13 +9,13 @@ namespace Drupal\rules\Tests\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserIsBlocked;
-use Drupal\rules\Tests\RulesTestBase;
+use Drupal\rules\Tests\RulesUnitTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserIsBlocked
  * @group rules_conditions
  */
-class UserIsBlockedTest extends RulesTestBase {
+class UserIsBlockedTest extends RulesUnitTestBase {
 
   /**
    * The condition to be tested.
