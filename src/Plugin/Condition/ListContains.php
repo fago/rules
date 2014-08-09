@@ -31,6 +31,7 @@ use Drupal\Core\Entity\EntityInterface;
  * @todo: Add access callback information from Drupal 7?
  * @todo: Add group information from Drupal 7?
  * @todo: set ContextDefinition restriction
+ * @todo: Add info alter
  */
 class ListContains extends RulesConditionBase {
 
@@ -50,7 +51,7 @@ class ListContains extends RulesConditionBase {
 
     if ($item instanceof EntityInterface && $id = $item->id()) {
       // Check for equal items using the identifier if there is one.
-      foreach ($list->getValue() as $list_item) {
+      foreach ($list as $list_item) {
         if ($list_item->id() == $id) {
           return TRUE;
         }
