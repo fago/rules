@@ -50,8 +50,8 @@ class ListContains extends RulesConditionBase {
 
     if ($item instanceof EntityInterface && $id = $item->id()) {
       // Check for equal items using the identifier if there is one.
-      foreach ($list->getValue() as $i) {
-        if ($i->id() == $id) {
+      foreach ($list->getValue() as $list_item) {
+        if ($list_item->id() == $id) {
           return TRUE;
         }
       }
