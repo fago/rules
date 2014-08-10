@@ -17,10 +17,19 @@ use Drupal\rules\Engine\RulesLog;
 class ConfigEntityTest extends RulesDrupalTestBase {
 
   /**
+   * The entity storage for Rules config entities.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $storage;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
+
+    $this->storage = $this->container->get('entity.manager')->getStorage('rule');
 
     // Clear the log from any stale entries that are bleeding over from previous
     // tests.
@@ -32,9 +41,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Tests that an empty rule configuration can be saved.
    */
   public function testSavingEmptyRule() {
-    $entity_manager = $this->container->get('entity.manager');
-    $config_entity = $entity_manager->getStorage('rule')
-      ->create(['id' => 'test_rule']);
+    $config_entity = $this->storage->create(['id' => 'test_rule']);
     $config_entity->save();
   }
 
@@ -46,19 +53,43 @@ class ConfigEntityTest extends RulesDrupalTestBase {
       'action_id' => 'rules_test_log',
     ]);
 
-    $entity_manager = $this->container->get('entity.manager');
-    $config_entity = $entity_manager->getStorage('rule')
-      ->create([
-        'id' => 'test_rule',
-        'expression_id' => 'rules_action',
-        'configuration' => $action->getConfiguration(),
-      ]);
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_action',
+      'configuration' => $action->getConfiguration(),
+    ]);
     $config_entity->save();
 
-    $loaded_entity = $entity_manager->getStorage('rule')->load('test_rule');
+    $loaded_entity = $this->storage->load('test_rule');
     $this->assertEqual($loaded_entity->get('expression_id'), 'rules_action', 'Expression ID was successfully loaded.');
     $this->assertEqual($loaded_entity->get('configuration'), $action->getConfiguration(), 'Action configuration is the same after loading the config.');
 
+    // Create the Rules expression object from the configuration.
+    $expression = $loaded_entity->getExpression();
+    $expression->execute();
+
+    // Test that the action logged something.
+    $log = RulesLog::logger()->get();
+    $this->assertEqual($log[0][0], 'action called');
+  }
+
+  /**
+   * Tests saving the nested config of a rule and then loading it again.
+   */
+  public function testConfigRule() {
+    // Create a simple rule with one action and one condition.
+    $rule = $this->createRulesRule();
+    $rule->addCondition($this->createRulesCondition('rules_test_true'));
+    $rule->addAction($this->createRulesAction('rules_test_log'));
+
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_rule',
+      'configuration' => $rule->getConfiguration(),
+    ]);
+    $config_entity->save();
+
+    $loaded_entity = $this->storage->load('test_rule');
     // Create the Rules expression object from the configuration.
     $expression = $loaded_entity->getExpression();
     $expression->execute();

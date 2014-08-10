@@ -68,11 +68,12 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
+    $configuration += ['conditions' => [], 'actions' => []];
     // Per default the outer condition container of a rule is initialized as
     // conjunction (AND), meaning that all conditions in it must evaluate to
     // TRUE to fire the actions.
-    $this->conditions = $expression_manager->createInstance('rules_and');
-    $this->actions = $expression_manager->createInstance('rules_action_set');
+    $this->conditions = $expression_manager->createInstance('rules_and', $configuration['conditions']);
+    $this->actions = $expression_manager->createInstance('rules_action_set', $configuration['actions']);
   }
 
   /**
@@ -143,6 +144,18 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   public function setActions(RulesActionContainerInterface $actions) {
     $this->actions = $actions;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    $configuration = parent::getConfiguration();
+    // We need to update the configuration in case actions/conditions have been
+    // added or changed.
+    $configuration['conditions'] = $this->conditions->getConfiguration();
+    $configuration['actions'] = $this->actions->getConfiguration();
+    return $configuration;
   }
 
 }
