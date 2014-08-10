@@ -6,14 +6,14 @@ The Rules module allows site administrators to define conditionally executed
 actions based on occurring events (ECA-rules).
 
 * Project homepage: http://drupal.org/project/rules
+* #d8rules initiative: http://d8rules.org/
 * Documentation: http://thefubhy.gitbooks.io/rules
 
 ## Contributing
 
-For some time development will happen on GitHub and will be using the pull
-request model: in case you are not familiar with that, please take a few minutes
-to read the [GitHub article](https://help.github.com/articles/using-pull-requests)
-about that topic.
+For some time, development will happen on GitHub using the pull request model:
+in case you are not familiar with that, please take a few minutes to read the
+[GitHub article](https://help.github.com/articles/using-pull-requests) on using pull requests.
 
 There are a few conventions that should be followed when contributing:
 
