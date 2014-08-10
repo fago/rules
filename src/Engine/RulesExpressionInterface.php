@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 
@@ -15,7 +16,7 @@ use Drupal\Core\Executable\ExecutableInterface;
  *
  * @see \Drupal\rules\Plugin\RulesExpressionPluginManager
  */
-interface RulesExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface {
+interface RulesExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ConfigurablePluginInterface {
 
   /**
    * Execute the expression with a given Rules state.
