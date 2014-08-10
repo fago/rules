@@ -52,7 +52,6 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
 
     $configuration += ['actions' => []];
     foreach ($configuration['actions'] as $action_config) {
-      $action_config += ['configuration' => []];
       $action = $expression_manager->createInstance($action_config['id'], $action_config);
       $this->addAction($action);
     }

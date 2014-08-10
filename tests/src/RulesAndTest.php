@@ -28,7 +28,7 @@ class RulesAndTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->and = new RulesAnd([], '', []);
+    $this->and = new RulesAnd([], '', [], $this->expressionManager);
   }
 
   /**

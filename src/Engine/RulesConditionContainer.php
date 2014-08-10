@@ -40,7 +40,6 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
 
     $configuration += ['conditions' => []];
     foreach ($configuration['conditions'] as $condition_config) {
-      $condition_config += ['configuration' => []];
       $condition = $expression_manager->createInstance($condition_config['id'], $condition_config);
       $this->addCondition($condition);
     }

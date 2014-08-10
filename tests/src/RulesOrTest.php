@@ -28,7 +28,7 @@ class RulesOrTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->or = new RulesOr([], '', []);
+    $this->or = new RulesOr([], '', [], $this->expressionManager);
   }
 
   /**

@@ -38,6 +38,13 @@ abstract class RulesUnitTestBase extends UnitTestCase {
   protected $testAction;
 
   /**
+   * The mocked expression manager object.
+   *
+   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   */
+  protected $expressionManager;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -72,6 +79,10 @@ abstract class RulesUnitTestBase extends UnitTestCase {
       ->will($this->returnValue(FALSE));
 
     $this->testAction = $this->getMock('Drupal\rules\Engine\RulesExpressionActionInterface');
+
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Plugin\RulesExpressionPluginManager')
+      ->disableOriginalConstructor()
+      ->getMock();
   }
 
   /**

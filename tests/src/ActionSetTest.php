@@ -28,7 +28,7 @@ class ActionSetTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->actionSet = new ActionSet([], '', []);
+    $this->actionSet = new ActionSet([], '', [], $this->expressionManager);
   }
 
   /**
