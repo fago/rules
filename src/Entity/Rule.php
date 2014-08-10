@@ -68,7 +68,7 @@ class Rule extends ConfigEntityBase {
    *
    * @var string
    */
-  protected $expressionId;
+  protected $expression_id;
 
   /**
    * The expression plugin specific configuration as nested array.
@@ -98,12 +98,25 @@ class Rule extends ConfigEntityBase {
    *   A Rule expression instance.
    */
   public function getExpression() {
-    // Ensure that an executable View is available.
+    // Ensure that an executable Rules expression is available.
     if (!isset($this->expression)) {
-      // @todo Call some factory here that returns the expression.
+      $this->expression = $this->getExpressionManager()->createInstance($this->expression_id, $this->configuration);
     }
 
     return $this->expression;
+  }
+
+  /**
+   * Returns the Rules expression manager.
+   *
+   * @todo Actually we should use dependency injection here, but is that even
+   *   possible with config entities? How?
+   *
+   * @return \Drupal\rules\Plugin\RulesExpressionPluginManager
+   *   The Rules expression manager.
+   */
+  protected function getExpressionManager() {
+    return \Drupal::service('plugin.manager.rules_expression');
   }
 
   /**

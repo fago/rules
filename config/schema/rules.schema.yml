@@ -22,3 +22,9 @@ rules.rule.*:
     core:
       type: string
       label: 'Drupal version'
+    expression_id:
+      type: string
+      label: 'Rules expression plugin ID'
+    configuration:
+      type: mapping
+      label: 'Rules expression configuration'
