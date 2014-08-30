@@ -77,7 +77,10 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testContextPassing() {
     $rule = $this->createRulesRule(['context_definitions' => [
-      'test' => new ContextDefinition('string', t('Test string')),
+      'test' => [
+        'type' => 'string',
+        'label' => 'Test string',
+      ],
     ]]);
 
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [

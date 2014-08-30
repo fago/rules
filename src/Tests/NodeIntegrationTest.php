@@ -61,7 +61,10 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $node->setOwner($user);
 
     $rule = $this->createRulesRule(['context_definitions' => [
-      'node' => new ContextDefinition('entity:node', 'Node'),
+      'node' => [
+        'type' => 'entity:node',
+        'label' => 'Node',
+      ],
     ]]);
 
     // Test that the long detailed data selector works.
@@ -105,8 +108,14 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $action = $this->rulesExpressionManager->createInstance('rules_action', [
       'action_id' => 'rules_test_node',
       'context_definitions' => [
-        'node' => new ContextDefinition('entity:node', 'Node'),
-        'title' => new ContextDefinition('string', 'Title'),
+        'node' => [
+          'type' => 'entity:node',
+          'label' => 'Node',
+        ],
+        'title' => [
+          'type' => 'string',
+          'label' => 'Title',
+        ],
       ],
       // We don't need a context mapping here, the action will just pick the
       // contexts with the same names.

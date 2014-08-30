@@ -99,4 +99,30 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $this->assertEqual($log[0][0], 'action called');
   }
 
+  /**
+   * Make sure that expressions using context definitions can be exported.
+   */
+  public function testContextDefinitionExport() {
+    $rule = $this->createRulesRule(['context_definitions' => [
+      'test' => [
+        'type' => 'string',
+        'label' => 'Test string',
+      ],
+    ]]);
+
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_rule',
+      'configuration' => $rule->getConfiguration(),
+    ]);
+    $config_entity->save();
+
+    $loaded_entity = $this->storage->load('test_rule');
+    // Create the Rules expression object from the configuration.
+    $expression = $loaded_entity->getExpression();
+    $context_definitions = $expression->getContextDefinitions();
+    $this->assertEqual($context_definitions['test']->getDataType(), 'string', 'Data type of context definition is correct.');
+    $this->assertEqual($context_definitions['test']->getLabel(), 'Test string', 'Label of context definition is correct.');
+  }
+
 }
