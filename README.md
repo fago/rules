@@ -13,7 +13,8 @@ actions based on occurring events (ECA-rules).
 
 For some time, development will happen on GitHub using the pull request model:
 in case you are not familiar with that, please take a few minutes to read the
-[GitHub article](https://help.github.com/articles/using-pull-requests) on using pull requests.
+[GitHub article](https://help.github.com/articles/using-pull-requests) on using
+pull requests.
 
 There are a few conventions that should be followed when contributing:
 
