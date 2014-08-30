@@ -41,9 +41,13 @@ installation and a checkout of the Rules module in the modules folder.
     cd /path/to/drupal-8/core
     ./vendor/bin/phpunit ../modules/rules
 
-#### Simpletest using Drush
+#### Simpletest
 
-    drush test-run 'Rules, Rules conditions'
+    php ./core/scripts/run-tests.sh --verbose --color "rules"
+
+Example for executing one single test file during development:
+
+    php ./core/scripts/run-tests.sh --verbose --color --class "Drupal\rules\Tests\RulesEngineTest"
 
 You can also execute the test cases from the web interface at
 ``/admin/config/development/testing``.
