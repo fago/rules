@@ -1,6 +1,6 @@
 # Schema for the configuration files of the Rules module.
 
-rules.rule.*:
+rules.component.*:
   type: config_entity
   label: 'Rule'
   mapping:

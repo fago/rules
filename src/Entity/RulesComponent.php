@@ -10,12 +10,13 @@ namespace Drupal\rules\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 
 /**
- * Defines a Rule configuration entity class.
+ * Rules component configuration entity to persistently store configuration.
  *
  * @ConfigEntityType(
- *   id = "rule",
- *   label = @Translation("Rule"),
+ *   id = "rules_component",
+ *   label = @Translation("Rules component"),
  *   admin_permission = "administer rules",
+ *   config_prefix = "component",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
@@ -23,17 +24,17 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   }
  * )
  */
-class Rule extends ConfigEntityBase {
+class RulesComponent extends ConfigEntityBase {
 
   /**
-   * The unique ID of the rule.
+   * The unique ID of the Rules component.
    *
    * @var string
    */
   public $id = NULL;
 
   /**
-   * The label of the rule.
+   * The label of the Rules component.
    *
    * @var string
    */
@@ -47,7 +48,7 @@ class Rule extends ConfigEntityBase {
   protected $description = '';
 
   /**
-   * The "tags" of a rule.
+   * The "tags" of a Rules component.
    *
    * The tags are stored as a single string, though it is used as multiple tags
    * for example in the rules overview.
@@ -57,7 +58,7 @@ class Rule extends ConfigEntityBase {
   protected $tag = '';
 
   /**
-   * The core version the rule was created for.
+   * The core version the Rules component was created for.
    *
    * @var int
    */
@@ -78,24 +79,24 @@ class Rule extends ConfigEntityBase {
   protected $configuration = [];
 
   /**
-   * Stores a reference to the executable expression version of this rule.
+   * Stores a reference to the executable expression version of this component.
    *
    * @var \Drupal\rules\ViewExecutable
    */
   protected $expression;
 
   /**
-   * The module implementing this rule.
+   * The module implementing this Rules component.
    *
    * @var string
    */
   protected $module = 'rules';
 
   /**
-   * Gets a Rules expression instance for this rule.
+   * Gets a Rules expression instance for this Rules component.
    *
    * @return \Drupal\rules\Engine\RulesExpressionInterface
-   *   A Rule expression instance.
+   *   A Rules expression instance.
    */
   public function getExpression() {
     // Ensure that an executable Rules expression is available.
@@ -131,7 +132,7 @@ class Rule extends ConfigEntityBase {
   /**
    * Overrides \Drupal\Core\Entity\Entity::label().
    *
-   * When a certain rule doesn't have a label return the ID.
+   * When a certain component doesn't have a label return the ID.
    */
   public function label() {
     if (!$label = $this->get('label')) {
@@ -146,7 +147,8 @@ class Rule extends ConfigEntityBase {
   public function calculateDependencies() {
     parent::calculateDependencies();
 
-    // Ensure that the rule is dependant on the module that implements the rule.
+    // Ensure that the Rules component is dependant on the module that
+    // implements the component.
     $this->addDependency('module', $this->module);
     
     // @todo Handle dependencies of plugins that are provided by various modules

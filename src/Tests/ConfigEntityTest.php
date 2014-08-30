@@ -29,7 +29,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->storage = $this->container->get('entity.manager')->getStorage('rule');
+    $this->storage = $this->container->get('entity.manager')->getStorage('rules_component');
 
     // Clear the log from any stale entries that are bleeding over from previous
     // tests.
