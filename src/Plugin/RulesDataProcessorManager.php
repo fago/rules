@@ -21,8 +21,8 @@ class RulesDataProcessorManager extends DefaultPluginManager {
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesDataProcessor') {
-    parent::__construct('Plugin/RulesDataProcessor', $namespaces, $module_handler, $plugin_definition_annotation_name);
     $this->alterInfo('rules_data_processor');
+    parent::__construct('Plugin/RulesDataProcessor', $namespaces, $module_handler, 'Drupal\rules\Engine\RulesDataProcessorInterface', $plugin_definition_annotation_name);
   }
 
 }

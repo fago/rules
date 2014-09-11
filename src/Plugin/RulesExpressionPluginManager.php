@@ -21,8 +21,8 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesExpression') {
-    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, $plugin_definition_annotation_name);
     $this->alterInfo('rules_expression');
+    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, 'Drupal\rules\Engine\RulesExpressionInterface', $plugin_definition_annotation_name);
   }
 
 }
