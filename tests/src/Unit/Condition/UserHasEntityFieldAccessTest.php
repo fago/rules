@@ -104,16 +104,16 @@ class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
     $this->entityAccess->expects($this->exactly(3))
       ->method('access')
       ->will($this->returnValueMap([
-        [$entity, 'view', Language::LANGCODE_DEFAULT, $account, TRUE],
-        [$entity, 'edit', Language::LANGCODE_DEFAULT, $account, TRUE],
-        [$entity, 'delete', Language::LANGCODE_DEFAULT, $account, FALSE],
+        [$entity, 'view', Language::LANGCODE_DEFAULT, $account, FALSE, TRUE],
+        [$entity, 'edit', Language::LANGCODE_DEFAULT, $account, FALSE, TRUE],
+        [$entity, 'delete', Language::LANGCODE_DEFAULT, $account, FALSE, FALSE],
       ]));
 
     $this->entityAccess->expects($this->exactly(2))
       ->method('fieldAccess')
       ->will($this->returnValueMap([
-        ['view', $definition, $account, $items, TRUE],
-        ['edit', $definition, $account, $items, FALSE],
+        ['view', $definition, $account, $items, FALSE, TRUE],
+        ['edit', $definition, $account, $items, FALSE, FALSE],
       ]));
 
     // Test with 'view', 'edit' and 'delete'. Both 'view' and 'edit' will have
