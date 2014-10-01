@@ -11,13 +11,9 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\TypedData\DataDefinition;
-use Drupal\Core\TypedData\Plugin\DataType\Any;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
-use Drupal\Tests\UnitTestCase;
-use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * Base class for Rules integration tests.
@@ -55,6 +51,43 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
   protected $rulesDataProcessorManager;
 
   /**
+   * All setup'ed namespaces.
+   *
+   * @var ArrayObject
+   */
+  protected $namespaces;
+
+  /**
+   * @var \Drupal\Core\Cache\NullBackend
+   */
+  protected $cacheBackend;
+
+
+  /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Defines extra namespaces used for finding plugins.
+   *
+   * @var String[]
+   */
+  protected $extraNamespaces = [];
+
+  /**
+   * Array keyed with module names and TRUE as value.
+   *
+   * @var boolean[]
+   */
+  protected $enabledModules;
+
+  /**
+   * @var \Drupal\Core\DependencyInjection\Container
+   */
+  protected $container;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -62,32 +95,32 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
     $container = new ContainerBuilder();
     // Register plugin managers used by Rules, but mock some unwanted
     // dependencies requiring more stuff to loaded.
-    $module_handler = $this->getMockBuilder('Drupal\Core\Extension\ModuleHandlerInterface')
+    $this->moduleHandler = $this->getMockBuilder('Drupal\Core\Extension\ModuleHandlerInterface')
       ->disableOriginalConstructor()
       ->getMock();
-    // Set all the modules as being existant.
-    $module_handler->expects($this->any())
+    // Set all the modules as being existent.
+    $this->enabledModules['rules'] = TRUE;
+    $this->enabledModules['rules_test'] = TRUE;
+    $this->moduleHandler->expects($this->any())
       ->method('moduleExists')
-      ->will($this->returnValueMap([
-        [ 'rules', TRUE ],
-        [ 'rules_test', TRUE],
-      ]));
+      ->will($this->returnValueMap(array_map(function($module) {
+       return [$module, TRUE];
+    }, array_keys($this->enabledModules))));
 
-    $cache_backend = new NullBackend('rules');
+    $this->cacheBackend = new NullBackend('rules');
     $rules_directory = __DIR__ . '/../../..';
-
-    $namespaces = new \ArrayObject(array(
+    $this->namespaces = new \ArrayObject(array(
       'Drupal\\rules' => $rules_directory . '/src',
       'Drupal\\rules_test' => $rules_directory . '/tests/modules/rules_test/src',
       'Drupal\\Core\\TypedData' => DRUPAL_ROOT . '/core/lib/Drupal/Core/TypedData',
       'Drupal\\Core\\Validation' => DRUPAL_ROOT . '/core/lib/Drupal/Core/Validation',
-    ));
+    ) + $this->extraNamespaces);
 
-    $this->actionManager = new ActionManager($namespaces, $cache_backend, $module_handler);
-    $this->conditionManager = new ConditionManager($namespaces, $cache_backend, $module_handler);
-    $this->rulesExpressionManager = new RulesExpressionPluginManager($namespaces, $module_handler);
-    $this->typedDataManager = new TypedDataManager($namespaces, $cache_backend, $module_handler);
-    $this->rulesDataProcessorManager = new RulesDataProcessorManager($namespaces, $module_handler);
+    $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
+    $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
+    $this->rulesExpressionManager = new RulesExpressionPluginManager($this->namespaces, $this->moduleHandler);
+    $this->typedDataManager = new TypedDataManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
+    $this->rulesDataProcessorManager = new RulesDataProcessorManager($this->namespaces, $this->moduleHandler);
 
     $container->set('plugin.manager.action', $this->actionManager);
     $container->set('plugin.manager.condition', $this->conditionManager);
@@ -99,4 +132,25 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
     \Drupal::setContainer($container);
     $this->container = $container;
   }
+
+  /**
+   * Returns a typed data object.
+   *
+   * This helper for quick creation of typed data objects.
+   *
+   * @param string $data_type
+   *   The data type to create an object for.
+   * @param mixed[] $value
+   *   The value to set.
+   *
+   * @return \Drupal\Core\TypedData\TypedDataInterface
+   *   The created object.
+   */
+  protected function getTypedData($data_type, $value)  {
+    $definition = $this->typedDataManager->createDataDefinition($data_type);
+    $data = $this->typedDataManager->create($definition);
+    $data->setValue($value);
+    return $data;
+  }
+
 }

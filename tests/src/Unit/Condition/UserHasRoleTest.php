@@ -7,15 +7,13 @@
 
 namespace Drupal\Tests\rules\Unit\Condition;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\UserHasRole;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Unit\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
  * @group rules_conditions
  */
-class UserHasRoleTest extends RulesUnitTestBase {
+class UserHasRoleTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition that is being tested.
@@ -28,15 +26,12 @@ class UserHasRoleTest extends RulesUnitTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
+    $this->enabledModules['user'] = TRUE;
+    $this->extraNamespaces += array(
+      'Drupal\\user' => DRUPAL_ROOT . '/core/modules/user/src',
+    );
     parent::setUp();
-
-    $this->condition = new UserHasRole([], '', ['context' => [
-      'user' => new ContextDefinition('entity:user'),
-      'roles' => new ContextDefinition('entity:role', NULL, TRUE, TRUE),
-      'operation' => new ContextDefinition('string'),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_user_has_role');
   }
 
   /**

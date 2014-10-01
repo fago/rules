@@ -7,15 +7,13 @@
 
 namespace Drupal\Tests\rules\Unit\Condition;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\EntityHasField;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Unit\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
  * @group rules_conditions
  */
-class EntityHasFieldTest extends RulesUnitTestBase {
+class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -29,14 +27,7 @@ class EntityHasFieldTest extends RulesUnitTestBase {
    */
   public function setUp() {
     parent::setUp();
-
-    $this->condition = new EntityHasField([], '', ['context' => [
-      'entity' => new ContextDefinition('entity'),
-      'field' => new ContextDefinition('string'),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
-    $this->condition->setTypedDataManager($this->getMockTypedDataManager());
+    $this->condition = $this->conditionManager->createInstance('rules_entity_has_field');
   }
 
   /**
@@ -65,11 +56,11 @@ class EntityHasFieldTest extends RulesUnitTestBase {
     $this->condition->setContextValue('entity', $entity);
 
     // Test with an existing field.
-    $this->condition->setContextValue('field', $this->getMockTypedData('existing-field'));
+    $this->condition->setContextValue('field', 'existing-field');
     $this->assertTrue($this->condition->evaluate());
 
     // Test with a non-existing field.
-    $this->condition->setContextValue('field', $this->getMockTypedData('non-existing-field'));
+    $this->condition->setContextValue('field', 'non-existing-field');
     $this->assertFalse($this->condition->evaluate());
   }
 }

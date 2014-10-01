@@ -8,6 +8,10 @@
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
+use Drupal\Core\TypedData\ListInterface;
+use Drupal\Core\TypedData\Type\BooleanInterface;
+use Drupal\Core\TypedData\Type\IntegerInterface;
+use Drupal\Core\TypedData\Type\StringInterface;
 use Drupal\rules\Engine\RulesConditionBase;
 
 /**
@@ -40,12 +44,16 @@ class DataIsEmpty extends RulesConditionBase {
    * {@inheritdoc}
    */
   public function evaluate() {
-    $data = $this->getContextValue('data');
+    $data = $this->getContext('data')->getContextData();
     if ($data instanceof ComplexDataInterface || $data instanceof ListInterface) {
       return $data->isEmpty();
     }
-
-    return empty($data);
+    $value = $data->getValue();
+    // For some primitives we can rely on PHP's type casting to boolean.
+    if ($data instanceof StringInterface || $data instanceof IntegerInterface || $data instanceof BooleanInterface) {
+      return !isset($value) || !$value;
+    }
+    return !isset($value);
   }
 
 }

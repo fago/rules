@@ -7,15 +7,13 @@
 
 namespace Drupal\Tests\rules\Unit\Condition;
 
-use Drupal\rules\Plugin\Condition\DataIsEmpty;
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Unit\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataIsEmpty
  * @group rules_conditions
  */
-class DataIsEmptyTest extends RulesUnitTestBase {
+class DataIsEmptyTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -29,11 +27,7 @@ class DataIsEmptyTest extends RulesUnitTestBase {
    */
   public function setUp() {
     parent::setUp();
-
-    $this->condition = new DataIsEmpty([], '', ['context' => [
-      'data' => new ContextDefinition(),
-    ]]);
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_data_is_empty');
   }
 
   /**
@@ -51,57 +45,56 @@ class DataIsEmptyTest extends RulesUnitTestBase {
    * @covers ::evaluate()
    */
   public function testConditionEvaluation() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
-    $node->expects($this->at(0))
+    $entity_adapter = $this->getMock('\Drupal\Core\TypedData\ComplexDataInterface');
+    $entity_adapter->expects($this->at(0))
       ->method('isEmpty')
       ->will($this->returnValue(TRUE));
-
-    $node->expects($this->at(1))
+    $entity_adapter->expects($this->at(1))
       ->method('isEmpty')
       ->will($this->returnValue(FALSE));
 
     // Test a ComplexDataInterface object.
-    $this->condition->setContextValue('data', $this->getMockTypedData($node));
+    $this->condition->getContext('data')->setContextData($entity_adapter);
     $this->assertTrue($this->condition->evaluate());
     $this->assertFalse($this->condition->evaluate());
 
     // These should all return FALSE.
     // A non-empty array.
-    $this->condition->setContextValue('data', $this->getMockTypedData([1,2,3]));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('list', [1,2,3]));
     $this->assertFalse($this->condition->evaluate());
 
     // An array containing an empty list.
-    $this->condition->setContextValue('data', $this->getMockTypedData([[]]));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('list', [[]]));
     $this->assertFalse($this->condition->evaluate());
 
     // An array with a zero-value element.
-    $this->condition->setContextValue('data', $this->getMockTypedData([0]));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('list', [0]));
     $this->assertFalse($this->condition->evaluate());
 
     // A scalar value.
-    $this->condition->setContextValue('data', $this->getMockTypedData(1));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('integer', 1));
     $this->assertFalse($this->condition->evaluate());
 
-    $this->condition->setContextValue('data', $this->getMockTypedData('short string'));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('string', 'short string'));
     $this->assertFalse($this->condition->evaluate());
 
     // These should all return TRUE.
     // An empty array.
-    $this->condition->setContextValue('data', $this->getMockTypedData([]));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('list', []));
     $this->assertTrue($this->condition->evaluate());
 
     // The false/zero/NULL values.
-    $this->condition->setContextValue('data', $this->getMockTypedData(FALSE));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('boolean', FALSE));
     $this->assertTrue($this->condition->evaluate());
 
-    $this->condition->setContextValue('data', $this->getMockTypedData(0));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('integer', 0));
     $this->assertTrue($this->condition->evaluate());
 
-    $this->condition->setContextValue('data', $this->getMockTypedData(NULL));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('string', NULL));
     $this->assertTrue($this->condition->evaluate());
 
     // An empty string.
-    $this->condition->setContextValue('data', $this->getMockTypedData(''));
+    $this->condition->getContext('data')->setContextData($this->getTypedData('string', ''));
     $this->assertTrue($this->condition->evaluate());
   }
 

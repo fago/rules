@@ -59,6 +59,10 @@ class AutoSaveTest extends RulesUnitTestBase {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
     $entity->expects($this->once())
       ->method('save');
+    $entity_adapter = $this->getMock('\Drupal\Core\TypedData\ComplexDataInterface');
+    $entity_adapter->expects($this->atLeastOnce())
+      ->method('getValue')
+      ->willReturn($entity);
 
     $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
     $context->expects($this->once())
@@ -66,7 +70,7 @@ class AutoSaveTest extends RulesUnitTestBase {
       ->willReturn($entity);
     $context->expects($this->once())
       ->method('getContextData')
-      ->willReturn($entity);
+      ->willReturn($entity_adapter);
 
     $action->setContext('entity', $context);
 
