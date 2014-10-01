@@ -193,7 +193,7 @@ class RulesState {
       // something here.
       if ($typed_data) {
         // Things that can be saved must have a save() method, right?
-        $typed_data->save();
+        $typed_data->getValue()->save();
       }
     }
   }
