@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\RemoveListItem.
+ * Contains \Drupal\rules\Plugin\Action\DataListItemRemove.
  */
 
 namespace Drupal\rules\Plugin\Action;
+
+use Drupal\rules\Engine\RulesActionBase;
 
 /**
  * Provides a 'Remove item from list' action.
@@ -24,8 +26,11 @@ namespace Drupal\rules\Plugin\Action;
  *    ),
  *   }
  * )
+ *
+ * @todo: Add access callback information from Drupal 7.
+ * @todo: Add group information from Drupal 7.
  */
-class RemoveListItem extends RulesActionBase {
+class DataListItemRemove extends RulesActionBase {
 
   /**
    * {@inheritdoc}
@@ -45,6 +50,6 @@ class RemoveListItem extends RulesActionBase {
       unset($list[$key]);
     }
 
-    $this->setContextValue('list', $list)
+    $this->setContextValue('list', $list);
   }
 }
