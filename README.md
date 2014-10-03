@@ -30,7 +30,7 @@ There are a few conventions that should be followed when contributing:
   for more information on how to do that.
 
 For further information on how to contribute please refer to
-[our documentation](http://thefubhy.gitbooks.io/rules/contributing/README.md).
+[our documentation](http://thefubhy.gitbooks.io/rules/contributing/README.html).
 
 ## Executing the automated tests
 
