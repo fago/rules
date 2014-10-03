@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\SaveEntity.
+ * Contains \Drupal\rules\Plugin\Action\EntitySave.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -31,7 +31,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class SaveEntity extends RulesActionBase {
+class EntitySave extends RulesActionBase {
 
   /**
    * Flag that indicates if the entity should be auto-saved later.

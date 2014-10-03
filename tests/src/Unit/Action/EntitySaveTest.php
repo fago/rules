@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\SaveEntityTest.
+ * Contains \Drupal\Tests\rules\Unit\Action\EntitySaveTest.
  */
 
 namespace Drupal\Tests\rules\Unit\Action;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\SaveEntity;
+use Drupal\rules\Plugin\Action\EntitySave;
 use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\SaveEntity
+ * @coversDefaultClass \Drupal\rules\Plugin\Action\EntitySave
  * @group rules_action
  */
-class SaveEntityTest extends RulesUnitTestBase {
+class EntitySaveTest extends RulesUnitTestBase {
 
   /**
    * The action to be tested.
@@ -30,7 +30,7 @@ class SaveEntityTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->action = new SaveEntity([], '', ['context' => [
+    $this->action = new EntitySave([], '', ['context' => [
       'entity' => new ContextDefinition('entity'),
       'immediate' => new ContextDefinition('boolean', NULL, FALSE),
     ]]);

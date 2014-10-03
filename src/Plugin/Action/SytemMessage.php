@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DrupalMessage.
+ * Contains \Drupal\rules\Plugin\Action\SytemMessage.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -14,7 +14,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * Provides a 'Show a message on the site' action.
  *
  * @Action(
- *   id = "rules_drupal_message",
+ *   id = "rules_system_message",
  *   label = @Translation("Show a message on the site"),
  *   context = {
  *     "message" = @ContextDefinition("string",
@@ -34,7 +34,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class DrupalMessage extends RulesActionBase {
+class SytemMessage extends RulesActionBase {
 
   /**
    * {@inheritdoc}

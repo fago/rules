@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DeleteEntity.
+ * Contains \Drupal\rules\Plugin\Action\EntityDelete.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -26,7 +26,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class DeleteEntity extends RulesActionBase {
+class EntityDelete extends RulesActionBase {
 
   /**
    * {@inheritdoc}

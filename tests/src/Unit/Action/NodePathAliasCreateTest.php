@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\CreateNodePathAliasTest.
+ * Contains \Drupal\Tests\rules\Unit\Action\NodePathAliasCreateTest.
  */
 
 namespace Drupal\Tests\rules\Unit\Action;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\CreateNodePathAlias;
+use Drupal\rules\Plugin\Action\NodePathAliasCreate;
 use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\CreateNodePathAlias
+ * @coversDefaultClass \Drupal\rules\Plugin\Action\NodePathAliasCreate
  * @group rules_actions
  */
-class CreateNodePathAliasTest extends RulesUnitTestBase {
+class NodePathAliasCreateTest extends RulesUnitTestBase {
 
   /**
    * The action to be tested.
@@ -39,7 +39,7 @@ class CreateNodePathAliasTest extends RulesUnitTestBase {
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
 
-    $this->action = new CreateNodePathAlias([], '', ['context' => [
+    $this->action = new NodePathAliasCreate([], '', ['context' => [
       'node' => new ContextDefinition('entity:node'),
       'alias' => new ContextDefinition('string'),
     ]], $this->aliasStorage);

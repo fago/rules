@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\DrupalMessageTest.
+ * Contains \Drupal\Tests\rules\Unit\Action\SytemMessageTest.
  */
 
 namespace Drupal\Tests\rules\Unit\Action {
 
   use Drupal\Core\Plugin\Context\ContextDefinition;
-  use Drupal\rules\Plugin\Action\DrupalMessage;
+  use Drupal\rules\Plugin\Action\SytemMessage;
   use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 
   /**
-   * @coversDefaultClass \Drupal\rules\Plugin\Action\DrupalMessage
+   * @coversDefaultClass \Drupal\rules\Plugin\Action\SytemMessage
    * @group rules_action
    */
-  class DrupalMessageTest extends RulesUnitTestBase {
+  class SytemMessageTest extends RulesUnitTestBase {
 
     /**
      * The action to be tested.
@@ -30,7 +30,7 @@ namespace Drupal\Tests\rules\Unit\Action {
     public function setUp() {
       parent::setUp();
 
-      $this->action = new DrupalMessage([], '', ['context' => [
+      $this->action = new SytemMessage([], '', ['context' => [
         'message' => new ContextDefinition('string'),
         'type' => new ContextDefinition('string'),
         'repeat' => new ContextDefinition('boolean', NULL, FALSE),

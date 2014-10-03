@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\CreatePathAliasTest.
+ * Contains \Drupal\Tests\rules\Unit\Action\PathAliasCreateTest.
  */
 
 namespace Drupal\Tests\rules\Unit\Action;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\CreatePathAlias;
+use Drupal\rules\Plugin\Action\PathAliasCreate;
 use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\CreatePathAlias
+ * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasCreate
  * @group rules_action
  */
-class CreatePathAliasTest extends RulesUnitTestBase {
+class PathAliasCreateTest extends RulesUnitTestBase {
 
   /**
    * The action to be tested.
@@ -40,7 +40,7 @@ class CreatePathAliasTest extends RulesUnitTestBase {
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
 
-    $this->action = new CreatePathAlias([], '', ['context' => [
+    $this->action = new PathAliasCreate([], '', ['context' => [
       'source' => new ContextDefinition('string'),
       'alias' => new ContextDefinition('string'),
       'language' => new ContextDefinition('language', NULL, FALSE),

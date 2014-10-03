@@ -2,30 +2,36 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\CreateNodePathAlias.
+ * Contains \Drupal\rules\Plugin\Action\PathAliasCreate.
  */
 
 namespace Drupal\rules\Plugin\Action;
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Create node path alias' action.
+ * Provides a 'Create any path alias' action.
  *
  * @Action(
- *   id = "rules_node_path_alias_create",
- *   label = @Translation("Create node path alias"),
+ *   id = "rules_path_alias_create",
+ *   label = @Translation("Create any path alias"),
  *   context = {
- *     "node" = @ContextDefinition("entity:node",
- *       label = @Translation("Content"),
- *       description = @Translation("The content for which to create a path alias.")
+ *     "source" = @ContextDefinition("string",
+ *       label = @Translation("Existing system path"),
+ *       description = @Translation("Specifies the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2.")
  *     ),
  *     "alias" = @ContextDefinition("string",
  *       label = @Translation("Path alias"),
- *       description = @Translation("Specify an alternative path by which the content can be accessed. For example, 'about' for an about page. Use a relative path and do not add a trailing slash.")
+ *       description = @Translation("Specify an alternative path by which this data can be accessed. For example, 'about' for an about page. Use a relative path and do not add a trailing slash.")
+ *     ),
+ *     "language" = @ContextDefinition("language",
+ *       label = @Translation("Language"),
+ *       description = @Translation("If specified, the language for which the path alias applies."),
+ *       required = FALSE
  *     )
  *   }
  * )
@@ -33,7 +39,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class CreateNodePathAlias extends RulesActionBase implements ContainerFactoryPluginInterface {
+class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The alias storage service.
@@ -43,7 +49,7 @@ class CreateNodePathAlias extends RulesActionBase implements ContainerFactoryPlu
   protected $aliasStorage;
 
   /**
-   * Constructs a CreateNodePathAlias object.
+   * Constructs a PathAliasCreate object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -75,24 +81,18 @@ class CreateNodePathAlias extends RulesActionBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Create node path alias');
+    return $this->t('Create any path alias');
   }
 
   /**
    * {@inheritdoc}
    */
   public function execute() {
+    $source = $this->getContextValue('source');
     $alias = $this->getContextValue('alias');
-    $node = $this->getContextValue('node');
-
-    // We need to save the node before we can get its internal path.
-    if ($node->isNew()) {
-      $node->save();
-    }
-
-    $path = $node->urlInfo()->getInternalPath();
-    $langcode = $node->language()->getId();
-    $this->aliasStorage->save($path, $alias, $langcode);
+    $language = $this->getContextValue('language');
+    $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
+    $this->aliasStorage->save($source, $alias, $langcode);
   }
 
 }
