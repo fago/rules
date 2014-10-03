@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\NodeIsStickyTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\NodeIsPromotedTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\NodeIsSticky;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\rules\Plugin\Condition\NodeIsPromoted;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsSticky
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPromoted
  * @group rules_conditions
  */
-class NodeIsStickyTest extends RulesUnitTestBase {
+class NodeIsPromotedTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -30,11 +30,7 @@ class NodeIsStickyTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->condition = new NodeIsSticky([], '', ['context' => [
-      'node' => new ContextDefinition('entity:node'),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_node_is_promoted');
   }
 
   /**
@@ -43,7 +39,7 @@ class NodeIsStickyTest extends RulesUnitTestBase {
    * @covers ::summary()
    */
   public function testSummary() {
-    $this->assertEquals('Node is sticky', $this->condition->summary());
+    $this->assertEquals('Node is promoted', $this->condition->summary());
   }
 
   /**
@@ -54,11 +50,11 @@ class NodeIsStickyTest extends RulesUnitTestBase {
   public function testConditionEvaluation() {
     $node = $this->getMock('Drupal\node\NodeInterface');
     $node->expects($this->at(0))
-      ->method('isSticky')
+      ->method('isPromoted')
       ->will($this->returnValue(TRUE));
 
     $node->expects($this->at(1))
-      ->method('isSticky')
+      ->method('isPromoted')
       ->will($this->returnValue(FALSE));
 
     // Set the node context value.

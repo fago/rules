@@ -2,21 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\UserHasEntityFieldAccessTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\UserHasEntityFieldAccessTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Language\Language;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
  * @group rules_conditions
  */
-class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
+class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -43,23 +43,11 @@ class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
+    $this->enableModule('user');
+
     parent::setUp();
 
-    $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
-    $this->entityManager = $this->getMock('Drupal\Core\Entity\EntityManagerInterface');
-    $this->entityManager->expects($this->any())
-      ->method('getAccessControlHandler')
-      ->with($this->anything())
-      ->will($this->returnValue($this->entityAccess));
-
-    $this->condition = new UserHasEntityFieldAccess([], '', ['context' => [
-      'entity' => new ContextDefinition('entity'),
-      'field' => new ContextDefinition('string'),
-      'operation' => new ContextDefinition('string'),
-      'user' => new ContextDefinition('entity:user'),
-    ]], $this->entityManager);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_entity_field_access');
   }
 
   /**
@@ -80,6 +68,10 @@ class UserHasEntityFieldAccessTest extends RulesUnitTestBase {
     $account = $this->getMock('Drupal\user\UserInterface');
     $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
     $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+
+    $entity->expects($this->any())
+      ->method('getEntityTypeId')
+      ->will($this->returnValue('user'));
 
     $entity->expects($this->exactly(3))
       ->method('hasField')

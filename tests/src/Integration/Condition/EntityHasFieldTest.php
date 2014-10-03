@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\EntityHasFieldTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\EntityHasFieldTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Unit\RulesEntityIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
@@ -27,6 +27,7 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
    */
   public function setUp() {
     parent::setUp();
+
     $this->condition = $this->conditionManager->createInstance('rules_entity_has_field');
   }
 

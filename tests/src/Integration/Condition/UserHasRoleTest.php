@@ -2,12 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\UserHasRoleTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\UserHasRoleTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Unit\RulesEntityIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
@@ -26,11 +26,10 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->enabledModules['user'] = TRUE;
-    $this->extraNamespaces += array(
-      'Drupal\\user' => DRUPAL_ROOT . '/core/modules/user/src',
-    );
+    $this->enableModule('user');
+
     parent::setUp();
+
     $this->condition = $this->conditionManager->createInstance('rules_user_has_role');
   }
 

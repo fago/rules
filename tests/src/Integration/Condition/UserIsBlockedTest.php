@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\UserIsBlockedTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\UserIsBlockedTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\UserIsBlocked;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserIsBlocked
  * @group rules_conditions
  */
-class UserIsBlockedTest extends RulesUnitTestBase {
+class UserIsBlockedTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -30,11 +30,7 @@ class UserIsBlockedTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->condition = new UserIsBlocked([], '', ['context' => [
-      'user' => new ContextDefinition('entity:user'),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_user_is_blocked');
   }
 
   /**

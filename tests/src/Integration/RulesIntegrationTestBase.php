@@ -2,16 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\RulesIntegrationTestBase.
+ * Contains \Drupal\Tests\rules\Integration\RulesIntegrationTestBase.
  */
 
-namespace Drupal\Tests\rules\Unit;
+namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Core\Action\ActionManager;
+use Drupal\Core\Path\AliasManager;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
+use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 
@@ -34,6 +36,11 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
    * @var \Drupal\Core\Action\ActionManager
    */
   protected $actionManager;
+
+  /**
+   * @var \Drupal\Core\Path\AliasManager
+   */
+  protected $aliasManager;
 
   /**
    * @var \Drupal\Core\Condition\ConditionManager
@@ -122,6 +129,11 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
     $this->typedDataManager = new TypedDataManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->rulesDataProcessorManager = new RulesDataProcessorManager($this->namespaces, $this->moduleHandler);
 
+    $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $container->set('path.alias_manager', $this->aliasManager);
     $container->set('plugin.manager.action', $this->actionManager);
     $container->set('plugin.manager.condition', $this->conditionManager);
     $container->set('plugin.manager.rules_expression', $this->rulesExpressionManager);
@@ -131,6 +143,26 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
 
     \Drupal::setContainer($container);
     $this->container = $container;
+  }
+
+  /**
+   * Fakes the enabling of a module and loads its namespace.
+   *
+   * Default behaviour works fine for core modules.
+   *
+   * @param string $name
+   *   The name of the module that's gonna be enabled.
+   * @param array $namespaces
+   *   Map of the association between module's namespaces and filesystem paths.
+   */
+  protected function enableModule($name, array $namespaces = []) {
+    $this->enabledModules[$name] = TRUE;
+
+    if (empty($namespaces)) {
+        $namespaces = array('Drupal\\' . $name => DRUPAL_ROOT . '/core/modules/' . $name . '/src');
+    }
+
+    $this->extraNamespaces += $namespaces;
   }
 
   /**

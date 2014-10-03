@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\PathHasAliasTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\PathAliasExistsTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\PathHasAlias;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\rules\Plugin\Condition\PathAliasExists;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Condition\PathHasAlias
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\PathAliasExists
  * @group rules_conditions
  */
-class PathHasAliasTest extends RulesUnitTestBase {
+class PathAliasExistsTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -44,16 +44,7 @@ class PathHasAliasTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->condition = new PathHasAlias([], '', ['context' => [
-      'path' => new ContextDefinition('string'),
-      'language' => new ContextDefinition('string', NULL, FALSE),
-    ]], $this->aliasManager);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_path_alias_exists');
 
     $this->englishLanguage = $this->getMock('Drupal\Core\Language\LanguageInterface');
     $this->englishLanguage->expects($this->any())
@@ -79,27 +70,27 @@ class PathHasAliasTest extends RulesUnitTestBase {
    * @covers ::summary()
    */
   public function testSummary() {
-    $this->assertEquals('Path has alias', $this->condition->summary());
+    $this->assertEquals('Path alias exists', $this->condition->summary());
   }
 
   /**
-   * Tests evaluating the condition for a path with an alias.
+   * Tests evaluating the condition for an alias that can be resolved.
    *
    * @covers ::evaluate()
    */
-  public function testConditionEvaluationPathWithAlias() {
+  public function testConditionEvaluationAliasWithPath() {
     $this->aliasManager->expects($this->at(0))
-      ->method('getAliasByPath')
-      ->with('path-with-alias', $this->anything())
-      ->will($this->returnValue('alias-for-path'));
+      ->method('getPathByAlias')
+      ->with('alias-for-path', $this->anything())
+      ->will($this->returnValue('path-with-alias'));
 
     $this->aliasManager->expects($this->at(1))
-      ->method('getAliasByPath')
-      ->with('path-with-alias', 'en')
-      ->will($this->returnValue('alias-for-path'));
+      ->method('getPathByAlias')
+      ->with('alias-for-path', 'en')
+      ->will($this->returnValue('path-with-alias'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('path', $this->getMockTypedData('path-with-alias'));
+    $this->condition->setContextValue('alias', $this->getMockTypedData('alias-for-path'));
 
     // Test without language context set.
     $this->assertTrue($this->condition->evaluate());
@@ -110,23 +101,23 @@ class PathHasAliasTest extends RulesUnitTestBase {
   }
 
   /**
-   * Tests evaluating the condition for path without an alias.
+   * Tests evaluating the condition for an alias that can not be resolved.
    *
    * @covers ::evaluate()
    */
-  public function testConditionEvaluationPathWithoutAlias() {
+  public function testConditionEvaluationAliasWithoutPath() {
     $this->aliasManager->expects($this->at(0))
-      ->method('getAliasByPath')
-      ->with('path-without-alias', $this->anything())
-      ->will($this->returnValue('path-without-alias'));
+      ->method('getPathByAlias')
+      ->with('alias-for-path-that-does-not-exist', $this->anything())
+      ->will($this->returnValue('alias-for-path-that-does-not-exist'));
 
     $this->aliasManager->expects($this->at(1))
-      ->method('getAliasByPath')
-      ->with('path-without-alias', 'en')
-      ->will($this->returnValue('path-without-alias'));
+      ->method('getPathByAlias')
+      ->with('alias-for-path-that-does-not-exist', 'en')
+      ->will($this->returnValue('alias-for-path-that-does-not-exist'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('path', $this->getMockTypedData('path-without-alias'));
+    $this->condition->setContextValue('alias', $this->getMockTypedData('alias-for-path-that-does-not-exist'));
 
     // Test without language context set.
     $this->assertFalse($this->condition->evaluate());

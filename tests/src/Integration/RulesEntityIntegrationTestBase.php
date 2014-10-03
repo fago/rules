@@ -2,11 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\RulesEntityIntegrationTestBase.
+ * Contains \Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase.
  */
 
-namespace Drupal\Tests\rules\Unit;
-use Drupal\Core\Entity\EntityManager;
+namespace Drupal\Tests\rules\Integration;
 
 require_once DRUPAL_ROOT . '/core/includes/entity.inc';
 
@@ -28,13 +27,12 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->extraNamespaces += array(
+    $this->enableModule('entity_test', [
       // Register entity plugins.
       'Drupal\\Core\\Entity' => DRUPAL_ROOT . '/core/lib/Drupal/Core/Entity',
       // Add entity test entity types.
       'Drupal\\entity_test' => DRUPAL_ROOT . '/core/modules/system/tests/modules/entity_test/src',
-    );
-    $this->enabledModules['entity_test'] = TRUE;
+    ]);
 
     parent::setup();
 
@@ -46,16 +44,27 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->method('getLanguages')
       ->will($this->returnValue(array('en' => (object) array('id' => 'en'))));
 
-    $this->entityManager = new EntityManager(
-      $this->namespaces,
-      $this->moduleHandler,
-      $this->cacheBackend,
-      $language_manager,
-      $this->getStringTranslationStub(),
-      $this->getClassResolverStub(),
-      $this->typedDataManager,
-      $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreInterface')
-    );
+    $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
+
+    $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
+      ->setMethods(['getAccessControlHandler'])
+      ->setConstructorArgs([
+        $this->namespaces,
+        $this->moduleHandler,
+        $this->cacheBackend,
+        $language_manager,
+        $this->getStringTranslationStub(),
+        $this->getClassResolverStub(),
+        $this->typedDataManager,
+        $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreInterface'),
+      ])
+      ->getMock();
+
+    $this->entityManager->expects($this->any())
+      ->method('getAccessControlHandler')
+      ->with($this->anything())
+      ->will($this->returnValue($this->entityAccess));
+
     $this->container->set('entity.manager', $this->entityManager);
 
     $this->moduleHandler->expects($this->any())

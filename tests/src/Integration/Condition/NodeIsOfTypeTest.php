@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\NodeIsOfTypeTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\NodeIsOfTypeTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Plugin\Condition\NodeIsOfType;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsOfType
  * @group rules_conditions
  */
-class NodeIsOfTypeTest extends RulesUnitTestBase {
+class NodeIsOfTypeTest extends RulesIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -30,12 +30,7 @@ class NodeIsOfTypeTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->condition = new NodeIsOfType([], '', ['context' => [
-      'node' => new ContextDefinition('entity:node'),
-      'types' => new ContextDefinition('string', NULL, TRUE, TRUE),
-    ]]);
-
-    $this->condition->setStringTranslation($this->getMockStringTranslation());
+    $this->condition = $this->conditionManager->createInstance('rules_node_is_of_type');
   }
 
   /**

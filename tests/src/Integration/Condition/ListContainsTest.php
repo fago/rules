@@ -2,13 +2,13 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Condition\ListContainsTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\ListContainsTest.
  *
  */
 
-namespace Drupal\Tests\rules\Unit\Condition;
+namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Unit\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\ListContains
@@ -28,6 +28,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
    */
   public function setUp() {
     parent::setUp();
+
     $this->condition = $this->conditionManager->createInstance('rules_list_contains');
   }
 
