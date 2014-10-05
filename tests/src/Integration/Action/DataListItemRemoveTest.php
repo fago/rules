@@ -47,7 +47,7 @@ class DataListItemRemoveTest extends RulesIntegrationTestBase {
    * @covers ::execute()
    */
   public function testActionExecution() {
-    $list = array('One', 'Two', 'Three');
+    $list = ['One', 'Two', 'Three'];
 
     $this->action
       ->setContextValue('list', $list)
@@ -56,6 +56,6 @@ class DataListItemRemoveTest extends RulesIntegrationTestBase {
     $this->action->execute();
 
     // The second item should be removed from the list.
-    $this->assertArrayEquals(array('One', 'Three'), array_values($this->action->getContextValue('list')));
+    $this->assertArrayEquals(['One', 'Three'], array_values($this->action->getContextValue('list')));
   }
 }
