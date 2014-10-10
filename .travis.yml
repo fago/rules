@@ -29,6 +29,10 @@ install:
   - composer global require youngj/httpserver:dev-master
 
 before_script:
+  # Remove Xdebug as we don't need it and it causes
+  # PHP Fatal error:  Maximum function nesting level of '256' reached
+  - phpenv config-rm xdebug.ini
+
   # Remember the current rules test directory for later use in the Drupal
   # installation.
   - TESTDIR=$(pwd)
