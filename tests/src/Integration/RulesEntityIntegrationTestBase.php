@@ -36,13 +36,18 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
 
     parent::setup();
 
+    $language = $this->getMock('Drupal\Core\Language\LanguageInterface');
+    $language->expects($this->any())
+      ->method('getId')
+      ->willReturn('en');
+
     $language_manager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
     $language_manager->expects($this->any())
       ->method('getCurrentLanguage')
-      ->will($this->returnValue((object) array('id' => 'en')));
+      ->willReturn($language);
     $language_manager->expects($this->any())
       ->method('getLanguages')
-      ->will($this->returnValue(array('en' => (object) array('id' => 'en'))));
+      ->willReturn([$language]);
 
     $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
 
