@@ -34,7 +34,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @todo: Add access callback information from Drupal 7.
  * @todo: Add group information from Drupal 7.
  */
-class SytemMessage extends RulesActionBase {
+class SystemMessage extends RulesActionBase {
 
   /**
    * {@inheritdoc}

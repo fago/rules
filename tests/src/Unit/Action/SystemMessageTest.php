@@ -8,14 +8,14 @@
 namespace Drupal\Tests\rules\Unit\Action {
 
   use Drupal\Core\Plugin\Context\ContextDefinition;
-  use Drupal\rules\Plugin\Action\SytemMessage;
+  use Drupal\rules\Plugin\Action\SystemMessage;
   use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\Action\SytemMessage
    * @group rules_action
    */
-  class SytemMessageTest extends RulesUnitTestBase {
+  class SystemMessageTest extends RulesUnitTestBase {
 
     /**
      * The action to be tested.
@@ -30,7 +30,7 @@ namespace Drupal\Tests\rules\Unit\Action {
     public function setUp() {
       parent::setUp();
 
-      $this->action = new SytemMessage([], '', ['context' => [
+      $this->action = new SystemMessage([], '', ['context' => [
         'message' => new ContextDefinition('string'),
         'type' => new ContextDefinition('string'),
         'repeat' => new ContextDefinition('boolean', NULL, FALSE),
