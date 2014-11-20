@@ -119,8 +119,8 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
     $this->namespaces = new \ArrayObject(array(
       'Drupal\\rules' => $rules_directory . '/src',
       'Drupal\\rules_test' => $rules_directory . '/tests/modules/rules_test/src',
-      'Drupal\\Core\\TypedData' => DRUPAL_ROOT . '/core/lib/Drupal/Core/TypedData',
-      'Drupal\\Core\\Validation' => DRUPAL_ROOT . '/core/lib/Drupal/Core/Validation',
+      'Drupal\\Core\\TypedData' => $this->root . '/core/lib/Drupal/Core/TypedData',
+      'Drupal\\Core\\Validation' => $this->root . '/core/lib/Drupal/Core/Validation',
     ) + $this->extraNamespaces);
 
     $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
@@ -143,26 +143,6 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
 
     \Drupal::setContainer($container);
     $this->container = $container;
-  }
-
-  /**
-   * Fakes the enabling of a module and loads its namespace.
-   *
-   * Default behaviour works fine for core modules.
-   *
-   * @param string $name
-   *   The name of the module that's gonna be enabled.
-   * @param array $namespaces
-   *   Map of the association between module's namespaces and filesystem paths.
-   */
-  protected function enableModule($name, array $namespaces = []) {
-    $this->enabledModules[$name] = TRUE;
-
-    if (empty($namespaces)) {
-        $namespaces = array('Drupal\\' . $name => DRUPAL_ROOT . '/core/modules/' . $name . '/src');
-    }
-
-    $this->extraNamespaces += $namespaces;
   }
 
   /**

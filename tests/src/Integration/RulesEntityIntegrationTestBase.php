@@ -7,8 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration;
 
-require_once DRUPAL_ROOT . '/core/includes/entity.inc';
-
 /**
  * Base class for Rules integration tests with entities.
  *
@@ -27,14 +25,14 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->enableModule('entity_test', [
-      // Register entity plugins.
-      'Drupal\\Core\\Entity' => DRUPAL_ROOT . '/core/lib/Drupal/Core/Entity',
-      // Add entity test entity types.
-      'Drupal\\entity_test' => DRUPAL_ROOT . '/core/modules/system/tests/modules/entity_test/src',
-    ]);
+    $this->enabledModules['entity_test'] = TRUE;
 
     parent::setup();
+
+    require_once $this->root . '/core/includes/entity.inc';
+
+    $this->namespaces['Drupal\\Core\\Entity'] = $this->root . '/core/lib/Drupal/Core/Entity';
+    $this->namespaces['Drupal\\entity_test'] = $this->root . '/core/modules/system/tests/modules/entity_test/src';
 
     $language = $this->getMock('Drupal\Core\Language\LanguageInterface');
     $language->expects($this->any())
