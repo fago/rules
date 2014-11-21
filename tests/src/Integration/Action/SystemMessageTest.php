@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\SytemMessageTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\SytemMessageTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action {
+namespace Drupal\Tests\rules\Integration\Action {
 
-  use Drupal\Core\Plugin\Context\ContextDefinition;
-  use Drupal\rules\Plugin\Action\SystemMessage;
-  use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+  use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\Action\SytemMessage
    * @group rules_action
    */
-  class SystemMessageTest extends RulesUnitTestBase {
+  class SystemMessageTest extends RulesIntegrationTestBase {
 
     /**
      * The action to be tested.
@@ -30,14 +28,7 @@ namespace Drupal\Tests\rules\Unit\Action {
     public function setUp() {
       parent::setUp();
 
-      $this->action = new SystemMessage([], '', ['context' => [
-        'message' => new ContextDefinition('string'),
-        'type' => new ContextDefinition('string'),
-        'repeat' => new ContextDefinition('boolean', NULL, FALSE),
-      ]]);
-
-      $this->action->setStringTranslation($this->getMockStringTranslation());
-      $this->action->setTypedDataManager($this->getMockTypedDataManager());
+      $this->action = $this->actionManager->createInstance('rules_system_message');
 
       // Clear the statically stored messages before every test run.
       $this->clearMessages();
@@ -58,9 +49,9 @@ namespace Drupal\Tests\rules\Unit\Action {
      * @covers ::execute()
      */
     public function testActionExecution() {
-      $this->action->setContextValue('message', $this->getMockTypedData('test message'))
-        ->setContextValue('type', $this->getMockTypedData('status'))
-        ->setContextValue('repeat', $this->getMockTypedData(FALSE));
+      $this->action->setContextValue('message', 'test message')
+        ->setContextValue('type', 'status')
+        ->setContextValue('repeat', FALSE);
 
       // Execute the action multiple times. The message should still only
       // be stored once (repeat is set to FALSE).
@@ -73,7 +64,7 @@ namespace Drupal\Tests\rules\Unit\Action {
       $this->assertArrayEquals(['test message'], $messages);
 
       // Set the 'repeat' context to TRUE and execute the action again.
-      $this->action->setContextValue('repeat', $this->getMockTypedData(TRUE));
+      $this->action->setContextValue('repeat', TRUE);
       $this->action->execute();
 
       // The message should be repeated now.
@@ -88,8 +79,8 @@ namespace Drupal\Tests\rules\Unit\Action {
      * @covers ::execute()
      */
     public function testOptionalRepeat() {
-      $this->action->setContextValue('message', $this->getMockTypedData('test message'))
-        ->setContextValue('type', $this->getMockTypedData('status'));
+      $this->action->setContextValue('message', 'test message')
+        ->setContextValue('type', 'status');
 
       $this->action->execute();
 

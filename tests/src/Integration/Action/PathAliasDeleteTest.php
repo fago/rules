@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\PathAliasDeleteTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\PathAliasDeleteTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\PathAliasDelete;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasDelete
  * @group rules_action
  */
-class PathAliasDeleteTest extends RulesUnitTestBase {
+class PathAliasDeleteTest extends RulesIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -39,12 +37,10 @@ class PathAliasDeleteTest extends RulesUnitTestBase {
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
 
-    $this->action = new PathAliasDelete([], '', ['context' => [
-      'path' => new ContextDefinition('string')
-    ]], $this->aliasStorage);
+    $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
+    $this->container->set('path.alias_storage', $this->aliasStorage);
 
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->action = $this->actionManager->createInstance('rules_path_aliases_delete');
   }
 
   /**
@@ -70,7 +66,7 @@ class PathAliasDeleteTest extends RulesUnitTestBase {
       ->with(['path' => $path]);
 
     $this->action
-      ->setContextValue('path', $this->getMockTypedData($path));
+      ->setContextValue('path', $path);
 
     $this->action->execute();
   }

@@ -2,21 +2,19 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\PathAliasCreateTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\PathAliasCreateTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\PathAliasCreate;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasCreate
  * @group rules_action
  */
-class PathAliasCreateTest extends RulesUnitTestBase {
+class PathAliasCreateTest extends RulesIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -39,15 +37,9 @@ class PathAliasCreateTest extends RulesUnitTestBase {
     parent::setUp();
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
+    $this->container->set('path.alias_storage', $this->aliasStorage);
 
-    $this->action = new PathAliasCreate([], '', ['context' => [
-      'source' => new ContextDefinition('string'),
-      'alias' => new ContextDefinition('string'),
-      'language' => new ContextDefinition('language', NULL, FALSE),
-    ]], $this->aliasStorage);
-
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->action = $this->actionManager->createInstance('rules_path_alias_create');
   }
 
   /**
@@ -69,8 +61,8 @@ class PathAliasCreateTest extends RulesUnitTestBase {
       ->method('save')
       ->with('node/1', 'about', LanguageInterface::LANGCODE_NOT_SPECIFIED);
 
-    $this->action->setContextValue('source', $this->getMockTypedData('node/1'))
-      ->setContextValue('alias', $this->getMockTypedData('about'));
+    $this->action->setContextValue('source', 'node/1')
+      ->setContextValue('alias', 'about');
 
     $this->action->execute();
   }
@@ -82,7 +74,7 @@ class PathAliasCreateTest extends RulesUnitTestBase {
    */
   public function testActionExecutionWithLanguage() {
     $language = $this->getMock('Drupal\Core\Language\LanguageInterface');
-    $language->expects($this->once())
+    $language->expects($this->any())
       ->method('getId')
       ->will($this->returnValue('en'));
 
@@ -90,9 +82,9 @@ class PathAliasCreateTest extends RulesUnitTestBase {
       ->method('save')
       ->with('node/1', 'about', 'en');
 
-    $this->action->setContextValue('source', $this->getMockTypedData('node/1'))
-      ->setContextValue('alias', $this->getMockTypedData('about'))
-      ->setContextValue('language', $this->getMockTypedData($language));
+    $this->action->setContextValue('source', 'node/1')
+      ->setContextValue('alias', 'about')
+      ->setContextValue('language', $language);
 
     $this->action->execute();
   }
