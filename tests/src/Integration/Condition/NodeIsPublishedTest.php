@@ -7,8 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\NodeIsPublished;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**

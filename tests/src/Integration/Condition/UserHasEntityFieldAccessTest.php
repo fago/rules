@@ -8,8 +8,6 @@
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Language\Language;
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**

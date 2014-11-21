@@ -8,7 +8,6 @@
 namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Core\Action\ActionManager;
-use Drupal\Core\Path\AliasManager;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;

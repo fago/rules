@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**

@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 
 /**
