@@ -148,7 +148,7 @@ namespace {
       static $messages = NULL;
 
       if (!empty($message)) {
-        $messages[$type] = isset($messages[$type]) ? $messages[$type] : array();
+        $messages[$type] = isset($messages[$type]) ? $messages[$type] : [];
         if ($repeat || !in_array($message, $messages[$type])) {
           $messages[$type][] = $message;
         }

@@ -68,7 +68,7 @@ trait RulesContextTrait {
    */
   public function getProvidedDefinitions() {
     $definition = $this->getPluginDefinition();
-    return !empty($definition['provides']) ? $definition['provides'] : array();
+    return !empty($definition['provides']) ? $definition['provides'] : [];
   }
 
   /**

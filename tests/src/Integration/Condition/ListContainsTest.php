@@ -49,7 +49,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
   public function testConditionEvaluation() {
 
     // Test array of string values
-    $list = array('One','Two','Three');
+    $list = ['One','Two','Three'];
 
     // Test that the list doesn't contain 'Zero'.
     $this->condition
@@ -108,7 +108,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
       ->will($this->returnValue('entity_four_id'));
 
     // Test array of entities
-    $entity_list = array($entity_one,$entity_two,$entity_three);
+    $entity_list = [$entity_one,$entity_two,$entity_three];
 
     // Test that the list of entities doesn't contain entity 'entity_zero'.
     $this->condition

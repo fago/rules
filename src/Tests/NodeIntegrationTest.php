@@ -35,7 +35,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $logger = RulesLog::logger();
     $logger->clear();
 
-    $this->installSchema('system', array('sequences'));
+    $this->installSchema('system', ['sequences']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
   }

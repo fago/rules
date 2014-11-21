@@ -152,7 +152,7 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
     $this->enabledModules[$name] = TRUE;
 
     if (empty($namespaces)) {
-      $namespaces = array('Drupal\\' . $name => $this->root . '/core/modules/' . $name . '/src');
+      $namespaces = ['Drupal\\' . $name => $this->root . '/core/modules/' . $name . '/src'];
     }
     foreach ($namespaces as $namespace => $path) {
       $this->namespaces[$namespace] = $path;
