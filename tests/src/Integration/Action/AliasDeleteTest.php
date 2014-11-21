@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\AliasDeleteTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\AliasDeleteTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\AliasDelete;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\AliasDelete
  * @group rules_action
  */
-class AliasDeleteTest extends RulesUnitTestBase {
+class AliasDeleteTest extends RulesIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -38,13 +36,9 @@ class AliasDeleteTest extends RulesUnitTestBase {
     parent::setUp();
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
+    $this->container->set('path.alias_storage', $this->aliasStorage);
 
-    $this->action = new AliasDelete([], '', ['context' => [
-      'alias' => new ContextDefinition('string')
-    ]], $this->aliasStorage);
-
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->action = $this->actionManager->createInstance('rules_path_alias_delete');
   }
 
   /**
@@ -70,7 +64,7 @@ class AliasDeleteTest extends RulesUnitTestBase {
       ->with(['alias' => $alias]);
 
     $this->action
-      ->setContextValue('alias', $this->getMockTypedData($alias));
+      ->setContextValue('alias', $alias);
 
     $this->action->execute();
   }
