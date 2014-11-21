@@ -26,11 +26,9 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
    * {@inheritdoc}
    */
   public function setUp() {
-    $this->enabledModules['user'] = TRUE;
-
     parent::setUp();
 
-    $this->namespaces['Drupal\\User'] = $this->root . '/core/modules/user/src';
+    $this->enableModule('user');
     $this->condition = $this->conditionManager->createInstance('rules_user_has_role');
   }
 

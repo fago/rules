@@ -69,23 +69,15 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
    */
   protected $cacheBackend;
 
-
   /**
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
 
   /**
-   * Defines extra namespaces used for finding plugins.
+   * Array object keyed with module names and TRUE as value.
    *
-   * @var String[]
-   */
-  protected $extraNamespaces = [];
-
-  /**
-   * Array keyed with module names and TRUE as value.
-   *
-   * @var boolean[]
+   * @var ArrayObject
    */
   protected $enabledModules;
 
@@ -106,22 +98,23 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
     // Set all the modules as being existent.
+    $this->enabledModules = new \ArrayObject();
     $this->enabledModules['rules'] = TRUE;
     $this->enabledModules['rules_test'] = TRUE;
     $this->moduleHandler->expects($this->any())
       ->method('moduleExists')
-      ->will($this->returnValueMap(array_map(function($module) {
-       return [$module, TRUE];
-    }, array_keys($this->enabledModules))));
+      ->will($this->returnCallback(function ($module) {
+        return [$module, $this->enabledModules[$module]];
+      }));
 
     $this->cacheBackend = new NullBackend('rules');
     $rules_directory = __DIR__ . '/../../..';
-    $this->namespaces = new \ArrayObject(array(
+    $this->namespaces = new \ArrayObject([
       'Drupal\\rules' => $rules_directory . '/src',
       'Drupal\\rules_test' => $rules_directory . '/tests/modules/rules_test/src',
       'Drupal\\Core\\TypedData' => $this->root . '/core/lib/Drupal/Core/TypedData',
       'Drupal\\Core\\Validation' => $this->root . '/core/lib/Drupal/Core/Validation',
-    ) + $this->extraNamespaces);
+    ]);
 
     $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
@@ -143,6 +136,27 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
 
     \Drupal::setContainer($container);
     $this->container = $container;
+  }
+
+  /**
+   * Fakes the enabling of a module and adds its namespace for plugin loading.
+   *
+   * Default behaviour works fine for core modules.
+   *
+   * @param string $name
+   *   The name of the module that's gonna be enabled.
+   * @param array $namespaces
+   *   Map of the association between module's namespaces and filesystem paths.
+   */
+  protected function enableModule($name, array $namespaces = []) {
+    $this->enabledModules[$name] = TRUE;
+
+    if (empty($namespaces)) {
+      $namespaces = array('Drupal\\' . $name => $this->root . '/core/modules/' . $name . '/src');
+    }
+    foreach ($namespaces as $namespace => $path) {
+      $this->namespaces[$namespace] = $path;
+    }
   }
 
   /**
