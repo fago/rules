@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\EntitySaveTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\EntitySaveTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\EntitySave;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\EntitySave
  * @group rules_action
  */
-class EntitySaveTest extends RulesUnitTestBase {
+class EntitySaveTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -30,13 +28,7 @@ class EntitySaveTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->action = new EntitySave([], '', ['context' => [
-      'entity' => new ContextDefinition('entity'),
-      'immediate' => new ContextDefinition('boolean', NULL, FALSE),
-    ]]);
-
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->action = $this->actionManager->createInstance('rules_entity_save');
   }
 
   /**
@@ -58,8 +50,8 @@ class EntitySaveTest extends RulesUnitTestBase {
     $entity->expects($this->once())
       ->method('save');
 
-    $this->action->setContextValue('entity', $this->getMockTypedData($entity))
-      ->setContextValue('immediate', $this->getMockTypedData(TRUE));
+    $this->action->setContextValue('entity', $entity)
+      ->setContextValue('immediate', TRUE);
 
     $this->action->execute();
     $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the entity has been saved already.');
@@ -75,7 +67,7 @@ class EntitySaveTest extends RulesUnitTestBase {
     $entity->expects($this->never())
       ->method('save');
 
-    $this->action->setContextValue('entity', $this->getMockTypedData($entity));
+    $this->action->setContextValue('entity', $entity);
     $this->action->execute();
 
     $this->assertEquals($this->action->autoSaveContext(), ['entity'], 'Action returns the entity context name for auto saving.');

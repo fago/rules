@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\EntityDeleteTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\EntityDeleteTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\EntityDelete;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityDelete
  * @group rules_action
  */
-class EntityDeleteTest extends RulesUnitTestBase {
+class EntityDeleteTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -30,12 +28,7 @@ class EntityDeleteTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->action = new EntityDelete([], '', ['context' => [
-      'entity' => new ContextDefinition('entity'),
-    ]]);
-
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->action = $this->actionManager->createInstance('rules_entity_delete');
   }
 
   /**
@@ -57,7 +50,7 @@ class EntityDeleteTest extends RulesUnitTestBase {
     $entity->expects($this->once())
       ->method('delete');
 
-    $this->action->setContextValue('entity', $this->getMockTypedData($entity));
+    $this->action->setContextValue('entity', $entity);
     $this->action->execute();
   }
 

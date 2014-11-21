@@ -49,7 +49,7 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
     $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
 
     $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
-      ->setMethods(['getAccessControlHandler'])
+      ->setMethods(['getAccessControlHandler', 'getBundleInfo'])
       ->setConstructorArgs([
         $this->namespaces,
         $this->moduleHandler,
@@ -67,6 +67,13 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->method('getAccessControlHandler')
       ->with($this->anything())
       ->will($this->returnValue($this->entityAccess));
+
+    // Return some dummy bundle information for now, so that the entity manager
+    // does not call out to the config entity system to get bundle information.
+    $this->entityManager->expects($this->any())
+      ->method('getBundleInfo')
+      ->with($this->anything())
+      ->willReturn(['test' => ['label' => 'Test']]);
 
     $this->container->set('entity.manager', $this->entityManager);
 

@@ -2,20 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Unit\Action\NodePathAliasCreateTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\NodePathAliasCreateTest.
  */
 
-namespace Drupal\Tests\rules\Unit\Action;
+namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Plugin\Action\NodePathAliasCreate;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\NodePathAliasCreate
  * @group rules_actions
  */
-class NodePathAliasCreateTest extends RulesUnitTestBase {
+class NodePathAliasCreateTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -36,16 +34,11 @@ class NodePathAliasCreateTest extends RulesUnitTestBase {
    */
   public function setUp() {
     parent::setUp();
+    $this->enableModule('node');
 
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
-
-    $this->action = new NodePathAliasCreate([], '', ['context' => [
-      'node' => new ContextDefinition('entity:node'),
-      'alias' => new ContextDefinition('string'),
-    ]], $this->aliasStorage);
-
-    $this->action->setStringTranslation($this->getMockStringTranslation());
-    $this->action->setTypedDataManager($this->getMockTypedDataManager());
+    $this->container->set('path.alias_storage', $this->aliasStorage);
+    $this->action = $this->actionManager->createInstance('rules_node_path_alias_create');
   }
 
   /**
@@ -72,8 +65,8 @@ class NodePathAliasCreateTest extends RulesUnitTestBase {
     $node->expects($this->once())
       ->method('save');
 
-    $this->action->setContextValue('node', $this->getMockTypedData($node))
-      ->setContextValue('alias', $this->getMockTypedData('about'));
+    $this->action->setContextValue('node', $node)
+      ->setContextValue('alias', 'about');
 
     $this->action->execute();
   }
@@ -93,8 +86,8 @@ class NodePathAliasCreateTest extends RulesUnitTestBase {
     $node->expects($this->never())
       ->method('save');
 
-    $this->action->setContextValue('node', $this->getMockTypedData($node))
-      ->setContextValue('alias', $this->getMockTypedData('about'));
+    $this->action->setContextValue('node', $node)
+      ->setContextValue('alias', 'about');
 
     $this->action->execute();
   }
