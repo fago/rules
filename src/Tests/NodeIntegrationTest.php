@@ -59,12 +59,14 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $user->save();
     $node->setOwner($user);
 
-    $rule = $this->createRulesRule(['context_definitions' => [
-      'node' => [
-        'type' => 'entity:node',
-        'label' => 'Node',
+    $rule = $this->createRulesRule([
+      'context_definitions' => [
+        'node' => [
+          'type' => 'entity:node',
+          'label' => 'Node',
+        ],
       ],
-    ]]);
+    ]);
 
     // Test that the long detailed data selector works.
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [

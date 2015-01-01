@@ -150,7 +150,7 @@ class RulesComponent extends ConfigEntityBase {
     // Ensure that the Rules component is dependant on the module that
     // implements the component.
     $this->addDependency('module', $this->module);
-    
+
     // @todo Handle dependencies of plugins that are provided by various modules
     //   here.
 

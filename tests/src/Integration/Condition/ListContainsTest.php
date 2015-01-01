@@ -3,7 +3,6 @@
 /**
  * @file
  * Contains \Drupal\Tests\rules\Integration\Condition\ListContainsTest.
- *
  */
 
 namespace Drupal\Tests\rules\Integration\Condition;

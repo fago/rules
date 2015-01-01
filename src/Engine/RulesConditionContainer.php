@@ -35,7 +35,7 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
    * @param \Drupal\rules\Plugin\RulesExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, RulesExpressionPluginManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $configuration += ['conditions' => []];

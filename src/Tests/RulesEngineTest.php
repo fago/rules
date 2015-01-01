@@ -75,12 +75,14 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests passing a string context to a condition.
    */
   public function testContextPassing() {
-    $rule = $this->createRulesRule(['context_definitions' => [
-      'test' => [
-        'type' => 'string',
-        'label' => 'Test string',
+    $rule = $this->createRulesRule([
+      'context_definitions' => [
+        'test' => [
+          'type' => 'string',
+          'label' => 'Test string',
+        ],
       ],
-    ]]);
+    ]);
 
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',

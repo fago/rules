@@ -103,12 +103,14 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Make sure that expressions using context definitions can be exported.
    */
   public function testContextDefinitionExport() {
-    $rule = $this->createRulesRule(['context_definitions' => [
-      'test' => [
-        'type' => 'string',
-        'label' => 'Test string',
+    $rule = $this->createRulesRule([
+      'context_definitions' => [
+        'test' => [
+          'type' => 'string',
+          'label' => 'Test string',
+        ],
       ],
-    ]]);
+    ]);
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
