@@ -12,9 +12,6 @@ mysql:
 
 before_install:
   - sudo apt-get update > /dev/null
-  # Always update Composer to the recent version, otherwise the drush
-  # installation fails.
-  - composer selfupdate
 
 install:
   # Install php packages required for running a web server from drush.
