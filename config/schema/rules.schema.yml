@@ -2,7 +2,7 @@
 
 rules.component.*:
   type: config_entity
-  label: 'Rule'
+  label: 'Rules component'
   mapping:
     id:
       type: string
@@ -26,5 +26,86 @@ rules.component.*:
       type: string
       label: 'Rules expression plugin ID'
     configuration:
-      type: mapping
-      label: 'Rules expression configuration'
+      type: rules_component.configuration.[%parent.expression_id]
+      label: 'Configuration'
+
+rules_component.configuration.rules_condition:
+  type: mapping
+  label: "Rules condition configuration"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    condition_id:
+      type: string
+      label: 'Condition plugin ID'
+    negate:
+      type: boolean
+      label: 'Negated'
+
+rules_component.configuration.rules_action:
+  type: mapping
+  label: "Rules action configuration"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    action_id:
+      type: string
+      label: 'Action plugin ID'
+
+rules_component.configuration.rules_rule:
+  type: mapping
+  label: "Rule"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    context_definitions:
+      type: sequence
+      label: 'Context definitions'
+      sequence:
+        - type: rules_component_context
+    conditions:
+      type: rules_component.configuration.[id]
+      label: 'Conditions'
+    actions:
+      type: rules_component.configuration.[id]
+      label: 'Actions'
+
+rules_component_context:
+  type: mapping
+  label: 'Context definition'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    label:
+      type: string
+      label: 'Label'
+
+rules_component.configuration.rules_and:
+  type: mapping
+  label: 'Rules And'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    conditions:
+      type: sequence
+      label: 'Conditions'
+      sequence:
+        - type: rules_component.configuration.[id]
+
+rules_component.configuration.rules_action_set:
+  type: mapping
+  label: 'Action set'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    actions:
+      type: sequence
+      label: 'Actions'
+      sequence:
+        - type: rules_component.configuration.[id]

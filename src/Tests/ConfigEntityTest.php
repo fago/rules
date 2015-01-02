@@ -41,7 +41,12 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Tests that an empty rule configuration can be saved.
    */
   public function testSavingEmptyRule() {
-    $config_entity = $this->storage->create(['id' => 'test_rule']);
+    $rule = $this->createRulesRule();
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_rule',
+      'configuration' => $rule->getConfiguration(),
+    ]);
     $config_entity->save();
   }
 
