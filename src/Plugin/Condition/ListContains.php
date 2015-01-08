@@ -16,6 +16,7 @@ use Drupal\Core\Entity\EntityInterface;
  * @Condition(
  *   id = "rules_list_contains",
  *   label = @Translation("List contains item"),
+ *   category = @Translation("Data"),
  *   context = {
  *     "list" = @ContextDefinition("list",
  *       label = @Translation("List"),

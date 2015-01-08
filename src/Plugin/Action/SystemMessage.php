@@ -16,6 +16,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @Action(
  *   id = "rules_system_message",
  *   label = @Translation("Show a message on the site"),
+ *   category = @Translation("System"),
  *   context = {
  *     "message" = @ContextDefinition("string",
  *       label = @Translation("Message")
@@ -32,7 +33,6 @@ use Drupal\rules\Engine\RulesActionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class SystemMessage extends RulesActionBase {
 

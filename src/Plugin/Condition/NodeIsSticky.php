@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_node_is_sticky",
  *   label = @Translation("Node is sticky"),
+ *   category = @Translation("Node"),
  *   context = {
  *     "node" = @ContextDefinition("entity:node",
  *       label = @Translation("Node")
@@ -23,7 +24,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class NodeIsSticky extends RulesConditionBase {
 

@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @Action(
  *   id = "rules_list_item_add",
  *   label = @Translation("Add list item"),
+ *   category = @Translation("Data"),
  *   context = {
  *     "list" = @ContextDefinition("list",
  *       label = @Translation("List"),
@@ -43,7 +44,6 @@ use Drupal\rules\Engine\RulesActionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7?
- * @todo: Add group information from Drupal 7?
  * @todo: set ContextDefinition restriction
  * @todo: Add info alter
  */

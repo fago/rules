@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Action(
  *   id = "rules_path_alias_create",
  *   label = @Translation("Create any path alias"),
+ *   category = @Translation("Path"),
  *   context = {
  *     "source" = @ContextDefinition("string",
  *       label = @Translation("Existing system path"),
@@ -37,7 +38,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
 

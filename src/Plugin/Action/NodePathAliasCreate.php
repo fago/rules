@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Action(
  *   id = "rules_node_path_alias_create",
  *   label = @Translation("Create node path alias"),
+ *   category = @Translation("Path"),
  *   context = {
  *     "node" = @ContextDefinition("entity:node",
  *       label = @Translation("Content"),
@@ -31,7 +32,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
 

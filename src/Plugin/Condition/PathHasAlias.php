@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Condition(
  *   id = "rules_path_has_alias",
  *   label = @Translation("Path has alias"),
+ *   category = @Translation("Path"),
  *   context = {
  *     "path" = @ContextDefinition("string",
  *       label = @Translation("Path")
@@ -31,7 +32,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginInterface {
 

@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @Action(
  *   id = "rules_entity_delete",
  *   label = @Translation("Delete entity"),
+ *   category = @Translation("Entity"),
  *   context = {
  *     "entity" = @ContextDefinition("entity",
  *       label = @Translation("Entity"),
@@ -24,7 +25,6 @@ use Drupal\rules\Engine\RulesActionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class EntityDelete extends RulesActionBase {
 

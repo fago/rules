@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_entity_is_of_bundle",
  *   label = @Translation("Entity is of bundle"),
+ *   category = @Translation("Entity"),
  *   context = {
  *     "entity" = @ContextDefinition("entity",
  *       label = @Translation("Entity"),
@@ -32,7 +33,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7?
- * @todo: Add group information from Drupal 7?
  */
 class EntityIsOfBundle extends RulesConditionBase {
 

@@ -20,6 +20,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_data_is_empty",
  *   label = @Translation("Data value is empty"),
+ *   category = @Translation("Data"),
  *   context = {
  *     "data" = @ContextDefinition("any",
  *       label = @Translation("Data to check"),
@@ -29,7 +30,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class DataIsEmpty extends RulesConditionBase {
 

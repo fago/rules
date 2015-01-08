@@ -19,6 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Condition(
  *   id = "rules_entity_field_access",
  *   label = @Translation("User has entity field access"),
+ *   category = @Translation("User"),
  *   context = {
  *     "entity" = @ContextDefinition("entity",
  *       label = @Translation("Entity")

@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_user_has_role",
  *   label = @Translation("User has role(s)"),
+ *   category = @Translation("User"),
  *   context = {
  *     "user" = @ContextDefinition("entity:user",
  *       label = @Translation("User")
@@ -32,7 +33,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class UserHasRole extends RulesConditionBase {
 

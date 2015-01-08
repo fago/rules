@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_user_is_blocked",
  *   label = @Translation("User is blocked"),
+ *   category = @Translation("User"),
  *   context = {
  *     "user" = @ContextDefinition("entity:user",
  *       label = @Translation("User")
@@ -23,7 +24,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class UserIsBlocked extends RulesConditionBase {
 

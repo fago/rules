@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_node_is_of_type",
  *   label = @Translation("Node is of type"),
+ *   category = @Translation("Node"),
  *   context = {
  *     "node" = @ContextDefinition("entity:node",
  *       label = @Translation("Node")

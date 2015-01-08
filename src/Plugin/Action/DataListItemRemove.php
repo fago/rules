@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesActionBase;
  * @Action(
  *   id = "rules_list_item_remove",
  *   label = @Translation("Remove item from list"),
+ *   category = @Translation("Data"),
  *   context = {
  *    "list" = @ContextDefinition("list",
  *      label = @Translation("List"),
@@ -28,7 +29,6 @@ use Drupal\rules\Engine\RulesActionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class DataListItemRemove extends RulesActionBase {
 

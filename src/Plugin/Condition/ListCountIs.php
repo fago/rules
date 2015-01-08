@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_list_count_is",
  *   label = @Translation("List Count Comparison"),
+ *   category = @Translation("Data"),
  *   context = {
  *     "list" = @ContextDefinition("list",
  *       label = @Translation("List"),
@@ -32,7 +33,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7?
- * @todo: Add group information from Drupal 7?
  * @todo: set ContextDefinition default value
  * @todo: set ContextDefinition options list
  * @todo: set ContextDefinition restriction

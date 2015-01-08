@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @Condition(
  *   id = "rules_data_comparison",
  *   label = @Translation("Data comparison"),
+ *   category = @Translation("Data"),
  *   context = {
  *     "data" = @ContextDefinition("any",
  *       label = @Translation("Data to compare"),
@@ -33,7 +34,6 @@ use Drupal\rules\Engine\RulesConditionBase;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  * @todo: Find a way to port rules_condition_data_is_operator_options() from Drupal 7.
  */
 class DataComparison extends RulesConditionBase {
