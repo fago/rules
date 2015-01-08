@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Condition\ListCountIs.
+ * Contains \Drupal\rules\Plugin\Condition\DataListCountIs.
  */
 
 namespace Drupal\rules\Plugin\Condition;
@@ -37,7 +37,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  * @todo: set ContextDefinition options list
  * @todo: set ContextDefinition restriction
  */
-class ListCountIs extends RulesConditionBase {
+class DataListCountIs extends RulesConditionBase {
 
   /**
    * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Condition\ListContains.
+ * Contains \Drupal\rules\Plugin\Condition\DataListContains.
  */
 
 namespace Drupal\rules\Plugin\Condition;
@@ -34,7 +34,7 @@ use Drupal\Core\Entity\EntityInterface;
  * @todo: set ContextDefinition restriction
  * @todo: Add info alter
  */
-class ListContains extends RulesConditionBase {
+class DataListContains extends RulesConditionBase {
 
   /**
    * {@inheritdoc}

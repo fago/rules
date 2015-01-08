@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Condition;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Condition\ListContains
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataListContains
  * @group rules_conditions
  */
 class ListContainsTest extends RulesIntegrationTestBase {

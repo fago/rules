@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Condition;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Condition\ListCountIs
+ * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataListCountIs
  * @group rules_conditions
  */
 class ListCountIsTest extends RulesIntegrationTestBase {
