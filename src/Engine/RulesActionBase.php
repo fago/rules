@@ -7,7 +7,9 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\rules\Context\RulesContextTrait;
 
 /**
@@ -68,6 +70,17 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
   public function autoSaveContext() {
     // Per default no context parameters will be auto saved.
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    // Just deny access per default for now.
+    if ($return_as_object) {
+      return new AccessResultForbidden();
+    }
+    return FALSE;
   }
 
 }
