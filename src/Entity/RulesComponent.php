@@ -15,6 +15,9 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * @ConfigEntityType(
  *   id = "rules_component",
  *   label = @Translation("Rules component"),
+ *   handlers = {
+ *     "list_builder" = "Drupal\rules\Entity\Controller\RulesComponentListBuilder",
+ *   },
  *   admin_permission = "administer rules",
  *   config_prefix = "component",
  *   entity_keys = {
@@ -139,6 +142,20 @@ class RulesComponent extends ConfigEntityBase {
       $label = $this->id();
     }
     return $label;
+  }
+
+  /**
+   * Returns the description.
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * Returns the tag.
+   */
+  public function getTag() {
+    return $this->tag();
   }
 
   /**

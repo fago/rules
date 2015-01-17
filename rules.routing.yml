@@ -1,0 +1,11 @@
+# This file brings everything together. Very nifty!
+
+entity.rules.collection:
+  path: '/rules/list'
+  defaults:
+  # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'rules_component'
+    _title: 'Rules Component List'
+  requirements:
+  # Checks for permission directly.
+    _permission: 'administer rules'

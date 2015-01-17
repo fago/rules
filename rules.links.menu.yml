@@ -1,0 +1,7 @@
+# Define the menu links for this module
+
+entity.rules.collection:
+  title: 'Rules Component Listing'
+  route_name: entity.rules.collection
+  description: 'List Rules Components'
+  weight: 10
