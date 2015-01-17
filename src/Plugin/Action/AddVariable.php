@@ -31,8 +31,6 @@ class AddVariable extends RulesActionBase {
    * Executes the plugin.
    */
   public function execute() {
-    $this->setProvidedValue('variable_added', $this->getContext('value'));
-    return TRUE;
+    $this->setProvidedValue('variable_added', $this->getContext('value')->getContextValue());
   }
-
 }
