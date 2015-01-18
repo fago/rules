@@ -15,7 +15,7 @@ use Drupal\rules\Engine\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 
 /**
- * Offers common methods for context plugin implementors.
+ * Offers common methods for context plugin implementers.
  */
 trait RulesContextTrait {
 
@@ -85,7 +85,6 @@ trait RulesContextTrait {
   protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {
     $context_definitions = $plugin->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
-
       $context_value = NULL;
       // First check if we can forward a context directly set on this plugin.
       try {
@@ -124,7 +123,6 @@ trait RulesContextTrait {
   protected function mapProvidedContext(ProvidedContextPluginInterface $plugin, RulesState $state) {
     $provides = $plugin->getProvidedDefinitions();
     foreach ($provides as $name => $provided_definition) {
-
       // Avoid name collisions in the rules state: provided variables can be
       // renamed.
       if (isset($this->configuration['provides_mapping'][$name])) {

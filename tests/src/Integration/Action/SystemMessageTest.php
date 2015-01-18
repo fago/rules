@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Action\SytemMessageTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\SystemMessageTest.
  */
 
 namespace Drupal\Tests\rules\Integration\Action {
@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action {
   use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
   /**
-   * @coversDefaultClass \Drupal\rules\Plugin\Action\SytemMessage
+   * @coversDefaultClass \Drupal\rules\Plugin\Action\SystemMessage
    * @group rules_action
    */
   class SystemMessageTest extends RulesIntegrationTestBase {

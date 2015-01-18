@@ -135,7 +135,7 @@ class RulesState {
         if ($typed_data->hasTranslation($langcode)) {
           $typed_data = $typed_data->getTranslation($langcode);
         }
-        // @todo What if the requested translation does not exist? Currenlty
+        // @todo What if the requested translation does not exist? Currently
         // we just ignore that and continue with the current object.
       }
 
@@ -175,7 +175,7 @@ class RulesState {
    * Mark a variable to be saved later when the execution is finished.
    *
    * @param string $selector
-   *   The data selector that sepcifies the target object to be saved. Example:
+   *   The data selector that specifies the target object to be saved. Example:
    *   node:uid:entity.
    */
   public function saveChangesLater($selector) {

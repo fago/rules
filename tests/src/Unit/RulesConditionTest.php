@@ -44,7 +44,7 @@ class RulesConditionTest extends RulesUnitTestBase {
     parent::setUp();
 
     // Create a test condition plugin that always evaluates to TRUE. We cannot
-    // use $this->trueCondtion because it is a Rules expression, but we need a
+    // use $this->trueCondition because it is a Rules expression, but we need a
     // condition plugin here.
     $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
     $this->trueCondition->expects($this->any())

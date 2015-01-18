@@ -18,9 +18,6 @@ class DataProcessorTest extends RulesDrupalTestBase {
    * Tests that the numeric offset plugin works.
    */
   public function testNumericOffset() {
-    $rule = $this->createRulesRule()
-      ->addCondition($this->createRulesCondition('rules_test_true'));
-
     // Configure a simple rule with one action.
     $action = $this->rulesExpressionManager->createInstance('rules_action', [
       'action_id' => 'rules_system_message',
@@ -35,10 +32,15 @@ class DataProcessorTest extends RulesDrupalTestBase {
           ],
         ],
       ],
-    ])->setContextValue('message', 1)
+    ]);
+
+    $action->setContextValue('message', 1)
       ->setContextValue('type', 'status');
-    $rule->addAction($action);
-    $rule->execute();
+
+    $this->createRulesRule()
+      ->addCondition($this->createRulesCondition('rules_test_true'))
+      ->addAction($action)
+      ->execute();
 
     $messages = drupal_set_message();
     // The original value was 1 and the processor adds 1, so the result should
