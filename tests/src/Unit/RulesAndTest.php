@@ -55,7 +55,7 @@ class RulesAndTest extends RulesUnitTestBase {
   }
 
   /**
-   * Tests two true condition.
+   * Tests two true conditions.
    */
   public function testTwoConditions() {
     // The method on the test condition must be called once.

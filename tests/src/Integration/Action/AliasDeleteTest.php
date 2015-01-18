@@ -56,7 +56,6 @@ class AliasDeleteTest extends RulesIntegrationTestBase {
    * @covers ::execute()
    */
   public function testActionExecution() {
-
     $alias = 'about/team';
 
     $this->aliasStorage->expects($this->once())

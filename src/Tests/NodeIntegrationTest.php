@@ -44,18 +44,21 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    */
   public function testNodeDataSelector() {
     $entity_manager = $this->container->get('entity.manager');
-    $node_type = $entity_manager->getStorage('node_type')
-      ->create(['type' => 'page']);
-    $node_type->save();
+    $entity_manager->getStorage('node_type')
+      ->create(['type' => 'page'])
+      ->save();
+
     $node = $entity_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
       ]);
+
     $user = $entity_manager->getStorage('user')
       ->create([
         'name' => 'test value',
       ]);
+
     $user->save();
     $node->setOwner($user);
 
@@ -73,6 +76,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
       'condition_id' => 'rules_test_string_condition',
       'context_mapping' => ['text:select' => 'node:uid:0:entity:name:0:value'],
     ]));
+
     // Test that the shortened data selector without list indices.
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
@@ -81,7 +85,6 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $rule->addAction($this->createRulesAction('rules_test_log'));
     $rule->setContextValue('node', $node);
-
     $rule->execute();
 
     // Test that the action logged something.
@@ -94,9 +97,10 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    */
   public function testNodeAutoSave() {
     $entity_manager = $this->container->get('entity.manager');
-    $node_type = $entity_manager->getStorage('node_type')
-      ->create(['type' => 'page']);
-    $node_type->save();
+    $entity_manager->getStorage('node_type')
+      ->create(['type' => 'page'])
+      ->save();
+
     $node = $entity_manager->getStorage('node')
       ->create([
         'title' => 'test',
@@ -121,6 +125,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
       // We don't need a context mapping here, the action will just pick the
       // contexts with the same names.
     ]);
+
     $action->setContextValue('node', $node);
     $action->setContextValue('title', 'new title');
     $action->execute();

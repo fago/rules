@@ -91,7 +91,6 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     $rule->addAction($this->createRulesAction('rules_test_log'));
     $rule->setContextValue('test', 'test value');
-
     $rule->execute();
 
     // Test that the action logged something.
@@ -138,6 +137,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     $state = new RulesState();
     $rule->executeWithState($state);
+
     // Check that the newly named variable exists and has the provided value.
     $variable = $state->getVariable('newname');
     $this->assertEqual($variable->getContextValue(), 'test value');
@@ -170,6 +170,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     $state = new RulesState();
     $rule->executeWithState($state);
+
     // Check that the created variables exists and have the provided values.
     $concatenated = $state->getVariable('concatenated');
     $this->assertEqual($concatenated->getContextValue(), 'test valuetest value');

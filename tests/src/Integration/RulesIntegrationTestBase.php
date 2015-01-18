@@ -59,7 +59,7 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
   /**
    * All setup'ed namespaces.
    *
-   * @var ArrayObject
+   * @var \ArrayObject
    */
   protected $namespaces;
 
@@ -76,7 +76,7 @@ abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
   /**
    * Array object keyed with module names and TRUE as value.
    *
-   * @var ArrayObject
+   * @var \ArrayObject
    */
   protected $enabledModules;
 

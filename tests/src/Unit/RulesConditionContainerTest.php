@@ -80,7 +80,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   }
 
   /**
-   * Tests executing the condition container with an executable manager..
+   * Tests executing the condition container with an executable manager.
    *
    * @covers ::execute()
    */

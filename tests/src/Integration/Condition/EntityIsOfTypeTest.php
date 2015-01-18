@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\EntityIsOfType.
+ * Contains \Drupal\Tests\rules\Integration\Condition\EntityIsOfTypeTest.
  */
 
 namespace Drupal\Tests\rules\Integration\Condition;

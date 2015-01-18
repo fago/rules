@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\SytemMessage.
+ * Contains \Drupal\rules\Plugin\Action\SystemMessage.
  */
 
 namespace Drupal\rules\Plugin\Action;

@@ -112,10 +112,12 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
         'multiple' => FALSE,
         'description' => NULL,
       ];
+
       $context_definitions[$context_name] = new ContextDefinition(
         $definition_array['type'], $definition_array['label'],
         $definition_array['required'], $definition_array['multiple'],
-        $definition_array['description']);
+        $definition_array['description']
+      );
     }
     return $context_definitions;
   }

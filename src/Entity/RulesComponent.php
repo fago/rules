@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Entity\View.
+ * Contains Drupal\rules\Entity\RulesComponent.
  */
 
 namespace Drupal\rules\Entity;
@@ -81,7 +81,7 @@ class RulesComponent extends ConfigEntityBase {
   /**
    * Stores a reference to the executable expression version of this component.
    *
-   * @var \Drupal\rules\ViewExecutable
+   * @var \Drupal\rules\Engine\RulesExpressionInterface
    */
   protected $expression;
 
@@ -132,7 +132,7 @@ class RulesComponent extends ConfigEntityBase {
   /**
    * Overrides \Drupal\Core\Entity\Entity::label().
    *
-   * When a certain component doesn't have a label return the ID.
+   * When a certain component does not have a label return the ID.
    */
   public function label() {
     if (!$label = $this->get('label')) {
