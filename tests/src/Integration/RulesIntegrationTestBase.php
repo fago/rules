@@ -12,9 +12,9 @@ use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\Tests\rules\Unit\RulesUnitTestBase;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Base class for Rules integration tests.
@@ -24,7 +24,7 @@ use Drupal\rules\Plugin\RulesExpressionPluginManager;
  * other 3rd party modules or APIs can and should be mocked; e.g. the action
  * to delete an entity would mock the call to the entity API.
  */
-abstract class RulesIntegrationTestBase extends RulesUnitTestBase {
+abstract class RulesIntegrationTestBase extends UnitTestCase {
 
   /**
    * @var \Drupal\Core\TypedData\TypedDataManager
