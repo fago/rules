@@ -60,38 +60,38 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
     $editor = $this->getMockRole('editor');
     $administrator = $this->getMockRole('administrator');
 
-    $this->condition->setContextValue('user', $this->getMockTypedData($account));
+    $this->condition->setContextValue('user', $account);
 
     // First test the default AND condition with both roles the user has.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $editor]));
+    $this->condition->setContextValue('roles', [$authenticated, $editor]);
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, this should fail.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $administrator]));
+    $this->condition->setContextValue('roles', [$authenticated, $administrator]);
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, should succeed.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated]));
+    $this->condition->setContextValue('roles', [$authenticated]);
     $this->assertTrue($this->condition->evaluate());
 
     // A role the user doesn't have.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$administrator]));
+    $this->condition->setContextValue('roles', [$administrator]);
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, the user has with OR condition, should succeed.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated]));
-    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
+    $this->condition->setContextValue('roles', [$authenticated]);
+    $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, but has the authenticated,
     // should succeed.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$authenticated, $administrator]));
-    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
+    $this->condition->setContextValue('roles', [$authenticated, $administrator]);
+    $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role. This should fail.
-    $this->condition->setContextValue('roles', $this->getMockTypedData([$administrator]));
-    $this->condition->setContextValue('operation', $this->getMockTypedData('OR'));
+    $this->condition->setContextValue('roles', [$administrator]);
+    $this->condition->setContextValue('operation', 'OR');
     $this->assertFalse($this->condition->evaluate());
   }
 

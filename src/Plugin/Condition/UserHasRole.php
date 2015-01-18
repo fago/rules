@@ -20,7 +20,7 @@ use Drupal\rules\Engine\RulesConditionBase;
  *     "user" = @ContextDefinition("entity:user",
  *       label = @Translation("User")
  *     ),
- *     "roles" = @ContextDefinition("entity:role",
+ *     "roles" = @ContextDefinition("entity:user_role",
  *       label = @Translation("Entity"),
  *       multiple = TRUE
  *     ),

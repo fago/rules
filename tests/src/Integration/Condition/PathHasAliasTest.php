@@ -88,13 +88,13 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
       ->will($this->returnValue('alias-for-path'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('path', $this->getMockTypedData('path-with-alias'));
+    $this->condition->setContextValue('path', 'path-with-alias');
 
     // Test without language context set.
     $this->assertTrue($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->getMockTypedData($this->englishLanguage));
+    $this->condition->setContextValue('language', $this->englishLanguage);
     $this->assertTrue($this->condition->evaluate());
   }
 
@@ -115,13 +115,13 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
       ->will($this->returnValue('path-without-alias'));
 
     // First, only set the path context.
-    $this->condition->setContextValue('path', $this->getMockTypedData('path-without-alias'));
+    $this->condition->setContextValue('path', 'path-without-alias');
 
     // Test without language context set.
     $this->assertFalse($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->getMockTypedData($this->englishLanguage));
+    $this->condition->setContextValue('language', $this->englishLanguage);
     $this->assertFalse($this->condition->evaluate());
   }
 
