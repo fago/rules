@@ -7,13 +7,13 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfBundle
  * @group rules_conditions
  */
-class EntityIsOfBundleTest extends RulesIntegrationTestBase {
+class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -58,18 +58,18 @@ class EntityIsOfBundleTest extends RulesIntegrationTestBase {
     // Add the test node to our context as the evaluated entity, along with
     // explicit entity type and bundle strings.
     // First, test with values that should evaluate TRUE.
-    $this->condition->setContextValue('entity', $this->getMockTypedData($entity))
-      ->setContextValue('type', $this->getMockTypedData('node'))
-      ->setContextValue('bundle', $this->getMockTypedData('page'));
+    $this->condition->setContextValue('entity', $entity)
+      ->setContextValue('type', 'node')
+      ->setContextValue('bundle', 'page');
 
     $this->assertTrue($this->condition->evaluate());
 
     // Then test with values that should evaluate FALSE.
-    $this->condition->setContextValue('bundle', $this->getMockTypedData('article'));
+    $this->condition->setContextValue('bundle', 'article');
     $this->assertFalse($this->condition->evaluate());
 
-    $this->condition->setContextValue('type', $this->getMockTypedData('taxonomy_term'))
-      ->setContextValue('bundle', $this->getMockTypedData('page'));
+    $this->condition->setContextValue('type', 'taxonomy_term')
+      ->setContextValue('bundle', 'page');
     $this->assertFalse($this->condition->evaluate());
   }
 }

@@ -86,9 +86,9 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
       ->with('potato-field')
       ->will($this->returnValue($items));
 
-    $this->condition->setContextValue('entity', $this->getMockTypedData($entity))
-      ->setContextValue('field', $this->getMockTypedData('potato-field'))
-      ->setContextValue('user', $this->getMockTypedData($account));
+    $this->condition->setContextValue('entity', $entity)
+      ->setContextValue('field', 'potato-field')
+      ->setContextValue('user', $account);
 
     $this->entityAccess->expects($this->exactly(3))
       ->method('access')
@@ -108,11 +108,11 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
     // Test with 'view', 'edit' and 'delete'. Both 'view' and 'edit' will have
     // general entity access, but the 'potato-field' should deny access for the
     // 'edit' operation. Hence, 'edit' and 'delete' should return FALSE.
-    $this->condition->setContextValue('operation', $this->getMockTypedData('view'));
+    $this->condition->setContextValue('operation', 'view');
     $this->assertTrue($this->condition->evaluate());
-    $this->condition->setContextValue('operation', $this->getMockTypedData('edit'));
+    $this->condition->setContextValue('operation', 'edit');
     $this->assertFalse($this->condition->evaluate());
-    $this->condition->setContextValue('operation', $this->getMockTypedData('delete'));
+    $this->condition->setContextValue('operation', 'delete');
     $this->assertFalse($this->condition->evaluate());
   }
 }

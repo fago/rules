@@ -7,13 +7,13 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsOfType
  * @group rules_conditions
  */
-class NodeIsOfTypeTest extends RulesIntegrationTestBase {
+class NodeIsOfTypeTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -28,6 +28,7 @@ class NodeIsOfTypeTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->enableModule('node');
     $this->condition = $this->conditionManager->createInstance('rules_node_is_of_type');
   }
 
@@ -52,14 +53,14 @@ class NodeIsOfTypeTest extends RulesIntegrationTestBase {
       ->will($this->returnValue('page'));
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $this->getMockTypedData($node));
+    $this->condition->setContextValue('node', $node);
 
     // Test evaluation with a list that contains the actual node type.
-    $this->condition->setContextValue('types', $this->getMockTypedData(['page', 'article']));
+    $this->condition->setContextValue('types', ['page', 'article']);
     $this->assertTrue($this->condition->evaluate());
 
     // Test with a list that does not contain the actual node type.
-    $this->condition->setContextValue('types', $this->getMockTypedData(['apple', 'banana']));
+    $this->condition->setContextValue('types', ['apple', 'banana']);
     $this->assertFalse($this->condition->evaluate());
   }
 

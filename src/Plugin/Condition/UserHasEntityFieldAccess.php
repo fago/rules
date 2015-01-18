@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     "field" = @ContextDefinition("string",
  *       label = @Translation("Field")
  *     ),
- *     "operation" = @ContextDefinition("operation",
+ *     "operation" = @ContextDefinition("string",
  *       label = @Translation("Operation")
  *     ),
  *     "user" = @ContextDefinition("entity:user",

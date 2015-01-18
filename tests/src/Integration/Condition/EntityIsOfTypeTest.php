@@ -7,13 +7,13 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfType
  * @group rules_conditions
  */
-class EntityIsOfTypeTest extends RulesIntegrationTestBase {
+class EntityIsOfTypeTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -54,12 +54,12 @@ class EntityIsOfTypeTest extends RulesIntegrationTestBase {
     // Add the test node to our context as the evaluated entity, along with an
     // explicit entity type string.
     // First, test with a value that should evaluate TRUE.
-    $this->condition->setContextValue('entity', $this->getMockTypedData($entity))
-      ->setContextValue('type', $this->getMockTypedData('node'));
+    $this->condition->setContextValue('entity', $entity)
+      ->setContextValue('type', 'node');
     $this->assertTrue($this->condition->evaluate());
 
     // Then test with values that should evaluate FALSE.
-    $this->condition->setContextValue('type', $this->getMockTypedData('taxonomy_term'));
+    $this->condition->setContextValue('type', 'taxonomy_term');
     $this->assertFalse($this->condition->evaluate());
   }
 }

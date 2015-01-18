@@ -7,13 +7,13 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserIsBlocked
  * @group rules_conditions
  */
-class UserIsBlockedTest extends RulesIntegrationTestBase {
+class UserIsBlockedTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -28,6 +28,7 @@ class UserIsBlockedTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->enableModule('user');
     $this->condition = $this->conditionManager->createInstance('rules_user_is_blocked');
   }
 
@@ -56,7 +57,7 @@ class UserIsBlockedTest extends RulesIntegrationTestBase {
       ->will($this->returnValue(FALSE));
 
     // Set the user context value.
-    $this->condition->setContextValue('user', $this->getMockTypedData($user));
+    $this->condition->setContextValue('user', $user);
 
     // Test evaluation. The first invocation should return TRUE, the second
     // should return FALSE.

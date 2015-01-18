@@ -7,13 +7,13 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPromoted
  * @group rules_conditions
  */
-class NodeIsPromotedTest extends RulesIntegrationTestBase {
+class NodeIsPromotedTest extends RulesEntityIntegrationTestBase {
 
   /**
    * The condition to be tested.
@@ -28,6 +28,7 @@ class NodeIsPromotedTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
 
+    $this->enableModule('node');
     $this->condition = $this->conditionManager->createInstance('rules_node_is_promoted');
   }
 
@@ -56,7 +57,7 @@ class NodeIsPromotedTest extends RulesIntegrationTestBase {
       ->will($this->returnValue(FALSE));
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $this->getMockTypedData($node));
+    $this->condition->setContextValue('node', $node);
 
     // Test evaluation. The first invocation should return TRUE, the second
     // should return FALSE.
