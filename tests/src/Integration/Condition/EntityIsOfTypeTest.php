@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\EntityIsOfBundleTest.
+ * Contains \Drupal\Tests\rules\Integration\Condition\EntityIsOfType.
  */
 
 namespace Drupal\Tests\rules\Integration\Condition;
