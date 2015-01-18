@@ -52,50 +52,33 @@ namespace Drupal\Tests\rules\Integration\Action {
       $this->action->setContextValue('user', $account)
         ->setContextValue('email_type', $mail_type);
 
-      // We instantiate the global mock object which will be used to call the
-      // userMailNotifyCall() method from the _user_mail_notify() in the global
-      // namespace, function which we define below.
-      global $user_mail_notify_test_helper;
-      $user_mail_notify_test_helper = $this->getMock('Drupal\Tests\rules\Integration\Action\UserMailNotifyTestHelper');
-
-      $user_mail_notify_test_helper->expects($this->once())
-        ->method('userMailNotifyCall')
-        ->with($mail_type, $account);
-
       $this->action->execute();
-    }
 
-  }
-
-  /**
-   * A helper class to check when the _user_mail_notify() is called.
-   *
-   * When testing the action, we want to check if the _user_mail_notify()
-   * global function is called. We can easy test if a method of a mock object
-   * is called, but not so easy if a php function is called. And also, the
-   * _user_mail_notify() function is not available when running the test case
-   * because the user module is not enabled. To check if the _user_mail_notify()
-   * gets called we declare it below in the global scope, and what we do is
-   * to just call the userMailNotifyCall() method of an UserMailNotifyTestHelper
-   * object (it is actually a globally available mock object).
-   *
-   * @package Drupal\Tests\rules\Integration\Action
-   */
-  class UserMailNotifyTestHelper {
-
-    public function userMailNotifyCall($op, $account, $langcode = NULL) {
-      // If this function gets called in this namespace, it means that the
-      // _user_mail_notify() was called.
+      // To ge the notifications that were sent, we call the _user_mail_notify()
+      // with no parameters.
+      $notifications = _user_mail_notify();
+      $this->assertSame(array($mail_type => 1), $notifications);
     }
   }
+
 }
 
 namespace {
 
+  /**
+   * We fake the _user_mail_notify() when using unit tests and we adapt it so
+   * that we can get how many times the function was called with a specific $op.
+   */
   if (!function_exists('_user_mail_notify')) {
-    function _user_mail_notify($op, $account, $langcode = NULL) {
-      global $user_mail_notify_test_helper;
-      $user_mail_notify_test_helper->userMailNotifyCall($op, $account, $langcode);
+    function _user_mail_notify($op = NULL, $account = NULL, $langcode = NULL) {
+      static $notifications_sent;
+      if (!empty($op)) {
+        if (!isset($notifications_sent[$op])) {
+          $notifications_sent[$op] = 0;
+        }
+        $notifications_sent[$op]++;
+      }
+      return $notifications_sent;
     }
   }
 }
