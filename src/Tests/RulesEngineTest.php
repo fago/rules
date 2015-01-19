@@ -108,7 +108,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_provider',
     ]));
-    // The secound condition consumes the variable.
+    // The second condition consumes the variable.
     $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
       'context_mapping' => ['text:select' => 'provided_text'],
@@ -144,7 +144,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests that mulitple actions can consume and provide context variables.
+   * Tests that multiple actions can consume and provide context variables.
    */
   public function testActionProvidedContext() {
     $rule = $this->createRulesRule();
