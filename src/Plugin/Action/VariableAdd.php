@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\AddVariable.
+ * Contains \Drupal\rules\Plugin\Action\VariableAdd.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -11,8 +11,9 @@ use Drupal\rules\Engine\RulesActionBase;
 
 /**
  * @Action(
- *   id = "rules_add_variable",
+ *   id = "rules_variable_add",
  *   label = @Translation("Add a variable"),
+ *   category = @Translation("Variable"),
  *   context = {
  *     "value" = @ContextDefinition("any",
  *       label = @Translation("Value")
@@ -25,7 +26,7 @@ use Drupal\rules\Engine\RulesActionBase;
  *    }
  * )
  */
-class AddVariable extends RulesActionBase {
+class VariableAdd extends RulesActionBase {
 
   /**
    * Executes the plugin.

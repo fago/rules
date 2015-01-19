@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Action\AddVariableTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\VariableAddTest.
  */
 
 namespace Drupal\Tests\rules\Integration\Action;
@@ -10,10 +10,10 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\AddVariable
+ * @coversDefaultClass \Drupal\rules\Plugin\Action\VariableAdd
  * @group rules_action
  */
-class AddVariableTest extends RulesIntegrationTestBase {
+class VariableAddTest extends RulesIntegrationTestBase {
 
   /**
    * {@inheritdoc}
@@ -30,8 +30,8 @@ class AddVariableTest extends RulesIntegrationTestBase {
   public function testExecute() {
     $variable = $this->randomMachineName();
 
-    /** @var \Drupal\rules\Plugin\Action\AddVariable $action */
-    $action = $this->actionManager->createInstance('rules_add_variable');
+    /** @var \Drupal\rules\Plugin\Action\VariableAdd $action */
+    $action = $this->actionManager->createInstance('rules_variable_add');
     $action->setContextValue('value', $variable);
     $action->execute();
 
