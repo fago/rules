@@ -86,6 +86,13 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $container;
 
   /**
+   * The class resolver mock for the typed data manager.
+   *
+   * @var \Drupal\Core\DependencyInjection\ClassResolverInterface
+   */
+  protected $classResolver;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -118,7 +125,12 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->rulesExpressionManager = new RulesExpressionPluginManager($this->namespaces, $this->moduleHandler);
-    $this->typedDataManager = new TypedDataManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
+
+    $this->classResolver = $this->getMockBuilder('Drupal\Core\DependencyInjection\ClassResolverInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->typedDataManager = new TypedDataManager($this->namespaces, $this->cacheBackend, $this->moduleHandler, $this->classResolver);
     $this->rulesDataProcessorManager = new RulesDataProcessorManager($this->namespaces, $this->moduleHandler);
 
     $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
