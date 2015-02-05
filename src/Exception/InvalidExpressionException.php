@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Expression\InvalidExpressionException.
+ * Contains \Drupal\rules\Exception\InvalidExpressionException.
  */
 
-namespace Drupal\rules\Expression;
+namespace Drupal\rules\Exception;
 
 use Drupal\rules\Engine\RulesException;
 

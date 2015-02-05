@@ -38,8 +38,8 @@ class DataProcessorTest extends RulesDrupalTestBase {
       ->setContextValue('type', 'status');
 
     $this->expressionManager->createRule()
-      ->addCondition($this->createCondition('rules_test_true'))
-      ->addAction($action)
+      ->addCondition('rules_test_true')
+      ->addExpressionObject($action)
       ->execute();
 
     $messages = drupal_set_message();
