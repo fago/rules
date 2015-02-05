@@ -2,7 +2,11 @@
 
 /**
  * @file
- * Rules tests.
+ * Rules 7.x tests.
+ *
+ * This files is here for keeping track which tests have been ported to Drupal
+ * 8 and which not. Any tests covered can be removed, so everything that's
+ * left in this file still needs to be ported.
  */
 
 class RulesTestCase extends DrupalWebTestCase {
