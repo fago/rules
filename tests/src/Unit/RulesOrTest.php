@@ -39,7 +39,7 @@ class RulesOrTest extends RulesUnitTestBase {
     $this->trueCondition->expects($this->once())
       ->method('executeWithState');
 
-    $this->or->addCondition($this->trueCondition);
+    $this->or->addExpressionObject($this->trueCondition);
     $this->assertTrue($this->or->execute(), 'Single condition returns TRUE.');
   }
 
@@ -62,8 +62,9 @@ class RulesOrTest extends RulesUnitTestBase {
     $this->trueCondition->expects($this->once())
       ->method('executeWithState');
 
-    $this->or->addCondition($this->trueCondition)
-      ->addCondition($this->trueCondition);
+    $this->or
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->trueCondition);
 
     $this->assertTrue($this->or->execute(), 'Two conditions returns TRUE.');
   }
@@ -76,8 +77,9 @@ class RulesOrTest extends RulesUnitTestBase {
     $this->falseCondition->expects($this->exactly(2))
       ->method('executeWithState');
 
-    $this->or->addCondition($this->falseCondition)
-      ->addCondition($this->falseCondition);
+    $this->or
+      ->addExpressionObject($this->falseCondition)
+      ->addExpressionObject($this->falseCondition);
 
     $this->assertFalse($this->or->execute(), 'Two false conditions return FALSE.');
   }

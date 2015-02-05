@@ -11,6 +11,7 @@ use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,6 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class RulesCondition extends RulesConditionBase implements RulesExpressionConditionInterface, ContainerFactoryPluginInterface {
+
+  use RulesExpressionTrait;
 
   /**
    * The condition manager used to instantiate the condition plugin.

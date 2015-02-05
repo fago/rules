@@ -8,18 +8,18 @@
 namespace Drupal\rules\Engine;
 
 /**
- * Defines a common interface for action containers.
+ * Contains action expressions.
  */
-interface RulesActionContainerInterface extends RulesExpressionActionInterface {
+interface RulesActionContainerInterface extends RulesExpressionActionInterface, RulesExpressionContainerInterface {
 
   /**
-   * Adds an action.
+   * Creates an action expression and adds it to the container.
    *
-   * @param \Drupal\rules\Engine\RulesExpressionActionInterface $action
-   *   The action object.
+   * @param string $action_id
+   *   The action plugin id.
    *
    * @return $this
    */
-  public function addAction(RulesExpressionActionInterface $action);
+  public function addAction($action_id, $configuration = NULL);
 
 }

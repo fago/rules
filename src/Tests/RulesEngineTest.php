@@ -9,6 +9,8 @@ namespace Drupal\rules\Tests;
 
 use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Plugin\RulesExpression\RulesAnd;
+use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 
 /**
  * Test using the Rules API to create and evaluate rules.
@@ -34,9 +36,9 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testRuleCreation() {
     // Create an 'and' condition container and add conditions to it.
-    $and = $this->createRulesAnd()
-      ->addCondition($this->createRulesCondition('rules_test_false'))
-      ->addCondition($this->createRulesCondition('rules_test_true')->negate())
+    $and = RulesAnd::cre()
+      ->addCondition(RulesCondition::cre(array('id' => 'rules_test_false'))
+      ->addCondition(RulesCondition::cre(array('id' => 'rules_test_true')))->negate())
       ->negate();
 
     // Test that the 'and' condition container evaluates to TRUE.
@@ -44,9 +46,9 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     // Create an 'or' condition container and add conditions to it, including
     // the previously created 'and' condition container.
-    $or = $this->createRulesOr()
-      ->addCondition($this->createRulesCondition('rules_test_true')->negate())
-      ->addCondition($this->createRulesCondition('rules_test_false'))
+    $or = $this->createOr()
+      ->addCondition($this->createCondition('rules_test_true')->negate())
+      ->addCondition($this->createCondition('rules_test_false'))
       ->addCondition($and);
 
     // Test that the 'or' condition container evaluates to TRUE.
@@ -54,16 +56,16 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     // Create a rule and add conditions to it, including the previously created
     // 'or' condition container.
-    $rule = $this->createRulesRule();
-    $rule->addCondition($this->createRulesCondition('rules_test_true'))
-      ->addCondition($this->createRulesCondition('rules_test_true'))
+    $rule = $this->createRule();
+    $rule->addCondition($this->createCondition('rules_test_true'))
+      ->addCondition($this->createCondition('rules_test_true'))
       ->addCondition($or);
 
     // Test that the rule's condition container evaluates to TRUE.
     $this->assertTrue($rule->getConditions()->execute());
 
     // Add an action to it and execute the rule.
-    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->addAction($this->createAction('rules_test_log'));
     $rule->execute();
 
     // Test that the action logged something.
@@ -75,7 +77,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests passing a string context to a condition.
    */
   public function testContextPassing() {
-    $rule = $this->createRulesRule([
+    $rule = $this->createRule([
       'context_definitions' => [
         'test' => [
           'type' => 'string',
@@ -84,12 +86,12 @@ class RulesEngineTest extends RulesDrupalTestBase {
       ],
     ]);
 
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+    $rule->addCondition($this->expressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
       'context_mapping' => ['text:select' => 'test'],
     ]));
 
-    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->addAction($this->createAction('rules_test_log'));
     $rule->setContextValue('test', 'test value');
     $rule->execute();
 
@@ -102,19 +104,19 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests that a condition can provide a value and another one can consume it.
    */
   public function testProvidedVariables() {
-    $rule = $this->createRulesRule();
+    $rule = $this->createRule();
 
     // The first condition provides a "provided_text" variable.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+    $rule->addCondition($this->expressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_provider',
     ]));
     // The second condition consumes the variable.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+    $rule->addCondition($this->expressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_string_condition',
       'context_mapping' => ['text:select' => 'provided_text'],
     ]));
 
-    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->addAction($this->createAction('rules_test_log'));
     $rule->execute();
 
     // Test that the action logged something.
@@ -126,10 +128,10 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests that provided variables can be renamed with configuration.
    */
   public function testRenamingOfProvidedVariables() {
-    $rule = $this->createRulesRule();
+    $rule = $this->createRule();
 
     // The condition provides a "provided_text" variable.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+    $rule->addCondition($this->expressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_provider',
       // Expose the variable as 'newname'.
       'provides_mapping' => ['provided_text' => 'newname'],
@@ -147,22 +149,22 @@ class RulesEngineTest extends RulesDrupalTestBase {
    * Tests that multiple actions can consume and provide context variables.
    */
   public function testActionProvidedContext() {
-    $rule = $this->createRulesRule();
+    $rule = $this->createRule();
 
     // The condition provides a "provided_text" variable.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
+    $rule->addCondition($this->expressionManager->createInstance('rules_condition', [
       'condition_id' => 'rules_test_provider',
     ]));
 
     // The action provides a "concatenated" variable.
-    $rule->addAction($this->rulesExpressionManager->createInstance('rules_action', [
+    $rule->addAction($this->expressionManager->createInstance('rules_action', [
       'action_id' => 'rules_test_string',
       'context_mapping' => ['text:select' => 'provided_text'],
     ]));
 
     // Add the same action again which will provide a "concatenated2" variable
     // now.
-    $rule->addAction($this->rulesExpressionManager->createInstance('rules_action', [
+    $rule->addAction($this->expressionManager->createInstance('rules_action', [
       'action_id' => 'rules_test_string',
       'context_mapping' => ['text:select' => 'concatenated'],
       'provides_mapping' => ['concatenated' => 'concatenated2'],

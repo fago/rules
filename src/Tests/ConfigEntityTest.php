@@ -41,7 +41,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Tests that an empty rule configuration can be saved.
    */
   public function testSavingEmptyRule() {
-    $rule = $this->createRulesRule();
+    $rule = $this->expressionManager->createRule();
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
@@ -54,9 +54,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Tests saving the configuration of an action and then loading it again.
    */
   public function testConfigAction() {
-    $action = $this->rulesExpressionManager->createInstance('rules_action', [
-      'action_id' => 'rules_test_log',
-    ]);
+    $action = $this->expressionManager->createAction('rules_test_log');
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
@@ -83,9 +81,10 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    */
   public function testConfigRule() {
     // Create a simple rule with one action and one condition.
-    $rule = $this->createRulesRule();
-    $rule->addCondition($this->createRulesCondition('rules_test_true'));
-    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule = $this->expressionManager
+      ->createRule();
+    $rule->addCondition('rules_test_true');
+    $rule->addAction('rules_test_log');
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
@@ -108,7 +107,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    * Make sure that expressions using context definitions can be exported.
    */
   public function testContextDefinitionExport() {
-    $rule = $this->createRulesRule([
+    $rule = $this->expressionManager->createRule([
       'context_definitions' => [
         'test' => [
           'type' => 'string',

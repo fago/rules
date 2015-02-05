@@ -12,7 +12,7 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionBase;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RulesAction extends RulesActionBase implements ContainerFactoryPluginInterface, RulesExpressionActionInterface {
 
-  use RulesExpressionBase;
+  use RulesExpressionTrait;
 
   /**
    * The action manager used to instantiate the action plugin.

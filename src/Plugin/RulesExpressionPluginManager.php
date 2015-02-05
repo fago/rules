@@ -18,11 +18,81 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 class RulesExpressionPluginManager extends DefaultPluginManager {
 
   /**
+   * A map from class names to plugin ids.
+   *
+   * @var string[]
+   */
+  protected $classNamePluginIdMap;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesExpression') {
     $this->alterInfo('rules_expression');
     parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, 'Drupal\rules\Engine\RulesExpressionInterface', $plugin_definition_annotation_name);
+  }
+
+  /**
+   * Creates a new rule.
+   *
+   * @param array $configuration
+   *   The configuration array to create the plugin instance with.
+   *
+   * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
+   *   The created rule.
+   */
+  public function createRule(array $configuration = []) {
+    return $this->createInstance('rules_rule', $configuration);
+  }
+
+  /**
+   * Creates a new action expression.
+   *
+   * @param string $id
+   *   The action plugin id.
+   *
+   * @return \Drupal\rules\Engine\RulesActionInterface;
+   *   The created action.
+   */
+  public function createAction($id) {
+    return $this->createInstance('rules_action', [
+      'action_id' => $id,
+    ]);
+  }
+
+  /**
+   * Creates a new condition expression.
+   *
+   * @param string $id
+   *   The condition plugin id.
+   *
+   * @return \Drupal\rules\Engine\RulesConditionInterface
+   *   The created condition.
+   */
+  public function createCondition($id) {
+    return $this->createInstance('rules_condition', [
+      'condition_id' => $id,
+    ]);
+  }
+
+  /**
+   * Creates a new 'and' condition container.
+   *
+   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   *   The created 'and' condition container.
+   */
+  public function createAnd() {
+    return $this->createInstance('rules_and');
+  }
+
+  /**
+   * Creates a new 'or' condition container.
+   *
+   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   *   The created 'or' condition container.
+   */
+  public function createOr() {
+    return $this->createInstance('rules_or');
   }
 
 }

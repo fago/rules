@@ -19,7 +19,7 @@ class DataProcessorTest extends RulesDrupalTestBase {
    */
   public function testNumericOffset() {
     // Configure a simple rule with one action.
-    $action = $this->rulesExpressionManager->createInstance('rules_action', [
+    $action = $this->expressionManager->createInstance('rules_action', [
       'action_id' => 'rules_system_message',
       // @todo Actually the data processor plugin only applies to numbers, so is
       // kind of an invalid configuration. Since the configuration is not
@@ -37,8 +37,8 @@ class DataProcessorTest extends RulesDrupalTestBase {
     $action->setContextValue('message', 1)
       ->setContextValue('type', 'status');
 
-    $this->createRulesRule()
-      ->addCondition($this->createRulesCondition('rules_test_true'))
+    $this->expressionManager->createRule()
+      ->addCondition($this->createCondition('rules_test_true'))
       ->addAction($action)
       ->execute();
 
