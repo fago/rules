@@ -8,7 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Expression\InvalidExpressionException;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

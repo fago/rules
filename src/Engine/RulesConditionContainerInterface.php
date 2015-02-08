@@ -10,7 +10,7 @@ namespace Drupal\rules\Engine;
 /**
  * Contains condition expressions.
  */
-interface RulesConditionContainerInterface extends RulesExpressionContainerInterface {
+interface RulesConditionContainerInterface extends RulesExpressionConditionInterface, RulesExpressionContainerInterface {
 
   /**
    * Creates a condition expression and adds it to the container.
