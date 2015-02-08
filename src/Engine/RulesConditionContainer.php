@@ -65,7 +65,7 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
    * {@inheritdoc}
    */
   public function addExpressionObject(RulesExpressionInterface $expression) {
-    if (!$expression instanceof \Drupal\rules\Engine\RulesExpressionConditionInterface) {
+    if (!$expression instanceof RulesExpressionConditionInterface) {
       throw new InvalidExpressionException();
     }
     $this->conditions[] = $expression;
@@ -75,9 +75,9 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration) {
+  public function addExpression($plugin_id, $configuration = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration)
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
     );
   }
 

@@ -19,16 +19,18 @@ interface RulesExpressionContainerInterface extends RulesExpressionInterface {
   /**
    * Creates and adds an expression.
    *
-   * @param \Drupal\rules\Engine\RulesExpressionInterface $expression
-   *   The expression object.
+   * @param string $plugin_id
+   *   The id of the expression plugin to add.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
-   * @throws \Drupal\rules\Expression\InvalidExpressionException
+   * @throws \Drupal\rules\Exception\InvalidExpressionException
    *   Thrown if the wrong expression is passed; e.g. if a condition expression
    *   is added to an action expression container.
    *
    * @return $this
    */
-  public function addExpression($plugin_id, $configuration);
+  public function addExpression($plugin_id, $configuration = NULL);
 
   /**
    * Adds an expression object.
@@ -36,12 +38,12 @@ interface RulesExpressionContainerInterface extends RulesExpressionInterface {
    * @param \Drupal\rules\Engine\RulesExpressionInterface $expression
    *   The expression object.
    *
-   * @throws \Drupal\rules\Expression\InvalidExpressionException
+   * @throws \Drupal\rules\Exception\InvalidExpressionException
    *   Thrown if the wrong expression is passed; e.g. if a condition expression
    *   is added to an action expression container.
    *
    * @return $this
    */
-  public function addExpressionObject(\Drupal\rules\Engine\RulesExpressionInterface $expression);
+  public function addExpressionObject(RulesExpressionInterface $expression);
 
 }

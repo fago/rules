@@ -22,6 +22,8 @@ interface RuleInterface extends RulesExpressionContainerInterface, RulesExpressi
    *
    * @param string $condition_id
    *   The condition plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
    * @return \Drupal\rules\Engine\RulesConditionInterface
    *   The created condition.
@@ -51,6 +53,8 @@ interface RuleInterface extends RulesExpressionContainerInterface, RulesExpressi
    *
    * @param string $action_id
    *   The action plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
    * @return $this
    */

@@ -9,8 +9,6 @@ namespace Drupal\rules\Tests;
 
 use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Plugin\RulesExpression\RulesAnd;
-use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 
 /**
  * Test using the Rules API to create and evaluate rules.

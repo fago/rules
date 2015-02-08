@@ -16,7 +16,9 @@ interface RulesActionContainerInterface extends RulesExpressionActionInterface, 
    * Creates an action expression and adds it to the container.
    *
    * @param string $action_id
-   *   The action plugin id.
+   *   The action plugin id
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
    * @return $this
    */

@@ -17,6 +17,8 @@ interface RulesConditionContainerInterface extends RulesExpressionConditionInter
    *
    * @param string $condition_id
    *   The condition plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
    * @return \Drupal\rules\Engine\RulesConditionInterface
    *   The created condition.

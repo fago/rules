@@ -10,10 +10,11 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
+use Drupal\rules\Engine\RulesExpressionActionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Expression\InvalidExpressionException;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,7 +76,7 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
    * {@inheritdoc}
    */
   public function addExpressionObject(RulesExpressionInterface $expression) {
-    if (!$expression instanceof \Drupal\rules\Engine\RulesExpressionActionInterface) {
+    if (!$expression instanceof RulesExpressionActionInterface) {
       throw new InvalidExpressionException();
     }
     $this->actions[] = $expression;
@@ -85,9 +86,9 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration) {
+  public function addExpression($plugin_id, $configuration = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration)
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
     );
   }
 

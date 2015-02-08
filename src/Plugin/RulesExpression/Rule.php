@@ -12,6 +12,8 @@ use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
+use Drupal\rules\Engine\RulesExpressionActionInterface;
+use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
@@ -184,10 +186,10 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function addExpressionObject(RulesExpressionInterface $expression) {
-    if ($expression instanceof \Drupal\rules\Engine\RulesExpressionConditionInterface) {
+    if ($expression instanceof RulesExpressionConditionInterface) {
       $this->conditions->addExpressionObject($expression);
     }
-    elseif ($expression instanceof \Drupal\rules\Engine\RulesExpressionActionInterface) {
+    elseif ($expression instanceof RulesExpressionActionInterface) {
       $this->actions->addExpressionObject($expression);
     }
     else {
@@ -199,9 +201,9 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration) {
+  public function addExpression($plugin_id, $configuration = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration)
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
     );
   }
 
