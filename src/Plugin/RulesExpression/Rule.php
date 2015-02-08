@@ -15,6 +15,7 @@ use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

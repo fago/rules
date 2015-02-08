@@ -55,10 +55,7 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The data processor plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, RulesDataProcessorManager $processor_manager) {
-    // Per default the result of this expression is not negated.
-    $configuration += ['negate' => FALSE];
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
     $this->conditionManager = $conditionManager;
     $this->processorManager = $processor_manager;
   }
@@ -74,6 +71,16 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
       $container->get('plugin.manager.condition'),
       $container->get('plugin.manager.rules_data_processor')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return [
+      // Per default the result of this expression is not negated.
+      'negate' => FALSE,
+    ];
   }
 
   /**
