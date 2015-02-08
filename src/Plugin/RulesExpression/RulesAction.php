@@ -12,7 +12,7 @@ use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionBase;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RulesAction extends RulesActionBase implements ContainerFactoryPluginInterface, RulesExpressionActionInterface {
 
-  use RulesExpressionBase;
+  use RulesExpressionTrait;
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -70,6 +70,19 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
       $container->get('plugin.manager.action'),
       $container->get('plugin.manager.rules_data_processor')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    // If the plugin id has been set already, keep it if not specified.
+    if (isset($this->configuration['action_id'])) {
+      $configuration += [
+        'action_id' => $this->configuration['action_id']
+      ];
+    }
+    return parent::setConfiguration($configuration);
   }
 
   /**

@@ -8,18 +8,20 @@
 namespace Drupal\rules\Engine;
 
 /**
- * Defines a common interface for condition containers.
+ * Contains condition expressions.
  */
-interface RulesConditionContainerInterface extends RulesConditionInterface, RulesExpressionConditionInterface {
+interface RulesConditionContainerInterface extends RulesExpressionConditionInterface, RulesExpressionContainerInterface {
 
   /**
-   * Adds a condition.
+   * Creates a condition expression and adds it to the container.
    *
-   * @param \Drupal\rules\Engine\RulesExpressionConditionInterface $condition
-   *   The condition object.
+   * @param string $condition_id
+   *   The condition plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
-   * @return $this
+   * @return \Drupal\rules\Engine\RulesConditionInterface
+   *   The created condition.
    */
-  public function addCondition(RulesExpressionConditionInterface $condition);
-
+  public function addCondition($condition_id, $configuration = NULL);
 }

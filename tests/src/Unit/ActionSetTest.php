@@ -39,7 +39,7 @@ class ActionSetTest extends RulesUnitTestBase {
     $this->testAction->expects($this->once())
       ->method('executeWithState');
 
-    $this->actionSet->addAction($this->testAction)->execute();
+    $this->actionSet->addExpressionObject($this->testAction)->execute();
   }
 
   /**
@@ -50,8 +50,8 @@ class ActionSetTest extends RulesUnitTestBase {
     $this->testAction->expects($this->exactly(2))
       ->method('executeWithState');
 
-    $this->actionSet->addAction($this->testAction)
-      ->addAction($this->testAction)
+    $this->actionSet->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->testAction)
       ->execute();
   }
 
@@ -64,10 +64,10 @@ class ActionSetTest extends RulesUnitTestBase {
       ->method('executeWithState');
 
     $inner = $this->getMockActionSet()
-      ->addAction($this->testAction);
+      ->addExpressionObject($this->testAction);
 
-    $this->actionSet->addAction($this->testAction)
-      ->addAction($inner)
+    $this->actionSet->addExpressionObject($this->testAction)
+      ->addExpressionObject($inner)
       ->execute();
   }
 

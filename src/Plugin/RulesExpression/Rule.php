@@ -13,9 +13,11 @@ use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
+use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -33,7 +35,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPluginInterface {
 
-  use RulesExpressionBase;
+  use RulesExpressionTrait;
 
   /**
    * List of conditions that must be met before actions are executed.
@@ -137,8 +139,8 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addCondition(RulesExpressionConditionInterface $condition) {
-    $this->conditions->addCondition($condition);
+  public function addCondition($condition_id, $configuration = NULL) {
+    $this->conditions->addCondition($condition_id, $configuration);
     return $this;
   }
 
@@ -160,8 +162,8 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addAction(RulesExpressionActionInterface $action) {
-    $this->actions->addAction($action);
+  public function addAction($action_id, $configuration = NULL) {
+    $this->actions->addAction($action_id, $configuration);
     return $this;
   }
 
@@ -178,6 +180,31 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   public function setActions(RulesActionContainerInterface $actions) {
     $this->actions = $actions;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addExpressionObject(RulesExpressionInterface $expression) {
+    if ($expression instanceof RulesExpressionConditionInterface) {
+      $this->conditions->addExpressionObject($expression);
+    }
+    elseif ($expression instanceof RulesExpressionActionInterface) {
+      $this->actions->addExpressionObject($expression);
+    }
+    else {
+      throw new InvalidExpressionException();
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addExpression($plugin_id, $configuration = NULL) {
+    return $this->addExpressionObject(
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+    );
   }
 
   /**

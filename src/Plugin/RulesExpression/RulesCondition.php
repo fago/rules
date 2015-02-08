@@ -11,6 +11,7 @@ use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Plugin\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,6 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class RulesCondition extends RulesConditionBase implements RulesExpressionConditionInterface, ContainerFactoryPluginInterface {
+
+  use RulesExpressionTrait;
 
   /**
    * The condition manager used to instantiate the condition plugin.
@@ -52,10 +55,9 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The data processor plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, RulesDataProcessorManager $processor_manager) {
-    // Per default the result of this expression is not negated.
-    $configuration += ['negate' => FALSE];
+    // Make sure defaults are applied.
+    $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
     $this->conditionManager = $conditionManager;
     $this->processorManager = $processor_manager;
   }
@@ -71,6 +73,29 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
       $container->get('plugin.manager.condition'),
       $container->get('plugin.manager.rules_data_processor')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return [
+      // Per default the result of this expression is not negated.
+      'negate' => FALSE,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    // If the plugin id has been set already, keep it if not specified.
+    if (isset($this->configuration['condition_id'])) {
+      $configuration += [
+        'condition_id' => $this->configuration['condition_id']
+      ];
+    }
+    return parent::setConfiguration($configuration);
   }
 
   /**

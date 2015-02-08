@@ -62,7 +62,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $user->save();
     $node->setOwner($user);
 
-    $rule = $this->createRulesRule([
+    $rule = $this->expressionManager->createRule([
       'context_definitions' => [
         'node' => [
           'type' => 'entity:node',
@@ -72,18 +72,16 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     ]);
 
     // Test that the long detailed data selector works.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
-      'condition_id' => 'rules_test_string_condition',
+    $rule->addCondition('rules_test_string_condition', [
       'context_mapping' => ['text:select' => 'node:uid:0:entity:name:0:value'],
-    ]));
+    ]);
 
     // Test that the shortened data selector without list indices.
-    $rule->addCondition($this->rulesExpressionManager->createInstance('rules_condition', [
-      'condition_id' => 'rules_test_string_condition',
+    $rule->addCondition('rules_test_string_condition', [
       'context_mapping' => ['text:select' => 'node:uid:entity:name:value'],
-    ]));
+    ]);
 
-    $rule->addAction($this->createRulesAction('rules_test_log'));
+    $rule->addAction('rules_test_log');
     $rule->setContextValue('node', $node);
     $rule->execute();
 
@@ -110,8 +108,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     // We use the rules_test_node action plugin which marks its node context for
     // auto saving.
     // @see \Drupal\rules_test\Plugin\Action\TestNodeAction
-    $action = $this->rulesExpressionManager->createInstance('rules_action', [
-      'action_id' => 'rules_test_node',
+    $action = $this->expressionManager->createAction('rules_test_node', [
       'context_definitions' => [
         'node' => [
           'type' => 'entity:node',

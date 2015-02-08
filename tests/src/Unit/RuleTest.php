@@ -116,8 +116,9 @@ class RuleTest extends RulesUnitTestBase {
     $this->testAction->expects($this->once())
       ->method('executeWithState');
 
-    $this->rule->addCondition($this->trueCondition)
-      ->addAction($this->testAction)
+    $this->rule
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->testAction)
       ->execute();
   }
 
@@ -131,8 +132,9 @@ class RuleTest extends RulesUnitTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $this->rule->addCondition($this->falseCondition)
-      ->addAction($this->testAction)
+    $this->rule
+      ->addExpressionObject($this->falseCondition)
+      ->addExpressionObject($this->testAction)
       ->execute();
   }
 
@@ -146,9 +148,10 @@ class RuleTest extends RulesUnitTestBase {
     $this->testAction->expects($this->once())
       ->method('executeWithState');
 
-    $this->rule->addCondition($this->trueCondition)
-      ->addCondition($this->trueCondition)
-      ->addAction($this->testAction)
+    $this->rule
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->testAction)
       ->execute();
   }
 
@@ -162,9 +165,10 @@ class RuleTest extends RulesUnitTestBase {
     $this->testAction->expects($this->never())
       ->method('execute');
 
-    $this->rule->addCondition($this->trueCondition)
-      ->addCondition($this->falseCondition)
-      ->addAction($this->testAction)
+    $this->rule
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->falseCondition)
+      ->addExpressionObject($this->testAction)
       ->execute();
   }
 
@@ -178,11 +182,12 @@ class RuleTest extends RulesUnitTestBase {
       ->method('executeWithState');
 
     $nested = $this->getMockRule()
-      ->addCondition($this->trueCondition)
-      ->addAction($this->testAction);
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->testAction);
 
-    $this->rule->addCondition($this->trueCondition)
-      ->addAction($nested)
+    $this->rule
+      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($nested)
       ->execute();
   }
 

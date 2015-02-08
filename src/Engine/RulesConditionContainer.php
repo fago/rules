@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Container for conditions.
  */
 abstract class RulesConditionContainer extends RulesConditionBase implements RulesConditionContainerInterface, ContainerFactoryPluginInterface {
+
+  use RulesExpressionTrait;
 
   /**
    * List of conditions that are evaluated.
@@ -37,11 +40,12 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, RulesExpressionPluginManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->expressionManager = $expression_manager;
 
     $configuration += ['conditions' => []];
     foreach ($configuration['conditions'] as $condition_config) {
-      $condition = $expression_manager->createInstance($condition_config['id'], $condition_config);
-      $this->addCondition($condition);
+      $condition = $this->expressionManager->createInstance($condition_config['id'], $condition_config);
+      $this->addExpressionObject($condition);
     }
   }
 
@@ -60,9 +64,32 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * {@inheritdoc}
    */
-  public function addCondition(RulesExpressionConditionInterface $condition) {
-    $this->conditions[] = $condition;
+  public function addExpressionObject(RulesExpressionInterface $expression) {
+    if (!$expression instanceof RulesExpressionConditionInterface) {
+      throw new InvalidExpressionException();
+    }
+    $this->conditions[] = $expression;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addExpression($plugin_id, $configuration = NULL) {
+    return $this->addExpressionObject(
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addCondition($condition_id, $configuration = NULL) {
+    return $this->addExpressionObject(
+      $this->expressionManager
+        ->createCondition($condition_id)
+        ->setConfiguration($configuration ?: [])
+    );
   }
 
   /**

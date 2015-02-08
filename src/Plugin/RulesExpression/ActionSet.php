@@ -11,8 +11,10 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Engine\RulesActionBase;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionBase;
+use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Plugin\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,7 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ActionSet extends RulesActionBase implements RulesActionContainerInterface, ContainerFactoryPluginInterface {
 
-  use RulesExpressionBase;
+  use RulesExpressionTrait;
 
   /**
    * List of actions that will be executed.
@@ -49,11 +51,12 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->expressionManager = $expression_manager;
 
     $configuration += ['actions' => []];
     foreach ($configuration['actions'] as $action_config) {
       $action = $expression_manager->createInstance($action_config['id'], $action_config);
-      $this->addAction($action);
+      $this->addExpressionObject($action);
     }
   }
 
@@ -72,9 +75,32 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
   /**
    * {@inheritdoc}
    */
-  public function addAction(RulesExpressionActionInterface $action) {
-    $this->actions[] = $action;
+  public function addExpressionObject(RulesExpressionInterface $expression) {
+    if (!$expression instanceof RulesExpressionActionInterface) {
+      throw new InvalidExpressionException();
+    }
+    $this->actions[] = $expression;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addExpression($plugin_id, $configuration = NULL) {
+    return $this->addExpressionObject(
+      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addAction($action_id, $configuration = NULL) {
+    return $this->addExpressionObject(
+      $this->expressionManager
+        ->createAction($action_id)
+        ->setConfiguration($configuration ?: [])
+    );
   }
 
   /**

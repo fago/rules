@@ -9,22 +9,26 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
-use Drupal\rules\Engine\RulesExpressionConditionInterface;
+use Drupal\rules\Engine\RulesExpressionActionInterface;
+use Drupal\rules\Engine\RulesExpressionContainerInterface;
 
 /**
  * Defines a rule.
  */
-interface RuleInterface extends RulesActionContainerInterface {
+interface RuleInterface extends RulesExpressionContainerInterface, RulesExpressionActionInterface {
 
   /**
-   * Adds a condition.
+   * Creates a condition expression and adds it to the container.
    *
-   * @param \Drupal\rules\Engine\RulesExpressionConditionInterface $condition
-   *   The condition object.
+   * @param string $condition_id
+   *   The condition plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
    *
-   * @return $this
+   * @return \Drupal\rules\Engine\RulesConditionInterface
+   *   The created condition.
    */
-  public function addCondition(RulesExpressionConditionInterface $condition);
+  public function addCondition($condition_id, $configuration = NULL);
 
   /**
    * Returns the conditions container of this rule.
@@ -43,6 +47,18 @@ interface RuleInterface extends RulesActionContainerInterface {
    * @return $this
    */
   public function setConditions(RulesConditionContainerInterface $conditions);
+
+  /**
+   * Creates an action expression and adds it to the container.
+   *
+   * @param string $action_id
+   *   The action plugin id.
+   * @param array $configuration
+   *   (optional) The configuration for the specified plugin.
+   *
+   * @return $this
+   */
+  public function addAction($action_id, $configuration = NULL);
 
   /**
    * Returns the actions of this rule.

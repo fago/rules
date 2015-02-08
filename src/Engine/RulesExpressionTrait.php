@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesExpressionBase.
+ * Contains \Drupal\rules\Engine\RulesExpressionTrait.
  */
 
 namespace Drupal\rules\Engine;
@@ -10,7 +10,12 @@ namespace Drupal\rules\Engine;
 /**
  * Provides base methods for Rules expression objects.
  */
-trait RulesExpressionBase {
+trait RulesExpressionTrait {
+
+  /**
+   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   */
+  protected $expressionManager;
 
   /**
    * Executes a rules expression.

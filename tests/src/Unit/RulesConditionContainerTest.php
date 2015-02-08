@@ -37,7 +37,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    */
   public function testAddCondition() {
     $container = $this->getMockConditionContainer();
-    $container->addCondition($this->trueCondition);
+    $container->addExpressionObject($this->trueCondition);
 
     $property = new \ReflectionProperty($container, 'conditions');
     $property->setAccessible(TRUE);
