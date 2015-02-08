@@ -55,6 +55,8 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The data processor plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, RulesDataProcessorManager $processor_manager) {
+    // Make sure defaults are applied.
+    $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->conditionManager = $conditionManager;
     $this->processorManager = $processor_manager;
