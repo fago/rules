@@ -11,7 +11,7 @@ actions based on occurring events (ECA-rules).
 
 ## Contributing
 
-Link to [Rules 8.x-3.x sprint issues](https://www.drupal.org/project/issues/search/rules?version%5B%5D=8.x&issue_tags=sprint).
+Link to [Rules 8.x-3.x contributing tasks](https://www.drupal.org/node/2245015#contributing).
 
 For some time, development will happen on GitHub using the pull request model:
 in case you are not familiar with that, please take a few minutes to read the
