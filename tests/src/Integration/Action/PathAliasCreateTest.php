@@ -45,7 +45,7 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Create any path alias', $this->action->summary());
@@ -54,7 +54,7 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   /**
    * Tests the action execution when no language is specified.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionWithoutLanguage() {
     $this->aliasStorage->expects($this->once())
@@ -70,7 +70,7 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   /**
    * Tests the action execution when a language is specified.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionWithLanguage() {
     $language = $this->getMock('Drupal\Core\Language\LanguageInterface');

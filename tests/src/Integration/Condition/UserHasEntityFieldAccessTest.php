@@ -50,7 +50,7 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('User has access to field on entity', $this->condition->summary());
@@ -59,7 +59,7 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     $account = $this->getMock('Drupal\user\UserInterface');

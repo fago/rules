@@ -34,7 +34,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('List contains', $this->condition->summary());
@@ -43,7 +43,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
 

@@ -53,7 +53,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   /**
    * Tests that the dependencies are properly set in the constructor.
    *
-   * @covers ::__construct()
+   * @covers ::__construct
    */
   public function testConstructor() {
     $property = new \ReflectionProperty($this->condition, 'aliasManager');
@@ -65,7 +65,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Path alias exists', $this->condition->summary());
@@ -74,7 +74,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition for an alias that can be resolved.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationAliasWithPath() {
     $this->aliasManager->expects($this->at(0))
@@ -101,7 +101,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition for an alias that can not be resolved.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationAliasWithoutPath() {
     $this->aliasManager->expects($this->at(0))

@@ -34,7 +34,7 @@ class DataIsEmptyTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Data value is empty', $this->condition->summary());
@@ -43,7 +43,7 @@ class DataIsEmptyTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     $entity_adapter = $this->getMock('\Drupal\Core\TypedData\ComplexDataInterface');

@@ -44,7 +44,7 @@ class AliasDeleteTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Delete any path alias', $this->action->summary());
@@ -53,7 +53,7 @@ class AliasDeleteTest extends RulesIntegrationTestBase {
   /**
    * Tests the action execution.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecution() {
     $alias = 'about/team';

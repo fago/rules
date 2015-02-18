@@ -34,7 +34,7 @@ class EntitySaveTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Save entity', $this->action->summary());
@@ -43,7 +43,7 @@ class EntitySaveTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the action execution when saving immediately.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionImmediately() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
@@ -60,7 +60,7 @@ class EntitySaveTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the action execution when saving is postponed.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionPostponed() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');

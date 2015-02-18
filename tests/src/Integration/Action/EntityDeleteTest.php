@@ -34,7 +34,7 @@ class EntityDeleteTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Delete entity', $this->action->summary());
@@ -43,7 +43,7 @@ class EntityDeleteTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the action execution.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecution() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');

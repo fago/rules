@@ -34,7 +34,7 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Entity has field', $this->condition->summary());
@@ -43,7 +43,7 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');

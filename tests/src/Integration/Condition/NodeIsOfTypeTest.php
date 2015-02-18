@@ -35,7 +35,7 @@ class NodeIsOfTypeTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Node is of type', $this->condition->summary());
@@ -44,7 +44,7 @@ class NodeIsOfTypeTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     $node = $this->getMock('Drupal\node\NodeInterface');

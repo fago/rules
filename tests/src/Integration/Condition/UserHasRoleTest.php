@@ -35,7 +35,7 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('User has role(s)', $this->condition->summary());
@@ -44,7 +44,7 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     // Set-up a mock object with roles 'authenticated' and 'editor', but not

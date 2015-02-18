@@ -25,7 +25,7 @@ class VariableAddTest extends RulesIntegrationTestBase {
   /**
    * Test the action execution.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testExecute() {
     $variable = $this->randomMachineName();

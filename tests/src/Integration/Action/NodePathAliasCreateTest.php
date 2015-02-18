@@ -44,7 +44,7 @@ class NodePathAliasCreateTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Create node path alias', $this->action->summary());
@@ -53,7 +53,7 @@ class NodePathAliasCreateTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the action execution with an unsaved node.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionWithUnsavedNode() {
     $node = $this->getMockNode();
@@ -74,7 +74,7 @@ class NodePathAliasCreateTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the action execution with a saved node.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionWithSavedNode() {
     $node = $this->getMockNode();

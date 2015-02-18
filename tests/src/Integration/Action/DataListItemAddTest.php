@@ -34,7 +34,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Add list item', $this->action->summary());
@@ -43,7 +43,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the action execution with default values.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionWithDefaults() {
     // Test adding a value at the end (default position).
@@ -67,7 +67,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the action execution - item append.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionItemAppend() {
     // Test adding a value at the end.
@@ -92,7 +92,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the action execution - item prepend.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionItemPrepend() {
     // Test adding a value at the start.
@@ -117,7 +117,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the action execution - enforce unique items.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionEnforceUnique() {
     // Test unique.
@@ -142,7 +142,7 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   /**
    * Tests the action execution - add non-unique items.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testActionExecutionNonUnique() {
     // Test non-unique.

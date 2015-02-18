@@ -33,7 +33,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   /**
    * Tests adding conditions to the condition container.
    *
-   * @covers ::addCondition()
+   * @covers ::addCondition
    */
   public function testAddCondition() {
     $container = $this->getMockConditionContainer();
@@ -48,8 +48,8 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   /**
    * Tests negating the result of the condition container.
    *
-   * @covers ::negate()
-   * @covers ::isNegated()
+   * @covers ::negate
+   * @covers ::isNegated
    */
   public function testNegate() {
     $container = $this->getMockConditionContainer(['evaluate']);
@@ -68,7 +68,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   /**
    * Tests executing the condition container.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testExecute() {
     $container = $this->getMockConditionContainer(['evaluate']);
@@ -82,7 +82,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   /**
    * Tests executing the condition container with an executable manager.
    *
-   * @covers ::execute()
+   * @covers ::execute
    */
   public function testExecuteWithExecutableManager() {
     $container = $this->getMockConditionContainer(['evaluate']);

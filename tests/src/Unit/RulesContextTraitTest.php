@@ -30,7 +30,7 @@ class RulesContextTraitTest extends RulesUnitTestBase {
   /**
    * Tests that a missing required context triggers an exception.
    *
-   * @covers ::mapContext()
+   * @covers ::mapContext
    * @expectedException \Drupal\rules\Engine\RulesEvaluationException
    * @expectedExceptionMessage Required context test is missing for plugin testplugin.
    */

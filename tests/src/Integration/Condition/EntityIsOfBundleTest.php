@@ -34,7 +34,7 @@ class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Entity is of bundle', $this->condition->summary());
@@ -43,7 +43,7 @@ class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests evaluating the condition.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluation() {
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');

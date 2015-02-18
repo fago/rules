@@ -34,7 +34,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests the summary.
    *
-   * @covers ::summary()
+   * @covers ::summary
    */
   public function testSummary() {
     $this->assertEquals('Data comparison', $this->condition->summary());
@@ -43,7 +43,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition with the "equals" operator.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorEquals() {
     // Test that when a boolean data does not equal a boolean value
@@ -96,7 +96,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition with the "contains" operator.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorContains() {
     // Test that when the data string contains the value string, and the operator
@@ -135,7 +135,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition with the "IN" operator.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorIn() {
     // Test that when the data string is 'IN' the value array, TRUE is returned.
@@ -157,7 +157,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition with the "is less than" operator.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorLessThan() {
     // Test that when data is less than value and operator is '<',
@@ -180,7 +180,7 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   /**
    * Tests evaluating the condition with the "is greater than" operator.
    *
-   * @covers ::evaluate()
+   * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorGreaterThan() {
     // Test that when data is greater than value and operator is '>',
