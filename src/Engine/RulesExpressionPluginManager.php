@@ -5,7 +5,7 @@
  * Contains \Drupal\rules\Plugin\RulesExpressionPluginManager.
  */
 
-namespace Drupal\rules\Plugin;
+namespace Drupal\rules\Engine;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -51,7 +51,7 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
    * @param string $id
    *   The action plugin id.
    *
-   * @return \Drupal\rules\Engine\RulesActionInterface;
+   * @return \Drupal\rules\Core\RulesActionInterface;
    *   The created action.
    */
   public function createAction($id) {
@@ -66,7 +66,7 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
    * @param string $id
    *   The condition plugin id.
    *
-   * @return \Drupal\rules\Engine\RulesConditionInterface
+   * @return \Drupal\rules\Core\RulesConditionInterface
    *   The created condition.
    */
   public function createCondition($id) {

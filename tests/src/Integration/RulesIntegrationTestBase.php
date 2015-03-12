@@ -12,8 +12,8 @@ use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Plugin\RulesDataProcessorManager;
-use Drupal\rules\Plugin\RulesExpressionPluginManager;
+use Drupal\rules\Engine\RulesDataProcessorManager;
+use Drupal\rules\Engine\RulesExpressionPluginManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -47,12 +47,12 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $conditionManager;
 
   /**
-   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
    */
   protected $rulesExpressionManager;
 
   /**
-   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
+   * @var \Drupal\rules\Engine\RulesDataProcessorManager
    */
   protected $rulesDataProcessorManager;
 

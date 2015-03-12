@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesActionInterface.
+ * Contains \Drupal\rules\Core\RulesActionInterface.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Action\ActionInterface;

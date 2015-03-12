@@ -10,11 +10,11 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Engine\RulesActionBase;
+use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Plugin\RulesDataProcessorManager;
+use Drupal\rules\Engine\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -52,7 +52,7 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
    *   The plugin implementation definition.
    * @param \Drupal\Core\Action\ActionManager $action_manager
    *   The action manager.
-   * @param \Drupal\rules\Plugin\RulesDataProcessorManager $processor_manager
+   * @param \Drupal\rules\Engine\RulesDataProcessorManager $processor_manager
    *   The data processor plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ActionManager $action_manager, RulesDataProcessorManager $processor_manager) {

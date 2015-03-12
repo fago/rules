@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\Action;
 
-use Drupal\rules\Engine\RulesActionBase;
+use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides an 'Add list item' action.

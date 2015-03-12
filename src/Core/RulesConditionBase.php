@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesConditionBase.
+ * Contains \Drupal\rules\Core\RulesConditionBase.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Core;
 
 use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Form\FormStateInterface;

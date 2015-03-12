@@ -7,7 +7,7 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 
 /**
  * Provides an always TRUE test condition.

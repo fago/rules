@@ -9,11 +9,11 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Engine\RulesExpressionConditionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Plugin\RulesDataProcessorManager;
+use Drupal\rules\Engine\RulesDataProcessorManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -51,7 +51,7 @@ class RulesCondition extends RulesConditionBase implements RulesExpressionCondit
    *   The plugin implementation definition.
    * @param \Drupal\Core\Condition\ConditionManager $conditionManager
    *   The condition manager.
-   * @param \Drupal\rules\Plugin\RulesDataProcessorManager $processor_manager
+   * @param \Drupal\rules\Engine\RulesDataProcessorManager $processor_manager
    *   The data processor plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, RulesDataProcessorManager $processor_manager) {

@@ -113,7 +113,7 @@ class RulesComponent extends ConfigEntityBase {
    * @todo Actually we should use dependency injection here, but is that even
    *   possible with config entities? How?
    *
-   * @return \Drupal\rules\Plugin\RulesExpressionPluginManager
+   * @return \Drupal\rules\Engine\RulesExpressionPluginManager
    *   The Rules expression manager.
    */
   protected function getExpressionManager() {

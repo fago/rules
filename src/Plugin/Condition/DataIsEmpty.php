@@ -12,7 +12,7 @@ use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\Type\BooleanInterface;
 use Drupal\Core\TypedData\Type\IntegerInterface;
 use Drupal\Core\TypedData\Type\StringInterface;
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 
 /**
  * Provides a 'Data value is empty' condition.

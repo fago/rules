@@ -26,7 +26,7 @@ class RulesConditionTest extends RulesUnitTestBase {
   /**
    * The mocked data processor manager.
    *
-   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
+   * @var \Drupal\rules\Engine\RulesDataProcessorManager
    */
   protected $processorManager;
 
@@ -46,7 +46,7 @@ class RulesConditionTest extends RulesUnitTestBase {
     // Create a test condition plugin that always evaluates to TRUE. We cannot
     // use $this->trueCondition because it is a Rules expression, but we need a
     // condition plugin here.
-    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesConditionInterface');
+    $this->trueCondition = $this->getMock('Drupal\rules\Core\RulesConditionInterface');
     $this->trueCondition->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(TRUE));
@@ -59,7 +59,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->processorManager = $this->getMockBuilder('Drupal\rules\Plugin\RulesDataProcessorManager')
+    $this->processorManager = $this->getMockBuilder('Drupal\rules\Engine\RulesDataProcessorManager')
       ->disableOriginalConstructor()
       ->getMock();
 

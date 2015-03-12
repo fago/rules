@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

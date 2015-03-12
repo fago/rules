@@ -7,7 +7,7 @@
 
 namespace Drupal\rules_test\Plugin\Condition;
 
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 
 /**
  * Returns TRUE if the test parameter equals 'test value'.

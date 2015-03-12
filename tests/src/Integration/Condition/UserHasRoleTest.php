@@ -18,7 +18,7 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
   /**
    * The condition that is being tested.
    *
-   * @var \Drupal\rules\Engine\RulesConditionInterface
+   * @var \Drupal\rules\Core\RulesConditionInterface
    */
   protected $condition;
 

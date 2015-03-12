@@ -8,8 +8,9 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Exception\InvalidExpressionException;
-use Drupal\rules\Plugin\RulesExpressionPluginManager;
+use Drupal\rules\Engine\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,7 +23,7 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * List of conditions that are evaluated.
    *
-   * @var \Drupal\rules\Engine\RulesConditionInterface[]
+   * @var \Drupal\rules\Core\RulesConditionInterface[]
    */
   protected $conditions = [];
 
@@ -35,7 +36,7 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Plugin\RulesExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\RulesExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, RulesExpressionPluginManager $expression_manager) {

@@ -17,7 +17,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   /**
    * The expression plugin manager.
    *
-   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
    */
   protected $expressionManager;
 
@@ -58,7 +58,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    * @param string $id
    *   The condition plugin id.
    *
-   * @return \Drupal\rules\Engine\RulesConditionInterface
+   * @return \Drupal\rules\Core\RulesConditionInterface
    *   The created condition plugin.
    */
   protected function createCondition($id) {

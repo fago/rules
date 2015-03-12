@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
-use Drupal\rules\Engine\RulesConditionBase;
+use Drupal\rules\Core\RulesConditionBase;
 
 /**
  * Provides a 'Entity has field' condition.

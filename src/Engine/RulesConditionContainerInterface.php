@@ -20,7 +20,7 @@ interface RulesConditionContainerInterface extends RulesExpressionConditionInter
    * @param array $configuration
    *   (optional) The configuration for the specified plugin.
    *
-   * @return \Drupal\rules\Engine\RulesConditionInterface
+   * @return \Drupal\rules\Core\RulesConditionInterface
    *   The created condition.
    */
   public function addCondition($condition_id, $configuration = NULL);

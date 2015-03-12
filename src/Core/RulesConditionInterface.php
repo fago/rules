@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesConditionInterface.
+ * Contains \Drupal\rules\Core\RulesConditionInterface.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionInterface;

@@ -18,7 +18,7 @@ class AliasDeleteTest extends RulesIntegrationTestBase {
   /**
    * The action to be tested.
    *
-   * @var \Drupal\rules\Engine\RulesActionInterface
+   * @var \Drupal\rules\Core\RulesActionInterface
    */
   protected $action;
 
