@@ -10,6 +10,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
@@ -139,8 +140,8 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addCondition($condition_id, $configuration = NULL) {
-    $this->conditions->addCondition($condition_id, $configuration);
+  public function addCondition($condition_id, ContextConfig $config = NULL) {
+    $this->conditions->addCondition($condition_id, $config);
     return $this;
   }
 
@@ -162,8 +163,8 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addAction($action_id, $configuration = NULL) {
-    $this->actions->addAction($action_id, $configuration);
+  public function addAction($action_id, ContextConfig $config = NULL) {
+    $this->actions->addAction($action_id, $config);
     return $this;
   }
 
@@ -201,9 +202,9 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration = NULL) {
+  public function addExpression($plugin_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+      $this->expressionManager->createInstance($plugin_id, $config ? $config->toArray() : [])
     );
   }
 

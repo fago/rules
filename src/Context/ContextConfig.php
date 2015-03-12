@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Context\ContextConfig
+ * Contains \Drupal\rules\Context\ContextConfig.
  */
 
 namespace Drupal\rules\Context;
@@ -20,9 +20,9 @@ class ContextConfig {
    * @var array
    */
   protected $config = [
-    'context' => [],
-    'context_map' => [],
-    'context_process' => [],
+    'context_values' => [],
+    'context_mapping' => [],
+    'context_processors' => [],
   ];
 
   /**
@@ -64,10 +64,11 @@ class ContextConfig {
    * @return $this
    */
   public function map($context_name, $selector) {
-    if (isset($this->config['context'][$context_name])) {
+    if (isset($this->config['context_values'][$context_name])) {
       throw new \LogicException("Cannot map a context value and pre-define it at the same time.");
     }
-    $this->config['context_map'][$context_name] = $selector;
+    $this->config['context_mapping'][$context_name] = $selector;
+    return $this;
   }
 
   /**
@@ -86,11 +87,12 @@ class ContextConfig {
    *
    * @return $this
    */
-  public function setContextValue($context_name, $value) {
-    if (isset($this->config['context_map'][$context_name])) {
+  public function setValue($context_name, $value) {
+    if (isset($this->config['context_mapping'][$context_name])) {
       throw new \LogicException("Cannot map a context value and pre-define it at the same time.");
     }
-    $this->config['context'][$context_name] = $value;
+    $this->config['context_values'][$context_name] = $value;
+    return $this;
   }
 
   /**
@@ -108,6 +110,7 @@ class ContextConfig {
    */
   public function setConfigKey($key, $value) {
     $this->config[$key] = $value;
+    return $this;
   }
 
   /**
@@ -123,7 +126,8 @@ class ContextConfig {
    * @return $this
    */
   public function process($context_name, $plugin_id, $options = []) {
-    $this->config['context_process'][$context_name][$plugin_id] = $options;
+    $this->config['context_processors'][$context_name][$plugin_id] = $options;
+    return $this;
   }
 
   /**
@@ -147,7 +151,7 @@ class ContextConfig {
    *   The config array, with the following keys set:
    *   - context_map: An array of data selectors, keyed by context name.
    *   - context An array of context values, keyed by context.
-   *   - context_process: An array of data processor config, keyed by context
+   *   - context_processors: An array of data processor config, keyed by context
    *     name and process plugin id.
    *   - Any other other config keys that have been set.
    */

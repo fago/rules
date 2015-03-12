@@ -77,23 +77,20 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration = NULL) {
+  public function addExpression($plugin_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+      $this->expressionManager->createInstance($plugin_id, $config ? $config->toArray() : [])
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addCondition($condition_id, $configuration = NULL) {
-    if ($configuration instanceof ContextConfig) {
-      $configuration = $configuration->toArray();
-    }
+  public function addCondition($condition_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
       $this->expressionManager
         ->createCondition($condition_id)
-        ->setConfiguration($configuration ?: [])
+        ->setConfiguration($config ? $config->toArray() : [])
     );
   }
 

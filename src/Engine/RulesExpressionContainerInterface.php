@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\rules\Engine;
+use Drupal\rules\Context\ContextConfig;
 
 /**
  * Defines a common interface for expressions containing other expressions.
@@ -21,7 +22,7 @@ interface RulesExpressionContainerInterface extends RulesExpressionInterface {
    *
    * @param string $plugin_id
    *   The id of the expression plugin to add.
-   * @param array $configuration
+   * @param \Drupal\rules\Context\ContextConfig $config
    *   (optional) The configuration for the specified plugin.
    *
    * @throws \Drupal\rules\Exception\InvalidExpressionException
@@ -30,7 +31,7 @@ interface RulesExpressionContainerInterface extends RulesExpressionInterface {
    *
    * @return $this
    */
-  public function addExpression($plugin_id, $configuration = NULL);
+  public function addExpression($plugin_id, ContextConfig $config = NULL);
 
   /**
    * Adds an expression object.

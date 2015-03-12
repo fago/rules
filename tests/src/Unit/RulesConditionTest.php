@@ -120,7 +120,7 @@ class RulesConditionTest extends RulesUnitTestBase {
   public function testDataProcessor() {
     $condition = new RulesCondition([
       'condition_id' => 'rules_or',
-      'processor_mapping' => [
+      'context_processors' => [
         'test' => [
           // We don't care about the data processor plugin name and
           // configuration since we will use a mock anyway.

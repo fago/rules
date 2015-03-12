@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesConditionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
@@ -22,13 +23,13 @@ interface RuleInterface extends RulesExpressionContainerInterface, RulesExpressi
    *
    * @param string $condition_id
    *   The condition plugin id.
-   * @param array $configuration
+   * @param \Drupal\rules\Context\ContextConfig $config
    *   (optional) The configuration for the specified plugin.
    *
    * @return \Drupal\rules\Core\RulesConditionInterface
    *   The created condition.
    */
-  public function addCondition($condition_id, $configuration = NULL);
+  public function addCondition($condition_id, ContextConfig $config = NULL);
 
   /**
    * Returns the conditions container of this rule.
@@ -53,12 +54,12 @@ interface RuleInterface extends RulesExpressionContainerInterface, RulesExpressi
    *
    * @param string $action_id
    *   The action plugin id.
-   * @param array $configuration
+   * @param \Drupal\rules\Context\ContextConfig $config
    *   (optional) The configuration for the specified plugin.
    *
    * @return $this
    */
-  public function addAction($action_id, $configuration = NULL);
+  public function addAction($action_id, ContextConfig $config = NULL);
 
   /**
    * Returns the actions of this rule.
