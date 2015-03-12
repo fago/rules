@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesException.
+ * Contains \Drupal\rules\Exception\RulesException.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Exception;
 
 /**
  * A common exception for Rules.
