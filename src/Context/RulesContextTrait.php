@@ -11,7 +11,7 @@ use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Plugin\Context\Context;
-use Drupal\rules\Engine\RulesEvaluationException;
+use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 
 /**
@@ -79,7 +79,7 @@ trait RulesContextTrait {
    * @param \Drupal\rules\Engine\RulesState $state
    *   The Rules state containing available variables.
    *
-   * @throws \Drupal\rules\Engine\RulesEvaluationException
+   * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   In case a required context is missing for the plugin.
    */
   protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {

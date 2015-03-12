@@ -14,6 +14,7 @@ use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
+use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
  * The rules evaluation state.
