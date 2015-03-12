@@ -84,9 +84,9 @@ class RulesEngineTest extends RulesDrupalTestBase {
       ],
     ]);
 
-    $rule->addCondition('rules_test_string_condition', [
-      'context_mapping' => ['text:select' => 'test'],
-    ]);
+    $rule->addCondition('rules_test_string_condition', ContextConfig::create()
+      ->map('text', 'test')
+    );
 
     $rule->addAction('rules_test_log');
     $rule->setContextValue('test', 'test value');
