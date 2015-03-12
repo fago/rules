@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesActionBase.
+ * Contains \Drupal\rules\Core\RulesActionBase.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Core;
 
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Plugin\ContextAwarePluginBase;

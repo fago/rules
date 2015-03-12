@@ -29,7 +29,7 @@ trait RulesContextTrait {
   /**
    * The data processor plugin manager used to process context variables.
    *
-   * @var \Drupal\rules\Plugin\RulesDataProcessorManager
+   * @var \Drupal\rules\Engine\RulesDataProcessorManager
    */
   protected $processorManager;
 

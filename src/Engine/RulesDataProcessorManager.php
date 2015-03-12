@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\RulesDataProcessorManager.
+ * Contains \Drupal\rules\Engine\RulesDataProcessorManager.
  */
 
-namespace Drupal\rules\Plugin;
+namespace Drupal\rules\Engine;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;

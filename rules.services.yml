@@ -1,7 +1,7 @@
 services:
   plugin.manager.rules_expression:
-    class: Drupal\rules\Plugin\RulesExpressionPluginManager
+    class: Drupal\rules\Engine\RulesExpressionPluginManager
     arguments: ['@container.namespaces', '@module_handler']
   plugin.manager.rules_data_processor:
-    class: Drupal\rules\Plugin\RulesDataProcessorManager
+    class: Drupal\rules\Engine\RulesDataProcessorManager
     arguments: ['@container.namespaces', '@module_handler']

@@ -7,7 +7,7 @@
 
 namespace Drupal\rules_test\Plugin\Action;
 
-use Drupal\rules\Engine\RulesActionBase;
+use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Engine\RulesLog;
 
 /**

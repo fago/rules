@@ -8,7 +8,7 @@
 namespace Drupal\rules\Plugin\Action;
 
 use Drupal\Component\Utility\String;
-use Drupal\rules\Engine\RulesActionBase;
+use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Show a message on the site' action.

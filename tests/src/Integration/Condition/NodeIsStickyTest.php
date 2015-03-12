@@ -18,7 +18,7 @@ class NodeIsStickyTest extends RulesEntityIntegrationTestBase {
   /**
    * The condition to be tested.
    *
-   * @var \Drupal\rules\Engine\RulesConditionInterface
+   * @var \Drupal\rules\Core\RulesConditionInterface
    */
   protected $condition;
 

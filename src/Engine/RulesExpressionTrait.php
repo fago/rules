@@ -13,7 +13,7 @@ namespace Drupal\rules\Engine;
 trait RulesExpressionTrait {
 
   /**
-   * @var \Drupal\rules\Plugin\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
    */
   protected $expressionManager;
 
