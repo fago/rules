@@ -23,6 +23,7 @@ class ContextConfig {
     'context_values' => [],
     'context_mapping' => [],
     'context_processors' => [],
+    'provides_mapping' => [],
   ];
 
   /**
@@ -96,6 +97,21 @@ class ContextConfig {
   }
 
   /**
+   * Maps the name of a provided context.
+   *
+   * @param string $provided_context_name
+   *   The name of the provided context.
+   * @param string $context_name
+   *   The context name under which the provided context should be registered.
+   *
+   * @return $this
+   */
+  public function provideAs($provided_context_name, $context_name) {
+    $this->config['provides_mapping'][$provided_context_name] = $context_name;
+    return $this;
+  }
+
+  /**
    * Sets an arbitrary configuration value under the given key.
    *
    * This may be used for setting any configuration options that are not making
@@ -153,6 +169,8 @@ class ContextConfig {
    *   - context An array of context values, keyed by context.
    *   - context_processors: An array of data processor config, keyed by context
    *     name and process plugin id.
+   *   - provides_mapping: An array of context names to use for provided
+   *     context, keyed by provided context name.
    *   - Any other other config keys that have been set.
    */
   public function toArray() {

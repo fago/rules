@@ -127,9 +127,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
 
     // The condition provides a "provided_text" variable.
     $rule->addCondition('rules_test_provider', ContextConfig::create()
-      // Expose the variable as 'newname'
-      // @todo: Cover key in ContextConfig.
-      ->setConfigKey('provides_mapping', ['provided_text' => 'newname'])
+      ->provideAs('provided_text', 'newname')
     );
 
     $state = new RulesState();
@@ -159,8 +157,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     // now.
     $rule->addAction('rules_test_string', ContextConfig::create()
       ->map('text', 'concatenated')
-      // @todo: Cover key in ContextConfig.
-      ->setConfigKey('provides_mapping', ['concatenated' => 'concatenated2'])
+      ->provideAs('concatenated', 'concatenated2')
     );
 
     $state = new RulesState();
