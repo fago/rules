@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesActionContainerInterface.
+ * Contains \Drupal\rules\Engine\ActionExpressionContainerInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -12,7 +12,7 @@ use Drupal\rules\Context\ContextConfig;
 /**
  * Contains action expressions.
  */
-interface RulesActionContainerInterface extends RulesExpressionActionInterface, RulesExpressionContainerInterface {
+interface ActionExpressionContainerInterface extends ActionExpressionInterface, ExpressionContainerInterface {
 
   /**
    * Creates an action expression and adds it to the container.

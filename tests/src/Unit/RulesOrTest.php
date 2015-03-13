@@ -18,7 +18,7 @@ class RulesOrTest extends RulesUnitTestBase {
   /**
    * The 'or' condition container being tested.
    *
-   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionContainerInterface
    */
   protected $or;
 

@@ -26,7 +26,7 @@ class RulesConditionTest extends RulesUnitTestBase {
   /**
    * The mocked data processor manager.
    *
-   * @var \Drupal\rules\Engine\RulesDataProcessorManager
+   * @var \Drupal\rules\Context\DataProcessorManager
    */
   protected $processorManager;
 
@@ -59,7 +59,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->processorManager = $this->getMockBuilder('Drupal\rules\Engine\RulesDataProcessorManager')
+    $this->processorManager = $this->getMockBuilder('Drupal\rules\Context\DataProcessorManager')
       ->disableOriginalConstructor()
       ->getMock();
 
@@ -158,7 +158,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->method('createInstance')
       ->will($this->returnValue($this->trueCondition));
 
-    $data_processor = $this->getMock('Drupal\rules\Engine\RulesDataProcessorInterface');
+    $data_processor = $this->getMock('Drupal\rules\Context\DataProcessorInterface');
     $data_processor->expects($this->once())
       ->method('process')
       ->with('old_value')

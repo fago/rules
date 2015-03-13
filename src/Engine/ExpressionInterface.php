@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesExpressionInterface.
+ * Contains \Drupal\rules\Engine\ExpressionInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -16,7 +16,7 @@ use Drupal\Core\Executable\ExecutableInterface;
  *
  * @see \Drupal\rules\Plugin\RulesExpressionPluginManager
  */
-interface RulesExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ConfigurablePluginInterface {
+interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ConfigurablePluginInterface {
 
   /**
    * Execute the expression with a given Rules state.

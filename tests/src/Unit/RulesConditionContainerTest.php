@@ -8,7 +8,7 @@
 namespace Drupal\Tests\rules\Unit;
 
 /**
- * @coversDefaultClass \Drupal\rules\Engine\RulesConditionContainer
+ * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
  * @group rules
  */
 class RulesConditionContainerTest extends RulesUnitTestBase {
@@ -21,12 +21,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @param string $class
    *   The name of the created mock class.
    *
-   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
    *   The mocked condition container.
    */
   protected function getMockConditionContainer(array $methods = [], $class = 'RulesConditionContainerMock') {
     return $this->getMockForAbstractClass(
-      'Drupal\rules\Engine\RulesConditionContainer', [], $class, FALSE, TRUE, TRUE, $methods
+      'Drupal\rules\Engine\ConditionExpressionContainer', [], $class, FALSE, TRUE, TRUE, $methods
     );
   }
 

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesConditionContainerInterface.
+ * Contains \Drupal\rules\Engine\ConditionExpressionContainerInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -12,7 +12,7 @@ use Drupal\rules\Context\ContextConfig;
 /**
  * Contains condition expressions.
  */
-interface RulesConditionContainerInterface extends RulesExpressionConditionInterface, RulesExpressionContainerInterface {
+interface ConditionExpressionContainerInterface extends ConditionExpressionInterface, ExpressionContainerInterface {
 
   /**
    * Creates a condition expression and adds it to the container.

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesExpressionActionInterface.
+ * Contains \Drupal\rules\Engine\ActionExpressionInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -12,6 +12,6 @@ use Drupal\rules\Core\RulesActionInterface;
 /**
  * Defines the interface for Rules expressions that can be used as actions.
  */
-interface RulesExpressionActionInterface extends RulesActionInterface, RulesExpressionInterface {
+interface ActionExpressionInterface extends RulesActionInterface, ExpressionInterface {
 
 }

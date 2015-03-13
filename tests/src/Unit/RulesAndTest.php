@@ -18,7 +18,7 @@ class RulesAndTest extends RulesUnitTestBase {
   /**
    * The 'and' condition container being tested.
    *
-   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionContainerInterface
    */
   protected $and;
 
