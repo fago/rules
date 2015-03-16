@@ -18,7 +18,7 @@ class RuleTest extends RulesUnitTestBase {
   /**
    * The rules expression plugin manager.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionPluginManager
    */
   protected $expressionManager;
 
@@ -32,14 +32,14 @@ class RuleTest extends RulesUnitTestBase {
   /**
    * The primary condition container of the rule.
    *
-   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionContainerInterface
    */
   protected $conditions;
 
   /**
    * The primary action container of the rule.
    *
-   * @var \Drupal\rules\Engine\RulesActionContainerInterface
+   * @var \Drupal\rules\Engine\ActionExpressionContainerInterface
    */
   protected $actions;
 
@@ -49,7 +49,7 @@ class RuleTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\RulesExpressionPluginManager')
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
 

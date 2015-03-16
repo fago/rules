@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesDataProcessorManager.
+ * Contains \Drupal\rules\Context\DataProcessorManager.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Context;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -15,14 +15,14 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\rules\Engine\RulesDataProcessorInterface
  */
-class RulesDataProcessorManager extends DefaultPluginManager {
+class DataProcessorManager extends DefaultPluginManager {
 
   /**
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesDataProcessor') {
     $this->alterInfo('rules_data_processor');
-    parent::__construct('Plugin/RulesDataProcessor', $namespaces, $module_handler, 'Drupal\rules\Engine\RulesDataProcessorInterface', $plugin_definition_annotation_name);
+    parent::__construct('Plugin/RulesDataProcessor', $namespaces, $module_handler, 'Drupal\rules\Context\DataProcessorInterface', $plugin_definition_annotation_name);
   }
 
 }

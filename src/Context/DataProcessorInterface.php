@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesDataProcessorInterface.
+ * Contains \Drupal\rules\Context\DataProcessorInterface.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Context;
 
 /**
  * Interface for Rules data processor plugins.
  */
-interface RulesDataProcessorInterface {
+interface DataProcessorInterface {
 
   /**
    * Process the given value.

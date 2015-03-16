@@ -19,28 +19,28 @@ abstract class RulesUnitTestBase extends UnitTestCase {
   /**
    * A mocked condition that always evaluates to TRUE.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionConditionInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionInterface
    */
   protected $trueCondition;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionConditionInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionInterface
    */
   protected $falseCondition;
 
   /**
    * A mocked dummy action object.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionActionInterface
+   * @var \Drupal\rules\Engine\ActionExpressionInterface
    */
   protected $testAction;
 
   /**
    * The mocked expression manager object.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionPluginManager
    */
   protected $expressionManager;
 
@@ -50,7 +50,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionConditionInterface');
+    $this->trueCondition = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
 
     $this->trueCondition->expects($this->any())
       ->method('execute')
@@ -64,7 +64,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMock('Drupal\rules\Engine\RulesExpressionConditionInterface');
+    $this->falseCondition = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
 
     $this->falseCondition->expects($this->any())
       ->method('execute')
@@ -78,9 +78,9 @@ abstract class RulesUnitTestBase extends UnitTestCase {
       ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMock('Drupal\rules\Engine\RulesExpressionActionInterface');
+    $this->testAction = $this->getMock('Drupal\rules\Engine\ActionExpressionInterface');
 
-    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\RulesExpressionPluginManager')
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionPluginManager')
       ->disableOriginalConstructor()
       ->getMock();
   }
@@ -216,7 +216,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
    * @param array $methods
    *   (optional) The methods to mock.
    *
-   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
    *   The mocked 'and' condition container.
    */
   protected function getMockAnd(array $methods = []) {
@@ -241,7 +241,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
    * @param array $methods
    *   (optional) The methods to mock.
    *
-   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
    *   The mocked 'or' condition container.
    */
   protected function getMockOr(array $methods = []) {
@@ -266,7 +266,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
    * @param array $methods
    *   (optional) The methods to mock.
    *
-   * @return \Drupal\rules\Engine\RulesActionContainerInterface
+   * @return \Drupal\rules\Engine\ActionExpressionContainerInterface
    *   The mocked action container.
    */
   protected function getMockActionSet(array $methods = []) {

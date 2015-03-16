@@ -10,13 +10,13 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\rules\Engine\RulesActionContainerInterface;
-use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\ActionExpressionContainerInterface;
+use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Exception\InvalidExpressionException;
-use Drupal\rules\Engine\RulesExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,14 +27,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Action set")
  * )
  */
-class ActionSet extends RulesActionBase implements RulesActionContainerInterface, ContainerFactoryPluginInterface {
+class ActionSet extends RulesActionBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
 
   use RulesExpressionTrait;
 
   /**
    * List of actions that will be executed.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionActionInterface[]
+   * @var \Drupal\rules\Engine\ActionExpressionInterface[]
    */
   protected $actions = [];
 
@@ -47,10 +47,10 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Engine\RulesExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\ExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
 
@@ -76,8 +76,8 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(RulesExpressionInterface $expression) {
-    if (!$expression instanceof RulesExpressionActionInterface) {
+  public function addExpressionObject(ExpressionInterface $expression) {
+    if (!$expression instanceof ActionExpressionInterface) {
       throw new InvalidExpressionException();
     }
     $this->actions[] = $expression;

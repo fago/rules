@@ -12,8 +12,8 @@ use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Engine\RulesDataProcessorManager;
-use Drupal\rules\Engine\RulesExpressionPluginManager;
+use Drupal\rules\Context\DataProcessorManager;
+use Drupal\rules\Engine\ExpressionPluginManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -47,12 +47,12 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $conditionManager;
 
   /**
-   * @var \Drupal\rules\Engine\RulesExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionPluginManager
    */
   protected $rulesExpressionManager;
 
   /**
-   * @var \Drupal\rules\Engine\RulesDataProcessorManager
+   * @var \Drupal\rules\Context\DataProcessorManager
    */
   protected $rulesDataProcessorManager;
 
@@ -124,14 +124,14 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
-    $this->rulesExpressionManager = new RulesExpressionPluginManager($this->namespaces, $this->moduleHandler);
+    $this->rulesExpressionManager = new ExpressionPluginManager($this->namespaces, $this->moduleHandler);
 
     $this->classResolver = $this->getMockBuilder('Drupal\Core\DependencyInjection\ClassResolverInterface')
       ->disableOriginalConstructor()
       ->getMock();
 
     $this->typedDataManager = new TypedDataManager($this->namespaces, $this->cacheBackend, $this->moduleHandler, $this->classResolver);
-    $this->rulesDataProcessorManager = new RulesDataProcessorManager($this->namespaces, $this->moduleHandler);
+    $this->rulesDataProcessorManager = new DataProcessorManager($this->namespaces, $this->moduleHandler);
 
     $this->aliasManager = $this->getMockBuilder('Drupal\Core\Path\AliasManagerInterface')
       ->disableOriginalConstructor()

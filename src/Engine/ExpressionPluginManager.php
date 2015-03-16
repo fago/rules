@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\RulesExpressionPluginManager.
+ * Contains \Drupal\rules\Plugin\ExpressionPluginManager.
  */
 
 namespace Drupal\rules\Engine;
@@ -13,9 +13,9 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Plugin manager for all Rules expressions.
  *
- * @see \Drupal\rules\Engine\RulesExpressionInterface
+ * @see \Drupal\rules\Engine\ExpressionInterface
  */
-class RulesExpressionPluginManager extends DefaultPluginManager {
+class ExpressionPluginManager extends DefaultPluginManager {
 
   /**
    * A map from class names to plugin ids.
@@ -29,7 +29,7 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesExpression') {
     $this->alterInfo('rules_expression');
-    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, 'Drupal\rules\Engine\RulesExpressionInterface', $plugin_definition_annotation_name);
+    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, 'Drupal\rules\Engine\ExpressionInterface', $plugin_definition_annotation_name);
   }
 
   /**
@@ -78,7 +78,7 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
   /**
    * Creates a new 'and' condition container.
    *
-   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
    *   The created 'and' condition container.
    */
   public function createAnd() {
@@ -88,7 +88,7 @@ class RulesExpressionPluginManager extends DefaultPluginManager {
   /**
    * Creates a new 'or' condition container.
    *
-   * @return \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
    *   The created 'or' condition container.
    */
   public function createOr() {

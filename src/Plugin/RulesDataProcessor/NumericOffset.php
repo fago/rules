@@ -8,7 +8,7 @@
 namespace Drupal\rules\Plugin\RulesDataProcessor;
 
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\rules\Engine\RulesDataProcessorInterface;
+use Drupal\rules\Context\DataProcessorInterface;
 
 /**
  * A data processor for applying numerical offsets.
@@ -21,7 +21,7 @@ use Drupal\rules\Engine\RulesDataProcessorInterface;
  *   label = @Translation("Apply numeric offset")
  * )
  */
-class NumericOffset extends PluginBase implements RulesDataProcessorInterface {
+class NumericOffset extends PluginBase implements DataProcessorInterface {
 
   /**
    * {@inheritdoc}

@@ -81,7 +81,7 @@ class RulesComponent extends ConfigEntityBase {
   /**
    * Stores a reference to the executable expression version of this component.
    *
-   * @var \Drupal\rules\Engine\RulesExpressionInterface
+   * @var \Drupal\rules\Engine\ExpressionInterface
    */
   protected $expression;
 
@@ -95,7 +95,7 @@ class RulesComponent extends ConfigEntityBase {
   /**
    * Gets a Rules expression instance for this Rules component.
    *
-   * @return \Drupal\rules\Engine\RulesExpressionInterface
+   * @return \Drupal\rules\Engine\ExpressionInterface
    *   A Rules expression instance.
    */
   public function getExpression() {
@@ -113,7 +113,7 @@ class RulesComponent extends ConfigEntityBase {
    * @todo Actually we should use dependency injection here, but is that even
    *   possible with config entities? How?
    *
-   * @return \Drupal\rules\Engine\RulesExpressionPluginManager
+   * @return \Drupal\rules\Engine\ExpressionPluginManager
    *   The Rules expression manager.
    */
   protected function getExpressionManager() {

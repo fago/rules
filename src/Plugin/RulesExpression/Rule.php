@@ -11,15 +11,15 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\rules\Engine\RulesActionContainerInterface;
-use Drupal\rules\Engine\RulesConditionContainerInterface;
-use Drupal\rules\Engine\RulesExpressionActionInterface;
-use Drupal\rules\Engine\RulesExpressionConditionInterface;
-use Drupal\rules\Engine\RulesExpressionInterface;
+use Drupal\rules\Engine\ActionExpressionContainerInterface;
+use Drupal\rules\Engine\ConditionExpressionContainerInterface;
+use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ConditionExpressionInterface;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Exception\InvalidExpressionException;
-use Drupal\rules\Engine\RulesExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,14 +41,14 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * List of conditions that must be met before actions are executed.
    *
-   * @var \Drupal\rules\Engine\RulesConditionContainerInterface
+   * @var \Drupal\rules\Engine\ConditionExpressionContainerInterface
    */
   protected $conditions;
 
   /**
    * List of actions that get executed if the conditions are met.
    *
-   * @var \Drupal\rules\Engine\RulesActionContainerInterface
+   * @var \Drupal\rules\Engine\ActionExpressionContainerInterface
    */
   protected $actions;
 
@@ -61,10 +61,10 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Engine\RulesExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\ExpressionPluginManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager) {
     // @todo: This needs to be removed again and we need to add proper derivative handling for Rules.
     if (isset($configuration['context_definitions'])) {
       $plugin_definition['context'] = $this->createContextDefinitions($configuration['context_definitions']);
@@ -155,7 +155,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function setConditions(RulesConditionContainerInterface $conditions) {
+  public function setConditions(ConditionExpressionContainerInterface $conditions) {
     $this->conditions = $conditions;
     return $this;
   }
@@ -178,7 +178,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function setActions(RulesActionContainerInterface $actions) {
+  public function setActions(ActionExpressionContainerInterface $actions) {
     $this->actions = $actions;
     return $this;
   }
@@ -186,11 +186,11 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(RulesExpressionInterface $expression) {
-    if ($expression instanceof RulesExpressionConditionInterface) {
+  public function addExpressionObject(ExpressionInterface $expression) {
+    if ($expression instanceof ConditionExpressionInterface) {
       $this->conditions->addExpressionObject($expression);
     }
-    elseif ($expression instanceof RulesExpressionActionInterface) {
+    elseif ($expression instanceof ActionExpressionInterface) {
       $this->actions->addExpressionObject($expression);
     }
     else {

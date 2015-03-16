@@ -20,7 +20,7 @@ class AutoSaveTest extends RulesUnitTestBase {
    * Tests auto saving after an action execution.
    */
   public function testActionAutoSave() {
-    $processor_manager = $this->getMockBuilder('Drupal\rules\Engine\RulesDataProcessorManager')
+    $processor_manager = $this->getMockBuilder('Drupal\rules\Context\DataProcessorManager')
       ->disableOriginalConstructor()
       ->getMock();
 

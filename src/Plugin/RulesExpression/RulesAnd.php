@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\rules\Engine\RulesConditionContainer;
+use Drupal\rules\Engine\ConditionExpressionContainer;
 use Drupal\rules\Engine\RulesState;
 
 /**
@@ -18,7 +18,7 @@ use Drupal\rules\Engine\RulesState;
  *   label = @Translation("Condition set (AND)")
  * )
  */
-class RulesAnd extends RulesConditionContainer {
+class RulesAnd extends ConditionExpressionContainer {
 
   /**
    * {@inheritdoc}
