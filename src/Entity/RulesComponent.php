@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Engine\ExpressionInterface;
 
 /**
  * Rules component configuration entity to persistently store configuration.
@@ -105,6 +106,21 @@ class RulesComponent extends ConfigEntityBase {
     }
 
     return $this->expression;
+  }
+
+  /**
+   * Sets a Rules expression instance for this Rules component.
+   *
+   * @param \Drupal\rules\Engine\ExpressionInterface $expression
+   *   The expression to set.
+   *
+   * @return $this
+   */
+  public function setExpression(ExpressionInterface $expression) {
+    $this->expression = $expression;
+    $this->expression_id = $expression->getPluginId();
+    $this->configuration = $expression->getConfiguration();
+    return $this;
   }
 
   /**
