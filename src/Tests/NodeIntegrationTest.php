@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\RulesLog;
 
 /**
@@ -72,14 +73,14 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     ]);
 
     // Test that the long detailed data selector works.
-    $rule->addCondition('rules_test_string_condition', [
-      'context_mapping' => ['text:select' => 'node:uid:0:entity:name:0:value'],
-    ]);
+    $rule->addCondition('rules_test_string_condition', ContextConfig::create()
+      ->map('text', 'node:uid:0:entity:name:0:value')
+    );
 
     // Test that the shortened data selector without list indices.
-    $rule->addCondition('rules_test_string_condition', [
-      'context_mapping' => ['text:select' => 'node:uid:entity:name:value'],
-    ]);
+    $rule->addCondition('rules_test_string_condition', ContextConfig::create()
+      ->map('text', 'node:uid:entity:name:value')
+    );
 
     $rule->addAction('rules_test_log');
     $rule->setContextValue('node', $node);

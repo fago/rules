@@ -24,7 +24,7 @@ class DataProcessorTest extends RulesDrupalTestBase {
       // @todo Actually the data processor plugin only applies to numbers, so is
       // kind of an invalid configuration. Since the configuration is not
       // validated during execution this works for now.
-      'processor_mapping' => [
+      'context_processors' => [
         'message' => [
           'plugin' => 'rules_numeric_offset',
           'configuration' => [

@@ -99,8 +99,8 @@ trait RulesContextTrait {
         $plugin->setContextValue($name, $context_value);
       }
       // Check if a data selector is configured that maps to the state.
-      elseif (isset($this->configuration['context_mapping'][$name . ':select'])) {
-        $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name . ':select']);
+      elseif (isset($this->configuration['context_mapping'][$name])) {
+        $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name]);
         $plugin->setContextValue($name, $typed_data);
       }
       elseif ($definition->isRequired()) {
@@ -141,8 +141,8 @@ trait RulesContextTrait {
    *   The plugin to process the context data on.
    */
   protected function processData(ContextAwarePluginInterface $plugin) {
-    if (isset($this->configuration['processor_mapping'])) {
-      foreach ($this->configuration['processor_mapping'] as $name => $settings) {
+    if (isset($this->configuration['context_processors'])) {
+      foreach ($this->configuration['context_processors'] as $name => $settings) {
         $data_processor = $this->processorManager->createInstance($settings['plugin'], $settings['configuration']);
         $new_value = $data_processor->process($plugin->getContextValue($name));
         $plugin->setContextValue($name, $new_value);

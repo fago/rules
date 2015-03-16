@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\RulesActionContainerInterface;
 use Drupal\rules\Engine\RulesExpressionActionInterface;
 use Drupal\rules\Engine\RulesExpressionInterface;
@@ -86,20 +87,20 @@ class ActionSet extends RulesActionBase implements RulesActionContainerInterface
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration = NULL) {
+  public function addExpression($plugin_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+      $this->expressionManager->createInstance($plugin_id, $config ? $config->toArray() : [])
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addAction($action_id, $configuration = NULL) {
+  public function addAction($action_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
       $this->expressionManager
         ->createAction($action_id)
-        ->setConfiguration($configuration ?: [])
+        ->setConfiguration($config ? $config->toArray() : [])
     );
   }
 

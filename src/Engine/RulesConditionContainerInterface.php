@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\rules\Context\ContextConfig;
+
 /**
  * Contains condition expressions.
  */
@@ -17,11 +19,11 @@ interface RulesConditionContainerInterface extends RulesExpressionConditionInter
    *
    * @param string $condition_id
    *   The condition plugin id.
-   * @param array $configuration
+   * @param \Drupal\rules\Context\ContextConfig $config
    *   (optional) The configuration for the specified plugin.
    *
    * @return \Drupal\rules\Core\RulesConditionInterface
    *   The created condition.
    */
-  public function addCondition($condition_id, $configuration = NULL);
+  public function addCondition($condition_id, ContextConfig $config = NULL);
 }

@@ -9,6 +9,7 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Engine\RulesExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -76,20 +77,20 @@ abstract class RulesConditionContainer extends RulesConditionBase implements Rul
   /**
    * {@inheritdoc}
    */
-  public function addExpression($plugin_id, $configuration = NULL) {
+  public function addExpression($plugin_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $configuration ?: [])
+      $this->expressionManager->createInstance($plugin_id, $config ? $config->toArray() : [])
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addCondition($condition_id, $configuration = NULL) {
+  public function addCondition($condition_id, ContextConfig $config = NULL) {
     return $this->addExpressionObject(
       $this->expressionManager
         ->createCondition($condition_id)
-        ->setConfiguration($configuration ?: [])
+        ->setConfiguration($config ? $config->toArray() : [])
     );
   }
 

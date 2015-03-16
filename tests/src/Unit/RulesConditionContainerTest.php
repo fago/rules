@@ -33,9 +33,9 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
   /**
    * Tests adding conditions to the condition container.
    *
-   * @covers ::addCondition
+   * @covers ::addExpressionObject
    */
-  public function testAddCondition() {
+  public function testAddExpressionObject() {
     $container = $this->getMockConditionContainer();
     $container->addExpressionObject($this->trueCondition);
 
