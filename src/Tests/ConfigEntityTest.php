@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Engine\RulesLog;
+use Drupal\rules\Entity\RulesComponent;
 
 /**
  * Tests storage and loading of Rules config entities.

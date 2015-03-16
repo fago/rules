@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies: {}
+id: rules_test_default_component
+label: Rules test default component
+module: rules
+description: 'Tests adding Rules component by default.'
+tag: 'test'
+core: 8.x
+expression_id: rules_rule
+configuration:
+  id: rules_rule
+  context_definitions:
+    user:
+      type: 'entity:user'
+      label: User
+      description: 'The user whose mail address to print.'
+  conditions:
+    id: rules_and
+    conditions: {}
+  actions:
+    id: rules_action_set
+    actions:
+      - id: rules_action
+        action_id: rules_system_message
+        context_values: {  }
+        context_mapping:
+          message: 'user:mail:value'
+        context_processors: {  }
+        provides_mapping: {  }
