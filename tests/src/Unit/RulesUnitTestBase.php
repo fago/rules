@@ -40,7 +40,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
   /**
    * The mocked expression manager object.
    *
-   * @var \Drupal\rules\Engine\ExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionManager
    */
   protected $expressionManager;
 
@@ -80,7 +80,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
 
     $this->testAction = $this->getMock('Drupal\rules\Engine\ActionExpressionInterface');
 
-    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionPluginManager')
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionManager')
       ->disableOriginalConstructor()
       ->getMock();
   }

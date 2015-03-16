@@ -13,7 +13,7 @@ use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\DataProcessorManager;
-use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -47,7 +47,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $conditionManager;
 
   /**
-   * @var \Drupal\rules\Engine\ExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionManager
    */
   protected $rulesExpressionManager;
 
@@ -124,7 +124,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
-    $this->rulesExpressionManager = new ExpressionPluginManager($this->namespaces, $this->moduleHandler);
+    $this->rulesExpressionManager = new ExpressionManager($this->namespaces, $this->moduleHandler);
 
     $this->classResolver = $this->getMockBuilder('Drupal\Core\DependencyInjection\ClassResolverInterface')
       ->disableOriginalConstructor()

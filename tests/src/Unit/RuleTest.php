@@ -18,7 +18,7 @@ class RuleTest extends RulesUnitTestBase {
   /**
    * The rules expression plugin manager.
    *
-   * @var \Drupal\rules\Engine\ExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionManager
    */
   protected $expressionManager;
 
@@ -49,7 +49,7 @@ class RuleTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionPluginManager')
+    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionManager')
       ->disableOriginalConstructor()
       ->getMock();
 

@@ -20,7 +20,7 @@ class Rules {
   /**
    * Returns the Rules expression manager service.
    *
-   * @return \Drupal\rules\Engine\ExpressionPluginManager
+   * @return \Drupal\rules\Engine\ExpressionManager
    *   The Rules expression manager service.
    */
   public static function expressionManager() {

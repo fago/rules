@@ -36,10 +36,10 @@ abstract class ConditionExpressionContainer extends RulesConditionBase implement
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Engine\ExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\ExpressionManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExpressionManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
 

@@ -14,7 +14,7 @@ use Drupal\Core\Executable\ExecutableInterface;
 /**
  * Defines the interface for Rules expressions.
  *
- * @see \Drupal\rules\Plugin\RulesExpressionPluginManager
+ * @see \Drupal\rules\Engine\ExpressionManager
  */
 interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ConfigurablePluginInterface {
 
