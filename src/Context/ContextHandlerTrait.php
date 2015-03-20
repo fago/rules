@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Context\RulesContextTrait.
+ * Contains \Drupal\rules\Context\ContextHandlerTrait.
  */
 
 namespace Drupal\rules\Context;
@@ -15,9 +15,14 @@ use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 
 /**
- * Offers common methods for context plugin implementers.
+ * Provides methods for handling context based on the plugin configuration.
+ *
+ * The trait requires the plugin to use configuration as defined by the
+ * ContextConfig class.
+ *
+ * @see \Drupal\rules\Context\ContextConfig
  */
-trait RulesContextTrait {
+trait ContextHandlerTrait {
 
   /**
    * The data objects that are provided by this plugin.
@@ -115,12 +120,12 @@ trait RulesContextTrait {
   /**
    * Maps provided context values from the plugin to the Rules state.
    *
-   * @param ProvidedContextPluginInterface $plugin
+   * @param ContextProviderInterface $plugin
    *   The plugin where the context values are extracted.
    * @param \Drupal\rules\Engine\RulesState $state
    *   The Rules state where the context variables are added.
    */
-  protected function mapProvidedContext(ProvidedContextPluginInterface $plugin, RulesState $state) {
+  protected function mapProvidedContext(ContextProviderInterface $plugin, RulesState $state) {
     $provides = $plugin->getProvidedDefinitions();
     foreach ($provides as $name => $provided_definition) {
       // Avoid name collisions in the rules state: provided variables can be

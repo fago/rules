@@ -11,6 +11,8 @@ use Drupal\Core\Plugin\ContextAwarePluginInterface;
 
 /**
  * Class for value objects helping with context configuration.
+ *
+ * @see \Drupal\rules\Context\ContextHandlerTrait
  */
 class ContextConfig {
 

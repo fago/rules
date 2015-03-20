@@ -10,14 +10,14 @@ namespace Drupal\rules\Core;
 use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\rules\Context\RulesContextTrait;
+use Drupal\rules\Context\ContextHandlerTrait;
 
 /**
  * Base class for rules conditions.
  */
 abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface {
 
-  use RulesContextTrait;
+  use ContextHandlerTrait;
 
   /**
    * The condition manager to proxy execute calls through.
