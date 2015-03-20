@@ -8,15 +8,14 @@
 namespace Drupal\rules\Context;
 
 /**
- * Interface for defining provided context aware plugins.
+ * Interface for plugins that provide context.
  *
- * Provided context aware plugins can specify an array of provided definitions
- * keyed by provided context name at the plugin definition under the "provides"
- * key.
+ * This interface allows plugins to provide new context; e.g., an action plugin
+ * that loads a user would provide the user entity.
  *
- * Provided context is a set of variables that are "produced" by the plugin.
- * Example: an action plugin that loads a user would add the user object as
- * provided context variable.
+ * The plugin has to specify an array of context definitions for the provided
+ * context under the "provides" key at the plugin definition, keyed by provided
+ * context name.
  */
 interface ContextProviderInterface {
 
