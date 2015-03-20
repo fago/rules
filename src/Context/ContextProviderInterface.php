@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Context\ProvidedContextPluginInterface.
+ * Contains \Drupal\rules\Context\ContextProviderInterface.
  */
 
 namespace Drupal\rules\Context;
@@ -18,7 +18,7 @@ namespace Drupal\rules\Context;
  * Example: an action plugin that loads a user would add the user object as
  * provided context variable.
  */
-interface ProvidedContextPluginInterface {
+interface ContextProviderInterface {
 
   /**
    * Sets the value for a defined provided variable.

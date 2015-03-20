@@ -9,12 +9,12 @@ namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionInterface;
-use Drupal\rules\Context\ProvidedContextPluginInterface;
+use Drupal\rules\Context\ContextProviderInterface;
 
 /**
  * Extends the core ConditionInterface to provide a negate() method.
  */
-interface RulesConditionInterface extends ConditionInterface, ContextAwarePluginInterface, ProvidedContextPluginInterface {
+interface RulesConditionInterface extends ConditionInterface, ContextAwarePluginInterface, ContextProviderInterface {
 
   /**
    * Negates the result after evaluating this condition.
