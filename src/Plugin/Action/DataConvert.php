@@ -33,7 +33,11 @@ use Drupal\Component\Utility\String;
  *      )
  *   }
  * )
- * @todo Handle invalid arguments with a more specific exceptions.
+ * @todo Add rounding_behaviour default value "round".
+ * @todo Add various input restrictions.
+ * @todo Add options_list for target type.
+ * @todo Specify the right data type for the provided result.
+ * @todo Alter context definition based on the target type.
  */
 class DataConvert extends RulesActionBase {
 
@@ -43,12 +47,18 @@ class DataConvert extends RulesActionBase {
   public function execute() {
     $value = $this->getContextValue('value');
 
-    if (!is_numeric($value)) {
-      throw new \InvalidArgumentException($this->t('The given context value is not numeric.'));
-    }
-
     $target_type = $this->getContextValue('target_type');
     $rounding_behavior = $this->getContextValue('rounding_behavior');
+
+    // @todo: Add support for objects implementing __toString().
+    if (!is_scalar($value)) {
+      throw new \InvalidArgumentException('Only scalar values are supported.');
+    }
+
+    // Ensure valid contexts have been provided.
+    if (isset($rounding_behavior) && $target_type != 'integer') {
+      throw new \InvalidArgumentException('A rounding behavior only makes sense with an integer target type.');
+    }
 
     // First apply the rounding behavior if given.
     if (!empty($rounding_behavior)) {
@@ -70,13 +80,13 @@ class DataConvert extends RulesActionBase {
     }
 
     switch ($target_type) {
-      case 'decimal':
+      case 'float':
         $result = floatval($value);
         break;
       case 'integer':
         $result = intval($value);
         break;
-      case 'text':
+      case 'string':
         $result = strval($value);
         break;
       default:

@@ -55,58 +55,41 @@ class DataConvertTest extends RulesIntegrationTestBase {
     $converted = $this->executeAction($value, 'integer', 'round');
     $this->assertInternalType('integer', $converted);
     $this->assertEquals(2, $converted);
+
+    $converted = $this->executeAction('+123', 'integer');
+    $this->assertInternalType('integer', $converted);
+    $this->assertEquals(123, $converted);
   }
 
   /**
-   * Test the conversion and rounding to decimal.
+   * Test the conversion to float.
    *
    * @covers ::execute
    */
-  public function testConvertToDecimal() {
+  public function testConvertToFloat() {
     $value = '1.5';
 
-    $converted = $this->executeAction($value, 'decimal');
+    $converted = $this->executeAction($value, 'float');
     $this->assertInternalType('float', $converted);
     $this->assertEquals(1.5, $converted);
 
-    $converted = $this->executeAction($value, 'decimal', 'down');
+    $converted = $this->executeAction('+1.5', 'float');
     $this->assertInternalType('float', $converted);
-    $this->assertEquals(1.0, $converted);
-
-    $converted = $this->executeAction($value, 'decimal', 'up');
-    $this->assertInternalType('float', $converted);
-    $this->assertEquals(2.0, $converted);
-
-    $converted = $this->executeAction($value, 'decimal', 'round');
-    $this->assertInternalType('float', $converted);
-    $this->assertEquals(2.0, $converted);
+    $this->assertEquals(1.5, $converted);
   }
 
   /**
-   * Test the conversion and rounding to text.
+   * Test the conversion to text.
    *
    * @covers ::execute
    */
-  public function testConvertToText() {
-
+  public function testConvertToString() {
     // Test the conversion to test/string.
     $value = 1.5;
 
-    $converted = $this->executeAction($value, 'text');
+    $converted = $this->executeAction($value, 'string');
     $this->assertInternalType('string', $converted);
     $this->assertEquals('1.5', $converted);
-
-    $converted = $this->executeAction($value, 'text', 'down');
-    $this->assertInternalType('string', $converted);
-    $this->assertEquals('1.0', $converted);
-
-    $converted = $this->executeAction($value, 'text', 'up');
-    $this->assertInternalType('string', $converted);
-    $this->assertEquals('2.0', $converted);
-
-    $converted = $this->executeAction($value, 'text', 'round');
-    $this->assertInternalType('string', $converted);
-    $this->assertEquals('2.0', $converted);
   }
 
   /**
@@ -116,8 +99,18 @@ class DataConvertTest extends RulesIntegrationTestBase {
    * @expectedException \InvalidArgumentException
    */
   public function testInvalidValueException() {
-    $value = $this->getRandomGenerator()->name();
-    $this->executeAction($value, 'integer');
+    $this->executeAction(['some-array'], 'integer');
+  }
+
+  /**
+   * Test the behavior if rounding behavior is used with non integers.
+   *
+   * @covers ::execute
+   * @expectedException \InvalidArgumentException
+   */
+  public function testInvalidRoundingBehavior() {
+    $converted = $this->executeAction('some', 'decimal', 'down');
+    $this->assertInternalType('float', $converted);
   }
 
   /**
