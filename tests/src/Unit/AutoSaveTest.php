@@ -45,7 +45,7 @@ class AutoSaveTest extends RulesUnitTestBase {
       ->willReturn(['entity' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]);
 
     $this->testAction->expects($this->once())
-      ->method('getProvidedDefinitions')
+      ->method('getProvidedContextDefinitions')
       ->willReturn([]);
 
     $this->testAction->expects($this->once())

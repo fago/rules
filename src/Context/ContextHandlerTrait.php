@@ -29,7 +29,7 @@ trait ContextHandlerTrait {
    *
    * @var \Drupal\Component\Plugin\Context\ContextInterface[]
    */
-  protected $provided;
+  protected $providedContext;
 
   /**
    * The data processor plugin manager used to process context variables.
@@ -39,28 +39,28 @@ trait ContextHandlerTrait {
   protected $processorManager;
 
   /**
-   * @see \Drupal\rules\Context\ProvidedContextPlugininterface
+   * @see \Drupal\rules\Context\ContextProviderInterface
    */
   public function setProvidedValue($name, $value) {
-    $this->getProvided($name)->setContextValue($value);
+    $this->getProvidedContext($name)->setContextValue($value);
     return $this;
   }
 
   /**
-   * @see \Drupal\rules\Context\ProvidedContextPlugininterface
+   * @see \Drupal\rules\Context\ContextProviderInterface
    */
-  public function getProvided($name) {
+  public function getProvidedContext($name) {
     // Check for a valid context value.
-    if (!isset($this->provided[$name])) {
-      $this->provided[$name] = new Context($this->getProvidedDefinition($name));
+    if (!isset($this->providedContext[$name])) {
+      $this->providedContext[$name] = new Context($this->getProvidedContextDefinition($name));
     }
-    return $this->provided[$name];
+    return $this->providedContext[$name];
   }
 
   /**
-   * @see \Drupal\rules\Context\ProvidedContextPlugininterface
+   * @see \Drupal\rules\Context\ContextProviderInterface
    */
-  public function getProvidedDefinition($name) {
+  public function getProvidedContextDefinition($name) {
     $definition = $this->getPluginDefinition();
     if (empty($definition['provides'][$name])) {
       throw new ContextException(sprintf("The %s provided context is not valid.", $name));
@@ -69,9 +69,9 @@ trait ContextHandlerTrait {
   }
 
   /**
-   * @see \Drupal\rules\Context\ProvidedContextPlugininterface
+   * @see \Drupal\rules\Context\ContextProviderInterface.
    */
-  public function getProvidedDefinitions() {
+  public function getProvidedContextDefinitions() {
     $definition = $this->getPluginDefinition();
     return !empty($definition['provides']) ? $definition['provides'] : [];
   }
@@ -126,15 +126,15 @@ trait ContextHandlerTrait {
    *   The Rules state where the context variables are added.
    */
   protected function mapProvidedContext(ContextProviderInterface $plugin, RulesState $state) {
-    $provides = $plugin->getProvidedDefinitions();
+    $provides = $plugin->getProvidedContextDefinitions();
     foreach ($provides as $name => $provided_definition) {
       // Avoid name collisions in the rules state: provided variables can be
       // renamed.
       if (isset($this->configuration['provides_mapping'][$name])) {
-        $state->addVariable($this->configuration['provides_mapping'][$name], $plugin->getProvided($name));
+        $state->addVariable($this->configuration['provides_mapping'][$name], $plugin->getProvidedContext($name));
       }
       else {
-        $state->addVariable($name, $plugin->getProvided($name));
+        $state->addVariable($name, $plugin->getProvidedContext($name));
       }
     }
   }

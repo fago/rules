@@ -20,7 +20,7 @@ namespace Drupal\rules\Context;
 interface ContextProviderInterface {
 
   /**
-   * Sets the value for a defined provided variable.
+   * Sets the value for a provided context.
    *
    * @param string $name
    *   The name of the provided context in the plugin definition.
@@ -43,7 +43,7 @@ interface ContextProviderInterface {
    * @return \Drupal\Component\Plugin\Context\ContextInterface
    *   The context object.
    */
-  public function getProvided($name);
+  public function getProvidedContext($name);
 
   /**
    * Gets a specific provided context definition of the plugin.
@@ -57,7 +57,7 @@ interface ContextProviderInterface {
    * @return \Drupal\Component\Plugin\Context\ContextDefinitionInterface.
    *   The definition of the provided context.
    */
-  public function getProvidedDefinition($name);
+  public function getProvidedContextDefinition($name);
 
   /**
    * Gets the provided context definitions of the plugin.
@@ -65,6 +65,6 @@ interface ContextProviderInterface {
    * @return array
    *   The array of provided context definitions, keyed by context name.
    */
-  public function getProvidedDefinitions();
+  public function getProvidedContextDefinitions();
 
 }

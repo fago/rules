@@ -88,6 +88,6 @@ class FetchEntityByIdTest extends RulesEntityIntegrationTestBase {
       ->execute();
 
     // Entity load with type 'test' and id '1' should return the dummy entity.
-    $this->assertEquals($entity, $this->action->getProvided('entity')->getContextValue('entity'), 'Action returns the loaded entity for fetching entity by id.');
+    $this->assertEquals($entity, $this->action->getProvidedContext('entity')->getContextValue('entity'), 'Action returns the loaded entity for fetching entity by id.');
   }
 }

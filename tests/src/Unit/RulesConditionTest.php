@@ -88,7 +88,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->with('test', 'value');
 
     $this->trueCondition->expects($this->once())
-      ->method('getProvidedDefinitions')
+      ->method('getProvidedContextDefinitions')
       ->will($this->returnValue([]));
 
     $this->conditionManager->expects($this->exactly(2))
@@ -140,7 +140,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
     $this->trueCondition->expects($this->once())
-      ->method('getProvidedDefinitions')
+      ->method('getProvidedContextDefinitions')
       ->will($this->returnValue([]));
 
     // Mock some original old value that will be replaced by the data processor.

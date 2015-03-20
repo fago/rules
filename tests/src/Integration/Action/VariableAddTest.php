@@ -35,7 +35,7 @@ class VariableAddTest extends RulesIntegrationTestBase {
     $action->setContextValue('value', $variable);
     $action->execute();
 
-    $result = $action->getProvided('variable_added');
+    $result = $action->getProvidedContext('variable_added');
     $this->assertEquals($variable, $result->getContextValue());
   }
 }

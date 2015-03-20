@@ -162,7 +162,7 @@ class DataConvertTest extends RulesIntegrationTestBase {
     }
 
     $action->execute();
-    $result = $action->getProvided('conversion_result');
+    $result = $action->getProvidedContext('conversion_result');
     return $result->getContextValue();
   }
 }
