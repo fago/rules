@@ -33,26 +33,14 @@ class ExpressionPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Creates a new rule.
-   *
-   * @param array $configuration
-   *   The configuration array to create the plugin instance with.
-   *
-   * @return \Drupal\rules\Plugin\RulesExpression\RuleInterface
-   *   The created rule.
+   * {@inheritdoc}
    */
   public function createRule(array $configuration = []) {
     return $this->createInstance('rules_rule', $configuration);
   }
 
   /**
-   * Creates a new action expression.
-   *
-   * @param string $id
-   *   The action plugin id.
-   *
-   * @return \Drupal\rules\Core\RulesActionInterface;
-   *   The created action.
+   * {@inheritdoc}
    */
   public function createAction($id) {
     return $this->createInstance('rules_action', [
@@ -61,13 +49,7 @@ class ExpressionPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Creates a new condition expression.
-   *
-   * @param string $id
-   *   The condition plugin id.
-   *
-   * @return \Drupal\rules\Core\RulesConditionInterface
-   *   The created condition.
+   * {@inheritdoc}
    */
   public function createCondition($id) {
     return $this->createInstance('rules_condition', [
@@ -76,20 +58,14 @@ class ExpressionPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Creates a new 'and' condition container.
-   *
-   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
-   *   The created 'and' condition container.
+   * {@inheritdoc}
    */
   public function createAnd() {
     return $this->createInstance('rules_and');
   }
 
   /**
-   * Creates a new 'or' condition container.
-   *
-   * @return \Drupal\rules\Engine\ConditionExpressionContainerInterface
-   *   The created 'or' condition container.
+   * {@inheritdoc}
    */
   public function createOr() {
     return $this->createInstance('rules_or');
