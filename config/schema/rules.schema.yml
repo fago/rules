@@ -26,11 +26,18 @@ rules.component.*:
       type: string
       label: 'Rules expression plugin ID'
     configuration:
-      type: rules_component.configuration.[%parent.expression_id]
+      type: rules_expression.[%parent.expression_id]
       label: 'Configuration'
 
-rules_component.configuration.rules_condition:
+rules_expression:
   type: mapping
+  label: 'Rules expression'
+  id:
+    type: string
+    label: 'Plugin ID'
+
+rules_expression.rules_condition:
+  type: rules_expression
   label: "Rules condition configuration"
   mapping:
     id:
@@ -43,8 +50,8 @@ rules_component.configuration.rules_condition:
       type: boolean
       label: 'Negated'
 
-rules_component.configuration.rules_action:
-  type: mapping
+rules_expression.rules_action:
+  type: rules_expression
   label: "Rules action configuration"
   mapping:
     id:
@@ -54,51 +61,24 @@ rules_component.configuration.rules_action:
       type: string
       label: 'Action plugin ID'
 
-rules_component.configuration.rules_rule:
-  type: mapping
-  label: "Rule"
-  mapping:
-    id:
-      type: string
-      label: 'Plugin ID'
-    context_definitions:
-      type: sequence
-      label: 'Context definitions'
-      sequence:
-        - type: rules_component_context
-    conditions:
-      type: rules_component.configuration.[id]
-      label: 'Conditions'
-    actions:
-      type: rules_component.configuration.[id]
-      label: 'Actions'
-
-rules_component_context:
-  type: mapping
-  label: 'Context definition'
-  mapping:
-    type:
-      type: string
-      label: 'Type'
-    label:
-      type: string
-      label: 'Label'
-
-rules_component.configuration.rules_and:
-  type: mapping
+rules_expression.rules_and:
+  type: rules_expression
   label: 'Rules And'
   mapping:
     id:
       type: string
       label: 'Plugin ID'
+    negate:
+      type: boolean
+      label: 'Negate'
     conditions:
       type: sequence
       label: 'Conditions'
       sequence:
-        - type: rules_component.configuration.[id]
+        - type: rules_expression.[id]
 
-rules_component.configuration.rules_action_set:
-  type: mapping
+rules_expression.rules_action_set:
+  type: rules_expression
   label: 'Action set'
   mapping:
     id:
@@ -108,4 +88,34 @@ rules_component.configuration.rules_action_set:
       type: sequence
       label: 'Actions'
       sequence:
-        - type: rules_component.configuration.[id]
+        - type: rules_expression.[id]
+
+rules_expression.rules_rule:
+  type: rules_expression
+  label: "Rule"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    context_definitions:
+      type: sequence
+      label: 'Context definitions'
+      sequence:
+        - type: rules.context.definition
+    conditions:
+      type: rules_expression.[id]
+      label: 'Conditions'
+    actions:
+      type: rules_expression.[id]
+      label: 'Actions'
+
+rules.context.definition:
+  type: mapping
+  label: 'Context definition'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    label:
+      type: string
+      label: 'Label'
