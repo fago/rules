@@ -10,7 +10,6 @@ namespace Drupal\rules\Context;
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Utility\String;
-use Drupal\Core\Plugin\Context\Context;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 

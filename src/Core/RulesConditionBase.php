@@ -7,46 +7,17 @@
 
 namespace Drupal\rules\Core;
 
-use Drupal\Core\Executable\ExecutableManagerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContextAwarePluginBase;
+use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\rules\Context\ContextProviderTrait;
 
 /**
  * Base class for rules conditions.
+ *
+ * @todo Figure out whether buildConfigurationForm() is useful to Rules somehow.
  */
-abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface {
+abstract class RulesConditionBase extends ConditionPluginBase implements RulesConditionInterface {
 
   use ContextProviderTrait;
-
-  /**
-   * The condition manager to proxy execute calls through.
-   *
-   * @var \Drupal\Core\Executable\ExecutableManagerInterface
-   */
-  protected $executableManager;
-
-  /**
-   * The plugin configuration.
-   *
-   * @var array
-   */
-  protected $configuration;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setExecutableManager(ExecutableManagerInterface $executableManager) {
-    $this->executableManager = $executableManager;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isNegated() {
-    return !empty($this->configuration['negate']);
-  }
 
   /**
    * {@inheritdoc}
@@ -54,66 +25,6 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   public function negate($negate = TRUE) {
     $this->configuration['negate'] = $negate;
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function execute() {
-    return $this->executableManager->execute($this);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfiguration() {
-    return [
-      'id' => $this->getPluginId(),
-    ] + $this->configuration;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration + $this->defaultConfiguration();
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
-    return [];
   }
 
 }
