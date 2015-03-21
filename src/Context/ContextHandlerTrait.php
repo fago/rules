@@ -25,56 +25,11 @@ use Drupal\rules\Engine\RulesState;
 trait ContextHandlerTrait {
 
   /**
-   * The data objects that are provided by this plugin.
-   *
-   * @var \Drupal\Component\Plugin\Context\ContextInterface[]
-   */
-  protected $providedContext;
-
-  /**
    * The data processor plugin manager used to process context variables.
    *
    * @var \Drupal\rules\Context\DataProcessorManager
    */
   protected $processorManager;
-
-  /**
-   * @see \Drupal\rules\Context\ContextProviderInterface
-   */
-  public function setProvidedValue($name, $value) {
-    $this->getProvidedContext($name)->setContextValue($value);
-    return $this;
-  }
-
-  /**
-   * @see \Drupal\rules\Context\ContextProviderInterface
-   */
-  public function getProvidedContext($name) {
-    // Check for a valid context value.
-    if (!isset($this->providedContext[$name])) {
-      $this->providedContext[$name] = new Context($this->getProvidedContextDefinition($name));
-    }
-    return $this->providedContext[$name];
-  }
-
-  /**
-   * @see \Drupal\rules\Context\ContextProviderInterface
-   */
-  public function getProvidedContextDefinition($name) {
-    $definition = $this->getPluginDefinition();
-    if (empty($definition['provides'][$name])) {
-      throw new ContextException(sprintf("The %s provided context is not valid.", $name));
-    }
-    return $definition['provides'][$name];
-  }
-
-  /**
-   * @see \Drupal\rules\Context\ContextProviderInterface.
-   */
-  public function getProvidedContextDefinitions() {
-    $definition = $this->getPluginDefinition();
-    return !empty($definition['provides']) ? $definition['provides'] : [];
-  }
 
   /**
    * Maps variables from rules state into the plugin context.

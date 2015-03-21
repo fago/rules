@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
@@ -30,6 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class RulesCondition extends RulesConditionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
 
   use RulesExpressionTrait;
+  use ContextHandlerTrait;
 
   /**
    * The condition manager used to instantiate the condition plugin.
