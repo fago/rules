@@ -6,13 +6,14 @@
  */
 
 namespace Drupal\rules\Engine;
+
 use Drupal\Component\Plugin\PluginManagerInterface;
 
 /**
- * Defines an interface for Expression Manager plugins.
+ * Defines an interface for the expression plugin manager.
  */
 interface ExpressionPluginManagerInterface extends PluginManagerInterface {
-   
+
   /**
    * Creates a new rule.
    *
