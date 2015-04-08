@@ -45,6 +45,8 @@ before_script:
   - cd drupal-8.0.x-dev
   # Apply patch so that run-tests.sh returns error code when executing Simpletests.
   - wget -q -O - https://www.drupal.org/files/issues/2189345_60.patch | patch -p1
+  # Apply context patch https://www.drupal.org/node/2467411 .
+  - wget -q -O - https://www.drupal.org/files/issues/2467411.patch | patch -p1
   # Install Drupal.
   - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/rules testing
 
