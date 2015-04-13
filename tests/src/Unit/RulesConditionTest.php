@@ -46,12 +46,12 @@ class RulesConditionTest extends RulesUnitTestBase {
     // Create a test condition plugin that always evaluates to TRUE. We cannot
     // use $this->trueCondition because it is a Rules expression, but we need a
     // condition plugin here.
-    $this->trueCondition = $this->getMock('Drupal\rules\Core\RulesConditionInterface');
-    $this->trueCondition->expects($this->any())
+    $this->trueConditionExpression = $this->getMock('Drupal\rules\Core\RulesConditionInterface');
+    $this->trueConditionExpression->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
-    $this->trueCondition->expects($this->any())
+    $this->trueConditionExpression->expects($this->any())
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
@@ -78,22 +78,22 @@ class RulesConditionTest extends RulesUnitTestBase {
 
     $this->condition->setContext('test', $context);
 
-    $this->trueCondition->expects($this->exactly(2))
+    $this->trueConditionExpression->expects($this->exactly(2))
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
     // Make sure that the context value is set as expected.
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('setContextValue')
       ->with('test', 'value');
 
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('getProvidedContextDefinitions')
       ->will($this->returnValue([]));
 
     $this->conditionManager->expects($this->exactly(2))
       ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
+      ->will($this->returnValue($this->trueConditionExpression));
 
     $this->assertTrue($this->condition->evaluate());
   }
@@ -103,13 +103,13 @@ class RulesConditionTest extends RulesUnitTestBase {
    */
   public function testContextDefinitions() {
     $context_definition = $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface');
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $context_definition]));
 
     $this->conditionManager->expects($this->once())
       ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
+      ->will($this->returnValue($this->trueConditionExpression));
 
     $this->assertSame($this->condition->getContextDefinitions(), ['test' => $context_definition]);
   }
@@ -135,28 +135,28 @@ class RulesConditionTest extends RulesUnitTestBase {
 
     $condition->setContext('test', $context);
 
-    $this->trueCondition->expects($this->exactly(2))
+    $this->trueConditionExpression->expects($this->exactly(2))
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('getProvidedContextDefinitions')
       ->will($this->returnValue([]));
 
     // Mock some original old value that will be replaced by the data processor.
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('getContextValue')
       ->with('test')
       ->will($this->returnValue('old_value'));
 
     // The outcome of the data processor needs to get set on the condition.
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('setContextValue')
       ->with('test', 'new_value');
 
     $this->conditionManager->expects($this->exactly(2))
       ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
+      ->will($this->returnValue($this->trueConditionExpression));
 
     $data_processor = $this->getMock('Drupal\rules\Context\DataProcessorInterface');
     $data_processor->expects($this->once())

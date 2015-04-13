@@ -113,12 +113,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -129,12 +129,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testConditionFails() {
     // The execute method on the action must never be called.
-    $this->testAction->expects($this->never())
+    $this->testActionExpression->expects($this->never())
       ->method('execute');
 
     $this->rule
-      ->addExpressionObject($this->falseCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->falseConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -145,13 +145,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -162,13 +162,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsFalse() {
     // The execute method on the action must never be called.
-    $this->testAction->expects($this->never())
+    $this->testActionExpression->expects($this->never())
       ->method('execute');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->falseCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->falseConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -178,15 +178,15 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testNestedRules() {
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $nested = $this->getMockRule()
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction);
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression);
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->trueConditionExpression)
       ->addExpressionObject($nested)
       ->execute();
   }

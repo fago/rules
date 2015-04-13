@@ -36,10 +36,10 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
-    $this->actionSet->addExpressionObject($this->testAction)->execute();
+    $this->actionSet->addExpressionObject($this->testActionExpression)->execute();
   }
 
   /**
@@ -47,11 +47,11 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testTwoActionExecution() {
     // The method on the test action must be called twice.
-    $this->testAction->expects($this->exactly(2))
+    $this->testActionExpression->expects($this->exactly(2))
       ->method('executeWithState');
 
-    $this->actionSet->addExpressionObject($this->testAction)
-      ->addExpressionObject($this->testAction)
+    $this->actionSet->addExpressionObject($this->testActionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -60,13 +60,13 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testNestedActionExecution() {
     // The method on the test action must be called twice.
-    $this->testAction->expects($this->exactly(2))
+    $this->testActionExpression->expects($this->exactly(2))
       ->method('executeWithState');
 
     $inner = $this->getMockActionSet()
-      ->addExpressionObject($this->testAction);
+      ->addExpressionObject($this->testActionExpression);
 
-    $this->actionSet->addExpressionObject($this->testAction)
+    $this->actionSet->addExpressionObject($this->testActionExpression)
       ->addExpressionObject($inner)
       ->execute();
   }
