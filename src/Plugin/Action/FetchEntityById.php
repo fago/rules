@@ -48,7 +48,7 @@ class FetchEntityById extends RulesActionBase implements ContainerFactoryPluginI
   protected $entityManager;
 
   /**
-   * Constructs a CreatePathAlias object.
+   * Constructs a FetchEntityById object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
