@@ -21,6 +21,17 @@ use Drupal\rules\Engine\RulesState;
 class RulesAnd extends ConditionExpressionContainer {
 
   /**
+   * Returns whether there is a configured condition.
+   *
+   * @todo: Remove this once we added the API to access configured conditions.
+   *
+   * @return bool
+   */
+  public function isEmpty() {
+    return empty($this->conditions);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function executeWithState(RulesState $state) {
