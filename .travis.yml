@@ -44,7 +44,7 @@ before_script:
   - wget -q -O - http://ftp.drupal.org/files/projects/drupal-8.0.x-dev.tar.gz | tar xz
   - cd drupal-8.0.x-dev
   # Apply patch so that run-tests.sh returns error code when executing Simpletests.
-  - wget -q -O - https://www.drupal.org/files/issues/2189345_60.patch | patch -p1
+  - wget -q -O - https://www.drupal.org/files/issues/2189345-61.patch | patch -p1
   # Apply context patch https://www.drupal.org/node/2467411 .
   - wget -q -O - https://www.drupal.org/files/issues/2467411.patch | patch -p1
   # Install Drupal.
