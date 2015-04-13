@@ -34,13 +34,9 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
    * @expectedException \Drupal\rules\Exception\RulesEvaluationException
    * @expectedExceptionMessage Required context test is missing for plugin testplugin.
    */
-  public function testMissingContextMapping() {
+  public function testMissingContext() {
     // Set 'getContextValue' as mocked method.
     $trait = $this->getMockForTrait('Drupal\rules\Context\ContextHandlerTrait', [], '', TRUE, TRUE, TRUE, ['getContextValue']);
-    $trait->expects($this->once())
-      ->method('getContextValue')
-      ->with('test')
-      ->will($this->returnValue(NULL));
     $context_definition = $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface');
 
     // Make the context required in the definition.
