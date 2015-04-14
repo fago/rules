@@ -8,7 +8,6 @@
 namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
-use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Utility\String;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
@@ -92,7 +91,7 @@ trait ContextHandlerTrait {
     if (isset($this->configuration['context_processors'])) {
       foreach ($this->configuration['context_processors'] as $context_name => $processors) {
         $value = $plugin->getContextValue($context_name);
-        foreach($processors as $processor_plugin_id => $configuration) {
+        foreach ($processors as $processor_plugin_id => $configuration) {
           $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
           $value = $data_processor->process($value);
         }

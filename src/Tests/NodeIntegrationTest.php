@@ -109,7 +109,8 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     // We use the rules_test_node action plugin which marks its node context for
     // auto saving.
     // @see \Drupal\rules_test\Plugin\Action\TestNodeAction
-    $action = $this->expressionManager->createAction('rules_test_node', [
+    $action = $this->expressionManager->createAction('rules_test_node')
+    ->setConfiguration([
       'context_definitions' => [
         'node' => [
           'type' => 'entity:node',
@@ -119,10 +120,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
           'type' => 'string',
           'label' => 'Title',
         ],
-      ],
-      // We don't need a context mapping here, the action will just pick the
-      // contexts with the same names.
-    ]);
+      ]
+    ] + ContextConfig::create()
+        ->map('node', 'node')
+        ->map('title', 'title')
+        ->toArray()
+    );
 
     $action->setContextValue('node', $node);
     $action->setContextValue('title', 'new title');
