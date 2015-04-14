@@ -90,10 +90,13 @@ trait ContextHandlerTrait {
    */
   protected function processData(ContextAwarePluginInterface $plugin) {
     if (isset($this->configuration['context_processors'])) {
-      foreach ($this->configuration['context_processors'] as $name => $settings) {
-        $data_processor = $this->processorManager->createInstance($settings['plugin'], $settings['configuration']);
-        $new_value = $data_processor->process($plugin->getContextValue($name));
-        $plugin->setContextValue($name, $new_value);
+      foreach ($this->configuration['context_processors'] as $context_name => $processors) {
+        $value = $plugin->getContextValue($context_name);
+        foreach($processors as $processor_plugin_id => $configuration) {
+          $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
+          $value = $data_processor->process($value);
+        }
+        $plugin->setContextValue($context_name, $value);
       }
     }
   }

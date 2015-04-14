@@ -18,7 +18,7 @@ use Drupal\rules\Engine\RulesLog;
  *   label = @Translation("Test action logging.")
  * )
  */
-class TestAction extends RulesActionBase {
+class TestLogAction extends RulesActionBase {
 
   /**
    * {@inheritdoc}

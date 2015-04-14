@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 
 
@@ -87,16 +88,13 @@ class RulesConditionTest extends RulesUnitTestBase {
    */
   public function testDataProcessor() {
     $condition = new RulesCondition([
-      'condition_id' => 'rules_or',
-      'context_processors' => [
-        'test' => [
-          // We don't care about the data processor plugin name and
-          // configuration since we will use a mock anyway.
-          'plugin' => 'foo',
-          'configuration' => [],
-        ]
-      ]
-    ], '', [], $this->conditionManager, $this->processorManager);
+        'condition_id' => 'rules_or',
+      ] + ContextConfig::create()
+        // We don't care about the data processor plugin name and
+        // configuration since we will use a mock anyway.
+        ->process('test', 'foo', [])
+        ->toArray(),
+    '', [], $this->conditionManager, $this->processorManager);
 
     // Build some mocked context and definitions for our mock condition.
     $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
