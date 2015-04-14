@@ -15,7 +15,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  *
  * @see \Drupal\rules\Engine\ExpressionInterface
  */
-class ExpressionPluginManager extends DefaultPluginManager {
+class ExpressionPluginManager extends DefaultPluginManager implements ExpressionPluginManagerInterface {
 
   /**
    * A map from class names to plugin ids.

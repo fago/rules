@@ -8,7 +8,6 @@
 namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
-use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Component\Utility\String;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
@@ -44,24 +43,13 @@ trait ContextHandlerTrait {
   protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {
     $context_definitions = $plugin->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
-      $context_value = NULL;
-      // First check if we can forward a context directly set on this plugin.
-      try {
-        $context_value = $this->getContextValue($name);
-      }
-      // A context exception means that there is no context with the given name,
-      // so we catch it and continue with the context mapping below.
-      catch (ContextException $e) {
-      }
-
-      if ($context_value) {
-        $plugin->setContextValue($name, $context_value);
-      }
       // Check if a data selector is configured that maps to the state.
-      elseif (isset($this->configuration['context_mapping'][$name])) {
+      if (isset($this->configuration['context_mapping'][$name])) {
         $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name]);
-        $plugin->setContextValue($name, $typed_data);
+        $plugin->getContext($name)->setContextData($typed_data);
       }
+      // @todo: This misses support for picking up pre-defined values here.
+
       elseif ($definition->isRequired()) {
         throw new RulesEvaluationException(String::format('Required context @name is missing for plugin @plugin.', [
           '@name' => $name,
@@ -101,10 +89,13 @@ trait ContextHandlerTrait {
    */
   protected function processData(ContextAwarePluginInterface $plugin) {
     if (isset($this->configuration['context_processors'])) {
-      foreach ($this->configuration['context_processors'] as $name => $settings) {
-        $data_processor = $this->processorManager->createInstance($settings['plugin'], $settings['configuration']);
-        $new_value = $data_processor->process($plugin->getContextValue($name));
-        $plugin->setContextValue($name, $new_value);
+      foreach ($this->configuration['context_processors'] as $context_name => $processors) {
+        $value = $plugin->getContextValue($context_name);
+        foreach ($processors as $processor_plugin_id => $configuration) {
+          $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
+          $value = $data_processor->process($value);
+        }
+        $plugin->setContextValue($context_name, $value);
       }
     }
   }

@@ -130,7 +130,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
    */
   public function executeWithState(RulesState $state) {
     // Evaluate the rule's conditions.
-    if (!$this->conditions->executeWithState($state)) {
+    if (!$this->conditions->isEmpty() && !$this->conditions->executeWithState($state)) {
       // Do not run the actions if the conditions are not met.
       return;
     }

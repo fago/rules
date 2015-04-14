@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Context\ContextConfig;
+
 /**
  * Test the data processor plugins during Rules evaluation.
  *
@@ -19,28 +21,34 @@ class DataProcessorTest extends RulesDrupalTestBase {
    */
   public function testNumericOffset() {
     // Configure a simple rule with one action.
-    $action = $this->expressionManager->createInstance('rules_action', [
-      'action_id' => 'rules_system_message',
+    $action = $this->expressionManager->createInstance('rules_action',
       // @todo Actually the data processor plugin only applies to numbers, so is
       // kind of an invalid configuration. Since the configuration is not
       // validated during execution this works for now.
-      'context_processors' => [
+      ContextConfig::create()
+        ->map('message', 'message')
+        ->map('type', 'type')
+        ->process('message', 'rules_numeric_offset', [
+          'offset' => 1,
+        ])
+        ->setConfigKey('action_id', 'rules_system_message')
+        ->toArray()
+    );
+
+    $rule = $this->expressionManager->createRule([
+      'context_definitions' => [
         'message' => [
-          'plugin' => 'rules_numeric_offset',
-          'configuration' => [
-            'offset' => 1,
-          ],
+          'type' => 'string',
+        ],
+        'type' => [
+          'type' => 'string',
         ],
       ],
     ]);
-
-    $action->setContextValue('message', 1)
-      ->setContextValue('type', 'status');
-
-    $this->expressionManager->createRule()
-      ->addCondition('rules_test_true')
-      ->addExpressionObject($action)
-      ->execute();
+    $rule->setContextValue('message', 1);
+    $rule->setContextValue('type', 'status');
+    $rule->addExpressionObject($action);
+    $rule->execute();
 
     $messages = drupal_set_message();
     // The original value was 1 and the processor adds 1, so the result should

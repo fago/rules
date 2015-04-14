@@ -36,10 +36,10 @@ class RulesOrTest extends RulesUnitTestBase {
    */
   public function testOneCondition() {
     // The method on the test condition must be called once.
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('executeWithState');
 
-    $this->or->addExpressionObject($this->trueCondition);
+    $this->or->addExpressionObject($this->trueConditionExpression);
     $this->assertTrue($this->or->execute(), 'Single condition returns TRUE.');
   }
 
@@ -59,12 +59,12 @@ class RulesOrTest extends RulesUnitTestBase {
    */
   public function testTwoConditions() {
     // The method on the test condition must be called once.
-    $this->trueCondition->expects($this->once())
+    $this->trueConditionExpression->expects($this->once())
       ->method('executeWithState');
 
     $this->or
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->trueCondition);
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->trueConditionExpression);
 
     $this->assertTrue($this->or->execute(), 'Two conditions returns TRUE.');
   }
@@ -74,12 +74,12 @@ class RulesOrTest extends RulesUnitTestBase {
    */
   public function testTwoFalseConditions() {
     // The method on the test condition must be called once.
-    $this->falseCondition->expects($this->exactly(2))
+    $this->falseConditionExpression->expects($this->exactly(2))
       ->method('executeWithState');
 
     $this->or
-      ->addExpressionObject($this->falseCondition)
-      ->addExpressionObject($this->falseCondition);
+      ->addExpressionObject($this->falseConditionExpression)
+      ->addExpressionObject($this->falseConditionExpression);
 
     $this->assertFalse($this->or->execute(), 'Two false conditions return FALSE.');
   }

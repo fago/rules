@@ -31,8 +31,8 @@ interface ExpressionPluginManagerInterface extends PluginManagerInterface {
    * @param string $id
    *   The action plugin id.
    *
-   * @return \Drupal\rules\Core\RulesActionInterface;
-   *   The created action.
+   * @return \Drupal\rules\Engine\ActionExpressionInterface
+   *   The created action expression.
    */
   public function createAction($id);
 
@@ -42,8 +42,8 @@ interface ExpressionPluginManagerInterface extends PluginManagerInterface {
    * @param string $id
    *   The condition plugin id.
    *
-   * @return \Drupal\rules\Core\RulesConditionInterface
-   *   The created condition.
+   * @return \Drupal\rules\Engine\ConditionExpressionInterface
+   *   The created condition expression.
    */
   public function createCondition($id);
 

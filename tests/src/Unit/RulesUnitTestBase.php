@@ -21,21 +21,21 @@ abstract class RulesUnitTestBase extends UnitTestCase {
    *
    * @var \Drupal\rules\Engine\ConditionExpressionInterface
    */
-  protected $trueCondition;
+  protected $trueConditionExpression;
 
   /**
    * A mocked condition that always evaluates to FALSE.
    *
    * @var \Drupal\rules\Engine\ConditionExpressionInterface
    */
-  protected $falseCondition;
+  protected $falseConditionExpression;
 
   /**
    * A mocked dummy action object.
    *
    * @var \Drupal\rules\Engine\ActionExpressionInterface
    */
-  protected $testAction;
+  protected $testActionExpression;
 
   /**
    * The mocked expression manager object.
@@ -50,35 +50,35 @@ abstract class RulesUnitTestBase extends UnitTestCase {
   public function setUp() {
     parent::setUp();
 
-    $this->trueCondition = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
+    $this->trueConditionExpression = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
 
-    $this->trueCondition->expects($this->any())
+    $this->trueConditionExpression->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(TRUE));
 
-    $this->trueCondition->expects($this->any())
+    $this->trueConditionExpression->expects($this->any())
       ->method('executeWithState')
       ->will($this->returnValue(TRUE));
 
-    $this->trueCondition->expects($this->any())
+    $this->trueConditionExpression->expects($this->any())
       ->method('evaluate')
       ->will($this->returnValue(TRUE));
 
-    $this->falseCondition = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
+    $this->falseConditionExpression = $this->getMock('Drupal\rules\Engine\ConditionExpressionInterface');
 
-    $this->falseCondition->expects($this->any())
+    $this->falseConditionExpression->expects($this->any())
       ->method('execute')
       ->will($this->returnValue(FALSE));
 
-    $this->falseCondition->expects($this->any())
+    $this->falseConditionExpression->expects($this->any())
       ->method('executeWithState')
       ->will($this->returnValue(FALSE));
 
-    $this->falseCondition->expects($this->any())
+    $this->falseConditionExpression->expects($this->any())
       ->method('evaluate')
       ->will($this->returnValue(FALSE));
 
-    $this->testAction = $this->getMock('Drupal\rules\Engine\ActionExpressionInterface');
+    $this->testActionExpression = $this->getMock('Drupal\rules\Engine\ActionExpressionInterface');
 
     $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionPluginManager')
       ->disableOriginalConstructor()
