@@ -31,12 +31,12 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     // Prepare our own dummy entityManager as the entityManager in
     // RulesEntityIntegrationTestBase does not mock the getStorage method.
     $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
-      ->setMethods(['getBundleInfo', 'getStorage'])
+      ->setMethods(['getBundleInfo', 'getStorage', 'getBaseFieldDefinitions'])
       ->setConstructorArgs([
         $this->namespaces,
         $this->moduleHandler,
         $this->cacheBackend,
-        $this->getMock('Drupal\Core\Language\LanguageManagerInterface'),
+        $this->languageManager,
         $this->getStringTranslationStub(),
         $this->getClassResolverStub(),
         $this->typedDataManager,
@@ -52,6 +52,12 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->with($this->anything())
       ->willReturn(['entity_test' => ['label' => 'Entity Test']]);
     $this->container->set('entity.manager', $this->entityManager);
+
+    // The base field definitions for entity_test aren't used, and would
+    // require additional mocking.
+    $this->entityManager->expects($this->any())
+      ->method('getBaseFieldDefinitions')
+      ->willReturn([]);
 
     $this->action = $this->actionManager->createInstance('rules_entity_fetch_by_field');
   }

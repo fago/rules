@@ -17,6 +17,13 @@ namespace Drupal\Tests\rules\Integration;
 abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
 
   /**
+   * The language manager mock.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
