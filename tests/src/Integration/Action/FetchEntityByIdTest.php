@@ -30,7 +30,7 @@ class FetchEntityByIdTest extends RulesEntityIntegrationTestBase {
 
     // Prepare dummy entity manager.
     $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
-      ->setMethods(['getBundleInfo', 'getStorage'])
+      ->setMethods(['getBundleInfo', 'getBaseFieldDefinitions', 'getStorage'])
       ->setConstructorArgs([
         $this->namespaces,
         $this->moduleHandler,
@@ -43,6 +43,12 @@ class FetchEntityByIdTest extends RulesEntityIntegrationTestBase {
         $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface')
       ])
       ->getMock();
+
+    // The base field definitions for entity_test aren't used, and would
+    // require additional mocking.
+    $this->entityManager->expects($this->any())
+      ->method('getBaseFieldDefinitions')
+      ->willReturn([]);
 
     // Return some dummy bundle information for now, so that the entity manager
     // does not call out to the config entity system to get bundle information.
