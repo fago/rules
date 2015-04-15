@@ -18,7 +18,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
   /**
    * The action to be tested.
    *
-   * @var \Drupal\rules\Engine\RulesActionInterface
+   * @var \Drupal\rules\Core\RulesActionInterface
    */
   protected $action;
 
@@ -204,6 +204,18 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->execute();
 
     // @todo Test that the provided context has the correct entity type.
+  }
+
+  /**
+   * @covers ::refineContextDefinitions
+   */
+  public function testRefiningContextDefinitions() {
+    $this->action->setContextValue('type', 'entity_test');
+    $this->action->refineContextdefinitions();
+    $this->assertEquals(
+      $this->action->getProvidedContextDefinition('entity_fetched')
+      ->getDataType(), 'entity:entity_test'
+    );
   }
 
 }

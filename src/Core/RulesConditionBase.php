@@ -22,6 +22,13 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
   /**
    * {@inheritdoc}
    */
+  public function refineContextDefinitions() {
+    // Do not define anything by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function negate($negate = TRUE) {
     $this->configuration['negate'] = $negate;
     return $this;

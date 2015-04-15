@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Core;
 
-use Drupal\Component\Plugin\ContextAwarePluginInterface;
+use Drupal\rules\Context\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\rules\Context\ContextProviderInterface;
 

@@ -97,6 +97,8 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
     // action plugin.
     $this->mapContext($action, $state);
 
+    $action->refineContextdefinitions();
+
     // Send the context value through configured data processor before executing
     // the action.
     $this->processData($action);

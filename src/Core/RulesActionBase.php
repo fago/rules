@@ -29,6 +29,13 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
   /**
    * {@inheritdoc}
    */
+  public function refineContextDefinitions() {
+    // Do not define anything by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getConfiguration() {
     return [
       'id' => $this->getPluginId(),

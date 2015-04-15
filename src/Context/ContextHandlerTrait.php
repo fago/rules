@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Component\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
@@ -32,7 +32,7 @@ trait ContextHandlerTrait {
   /**
    * Maps variables from rules state into the plugin context.
    *
-   * @param \Drupal\Component\Plugin\ContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin that is populated with context values.
    * @param \Drupal\rules\Engine\RulesState $state
    *   The Rules state containing available variables.
@@ -40,7 +40,7 @@ trait ContextHandlerTrait {
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   In case a required context is missing for the plugin.
    */
-  protected function mapContext(ContextAwarePluginInterface $plugin, RulesState $state) {
+  protected function mapContext(CoreContextAwarePluginInterface $plugin, RulesState $state) {
     $context_definitions = $plugin->getContextDefinitions();
     foreach ($context_definitions as $name => $definition) {
       // Check if a data selector is configured that maps to the state.
@@ -84,10 +84,10 @@ trait ContextHandlerTrait {
   /**
    * Process data context on the plugin, usually before it gets executed.
    *
-   * @param \Drupal\Component\Plugin\ContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin to process the context data on.
    */
-  protected function processData(ContextAwarePluginInterface $plugin) {
+  protected function processData(CoreContextAwarePluginInterface $plugin) {
     if (isset($this->configuration['context_processors'])) {
       foreach ($this->configuration['context_processors'] as $context_name => $processors) {
         $value = $plugin->getContextValue($context_name);
