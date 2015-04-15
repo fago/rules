@@ -7,8 +7,8 @@
 
 namespace Drupal\rules\Plugin\Action;
 
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Core\RulesActionBase;
-use Drupal\Component\Utility\String;
 
 /**
  * @Action(
@@ -73,7 +73,7 @@ class DataConvert extends RulesActionBase {
           $value = round($value);
           break;
         default:
-          throw new \InvalidArgumentException(String::format('Unknown rounding behavior: @rounding_behavior', [
+          throw new \InvalidArgumentException(SafeMarkup::format('Unknown rounding behavior: @rounding_behavior', [
             '@rounding_behavior' => $rounding_behavior,
           ]));
       }
@@ -90,7 +90,7 @@ class DataConvert extends RulesActionBase {
         $result = strval($value);
         break;
       default:
-        throw new \InvalidArgumentException(String::format('Unknown target type: @type', [
+        throw new \InvalidArgumentException(SafeMarkup::format('Unknown target type: @type', [
           '@type' => $target_type,
         ]));
     }

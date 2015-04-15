@@ -8,7 +8,7 @@
 namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Drupal\rules\Engine\RulesState;
 
@@ -51,7 +51,7 @@ trait ContextHandlerTrait {
       // @todo: This misses support for picking up pre-defined values here.
 
       elseif ($definition->isRequired()) {
-        throw new RulesEvaluationException(String::format('Required context @name is missing for plugin @plugin.', [
+        throw new RulesEvaluationException(SafeMarkup::format('Required context @name is missing for plugin @plugin.', [
           '@name' => $name,
           '@plugin' => $plugin->getPluginId(),
         ]));

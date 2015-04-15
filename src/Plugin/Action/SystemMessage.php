@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\Action;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
@@ -49,7 +49,7 @@ class SystemMessage extends RulesActionBase {
   public function execute() {
     // @todo Should we do the sanitization somewhere else? D7 had the sanitize
     // flag in the context definition.
-    $message = String::checkPlain($this->getContextValue('message'));
+    $message = SafeMarkup::checkPlain($this->getContextValue('message'));
     $type = $this->getContextValue('type');
     $repeat = (bool) $this->getContextValue('repeat');
     drupal_set_message($message, $type, $repeat);
