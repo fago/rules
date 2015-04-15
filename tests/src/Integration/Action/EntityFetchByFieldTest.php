@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityFetchByField
- * @group rules_action
+ * @group rules_actions
  */
 class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
 

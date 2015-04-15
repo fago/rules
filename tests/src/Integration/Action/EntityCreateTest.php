@@ -12,7 +12,7 @@ use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityCreate
- * @group rules_action
+ * @group rules_actions
  */
 class EntityCreateTest extends RulesEntityIntegrationTestBase {
 
