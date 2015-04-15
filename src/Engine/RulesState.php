@@ -22,7 +22,7 @@ use Drupal\rules\Exception\RulesEvaluationException;
  * A rule element may clone the state, so any added variables are only visible
  * for elements in the current PHP-variable-scope.
  */
-class RulesState {
+class RulesState implements RulesStateInterface {
 
   /**
    * Globally keeps the ids of rules blocked due to recursion prevention.
@@ -62,29 +62,14 @@ class RulesState {
   }
 
   /**
-   * Adds the given variable to the given execution state.
-   *
-   * @param string $name
-   *   The varible name.
-   * @param \Drupal\Core\Plugin\Context\ContextInterface $context
-   *   The variable wrapped as context.
+   * {@inheritdoc}
    */
   public function addVariable($name, ContextInterface $context) {
     $this->variables[$name] = $context;
   }
 
   /**
-   * Gets a variable.
-   *
-   * @param string $name
-   *   The name of the variable to return.
-   *
-   * @return \Drupal\Core\Plugin\Context\ContextInterface
-   *   The variable wrapped as context.
-   *
-   * @throws RulesEvaluationException
-   *   Throws a RulesEvaluationException if the variable does not exist in the
-   *   state.
+   * {@inheritdoc}
    */
   public function getVariable($name) {
     if (!array_key_exists($name, $this->variables)) {
@@ -96,20 +81,7 @@ class RulesState {
   }
 
   /**
-   * Returns a value as specified in the selector.
-   *
-   * @param string $selector
-   *   The selector string, e.g. "node:uid:entity:mail:value".
-   * @param string $langcode
-   *   (optional) The language code used to get the argument value if the
-   *   argument value should be translated. Defaults to
-   *   LanguageInterface::LANGCODE_NOT_SPECIFIED.
-   *
-   * @return \Drupal\Core\TypedData\TypedDataInterface
-   *   The variable wrapped as typed data.
-   *
-   * @throws RulesEvaluationException
-   *   Throws a RulesEvaluationException in case the selector cannot be applied.
+   * {@inheritdoc}
    */
   public function applyDataSelector($selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
     $parts = explode(':', $selector, 2);
@@ -173,18 +145,14 @@ class RulesState {
   }
 
   /**
-   * Mark a variable to be saved later when the execution is finished.
-   *
-   * @param string $selector
-   *   The data selector that specifies the target object to be saved. Example:
-   *   node:uid:entity.
+   * {@inheritdoc}
    */
   public function saveChangesLater($selector) {
     $this->saveLater[$selector] = TRUE;
   }
 
   /**
-   * Saves all variables that have been marked for auto saving.
+   * {@inheritdoc}
    */
   public function autoSave() {
     // Make changes permanent.
