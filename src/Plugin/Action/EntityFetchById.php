@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\FetchEntityById.
+ * Contains \Drupal\rules\Plugin\Action\EntityFetchById.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -16,11 +16,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Provides a 'Fetch entity by id' action.
  *
  * @Action(
- *   id = "rules_fetch_entity_by_id",
+ *   id = "rules_entity_fetch_by_id",
  *   label = @Translation("Fetch entity by id"),
  *   category = @Translation("Entity"),
  *   context = {
- *     "entity_type" = @ContextDefinition("string",
+ *     "entity_type_id" = @ContextDefinition("string",
  *       label = @Translation("Entity type"),
  *       description = @Translation("Specifies the type of entity that should be fetched.")
  *     ),
@@ -37,8 +37,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
+ * @todo: port for rules_entity_action_type_options.
  */
-class FetchEntityById extends RulesActionBase implements ContainerFactoryPluginInterface {
+class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The entity manager service.
@@ -48,7 +49,7 @@ class FetchEntityById extends RulesActionBase implements ContainerFactoryPluginI
   protected $entityManager;
 
   /**
-   * Constructs a FetchEntityById object.
+   * Constructs a EntityFetchById object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -87,10 +88,13 @@ class FetchEntityById extends RulesActionBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function execute() {
-    $entity_type = $this->getContextValue('entity_type');
+    $entity_type_id = $this->getContextValue('entity_type_id');
     $entity_id = $this->getContextValue('entity_id');
-    $storage = $this->entityManager->getStorage($entity_type);
+    $storage = $this->entityManager->getStorage($entity_type_id);
     $entity = $storage->load($entity_id);
+    // @todo Refine the provided context definition for 'entity'. Example: if
+    //  the loaded entity is a node then the provided context definition should
+    //  use the type node. We don't have an API for that yet.
     $this->setProvidedValue('entity', $entity);
   }
 }
