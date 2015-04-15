@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\PathAliasDelete.
+ * Contains \Drupal\rules\Plugin\Action\PathAliasDeleteByAlias.
  */
 
 namespace Drupal\rules\Plugin\Action;
@@ -13,23 +13,24 @@ use Drupal\rules\Core\RulesActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Delete alias for a path' action.
+ * Provides a 'Delete any path alias' action.
  *
  * @Action(
- *   id = "rules_path_aliases_delete",
- *   label = @Translation("Delete alias for a path"),
+ *   id = "rules_path_alias_delete_by_alias",
+ *   label = @Translation("Delete path alias"),
  *   category = @Translation("Path"),
  *   context = {
- *     "path" = @ContextDefinition("string",
- *       label = @Translation("Existing system path"),
- *       description = @Translation("Specifies the existing path you wish to delete the alias of, for example 'node/1'. Use a relative path and do not add a trailing slash.")
+ *     "alias" = @ContextDefinition("string",
+ *       label = @Translation("Existing system path alias"),
+ *       description = @Translation("Specifies the existing path alias you wish to delete, for example 'about/team'. Use a relative path and do not add a trailing slash.")
  *     )
  *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7.
+ * @todo: Add group information from Drupal 7.
  */
-class PathAliasDelete extends RulesActionBase implements ContainerFactoryPluginInterface {
+class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The alias storage service.
@@ -39,7 +40,7 @@ class PathAliasDelete extends RulesActionBase implements ContainerFactoryPluginI
   protected $aliasStorage;
 
   /**
-   * Constructs a PathAliasDelete object.
+   * Constructs a PathAliasDeleteByAlias object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -71,14 +72,14 @@ class PathAliasDelete extends RulesActionBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Delete alias for a path');
+    return $this->t('Delete any path alias');
   }
 
   /**
    * {@inheritdoc}
    */
   public function execute() {
-    $path = $this->getContextValue('path');
-    $this->aliasStorage->delete(['path' => $path]);
+    $alias = $this->getContextValue('alias');
+    $this->aliasStorage->delete(['alias' => $alias]);
   }
 }

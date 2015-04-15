@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Action\PathAliasDeleteTest.
+ * Contains \Drupal\Tests\rules\Integration\Action\PathAliasDeleteByPathTest.
  */
 
 namespace Drupal\Tests\rules\Integration\Action;
@@ -10,10 +10,10 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasDelete
+ * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasDeleteByPath
  * @group rules_action
  */
-class PathAliasDeleteTest extends RulesIntegrationTestBase {
+class PathAliasDeleteByPathTest extends RulesIntegrationTestBase {
 
   /**
    * The action to be tested.
@@ -40,7 +40,7 @@ class PathAliasDeleteTest extends RulesIntegrationTestBase {
     $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
     $this->container->set('path.alias_storage', $this->aliasStorage);
 
-    $this->action = $this->actionManager->createInstance('rules_path_aliases_delete');
+    $this->action = $this->actionManager->createInstance('rules_path_alias_delete_by_path');
   }
 
   /**
