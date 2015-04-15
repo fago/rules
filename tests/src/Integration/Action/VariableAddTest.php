@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\VariableAdd
- * @group rules_action
+ * @group rules_actions
  */
 class VariableAddTest extends RulesIntegrationTestBase {
 

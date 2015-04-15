@@ -11,7 +11,7 @@ namespace Drupal\Tests\rules\Integration\Action {
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\Action\SystemMessage
-   * @group rules_action
+   * @group rules_actions
    */
   class SystemMessageTest extends RulesIntegrationTestBase {
 

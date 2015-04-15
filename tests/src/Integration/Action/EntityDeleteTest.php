@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityDelete
- * @group rules_action
+ * @group rules_actions
  */
 class EntityDeleteTest extends RulesEntityIntegrationTestBase {
 
