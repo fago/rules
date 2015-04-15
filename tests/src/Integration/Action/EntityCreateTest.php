@@ -35,7 +35,7 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
     parent::setUp();
 
     // Prepare mocked bundle field definition. This is needed because
-    // EntityCreateDeriver adds required contexs for required fields, and
+    // EntityCreateDeriver adds required contexts for required fields, and
     // assumes that the bundle field is required.
     $this->bundleFieldDefinition = $this->getMockBuilder('Drupal\Core\Field\BaseFieldDefinition')
       ->disableOriginalConstructor()
@@ -106,7 +106,7 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
       ->method('getStorage')
       ->willReturn($this->entityTypeStorage);
 
-    // Return a mocked list of base fields defintions.
+    // Return a mocked list of base fields definitions.
     $this->entityManager
       ->expects($this->any())
       ->method('getBaseFieldDefinitions')
