@@ -7,6 +7,8 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Engine\ConditionExpressionContainer;
+
 /**
  * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
  * @group rules
@@ -52,10 +54,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::isNegated
    */
   public function testNegate() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->exactly(2))
-      ->method('evaluate')
-      ->will($this->returnValue(TRUE));
+    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
 
     $this->assertFalse($container->isNegated());
     $this->assertTrue($container->execute());
@@ -71,11 +70,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testExecute() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->once())
-      ->method('evaluate')
-      ->will($this->returnValue(TRUE));
-
+    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
     $this->assertTrue($container->execute());
   }
 
@@ -96,6 +91,20 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
 
     $container->setExecutableManager($manager);
     $this->assertTrue($container->execute());
+  }
+
+}
+
+/**
+ * Class used for overriding evalute() as this does not work with PHPunit.
+ */
+abstract class RulesConditionContainerTestStub extends ConditionExpressionContainer {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function evaluate() {
+    return TRUE;
   }
 
 }
