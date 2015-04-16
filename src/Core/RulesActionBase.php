@@ -90,4 +90,17 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function execute() {
+    // Provide a reasonable default implementation that calls doExecute() while
+    // passing the defined context as arguments.
+    $args = array();
+    foreach ($this->getContexts() as $name => $context) {
+      $args[$name] = $context->getContextValue();
+    }
+    call_user_func_array([$this, 'doExecute'], $args);
+  }
+
 }
