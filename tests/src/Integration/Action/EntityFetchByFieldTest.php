@@ -214,7 +214,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     $this->action->refineContextdefinitions();
     $this->assertEquals(
       $this->action->getProvidedContextDefinition('entity_fetched')
-      ->getDataType(), 'entity:entity_test'
+        ->getDataType(), 'entity:entity_test'
     );
   }
 

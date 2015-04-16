@@ -44,7 +44,7 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
       ->method('isRequired')
       ->will($this->returnValue(TRUE));
 
-    $plugin = $this->getMock('Drupal\Component\Plugin\ContextAwarePluginInterface');
+    $plugin = $this->getMock('Drupal\Core\Plugin\ContextAwarePluginInterface');
     $plugin->expects($this->once())
       ->method('getContextDefinitions')
       ->will($this->returnValue(['test' => $context_definition]));

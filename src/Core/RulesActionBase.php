@@ -30,7 +30,7 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
    * {@inheritdoc}
    */
   public function refineContextDefinitions() {
-    // Do not define anything by default.
+    // Do not refine anything by default.
   }
 
   /**
