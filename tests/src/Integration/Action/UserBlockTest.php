@@ -18,22 +18,22 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   /**
    * Constant used for authenticated test when mocking a user.
    */
-  const AUTHENTICATED = true;
+  const AUTHENTICATED = TRUE;
 
   /**
    * Constant used for authenticated test when mocking a user.
    */
-  const ANONYMOUS = false;
+  const ANONYMOUS = FALSE;
 
   /**
    * Constant used for active test when mocking a user.
    */
-  const ACTIVE = true;
+  const ACTIVE = TRUE;
 
   /**
    * Constant used for active test when mocking a user.
    */
-  const BLOCKED = false;
+  const BLOCKED = FALSE;
 
   /**
    * The action to be tested.
