@@ -5,3 +5,6 @@ services:
   plugin.manager.rules_data_processor:
     class: Drupal\rules\Context\DataProcessorManager
     arguments: ['@container.namespaces', '@module_handler']
+  logger.channel.rules:
+    class: Drupal\rules\Logger\RulesLoggerChannel
+    arguments: ['@config.factory']

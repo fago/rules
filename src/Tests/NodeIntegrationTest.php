@@ -30,11 +30,6 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Clear the log from any stale entries that are bleeding over from previous
-    // tests.
-    $logger = RulesLog::logger();
-    $logger->clear();
-
     $this->installSchema('system', ['sequences']);
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -85,10 +80,6 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $rule->addAction('rules_test_log');
     $rule->setContextValue('node', $node);
     $rule->execute();
-
-    // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
   }
 
   /**

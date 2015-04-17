@@ -119,3 +119,20 @@ rules.context.definition:
     label:
       type: string
       label: 'Label'
+
+rules.settings:
+  type: config_object
+  label: 'Rules settings'
+  mapping:
+    log_errors:
+      type: integer
+      label: 'Logging of Rules evaluation errors'
+    debug_log:
+      type: boolean
+      label: 'Log debug information to the available loggers'
+    debug:
+      type: boolean
+      label: 'Show debug information'
+    log_level:
+      type: integer
+      label: 'Log level'

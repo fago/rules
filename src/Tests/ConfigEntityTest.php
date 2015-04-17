@@ -7,8 +7,6 @@
 
 namespace Drupal\rules\Tests;
 
-use Drupal\rules\Engine\RulesLog;
-
 /**
  * Tests storage and loading of Rules config entities.
  *
@@ -30,11 +28,6 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     parent::setUp();
 
     $this->storage = $this->container->get('entity.manager')->getStorage('rules_component');
-
-    // Clear the log from any stale entries that are bleeding over from previous
-    // tests.
-    $logger = RulesLog::logger();
-    $logger->clear();
   }
 
   /**
@@ -72,8 +65,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $expression->execute();
 
     // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
+    $this->assertRulesLogEntryExists('action called');
   }
 
   /**
@@ -99,8 +91,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $expression->execute();
 
     // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
+    $this->assertRulesLogEntryExists('action called');
   }
 
   /**
