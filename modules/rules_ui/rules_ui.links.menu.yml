@@ -1,0 +1,31 @@
+# Menu links for Rules UI.
+
+# Overview page returns a menu-block with links that where
+# rules.ui.overview is declared as parent.
+rules.ui.overview:
+  title: 'Rules'
+  route_name: rules.ui.overview
+  parent: system.admin_config_workflow
+  description: 'Rules administration overview.'
+
+# Menu links shown on rules.ui.overview .
+rules.ui.reactions:
+  title: 'Reaction rules'
+  route_name: stub.rules_reaction.collection
+  parent: rules.ui.overview
+  description: 'Reaction rules administration overview.'
+  weight: 0
+
+rules.ui.components:
+  title: 'Components'
+  route_name: entity.rules_component.collection
+  parent: rules.ui.overview
+  description: 'Components administration overview.'
+  weight: 1
+
+rules.ui.settings:
+  title: 'Settings'
+  route_name: rules.ui.settings
+  parent: rules.ui.overview
+  description: 'Rules settings page.'
+  weight: 2

@@ -8,3 +8,6 @@ services:
   logger.channel.rules:
     class: Drupal\rules\Logger\RulesLoggerChannel
     arguments: ['@config.factory']
+  plugin.manager.rules_component:
+    class: Drupal\rules\Plugin\RulesComponentManager
+    arguments: ['@container.namespaces', '@module_handler']

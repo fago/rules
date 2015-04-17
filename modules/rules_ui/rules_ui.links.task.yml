@@ -1,0 +1,25 @@
+# Menu tasks for Rules UI.
+
+rules.ui.overview:
+  title: 'Overview'
+  route_name: rules.ui.overview
+  base_route: rules.ui.overview
+  weight: 0
+
+rules.ui.reactions:
+  title: 'Reaction rules'
+  route_name: stub.rules_reaction.collection
+  base_route: rules.ui.overview
+  weight: 1
+
+rules.ui.components:
+  title: 'Components'
+  route_name: entity.rules_component.collection
+  base_route: rules.ui.overview
+  weight: 2
+
+rules.ui.settings:
+  title: 'Settings'
+  route_name: rules.ui.settings
+  base_route: rules.ui.overview
+  weight: 2

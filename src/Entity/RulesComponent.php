@@ -15,12 +15,24 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  * @ConfigEntityType(
  *   id = "rules_component",
  *   label = @Translation("Rules component"),
+ *   handlers = {
+ *     "list_builder" = "Drupal\rules\Entity\Controller\RulesComponentListBuilder",
+ *     "form" = {
+ *        "add" = "\Drupal\rules\Entity\RulesComponentAddForm",
+ *        "edit" = "\Drupal\rules\Entity\RulesComponentEditForm",
+ *        "delete" = "\Drupal\rules\Entity\RulesComponentDeleteForm"
+ *      }
+ *   },
  *   admin_permission = "administer rules",
  *   config_prefix = "component",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "label",
  *     "status" = "status"
+ *   },
+ *   links = {
+ *     "edit-form" = "/admin/config/workflow/rules/components/edit/{rules_component}",
+ *     "delete-form" = "/admin/config/workflow/rules/components/delete/{rules_component}",
  *   }
  * )
  */
@@ -139,6 +151,20 @@ class RulesComponent extends ConfigEntityBase {
       $label = $this->id();
     }
     return $label;
+  }
+
+  /**
+   * Returns the description.
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * Returns the tag.
+   */
+  public function getTag() {
+    return $this->tag;
   }
 
   /**

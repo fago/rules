@@ -1,0 +1,94 @@
+# Declaration of Rules UI routings.
+
+
+### Admin Overview
+# Overview page returns a menu-block with links that where
+# rules.ui.overview is declared as parent.
+rules.ui.overview:
+  path: '/admin/config/workflow/rules'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Rules'
+  requirements:
+    _permission: 'administer rules+administer rules components+administer rules reactions'
+
+
+### Rules settings form
+rules.ui.settings:
+  path: '/admin/config/workflow/rules/settings'
+  defaults:
+    _controller: '\Drupal\rules_ui\Controller\RulesUiController::settingsForm'
+    _title: 'Rules settings'
+  requirements:
+    _permission: 'administer rules'
+
+
+### Rules Reactions
+stub.rules_reaction.collection:
+  path: '/admin/config/workflow/rules/reactions'
+  defaults:
+    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _title: 'Reaction rules'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+stub.rules_reaction.add_form:
+  path: '/admin/config/workflow/rules/reactions/add'
+  defaults:
+    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _title: 'Add reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+stub.rules_reaction.edit_form:
+  path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction}'
+  defaults:
+    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _title: 'Edit reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+stub.rules_reaction.delete_form:
+  path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction}'
+  defaults:
+    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _title: 'Delete reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+
+### Rules Components
+entity.rules_component.collection:
+  path: '/admin/config/workflow/rules/components'
+  defaults:
+  # Calls the list controller, defined in the annotation of the rules component entity.
+    _entity_list: 'rules_component'
+    _title: 'Components'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.add_form:
+  path: '/admin/config/workflow/rules/components/add'
+  defaults:
+    _entity_form: 'rules_component.add'
+    _title: 'Add component'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.edit_form:
+  path: '/admin/config/workflow/rules/components/edit/{rules_component}'
+  defaults:
+    _entity_form: 'rules_component.edit'
+    _title: 'Edit component'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.delete_form:
+  path: '/admin/config/workflow/rules/components/delete/{rules_component}'
+  defaults:
+    _entity_form: 'rules_component.delete'
+    _title: 'Delete component'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer rules+administer rules components'
