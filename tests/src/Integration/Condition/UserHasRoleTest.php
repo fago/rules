@@ -33,15 +33,6 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('User has role(s)', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate

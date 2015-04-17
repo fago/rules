@@ -51,16 +51,6 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
     $this->action = $this->actionManager->createInstance('rules_send_email');
   }
 
-
-  /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Send email', $this->action->summary());
-  }
-
   /**
    * Tests sending a mail to one recipient.
    *

@@ -32,15 +32,6 @@ class ListCountIsTest extends RulesIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('List count comparison', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate

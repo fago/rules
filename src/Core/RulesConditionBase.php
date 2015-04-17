@@ -18,6 +18,7 @@ use Drupal\rules\Context\ContextProviderTrait;
 abstract class RulesConditionBase extends ConditionPluginBase implements RulesConditionInterface {
 
   use ContextProviderTrait;
+  use ExecutablePluginTrait;
 
   /**
    * {@inheritdoc}

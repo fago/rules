@@ -63,15 +63,6 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Path has alias', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition for a path with an alias.
    *
    * @covers ::evaluate

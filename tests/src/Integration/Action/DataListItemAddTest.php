@@ -32,15 +32,6 @@ class DataListItemAddTest extends RulesIntegrationTestBase  {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Add list item', $this->action->summary());
-  }
-
-  /**
    * Tests the action execution with default values.
    *
    * @covers ::execute

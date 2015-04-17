@@ -33,15 +33,6 @@ class NodeIsStickyTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Node is sticky', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate

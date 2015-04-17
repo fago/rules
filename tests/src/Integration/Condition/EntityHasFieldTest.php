@@ -32,15 +32,6 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Entity has field', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate

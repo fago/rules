@@ -63,15 +63,6 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Fetch entities by field', $this->action->summary());
-  }
-
-  /**
    * Tests action execution when no value for limit is provided.
    *
    * @covers ::execute

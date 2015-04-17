@@ -43,15 +43,6 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Create any path alias', $this->action->summary());
-  }
-
-  /**
    * Tests the action execution when no language is specified.
    *
    * @covers ::execute

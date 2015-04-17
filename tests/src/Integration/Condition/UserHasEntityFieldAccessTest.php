@@ -48,15 +48,6 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('User has access to field on entity', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition.
    *
    * @covers ::evaluate
