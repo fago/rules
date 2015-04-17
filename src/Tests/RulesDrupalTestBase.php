@@ -35,6 +35,14 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    */
   protected $typedDataManager;
 
+
+  /**
+   * Rules logger.
+   *
+   * @var \Drupal\rules\Logger\RulesLoggerChannel
+   */
+  protected $logger;
+
   /**
    * Modules to enable.
    *
@@ -47,6 +55,12 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    */
   public function setUp() {
     parent::setUp();
+
+    $this->logger = $this->container->get('logger.channel.rules');
+    // Clear the log from any stale entries that are bleeding over from previous
+    // tests.
+    $this->logger->clearLogs();
+
     $this->expressionManager = $this->container->get('plugin.manager.rules_expression');
     $this->conditionManager = $this->container->get('plugin.manager.condition');
     $this->typedDataManager = $this->container->get('typed_data_manager');
@@ -66,6 +80,20 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
       'condition_id' => $id,
     ]);
     return $condition;
+  }
+
+  /**
+   * Checks if particular message is in the log with given delta.
+   *
+   * @param string $message
+   *   Log message.
+   * @param int $log_item_index
+   *   Log item's index in log entries stack.
+   */
+  protected function assertRulesLogEntryExists($message, $log_item_index = 0) {
+    // Test that the action has logged something.
+    $logs = $this->logger->getLogs();
+    $this->assertEqual($logs[$log_item_index]['message'], $message);
   }
 
 }
