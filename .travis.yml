@@ -4,6 +4,7 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - 7
 
 mysql:
   database: rules
@@ -27,8 +28,9 @@ install:
 
 before_script:
   # Remove Xdebug as we don't need it and it causes
-  # PHP Fatal error:  Maximum function nesting level of '256' reached
-  - phpenv config-rm xdebug.ini
+  # PHP Fatal error:  Maximum function nesting level of '256' reached.
+  # We also don't care if that file exists or not on PHP 7.
+  - phpenv config-rm xdebug.ini || true
 
   # Remember the current rules test directory for later use in the Drupal
   # installation.
