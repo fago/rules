@@ -2,38 +2,27 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\NodePathAliasCreate.
+ * Contains \Drupal\rules\Plugin\Action\EntityPathAliasCreate.
  */
 
 namespace Drupal\rules\Plugin\Action;
 
 use Drupal\Core\Path\AliasStorageInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Create node path alias' action.
+ * Provides a generic 'Create entity path alias' action.
  *
  * @Action(
- *   id = "rules_node_path_alias_create",
- *   label = @Translation("Create node path alias"),
- *   category = @Translation("Path"),
- *   context = {
- *     "node" = @ContextDefinition("entity:node",
- *       label = @Translation("Content"),
- *       description = @Translation("The content for which to create a path alias.")
- *     ),
- *     "alias" = @ContextDefinition("string",
- *       label = @Translation("Path alias"),
- *       description = @Translation("Specify an alternative path by which the content can be accessed. For example, 'about' for an about page. Use a relative path and do not add a trailing slash.")
- *     )
- *   }
+ *   id = "rules_entity_path_alias_create",
+ *   deriver = "Drupal\rules\Plugin\Action\EntityPathAliasCreateDeriver",
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  */
-class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
+class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The alias storage service.
@@ -43,7 +32,14 @@ class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPlu
   protected $aliasStorage;
 
   /**
-   * Constructs a NodePathAliasCreate object.
+   * The entity type id.
+   *
+   * @var string
+   */
+  protected $entityTypeId;
+
+  /**
+   * Constructs an EntityPathAliasCreate object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -57,6 +53,7 @@ class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPlu
   public function __construct(array $configuration, $plugin_id, $plugin_definition, AliasStorageInterface $alias_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->aliasStorage = $alias_storage;
+    $this->entityTypeId = $plugin_definition['entity_type_id'];
   }
 
   /**
@@ -75,7 +72,7 @@ class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPlu
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Create node path alias');
+    return $this->t("Create @entity_type_id path alias", array('@entity_type_id' => $this->entityTypeId));
   }
 
   /**
@@ -83,16 +80,15 @@ class NodePathAliasCreate extends RulesActionBase implements ContainerFactoryPlu
    */
   public function execute() {
     $alias = $this->getContextValue('alias');
-    $node = $this->getContextValue('node');
+    $entity = $this->getContextValue('entity');
 
-    // We need to save the node before we can get its internal path.
-    if ($node->isNew()) {
-      $node->save();
+    // We need to save the entity before we can get its internal path.
+    if ($entity->isNew()) {
+      $entity->save();
     }
 
-    $path = $node->urlInfo()->getInternalPath();
-    $langcode = $node->language()->getId();
+    $path = $entity->urlInfo()->getInternalPath();
+    $langcode = $entity->language()->getId();
     $this->aliasStorage->save($path, $alias, $langcode);
   }
-
 }
