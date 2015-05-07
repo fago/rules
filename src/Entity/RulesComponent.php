@@ -30,6 +30,16 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "label" = "label",
  *     "status" = "status"
  *   },
+ *   config_export = {
+ *     "id",
+ *     "label",
+ *     "module",
+ *     "description",
+ *     "tag",
+ *     "core",
+ *     "expression_id",
+ *     "configuration",
+ *   },
  *   links = {
  *     "edit-form" = "/admin/config/workflow/rules/components/edit/{rules_component}",
  *     "delete-form" = "/admin/config/workflow/rules/components/delete/{rules_component}",
