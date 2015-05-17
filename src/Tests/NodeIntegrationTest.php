@@ -22,7 +22,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'field', 'text', 'entity', 'user'];
+  public static $modules = ['node', 'field', 'text', 'user'];
 
   /**
    * {@inheritdoc}
