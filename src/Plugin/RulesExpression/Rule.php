@@ -17,7 +17,7 @@ use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
-use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Engine\ExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -128,7 +128,7 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesState $state) {
+  public function executeWithState(RulesStateInterface $state) {
     // Evaluate the rule's conditions.
     if (!$this->conditions->isEmpty() && !$this->conditions->executeWithState($state)) {
       // Do not run the actions if the conditions are not met.

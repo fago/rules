@@ -10,11 +10,12 @@ namespace Drupal\rules\Plugin\RulesExpression;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
+use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Context\DataProcessorManager;
+use Drupal\rules\Engine\RulesStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -103,7 +104,7 @@ class RulesCondition extends RulesConditionBase implements ConditionExpressionIn
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesState $state) {
+  public function executeWithState(RulesStateInterface $state) {
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);

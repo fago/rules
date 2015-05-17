@@ -52,7 +52,7 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
       ->method('getPluginId')
       ->will($this->returnValue('testplugin'));
 
-    $state = $this->getMock('Drupal\rules\Engine\RulesState');
+    $state = $this->getMock('Drupal\rules\Engine\RulesStateInterface');
 
     // Make the 'mapContext' method visible.
     $reflection = new \ReflectionClass($trait);

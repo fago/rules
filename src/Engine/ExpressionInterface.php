@@ -21,7 +21,7 @@ interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInt
   /**
    * Execute the expression with a given Rules state.
    *
-   * @param \Drupal\rules\Engine\RulesState $state
+   * @param \Drupal\rules\Engine\RulesStateInterface $state
    *   The state with all the execution variables in it.
    *
    * @return null|bool
@@ -31,6 +31,6 @@ interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInt
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   In case the Rules expression triggers errors during execution.
    */
-  public function executeWithState(RulesState $state);
+  public function executeWithState(RulesStateInterface $state);
 
 }

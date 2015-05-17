@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
 use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Engine\RulesStateInterface;
 
 /**
  * Evaluates a group of conditions with a logical AND.
@@ -34,7 +35,7 @@ class RulesAnd extends ConditionExpressionContainer {
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesState $state) {
+  public function executeWithState(RulesStateInterface $state) {
     foreach ($this->conditions as $condition) {
       if (!$condition->executeWithState($state)) {
         return FALSE;

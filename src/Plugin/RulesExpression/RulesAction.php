@@ -11,11 +11,11 @@ use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
+use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\RulesExpressionTrait;
-use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Context\DataProcessorManager;
+use Drupal\rules\Engine\RulesStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -90,7 +90,7 @@ class RulesAction extends RulesActionBase implements ContainerFactoryPluginInter
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesState $state) {
+  public function executeWithState(RulesStateInterface $state) {
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
 
     // We have to forward the context values from our configuration to the
