@@ -21,6 +21,6 @@ interface ContextAwarePluginInterface extends CoreContextAwarePluginInterface {
    * already available upon which the definition of subsequent or provided
    * context can be refined.
    */
-  public function refineContextdefinitions();
+  public function refineContextDefinitions();
 
 }
