@@ -20,9 +20,9 @@ class RulesUiController extends ControllerBase {
    *   Renderable array.
    */
   public function settingsForm() {
-    $element = array(
+    $element = [
       '#markup' => 'Rules settings form is not implemented yet.',
-    );
+    ];
     return $element;
   }
 }

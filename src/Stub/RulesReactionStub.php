@@ -18,9 +18,9 @@ class RulesReactionStub {
    *   A simple renderable array.
    */
   public function notImplemented() {
-    $element = array(
+    $element = [
       '#markup' => 'Not implemented yet.',
-    );
+    ];
     return $element;
   }
 }

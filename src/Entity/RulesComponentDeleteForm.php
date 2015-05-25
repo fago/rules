@@ -20,7 +20,7 @@ class RulesComponentDeleteForm extends EntityConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete component %label?', array('%label' => $this->entity->label()));
+    return $this->t('Are you sure you want to delete component %label?', ['%label' => $this->entity->label()]);
   }
 
   /**
@@ -43,8 +43,8 @@ class RulesComponentDeleteForm extends EntityConfirmFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
 
-    $this->logger('user')->notice('Deleted component %label)', array('%label' => $this->entity->label()));
-    drupal_set_message($this->t('Component %label has been deleted.', array('%label' => $this->entity->label())));
+    $this->logger('user')->notice('Deleted component %label)', ['%label' => $this->entity->label()]);
+    drupal_set_message($this->t('Component %label has been deleted.', ['%label' => $this->entity->label()]));
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }

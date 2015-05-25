@@ -26,9 +26,9 @@ class RulesComponentListBuilder extends ConfigEntityListBuilder {
    * buildHeader() and buildRow() implementations.
    */
   public function render() {
-    $build['description'] = array(
+    $build['description'] = [
       '#markup' => $this->t('These rules components are config entities. Add more text here.'),
-    );
+    ];
     $build['table'] = parent::render();
     return $build;
   }
