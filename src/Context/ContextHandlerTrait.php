@@ -7,10 +7,10 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\Component\Utility\SafeMarkup;
-use Drupal\rules\Exception\RulesEvaluationException;
+use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
  * Provides methods for handling context based on the plugin configuration.
@@ -86,14 +86,16 @@ trait ContextHandlerTrait {
    *
    * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin to process the context data on.
+   * @param \Drupal\rules\Engine\RulesStateInterface $rules_state
+   *   The current Rules execution state with context variables.
    */
-  protected function processData(CoreContextAwarePluginInterface $plugin) {
+  protected function processData(CoreContextAwarePluginInterface $plugin, RulesStateInterface $rules_state) {
     if (isset($this->configuration['context_processors'])) {
       foreach ($this->configuration['context_processors'] as $context_name => $processors) {
         $value = $plugin->getContextValue($context_name);
         foreach ($processors as $processor_plugin_id => $configuration) {
           $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
-          $value = $data_processor->process($value);
+          $value = $data_processor->process($value, $rules_state);
         }
         $plugin->setContextValue($context_name, $value);
       }

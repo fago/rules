@@ -125,4 +125,60 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been saved.');
   }
 
+  /**
+   * Tests that tokens in action parameters get replaced.
+   */
+  public function testTokenReplacements() {
+    $entity_manager = $this->container->get('entity.manager');
+    $entity_manager->getStorage('node_type')
+      ->create(['type' => 'page'])
+      ->save();
+
+    $node = $entity_manager->getStorage('node')
+      ->create([
+        'title' => 'test',
+        'type' => 'page',
+      ]);
+
+    $user = $entity_manager->getStorage('user')
+      ->create([
+        'name' => 'klausi',
+      ]);
+
+    $user->save();
+    $node->setOwner($user);
+
+    // Configure a simple rule with one action.
+    $action = $this->expressionManager->createInstance('rules_action',
+      ContextConfig::create()
+        ->map('message', 'message')
+        ->map('type', 'type')
+        ->process('message', 'rules_tokens')
+        ->setConfigKey('action_id', 'rules_system_message')
+        ->toArray()
+    );
+
+    $rule = $this->expressionManager->createRule([
+      'context_definitions' => [
+        'node' => [
+          'type' => 'entity:node',
+        ],
+        'message' => [
+          'type' => 'string',
+        ],
+        'type' => [
+          'type' => 'string',
+        ],
+      ],
+    ]);
+    $rule->setContextValue('node', $node);
+    $rule->setContextValue('message', 'Hello [node:uid:entity:name:value]!');
+    $rule->setContextValue('type', 'status');
+    $rule->addExpressionObject($action);
+    $rule->execute();
+
+    $messages = drupal_set_message();
+    $this->assertEqual($messages['status'][0]['message'], 'Hello klausi!');
+  }
+
 }

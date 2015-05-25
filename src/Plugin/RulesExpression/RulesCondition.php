@@ -117,7 +117,7 @@ class RulesCondition extends RulesConditionBase implements ConditionExpressionIn
 
     // Send the context values through configured data processors before
     // evaluating the condition.
-    $this->processData($condition);
+    $this->processData($condition, $state);
 
     $result = $condition->evaluate();
 
