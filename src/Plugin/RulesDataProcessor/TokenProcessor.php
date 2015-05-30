@@ -12,6 +12,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Utility\Token;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Exception\RulesEvaluationException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -67,23 +68,31 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
     $replacements = [];
     // We only use the token service to scan for tokens in the text. The
     // replacements are done by using the data selector logic.
-    foreach ($this->tokenService->scan($value) as $tokens) {
+    foreach ($this->tokenService->scan($value) as $var_name => $tokens) {
       foreach ($tokens as $token) {
         // Remove the opening and closing bracket to form a data selector.
         $data_selector = substr($token, 1, -1);
         try {
           $replacement_data = $rules_state->applyDataSelector($data_selector);
-          // @todo Data type specific formatting should happen here or we might
-          //   invoke the Token API for that. Example: for a date we don't want
-          //   to get the Unix timestamp in seconds but rather a formatted date
-          //   string.
           $replacements[$token] = $replacement_data->getString();
         }
         catch (RulesEvaluationException $exception) {
-          // Data selector is invalid, so ignore this token.
-          // @todo We should probably invoke the token service here to check if
-          //   there are other tokens that bypass the typed data system. But is
-          //   that an actual use case?
+          // Data selector is invalid, so try to resolve the token with the
+          // token service.
+          if ($rules_state->hasVariable($var_name)) {
+            $variable = $rules_state->getVariable($var_name);
+            $token_type = $variable->getContextDefinition()->getDataType();
+            // The Token system does not know about "enity:" data type prefixes,
+            // so we have to remove them.
+            $token_type = str_replace('entity:', '', $token_type);
+            $data = [$token_type => $variable->getContextValue()];
+            $replacements += $this->tokenService->generate($token_type, $tokens, $data, ['sanitize' => FALSE]);
+          }
+          else {
+            $replacements += $this->tokenService->generate($var_name, $tokens, [], ['sanitize' => FALSE]);
+          }
+          // Remove tokens if no replacement value is found.
+          $replacements += array_fill_keys($tokens, '');
         }
       }
     }

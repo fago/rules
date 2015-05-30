@@ -83,6 +83,13 @@ class RulesState implements RulesStateInterface {
   /**
    * {@inheritdoc}
    */
+  public function hasVariable($name) {
+    return array_key_exists($name, $this->variables);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function applyDataSelector($selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
     $parts = explode(':', $selector, 2);
     $context = $this->getVariable($parts[0]);

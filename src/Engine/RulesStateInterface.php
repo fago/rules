@@ -9,7 +9,6 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Plugin\Context\ContextInterface;
-use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
  * Defines an interface for the rules state.
@@ -40,6 +39,17 @@ interface RulesStateInterface {
    *   state.
    */
   public function getVariable($name);
+
+  /**
+   * Checks if a variable exists by name in the Rules state.
+   *
+   * @param string $name
+   *   The variable name.
+   *
+   * @return bool
+   *   TRUE if the variable exists, FALSE otherwise.
+   */
+  public function hasVariable($name);
 
   /**
    * Returns a value as specified in the selector.
