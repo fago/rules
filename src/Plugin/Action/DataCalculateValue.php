@@ -30,7 +30,7 @@ use Drupal\rules\Core\RulesActionBase;
  *       description = @Translation("The second input value for the calculation.")
  *     )
  *   },
- *  provides = {
+ *   provides = {
  *     "result" = @ContextDefinition("float",
  *       label = @Translation("Calculated result")
  *     )
@@ -51,13 +51,16 @@ class DataCalculateValue extends RulesActionBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Executes the action with the given context.
+   *
+   * @param float $input_1
+   *   The first input value.
+   * @param string $operator
+   *   The operator that should be applied.
+   * @param float $input_2
+   *   The second input value.
    */
-  public function execute() {
-    $input_1 = $this->getContextValue('input_1');
-    $operator = $this->getContextValue('operator');
-    $input_2 = $this->getContextValue('input_2');
-
+  public function doExecute($input_1, $operator, $input_2) {
     switch ($operator) {
       case '+':
         $result = $input_1 + $input_2;

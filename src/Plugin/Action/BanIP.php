@@ -92,11 +92,12 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Executes the action with the given context.
+   *
+   * @param string $ip
+   *   (optional) The IP address that should be banned.
    */
-  public function execute() {
-    $ip = $this->getContextValue('ip');
-
+  public function doExecute($ip = NULL) {
     if (!isset($ip)) {
       $ip = $this->request->getClientIp();
     }
