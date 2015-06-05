@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
+use Drupal\rules\Engine\RulesStateInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
@@ -74,25 +75,6 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
     $this->assertTrue($container->execute());
   }
 
-  /**
-   * Tests executing the condition container with an executable manager.
-   *
-   * @covers ::execute
-   */
-  public function testExecuteWithExecutableManager() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->never())
-      ->method('evaluate');
-
-    $manager = $this->getMock('Drupal\Core\Executable\ExecutableManagerInterface');
-    $manager->expects($this->once())
-      ->method('execute')
-      ->will($this->returnValue(TRUE));
-
-    $container->setExecutableManager($manager);
-    $this->assertTrue($container->execute());
-  }
-
 }
 
 /**
@@ -103,7 +85,7 @@ abstract class RulesConditionContainerTestStub extends ConditionExpressionContai
   /**
    * {@inheritdoc}
    */
-  public function evaluate() {
+  public function evaluate(RulesStateInterface $state) {
     return TRUE;
   }
 

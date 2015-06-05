@@ -11,9 +11,8 @@ use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
-use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Engine\ConditionExpressionInterface;
-use Drupal\rules\Engine\RulesExpressionTrait;
+use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Engine\RulesStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -29,9 +28,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("An executable condition.")
  * )
  */
-class RulesCondition extends RulesConditionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
+class RulesCondition extends ExpressionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
 
-  use RulesExpressionTrait;
   use ContextHandlerTrait;
 
   /**
@@ -131,19 +129,8 @@ class RulesCondition extends RulesConditionBase implements ConditionExpressionIn
   /**
    * {@inheritdoc}
    */
-  public function evaluate() {
-    $contexts = $this->getContexts();
-    $state = new RulesState($contexts);
-    return $this->executeWithState($state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function summary() {
-    // @todo A condition expression has no summary. Or should we forward this to
-    //   the condition plugin?
-    return '';
+  public function isNegated() {
+    return !empty($this->configuration['negate']);
   }
 
   /**

@@ -9,17 +9,16 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
-use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
-use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\RulesExpressionTrait;
+use Drupal\rules\Engine\ExpressionPluginManager;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
-use Drupal\rules\Engine\ExpressionPluginManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,9 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("A rule, executing actions when conditions are met.")
  * )
  */
-class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPluginInterface {
-
-  use RulesExpressionTrait;
+class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPluginInterface {
 
   /**
    * List of conditions that must be met before actions are executed.
@@ -65,11 +62,6 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
    *   The rules expression plugin manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager) {
-    // @todo: This needs to be removed again and we need to add proper derivative handling for Rules.
-    if (isset($configuration['context_definitions'])) {
-      $plugin_definition['context'] = $this->createContextDefinitions($configuration['context_definitions']);
-    }
-
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $configuration += ['conditions' => [], 'actions' => []];
@@ -90,39 +82,6 @@ class Rule extends RulesActionBase implements RuleInterface, ContainerFactoryPlu
       $plugin_definition,
       $container->get('plugin.manager.rules_expression')
     );
-  }
-
-  /**
-   * Converts a context definition configuration array into an object.
-   *
-   * @todo This should be replaced by some convenience method on the
-   *   ContextDefinition class in core?
-   *
-   * @param array $configuration
-   *   The configuration properties for populating the context definition
-   *   object.
-   *
-   * @return \Drupal\Core\Plugin\Context\ContextDefinitionInterface[]
-   *   A list of context definitions keyed by the context name.
-   */
-  protected function createContextDefinitions(array $configuration) {
-    $context_definitions = [];
-    foreach ($configuration as $context_name => $definition_array) {
-      $definition_array += [
-        'type' => 'any',
-        'label' => NULL,
-        'required' => TRUE,
-        'multiple' => FALSE,
-        'description' => NULL,
-      ];
-
-      $context_definitions[$context_name] = new ContextDefinition(
-        $definition_array['type'], $definition_array['label'],
-        $definition_array['required'], $definition_array['multiple'],
-        $definition_array['description']
-      );
-    }
-    return $context_definitions;
   }
 
   /**

@@ -10,13 +10,14 @@ namespace Drupal\rules\Engine;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\ContextAwarePluginInterface;
 use Drupal\Core\Executable\ExecutableInterface;
+use Drupal\rules\Context\ContextProviderInterface;
 
 /**
  * Defines the interface for Rules expressions.
  *
  * @see \Drupal\rules\Plugin\RulesExpressionPluginManager
  */
-interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ConfigurablePluginInterface {
+interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ContextProviderInterface, ConfigurablePluginInterface {
 
   /**
    * Execute the expression with a given Rules state.

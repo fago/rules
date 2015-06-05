@@ -35,7 +35,7 @@ class RulesAnd extends ConditionExpressionContainer {
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesStateInterface $state) {
+  public function evaluate(RulesStateInterface $state) {
     foreach ($this->conditions as $condition) {
       if (!$condition->executeWithState($state)) {
         return FALSE;
@@ -44,15 +44,6 @@ class RulesAnd extends ConditionExpressionContainer {
     // An empty AND should return FALSE, otherwise all conditions evaluated to
     // TRUE and we return TRUE.
     return !empty($this->conditions);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function evaluate() {
-    $contexts = $this->getContexts();
-    $state = new RulesState($contexts);
-    return $this->executeWithState($state);
   }
 
 }

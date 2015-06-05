@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
-use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Engine\RulesStateInterface;
 
 /**
@@ -24,7 +23,7 @@ class RulesOr extends ConditionExpressionContainer {
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesStateInterface $state) {
+  public function evaluate(RulesStateInterface $state) {
     foreach ($this->conditions as $condition) {
       if ($condition->executeWithState($state)) {
         return TRUE;
@@ -33,15 +32,6 @@ class RulesOr extends ConditionExpressionContainer {
     // An empty OR should return TRUE, otherwise all conditions evaluated to
     // FALSE and we return FALSE.
     return empty($this->conditions);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function evaluate() {
-    $contexts = $this->getContexts();
-    $state = new RulesState($contexts);
-    return $this->executeWithState($state);
   }
 
 }
