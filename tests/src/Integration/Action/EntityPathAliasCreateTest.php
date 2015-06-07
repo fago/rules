@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityPathAliasCreate
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityPathAliasCreate
  * @group rules_actions
  */
 class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {

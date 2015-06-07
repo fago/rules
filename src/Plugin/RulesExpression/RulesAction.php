@@ -8,10 +8,10 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Component\Plugin\Exception\ContextException;
-use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
+use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\RulesStateInterface;
@@ -35,7 +35,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
   /**
    * The action manager used to instantiate the action plugin.
    *
-   * @var \Drupal\Core\Action\ActionManager
+   * @var \Drupal\rules\Core\RulesActionManagerInterface
    */
   protected $actionManager;
 
@@ -50,12 +50,12 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Action\ActionManager $action_manager
-   *   The action manager.
+   * @param \Drupal\rules\Core\RulesActionManagerInterface $action_manager
+   *   The Rules action manager.
    * @param \Drupal\rules\Context\DataProcessorManager $processor_manager
    *   The data processor plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ActionManager $action_manager, DataProcessorManager $processor_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RulesActionManagerInterface $action_manager, DataProcessorManager $processor_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->actionManager = $action_manager;
@@ -67,7 +67,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
-      $container->get('plugin.manager.action'),
+      $container->get('plugin.manager.rules_action'),
       $container->get('plugin.manager.rules_data_processor')
     );
   }

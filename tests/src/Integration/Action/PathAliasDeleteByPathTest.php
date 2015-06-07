@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasDeleteByPath
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\PathAliasDeleteByPath
  * @group rules_actions
  */
 class PathAliasDeleteByPathTest extends RulesIntegrationTestBase {

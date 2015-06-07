@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action {
   use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
   /**
-   * @coversDefaultClass \Drupal\rules\Plugin\Action\SendAccountEmail
+   * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SendAccountEmail
    * @group rules_actions
    */
   class SendAccountEmailTest extends RulesEntityIntegrationTestBase {

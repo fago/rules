@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\BanIP
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\BanIP
  * @group rules_action
  */
 class BanIPTest extends RulesIntegrationTestBase {

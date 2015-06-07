@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\DataListItemAdd
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataListItemAdd
  * @group rules_actions
  */
 class DataListItemAddTest extends RulesIntegrationTestBase  {

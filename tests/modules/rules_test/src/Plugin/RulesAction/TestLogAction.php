@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules_test\Plugin\Action\TestAction.
+ * Contains \Drupal\rules_test\Plugin\RulesAction\TestAction.
  */
 
-namespace Drupal\rules_test\Plugin\Action;
+namespace Drupal\rules_test\Plugin\RulesAction;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides an action writing something to the Rules log.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_test_log",
  *   label = @Translation("Test action logging.")
  * )

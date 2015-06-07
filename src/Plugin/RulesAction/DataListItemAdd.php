@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DataListItemAdd.
+ * Contains \Drupal\rules\Plugin\RulesAction\DataListItemAdd.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides an 'Add list item' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_list_item_add",
  *   label = @Translation("Add list item"),
  *   category = @Translation("Data"),

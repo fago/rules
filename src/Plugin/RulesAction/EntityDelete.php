@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntityDelete.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityDelete.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Delete entity' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_entity_delete",
  *   label = @Translation("Delete entity"),
  *   category = @Translation("Entity"),

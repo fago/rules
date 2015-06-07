@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules_test\Plugin\Action\TestNodeAction.
+ * Contains \Drupal\rules_test\Plugin\RulesAction\TestNodeAction.
  */
 
-namespace Drupal\rules_test\Plugin\Action;
+namespace Drupal\rules_test\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a test action that sets a node title.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_test_node",
  *   label = @Translation("Test action string."),
  *   context = {

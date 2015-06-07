@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityFetchById
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityFetchById
  * @group rules_actions
  */
 class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {

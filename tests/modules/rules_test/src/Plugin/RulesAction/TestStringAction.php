@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules_test\Plugin\Action\TestStringAction.
+ * Contains \Drupal\rules_test\Plugin\RulesAction\TestStringAction.
  */
 
-namespace Drupal\rules_test\Plugin\Action;
+namespace Drupal\rules_test\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a test action that concatenates a string to itself.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_test_string",
  *   label = @Translation("Test action string."),
  *   context = {

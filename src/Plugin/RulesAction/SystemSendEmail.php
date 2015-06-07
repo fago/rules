@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\Action\SystemSendEmail.
+ * Contains Drupal\rules\Plugin\RulesAction\SystemSendEmail.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Mail\MailManager;
@@ -19,7 +19,7 @@ use Drupal\Core\Language\LanguageInterface;
 /**
  * Provides "Send email" rules action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_send_email",
  *   label = @Translation("Send email"),
  *   category = @Translation("System"),

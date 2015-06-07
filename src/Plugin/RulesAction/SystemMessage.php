@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\SystemMessage.
+ * Contains \Drupal\rules\Plugin\RulesAction\SystemMessage.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Core\RulesActionBase;
@@ -13,7 +13,7 @@ use Drupal\rules\Core\RulesActionBase;
 /**
  * Provides a 'Show a message on the site' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_system_message",
  *   label = @Translation("Show a message on the site"),
  *   category = @Translation("System"),

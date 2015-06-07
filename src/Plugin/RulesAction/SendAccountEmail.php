@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\SendAccountEmail.
+ * Contains \Drupal\rules\Plugin\RulesAction\SendAccountEmail.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Send account e-mail' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_send_account_email",
  *   label = @Translation("Send account e-mail"),
  *   category = @Translation("User"),

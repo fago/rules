@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\UserBlock.
+ * Contains \Drupal\rules\Plugin\RulesAction\UserBlock.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides "Block User" action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_user_block",
  *   label = @Translation("Block a user"),
  *   category = @Translation("User"),

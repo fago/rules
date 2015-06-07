@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntityFetchByField.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityFetchByField.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a 'Fetch entities by field' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_entity_fetch_by_field",
  *   label = @Translation("Fetch entities by field"),
  *   category = @Translation("Entity"),

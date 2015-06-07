@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\UserUnblock.
+ * Contains \Drupal\rules\Plugin\RulesAction\UserUnblock.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides "Unblock User" action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_user_unblock",
  *   label = @Translation("Unblock a user"),
  *   category = @Translation("User"),

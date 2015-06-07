@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntitySave.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntitySave.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Save entity' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_entity_save",
  *   label = @Translation("Save entity"),
  *   category = @Translation("Entity"),

@@ -2,16 +2,16 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DataConvert.
+ * Contains \Drupal\rules\Plugin\RulesAction\DataConvert.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
- * @Action(
+ * @RulesAction(
  *   id = "rules_data_convert",
  *   label = @Translation("Convert data"),
  *   category = @Translation("Data"),

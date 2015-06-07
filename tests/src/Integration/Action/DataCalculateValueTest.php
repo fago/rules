@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\DataCalculateValue
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataCalculateValue
  * @group rules_actions
  */
 class DataCalculateValueTest extends RulesIntegrationTestBase {

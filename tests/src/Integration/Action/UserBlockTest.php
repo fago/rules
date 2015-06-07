@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\UserBlock
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserBlock
  * @group rules_actions
  */
 class UserBlockTest extends RulesEntityIntegrationTestBase {

@@ -35,7 +35,6 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
    */
   protected $typedDataManager;
 
-
   /**
    * Rules logger.
    *

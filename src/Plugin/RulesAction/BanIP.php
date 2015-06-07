@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\BanIP.
+ * Contains \Drupal\rules\Plugin\RulesAction\BanIP.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\ban\BanIpManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides the 'Ban IP' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_ban_ip",
  *   label = @Translation("Ban IP"),
  *   category = @Translation("Ban"),

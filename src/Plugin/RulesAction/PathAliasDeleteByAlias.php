@@ -2,44 +2,34 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\PathAliasCreate.
+ * Contains \Drupal\rules\Plugin\RulesAction\PathAliasDeleteByAlias.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Create any path alias' action.
+ * Provides a 'Delete any path alias' action.
  *
- * @Action(
- *   id = "rules_path_alias_create",
- *   label = @Translation("Create any path alias"),
+ * @RulesAction(
+ *   id = "rules_path_alias_delete_by_alias",
+ *   label = @Translation("Delete path alias"),
  *   category = @Translation("Path"),
  *   context = {
- *     "source" = @ContextDefinition("string",
- *       label = @Translation("Existing system path"),
- *       description = @Translation("Specifies the existing path you wish to alias. For example: node/28, forum/1, taxonomy/term/1+2.")
- *     ),
  *     "alias" = @ContextDefinition("string",
- *       label = @Translation("Path alias"),
- *       description = @Translation("Specify an alternative path by which this data can be accessed. For example, 'about' for an about page. Use a relative path and do not add a trailing slash.")
- *     ),
- *     "language" = @ContextDefinition("language",
- *       label = @Translation("Language"),
- *       description = @Translation("If specified, the language for which the path alias applies."),
- *       required = FALSE
+ *       label = @Translation("Existing system path alias"),
+ *       description = @Translation("Specifies the existing path alias you wish to delete, for example 'about/team'. Use a relative path and do not add a trailing slash.")
  *     )
  *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  */
-class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
+class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The alias storage service.
@@ -49,7 +39,7 @@ class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginI
   protected $aliasStorage;
 
   /**
-   * Constructs a PathAliasCreate object.
+   * Constructs a PathAliasDeleteByAlias object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -81,18 +71,14 @@ class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Create any path alias');
+    return $this->t('Delete any path alias');
   }
 
   /**
    * {@inheritdoc}
    */
   public function execute() {
-    $source = $this->getContextValue('source');
     $alias = $this->getContextValue('alias');
-    $language = $this->getContextValue('language');
-    $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_NOT_SPECIFIED;
-    $this->aliasStorage->save($source, $alias, $langcode);
+    $this->aliasStorage->delete(['alias' => $alias]);
   }
-
 }

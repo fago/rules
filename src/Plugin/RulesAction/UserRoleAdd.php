@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\UserRoleAdd.
+ * Contains \Drupal\rules\Plugin\RulesAction\UserRoleAdd.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Add user role' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_user_role_add",
  *   label = @Translation("Add user role"),
  *   category = @Translation("User"),
