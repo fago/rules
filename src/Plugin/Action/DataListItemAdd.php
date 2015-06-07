@@ -40,7 +40,6 @@ use Drupal\rules\Core\RulesActionBase;
  *
  * @todo: Add access callback information from Drupal 7?
  * @todo: set ContextDefinition restriction
- * @todo: Add info alter
  */
 class DataListItemAdd extends RulesActionBase {
 
