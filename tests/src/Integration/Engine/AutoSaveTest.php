@@ -9,7 +9,6 @@ namespace Drupal\Tests\rules\Integration\Engine;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * Test auto saving of variables after Rules execution.
