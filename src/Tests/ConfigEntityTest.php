@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Context\ContextDefinition;
+
 /**
  * Tests storage and loading of Rules config entities.
  *
@@ -100,10 +102,9 @@ class ConfigEntityTest extends RulesDrupalTestBase {
   public function testContextDefinitionExport() {
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'test' => [
-          'type' => 'string',
-          'label' => 'Test string',
-        ],
+        'test' => ContextDefinition::create('string')
+          ->setLabel('Test string')
+          ->toArray()
       ],
     ]);
 

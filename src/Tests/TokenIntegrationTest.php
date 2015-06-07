@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 
 /**
  * Test using the Rules API with the Token system.
@@ -32,12 +33,8 @@ class TokenIntegrationTest extends RulesDrupalTestBase {
 
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'message' => [
-          'type' => 'string',
-        ],
-        'type' => [
-          'type' => 'string',
-        ],
+        'message' => ContextDefinition::create('string')->toArray(),
+        'type' => ContextDefinition::create('string')->toArray(),
       ],
     ]);
     $rule->setContextValue('message', 'The date is [date:custom:Y-m]!');

@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Context\ContextConfig;
 
 /**
@@ -37,12 +38,8 @@ class DataProcessorTest extends RulesDrupalTestBase {
 
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'message' => [
-          'type' => 'string',
-        ],
-        'type' => [
-          'type' => 'string',
-        ],
+        'message' => ContextDefinition::create('string')->toArray(),
+        'type' => ContextDefinition::create('string')->toArray(),
       ],
     ]);
     $rule->setContextValue('message', 1);

@@ -52,7 +52,6 @@ use Drupal\Core\Language\LanguageInterface;
  *
  * @todo: Define that message Context should be textarea comparing with textfield Subject
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginInterface {
 

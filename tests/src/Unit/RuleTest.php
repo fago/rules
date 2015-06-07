@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 
 /**
@@ -197,10 +198,9 @@ class RuleTest extends RulesUnitTestBase {
   public function testContextDefinitionFromConfig() {
     $rule = new Rule([
       'context_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-          'label' => 'Node',
-        ],
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('node')
+          ->toArray()
       ],
     ], 'rules_rule', [], $this->expressionManager);
     $context_definition = $rule->getContextDefinition('node');
@@ -213,10 +213,9 @@ class RuleTest extends RulesUnitTestBase {
   public function testProvidedDefinitionFromConfig() {
     $rule = new Rule([
       'provided_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-          'label' => 'Node',
-        ],
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('node')
+          ->toArray()
       ],
     ], 'rules_rule', [], $this->expressionManager);
     $provided_definition = $rule->getProvidedContextDefinition('node');

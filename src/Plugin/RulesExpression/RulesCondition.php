@@ -13,7 +13,6 @@ use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExpressionBase;
-use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Engine\RulesStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
