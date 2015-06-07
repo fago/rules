@@ -35,17 +35,11 @@ use Drupal\rules\Core\RulesActionBase;
  *       description = @Translation("Position to insert the item."),
  *       required = FALSE
  *     )
- *   },
- *   provides = {
- *     "outputlist" = @ContextDefinition("list",
- *       label = @Translation("The resulting data list with item added.")
- *     )
  *   }
  * )
  *
  * @todo: Add access callback information from Drupal 7?
  * @todo: set ContextDefinition restriction
- * @todo: Add info alter
  */
 class DataListItemAdd extends RulesActionBase {
 
