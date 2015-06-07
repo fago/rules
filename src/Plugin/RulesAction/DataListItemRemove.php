@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DataListItemRemove.
+ * Contains \Drupal\rules\Plugin\RulesAction\DataListItemRemove.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'Remove item from list' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_list_item_remove",
  *   label = @Translation("Remove item from list"),
  *   category = @Translation("Data"),

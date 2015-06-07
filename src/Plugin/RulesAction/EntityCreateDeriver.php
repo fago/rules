@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntityPathAliasCreateDeriver.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityCreateDeriver.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
@@ -19,9 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Derives entity create plugin definitions based on content entity types.
  *
- * @see \Drupal\rules\Plugin\Action\EntityPathAliasCreate
+ * @see \Drupal\rules\Plugin\RulesAction\EntityCreate
  */
-class EntityPathAliasCreateDeriver extends DeriverBase implements ContainerDeriverInterface {
+class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterface {
   use StringTranslationTrait;
 
   /**
@@ -32,7 +32,7 @@ class EntityPathAliasCreateDeriver extends DeriverBase implements ContainerDeriv
   protected $entityManager;
 
   /**
-   * Creates a new EntityPathAliasCreateDeriver object.
+   * Creates a new EntityCreateDeriver object.
    *
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
@@ -62,15 +62,30 @@ class EntityPathAliasCreateDeriver extends DeriverBase implements ContainerDeriv
       }
 
       $this->derivatives["entity:$entity_type_id"] = [
-        'label' => $this->t('Create @entity_type path alias', ['@entity_type' => $entity_type->getLowercaseLabel()]),
-        'category' => $this->t('Path'),
+        'label' => $this->t('Create a new @entity_type', ['@entity_type' => $entity_type->getLowercaseLabel()]),
+        'category' => $entity_type->getLabel(),
         'entity_type_id' => $entity_type_id,
-        'context' => [
-          'entity' => new ContextDefinition("entity:$entity_type_id", $entity_type->getLabel(), $this->t('The @entity_type for which to create a path alias.', ['@entity_type' => $entity_type->getLowercaseLabel()])),
-          'alias' => new ContextDefinition('string', $this->t('Path alias'), $this->t("Specify an alternative path by which the content can be accessed. For example, 'about' for an about page. Use a relative path and do not add a trailing slash.")),
+        'context' => [],
+        'provides' => [
+          'entity' => new ContextDefinition("entity:$entity_type_id", $entity_type->getLabel()),
         ],
-        'provides' => [],
       ] + $base_plugin_definition;
+      // Add a required context for the bundle key, and optional contexts for
+      // other required base fields. This matches the storage create() behavior,
+      // where only the bundle requirement is enforced.
+      $bundle_key = $entity_type->getKey('bundle');
+      $base_field_definitions = $this->entityManager->getBaseFieldDefinitions($entity_type_id);
+      foreach ($base_field_definitions as $field_name => $definition) {
+        if ($field_name != $bundle_key && !$definition->isRequired()) {
+          continue;
+        }
+
+        $required = ($field_name == $bundle_key);
+        $multiple = ($definition->getCardinality() === 1) ? FALSE : TRUE;
+        $this->derivatives["entity:$entity_type_id"]['context'][$field_name] = new ContextDefinition(
+          $definition->getType(), $definition->getLabel(), $required, $multiple, $definition->getDescription()
+        );
+      }
     }
 
     return $this->derivatives;

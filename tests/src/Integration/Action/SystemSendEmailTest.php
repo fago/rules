@@ -13,7 +13,7 @@ use Psr\Log\LogLevel;
 use Drupal\Component\Utility\SafeMarkup;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\SystemSendEmail
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemSendEmail
  * @group rules_actions
  */
 class SystemSendEmailTest extends RulesIntegrationTestBase {
@@ -31,7 +31,7 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
   /**
    * The action to be tested.
    *
-   * @var \Drupal\rules\Plugin\Action\SystemSendEmail
+   * @var \Drupal\rules\Plugin\RulesAction\SystemSendEmail
    */
   protected $action;
 

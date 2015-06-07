@@ -2,15 +2,15 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\VariableAdd.
+ * Contains \Drupal\rules\Plugin\RulesAction\VariableAdd.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
- * @Action(
+ * @RulesAction(
  *   id = "rules_variable_add",
  *   label = @Translation("Add a variable"),
  *   category = @Translation("Variable"),

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\DataCalculateValue.
+ * Contains \Drupal\rules\Plugin\RulesAction\DataCalculateValue.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 
 /**
  * Provides a 'numeric calculation' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_data_calculate_value",
  *   label = @Translation("Calculates a numeric value"),
  *   category = @Translation("Data"),

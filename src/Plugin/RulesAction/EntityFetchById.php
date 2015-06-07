@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntityFetchById.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityFetchById.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a 'Fetch entity by id' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_entity_fetch_by_id",
  *   label = @Translation("Fetch entity by id"),
  *   category = @Translation("Entity"),

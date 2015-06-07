@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\DataConvert
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataConvert
  * @group rules_actions
  */
 class DataConvertTest extends RulesIntegrationTestBase {

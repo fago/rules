@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\PathAliasDeleteByPath.
+ * Contains \Drupal\rules\Plugin\RulesAction\PathAliasDeleteByPath.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a 'Delete alias for a path' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_path_alias_delete_by_path",
  *   label = @Translation("Delete all aliases for a path"),
  *   category = @Translation("Path"),

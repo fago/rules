@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityDelete
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityDelete
  * @group rules_actions
  */
 class EntityDeleteTest extends RulesEntityIntegrationTestBase {

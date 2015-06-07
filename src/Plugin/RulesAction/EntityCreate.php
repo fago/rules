@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\EntityCreate.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityCreate.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\rules\Core\RulesActionBase;
@@ -15,9 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a generic 'Create a new entity' action.
  *
- * @Action(
+ * @RulesAction(
  *   id = "rules_entity_create",
- *   deriver = "Drupal\rules\Plugin\Action\EntityCreateDeriver",
+ *   deriver = "Drupal\rules\Plugin\RulesAction\EntityCreateDeriver",
  * )
  *
  * @todo: Add access callback information from Drupal 7.

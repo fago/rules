@@ -12,7 +12,7 @@ use Drupal\Tests\rules\Integration\RulesUserIntegrationTestTrait;
 use Drupal\user\RoleInterface;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\UserRoleAdd
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserRoleAdd
  * @group rules_actions
  */
 class UserRoleAddTest extends RulesEntityIntegrationTestBase {

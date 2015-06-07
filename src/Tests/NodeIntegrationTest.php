@@ -98,7 +98,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     // We use the rules_test_node action plugin which marks its node context for
     // auto saving.
-    // @see \Drupal\rules_test\Plugin\Action\TestNodeAction
+    // @see \Drupal\rules_test\Plugin\RulesAction\TestNodeAction
     $action = $this->expressionManager->createAction('rules_test_node')
     ->setConfiguration([
       'context_definitions' => [

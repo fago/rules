@@ -2,34 +2,27 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Plugin\Action\PathAliasDeleteByAlias.
+ * Contains \Drupal\rules\Plugin\RulesAction\EntityPathAliasCreate.
  */
 
-namespace Drupal\rules\Plugin\Action;
+namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Path\AliasStorageInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Delete any path alias' action.
+ * Provides a generic 'Create entity path alias' action.
  *
- * @Action(
- *   id = "rules_path_alias_delete_by_alias",
- *   label = @Translation("Delete path alias"),
- *   category = @Translation("Path"),
- *   context = {
- *     "alias" = @ContextDefinition("string",
- *       label = @Translation("Existing system path alias"),
- *       description = @Translation("Specifies the existing path alias you wish to delete, for example 'about/team'. Use a relative path and do not add a trailing slash.")
- *     )
- *   }
+ * @RulesAction(
+ *   id = "rules_entity_path_alias_create",
+ *   deriver = "Drupal\rules\Plugin\RulesAction\EntityPathAliasCreateDeriver",
  * )
  *
  * @todo: Add access callback information from Drupal 7.
  */
-class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactoryPluginInterface {
+class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
    * The alias storage service.
@@ -39,7 +32,14 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
   protected $aliasStorage;
 
   /**
-   * Constructs a PathAliasDeleteByAlias object.
+   * The entity type id.
+   *
+   * @var string
+   */
+  protected $entityTypeId;
+
+  /**
+   * Constructs an EntityPathAliasCreate object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -53,6 +53,7 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
   public function __construct(array $configuration, $plugin_id, $plugin_definition, AliasStorageInterface $alias_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->aliasStorage = $alias_storage;
+    $this->entityTypeId = $plugin_definition['entity_type_id'];
   }
 
   /**
@@ -71,7 +72,7 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function summary() {
-    return $this->t('Delete any path alias');
+    return $this->t("Create @entity_type_id path alias", ['@entity_type_id' => $this->entityTypeId]);
   }
 
   /**
@@ -79,6 +80,15 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
    */
   public function execute() {
     $alias = $this->getContextValue('alias');
-    $this->aliasStorage->delete(['alias' => $alias]);
+    $entity = $this->getContextValue('entity');
+
+    // We need to save the entity before we can get its internal path.
+    if ($entity->isNew()) {
+      $entity->save();
+    }
+
+    $path = $entity->urlInfo()->getInternalPath();
+    $langcode = $entity->language()->getId();
+    $this->aliasStorage->save($path, $alias, $langcode);
   }
 }

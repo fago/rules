@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\EntityFetchByField
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityFetchByField
  * @group rules_actions
  */
 class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
