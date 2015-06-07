@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
 
@@ -65,10 +66,9 @@ class RulesEngineTest extends RulesDrupalTestBase {
   public function testContextPassing() {
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'test' => [
-          'type' => 'string',
-          'label' => 'Test string',
-        ],
+        'test' => ContextDefinition::create('string')
+          ->setLabel('Test string')
+          ->toArray()
       ],
     ]);
 

@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Integration\Engine;
 
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -23,9 +24,7 @@ class AutoSaveTest extends RulesEntityIntegrationTestBase {
   public function testActionAutoSave() {
     $rule = $this->rulesExpressionManager->createRule([
       'context_definitions' => [
-        'entity' => [
-          'type' => 'entity',
-        ],
+        'entity' => ContextDefinition::create('entity')->toArray()
       ],
     ]);
     // Just leverage the entity save action, which by default uses auto-saving.

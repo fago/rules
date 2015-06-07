@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 
 /**
  * Test using the Rules API with nodes.
@@ -59,10 +60,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-          'label' => 'Node',
-        ],
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('Node')
+          ->toArray(),
       ],
     ]);
 
@@ -102,14 +102,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $action = $this->expressionManager->createAction('rules_test_node')
     ->setConfiguration([
       'context_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-          'label' => 'Node',
-        ],
-        'title' => [
-          'type' => 'string',
-          'label' => 'Title',
-        ],
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('Node')
+          ->toArray(),
+        'title' => ContextDefinition::create('string')
+          ->setLabel('Title')
+          ->toArray(),
       ]
     ] + ContextConfig::create()
         ->map('node', 'node')
@@ -159,15 +157,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-        ],
-        'message' => [
-          'type' => 'string',
-        ],
-        'type' => [
-          'type' => 'string',
-        ],
+        'node' => ContextDefinition::create('entity:node')->toArray(),
+        'message' => ContextDefinition::create('string')->toArray(),
+        'type' => ContextDefinition::create('string')->toArray(),
       ],
     ]);
     $rule->setContextValue('node', $node);
@@ -209,15 +201,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'node' => [
-          'type' => 'entity:node',
-        ],
-        'message' => [
-          'type' => 'string',
-        ],
-        'type' => [
-          'type' => 'string',
-        ],
+        'node' => ContextDefinition::create('entity:node')->toArray(),
+        'message' => ContextDefinition::create('string')->toArray(),
+        'type' => ContextDefinition::create('string')->toArray(),
       ],
     ]);
     $rule->setContextValue('node', $node);
