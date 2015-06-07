@@ -33,7 +33,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  *
  * @todo: Add access callback information from Drupal 7.
- * @todo: Add group information from Drupal 7.
  */
 class PathAliasExists extends RulesConditionBase implements ContainerFactoryPluginInterface {
 
