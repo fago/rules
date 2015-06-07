@@ -35,11 +35,6 @@ use Drupal\rules\Core\RulesActionBase;
  *       description = @Translation("Position to insert the item."),
  *       required = FALSE
  *     )
- *   },
- *   provides = {
- *     "outputlist" = @ContextDefinition("list",
- *       label = @Translation("The resulting data list with item added.")
- *     )
  *   }
  * )
  *
