@@ -92,6 +92,8 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
     $this->action->setContextValue('user', $user);
 
     $this->action->execute();
+
+    $this->assertEquals($this->action->autoSaveContext(), ['user'], 'Action returns the user context name for auto saving.');
   }
 
   /**
@@ -111,6 +113,8 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
     $this->action->setContextValue('user', $user);
 
     $this->action->execute();
+
+    $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the user has not been altered.');
   }
 
 
@@ -131,6 +135,8 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
     $this->action->setContextValue('user', $user);
 
     $this->action->execute();
+
+    $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the user has not been altered.');
   }
 
   /**
@@ -150,6 +156,8 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
     $this->action->setContextValue('user', $user);
 
     $this->action->execute();
+
+    $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the user has not been altered.');
   }
 
   /**

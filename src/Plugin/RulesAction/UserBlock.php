@@ -68,6 +68,13 @@ class UserBlock extends RulesActionBase implements ContainerFactoryPluginInterfa
   }
 
   /**
+   * Flag that indicates if the entity should be auto-saved later.
+   *
+   * @var bool
+   */
+  protected $saveLater = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function summary() {
@@ -87,7 +94,19 @@ class UserBlock extends RulesActionBase implements ContainerFactoryPluginInterfa
     if ($user->isAuthenticated() && $user->isActive()) {
       $user->block();
       $this->sessionManager->delete($user->id());
+      // Set flag that indicates if the entity should be auto-saved later.
+      $this->saveLater = TRUE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function autoSaveContext() {
+    if ($this->saveLater) {
+      return ['user'];
+    }
+    return [];
   }
 
 }
