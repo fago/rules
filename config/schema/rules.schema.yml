@@ -29,6 +29,38 @@ rules.component.*:
       type: rules_expression.[%parent.expression_id]
       label: 'Configuration'
 
+rules.reaction.*:
+  type: config_entity
+  label: 'Reaction rule'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    event:
+      type: string
+      label: 'Event'
+    module:
+      type: string
+      label: 'Module'
+    description:
+      type: text
+      label: 'Administrative description'
+    tag:
+      type: string
+      label: 'Tag'
+    core:
+      type: string
+      label: 'Drupal version'
+    expression_id:
+      type: string
+      label: 'Rules expression plugin ID'
+    configuration:
+      type: rules_expression.[%parent.expression_id]
+      label: 'Configuration'
+
 rules_expression:
   type: mapping
   label: 'Rules expression'
@@ -102,6 +134,23 @@ rules_expression.rules_rule:
       label: 'Context definitions'
       sequence:
         - type: rules.context.definition
+    conditions:
+      type: rules_expression.[id]
+      label: 'Conditions'
+    actions:
+      type: rules_expression.[id]
+      label: 'Actions'
+
+rules_expression.rules_reaction_rule:
+  type: rules_expression
+  label: "Reaction Rule"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    event:
+      type: string
+      label: 'Event'
     conditions:
       type: rules_expression.[id]
       label: 'Conditions'

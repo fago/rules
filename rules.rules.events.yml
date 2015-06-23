@@ -1,0 +1,7 @@
+rules_user_login:
+  label: 'User has logged in'
+  category: 'User'
+  context:
+    account:
+      type: 'entity:user'
+      label: 'Logged in user'

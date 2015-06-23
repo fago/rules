@@ -5,6 +5,9 @@ services:
   plugin.manager.rules_action:
     class: Drupal\rules\Core\RulesActionManager
     parent: default_plugin_manager
+  plugin.manager.rules_event:
+    class: Drupal\rules\Engine\RulesEventManager
+    arguments: ['@module_handler']
   plugin.manager.rules_data_processor:
     class: Drupal\rules\Context\DataProcessorManager
     arguments: ['@container.namespaces', '@module_handler']
@@ -14,3 +17,8 @@ services:
   plugin.manager.rules_component:
     class: Drupal\rules\Plugin\RulesComponentManager
     arguments: ['@container.namespaces', '@module_handler']
+  rules.event_subscriber:
+    class: Drupal\rules\EventSubscriber\GenericEventSubscriber
+    arguments: ['@entity.manager']
+    tags:
+      - { name: 'event_subscriber' }
