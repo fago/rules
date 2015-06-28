@@ -9,7 +9,7 @@ namespace Drupal\rules\EventSubscriber;
 
 use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Subsscribes to Symfony events and maps them to Rules events.
@@ -41,7 +41,9 @@ class GenericEventSubscriber implements EventSubscriberInterface {
     $events = [];
     $callback = ['onRulesEvent', 100];
 
-    // If there is no state service there is nothing we can do here.
+    // If there is no state service there is nothing we can do here. This static
+    // method could be called early when the container is built, so the state
+    // service might no always be available.
     if (!\Drupal::hasService('state')) {
       return [];
     }
@@ -64,12 +66,12 @@ class GenericEventSubscriber implements EventSubscriberInterface {
   /**
    * Reacts on the given event and invokes configured reaction rules.
    *
-   * @param \Symfony\Component\EventDispatcher\GenericEvent $event
+   * @param \Symfony\Component\EventDispatcher\Event $event
    *   The event object containing context for the event.
    * @param string $event_name
    *   The event name.
    */
-  public function onRulesEvent(GenericEvent $event, $event_name) {
+  public function onRulesEvent(Event $event, $event_name) {
     // Load reaction rule config entities by $event_name.
     $storage = $this->entityManager->getStorage('rules_reaction_rule');
     // @todo Only load active reaction rules here.
@@ -79,9 +81,13 @@ class GenericEventSubscriber implements EventSubscriberInterface {
     foreach ($configs as $rules_config) {
       $reaction_rule = $rules_config->getExpression();
 
-      // Set the rest of arguments as further context values on the rule.
-      foreach ($event->getArguments() as $name => $value) {
-        $reaction_rule->setContextValue($name, $value);
+      $context_names = array_keys($reaction_rule->getContextDefinitions());
+      foreach ($context_names as $context_name) {
+        // If this is a GenericEvent get the context for the rule from the event
+        // arguments.
+        if ($event instanceof GenericEvent) {
+          $reaction_rule->setContextValue($context_name, $event->getArgument($context_name));
+        }
       }
 
       $reaction_rule->execute();

@@ -5,3 +5,9 @@ rules_user_login:
     account:
       type: 'entity:user'
       label: 'Logged in user'
+kernel.request:
+  label: 'Drupal is initializing'
+  category: 'System'
+  # @todo Should this event have the request as context? Should we define a
+  # request data type?
+  help: "Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."

@@ -7,12 +7,12 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Plugin\Discovery\YamlDiscovery;
 use Drupal\Core\Plugin\Factory\ContainerFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\rules\Context\ContextDefinition;
 
 /**
  * Plugin manager for Rules events that can be triggered.
@@ -53,32 +53,8 @@ class RulesEventManager extends DefaultPluginManager {
       return;
     }
     // Convert the flat context arrays into ContextDefinition objects.
-    // @todo This code should be removed and we should pass this off to some
-    //   annotation reader code that converts plugin defintion parts into
-    //   objects.
     foreach ($definition['context'] as $context_name => $values) {
-      $values += array(
-        'required' => TRUE,
-        'multiple' => FALSE,
-        'default_value' => NULL,
-      );
-      foreach (['label', 'description'] as $key) {
-        if (isset($values[$key])) {
-          // @todo Dynamic translations are bad! But how can specify
-          //   translatable strings in the plugin definition YAML file?
-          $values[$key] = $this->t($values[$key]);
-        }
-        else {
-          $values[$key] = NULL;
-        }
-      }
-      if (isset($values['class']) && !in_array('Drupal\Core\Plugin\Context\ContextDefinitionInterface', class_implements($values['class']))) {
-        throw new PluginException('ContextDefinition class must implement \Drupal\Core\Plugin\Context\ContextDefinitionInterface.');
-      }
-      $class = isset($values['class']) ? $values['class'] : 'Drupal\Core\Plugin\Context\ContextDefinition';
-      $definition['context'][$context_name] = new $class(
-        $values['type'], $values['label'], $values['required'],
-        $values['multiple'], $values['description'], $values['default_value']);
+      $definition['context'][$context_name] = ContextDefinition::createFromArray($values);
     }
   }
 
