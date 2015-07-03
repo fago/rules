@@ -216,4 +216,43 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $this->assertEqual($messages['status'][0]['message'], 'The node was created in the year 1970');
   }
 
+  /**
+   * Tests that the data set action works on nodes.
+   */
+  public function testDataSet() {
+    $entity_manager = $this->container->get('entity.manager');
+    $entity_manager->getStorage('node_type')
+      ->create(['type' => 'page'])
+      ->save();
+
+    $node = $entity_manager->getStorage('node')
+      ->create([
+        'title' => 'test',
+        'type' => 'page',
+      ]);
+
+    // Configure a simple rule with one action.
+    $action = $this->expressionManager->createInstance('rules_action',
+      ContextConfig::create()
+        ->setConfigKey('action_id', 'rules_data_set')
+        ->map('data', 'node:title')
+        ->map('value', 'new_title')
+        ->toArray()
+    );
+
+    $rule = $this->expressionManager->createRule([
+      'context_definitions' => [
+        'node' => ContextDefinition::create('entity:node')->toArray(),
+        'new_title' => ContextDefinition::create('string')->toArray(),
+      ],
+    ]);
+    $rule->setContextValue('node', $node);
+    $rule->setContextValue('new_title', 'new title');
+    $rule->addExpressionObject($action);
+    $rule->execute();
+
+    $this->assertEqual('new title', $node->getTitle());
+    $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been auto-saved.');
+  }
+
 }
