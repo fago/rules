@@ -48,13 +48,10 @@ class UserIsBlockedTest extends RulesEntityIntegrationTestBase {
    */
   public function testConditionEvaluation() {
     $user = $this->getMock('Drupal\user\UserInterface');
-    $user->expects($this->at(0))
-      ->method('isBlocked')
-      ->will($this->returnValue(TRUE));
 
-    $user->expects($this->at(1))
+    $user->expects($this->exactly(2))
       ->method('isBlocked')
-      ->will($this->returnValue(FALSE));
+      ->will($this->onConsecutiveCalls(TRUE, FALSE));
 
     // Set the user context value.
     $this->condition->setContextValue('user', $user);
