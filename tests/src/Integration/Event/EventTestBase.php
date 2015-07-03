@@ -8,12 +8,12 @@
 namespace Drupal\Tests\rules\Integration\Event;
 
 use Drupal\rules\Engine\RulesEventManager;
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * Base class for testing Rules Event definitions.
  */
-abstract class EventTestBase extends RulesIntegrationTestBase {
+abstract class EventTestBase extends RulesEntityIntegrationTestBase {
 
   /**
    * The Rules event plugin manager.

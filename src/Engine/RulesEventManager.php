@@ -9,6 +9,7 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
 use Drupal\Core\Plugin\Discovery\YamlDiscovery;
 use Drupal\Core\Plugin\Factory\ContainerFactory;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -39,7 +40,7 @@ class RulesEventManager extends DefaultPluginManager {
    */
   public function __construct(ModuleHandlerInterface $module_handler) {
     $this->alterInfo('rules_event');
-    $this->discovery = new YamlDiscovery('rules.events', $module_handler->getModuleDirectories());
+    $this->discovery = new ContainerDerivativeDiscoveryDecorator(new YamlDiscovery('rules.events', $module_handler->getModuleDirectories()));
     $this->factory = new ContainerFactory($this, 'Drupal\rules\Core\RulesEventInterface');
     $this->moduleHandler = $module_handler;
   }
