@@ -1,11 +1,11 @@
 # Action links for Rules UI.
 
 # Rules reaction related actions.
-rules_reaction_add_action:
-  route_name: stub.rules_reaction.add_form
+rules_reaction_rule_add_action:
+  route_name: entity.rules_reaction_rule.add_form
   title: 'Add reaction rule'
   appears_on:
-    - stub.rules_reaction.collection
+    - entity.rules_reaction_rule.collection
 
 # Rules component related actions.
 rules_component_add_action:

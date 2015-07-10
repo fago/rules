@@ -20,7 +20,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "form" = {
  *        "add" = "\Drupal\rules\Entity\RulesComponentAddForm",
  *        "edit" = "\Drupal\rules\Entity\RulesComponentEditForm",
- *        "delete" = "\Drupal\rules\Entity\RulesComponentDeleteForm"
+ *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
  *      }
  *   },
  *   admin_permission = "administer rules",
@@ -41,6 +41,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "configuration",
  *   },
  *   links = {
+ *     "collection" = "/admin/config/workflow/rules/components",
  *     "edit-form" = "/admin/config/workflow/rules/components/edit/{rules_component}",
  *     "delete-form" = "/admin/config/workflow/rules/components/delete/{rules_component}",
  *   }

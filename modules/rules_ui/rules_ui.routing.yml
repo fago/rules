@@ -24,34 +24,34 @@ rules.ui.settings:
 
 
 ### Rules Reactions
-stub.rules_reaction.collection:
+entity.rules_reaction_rule.collection:
   path: '/admin/config/workflow/rules/reactions'
   defaults:
-    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _entity_list: 'rules_reaction_rule'
     _title: 'Reaction rules'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
-stub.rules_reaction.add_form:
+entity.rules_reaction_rule.add_form:
   path: '/admin/config/workflow/rules/reactions/add'
   defaults:
-    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _entity_form: 'rules_reaction_rule.add'
     _title: 'Add reaction rule'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
-stub.rules_reaction.edit_form:
-  path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction}'
+entity.rules_reaction_rule.edit_form:
+  path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}'
   defaults:
-    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _entity_form: 'rules_reaction_rule.edit'
     _title: 'Edit reaction rule'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
-stub.rules_reaction.delete_form:
-  path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction}'
+entity.rules_reaction_rule.delete_form:
+  path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}'
   defaults:
-    _controller: 'Drupal\rules\Stub\RulesReactionStub::notImplemented'
+    _entity_form: 'rules_reaction_rule.delete'
     _title: 'Delete reaction rule'
   requirements:
     _permission: 'administer rules+administer rules reactions'

@@ -8,7 +8,7 @@ rules.ui.overview:
 
 rules.ui.reactions:
   title: 'Reaction rules'
-  route_name: stub.rules_reaction.collection
+  route_name: entity.rules_reaction_rule.collection
   base_route: rules.ui.overview
   weight: 1
 

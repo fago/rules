@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Plugin\CategorizingPluginManagerInterface;
+use Drupal\Core\Plugin\CategorizingPluginManagerTrait;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
@@ -22,9 +24,9 @@ use Drupal\rules\Context\ContextDefinition;
  *
  * @see \Drupal\rules\Core\RulesEventInterface
  */
-class RulesEventManager extends DefaultPluginManager {
+class RulesEventManager extends DefaultPluginManager implements CategorizingPluginManagerInterface {
 
-  use StringTranslationTrait;
+  use CategorizingPluginManagerTrait;
 
   /**
    * Provides some default values for the definition of all Rules event plugins.

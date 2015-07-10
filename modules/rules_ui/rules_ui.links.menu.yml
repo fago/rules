@@ -11,7 +11,7 @@ rules.ui.overview:
 # Menu links shown on rules.ui.overview .
 rules.ui.reactions:
   title: 'Reaction rules'
-  route_name: stub.rules_reaction.collection
+  route_name: entity.rules_reaction_rule.collection
   parent: rules.ui.overview
   description: 'Reaction rules administration overview.'
   weight: 0

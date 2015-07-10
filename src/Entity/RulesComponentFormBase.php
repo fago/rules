@@ -8,9 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Entity\EntityForm;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the base form for rules add and edit forms.
@@ -18,58 +16,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class RulesComponentFormBase extends EntityForm {
 
   /**
-   * The rules component entity.
-   *
-   * @var \Drupal\rules\Entity\RulesComponent
-   */
-  protected $entity;
-
-  /**
-   * The RulesComponent storage.
-   *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
-   */
-  protected $storage = NULL;
-
-  /**
-   * Constructs a new ActionAddForm.
-   *
-   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
-   *   The rules_component storage.
-   */
-  public function __construct(EntityStorageInterface $storage) {
-    $this->storage = $storage;
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity.manager')->getStorage('rules_component')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function form($form, FormStateInterface $form_state) {
+  public function form(array $form, FormStateInterface $form_state) {
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#default_value' => $this->entity->label(),
       '#required' => TRUE,
     ];
-
-    // @todo enter a real tag field here.
-    $form['tag'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Tag'),
-      '#default_value' => $this->entity->getTag(),
-      '#description' => t('Enter a tag here'),
-      '#required' => TRUE,
-    ];
-
 
     $form['id'] = [
       '#type' => 'machine_name',
@@ -83,6 +38,15 @@ abstract class RulesComponentFormBase extends EntityForm {
       ],
     ];
 
+    // @todo enter a real tag field here.
+    $form['tag'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Tag'),
+      '#default_value' => $this->entity->getTag(),
+      '#description' => t('Enter a tag here'),
+      '#required' => TRUE,
+    ];
+
     $form['description'] = [
       '#type' => 'textarea',
       '#default_value' => $this->entity->getDescription(),
@@ -92,4 +56,19 @@ abstract class RulesComponentFormBase extends EntityForm {
 
     return parent::form($form, $form_state);
   }
+
+  /**
+   * Machine name exists callback.
+   *
+   * @param string $id
+   *   The machine name ID.
+   *
+   * @return bool
+   *   TRUE if an entity with the same name already exists, FALSE otherwise.
+   */
+  public function exists($id) {
+    $type = $this->entity->getEntityTypeId();
+    return (bool) $this->entityManager->getStorage($type)->load($id);
+  }
+
 }
