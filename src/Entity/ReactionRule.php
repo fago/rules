@@ -43,7 +43,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "configuration",
  *   },
  *   links = {
- *     "collection" = "/admin/config/workflow/rules/reactions",
+ *     "collection" = "/admin/config/workflow/rules",
  *     "edit-form" = "/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}",
  *     "delete-form" = "/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}"
  *   }

@@ -1,18 +1,6 @@
 # Declaration of Rules UI routings.
 
 
-### Admin Overview
-# Overview page returns a menu-block with links that where
-# rules.ui.overview is declared as parent.
-rules.ui.overview:
-  path: '/admin/config/workflow/rules'
-  defaults:
-    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
-    _title: 'Rules'
-  requirements:
-    _permission: 'administer rules+administer rules components+administer rules reactions'
-
-
 ### Rules settings form
 rules.ui.settings:
   path: '/admin/config/workflow/rules/settings'
@@ -25,10 +13,10 @@ rules.ui.settings:
 
 ### Rules Reactions
 entity.rules_reaction_rule.collection:
-  path: '/admin/config/workflow/rules/reactions'
+  path: '/admin/config/workflow/rules'
   defaults:
     _entity_list: 'rules_reaction_rule'
-    _title: 'Reaction rules'
+    _title: 'Rules'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -63,7 +51,7 @@ entity.rules_component.collection:
   defaults:
   # Calls the list controller, defined in the annotation of the rules component entity.
     _entity_list: 'rules_component'
-    _title: 'Components'
+    _title: 'Rules components'
   requirements:
     _permission: 'administer rules+administer rules components'
 

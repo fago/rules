@@ -5,4 +5,4 @@ package: Rules
 core: 8.x
 dependencies:
   - rules
-configure: rules.ui.overview
+configure: entity.rules_reaction_rule.collection
