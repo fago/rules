@@ -33,3 +33,16 @@ function rules_entity_presave(EntityInterface $entity) {
     $event_dispatcher->dispatch("rules_entity_presave:$entity_type_id", $event);
   }
 }
+
+/**
+ * Implements hook_entity_insert().
+ */
+function rules_entity_insert(EntityInterface $entity) {
+  // Only handle content entities and ignore config entities.
+  if ($entity instanceof ContentEntityInterface) {
+    $entity_type_id = $entity->getEntityTypeId();
+    $event = new EntityEvent($entity, [$entity_type_id => $entity]);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch("rules_entity_insert:$entity_type_id", $event);
+  }
+}
