@@ -22,6 +22,19 @@ function rules_user_login($account) {
 }
 
 /**
+ * Implements hook_entity_view().
+ */
+function rules_entity_view(EntityInterface $entity) {
+  // Only handle content entities and ignore config entities.
+  if ($entity instanceof ContentEntityInterface) {
+    $entity_type_id = $entity->getEntityTypeId();
+    $event = new EntityEvent($entity, [$entity_type_id => $entity]);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch("rules_entity_view:$entity_type_id", $event);
+  }
+}
+
+/**
  * Implements hook_entity_presave().
  */
 function rules_entity_presave(EntityInterface $entity) {
