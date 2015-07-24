@@ -9,6 +9,7 @@ namespace Drupal\rules\Plugin\RulesDataProcessor;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Utility\Token;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Engine\RulesStateInterface;
@@ -66,6 +67,9 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    */
   public function process($value, RulesStateInterface $rules_state) {
     $replacements = [];
+    // The Token API requires this metadata object, but it is useless for us
+    // here so we just always pass the same instance and ignore it.
+    $bubbleable_metdata = new BubbleableMetadata();
     // We only use the token service to scan for tokens in the text. The
     // replacements are done by using the data selector logic.
     foreach ($this->tokenService->scan($value) as $var_name => $tokens) {
@@ -86,10 +90,10 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
             // so we have to remove them.
             $token_type = str_replace('entity:', '', $token_type);
             $data = [$token_type => $variable->getContextValue()];
-            $replacements += $this->tokenService->generate($token_type, $tokens, $data, ['sanitize' => FALSE]);
+            $replacements += $this->tokenService->generate($token_type, $tokens, $data, ['sanitize' => FALSE], $bubbleable_metdata);
           }
           else {
-            $replacements += $this->tokenService->generate($var_name, $tokens, [], ['sanitize' => FALSE]);
+            $replacements += $this->tokenService->generate($var_name, $tokens, [], ['sanitize' => FALSE], $bubbleable_metdata);
           }
           // Remove tokens if no replacement value is found.
           $replacements += array_fill_keys($tokens, '');
