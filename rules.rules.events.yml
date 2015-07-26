@@ -17,3 +17,6 @@ rules_entity_presave:
 rules_entity_delete:
   label: 'After deleting an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver'
+rules_entity_insert:
+  label: 'After saving a new entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityInsertDeriver'
