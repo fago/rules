@@ -23,3 +23,6 @@ rules_entity_insert:
 rules_entity_update:
   label: 'After updating an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityUpdateDeriver'
+rules_entity_view:
+  label: 'Viewing an entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityViewDeriver'
