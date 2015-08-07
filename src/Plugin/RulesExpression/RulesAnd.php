@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
-use Drupal\rules\Engine\RulesState;
 use Drupal\rules\Engine\RulesStateInterface;
 
 /**

@@ -13,7 +13,7 @@ use Drupal\Component\Annotation\Plugin;
  * Defines the RulesDataProcessor annotation class.
  *
  * This annotation is used to identify plugins that want to alter variables
- * before they are passed on during Rules exceution.
+ * before they are passed on during Rules execution.
  *
  * @Annotation
  */

@@ -26,8 +26,8 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
   /**
    * Constructs a new reaction rule form.
    *
-   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
-   *   The rules_component storage.
+   * @param \Drupal\rules\Engine\RulesEventManager $event_manager
+   *   The Rules event manager.
    */
   public function __construct(RulesEventManager $event_manager) {
     $this->eventManager = $event_manager;
@@ -57,9 +57,9 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    $event_defintions = $this->eventManager->getGroupedDefinitions();
+    $event_definitions = $this->eventManager->getGroupedDefinitions();
     $options = [];
-    foreach ($event_defintions as $group => $definitions) {
+    foreach ($event_definitions as $group => $definitions) {
       foreach ($definitions as $id => $definition) {
         $options[$group][$id] = $definition['label'];
       }

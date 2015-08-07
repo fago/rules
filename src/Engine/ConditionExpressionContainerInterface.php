@@ -26,4 +26,5 @@ interface ConditionExpressionContainerInterface extends ConditionExpressionInter
    *   The created condition.
    */
   public function addCondition($condition_id, ContextConfig $config = NULL);
+
 }

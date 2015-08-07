@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Subsscribes to Symfony events and maps them to Rules events.
+ * Subscribes to Symfony events and maps them to Rules events.
  */
 class GenericEventSubscriber implements EventSubscriberInterface {
 

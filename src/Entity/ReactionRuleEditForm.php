@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\ReactoinRuleEditForm.
+ * Contains \Drupal\rules\Entity\ReactionRuleEditForm.
  */
 
 namespace Drupal\rules\Entity;
