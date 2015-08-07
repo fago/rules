@@ -50,7 +50,7 @@ class DataProcessorTest extends RulesDrupalTestBase {
     $messages = drupal_set_message();
     // The original value was 1 and the processor adds 1, so the result should
     // be 2.
-    $this->assertEqual($messages['status'][0]['message'], '2');
+    $this->assertEqual((string) $messages['status'][0], '2');
   }
 
 }
