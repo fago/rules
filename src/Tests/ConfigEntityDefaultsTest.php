@@ -7,8 +7,10 @@
 
 namespace Drupal\rules\Tests;
 
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Entity\RulesComponent;
+use Drupal\user\Entity\User;
 
 /**
  * Tests default config.
@@ -41,11 +43,19 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   protected $strictConfigSchema = FALSE;
 
   /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
-    $this->storage = $this->container->get('entity.manager')->getStorage('rules_component');
+    $this->entityManager = $this->container->get('entity.manager');
+    $this->storage = $this->entityManager->getStorage('rules_component');
     $this->installConfig(['rules_test_default_component']);
   }
 
@@ -59,14 +69,17 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
     $expression = $config_entity
       ->getExpression();
 
+    $user = $this->entityManager->getStorage('user')
+      ->create(array('mail' => 'test@example.com'));
+
     $expression
-      ->setContextValue('user', \Drupal::currentUser())
+      ->setContextValue('user', $user)
       ->execute();
 
-    // @todo: For some reason this does not work yet.
-    // Test that the action was executed.
-    debug($_SESSION['messages']);
-    debug(drupal_get_messages());
+    // Test that the action was executed correctly.
+    $messages = drupal_get_messages();
+    $message_string = isset($messages['status'][0]) ? (string) $messages['status'][0] : NULL;
+    $this->assertEqual($message_string, 'test@example.com');
   }
 
 }
