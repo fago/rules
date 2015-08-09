@@ -16,7 +16,7 @@ use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionManager;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -61,7 +61,7 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
    * @param \Drupal\rules\Engine\ExpressionManager $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManager $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $configuration += ['conditions' => [], 'actions' => []];

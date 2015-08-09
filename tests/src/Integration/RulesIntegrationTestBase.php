@@ -13,6 +13,7 @@ use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Engine\ExpressionManager;
+use Drupal\rules\Core\RulesActionManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
