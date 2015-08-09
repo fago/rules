@@ -12,6 +12,8 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\CategorizingPluginManagerTrait;
 use Drupal\Core\Plugin\Context\ContextAwarePluginManagerTrait;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
+use Drupal\rules\Context\AnnotatedClassDiscovery;
 
 /**
  * Provides an Action plugin manager for the Rules actions API.
@@ -41,6 +43,19 @@ class RulesActionManager extends DefaultPluginManager implements RulesActionMana
     parent::__construct('Plugin/RulesAction', $namespaces, $module_handler, 'Drupal\rules\Core\RulesActionInterface', 'Drupal\rules\Core\Annotation\RulesAction');
     $this->alterInfo('rules_action_info');
     $this->setCacheBackend($cache_backend, 'rules_action_info');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDiscovery() {
+    if (!$this->discovery) {
+      // Swap out the annotated class discovery used, so we can control the
+      // annotation classes picked.
+      $discovery = new AnnotatedClassDiscovery($this->subdir, $this->namespaces, $this->pluginDefinitionAnnotationName);
+      $this->discovery = new ContainerDerivativeDiscoveryDecorator($discovery);
+    }
+    return $this->discovery;
   }
 
 }

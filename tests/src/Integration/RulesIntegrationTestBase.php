@@ -8,7 +8,7 @@
 namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Core\Cache\NullBackend;
-use Drupal\Core\Condition\ConditionManager;
+use Drupal\rules\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Context\DataProcessorManager;
@@ -47,7 +47,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $aliasManager;
 
   /**
-   * @var \Drupal\Core\Condition\ConditionManager
+   * @var \Drupal\rules\Condition\ConditionManager
    */
   protected $conditionManager;
 

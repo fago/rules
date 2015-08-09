@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\Tests\rules\Integration\RulesAction\RulesActionManagerTest.
+ */
+
+namespace Drupal\Tests\rules\Integration\RulesAction;
+
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+
+/**
+ * Tests the Rules action manager.
+ */
+class RulesActionManagerTest extends RulesIntegrationTestBase {
+
+  /**
+   * @cover getDiscovery()
+   */
+  public function testContextDefinitionAnnotations() {
+    $definitions = $this->actionManager->getDefinitions();
+    // Make sure all context definitions are using the class provided by Rules.
+    foreach ($definitions as $definition) {
+      if (!empty($definition['context'])) {
+        foreach ($definition['context'] as $context_definition) {
+          $this->assertInstanceOf('Drupal\rules\Context\ContextDefinitionInterface', $context_definition);
+        }
+      }
+    }
+  }
+}
