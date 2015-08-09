@@ -8,15 +8,14 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Core\RulesActionBase;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\RulesExpressionTrait;
-use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Exception\InvalidExpressionException;
 use Drupal\rules\Engine\ExpressionManager;
+use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,9 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Action set")
  * )
  */
-class ActionSet extends RulesActionBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
-
-  use RulesExpressionTrait;
+class ActionSet extends ExpressionBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
 
   /**
    * List of actions that will be executed.
@@ -107,7 +104,7 @@ class ActionSet extends RulesActionBase implements ActionExpressionContainerInte
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesState $state) {
+  public function executeWithState(RulesStateInterface $state) {
     foreach ($this->actions as $action) {
       $action->executeWithState($state);
     }

@@ -10,8 +10,8 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\EntitySave
- * @group rules_action
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntitySave
+ * @group rules_actions
  */
 class EntitySaveTest extends RulesEntityIntegrationTestBase {
 

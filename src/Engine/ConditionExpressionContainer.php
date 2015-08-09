@@ -8,7 +8,6 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Core\RulesConditionBase;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,9 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Container for conditions.
  */
-abstract class ConditionExpressionContainer extends RulesConditionBase implements ConditionExpressionContainerInterface, ContainerFactoryPluginInterface {
-
-  use RulesExpressionTrait;
+abstract class ConditionExpressionContainer extends ExpressionBase implements ConditionExpressionContainerInterface, ContainerFactoryPluginInterface {
 
   /**
    * List of conditions that are evaluated.
@@ -96,27 +93,15 @@ abstract class ConditionExpressionContainer extends RulesConditionBase implement
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, array &$form_state) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormId() {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function execute() {
-    if (isset($this->executableManager)) {
-      return $this->executableManager->execute($this);
-    }
-    $result = $this->evaluate();
+  public function executeWithState(RulesStateInterface $rules_state) {
+    $result = $this->evaluate($rules_state);
     return $this->isNegated() ? !$result : $result;
   }
+
+  /**
+   * Returns the final result after executing the conditions.
+   */
+  abstract public function evaluate(RulesStateInterface $rules_state);
 
   /**
    * {@inheritdoc}
@@ -129,8 +114,8 @@ abstract class ConditionExpressionContainer extends RulesConditionBase implement
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    // @todo: Move to and implement at inheriting classes.
+  public function isNegated() {
+    return !empty($this->configuration['negate']);
   }
 
   /**

@@ -26,11 +26,50 @@ rules.component.*:
       type: string
       label: 'Rules expression plugin ID'
     configuration:
-      type: rules_component.configuration.[%parent.expression_id]
+      type: rules_expression.[%parent.expression_id]
       label: 'Configuration'
 
-rules_component.configuration.rules_condition:
+rules.reaction.*:
+  type: config_entity
+  label: 'Reaction rule'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    event:
+      type: string
+      label: 'Event'
+    module:
+      type: string
+      label: 'Module'
+    description:
+      type: text
+      label: 'Administrative description'
+    tag:
+      type: string
+      label: 'Tag'
+    core:
+      type: string
+      label: 'Drupal version'
+    expression_id:
+      type: string
+      label: 'Rules expression plugin ID'
+    configuration:
+      type: rules_expression.[%parent.expression_id]
+      label: 'Configuration'
+
+rules_expression:
   type: mapping
+  label: 'Rules expression'
+  id:
+    type: string
+    label: 'Plugin ID'
+
+rules_expression.rules_condition:
+  type: rules_expression
   label: "Rules condition configuration"
   mapping:
     id:
@@ -43,8 +82,8 @@ rules_component.configuration.rules_condition:
       type: boolean
       label: 'Negated'
 
-rules_component.configuration.rules_action:
-  type: mapping
+rules_expression.rules_action:
+  type: rules_expression
   label: "Rules action configuration"
   mapping:
     id:
@@ -54,8 +93,37 @@ rules_component.configuration.rules_action:
       type: string
       label: 'Action plugin ID'
 
-rules_component.configuration.rules_rule:
-  type: mapping
+rules_expression.rules_and:
+  type: rules_expression
+  label: 'Rules And'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    negate:
+      type: boolean
+      label: 'Negate'
+    conditions:
+      type: sequence
+      label: 'Conditions'
+      sequence:
+        - type: rules_expression.[id]
+
+rules_expression.rules_action_set:
+  type: rules_expression
+  label: 'Action set'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    actions:
+      type: sequence
+      label: 'Actions'
+      sequence:
+        - type: rules_expression.[id]
+
+rules_expression.rules_rule:
+  type: rules_expression
   label: "Rule"
   mapping:
     id:
@@ -65,15 +133,32 @@ rules_component.configuration.rules_rule:
       type: sequence
       label: 'Context definitions'
       sequence:
-        - type: rules_component_context
+        - type: rules.context.definition
     conditions:
-      type: rules_component.configuration.[id]
+      type: rules_expression.[id]
       label: 'Conditions'
     actions:
-      type: rules_component.configuration.[id]
+      type: rules_expression.[id]
       label: 'Actions'
 
-rules_component_context:
+rules_expression.rules_reaction_rule:
+  type: rules_expression
+  label: "Reaction Rule"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    event:
+      type: string
+      label: 'Event'
+    conditions:
+      type: rules_expression.[id]
+      label: 'Conditions'
+    actions:
+      type: rules_expression.[id]
+      label: 'Actions'
+
+rules.context.definition:
   type: mapping
   label: 'Context definition'
   mapping:
@@ -84,28 +169,19 @@ rules_component_context:
       type: string
       label: 'Label'
 
-rules_component.configuration.rules_and:
-  type: mapping
-  label: 'Rules And'
+rules.settings:
+  type: config_object
+  label: 'Rules settings'
   mapping:
-    id:
-      type: string
-      label: 'Plugin ID'
-    conditions:
-      type: sequence
-      label: 'Conditions'
-      sequence:
-        - type: rules_component.configuration.[id]
-
-rules_component.configuration.rules_action_set:
-  type: mapping
-  label: 'Action set'
-  mapping:
-    id:
-      type: string
-      label: 'Plugin ID'
-    actions:
-      type: sequence
-      label: 'Actions'
-      sequence:
-        - type: rules_component.configuration.[id]
+    log_errors:
+      type: integer
+      label: 'Logging of Rules evaluation errors'
+    debug_log:
+      type: boolean
+      label: 'Log debug information to the available loggers'
+    debug:
+      type: boolean
+      label: 'Show debug information'
+    log_level:
+      type: integer
+      label: 'Log level'

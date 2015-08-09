@@ -7,10 +7,12 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\Plugin\ContextAwarePluginInterface;
+use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 
 /**
  * Class for value objects helping with context configuration.
+ *
+ * @see \Drupal\rules\Context\ContextHandlerTrait
  */
 class ContextConfig {
 
@@ -185,7 +187,7 @@ class ContextConfig {
    *
    * @todo: Implement.
    */
-  public function checkConfig(ContextAwarePluginInterface $plugin) {
+  public function checkConfig(CoreContextAwarePluginInterface $plugin) {
     // @todo.
   }
 

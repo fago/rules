@@ -10,8 +10,8 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\VariableAdd
- * @group rules_action
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\VariableAdd
+ * @group rules_actions
  */
 class VariableAddTest extends RulesIntegrationTestBase {
 
@@ -30,12 +30,12 @@ class VariableAddTest extends RulesIntegrationTestBase {
   public function testExecute() {
     $variable = $this->randomMachineName();
 
-    /** @var \Drupal\rules\Plugin\Action\VariableAdd $action */
+    /** @var \Drupal\rules\Plugin\RulesAction\VariableAdd $action */
     $action = $this->actionManager->createInstance('rules_variable_add');
     $action->setContextValue('value', $variable);
     $action->execute();
 
-    $result = $action->getProvided('variable_added');
+    $result = $action->getProvidedContext('variable_added');
     $this->assertEquals($variable, $result->getContextValue());
   }
 }

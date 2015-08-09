@@ -8,6 +8,7 @@
 namespace Drupal\rules\Tests;
 
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
 
@@ -17,18 +18,6 @@ use Drupal\rules\Engine\RulesState;
  * @group rules
  */
 class RulesEngineTest extends RulesDrupalTestBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-
-    // Clear the log from any stale entries that are bleeding over from previous
-    // tests.
-    $logger = RulesLog::logger();
-    $logger->clear();
-  }
 
   /**
    * Tests creating a rule and iterating over the rule elements.
@@ -68,8 +57,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $rule->execute();
 
     // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
+    $this->assertRulesLogEntryExists('action called');
   }
 
   /**
@@ -78,10 +66,9 @@ class RulesEngineTest extends RulesDrupalTestBase {
   public function testContextPassing() {
     $rule = $this->expressionManager->createRule([
       'context_definitions' => [
-        'test' => [
-          'type' => 'string',
-          'label' => 'Test string',
-        ],
+        'test' => ContextDefinition::create('string')
+          ->setLabel('Test string')
+          ->toArray()
       ],
     ]);
 
@@ -94,8 +81,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $rule->execute();
 
     // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
+    $this->assertRulesLogEntryExists('action called');
   }
 
   /**
@@ -115,8 +101,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $rule->execute();
 
     // Test that the action logged something.
-    $log = RulesLog::logger()->get();
-    $this->assertEqual($log[0][0], 'action called');
+    $this->assertRulesLogEntryExists('action called');
   }
 
   /**

@@ -7,14 +7,16 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Plugin\RulesExpression\RulesCondition;
+use Drupal\Tests\UnitTestCase;
 
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesCondition
  * @group rules
  */
-class RulesConditionTest extends RulesUnitTestBase {
+class RulesConditionTest extends UnitTestCase {
 
   /**
    * The mocked condition manager.
@@ -35,7 +37,7 @@ class RulesConditionTest extends RulesUnitTestBase {
    *
    * @var \Drupal\rules\Plugin\RulesExpression\RulesCondition
    */
-  protected $condition;
+  protected $conditionExpression;
 
   /**
    * {@inheritdoc}
@@ -43,9 +45,7 @@ class RulesConditionTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Create a test condition plugin that always evaluates to TRUE. We cannot
-    // use $this->trueCondition because it is a Rules expression, but we need a
-    // condition plugin here.
+    // Create a test condition plugin that always evaluates to TRUE.
     $this->trueCondition = $this->getMock('Drupal\rules\Core\RulesConditionInterface');
     $this->trueCondition->expects($this->any())
       ->method('execute')
@@ -63,39 +63,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->disableOriginalConstructor()
       ->getMock();
 
-    $this->condition = new RulesCondition(['condition_id' => 'rules_or'], '', [], $this->conditionManager, $this->processorManager);
-  }
-
-  /**
-   * Tests that evaluate() correctly passes the context to the condition plugin.
-   */
-  public function testEvaluateWithContext() {
-    // Build some mocked context and definitions for our mock condition.
-    $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
-    $context->expects($this->once())
-      ->method('getContextValue')
-      ->will($this->returnValue('value'));
-
-    $this->condition->setContext('test', $context);
-
-    $this->trueCondition->expects($this->exactly(2))
-      ->method('getContextDefinitions')
-      ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
-
-    // Make sure that the context value is set as expected.
-    $this->trueCondition->expects($this->once())
-      ->method('setContextValue')
-      ->with('test', 'value');
-
-    $this->trueCondition->expects($this->once())
-      ->method('getProvidedDefinitions')
-      ->will($this->returnValue([]));
-
-    $this->conditionManager->expects($this->exactly(2))
-      ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
-
-    $this->assertTrue($this->condition->evaluate());
+    $this->conditionExpression = new RulesCondition(['condition_id' => 'rules_or'], '', [], $this->conditionManager, $this->processorManager);
   }
 
   /**
@@ -111,7 +79,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->method('createInstance')
       ->will($this->returnValue($this->trueCondition));
 
-    $this->assertSame($this->condition->getContextDefinitions(), ['test' => $context_definition]);
+    $this->assertSame($this->conditionExpression->getContextDefinitions(), ['test' => $context_definition]);
   }
 
   /**
@@ -119,16 +87,13 @@ class RulesConditionTest extends RulesUnitTestBase {
    */
   public function testDataProcessor() {
     $condition = new RulesCondition([
-      'condition_id' => 'rules_or',
-      'context_processors' => [
-        'test' => [
-          // We don't care about the data processor plugin name and
-          // configuration since we will use a mock anyway.
-          'plugin' => 'foo',
-          'configuration' => [],
-        ]
-      ]
-    ], '', [], $this->conditionManager, $this->processorManager);
+        'condition_id' => 'rules_or',
+      ] + ContextConfig::create()
+        // We don't care about the data processor plugin name and
+        // configuration since we will use a mock anyway.
+        ->process('test', 'foo', [])
+        ->toArray(),
+    '', [], $this->conditionManager, $this->processorManager);
 
     // Build some mocked context and definitions for our mock condition.
     $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
@@ -140,7 +105,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
 
     $this->trueCondition->expects($this->once())
-      ->method('getProvidedDefinitions')
+      ->method('getProvidedContextDefinitions')
       ->will($this->returnValue([]));
 
     // Mock some original old value that will be replaced by the data processor.
@@ -168,7 +133,7 @@ class RulesConditionTest extends RulesUnitTestBase {
       ->method('createInstance')
       ->will($this->returnValue($data_processor));
 
-    $this->assertTrue($condition->evaluate());
+    $this->assertTrue($condition->execute());
   }
 
 }

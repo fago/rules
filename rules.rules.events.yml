@@ -1,0 +1,28 @@
+rules_user_login:
+  label: 'User has logged in'
+  category: 'User'
+  context:
+    account:
+      type: 'entity:user'
+      label: 'Logged in user'
+kernel.request:
+  label: 'Drupal is initializing'
+  category: 'System'
+  # @todo Should this event have the request as context? Should we define a
+  # request data type?
+  help: "Be aware that some actions might initialize the theme system. After that, it's impossible for any module to change the used theme."
+rules_entity_presave:
+  label: 'Before saving an entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityPresaveDeriver'
+rules_entity_delete:
+  label: 'After deleting an entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver'
+rules_entity_insert:
+  label: 'After saving a new entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityInsertDeriver'
+rules_entity_update:
+  label: 'After updating an entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityUpdateDeriver'
+rules_entity_view:
+  label: 'Viewing an entity'
+  deriver: '\Drupal\rules\Plugin\RulesEvent\EntityViewDeriver'

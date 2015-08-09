@@ -7,6 +7,9 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Engine\ConditionExpressionContainer;
+use Drupal\rules\Engine\RulesStateInterface;
+
 /**
  * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
  * @group rules
@@ -37,12 +40,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    */
   public function testAddExpressionObject() {
     $container = $this->getMockConditionContainer();
-    $container->addExpressionObject($this->trueCondition);
+    $container->addExpressionObject($this->trueConditionExpression);
 
     $property = new \ReflectionProperty($container, 'conditions');
     $property->setAccessible(TRUE);
 
-    $this->assertArrayEquals([$this->trueCondition], $property->getValue($container));
+    $this->assertArrayEquals([$this->trueConditionExpression], $property->getValue($container));
   }
 
   /**
@@ -52,10 +55,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::isNegated
    */
   public function testNegate() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->exactly(2))
-      ->method('evaluate')
-      ->will($this->returnValue(TRUE));
+    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
 
     $this->assertFalse($container->isNegated());
     $this->assertTrue($container->execute());
@@ -71,31 +71,22 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testExecute() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->once())
-      ->method('evaluate')
-      ->will($this->returnValue(TRUE));
-
+    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
     $this->assertTrue($container->execute());
   }
 
+}
+
+/**
+ * Class used for overriding evalute() as this does not work with PHPunit.
+ */
+abstract class RulesConditionContainerTestStub extends ConditionExpressionContainer {
+
   /**
-   * Tests executing the condition container with an executable manager.
-   *
-   * @covers ::execute
+   * {@inheritdoc}
    */
-  public function testExecuteWithExecutableManager() {
-    $container = $this->getMockConditionContainer(['evaluate']);
-    $container->expects($this->never())
-      ->method('evaluate');
-
-    $manager = $this->getMock('Drupal\Core\Executable\ExecutableManagerInterface');
-    $manager->expects($this->once())
-      ->method('execute')
-      ->will($this->returnValue(TRUE));
-
-    $container->setExecutableManager($manager);
-    $this->assertTrue($container->execute());
+  public function evaluate(RulesStateInterface $state) {
+    return TRUE;
   }
 
 }

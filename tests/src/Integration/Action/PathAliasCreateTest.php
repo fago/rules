@@ -11,8 +11,8 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\PathAliasCreate
- * @group rules_action
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\PathAliasCreate
+ * @group rules_actions
  */
 class PathAliasCreateTest extends RulesIntegrationTestBase {
 

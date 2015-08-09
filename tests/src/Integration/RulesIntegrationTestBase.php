@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration;
 
-use Drupal\Core\Action\ActionManager;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -27,12 +26,17 @@ use Drupal\Tests\UnitTestCase;
 abstract class RulesIntegrationTestBase extends UnitTestCase {
 
   /**
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
+
+  /**
    * @var \Drupal\Core\TypedData\TypedDataManager
    */
   protected $typedDataManager;
 
   /**
-   * @var \Drupal\Core\Action\ActionManager
+   * @var \Drupal\rules\Core\RulesActionManagerInterface
    */
   protected $actionManager;
 
@@ -122,7 +126,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
       'Drupal\\Core\\Validation' => $this->root . '/core/lib/Drupal/Core/Validation',
     ]);
 
-    $this->actionManager = new ActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
+    $this->actionManager = new RulesActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler);
     $this->rulesExpressionManager = new ExpressionManager($this->namespaces, $this->moduleHandler);
 
@@ -137,11 +141,19 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
       ->disableOriginalConstructor()
       ->getMock();
 
+    $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManagerInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
+    $this->entityManager->expects($this->any())
+      ->method('getDefinitions')
+      ->willReturn([]);
+
+    $container->set('entity.manager', $this->entityManager);
     $container->set('path.alias_manager', $this->aliasManager);
-    $container->set('plugin.manager.action', $this->actionManager);
+    $container->set('plugin.manager.rules_action', $this->actionManager);
     $container->set('plugin.manager.condition', $this->conditionManager);
     $container->set('plugin.manager.rules_expression', $this->rulesExpressionManager);
-    $container->set('plugin.manager.rules_data_processor', $this->rulesExpressionManager);
+    $container->set('plugin.manager.rules_data_processor', $this->rulesDataProcessorManager);
     $container->set('typed_data_manager', $this->typedDataManager);
     $container->set('string_translation', $this->getStringTranslationStub());
 

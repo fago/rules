@@ -7,45 +7,23 @@
 
 namespace Drupal\rules\Core;
 
-use Drupal\Core\Executable\ExecutableManagerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContextAwarePluginBase;
-use Drupal\rules\Context\RulesContextTrait;
+use Drupal\Core\Condition\ConditionPluginBase;
+use Drupal\rules\Context\ContextProviderTrait;
 
 /**
  * Base class for rules conditions.
+ *
+ * @todo Figure out whether buildConfigurationForm() is useful to Rules somehow.
  */
-abstract class RulesConditionBase extends ContextAwarePluginBase implements RulesConditionInterface {
+abstract class RulesConditionBase extends ConditionPluginBase implements RulesConditionInterface {
 
-  use RulesContextTrait;
-
-  /**
-   * The condition manager to proxy execute calls through.
-   *
-   * @var \Drupal\Core\Executable\ExecutableManagerInterface
-   */
-  protected $executableManager;
-
-  /**
-   * The plugin configuration.
-   *
-   * @var array
-   */
-  protected $configuration;
+  use ContextProviderTrait;
 
   /**
    * {@inheritdoc}
    */
-  public function setExecutableManager(ExecutableManagerInterface $executableManager) {
-    $this->executableManager = $executableManager;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isNegated() {
-    return !empty($this->configuration['negate']);
+  public function refineContextDefinitions() {
+    // Do not refine anything by default.
   }
 
   /**
@@ -59,61 +37,14 @@ abstract class RulesConditionBase extends ContextAwarePluginBase implements Rule
   /**
    * {@inheritdoc}
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    // @todo: Figure out whether this is useful to Rules somehow.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function execute() {
-    return $this->executableManager->execute($this);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfiguration() {
-    return [
-      'id' => $this->getPluginId(),
-    ] + $this->configuration;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration + $this->defaultConfiguration();
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function calculateDependencies() {
-    return [];
+  public function evaluate() {
+    // Provide a reasonable default implementation that calls doEvaluate() while
+    // passing the defined context as arguments.
+    $args = [];
+    foreach ($this->getContexts() as $name => $context) {
+      $args[$name] = $context->getContextValue();
+    }
+    call_user_func_array([$this, 'doEvaluate'], $args);
   }
 
 }

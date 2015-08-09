@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 
 /**
@@ -113,12 +114,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -129,12 +130,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testConditionFails() {
     // The execute method on the action must never be called.
-    $this->testAction->expects($this->never())
+    $this->testActionExpression->expects($this->never())
       ->method('execute');
 
     $this->rule
-      ->addExpressionObject($this->falseCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->falseConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -145,13 +146,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -162,13 +163,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsFalse() {
     // The execute method on the action must never be called.
-    $this->testAction->expects($this->never())
+    $this->testActionExpression->expects($this->never())
       ->method('execute');
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->falseCondition)
-      ->addExpressionObject($this->testAction)
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->falseConditionExpression)
+      ->addExpressionObject($this->testActionExpression)
       ->execute();
   }
 
@@ -178,17 +179,47 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testNestedRules() {
-    $this->testAction->expects($this->once())
+    $this->testActionExpression->expects($this->once())
       ->method('executeWithState');
 
     $nested = $this->getMockRule()
-      ->addExpressionObject($this->trueCondition)
-      ->addExpressionObject($this->testAction);
+      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->testActionExpression);
 
     $this->rule
-      ->addExpressionObject($this->trueCondition)
+      ->addExpressionObject($this->trueConditionExpression)
       ->addExpressionObject($nested)
       ->execute();
+  }
+
+  /**
+   * Tests that a context definiton object is created from configuration.
+   */
+  public function testContextDefinitionFromConfig() {
+    $rule = new Rule([
+      'context_definitions' => [
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('node')
+          ->toArray()
+      ],
+    ], 'rules_rule', [], $this->expressionManager);
+    $context_definition = $rule->getContextDefinition('node');
+    $this->assertSame($context_definition->getDataType(), 'entity:node');
+  }
+
+  /**
+   * Tests that provided context definitons are created from configuration.
+   */
+  public function testProvidedDefinitionFromConfig() {
+    $rule = new Rule([
+      'provided_definitions' => [
+        'node' => ContextDefinition::create('entity:node')
+          ->setLabel('node')
+          ->toArray()
+      ],
+    ], 'rules_rule', [], $this->expressionManager);
+    $provided_definition = $rule->getProvidedContextDefinition('node');
+    $this->assertSame($provided_definition->getDataType(), 'entity:node');
   }
 
 }

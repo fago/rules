@@ -10,8 +10,8 @@ namespace Drupal\Tests\rules\Integration\Action {
   use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
   /**
-   * @coversDefaultClass \Drupal\rules\Plugin\Action\SystemMessage
-   * @group rules_action
+   * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemMessage
+   * @group rules_actions
    */
   class SystemMessageTest extends RulesIntegrationTestBase {
 

@@ -17,9 +17,11 @@ namespace Drupal\Tests\rules\Integration;
 abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
 
   /**
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * The language manager mock.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $entityManager;
+  protected $languageManager;
 
   /**
    * {@inheritdoc}
@@ -38,27 +40,27 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->method('getId')
       ->willReturn('en');
 
-    $language_manager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
-    $language_manager->expects($this->any())
+    $this->languageManager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
+    $this->languageManager->expects($this->any())
       ->method('getCurrentLanguage')
       ->willReturn($language);
-    $language_manager->expects($this->any())
+    $this->languageManager->expects($this->any())
       ->method('getLanguages')
       ->willReturn([$language]);
 
     $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
 
     $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
-      ->setMethods(['getAccessControlHandler', 'getBundleInfo'])
+      ->setMethods(['getAccessControlHandler', 'getBaseFieldDefinitions', 'getBundleInfo'])
       ->setConstructorArgs([
         $this->namespaces,
         $this->moduleHandler,
         $this->cacheBackend,
-        $language_manager,
+        $this->languageManager,
         $this->getStringTranslationStub(),
         $this->getClassResolverStub(),
         $this->typedDataManager,
-        $this->getMock('Drupal\Core\KeyValueStore\KeyValueStoreInterface'),
+        $this->getMock('Drupal\Core\KeyValueStore\KeyValueFactoryInterface'),
         $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface')
       ])
       ->getMock();
@@ -67,6 +69,12 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->method('getAccessControlHandler')
       ->with($this->anything())
       ->will($this->returnValue($this->entityAccess));
+
+    // The base field definitions for entity_test aren't used, and would
+    // require additional mocking.
+    $this->entityManager->expects($this->any())
+      ->method('getBaseFieldDefinitions')
+      ->willReturn([]);
 
     // Return some dummy bundle information for now, so that the entity manager
     // does not call out to the config entity system to get bundle information.
@@ -82,5 +90,4 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->with('entity_type_build')
       ->willReturn([]);
   }
-
 }

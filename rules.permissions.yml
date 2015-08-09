@@ -1,0 +1,22 @@
+# Most of the time administrators will be able to administer both reactions,
+# components and settings. But permissions are split up in such a way it
+# should be possible to have 'light' and 'root' rules administrators.
+#
+# Permissions are declared in Rules (not Rules UI) so other contrib modules
+# can make use of it.
+administer rules:
+  title: 'Administer Rules'
+  description: 'Administer all Rules configurations and settings.'
+administer rules reactions:
+  title: 'Administer Rules reactions'
+  description: 'Administer Rules reaction configurations and settings.'
+administer rules components:
+  title: 'Administer Rules components'
+  description: 'Administer Rules component configurations and settings.'
+bypass rules access:
+  title: 'Bypass Rules access control'
+  description: 'Control all configurations regardless of permission restrictions of events, conditions or actions.'
+  restrict access: true
+access rules debug:
+  title: 'View Rules debug log'
+  description: 'Access the Rules debug log.'

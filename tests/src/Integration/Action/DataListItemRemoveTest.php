@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
- * @coversDefaultClass \Drupal\rules\Plugin\Action\DataListItemRemove
+ * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataListItemRemove
  * @group rules_actions
  */
 class DataListItemRemoveTest extends RulesIntegrationTestBase {

@@ -10,14 +10,14 @@ namespace Drupal\rules\Core;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\rules\Context\RulesContextTrait;
+use Drupal\rules\Context\ContextProviderTrait;
 
 /**
  * Base class for rules actions.
  */
 abstract class RulesActionBase extends ContextAwarePluginBase implements RulesActionInterface {
 
-  use RulesContextTrait;
+  use ContextProviderTrait;
 
   /**
    * The plugin configuration.
@@ -25,6 +25,13 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
    * @var array
    */
   protected $configuration;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions() {
+    // Do not refine anything by default.
+  }
 
   /**
    * {@inheritdoc}
@@ -81,6 +88,19 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
       return new AccessResultForbidden();
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function execute() {
+    // Provide a reasonable default implementation that calls doExecute() while
+    // passing the defined context as arguments.
+    $args = [];
+    foreach ($this->getContexts() as $name => $context) {
+      $args[$name] = $context->getContextValue();
+    }
+    call_user_func_array([$this, 'doExecute'], $args);
   }
 
 }
