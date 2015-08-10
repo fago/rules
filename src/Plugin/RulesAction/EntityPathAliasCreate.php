@@ -71,13 +71,6 @@ class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t("Create @entity_type_id path alias", ['@entity_type_id' => $this->entityTypeId]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $alias = $this->getContextValue('alias');
     $entity = $this->getContextValue('entity');

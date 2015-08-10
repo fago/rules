@@ -74,13 +74,6 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Path has alias');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $path = $this->getContextValue('path');
     $language = $this->getContext('language')->getContextData() ? $this->getContextValue('language')->getId() : NULL;

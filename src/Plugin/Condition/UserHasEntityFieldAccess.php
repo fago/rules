@@ -79,13 +79,6 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('User has access to field on entity');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $entity = $this->getContextValue('entity');
     $field = $this->getContextValue('field');

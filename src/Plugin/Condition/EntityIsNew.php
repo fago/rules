@@ -31,13 +31,6 @@ class EntityIsNew extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Entity is new');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $provided_entity = $this->getContextValue('entity');
     return $provided_entity->isNew();

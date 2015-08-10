@@ -36,13 +36,6 @@ class DataSet extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Set a data value.');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $typed_data = $this->getContext('data')->getContextData();
     $typed_data->setValue($this->getContextValue('value'));

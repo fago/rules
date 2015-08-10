@@ -71,13 +71,6 @@ class EntityCreate extends RulesActionBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t("Create a new @entity_type_id entity", ['@entity_type_id' => $this->entityTypeId]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $values = $this->getContextValues();
     $entity = $this->storage->create($values);

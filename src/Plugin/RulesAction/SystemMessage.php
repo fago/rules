@@ -39,13 +39,6 @@ class SystemMessage extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Show a message on the site');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     // @todo Should we do the sanitization somewhere else? D7 had the sanitize
     // flag in the context definition.

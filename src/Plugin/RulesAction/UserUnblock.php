@@ -40,13 +40,6 @@ class UserUnblock extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Unblock a user');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     /** @var $user \Drupal\user\UserInterface */
     $user = $this->getContextValue('user');

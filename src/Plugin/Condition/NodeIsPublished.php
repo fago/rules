@@ -30,13 +30,6 @@ class NodeIsPublished extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Node is published');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $node = $this->getContextValue('node');
     return $node->isPublished();

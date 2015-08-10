@@ -62,6 +62,15 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
+   * Test the summary method.
+   *
+   * @covers ::summary
+   */
+  public function testSummary() {
+    $this->assertEquals('Block a user', $this->action->summary());
+  }
+
+  /**
    * Test execute() method for active and authenticated users.
    *
    * @covers ::execute

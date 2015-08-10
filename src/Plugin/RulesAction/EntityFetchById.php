@@ -80,13 +80,6 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Fetch entity by id');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $entity_type_id = $this->getContextValue('entity_type_id');
     $entity_id = $this->getContextValue('entity_id');

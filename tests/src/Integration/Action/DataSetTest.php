@@ -38,7 +38,7 @@ class DataSetTest extends RulesIntegrationTestBase {
    * @covers ::summary
    */
   public function testSummary() {
-    $this->assertEquals('Set a data value.', $this->action->summary());
+    $this->assertEquals('Set a data value', $this->action->summary());
   }
 
   /**

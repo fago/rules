@@ -101,13 +101,6 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Send email');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $to = $this->getContextValue('to');
     $reply = $this->getContextValue('reply');

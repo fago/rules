@@ -75,13 +75,6 @@ class PathAliasExists extends RulesConditionBase implements ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Path alias exists');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $alias = $this->getContextValue('alias');
     $language = $this->getContext('language')->getContextData() ? $this->getContextValue('language')->getId() : NULL;

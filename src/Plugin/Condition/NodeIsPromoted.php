@@ -30,13 +30,6 @@ class NodeIsPromoted extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Node is promoted');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $node = $this->getContextValue('node');
     return $node->isPromoted();

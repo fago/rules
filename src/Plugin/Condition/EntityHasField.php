@@ -35,13 +35,6 @@ class EntityHasField extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Entity has field');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $entity = $this->getContextValue('entity');
     $field = $this->getContextValue('field');

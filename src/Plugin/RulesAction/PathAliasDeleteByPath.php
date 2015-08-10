@@ -70,13 +70,6 @@ class PathAliasDeleteByPath extends RulesActionBase implements ContainerFactoryP
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Delete alias for a path');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $path = $this->getContextValue('path');
     $this->aliasStorage->delete(['path' => $path]);

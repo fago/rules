@@ -39,13 +39,6 @@ class UserHasRole extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('User has role(s)');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $account = $this->getContextValue('user');
     $roles = $this->getContextValue('roles');

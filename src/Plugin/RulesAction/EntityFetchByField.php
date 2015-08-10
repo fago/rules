@@ -96,13 +96,6 @@ class EntityFetchByField extends RulesActionBase implements ContainerFactoryPlug
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function summary() {
-    return $this->t('Fetch entities by field');
-  }
-
-  /**
    * Execute the action within the given context.
    */
   protected function doExecute($entity_type, $field_name, $field_value, $limit = NULL) {

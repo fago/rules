@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @RulesAction(
  *   id = "rules_ban_ip",
- *   label = @Translation("Ban IP"),
+ *   label = @Translation("Ban an IP address"),
  *   category = @Translation("Ban"),
  *   context = {
  *     "ip" = @ContextDefinition("string",
@@ -82,13 +82,6 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->banManager = $banManager;
     $this->request = $request;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function summary() {
-    return $this->t('Ban an IP address');
   }
 
   /**

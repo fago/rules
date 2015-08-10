@@ -43,13 +43,6 @@ class EntitySave extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Save entity');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     // We only need to do something here if the immediate flag is set, otherwise
     // the entity will be auto-saved after the execution.

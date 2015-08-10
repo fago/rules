@@ -31,6 +31,15 @@ class DataCalculateValueTest extends RulesIntegrationTestBase {
   }
 
   /**
+   * Tests the summary.
+   *
+   * @covers ::summary
+   */
+  public function testSummary() {
+    $this->assertEquals('Calculates a numeric value', $this->action->summary());
+  }
+
+  /**
    * Tests the addition of two numeric values.
    *
    * @covers ::execute

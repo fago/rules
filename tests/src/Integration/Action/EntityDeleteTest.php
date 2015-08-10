@@ -32,6 +32,15 @@ class EntityDeleteTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
+   * Tests the summary.
+   *
+   * @covers ::summary
+   */
+  public function testSummary() {
+    $this->assertEquals('Delete entity', $this->action->summary());
+  }
+
+  /**
    * Tests the action execution.
    *
    * @covers ::execute

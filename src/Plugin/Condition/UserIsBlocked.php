@@ -30,13 +30,6 @@ class UserIsBlocked extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('User is blocked');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $account = $this->getContextValue('user');
     return $account->isBlocked();

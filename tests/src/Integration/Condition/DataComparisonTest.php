@@ -191,4 +191,13 @@ class DataComparisonTest extends RulesIntegrationTestBase {
     $this->assertFalse($this->condition->evaluate());
   }
 
+  /**
+   * Tests the summary.
+   *
+   * @covers ::summary
+   */
+  public function testSummary() {
+    $this->assertEquals('Data comparison', $this->condition->summary());
+  }
+
 }
