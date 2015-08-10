@@ -66,4 +66,33 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $this->assertRulesLogEntryExists('action called');
   }
 
+  /**
+   * Test that the user logout hook triggers the Rules event listener.
+   */
+  public function testUserLogoutEvent() {
+    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_user_logout']);
+    $rule->addCondition('rules_test_true');
+    $rule->addAction('rules_test_log');
+
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_reaction_rule',
+      'event' => 'rules_user_logout',
+      'configuration' => $rule->getConfiguration(),
+    ]);
+    $config_entity->save();
+
+    // Rebuild the container so that the newly configured event gets picked up.
+    $this->kernel->rebuildContainer();
+    // The logger instance has changed, refresh it.
+    $this->logger = $this->container->get('logger.channel.rules');
+
+    $account = $this->container->get('current_user');
+    // Invoke the hook manually which should trigger the rule.
+    rules_user_logout($account);
+
+    // Test that the action in the rule logged something.
+    $this->assertRulesLogEntryExists('action called');
+  }
+
 }

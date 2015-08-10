@@ -5,6 +5,13 @@ rules_user_login:
     account:
       type: 'entity:user'
       label: 'Logged in user'
+rules_user_logout:
+  label: 'User has logged out'
+  category: 'User'
+  context:
+    account:
+      type: 'entity:user'
+      label: 'Logged out user'
 kernel.request:
   label: 'Drupal is initializing'
   category: 'System'
