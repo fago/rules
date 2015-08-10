@@ -7,9 +7,16 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\Core\Condition\ConditionManager;
+use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
+use Drupal\Core\Plugin\Context\ContextInterface;
+use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Plugin\RulesExpression\RulesCondition;
+use Drupal\rules\Core\RulesConditionInterface;
 use Drupal\Tests\UnitTestCase;
+use Prophecy\Argument;
 
 
 /**
@@ -21,14 +28,14 @@ class RulesConditionTest extends UnitTestCase {
   /**
    * The mocked condition manager.
    *
-   * @var \Drupal\Core\Condition\ConditionManager
+   * @var \Drupal\Core\Condition\ConditionManager|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $conditionManager;
 
   /**
    * The mocked data processor manager.
    *
-   * @var \Drupal\rules\Context\DataProcessorManager
+   * @var \Drupal\rules\Context\DataProcessorManager|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $processorManager;
 
@@ -40,46 +47,46 @@ class RulesConditionTest extends UnitTestCase {
   protected $conditionExpression;
 
   /**
+   * A condition plugin that always evaluates to TRUE.
+   *
+   * @var \Drupal\rules\Core\RulesConditionInterface|\Prophecy\Prophecy\ProphecyInterface
+   */
+  protected $trueCondition;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
 
     // Create a test condition plugin that always evaluates to TRUE.
-    $this->trueCondition = $this->getMock('Drupal\rules\Core\RulesConditionInterface');
-    $this->trueCondition->expects($this->any())
-      ->method('execute')
-      ->will($this->returnValue(TRUE));
+    $this->trueCondition = $this->prophesize(RulesConditionInterface::class);
+    $this->trueCondition->execute()->willReturn(TRUE);
+    $this->trueCondition->evaluate()->willReturn(TRUE);
 
-    $this->trueCondition->expects($this->any())
-      ->method('evaluate')
-      ->will($this->returnValue(TRUE));
+    $this->conditionManager = $this->prophesize(ConditionManager::class);
 
-    $this->conditionManager = $this->getMockBuilder('Drupal\Core\Condition\ConditionManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->processorManager = $this->prophesize(DataProcessorManager::class);
 
-    $this->processorManager = $this->getMockBuilder('Drupal\rules\Context\DataProcessorManager')
-      ->disableOriginalConstructor()
-      ->getMock();
-
-    $this->conditionExpression = new RulesCondition(['condition_id' => 'rules_or'], '', [], $this->conditionManager, $this->processorManager);
+    $this->conditionExpression = new RulesCondition(
+      ['condition_id' => 'test_condition'], '', [],
+      $this->conditionManager->reveal(), $this->processorManager->reveal());
   }
 
   /**
    * Tests that context definitions are retrieved form the plugin.
    */
   public function testContextDefinitions() {
-    $context_definition = $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface');
-    $this->trueCondition->expects($this->once())
-      ->method('getContextDefinitions')
-      ->will($this->returnValue(['test' => $context_definition]));
+    $context_definition = $this->prophesize(ContextDefinitionInterface::class);
+    $this->trueCondition->getContextDefinitions()
+      ->willReturn(['test' => $context_definition->reveal()])
+      ->shouldBeCalledTimes(1);
 
-    $this->conditionManager->expects($this->once())
-      ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
+    $this->conditionManager->createInstance('test_condition')
+      ->willReturn($this->trueCondition->reveal())
+      ->shouldBeCalledTimes(1);
 
-    $this->assertSame($this->conditionExpression->getContextDefinitions(), ['test' => $context_definition]);
+    $this->assertSame($this->conditionExpression->getContextDefinitions(), ['test' => $context_definition->reveal()]);
   }
 
   /**
@@ -87,51 +94,52 @@ class RulesConditionTest extends UnitTestCase {
    */
   public function testDataProcessor() {
     $condition = new RulesCondition([
-        'condition_id' => 'rules_or',
+        'condition_id' => 'test_condition',
       ] + ContextConfig::create()
         // We don't care about the data processor plugin name and
         // configuration since we will use a mock anyway.
         ->process('test', 'foo', [])
         ->toArray(),
-    '', [], $this->conditionManager, $this->processorManager);
+    '', [], $this->conditionManager->reveal(), $this->processorManager->reveal());
 
     // Build some mocked context and definitions for our mock condition.
-    $context = $this->getMock('Drupal\Core\Plugin\Context\ContextInterface');
+    $context = $this->prophesize(ContextInterface::class);
 
-    $condition->setContext('test', $context);
+    $condition->setContext('test', $context->reveal());
 
-    $this->trueCondition->expects($this->exactly(2))
-      ->method('getContextDefinitions')
-      ->will($this->returnValue(['test' => $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface')]));
+    $this->trueCondition->getContextDefinitions()->willReturn([
+      'test' => $this->prophesize(ContextDefinitionInterface::class)->reveal(),
+    ])->shouldBeCalledTimes(2);
 
-    $this->trueCondition->expects($this->once())
-      ->method('getProvidedContextDefinitions')
-      ->will($this->returnValue([]));
+    $this->trueCondition->getProvidedContextDefinitions()
+      ->willReturn([])
+      ->shouldBeCalledTimes(1);
 
     // Mock some original old value that will be replaced by the data processor.
-    $this->trueCondition->expects($this->once())
-      ->method('getContextValue')
-      ->with('test')
-      ->will($this->returnValue('old_value'));
+    $this->trueCondition->getContextValue('test')
+      ->willReturn('old_value')
+      ->shouldBeCalledTimes(1);
 
     // The outcome of the data processor needs to get set on the condition.
-    $this->trueCondition->expects($this->once())
-      ->method('setContextValue')
-      ->with('test', 'new_value');
+    $this->trueCondition->setContextValue('test', 'new_value')->shouldBeCalledTimes(1);
 
-    $this->conditionManager->expects($this->exactly(2))
-      ->method('createInstance')
-      ->will($this->returnValue($this->trueCondition));
+    $this->trueCondition->refineContextDefinitions()->shouldBeCalledTimes(1);
 
-    $data_processor = $this->getMock('Drupal\rules\Context\DataProcessorInterface');
-    $data_processor->expects($this->once())
-      ->method('process')
-      ->with('old_value')
-      ->will($this->returnValue('new_value'));
+    $this->conditionManager->createInstance('test_condition', ['negate' => FALSE])
+      ->willReturn($this->trueCondition->reveal())
+      ->shouldBeCalledTimes(1);
+    $this->conditionManager->createInstance('test_condition')
+      ->willReturn($this->trueCondition->reveal())
+      ->shouldBeCalledTimes(1);
 
-    $this->processorManager->expects($this->once())
-      ->method('createInstance')
-      ->will($this->returnValue($data_processor));
+    $data_processor = $this->prophesize(DataProcessorInterface::class);
+    $data_processor->process('old_value', Argument::any())
+      ->willReturn('new_value')
+      ->shouldBeCalledTimes(1);
+
+    $this->processorManager->createInstance('foo', [])
+      ->willReturn($data_processor->reveal())
+      ->shouldBeCalledTimes(1);
 
     $this->assertTrue($condition->execute());
   }

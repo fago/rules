@@ -13,7 +13,7 @@ use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionPluginManagerInterface;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -44,10 +44,10 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Engine\ExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\ExpressionPluginManagerInterface $expression_manager
    *   The rules expression plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManagerInterface $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
 

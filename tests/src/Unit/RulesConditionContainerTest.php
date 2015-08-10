@@ -40,12 +40,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    */
   public function testAddExpressionObject() {
     $container = $this->getMockConditionContainer();
-    $container->addExpressionObject($this->trueConditionExpression);
+    $container->addExpressionObject($this->trueConditionExpression->reveal());
 
     $property = new \ReflectionProperty($container, 'conditions');
     $property->setAccessible(TRUE);
 
-    $this->assertArrayEquals([$this->trueConditionExpression], $property->getValue($container));
+    $this->assertArrayEquals([$this->trueConditionExpression->reveal()], $property->getValue($container));
   }
 
   /**
