@@ -8,8 +8,7 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Engine\ExpressionManager;
-use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;
@@ -26,7 +25,7 @@ class RuleTest extends RulesUnitTestBase {
   /**
    * The rules expression plugin manager.
    *
-   * @var \Drupal\rules\Engine\ExpressionManagerInterface
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $expressionManager;
 
@@ -57,7 +56,7 @@ class RuleTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->expressionManager = $this->prophesize(ExpressionManager::class);
+    $this->expressionManager = $this->prophesize(ExpressionManagerInterface::class);
 
     $this->conditions = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal());
     $this->expressionManager->createInstance('rules_and', [])->willReturn($this->conditions);

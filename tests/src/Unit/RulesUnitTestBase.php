@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Unit;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\RulesStateInterface;
-use Drupal\rules\Engine\ExpressionPluginManagerInterface;
+use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
