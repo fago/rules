@@ -49,7 +49,7 @@ class PathAliasDeleteByPathTest extends RulesIntegrationTestBase {
    * @covers ::summary
    */
   public function testSummary() {
-    $this->assertEquals('Delete alias for a path', $this->action->summary());
+    $this->assertEquals('Delete all aliases for a path', $this->action->summary());
   }
 
   /**

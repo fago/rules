@@ -26,14 +26,6 @@ use Drupal\rules\Core\RulesConditionBase;
  * @todo: Add access callback information from Drupal 7.
  */
 class NodeIsSticky extends RulesConditionBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function summary() {
-    return $this->t('Node is sticky');
-  }
-
   /**
    * {@inheritdoc}
    */

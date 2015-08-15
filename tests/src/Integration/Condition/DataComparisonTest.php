@@ -32,15 +32,6 @@ class DataComparisonTest extends RulesIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Data comparison', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition with the "equals" operator.
    *
    * @covers ::evaluate
@@ -198,6 +189,15 @@ class DataComparisonTest extends RulesIntegrationTestBase {
       ->setContextValue('operator', '>')
       ->setContextValue('value', 2);
     $this->assertFalse($this->condition->evaluate());
+  }
+
+  /**
+   * Tests the summary.
+   *
+   * @covers ::summary
+   */
+  public function testSummary() {
+    $this->assertEquals('Data comparison', $this->condition->summary());
   }
 
 }

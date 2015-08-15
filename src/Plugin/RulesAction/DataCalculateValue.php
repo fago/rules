@@ -44,13 +44,6 @@ use Drupal\rules\Core\RulesActionBase;
 class DataCalculateValue extends RulesActionBase {
 
   /**
-   * {@inheritdoc}
-   */
-  public function summary() {
-    return $this->t('Calculate a numeric value');
-  }
-
-  /**
    * Executes the action with the given context.
    *
    * @param float $input_1

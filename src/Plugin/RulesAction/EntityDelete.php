@@ -31,13 +31,6 @@ class EntityDelete extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Delete entity');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $entity = $this->getContextValue('entity');
     $entity->delete();

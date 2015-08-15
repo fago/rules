@@ -33,13 +33,6 @@ class NodeIsOfType extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Node is of type');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $node = $this->getContextValue('node');
     $types = $this->getContextValue('types');

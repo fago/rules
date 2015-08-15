@@ -8,7 +8,14 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\ExpressionManager;
+use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
+use Drupal\rules\Plugin\RulesExpression\RulesAnd;
+use Drupal\rules\Plugin\RulesExpression\RulesOr;
+use Drupal\rules\Plugin\RulesExpression\ActionSet;
+use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
@@ -19,7 +26,7 @@ class RuleTest extends RulesUnitTestBase {
   /**
    * The rules expression plugin manager.
    *
-   * @var \Drupal\rules\Engine\ExpressionManager
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
    */
   protected $expressionManager;
 
@@ -50,23 +57,15 @@ class RuleTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->expressionManager = $this->getMockBuilder('Drupal\rules\Engine\ExpressionManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->expressionManager = $this->prophesize(ExpressionManager::class);
 
-    $this->conditions = $this->getMockAnd();
-    $this->expressionManager->expects($this->at(0))
-      ->method('createInstance')
-      ->with('rules_and')
-      ->will($this->returnValue($this->conditions));
+    $this->conditions = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal());
+    $this->expressionManager->createInstance('rules_and', [])->willReturn($this->conditions);
 
-    $this->actions = $this->getMockActionSet();
-    $this->expressionManager->expects($this->at(1))
-      ->method('createInstance')
-      ->with('rules_action_set')
-      ->will($this->returnValue($this->actions));
+    $this->actions = new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal());
+    $this->expressionManager->createInstance('rules_action_set', [])->willReturn($this->actions);
 
-    $this->rule = new Rule([], 'rules_rule', [], $this->expressionManager);
+    $this->rule = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
   }
 
   /**
@@ -86,11 +85,11 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::getConditions
    */
   public function testSetConditionsGetConditions() {
-    $or = $this->getMockOr();
+    $or = new RulesOr([], 'rules_or', [], $this->expressionManager->reveal());
     $this->rule->setConditions($or);
     $this->assertSame($or, $this->rule->getConditions());
 
-    $and = $this->getMockAnd();
+    $and = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal());
     $this->rule->setConditions($and);
     $this->assertSame($and, $this->rule->getConditions());
   }
@@ -102,7 +101,7 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::getActions
    */
   public function testSetActionsGetActions() {
-    $action_set = $this->getMockActionSet();
+    $action_set = new ActionSet([], '', [], $this->expressionManager->reveal());
     $this->rule->setActions($action_set);
     $this->assertSame($action_set, $this->rule->getActions());
   }
@@ -114,12 +113,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
-    $this->testActionExpression->expects($this->once())
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
 
     $this->rule
-      ->addExpressionObject($this->trueConditionExpression)
-      ->addExpressionObject($this->testActionExpression)
+      ->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
 
@@ -130,12 +129,12 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testConditionFails() {
     // The execute method on the action must never be called.
-    $this->testActionExpression->expects($this->never())
-      ->method('execute');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldNotBeCalled();
 
     $this->rule
-      ->addExpressionObject($this->falseConditionExpression)
-      ->addExpressionObject($this->testActionExpression)
+      ->addExpressionObject($this->falseConditionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
 
@@ -146,13 +145,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
-    $this->testActionExpression->expects($this->once())
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
 
     $this->rule
-      ->addExpressionObject($this->trueConditionExpression)
-      ->addExpressionObject($this->trueConditionExpression)
-      ->addExpressionObject($this->testActionExpression)
+      ->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
 
@@ -163,13 +162,13 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testTwoConditionsFalse() {
     // The execute method on the action must never be called.
-    $this->testActionExpression->expects($this->never())
-      ->method('execute');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldNotBeCalled();
 
     $this->rule
-      ->addExpressionObject($this->trueConditionExpression)
-      ->addExpressionObject($this->falseConditionExpression)
-      ->addExpressionObject($this->testActionExpression)
+      ->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($this->falseConditionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
 
@@ -179,15 +178,20 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testNestedRules() {
-    $this->testActionExpression->expects($this->once())
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
 
-    $nested = $this->getMockRule()
-      ->addExpressionObject($this->trueConditionExpression)
-      ->addExpressionObject($this->testActionExpression);
+    $nested = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
+    // We need to replace the action and conditon container to not have the same
+    // instances as in the outer rule.
+    $nested->setConditions(new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal()));
+    $nested->setActions(new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal()));
+
+    $nested->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal());
 
     $this->rule
-      ->addExpressionObject($this->trueConditionExpression)
+      ->addExpressionObject($this->trueConditionExpression->reveal())
       ->addExpressionObject($nested)
       ->execute();
   }
@@ -202,7 +206,7 @@ class RuleTest extends RulesUnitTestBase {
           ->setLabel('node')
           ->toArray()
       ],
-    ], 'rules_rule', [], $this->expressionManager);
+    ], 'rules_rule', [], $this->expressionManager->reveal());
     $context_definition = $rule->getContextDefinition('node');
     $this->assertSame($context_definition->getDataType(), 'entity:node');
   }
@@ -217,7 +221,7 @@ class RuleTest extends RulesUnitTestBase {
           ->setLabel('node')
           ->toArray()
       ],
-    ], 'rules_rule', [], $this->expressionManager);
+    ], 'rules_rule', [], $this->expressionManager->reveal());
     $provided_definition = $rule->getProvidedContextDefinition('node');
     $this->assertSame($provided_definition->getDataType(), 'entity:node');
   }

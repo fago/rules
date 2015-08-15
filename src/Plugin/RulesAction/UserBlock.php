@@ -77,13 +77,6 @@ class UserBlock extends RulesActionBase implements ContainerFactoryPluginInterfa
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Block a user');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     /**
      * @var $user \Drupal\user\UserInterface

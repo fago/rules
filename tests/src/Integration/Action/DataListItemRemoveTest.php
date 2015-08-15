@@ -37,7 +37,7 @@ class DataListItemRemoveTest extends RulesIntegrationTestBase {
    * @covers ::summary
    */
   public function testSummary() {
-    $this->assertEquals('Remove list item', $this->action->summary());
+    $this->assertEquals('Remove item from list', $this->action->summary());
   }
 
   /**

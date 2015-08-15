@@ -63,15 +63,6 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   }
 
   /**
-   * Tests the summary.
-   *
-   * @covers ::summary
-   */
-  public function testSummary() {
-    $this->assertEquals('Path alias exists', $this->condition->summary());
-  }
-
-  /**
    * Tests evaluating the condition for an alias that can be resolved.
    *
    * @covers ::evaluate

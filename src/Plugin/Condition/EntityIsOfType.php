@@ -35,13 +35,6 @@ class EntityIsOfType extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Entity is of type');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $provided_entity = $this->getContextValue('entity');
     $specified_type = $this->getContextValue('type');

@@ -36,13 +36,6 @@ class DataIsEmpty extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Data value is empty');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $data = $this->getContext('data')->getContextData();
     if ($data instanceof ComplexDataInterface || $data instanceof ListInterface) {

@@ -8,6 +8,8 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Plugin\RulesExpression\ActionSet;
+use Drupal\rules\Engine\RulesStateInterface;
+use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\ActionSet
@@ -28,7 +30,7 @@ class ActionSetTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->actionSet = new ActionSet([], '', [], $this->expressionManager);
+    $this->actionSet = new ActionSet([], '', [], $this->expressionManager->reveal());
   }
 
   /**
@@ -36,10 +38,10 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testActionExecution() {
     // The method on the test action must be called once.
-    $this->testActionExpression->expects($this->once())
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
 
-    $this->actionSet->addExpressionObject($this->testActionExpression)->execute();
+    $this->actionSet->addExpressionObject($this->testActionExpression->reveal())->execute();
   }
 
   /**
@@ -47,11 +49,11 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testTwoActionExecution() {
     // The method on the test action must be called twice.
-    $this->testActionExpression->expects($this->exactly(2))
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(2);
 
-    $this->actionSet->addExpressionObject($this->testActionExpression)
-      ->addExpressionObject($this->testActionExpression)
+    $this->actionSet->addExpressionObject($this->testActionExpression->reveal())
+      ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
 
@@ -60,13 +62,13 @@ class ActionSetTest extends RulesUnitTestBase {
    */
   public function testNestedActionExecution() {
     // The method on the test action must be called twice.
-    $this->testActionExpression->expects($this->exactly(2))
-      ->method('executeWithState');
+    $this->testActionExpression->executeWithState(
+      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(2);
 
-    $inner = $this->getMockActionSet()
-      ->addExpressionObject($this->testActionExpression);
+    $inner = new ActionSet([], '', [], $this->expressionManager->reveal());
+    $inner->addExpressionObject($this->testActionExpression->reveal());
 
-    $this->actionSet->addExpressionObject($this->testActionExpression)
+    $this->actionSet->addExpressionObject($this->testActionExpression->reveal())
       ->addExpressionObject($inner)
       ->execute();
   }

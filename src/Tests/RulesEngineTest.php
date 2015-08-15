@@ -155,4 +155,12 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $this->assertEqual($concatenated2->getContextValue(), 'test valuetest valuetest valuetest value');
   }
 
+  /**
+   * Verifies swapping out core services works.
+   */
+  public function testSwappedCoreServices() {
+    $condition_manager = $this->container->get('plugin.manager.condition');
+    $this->assertTrue($condition_manager instanceof \Drupal\rules\Condition\ConditionManager);
+  }
+
 }

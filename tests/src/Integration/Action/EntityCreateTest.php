@@ -138,7 +138,7 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
    * @covers ::summary
    */
   public function testSummary() {
-    $this->assertEquals('Create a new test entity', $this->action->summary());
+    $this->assertEquals('Create a new test', $this->action->summary());
   }
 
   /**

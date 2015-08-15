@@ -18,6 +18,7 @@ use Drupal\rules\Context\ContextProviderTrait;
 abstract class RulesActionBase extends ContextAwarePluginBase implements RulesActionInterface {
 
   use ContextProviderTrait;
+  use ExecutablePluginTrait;
 
   /**
    * The plugin configuration.

@@ -90,4 +90,5 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->with('entity_type_build')
       ->willReturn([]);
   }
+
 }

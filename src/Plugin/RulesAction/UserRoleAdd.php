@@ -42,13 +42,6 @@ class UserRoleAdd extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Add user role');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $account = $this->getContextValue('user');
     $roles = $this->getContextValue('roles');

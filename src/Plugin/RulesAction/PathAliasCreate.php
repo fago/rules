@@ -80,13 +80,6 @@ class PathAliasCreate extends RulesActionBase implements ContainerFactoryPluginI
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Create any path alias');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $source = $this->getContextValue('source');
     $alias = $this->getContextValue('alias');

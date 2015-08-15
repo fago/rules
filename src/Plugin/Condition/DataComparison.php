@@ -41,13 +41,6 @@ class DataComparison extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Data comparison');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $data = $this->getContextValue('data');
     $operator = $this->getContext('operator')->getContextData() ? $this->getContextValue('operator') : '==';

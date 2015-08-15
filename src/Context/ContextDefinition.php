@@ -11,11 +11,8 @@ use \Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;
 
 /**
  * Extends the core context definition class with useful methods.
- *
- * @todo: This class is not used when context definitions are created from
- * annotations. Make it so.
  */
-class ContextDefinition extends ContextDefinitionCore {
+class ContextDefinition extends ContextDefinitionCore implements ContextDefinitionInterface {
 
   /**
    * The mapping of config export keys to internal properties.

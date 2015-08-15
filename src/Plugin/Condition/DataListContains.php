@@ -39,13 +39,6 @@ class DataListContains extends RulesConditionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('List contains');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function evaluate() {
     $list = $this->getContextValue('list');
     $item = $this->getContextValue('item');

@@ -46,13 +46,6 @@ class DataListItemAdd extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Add list item');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $list = $this->getContextValue('list');
     $item = $this->getContextValue('item');

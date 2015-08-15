@@ -35,13 +35,6 @@ class SendAccountEmail extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function summary() {
-    return $this->t('Send account e-mail');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function execute() {
     $account = $this->getContextValue('user');
     $mail_type = $this->getContextValue('email_type');
