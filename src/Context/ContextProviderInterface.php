@@ -62,7 +62,7 @@ interface ContextProviderInterface {
   /**
    * Gets the provided context definitions of the plugin.
    *
-   * @return array
+   * @return \Drupal\Component\Plugin\Context\ContextDefinitionInterface[]
    *   The array of provided context definitions, keyed by context name.
    */
   public function getProvidedContextDefinitions();

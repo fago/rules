@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\ExpressionPluginManagerInterface.
+ * Contains \Drupal\rules\Engine\ExpressionManagerInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 /**
  * Defines an interface for the expression plugin manager.
  */
-interface ExpressionPluginManagerInterface extends PluginManagerInterface {
+interface ExpressionManagerInterface extends PluginManagerInterface {
 
   /**
    * Creates a new rule.

@@ -17,7 +17,7 @@ abstract class RulesDrupalTestBase extends KernelTestBase {
   /**
    * The expression plugin manager.
    *
-   * @var \Drupal\rules\Engine\ExpressionPluginManager
+   * @var \Drupal\rules\Engine\ExpressionManager
    */
   protected $expressionManager;
 

@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\rules\Engine\ExpressionPluginManager;
+use Drupal\rules\Engine\ExpressionManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rules\Engine\RulesEventManager;
 
@@ -30,12 +30,12 @@ class ReactionRule extends Rule {
    *   The plugin_id for the plugin instance.
    * @param array $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\Engine\ExpressionPluginManager $expression_manager
+   * @param \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
    *   The rules expression plugin manager.
    * @param \Drupal\rules\Engine\RulesEventManager $event_manager
    *   The Rules event manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionPluginManager $expression_manager, RulesEventManager $event_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManagerInterface $expression_manager, RulesEventManager $event_manager) {
     // @todo Reaction rules should also work with multiple events.
     if (isset($configuration['event'])) {
       $event_definition = $event_manager->getDefinition($configuration['event']);

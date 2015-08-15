@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Unit;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\RulesStateInterface;
-use Drupal\rules\Engine\ExpressionPluginManagerInterface;
+use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
@@ -66,7 +66,7 @@ abstract class RulesUnitTestBase extends UnitTestCase {
 
     $this->testActionExpression = $this->prophesize(ActionExpressionInterface::class);
 
-    $this->expressionManager = $this->prophesize(ExpressionPluginManagerInterface::class);
+    $this->expressionManager = $this->prophesize(ExpressionManagerInterface::class);
   }
 
 }

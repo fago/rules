@@ -15,7 +15,7 @@ use Drupal\rules\Context\ContextProviderInterface;
 /**
  * Defines the interface for Rules expressions.
  *
- * @see \Drupal\rules\Plugin\RulesExpressionPluginManager
+ * @see \Drupal\rules\Engine\ExpressionManager
  */
 interface ExpressionInterface extends ExecutableInterface, ContextAwarePluginInterface, ContextProviderInterface, ConfigurablePluginInterface {
 

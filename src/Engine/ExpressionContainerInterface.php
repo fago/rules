@@ -6,6 +6,7 @@
  */
 
 namespace Drupal\rules\Engine;
+
 use Drupal\rules\Context\ContextConfig;
 
 /**

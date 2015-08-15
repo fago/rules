@@ -7,6 +7,8 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\rules\Context\ContextConfig;
+
 /**
  * @coversDefaultClass \Drupal\rules\Context\ContextHandlerTrait
  * @group rules
@@ -38,6 +40,9 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
     // Set 'getContextValue' as mocked method.
     $trait = $this->getMockForTrait('Drupal\rules\Context\ContextHandlerTrait', [], '', TRUE, TRUE, TRUE, ['getContextValue']);
     $context_definition = $this->getMock('Drupal\Core\Plugin\Context\ContextDefinitionInterface');
+
+    // Let the trait work with an empty configuration.
+    $trait->configuration = ContextConfig::create()->toArray();
 
     // Make the context required in the definition.
     $context_definition->expects($this->once())

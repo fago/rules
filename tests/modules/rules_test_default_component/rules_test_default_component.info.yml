@@ -1,0 +1,7 @@
+name: Rules test default component
+type: module
+description: 'Support module for testing Rules config defaults.'
+package: Rules
+core: 8.x
+dependencies:
+  - rules
