@@ -46,9 +46,25 @@ trait ContextHandlerTrait {
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name])) {
         $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name]);
+
+        if ($typed_data->getValue() === NULL && !$definition->isAllowedNull()) {
+          throw new RulesEvaluationException(SafeMarkup::format('The value of data selector @selector is NULL, but the context @name in @plugin requires a value.', [
+            '@selector' => $this->configuration['context_mapping'][$name],
+            '@name' => $name,
+            '@plugin' => $plugin->getPluginId(),
+          ]));
+        }
         $plugin->getContext($name)->setContextData($typed_data);
       }
       elseif (array_key_exists($name, $this->configuration['context_values'])) {
+
+        if ($this->configuration['context_values'][$name] === NULL && !$definition->isAllowedNull()) {
+          throw new RulesEvaluationException(SafeMarkup::format('The context value for @name is NULL, but the context @name in @plugin requires a value.', [
+            '@name' => $name,
+            '@plugin' => $plugin->getPluginId(),
+          ]));
+        }
+
         $plugin->getContext($name)->setContextValue($this->configuration['context_values'][$name]);
       }
       elseif ($definition->isRequired()) {

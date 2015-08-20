@@ -27,7 +27,15 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
     'required' => 'isRequired',
     'default_value' => 'defaultValue',
     'constraints' => 'constraints',
+    'allow_null' => 'allowNull',
   ];
+
+  /**
+   * Whether the context value is allowed to be NULL or not.
+   *
+   * @var bool
+   */
+  protected $allowNull = FALSE;
 
   /**
    * Exports the definition as an array.
@@ -57,11 +65,35 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
    *   The created definition.
    */
   public static function createFromArray($values) {
-    $definition = static::create($values['type']);
+    if (isset($values['class']) && !in_array('Drupal\rules\Context\ContextDefinitionInterface', class_implements($values['class']))) {
+      throw new \Exception('ContextDefinition class must implement \Drupal\rules\Context\ContextDefinitionInterface.');
+    }
+    // Default to Rules context definition class.
+    $values['class'] = isset($values['class']) ? $values['class'] : '\Drupal\rules\Context\ContextDefinition';
+    if (!isset($values['type'])) {
+      $values['type'] = 'any';
+    }
+
+    $definition = $values['class']::create($values['type']);
     foreach (array_intersect_key(static::$nameMap, $values) as $key => $name) {
       $definition->$name = $values[$key];
     }
     return $definition;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isAllowedNull() {
+    return $this->allowNull;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAllowNull($null_allowed) {
+    $this->allowNull = $null_allowed;
+    return $this;
   }
 
 }

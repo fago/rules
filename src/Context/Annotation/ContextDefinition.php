@@ -7,7 +7,8 @@
 
 namespace Drupal\rules\Context\Annotation;
 
-use \Drupal\Core\Annotation\ContextDefinition as CoreContextDefinition;
+use Drupal\Core\Annotation\ContextDefinition as CoreContextDefinition;
+use Drupal\rules\Context\ContextDefinition as RulesContextDefinition;
 
 /**
  * Extends the core context definition annotation object for Rules.
@@ -24,7 +25,7 @@ class ContextDefinition extends CoreContextDefinition {
   /**
    * The ContextDefinitionInterface object.
    *
-   * @var \Drupal\rules\Context\ContextDefinitionInterface.
+   * @var \Drupal\rules\Context\ContextDefinitionInterface
    */
   protected $definition;
 
@@ -32,12 +33,7 @@ class ContextDefinition extends CoreContextDefinition {
    * {@inheritdoc}
    */
   public function __construct(array $values) {
-    if (isset($values['class']) && !in_array('Drupal\rules\Context\ContextDefinitionInterface', class_implements($values['class']))) {
-      throw new \Exception('ContextDefinition class must implement \Drupal\rules\Context\ContextDefinitionInterface.');
-    }
-    // Default to Rules context definition class.
-    $values['class'] = isset($values['class']) ? $values['class'] : '\Drupal\rules\Context\ContextDefinition';
-    parent::__construct($values);
+    $this->definition = RulesContextDefinition::createFromArray($values);
   }
 
   /**

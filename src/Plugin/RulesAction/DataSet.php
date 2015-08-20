@@ -19,7 +19,8 @@ use Drupal\rules\Core\RulesActionBase;
  *   context = {
  *     "data" = @ContextDefinition("any",
  *       label = @Translation("Data"),
- *       description = @Translation("Specifies the data to be modified using a data selector, e.g. 'node:author:name'.")
+ *       description = @Translation("Specifies the data to be modified using a data selector, e.g. 'node:author:name'."),
+ *       allow_null = TRUE
  *     ),
  *     "value" = @ContextDefinition("any",
  *       label = @Translation("Value"),

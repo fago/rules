@@ -9,6 +9,7 @@ namespace Drupal\rules\Tests;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
  * Test using the Rules API with nodes.
