@@ -5,12 +5,7 @@
  * Contains \Drupal\rules\Tests\ConfigEntityDefaultsTest.
  */
 
-namespace Drupal\rules\Tests;
-
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\rules\Engine\RulesLog;
-use Drupal\rules\Entity\RulesComponent;
-use Drupal\user\Entity\User;
+namespace Drupal\Tests\rules\Kernel;
 
 /**
  * Tests default config.

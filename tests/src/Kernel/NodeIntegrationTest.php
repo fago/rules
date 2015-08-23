@@ -5,11 +5,10 @@
  * Contains \Drupal\rules\Tests\NodeIntegrationTest.
  */
 
-namespace Drupal\rules\Tests;
+namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
  * Test using the Rules API with nodes.

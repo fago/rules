@@ -5,11 +5,10 @@
  * Contains \Drupal\rules\Tests\RulesEngineTest.
  */
 
-namespace Drupal\rules\Tests;
+namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Engine\RulesLog;
 use Drupal\rules\Engine\RulesState;
 
 /**

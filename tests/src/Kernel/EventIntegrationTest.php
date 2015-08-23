@@ -5,7 +5,7 @@
  * Contains \Drupal\rules\Tests\EventIntegrationTest.
  */
 
-namespace Drupal\rules\Tests;
+namespace Drupal\Tests\rules\Kernel;
 
 /**
  * Test for the Symfony event mapping to Rules events.
@@ -54,7 +54,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity->save();
 
     // Rebuild the container so that the newly configured event gets picked up.
-    $this->kernel->rebuildContainer();
+    $this->container->get('kernel')->rebuildContainer();
     // The logger instance has changed, refresh it.
     $this->logger = $this->container->get('logger.channel.rules');
 
@@ -83,7 +83,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity->save();
 
     // Rebuild the container so that the newly configured event gets picked up.
-    $this->kernel->rebuildContainer();
+    $this->container->get('kernel')->rebuildContainer();
     // The logger instance has changed, refresh it.
     $this->logger = $this->container->get('logger.channel.rules');
 

@@ -7,13 +7,6 @@ php:
   - 7
   - hhvm
 
-# Install php packages required for running a web server from drush.
-addons:
-  apt:
-    packages:
-    - php5-cgi
-    - php5-mysql
-
 matrix:
   allow_failures:
     # PHP 7 testing is disabled for now since Drupal installation throws
@@ -25,26 +18,10 @@ matrix:
   # Don't wait for the allowed failures to build.
   fast_finish: true
 
-
-# Cache Composer directory so that we don't have to download drush all the time.
-cache:
-  directories:
-    - $HOME/.composer/cache
-
 mysql:
   database: rules
   username: root
   encoding: utf8
-
-install:
-  # Add composer's global bin directory to the path.
-  # @see: https://github.com/drush-ops/drush#install---composer
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-
-  # install drush 8 globally, which is in beta right now.
-  - mkdir -p $HOME/.composer
-  - "echo '{\"minimum-stability\": \"beta\"}' > $HOME/.composer/composer.json"
-  - travis_retry composer global require drush/drush:8.*
 
 before_script:
   # Remove Xdebug as we don't need it and it causes
@@ -59,29 +36,17 @@ before_script:
   # lookup.
   - cd ..
 
-  # Create new site, stubbing sendmail path with true to prevent delivery errors
-  # and manually resolving drush path.
+  # Create database.
   - mysql -e 'create database rules'
+  # Export database variable for kernel tests.
+  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/rules
   # Download Drupal 8 core.
   - travis_retry git clone --branch 8.0.x --depth 1 http://git.drupal.org/project/drupal.git
   - cd drupal
-  # Apply patch so that run-tests.sh returns error code when executing Simpletests.
-  - travis_retry wget -q -O - https://www.drupal.org/files/issues/2189345-61.patch | patch -p1
-  # Install Drupal.
-  - php -d sendmail_path=`which true` ~/.composer/vendor/bin/drush.php --yes site-install --db-url=mysql://root:@127.0.0.1/rules testing
 
-  # Reference and enable rules in build site.
+  # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
-  - drush --yes pm-enable simpletest rules
-
-  # Start a web server on port 8080, run in the background; wait for
-  # initialization. This is temporarly disabled since there are no web tests
-  # yet.
-  #- drush runserver 127.0.0.1:8080 &
-  #- until netstat -an 2>/dev/null | grep '8080.*LISTEN'; do true; done
 
 script:
-  # Run the Simpletests for Rules.
-  - php ./core/scripts/run-tests.sh --php `which php` --concurrency 12 --url http://127.0.0.1:8080 --verbose --color "rules"
-  # Run the PHPUnit tests.
+  # Run the PHPUnit tests which also include the kernel tests.
   - ./core/vendor/phpunit/phpunit/phpunit -c ./core/phpunit.xml.dist ./modules/rules

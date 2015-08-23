@@ -36,21 +36,26 @@ For further information on how to contribute please refer to
 
 ## Executing the automated tests
 
-This module comes with PHPUnit and Simpletest tests. You need a working Drupal 8
-installation and a checkout of the Rules module in the modules folder.
+This module comes with PHPUnit tests. You need a working Drupal 8 installation
+and a checkout of the Rules module in the modules folder.
 
-#### PHPUnit
+#### Unit tests only
 
     cd /path/to/drupal-8/core
+    ./vendor/bin/phpunit ../modules/rules/src/Unit
+    ./vendor/bin/phpunit ../modules/rules/src/Integration
+
+#### Unit test and kernel tests
+
+Make sure to use your DB connection details for the SIMPLETEST_DB.
+
+    cd /path/to/drupal-8/core
+    export SIMPLETEST_DB=mysql://drupal-8:password@localhost/drupal-8
     ./vendor/bin/phpunit ../modules/rules
-
-#### Simpletest
-
-    php ./core/scripts/run-tests.sh --verbose --color "rules"
 
 Example for executing one single test file during development:
 
-    php ./core/scripts/run-tests.sh --verbose --color --class "Drupal\rules\Tests\RulesEngineTest"
+    ./vendor/bin/phpunit ../modules/rules/tests/src/Integration/Action/DataSetTest.php
 
 You can also execute the test cases from the web interface at
 ``/admin/config/development/testing``.

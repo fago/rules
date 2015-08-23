@@ -5,7 +5,7 @@
  * Contains \Drupal\rules\Tests\TokenIntegrationTest.
  */
 
-namespace Drupal\rules\Tests;
+namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
