@@ -42,8 +42,8 @@ and a checkout of the Rules module in the modules folder.
 #### Unit tests only
 
     cd /path/to/drupal-8/core
-    ./vendor/bin/phpunit ../modules/rules/src/Unit
-    ./vendor/bin/phpunit ../modules/rules/src/Integration
+    ./vendor/bin/phpunit ../modules/rules/tests/src/Unit
+    ./vendor/bin/phpunit ../modules/rules/tests/src/Integration
 
 #### Unit test and kernel tests
 
