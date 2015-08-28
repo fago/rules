@@ -7,6 +7,10 @@
 
 namespace Drupal\Tests\rules\Integration;
 
+use Drupal\Core\Entity\EntityAccessControlHandlerInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+
 /**
  * Base class for Rules integration tests with entities.
  *
@@ -19,9 +23,16 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
   /**
    * The language manager mock.
    *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
+   * @var \Drupal\Core\Language\LanguageManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $languageManager;
+
+  /**
+   * The mocked entity access handler.
+   *
+   * @var \Drupal\Core\Entity\EntityAccessControlHandlerInterface|\Prophecy\Prophecy\ProphecyInterface
+   */
+  protected $entityAccess;
 
   /**
    * {@inheritdoc}
@@ -35,28 +46,22 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
     $this->namespaces['Drupal\\Core\\Entity'] = $this->root . '/core/lib/Drupal/Core/Entity';
     $this->namespaces['Drupal\\entity_test'] = $this->root . '/core/modules/system/tests/modules/entity_test/src';
 
-    $language = $this->getMock('Drupal\Core\Language\LanguageInterface');
-    $language->expects($this->any())
-      ->method('getId')
-      ->willReturn('en');
+    $language = $this->prophesize(LanguageInterface::class);
+    $language->getId()->willReturn('en');
 
-    $this->languageManager = $this->getMock('Drupal\Core\Language\LanguageManagerInterface');
-    $this->languageManager->expects($this->any())
-      ->method('getCurrentLanguage')
-      ->willReturn($language);
-    $this->languageManager->expects($this->any())
-      ->method('getLanguages')
-      ->willReturn([$language]);
+    $this->languageManager = $this->prophesize(LanguageManagerInterface::class);
+    $this->languageManager->getCurrentLanguage()->willReturn($language->reveal());
+    $this->languageManager->getLanguages()->willReturn([$language->reveal()]);
 
-    $this->entityAccess = $this->getMock('Drupal\Core\Entity\EntityAccessControlHandlerInterface');
+    $this->entityAccess = $this->prophesize(EntityAccessControlHandlerInterface::class);
 
     $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
       ->setMethods(['getAccessControlHandler', 'getBaseFieldDefinitions', 'getBundleInfo'])
       ->setConstructorArgs([
         $this->namespaces,
-        $this->moduleHandler,
+        $this->moduleHandler->reveal(),
         $this->cacheBackend,
-        $this->languageManager,
+        $this->languageManager->reveal(),
         $this->getStringTranslationStub(),
         $this->getClassResolverStub(),
         $this->typedDataManager,
@@ -68,7 +73,7 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
     $this->entityManager->expects($this->any())
       ->method('getAccessControlHandler')
       ->with($this->anything())
-      ->will($this->returnValue($this->entityAccess));
+      ->will($this->returnValue($this->entityAccess->reveal()));
 
     // The base field definitions for entity_test aren't used, and would
     // require additional mocking.
@@ -85,9 +90,7 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
 
     $this->container->set('entity.manager', $this->entityManager);
 
-    $this->moduleHandler->expects($this->any())
-      ->method('getImplementations')
-      ->with('entity_type_build')
+    $this->moduleHandler->getImplementations('entity_type_build')
       ->willReturn([]);
   }
 

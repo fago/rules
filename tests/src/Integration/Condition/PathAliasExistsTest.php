@@ -59,7 +59,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
     $property = new \ReflectionProperty($this->condition, 'aliasManager');
     $property->setAccessible(TRUE);
 
-    $this->assertSame($this->aliasManager, $property->getValue($this->condition));
+    $this->assertSame($this->aliasManager->reveal(), $property->getValue($this->condition));
   }
 
   /**
@@ -68,15 +68,13 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluationAliasWithPath() {
-    $this->aliasManager->expects($this->at(0))
-      ->method('getPathByAlias')
-      ->with('alias-for-path', $this->anything())
-      ->will($this->returnValue('path-with-alias'));
+    $this->aliasManager->getPathByAlias('alias-for-path', NULL)
+      ->willReturn('path-with-alias')
+      ->shouldBeCalledTimes(1);
 
-    $this->aliasManager->expects($this->at(1))
-      ->method('getPathByAlias')
-      ->with('alias-for-path', 'en')
-      ->will($this->returnValue('path-with-alias'));
+    $this->aliasManager->getPathByAlias('alias-for-path', 'en')
+      ->willReturn('path-with-alias')
+      ->shouldBeCalledTimes(1);
 
     // First, only set the path context.
     $this->condition->setContextValue('alias', 'alias-for-path');
@@ -95,15 +93,13 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluationAliasWithoutPath() {
-    $this->aliasManager->expects($this->at(0))
-      ->method('getPathByAlias')
-      ->with('alias-for-path-that-does-not-exist', $this->anything())
-      ->will($this->returnValue('alias-for-path-that-does-not-exist'));
+    $this->aliasManager->getPathByAlias('alias-for-path-that-does-not-exist', NULL)
+      ->willReturn('alias-for-path-that-does-not-exist')
+      ->shouldBeCalledTimes(1);
 
-    $this->aliasManager->expects($this->at(1))
-      ->method('getPathByAlias')
-      ->with('alias-for-path-that-does-not-exist', 'en')
-      ->will($this->returnValue('alias-for-path-that-does-not-exist'));
+    $this->aliasManager->getPathByAlias('alias-for-path-that-does-not-exist', 'en')
+      ->willReturn('alias-for-path-that-does-not-exist')
+      ->shouldBeCalledTimes(1);
 
     // First, only set the path context.
     $this->condition->setContextValue('alias', 'alias-for-path-that-does-not-exist');

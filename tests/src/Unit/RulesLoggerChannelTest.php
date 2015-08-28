@@ -10,6 +10,8 @@ namespace Drupal\Tests\rules\Unit;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\rules\Logger\RulesLoggerChannel;
 use Drupal\Tests\UnitTestCase;
+use Prophecy\Argument;
+use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
@@ -46,12 +48,11 @@ class RulesLoggerChannelTest extends UnitTestCase {
       ],
     ]);
     $channel = new RulesLoggerChannel($config);
-    $logger = $this->getMock('Psr\Log\LoggerInterface');
-    $channel->addLogger($logger);
+    $logger = $this->prophesize(LoggerInterface::class);
+    $logger->log($rfc_message_level, $message, Argument::type('array'))
+      ->shouldBeCalledTimes($expect_log);
 
-    $logger->expects($this->exactly($expect_log))
-      ->method('log')
-      ->with($rfc_message_level, $message);
+    $channel->addLogger($logger->reveal());
 
     $channel->log($psr3_message_level, $message);
   }

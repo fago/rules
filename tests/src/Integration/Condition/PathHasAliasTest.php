@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -23,16 +24,9 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
   protected $condition;
 
   /**
-   * The mocked alias manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasManagerInterface
-   */
-  protected $aliasManager;
-
-  /**
    * A mocked language object (english).
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Language\LanguageInterface
+   * @var \Drupal\Core\Language\LanguageInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $englishLanguage;
 
@@ -44,10 +38,8 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
 
     $this->condition = $this->conditionManager->createInstance('rules_path_has_alias');
 
-    $this->englishLanguage = $this->getMock('Drupal\Core\Language\LanguageInterface');
-    $this->englishLanguage->expects($this->any())
-      ->method('getId')
-      ->will($this->returnValue('en'));
+    $this->englishLanguage = $this->prophesize(LanguageInterface::class);
+    $this->englishLanguage->getId()->willReturn('en');
   }
 
   /**
@@ -59,7 +51,7 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
     $property = new \ReflectionProperty($this->condition, 'aliasManager');
     $property->setAccessible(TRUE);
 
-    $this->assertSame($this->aliasManager, $property->getValue($this->condition));
+    $this->assertSame($this->aliasManager->reveal(), $property->getValue($this->condition));
   }
 
   /**
@@ -68,15 +60,13 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluationPathWithAlias() {
-    $this->aliasManager->expects($this->at(0))
-      ->method('getAliasByPath')
-      ->with('path-with-alias', $this->anything())
-      ->will($this->returnValue('alias-for-path'));
+    $this->aliasManager->getAliasByPath('path-with-alias', NULL)
+      ->willReturn('alias-for-path')
+      ->shouldBeCalledTimes(1);
 
-    $this->aliasManager->expects($this->at(1))
-      ->method('getAliasByPath')
-      ->with('path-with-alias', 'en')
-      ->will($this->returnValue('alias-for-path'));
+    $this->aliasManager->getAliasByPath('path-with-alias', 'en')
+      ->willReturn('alias-for-path')
+      ->shouldBeCalledTimes(1);
 
     // First, only set the path context.
     $this->condition->setContextValue('path', 'path-with-alias');
@@ -85,7 +75,7 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->englishLanguage->reveal());
     $this->assertTrue($this->condition->evaluate());
   }
 
@@ -95,15 +85,13 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluationPathWithoutAlias() {
-    $this->aliasManager->expects($this->at(0))
-      ->method('getAliasByPath')
-      ->with('path-without-alias', $this->anything())
-      ->will($this->returnValue('path-without-alias'));
+    $this->aliasManager->getAliasByPath('path-without-alias', NULL)
+      ->willReturn('path-without-alias')
+      ->shouldBeCalledTimes(1);
 
-    $this->aliasManager->expects($this->at(1))
-      ->method('getAliasByPath')
-      ->with('path-without-alias', 'en')
-      ->will($this->returnValue('path-without-alias'));
+    $this->aliasManager->getAliasByPath('path-without-alias', 'en')
+      ->willReturn('path-without-alias')
+      ->shouldBeCalledTimes(1);
 
     // First, only set the path context.
     $this->condition->setContextValue('path', 'path-without-alias');
@@ -112,7 +100,7 @@ class PathHasAliasTest extends RulesIntegrationTestBase {
     $this->assertFalse($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->englishLanguage->reveal());
     $this->assertFalse($this->condition->evaluate());
   }
 

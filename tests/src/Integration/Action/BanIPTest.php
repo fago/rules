@@ -7,7 +7,9 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\ban\BanIpManagerInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\BanIP
@@ -23,12 +25,12 @@ class BanIPTest extends RulesIntegrationTestBase {
   protected $action;
 
   /**
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\ban\BanIpManagerInterface
+   * @var \Drupal\ban\BanIpManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $banManager;
 
   /**
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\HttpFoundation\Request
+   * @var \Symfony\Component\HttpFoundation\Request|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $request;
 
@@ -39,11 +41,11 @@ class BanIPTest extends RulesIntegrationTestBase {
     parent::setUp();
     // We need the ban module.
     $this->enableModule('ban');
-    $this->banManager = $this->getMock('Drupal\ban\BanIpManagerInterface');
-    $this->container->set('ban.ip_manager', $this->banManager);
+    $this->banManager = $this->prophesize(BanIpManagerInterface::class);
+    $this->container->set('ban.ip_manager', $this->banManager->reveal());
 
-    $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-    $this->container->set('request', $this->request);
+    $this->request = $this->prophesize(Request::class);
+    $this->container->set('request', $this->request->reveal());
 
     $this->action = $this->actionManager->createInstance('rules_ban_ip');
   }
@@ -74,10 +76,7 @@ class BanIPTest extends RulesIntegrationTestBase {
     $IPv4 = '192.0.2.0';
     $this->action->setContextValue('ip', $IPv4);
 
-    $this->banManager
-      ->expects($this->once())
-      ->method('banIp')
-      ->with($IPv4);
+    $this->banManager->banIp($IPv4)->shouldBeCalledTimes(1);
 
     $this->action->execute();
 
@@ -100,10 +99,7 @@ class BanIPTest extends RulesIntegrationTestBase {
     $IPv6 = '2002:0:0:0:0:0:c000:200';
     $this->action->setContextValue('ip', $IPv6);
 
-    $this->banManager
-      ->expects($this->once())
-      ->method('banIp')
-      ->with($IPv6);
+    $this->banManager->banIp($IPv6)->shouldBeCalledTimes(1);
 
     $this->action->execute();
 
@@ -120,15 +116,9 @@ class BanIPTest extends RulesIntegrationTestBase {
     // TEST-NET-1 IPv4.
     $ip = '192.0.2.0';
 
-    $this->request
-      ->expects($this->once())
-      ->method('getClientIP')
-      ->willReturn($ip);
+    $this->request->getClientIp()->willReturn($ip)->shouldBeCalledTimes(1);
 
-    $this->banManager
-      ->expects($this->once())
-      ->method('banIp')
-      ->with($ip);
+    $this->banManager->banIp($ip)->shouldBeCalledTimes(1);
 
     $this->action->execute();
 

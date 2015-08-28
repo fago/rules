@@ -7,7 +7,11 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Path\AliasStorageInterface;
+use Drupal\Core\Url;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
+use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityPathAliasCreate
@@ -25,7 +29,7 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
   /**
    * The mocked alias storage service.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasStorageInterface
+   * @var \Drupal\Core\Path\AliasStorageInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $aliasStorage;
 
@@ -36,11 +40,9 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
     parent::setUp();
 
     // Prepare mocked AliasStorageInterface.
-    $this->aliasStorage = $this->getMockBuilder('Drupal\Core\Path\AliasStorageInterface')
-      ->setMethods(['save'])
-      ->getMockForAbstractClass();
+    $this->aliasStorage = $this->prophesize(AliasStorageInterface::class);
 
-    $this->container->set('path.alias_storage', $this->aliasStorage);
+    $this->container->set('path.alias_storage', $this->aliasStorage->reveal());
 
     // Instantiate the action we are testing.
     $this->action = $this->actionManager->createInstance('rules_entity_path_alias_create:entity:entity_test');
@@ -62,20 +64,15 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
    */
   public function testActionExecutionWithUnsavedEntity() {
     // Test that the alias is only saved once.
-    $this->aliasStorage
-      ->expects($this->once())
-      ->method('save');
+    $this->aliasStorage->save('test/1', 'about', 'en')->shouldBeCalledTimes(1);
 
     $entity = $this->getMockEntity();
-    $entity->expects($this->once())
-      ->method('isNew')
-      ->will($this->returnValue(TRUE));
+    $entity->isNew()->willReturn(TRUE)->shouldBeCalledTimes(1);
 
     // Test that new entities are saved first.
-    $entity->expects($this->once())
-      ->method('save');
+    $entity->save()->shouldBeCalledTimes(1);
 
-    $this->action->setContextValue('entity', $entity)
+    $this->action->setContextValue('entity', $entity->reveal())
       ->setContextValue('alias', 'about');
 
     $this->action->execute();
@@ -88,20 +85,15 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
    */
   public function testActionExecutionWithSavedEntity() {
     // Test that the alias is only saved once.
-    $this->aliasStorage
-      ->expects($this->once())
-      ->method('save');
+    $this->aliasStorage->save('test/1', 'about', 'en')->shouldBeCalledTimes(1);
 
     $entity = $this->getMockEntity();
-    $entity->expects($this->once())
-      ->method('isNew')
-      ->will($this->returnValue(FALSE));
+    $entity->isNew()->willReturn(FALSE)->shouldBeCalledTimes(1);
 
     // Test that existing entities are not saved again.
-    $entity->expects($this->never())
-      ->method('save');
+    $entity->save()->shouldNotBeCalled();
 
-    $this->action->setContextValue('entity', $entity)
+    $this->action->setContextValue('entity', $entity->reveal())
       ->setContextValue('alias', 'about');
 
     $this->action->execute();
@@ -114,29 +106,21 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
    *   The mocked entity object.
    */
   protected function getMockEntity() {
-    $language = $this->languageManager->getCurrentLanguage();
+    $language = $this->languageManager->reveal()->getCurrentLanguage();
 
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->once())
-      ->method('language')
-      ->will($this->returnValue($language));
+    $entity = $this->prophesize(EntityInterface::class);
+    $entity->language()->willReturn($language)->shouldBeCalledTimes(1);
 
-    $url = $this->getMockBuilder('Drupal\Core\Url')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $url = $this->prophesize(Url::class);
+    $url->getInternalPath()->willReturn('test/1')->shouldBeCalledTimes(1);
 
-    $url->expects($this->once())
-      ->method('getInternalPath')
-      ->will($this->returnValue('test/1'));
+    $entity->urlInfo(Argument::any())->willReturn($url->reveal())
+      ->shouldBeCalledTimes(1);
 
-    $entity->expects($this->once())
-      ->method('urlInfo')
-      ->with('canonical')
-      ->will($this->returnValue($url));
-
-    $this->aliasStorage->expects($this->once())
-      ->method('save')
-      ->with('test/1', 'about', 'en');
+    // @todo is this really needed?
+    $entity->getCacheContexts()->willReturn([]);
+    $entity->getCacheTags()->willReturn([]);
+    $entity->getCacheMaxAge()->willReturn(-1);
 
     return $entity;
   }

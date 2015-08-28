@@ -27,10 +27,9 @@ abstract class EventTestBase extends RulesEntityIntegrationTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->moduleHandler->expects($this->any())
-      ->method('getModuleDirectories')
+    $this->moduleHandler->getModuleDirectories()
       ->willReturn(['rules' => __DIR__ . '/../../../..']);
-    $this->eventManager = new RulesEventManager($this->moduleHandler);
+    $this->eventManager = new RulesEventManager($this->moduleHandler->reveal());
   }
 
 }

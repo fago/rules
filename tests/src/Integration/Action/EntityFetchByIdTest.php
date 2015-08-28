@@ -7,6 +7,10 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -29,34 +33,28 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
     parent::setUp();
 
     // Prepare dummy entity manager.
-    $this->entityManager = $this->getMockBuilder('Drupal\Core\Entity\EntityManager')
-      ->setMethods(['getBundleInfo', 'getBaseFieldDefinitions', 'getStorage'])
-      ->setConstructorArgs([
-        $this->namespaces,
-        $this->moduleHandler,
-        $this->cacheBackend,
-        $this->getMock('Drupal\Core\Language\LanguageManagerInterface'),
-        $this->getStringTranslationStub(),
-        $this->getClassResolverStub(),
-        $this->typedDataManager,
-        $this->getMock('Drupal\Core\KeyValueStore\KeyValueFactoryInterface'),
-        $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-      ])
-      ->getMock();
-
-    // The base field definitions for entity_test aren't used, and would
-    // require additional mocking.
-    $this->entityManager->expects($this->any())
-      ->method('getBaseFieldDefinitions')
-      ->willReturn([]);
+    $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
     // Return some dummy bundle information for now, so that the entity manager
     // does not call out to the config entity system to get bundle information.
-    $this->entityManager->expects($this->any())
-      ->method('getBundleInfo')
-      ->with($this->anything())
-      ->willReturn(['test' => ['label' => 'Test']]);
-    $this->container->set('entity.manager', $this->entityManager);
+    $this->entityManager->getBundleInfo('test')
+      ->willReturn(['entity_test' => ['label' => 'Entity Test']]);
+
+    $this->container->set('entity.manager', $this->entityManager->reveal());
+
+    // The base field definitions for entity_test aren't used, and would
+    // require additional mocking.
+    $this->entityManager->getBaseFieldDefinitions('test')->willReturn([]);
+
+    $entityType = new ContentEntityType([
+      'id' => 'test',
+      'label' => 'Test',
+      'entity_keys' => [
+        'bundle' => 'bundle',
+      ],
+    ]);
+    $this->entityManager->getDefinitions()
+      ->willReturn(['test' => $entityType]);
 
     $this->action = $this->actionManager->createInstance('rules_entity_fetch_by_id');
   }
@@ -77,16 +75,13 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
    */
   public function testActionExecution() {
     // Prepare entity storage to return dummy entity on the 'load' execution.
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entityStorage = $this->getMock('Drupal\Core\Entity\EntityStorageInterface');
-    $entityStorage->expects($this->once())
-      ->method('load')
-      ->with(1)
-      ->will($this->returnValue($entity));
-    $this->entityManager->expects($this->once())
-      ->method('getStorage')
-      ->with('test')
-      ->will($this->returnValue($entityStorage));
+    $entity = $this->prophesize(EntityInterface::class);
+    $entityStorage = $this->prophesize(EntityStorageInterface::class);
+    $entityStorage->load(1)->willReturn($entity->reveal())
+      ->shouldBeCalledTimes(1);
+    $this->entityManager->getStorage('test')
+      ->willReturn($entityStorage->reveal())
+      ->shouldBeCalledTimes(1);
 
     $this->action
       ->setContextValue('entity_type_id', 'test')
@@ -94,6 +89,6 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
       ->execute();
 
     // Entity load with type 'test' and id '1' should return the dummy entity.
-    $this->assertEquals($entity, $this->action->getProvidedContext('entity')->getContextValue('entity'), 'Action returns the loaded entity for fetching entity by id.');
+    $this->assertEquals($entity->reveal(), $this->action->getProvidedContext('entity')->getContextValue('entity'), 'Action returns the loaded entity for fetching entity by id.');
   }
 }

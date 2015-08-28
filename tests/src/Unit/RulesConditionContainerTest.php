@@ -29,7 +29,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    */
   protected function getMockConditionContainer(array $methods = [], $class = 'RulesConditionContainerMock') {
     return $this->getMockForAbstractClass(
-      'Drupal\rules\Engine\ConditionExpressionContainer', [], $class, FALSE, TRUE, TRUE, $methods
+      ConditionExpressionContainer::class, [], $class, FALSE, TRUE, TRUE, $methods
     );
   }
 
@@ -55,7 +55,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::isNegated
    */
   public function testNegate() {
-    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
+    $container = $this->getMockForAbstractClass(RulesConditionContainerTestStub::class, [], '', FALSE);
 
     $this->assertFalse($container->isNegated());
     $this->assertTrue($container->execute());
@@ -71,7 +71,7 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
    * @covers ::execute
    */
   public function testExecute() {
-    $container = $this->getMockForAbstractClass('Drupal\Tests\rules\Unit\RulesConditionContainerTestStub', [], '', FALSE);
+    $container = $this->getMockForAbstractClass(RulesConditionContainerTestStub::class, [], '', FALSE);
     $this->assertTrue($container->execute());
   }
 

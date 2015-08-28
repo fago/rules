@@ -24,20 +24,6 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
   protected $condition;
 
   /**
-   * The mocked entity access handler.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityAccessControlHandlerInterface
-   */
-  protected $entityAccess;
-
-  /**
-   * The mocked entity manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
-
-  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -81,20 +67,22 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('field', 'potato-field')
       ->setContextValue('user', $account);
 
-    $this->entityAccess->expects($this->exactly(3))
-      ->method('access')
-      ->will($this->returnValueMap([
-        [$entity, 'view', Language::LANGCODE_DEFAULT, $account, FALSE, TRUE],
-        [$entity, 'edit', Language::LANGCODE_DEFAULT, $account, FALSE, TRUE],
-        [$entity, 'delete', Language::LANGCODE_DEFAULT, $account, FALSE, FALSE],
-      ]));
+    $this->entityAccess->access($entity, 'view', Language::LANGCODE_DEFAULT, $account)
+      ->willReturn(TRUE)
+      ->shouldBeCalledTimes(1);
+    $this->entityAccess->access($entity, 'edit', Language::LANGCODE_DEFAULT, $account)
+      ->willReturn(TRUE)
+      ->shouldBeCalledTimes(1);
+    $this->entityAccess->access($entity, 'delete', Language::LANGCODE_DEFAULT, $account)
+      ->willReturn(FALSE)
+      ->shouldBeCalledTimes(1);
 
-    $this->entityAccess->expects($this->exactly(2))
-      ->method('fieldAccess')
-      ->will($this->returnValueMap([
-        ['view', $definition, $account, $items, FALSE, TRUE],
-        ['edit', $definition, $account, $items, FALSE, FALSE],
-      ]));
+    $this->entityAccess->fieldAccess('view', $definition, $account, $items)
+      ->willReturn(TRUE)
+      ->shouldBeCalledTimes(1);
+    $this->entityAccess->fieldAccess('edit', $definition, $account, $items)
+      ->willReturn(FALSE)
+      ->shouldBeCalledTimes(1);
 
     // Test with 'view', 'edit' and 'delete'. Both 'view' and 'edit' will have
     // general entity access, but the 'potato-field' should deny access for the
