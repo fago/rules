@@ -7,9 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Entity\ContentEntityType;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
@@ -32,31 +30,6 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
    */
   public function setUp() {
     parent::setUp();
-
-    // Prepare our own dummy entityManager as the entityManager in
-    // RulesEntityIntegrationTestBase does not mock the getStorage method.
-    $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-
-    // Return some dummy bundle information for now, so that the entity manager
-    // does not call out to the config entity system to get bundle information.
-    $this->entityManager->getBundleInfo('test')
-      ->willReturn(['entity_test' => ['label' => 'Entity Test']]);
-
-    $this->container->set('entity.manager', $this->entityManager->reveal());
-
-    // The base field definitions for entity_test aren't used, and would
-    // require additional mocking.
-    $this->entityManager->getBaseFieldDefinitions('test')->willReturn([]);
-
-    $entityType = new ContentEntityType([
-      'id' => 'test',
-      'label' => 'Test',
-      'entity_keys' => [
-        'bundle' => 'bundle',
-      ],
-    ]);
-    $this->entityManager->getDefinitions()
-      ->willReturn(['test' => $entityType]);
 
     $this->action = $this->actionManager->createInstance('rules_entity_fetch_by_field');
   }

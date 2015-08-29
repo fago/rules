@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -25,7 +26,7 @@ class PathAliasDeleteByAliasTest extends RulesIntegrationTestBase {
   /**
    * The mocked alias storage service.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasStorageInterface
+   * @var \Drupal\Core\Path\AliasStorageInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $aliasStorage;
 
@@ -35,8 +36,8 @@ class PathAliasDeleteByAliasTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
-    $this->container->set('path.alias_storage', $this->aliasStorage);
+    $this->aliasStorage = $this->prophesize(AliasStorageInterface::class);
+    $this->container->set('path.alias_storage', $this->aliasStorage->reveal());
 
     $this->action = $this->actionManager->createInstance('rules_path_alias_delete_by_alias');
   }
@@ -58,12 +59,9 @@ class PathAliasDeleteByAliasTest extends RulesIntegrationTestBase {
   public function testActionExecution() {
     $alias = 'about/team';
 
-    $this->aliasStorage->expects($this->once())
-      ->method('delete')
-      ->with(['alias' => $alias]);
+    $this->aliasStorage->delete(['alias' => $alias])->shouldBeCalledTimes(1);
 
-    $this->action
-      ->setContextValue('alias', $alias);
+    $this->action->setContextValue('alias', $alias);
 
     $this->action->execute();
   }

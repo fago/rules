@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\node\NodeInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -38,18 +39,22 @@ class NodeIsPublishedTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
+    $published_node = $this->prophesizeEntity(NodeInterface::class);
 
-    $node->expects($this->exactly(2))
-      ->method('isPublished')
-      ->will($this->onConsecutiveCalls(TRUE, FALSE));
+    $published_node->isPublished()->willReturn(TRUE)->shouldBeCalledTimes(1);
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $node);
+    $this->condition->setContextValue('node', $published_node->reveal());
 
-    // Test evaluation. The first invocation should return TRUE, the second
-    // should return FALSE.
     $this->assertTrue($this->condition->evaluate());
+
+    $unpublished_node = $this->prophesizeEntity(NodeInterface::class);
+
+    $unpublished_node->isPublished()->willReturn(FALSE)->shouldBeCalledTimes(1);
+
+    // Set the node context value.
+    $this->condition->setContextValue('node', $unpublished_node->reveal());
+
     $this->assertFalse($this->condition->evaluate());
   }
 

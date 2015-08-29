@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -36,13 +37,11 @@ class EntityIsNewTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->once())
-      ->method('isNew')
-      ->will($this->returnValue(TRUE));
+    $entity = $this->prophesizeEntity(EntityInterface::class);
+    $entity->isNew()->willReturn(TRUE)->shouldBeCalledTimes(1);
 
     // Add the test node to our context as the evaluated entity.
-    $this->condition->setContextValue('entity', $entity);
+    $this->condition->setContextValue('entity', $entity->reveal());
     $this->assertTrue($this->condition->evaluate());
   }
 }

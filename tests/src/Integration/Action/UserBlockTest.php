@@ -7,7 +7,9 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\Core\Session\SessionManagerInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserBlock
@@ -45,7 +47,7 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   /**
    * The mocked session manager.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Session\SessionManagerInterface
+   * @var \Drupal\Core\Session\SessionManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $sessionManager;
 
@@ -56,8 +58,8 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
     parent::setUp();
     $this->enableModule('user');
 
-    $this->sessionManager = $this->getMock('Drupal\Core\Session\SessionManagerInterface');
-    $this->container->set('session_manager', $this->sessionManager);
+    $this->sessionManager = $this->prophesize(SessionManagerInterface::class);
+    $this->container->set('session_manager', $this->sessionManager->reveal());
     $this->action = $this->actionManager->createInstance('rules_user_block');
   }
 
@@ -78,18 +80,13 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   public function testBlockUserWithValidUser() {
     $user = $this->getUserMock(self::ACTIVE, self::AUTHENTICATED);
 
-    $user->expects($this->once())
-      ->method('block');
+    $user->block()->shouldBeCalledTimes(1);
 
-    $user->expects($this->once())
-      ->method('id')
-      ->willReturn('123');
+    $user->id()->willReturn('123')->shouldBeCalledTimes(1);
 
-    $this->sessionManager->expects($this->once())
-      ->method('delete')
-      ->with('123');
+    $this->sessionManager->delete('123')->shouldBeCalledTimes(1);
 
-    $this->action->setContextValue('user', $user);
+    $this->action->setContextValue('user', $user->reveal());
 
     $this->action->execute();
 
@@ -104,13 +101,11 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   public function testBlockUserWithActiveAnonymousUser() {
     $user = $this->getUserMock(self::ACTIVE, self::ANONYMOUS);
 
-    $user->expects($this->never())
-      ->method('block');
+    $user->block()->shouldNotBeCalled();
 
-    $this->sessionManager->expects($this->never())
-      ->method('delete');
+    $this->sessionManager->delete()->shouldNotBeCalled();
 
-    $this->action->setContextValue('user', $user);
+    $this->action->setContextValue('user', $user->reveal());
 
     $this->action->execute();
 
@@ -126,13 +121,11 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   public function testBlockUserWithBlockedAuthenticatedUser() {
     $user = $this->getUserMock(self::BLOCKED, self::AUTHENTICATED);
 
-    $user->expects($this->never())
-      ->method('block');
+    $user->block()->shouldNotBeCalled();
 
-    $this->sessionManager->expects($this->never())
-      ->method('delete');
+    $this->sessionManager->delete()->shouldNotBeCalled();
 
-    $this->action->setContextValue('user', $user);
+    $this->action->setContextValue('user', $user->reveal());
 
     $this->action->execute();
 
@@ -147,13 +140,11 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
   public function testBlockUserWithBlockedAnonymousUser() {
     $user = $this->getUserMock(self::BLOCKED, self::ANONYMOUS);
 
-    $user->expects($this->never())
-      ->method('block');
+    $user->block()->shouldNotBeCalled();
 
-    $this->sessionManager->expects($this->never())
-      ->method('delete');
+    $this->sessionManager->delete()->shouldNotBeCalled();
 
-    $this->action->setContextValue('user', $user);
+    $this->action->setContextValue('user', $user->reveal());
 
     $this->action->execute();
 
@@ -168,19 +159,14 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
    * @param bool $authenticated
    *   Is user authenticated.
    *
-   * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\user\UserInterface
+   * @return \Drupal\user\UserInterface|\Prophecy\Prophecy\ProphecyInterface
    *   The mocked user object.
    */
   protected function getUserMock($active, $authenticated) {
-    $user = $this->getMock('Drupal\user\UserInterface');
+    $user = $this->prophesizeEntity(UserInterface::class);
 
-    $user->expects($this->any())
-      ->method('isActive')
-      ->willReturn($active);
-
-    $user->expects($this->any())
-      ->method('isAuthenticated')
-      ->willReturn($authenticated);
+    $user->isActive()->willReturn($active);
+    $user->isAuthenticated()->willReturn($authenticated);
 
     return $user;
   }

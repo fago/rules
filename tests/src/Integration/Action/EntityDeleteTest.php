@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -46,11 +47,10 @@ class EntityDeleteTest extends RulesEntityIntegrationTestBase {
    * @covers ::execute
    */
   public function testActionExecution() {
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->once())
-      ->method('delete');
+    $entity = $this->prophesizeEntity(EntityInterface::class);
+    $entity->delete()->shouldBeCalledTimes(1);
 
-    $this->action->setContextValue('entity', $entity);
+    $this->action->setContextValue('entity', $entity->reveal());
     $this->action->execute();
   }
 

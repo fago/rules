@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -26,7 +27,7 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   /**
    * The mocked alias storage service.
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasStorageInterface
+   * @var \Drupal\Core\Path\AliasStorageInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $aliasStorage;
 
@@ -36,8 +37,8 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->aliasStorage = $this->getMock('Drupal\Core\Path\AliasStorageInterface');
-    $this->container->set('path.alias_storage', $this->aliasStorage);
+    $this->aliasStorage = $this->prophesize(AliasStorageInterface::class);
+    $this->container->set('path.alias_storage', $this->aliasStorage->reveal());
 
     $this->action = $this->actionManager->createInstance('rules_path_alias_create');
   }
@@ -57,9 +58,8 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
    * @covers ::execute
    */
   public function testActionExecutionWithoutLanguage() {
-    $this->aliasStorage->expects($this->once())
-      ->method('save')
-      ->with('node/1', 'about', LanguageInterface::LANGCODE_NOT_SPECIFIED);
+    $this->aliasStorage->save('node/1', 'about', LanguageInterface::LANGCODE_NOT_SPECIFIED)
+      ->shouldBeCalledTimes(1);
 
     $this->action->setContextValue('source', 'node/1')
       ->setContextValue('alias', 'about');
@@ -73,18 +73,15 @@ class PathAliasCreateTest extends RulesIntegrationTestBase {
    * @covers ::execute
    */
   public function testActionExecutionWithLanguage() {
-    $language = $this->getMock('Drupal\Core\Language\LanguageInterface');
-    $language->expects($this->any())
-      ->method('getId')
-      ->will($this->returnValue('en'));
+    $language = $this->prophesize(LanguageInterface::class);
+    $language->getId()->willReturn('en');
 
-    $this->aliasStorage->expects($this->once())
-      ->method('save')
-      ->with('node/1', 'about', 'en');
+    $this->aliasStorage->save('node/1', 'about', 'en')
+      ->shouldBeCalledTimes(1);
 
     $this->action->setContextValue('source', 'node/1')
       ->setContextValue('alias', 'about')
-      ->setContextValue('language', $language);
+      ->setContextValue('language', $language->reveal());
 
     $this->action->execute();
   }

@@ -45,7 +45,7 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
     $this->container->set('path.alias_storage', $this->aliasStorage->reveal());
 
     // Instantiate the action we are testing.
-    $this->action = $this->actionManager->createInstance('rules_entity_path_alias_create:entity:entity_test');
+    $this->action = $this->actionManager->createInstance('rules_entity_path_alias_create:entity:test');
   }
 
   /**
@@ -54,7 +54,7 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
    * @covers ::summary
    */
   public function testSummary() {
-    $this->assertEquals('Create test entity path alias', $this->action->summary());
+    $this->assertEquals('Create test path alias', $this->action->summary());
   }
 
   /**
@@ -102,13 +102,13 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
   /**
    * Creates a mock entity.
    *
-   * @return \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Entity\EntityInterface
+   * @return \Drupal\Core\Entity\EntityInterface|\Prophecy\Prophecy\ProphecyInterface
    *   The mocked entity object.
    */
   protected function getMockEntity() {
     $language = $this->languageManager->reveal()->getCurrentLanguage();
 
-    $entity = $this->prophesize(EntityInterface::class);
+    $entity = $this->prophesizeEntity(EntityInterface::class);
     $entity->language()->willReturn($language)->shouldBeCalledTimes(1);
 
     $url = $this->prophesize(Url::class);
@@ -116,11 +116,6 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
 
     $entity->urlInfo(Argument::any())->willReturn($url->reveal())
       ->shouldBeCalledTimes(1);
-
-    // @todo is this really needed?
-    $entity->getCacheContexts()->willReturn([]);
-    $entity->getCacheTags()->willReturn([]);
-    $entity->getCacheMaxAge()->willReturn(-1);
 
     return $entity;
   }

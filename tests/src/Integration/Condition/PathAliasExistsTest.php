@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -23,16 +24,9 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
   protected $condition;
 
   /**
-   * The mocked alias manager.
-   *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Path\AliasManagerInterface
-   */
-  protected $aliasManager;
-
-  /**
    * A mocked language object (english).
    *
-   * @var \PHPUnit_Framework_MockObject_MockObject|\Drupal\Core\Language\LanguageInterface
+   * @var \Drupal\Core\Language\LanguageInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $englishLanguage;
 
@@ -44,10 +38,8 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
 
     $this->condition = $this->conditionManager->createInstance('rules_path_alias_exists');
 
-    $this->englishLanguage = $this->getMock('Drupal\Core\Language\LanguageInterface');
-    $this->englishLanguage->expects($this->any())
-      ->method('getId')
-      ->will($this->returnValue('en'));
+    $this->englishLanguage = $this->prophesize(LanguageInterface::class);
+    $this->englishLanguage->getId()->willReturn('en');
   }
 
   /**
@@ -83,7 +75,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
     $this->assertTrue($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->englishLanguage->reveal());
     $this->assertTrue($this->condition->evaluate());
   }
 
@@ -108,7 +100,7 @@ class PathAliasExistsTest extends RulesIntegrationTestBase {
     $this->assertFalse($this->condition->evaluate());
 
     // Test with language context set.
-    $this->condition->setContextValue('language', $this->englishLanguage);
+    $this->condition->setContextValue('language', $this->englishLanguage->reveal());
     $this->assertFalse($this->condition->evaluate());
   }
 

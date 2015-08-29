@@ -18,11 +18,11 @@ class EntityDeleteTest extends EventTestBase {
    * Tests the event metadata.
    */
   public function testEventMetadata() {
-    $plugin_definition = $this->eventManager->getDefinition('rules_entity_delete:entity_test_label');
-    $this->assertSame('After deleting entity test label', $plugin_definition['label']);
-    $context_definition = $plugin_definition['context']['entity_test_label'];
-    $this->assertSame('entity:entity_test_label', $context_definition->getDataType());
-    $this->assertSame('Entity Test label', $context_definition->getLabel());
+    $plugin_definition = $this->eventManager->getDefinition('rules_entity_delete:test');
+    $this->assertSame('After deleting test', $plugin_definition['label']);
+    $context_definition = $plugin_definition['context']['test'];
+    $this->assertSame('entity:test', $context_definition->getDataType());
+    $this->assertSame('Test', $context_definition->getLabel());
   }
 
 }

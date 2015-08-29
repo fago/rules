@@ -7,8 +7,12 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Language\Language;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
+use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
@@ -39,48 +43,40 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $account = $this->getMock('Drupal\user\UserInterface');
-    $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
-    $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
+    $account = $this->prophesizeEntity(UserInterface::class);
+    $entity = $this->prophesizeEntity(ContentEntityInterface::class);
+    $items = $this->prophesize(FieldItemListInterface::class);
 
-    $entity->expects($this->any())
-      ->method('getEntityTypeId')
-      ->will($this->returnValue('user'));
+    $entity->getEntityTypeId()->willReturn('user');
+    $entity->hasField('potato-field')->willReturn(TRUE)
+      ->shouldBeCalledTimes(3);
 
-    $entity->expects($this->exactly(3))
-      ->method('hasField')
-      ->with('potato-field')
-      ->will($this->returnValue(TRUE));
+    $definition = $this->prophesize(FieldDefinitionInterface::class);
+    $entity->getFieldDefinition('potato-field')
+      ->willReturn($definition->reveal())
+      ->shouldBeCalledTimes(2);
 
-    $definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
-    $entity->expects($this->exactly(2))
-      ->method('getFieldDefinition')
-      ->with('potato-field')
-      ->will($this->returnValue($definition));
+    $entity->get('potato-field')->willReturn($items->reveal())
+      ->shouldBeCalledTimes(2);
 
-    $entity->expects($this->exactly(2))
-      ->method('get')
-      ->with('potato-field')
-      ->will($this->returnValue($items));
-
-    $this->condition->setContextValue('entity', $entity)
+    $this->condition->setContextValue('entity', $entity->reveal())
       ->setContextValue('field', 'potato-field')
-      ->setContextValue('user', $account);
+      ->setContextValue('user', $account->reveal());
 
-    $this->entityAccess->access($entity, 'view', Language::LANGCODE_DEFAULT, $account)
+    $this->entityAccess->access($entity->reveal(), 'view', Language::LANGCODE_DEFAULT, $account->reveal())
       ->willReturn(TRUE)
       ->shouldBeCalledTimes(1);
-    $this->entityAccess->access($entity, 'edit', Language::LANGCODE_DEFAULT, $account)
+    $this->entityAccess->access($entity->reveal(), 'edit', Language::LANGCODE_DEFAULT, $account->reveal())
       ->willReturn(TRUE)
       ->shouldBeCalledTimes(1);
-    $this->entityAccess->access($entity, 'delete', Language::LANGCODE_DEFAULT, $account)
+    $this->entityAccess->access($entity->reveal(), 'delete', Language::LANGCODE_DEFAULT, $account->reveal())
       ->willReturn(FALSE)
       ->shouldBeCalledTimes(1);
 
-    $this->entityAccess->fieldAccess('view', $definition, $account, $items)
+    $this->entityAccess->fieldAccess('view', $definition->reveal(), $account->reveal(), $items->reveal())
       ->willReturn(TRUE)
       ->shouldBeCalledTimes(1);
-    $this->entityAccess->fieldAccess('edit', $definition, $account, $items)
+    $this->entityAccess->fieldAccess('edit', $definition->reveal(), $account->reveal(), $items->reveal())
       ->willReturn(FALSE)
       ->shouldBeCalledTimes(1);
 

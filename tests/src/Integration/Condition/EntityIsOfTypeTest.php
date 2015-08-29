@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -37,15 +38,13 @@ class EntityIsOfTypeTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->exactly(2))
-      ->method('getEntityTypeId')
-      ->will($this->returnValue('node'));
+    $entity = $this->prophesizeEntity(EntityInterface::class);
+    $entity->getEntityTypeId()->willReturn('node')->shouldBeCalledTimes(2);
 
     // Add the test node to our context as the evaluated entity, along with an
     // explicit entity type string.
     // First, test with a value that should evaluate TRUE.
-    $this->condition->setContextValue('entity', $entity)
+    $this->condition->setContextValue('entity', $entity->reveal())
       ->setContextValue('type', 'node');
     $this->assertTrue($this->condition->evaluate());
 

@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\node\NodeInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -38,18 +39,22 @@ class NodeIsPromotedTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
+    $promoted_node = $this->prophesizeEntity(NodeInterface::class);
 
-    $node->expects($this->exactly(2))
-      ->method('isPromoted')
-      ->will($this->onConsecutiveCalls(TRUE, FALSE));
+    $promoted_node->isPromoted()->willReturn(TRUE)->shouldBeCalledTimes(1);
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $node);
+    $this->condition->setContextValue('node', $promoted_node->reveal());
 
-    // Test evaluation. The first invocation should return TRUE, the second
-    // should return FALSE.
     $this->assertTrue($this->condition->evaluate());
+
+    $unpromoted_node = $this->prophesizeEntity(NodeInterface::class);
+
+    $unpromoted_node->isPromoted()->willReturn(FALSE)->shouldBeCalledTimes(1);
+
+    // Set the node context value.
+    $this->condition->setContextValue('node', $unpromoted_node->reveal());
+
     $this->assertFalse($this->condition->evaluate());
   }
 

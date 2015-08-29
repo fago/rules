@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -37,19 +38,15 @@ class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->exactly(3))
-      ->method('getEntityTypeId')
-      ->will($this->returnValue('node'));
+    $entity = $this->prophesizeEntity(EntityInterface::class);
 
-    $entity->expects($this->exactly(3))
-      ->method('bundle')
-      ->will($this->returnValue('page'));
+    $entity->getEntityTypeId()->willReturn('node')->shouldBeCalledTimes(3);
+    $entity->bundle()->willReturn('page')->shouldBeCalledTimes(3);
 
     // Add the test node to our context as the evaluated entity, along with
     // explicit entity type and bundle strings.
     // First, test with values that should evaluate TRUE.
-    $this->condition->setContextValue('entity', $entity)
+    $this->condition->setContextValue('entity', $entity->reveal())
       ->setContextValue('type', 'node')
       ->setContextValue('bundle', 'page');
 

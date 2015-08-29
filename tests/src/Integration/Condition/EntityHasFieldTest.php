@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -37,15 +38,13 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
-    $entity->expects($this->exactly(2))
-      ->method('hasField')
-      ->will($this->returnValueMap([
-        ['existing-field', TRUE],
-        ['non-existing-field', FALSE],
-      ]));
+    $entity = $this->prophesizeEntity(ContentEntityInterface::class);
+    $entity->hasField('existing-field')->willReturn(TRUE)
+        ->shouldBeCalledTimes(1);
+    $entity->hasField('non-existing-field')->willReturn(FALSE)
+        ->shouldBeCalledTimes(1);
 
-    $this->condition->setContextValue('entity', $entity);
+    $this->condition->setContextValue('entity', $entity->reveal());
 
     // Test with an existing field.
     $this->condition->setContextValue('field', 'existing-field');

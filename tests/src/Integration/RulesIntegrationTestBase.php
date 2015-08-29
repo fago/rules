@@ -208,4 +208,21 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     return $data;
   }
 
+  /**
+   * Helper method to mock irrelevant cache methods on entities.
+   *
+   * @param string $interface
+   *   The interface that should be mocked, example: EntityInterface::class.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Prophecy\Prophecy\ProphecyInterface
+   */
+  protected function prophesizeEntity($interface) {
+    $entity = $this->prophesize($interface);
+    // Cache methods are irrelevant for the tests but might be called.
+    $entity->getCacheContexts()->willReturn([]);
+    $entity->getCacheTags()->willReturn([]);
+    $entity->getCacheMaxAge()->willReturn(0);
+    return $entity;
+  }
+
 }

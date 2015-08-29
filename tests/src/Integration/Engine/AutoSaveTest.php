@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Engine;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
@@ -32,11 +33,10 @@ class AutoSaveTest extends RulesEntityIntegrationTestBase {
       ->map('entity', 'entity')
     );
 
-    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity->expects($this->once())
-      ->method('save');
+    $entity = $this->prophesizeEntity(EntityInterface::class);
+    $entity->save()->shouldBeCalledTimes(1);
 
-    $rule->setContextValue('entity', $entity);
+    $rule->setContextValue('entity', $entity->reveal());
     $rule->execute();
   }
 

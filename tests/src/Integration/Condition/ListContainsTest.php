@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -72,62 +73,52 @@ class ListContainsTest extends RulesIntegrationTestBase {
     $this->assertFalse($this->condition->evaluate());
 
     // Create array of mock entities
-    $entity_zero = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity_zero->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue('entity_zero_id'));
+    $entity_zero = $this->prophesizeEntity(EntityInterface::class);
+    $entity_zero->id()->willReturn('entity_zero_id');
 
-    $entity_one = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity_one->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue('entity_one_id'));
+    $entity_one = $this->prophesizeEntity(EntityInterface::class);
+    $entity_one->id()->willReturn('entity_one_id');
 
-    $entity_two = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity_two->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue('entity_two_id'));
+    $entity_two = $this->prophesizeEntity(EntityInterface::class);
+    $entity_two->id()->willReturn('entity_two_id');
 
-    $entity_three = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity_three->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue('entity_three_id'));
+    $entity_three = $this->prophesizeEntity(EntityInterface::class);
+    $entity_three->id()->willReturn('entity_three_id');
 
-    $entity_four = $this->getMock('Drupal\Core\Entity\EntityInterface');
-    $entity_four->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue('entity_four_id'));
+    $entity_four = $this->prophesizeEntity(EntityInterface::class);
+    $entity_four->id()->willReturn('entity_four_id');
 
     // Test array of entities
-    $entity_list = [$entity_one,$entity_two,$entity_three];
+    $entity_list = [$entity_one->reveal(), $entity_two->reveal(), $entity_three->reveal()];
 
     // Test that the list of entities doesn't contain entity 'entity_zero'.
     $this->condition
       ->setContextValue('list', $entity_list)
-      ->setContextValue('item', $entity_zero);
+      ->setContextValue('item', $entity_zero->reveal());
     $this->assertFalse($this->condition->evaluate());
 
     // Test that the list of entities contains entity 'entity_one'.
     $this->condition
       ->setContextValue('list', $entity_list)
-      ->setContextValue('item', $entity_one);
+      ->setContextValue('item', $entity_one->reveal());
     $this->assertTrue($this->condition->evaluate());
 
     // Test that the list of entities contains entity 'entity_two'.
     $this->condition
       ->setContextValue('list', $entity_list)
-      ->setContextValue('item', $entity_two);
+      ->setContextValue('item', $entity_two->reveal());
     $this->assertTrue($this->condition->evaluate());
 
     // Test that the list of entities contains entity 'entity_three'.
     $this->condition
       ->setContextValue('list', $entity_list)
-      ->setContextValue('item', $entity_three);
+      ->setContextValue('item', $entity_three->reveal());
     $this->assertTrue($this->condition->evaluate());
 
     // Test that the list of entities doesn't contain entity 'entity_four'.
     $this->condition
       ->setContextValue('list', $entity_list)
-      ->setContextValue('item', $entity_four);
+      ->setContextValue('item', $entity_four->reveal());
     $this->assertFalse($this->condition->evaluate());
   }
 }

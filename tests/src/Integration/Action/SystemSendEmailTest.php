@@ -7,10 +7,12 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
-use Drupal\Core\Language\LanguageInterface;
-use Psr\Log\LogLevel;
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemSendEmail
@@ -19,12 +21,12 @@ use Drupal\Component\Utility\SafeMarkup;
 class SystemSendEmailTest extends RulesIntegrationTestBase {
 
   /**
-   * @var \Psr\Log\LoggerInterface
+   * @var \Psr\Log\LoggerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $logger;
 
   /**
-   * @var \Drupal\Core\Mail\MailManagerInterface
+   * @var \Drupal\Core\Mail\MailManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $mailManager;
 
@@ -40,13 +42,12 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->logger = $this->getMock('Psr\Log\LoggerInterface');
+    $this->logger = $this->prophesize(LoggerInterface::class);
 
-    $this->mailManager = $this->getMockBuilder('Drupal\Core\Mail\MailManagerInterface')
-      ->getMock();
+    $this->mailManager = $this->prophesize(MailManagerInterface::class);
 
-    $this->container->set('logger.factory', $this->logger);
-    $this->container->set('plugin.manager.mail', $this->mailManager);
+    $this->container->set('logger.factory', $this->logger->reveal());
+    $this->container->set('plugin.manager.mail', $this->mailManager->reveal());
 
     $this->action = $this->actionManager->createInstance('rules_send_email');
   }
@@ -72,23 +73,25 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
       ->setContextValue('subject', 'subject')
       ->setContextValue('message', 'hello');
 
-    $language = $this->action->getContextValue('language');
-    $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_SITE_DEFAULT;
     $params = [
-      'subject' => $this->action->getContextValue('subject'),
-      'message' => $this->action->getContextValue('message'),
+      'subject' => 'subject',
+      'message' => 'hello',
     ];
 
-    $this->mailManager
-      ->expects($this->once())
-      ->method('mail')
-      ->with('rules', 'rules_action_mail_' . $this->action->getPluginId(), implode(', ', $to), $langcode, $params)
-      ->willReturn(['result' => TRUE]);
+    $this->mailManager->mail(
+      'rules', 'rules_action_mail_' . $this->action->getPluginId(),
+      implode(', ', $to),
+      LanguageInterface::LANGCODE_SITE_DEFAULT,
+      $params,
+      NULL
+    )
+      ->willReturn(['result' => TRUE])
+      ->shouldBeCalledTimes(1);
 
-    $this->logger
-      ->expects($this->once())
-      ->method('log')
-      ->with(LogLevel::NOTICE, SafeMarkup::format('Successfully sent email to %to', ['%to' => implode(', ', $to)]));
+    $this->logger->log(
+      LogLevel::NOTICE,
+      SafeMarkup::format('Successfully sent email to %to', ['%to' => implode(', ', $to)])
+    )->shouldBeCalledTimes(1);
 
     $this->action->execute();
   }
@@ -104,23 +107,25 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
       ->setContextValue('subject', 'subject')
       ->setContextValue('message', 'hello');
 
-    $language = $this->action->getContextValue('language');
-    $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_SITE_DEFAULT;
     $params = [
-      'subject' => $this->action->getContextValue('subject'),
-      'message' => $this->action->getContextValue('message'),
+      'subject' => 'subject',
+      'message' => 'hello',
     ];
 
-    $this->mailManager
-      ->expects($this->once())
-      ->method('mail')
-      ->with('rules', 'rules_action_mail_' . $this->action->getPluginId(), implode(', ', $to), $langcode, $params)
-      ->willReturn(['result' => TRUE]);
+    $this->mailManager->mail(
+      'rules', 'rules_action_mail_' . $this->action->getPluginId(),
+      implode(', ', $to),
+      LanguageInterface::LANGCODE_SITE_DEFAULT,
+      $params,
+      NULL
+    )
+      ->willReturn(['result' => TRUE])
+      ->shouldBeCalledTimes(1);
 
-    $this->logger
-      ->expects($this->once())
-      ->method('log')
-      ->with(LogLevel::NOTICE, SafeMarkup::format('Successfully sent email to %to', ['%to' => implode(', ', $to)]));
+    $this->logger->log(
+      LogLevel::NOTICE,
+      SafeMarkup::format('Successfully sent email to %to', ['%to' => implode(', ', $to)])
+    )->shouldBeCalledTimes(1);
 
     $this->action->execute();
   }

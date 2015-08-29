@@ -8,6 +8,8 @@
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
+use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
@@ -40,72 +42,50 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
   public function testConditionEvaluation() {
     // Set-up a mock object with roles 'authenticated' and 'editor', but not
     // 'administrator'.
-    $account = $this->getMock('Drupal\user\UserInterface');
-    $account->expects($this->exactly(7))
-      ->method('getRoles')
-      ->will($this->returnValue(['authenticated', 'editor']));
+    $account = $this->prophesizeEntity(UserInterface::class);
+    $account->getRoles()->willReturn(['authenticated', 'editor'])
+      ->shouldBeCalledTimes(7);
 
-    $this->condition->setContextValue('user', $account);
+    $this->condition->setContextValue('user', $account->reveal());
 
-    $authenticated = $this->getMockRole('authenticated');
-    $editor = $this->getMockRole('editor');
-    $administrator = $this->getMockRole('administrator');
-
-    $this->condition->setContextValue('user', $account);
+    $authenticated = $this->prophesize(RoleInterface::class);
+    $authenticated->id()->willReturn('authenticated');
+    $editor = $this->prophesize(RoleInterface::class);
+    $editor->id()->willReturn('authenticated');
+    $administrator = $this->prophesize(RoleInterface::class);
+    $administrator->id()->willReturn('administrator');
 
     // First test the default AND condition with both roles the user has.
-    $this->condition->setContextValue('roles', [$authenticated, $editor]);
+    $this->condition->setContextValue('roles', [$authenticated->reveal(), $editor->reveal()]);
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, this should fail.
-    $this->condition->setContextValue('roles', [$authenticated, $administrator]);
+    $this->condition->setContextValue('roles', [$authenticated->reveal(), $administrator->reveal()]);
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, should succeed.
-    $this->condition->setContextValue('roles', [$authenticated]);
+    $this->condition->setContextValue('roles', [$authenticated->reveal()]);
     $this->assertTrue($this->condition->evaluate());
 
     // A role the user doesn't have.
-    $this->condition->setContextValue('roles', [$administrator]);
+    $this->condition->setContextValue('roles', [$administrator->reveal()]);
     $this->assertFalse($this->condition->evaluate());
 
     // Only one role, the user has with OR condition, should succeed.
-    $this->condition->setContextValue('roles', [$authenticated]);
+    $this->condition->setContextValue('roles', [$authenticated->reveal()]);
     $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role, but has the authenticated,
     // should succeed.
-    $this->condition->setContextValue('roles', [$authenticated, $administrator]);
+    $this->condition->setContextValue('roles', [$authenticated->reveal(), $administrator->reveal()]);
     $this->condition->setContextValue('operation', 'OR');
     $this->assertTrue($this->condition->evaluate());
 
     // User doesn't have the administrator role. This should fail.
-    $this->condition->setContextValue('roles', [$administrator]);
+    $this->condition->setContextValue('roles', [$administrator->reveal()]);
     $this->condition->setContextValue('operation', 'OR');
     $this->assertFalse($this->condition->evaluate());
-  }
-
-  /**
-   * Creates a mocked user role.
-   *
-   * @param string $id
-   *   The machine-readable name of the mocked role.
-   *
-   * @return \PHPUnit_Framework_MockObject_MockBuilder|\Drupal\user\RoleInterface
-   *   The mocked role.
-   */
-  protected function getMockRole($id) {
-    $role = $this->getMockBuilder('Drupal\user\Entity\Role')
-      ->disableOriginalConstructor()
-      ->setMethods(['id'])
-      ->getMock();
-
-    $role->expects($this->any())
-      ->method('id')
-      ->will($this->returnValue($id));
-
-    return $role;
   }
 
 }

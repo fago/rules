@@ -7,8 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\Core\Entity\ContentEntityType;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageBase;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
@@ -58,22 +56,10 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
       ->willReturn('Bundle mock description')
       ->shouldBeCalledTimes(1);
 
-    // Prepare an content entity type instance.
-    $entityType = new ContentEntityType([
-      'id' => 'test',
-      'label' => 'Test',
-      'entity_keys' => [
-        'bundle' => 'bundle',
-      ],
-    ]);
-
     // Prepare mocked entity storage.
     $entityTypeStorage = $this->prophesize(EntityStorageBase::class);
     $entityTypeStorage->create(['bundle' => 'test'])
       ->willReturn(self::ENTITY_REPLACEMENT);
-
-    // Prepare mocked entity manager.
-    $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
     // Return the mocked storage controller.
     $this->entityManager->getStorage('test')
@@ -82,17 +68,6 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
     // Return a mocked list of base fields definitions.
     $this->entityManager->getBaseFieldDefinitions('test')
       ->willReturn(['bundle' => $bundleFieldDefinition->reveal()]);
-
-    // Return a mocked list of entity types.
-    $this->entityManager->getDefinitions()
-      ->willReturn(['test' => $entityType]);
-
-    // Return some dummy bundle information for now, so that the entity manager
-    // does not call out to the config entity system to get bundle information.
-    $this->entityManager->getBundleInfo('test')
-      ->willReturn(['test' => ['label' => 'Test']]);
-
-    $this->container->set('entity.manager', $this->entityManager->reveal());
 
     // Instantiate the action we are testing.
     $this->action = $this->actionManager->createInstance('rules_entity_create:entity:test');

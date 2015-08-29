@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -37,17 +38,17 @@ class DataIsEmptyTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $entity_adapter = $this->getMock('\Drupal\Core\TypedData\ComplexDataInterface');
-    $entity_adapter->expects($this->at(0))
-      ->method('isEmpty')
-      ->will($this->returnValue(TRUE));
-    $entity_adapter->expects($this->at(1))
-      ->method('isEmpty')
-      ->will($this->returnValue(FALSE));
-
     // Test a ComplexDataInterface object.
-    $this->condition->getContext('data')->setContextData($entity_adapter);
+    $entity_adapter_empty = $this->prophesize(ComplexDataInterface::class);
+    $entity_adapter_empty->isEmpty()->willReturn(TRUE)->shouldBeCalledTimes(1);
+
+    $this->condition->getContext('data')->setContextData($entity_adapter_empty->reveal());
     $this->assertTrue($this->condition->evaluate());
+
+    $entity_adapter_full = $this->prophesize(ComplexDataInterface::class);
+    $entity_adapter_full->isEmpty()->willReturn(FALSE)->shouldBeCalledTimes(1);
+
+    $this->condition->getContext('data')->setContextData($entity_adapter_full->reveal());
     $this->assertFalse($this->condition->evaluate());
 
     // These should all return FALSE.

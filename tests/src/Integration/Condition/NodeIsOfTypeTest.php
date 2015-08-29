@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\node\NodeInterface;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -38,13 +39,11 @@ class NodeIsOfTypeTest extends RulesEntityIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluation() {
-    $node = $this->getMock('Drupal\node\NodeInterface');
-    $node->expects($this->any())
-      ->method('getType')
-      ->will($this->returnValue('page'));
+    $node = $this->prophesizeEntity(NodeInterface::class);
+    $node->getType()->willReturn('page');
 
     // Set the node context value.
-    $this->condition->setContextValue('node', $node);
+    $this->condition->setContextValue('node', $node->reveal());
 
     // Test evaluation with a list that contains the actual node type.
     $this->condition->setContextValue('types', ['page', 'article']);
