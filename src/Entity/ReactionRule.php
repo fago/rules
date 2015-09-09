@@ -116,6 +116,22 @@ class ReactionRule extends ConfigEntityBase {
    * @var string
    */
   protected $module = 'rules';
+    
+  /**
+   * Sets a Rules expression instance for this Reaction rule.
+   *
+   * @param \Drupal\rules\Engine\ExpressionInterface $expression
+   *   The expression to set.
+   *
+   * @return $this
+   */
+  public function setExpression(ExpressionInterface $expression) {
+    $this->expression = $expression;
+    $this->expression_id = $expression->getPluginId();
+    $this->configuration = $expression->getConfiguration();
+    return $this;
+  }
+  
 
   /**
    * Gets a Rules expression instance for this Reaction rule.
