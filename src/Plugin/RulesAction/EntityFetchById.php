@@ -22,7 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   context = {
  *     "entity_type_id" = @ContextDefinition("string",
  *       label = @Translation("Entity type"),
- *       description = @Translation("Specifies the type of entity that should be fetched.")
+ *       description = @Translation("Specifies the type of entity that should be fetched."),
+ *       assignment_restriction = "input"
  *     ),
  *     "entity_id" = @ContextDefinition("integer",
  *       label = @Translation("Identifier"),

@@ -18,6 +18,14 @@ use \Drupal\Core\Plugin\Context\ContextDefinitionInterface as ContextDefinitionI
 interface ContextDefinitionInterface extends ContextDefinitionInterfaceCore {
 
   /**
+   * Constants for the context assignment restriction mode.
+   *
+   * @see ::getAssignmentRestriction()
+   */
+  const ASSIGNMENT_RESTRICTION_INPUT = 'input';
+  const ASSIGNMENT_RESTRICTION_SELECTOR = 'selector';
+
+  /**
    * Determines if the context value is allowed to be NULL.
    *
    * @return bool
@@ -34,5 +42,27 @@ interface ContextDefinitionInterface extends ContextDefinitionInterfaceCore {
    * @return $this
    */
   public function setAllowNull($null_allowed);
+
+  /**
+   * Determines if this context has an assignment restriction.
+   *
+   * @return string|null
+   *   Either ASSIGNMENT_RESTRICTION_INPUT for contexts that are only allowed to
+   *   be provided as input values, ASSIGNMENT_RESTRICTION_SELECTOR for contexts
+   *   that must be provided as data selectors or NULL if there is no
+   *   restriction for this context.
+   */
+  public function getAssignmentRestriction();
+
+  /**
+   * Sets the assignment restriction mode for this context.
+   *
+   * @param string|null $restriction
+   *   Either ASSIGNMENT_RESTRICTION_INPUT for contexts that are only allowed to
+   *   be provided as input values, ASSIGNMENT_RESTRICTION_SELECTOR for contexts
+   *   that must be provided as data selectors or NULL if there is no
+   *   restriction for this context.
+   */
+  public function setAssignmentRestriction($restriction);
 
 }
