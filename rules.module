@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Event\EntityEvent;
 use Drupal\rules\Event\UserLoginEvent;
@@ -36,7 +37,7 @@ function rules_user_logout($account) {
 /**
  * Implements hook_entity_view().
  */
-function rules_entity_view(EntityInterface $entity) {
+function rules_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode, $langcode) {
   // Only handle content entities and ignore config entities.
   if ($entity instanceof ContentEntityInterface) {
     $entity_type_id = $entity->getEntityTypeId();
