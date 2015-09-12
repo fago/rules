@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Engine\ExpressionInterface;
 
 /**
  * Reaction rule configuration entity to persistently store configuration.

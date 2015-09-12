@@ -114,4 +114,16 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $this->assertEqual($context_definitions['test']->getLabel(), 'Test string', 'Label of context definition is correct.');
   }
 
+  /**
+   * Tests that a reaction rule config entity can be saved.
+   */
+  public function testReactionRuleSaving() {
+    $rule = $this->expressionManager->createReactionRule();
+    $storage = $this->container->get('entity.manager')->getStorage('rules_reaction_rule');
+    $config_entity = $storage->create([
+      'id' => 'test_rule'
+    ])->setExpression($rule);
+    $config_entity->save();
+  }
+
 }

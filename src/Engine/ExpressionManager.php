@@ -42,6 +42,13 @@ class ExpressionManager extends DefaultPluginManager implements ExpressionManage
   /**
    * {@inheritdoc}
    */
+  public function createReactionRule(array $configuration = []) {
+    return $this->createInstance('rules_reaction_rule', $configuration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function createAction($id) {
     return $this->createInstance('rules_action', [
       'action_id' => $id,
