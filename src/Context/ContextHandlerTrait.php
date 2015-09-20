@@ -56,7 +56,9 @@ trait ContextHandlerTrait {
         }
         $plugin->getContext($name)->setContextData($typed_data);
       }
-      elseif (array_key_exists($name, $this->configuration['context_values'])) {
+      elseif (isset($this->configuration['context_values'])
+        && array_key_exists($name, $this->configuration['context_values'])
+      ) {
 
         if ($this->configuration['context_values'][$name] === NULL && !$definition->isAllowedNull()) {
           throw new RulesEvaluationException(SafeMarkup::format('The context value for @name is NULL, but the context @name in @plugin requires a value.', [

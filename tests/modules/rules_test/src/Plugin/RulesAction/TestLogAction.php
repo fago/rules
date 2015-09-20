@@ -17,7 +17,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @RulesAction(
  *   id = "rules_test_log",
- *   label = @Translation("Test action logging.")
+ *   label = @Translation("Test action logging."),
+ *   context = {
+ *     "message" = @ContextDefinition("string",
+ *       label = @Translation("Message to log"),
+ *       required = false
+ *     )
+ *   }
  * )
  */
 class TestLogAction extends RulesActionBase implements ContainerFactoryPluginInterface {
@@ -62,7 +68,11 @@ class TestLogAction extends RulesActionBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function execute() {
-    $this->logger->info('action called');
+    $message = $this->getContextValue('message');
+    if (empty($message)) {
+      $message = 'action called';
+    }
+    $this->logger->info($message);
   }
 
 }

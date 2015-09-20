@@ -8,8 +8,9 @@
 namespace Drupal\rules\EventSubscriber;
 
 use Drupal\Core\Entity\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Subscribes to Symfony events and maps them to Rules events.

@@ -92,6 +92,26 @@ rules_expression.rules_action:
     action_id:
       type: string
       label: 'Action plugin ID'
+    context_values:
+      type: sequence
+      label: 'Context values'
+      sequence:
+        - type: string
+    context_mapping:
+      type: sequence
+      label: 'Context mapping'
+      sequence:
+        - type: string
+    context_processors:
+      type: sequence
+      label: 'Context processors'
+      sequence:
+        - type: string
+    provides_mapping:
+      type: sequence
+      label: 'Provided context mapping'
+      sequence:
+        - type: string
 
 rules_expression.rules_and:
   type: rules_expression
