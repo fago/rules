@@ -36,7 +36,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
     $or = $this->expressionManager->createOr()
       ->addCondition('rules_test_true', ContextConfig::create()->negateResult())
       ->addCondition('rules_test_false')
-      ->addCondition($and);
+      ->addExpressionObject($and);
 
     // Test that the 'or' condition container evaluates to TRUE.
     $this->assertTrue($or->execute());

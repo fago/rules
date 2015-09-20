@@ -144,4 +144,31 @@ class RulesConditionTest extends UnitTestCase {
     $this->assertTrue($condition->execute());
   }
 
+  /**
+   * Tests that negating a condition works.
+   */
+  public function testNegation() {
+    $this->conditionManager->createInstance('test_condition', ['negate' => TRUE])
+      ->willReturn($this->trueCondition->reveal())
+      ->shouldBeCalledTimes(1);
+
+    $this->conditionManager->createInstance('test_condition')
+      ->willReturn($this->trueCondition->reveal())
+      ->shouldBeCalledTimes(1);
+
+    // Create a condition wich is negated.
+    $conditionExpression = new RulesCondition([
+      'condition_id' => 'test_condition',
+      'negate' => TRUE,
+    ], '', [], $this->conditionManager->reveal(), $this->processorManager->reveal());
+
+    $this->trueCondition->getContextDefinitions()->willReturn([]);
+    $this->trueCondition->refineContextDefinitions()->shouldBeCalledTimes(1);
+    $this->trueCondition->getProvidedContextDefinitions()
+      ->willReturn([])
+      ->shouldBeCalledTimes(1);
+
+    $this->assertFalse($conditionExpression->execute());
+  }
+
 }
