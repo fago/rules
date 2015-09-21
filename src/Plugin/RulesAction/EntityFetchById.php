@@ -79,11 +79,14 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
   }
 
   /**
-   * {@inheritdoc}
+   * Executes the action with the given context.
+   *
+   * @param int $entity_type_id
+   *   The entity type id.
+   * @param int $entity_id
+   *   The entity id.
    */
-  public function execute() {
-    $entity_type_id = $this->getContextValue('entity_type_id');
-    $entity_id = $this->getContextValue('entity_id');
+  public function doExecute($entity_type_id, $entity_id) {
     $storage = $this->entityManager->getStorage($entity_type_id);
     $entity = $storage->load($entity_id);
     // @todo Refine the provided context definition for 'entity'. Example: if
@@ -91,4 +94,5 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
     //  use the type node. We don't have an API for that yet.
     $this->setProvidedValue('entity', $entity);
   }
+
 }
