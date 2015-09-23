@@ -45,7 +45,7 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
     foreach ($this->getContexts() as $name => $context) {
       $args[$name] = $context->getContextValue();
     }
-    call_user_func_array([$this, 'doEvaluate'], $args);
+    return call_user_func_array([$this, 'doEvaluate'], $args);
   }
 
 }
