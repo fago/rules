@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
@@ -29,10 +30,12 @@ use Drupal\rules\Core\RulesActionBase;
 class EntityDelete extends RulesActionBase {
 
   /**
-   * {@inheritdoc}
+   * Deletes the Entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *    The entity to be deleted.
    */
-  public function execute() {
-    $entity = $this->getContextValue('entity');
+  protected function doExecute(EntityInterface $entity) {
     $entity->delete();
   }
 
