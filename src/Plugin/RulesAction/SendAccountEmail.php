@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\user\UserInterface;
 
 /**
  * Provides a 'Send account e-mail' action.
@@ -33,12 +34,15 @@ use Drupal\rules\Core\RulesActionBase;
 class SendAccountEmail extends RulesActionBase {
 
   /**
-   * {@inheritdoc}
+   * Send account email.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   User who should receive the notification.
+   * @param string $email_type
+   *   Type of email to be sent.
    */
-  public function execute() {
-    $account = $this->getContextValue('user');
-    $mail_type = $this->getContextValue('email_type');
-    _user_mail_notify($mail_type, $account);
+  protected function doExecute(UserInterface $user, $email_type) {
+    _user_mail_notify($email_type, $user);
   }
 
 }
