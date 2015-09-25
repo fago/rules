@@ -8,9 +8,24 @@
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\rules\Event\EntityEvent;
 use Drupal\rules\Event\UserLoginEvent;
 use Drupal\rules\Event\UserLogoutEvent;
+
+/**
+ * Implements hook_help().
+ */
+function rules_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'entity.rules_reaction_rule.collection':
+      $output = t('Reaction rules, listed below, react on selected events on the site. Each reaction rule may fire any number of <em>actions</em>, and may have any number of <em>conditions</em> that must be met for the actions to be executed. You can also set up <a href="!url1">components</a> – stand-alone sets of Rules configuration that can be used in Rules and other parts of your site. See <a href="!url2">the online documentation</a> for an introduction on how to use Rules.', [
+        '!url1' => \Drupal::url('entity.rules_component.collection'),
+        '!url2' => 'http://drupal.org/node/298480',
+      ]);
+      return $output;
+  }
+}
 
 /**
  * Implements hook_user_login().
@@ -98,3 +113,4 @@ function rules_entity_update(EntityInterface $entity) {
     $event_dispatcher->dispatch("rules_entity_update:$entity_type_id", $event);
   }
 }
+

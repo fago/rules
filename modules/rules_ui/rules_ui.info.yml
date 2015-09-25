@@ -1,8 +1,0 @@
-name: 'Rules UI'
-type: module
-description: 'Administration interface for Rules.'
-package: Rules
-core: 8.x
-dependencies:
-  - rules
-configure: entity.rules_reaction_rule.collection

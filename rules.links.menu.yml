@@ -1,6 +1,6 @@
-# Menu links for Rules UI.
+# Menu links for Rules.
 
-rules.ui.reactions:
+rules.reactions:
   title: 'Rules'
   route_name: entity.rules_reaction_rule.collection
   parent: system.admin_config_workflow

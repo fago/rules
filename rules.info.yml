@@ -3,3 +3,4 @@ type: module
 description: 'React on events and conditionally evaluate actions.'
 package: Rules
 core: 8.x
+configure: entity.rules_reaction_rule.collection

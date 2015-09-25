@@ -1,19 +1,19 @@
-# Menu tasks for Rules UI.
+# Menu tasks for Rules.
 
-rules.ui.reactions:
+rules.reactions:
   title: 'Reaction rules'
   route_name: entity.rules_reaction_rule.collection
   base_route: entity.rules_reaction_rule.collection
   weight: 1
 
-rules.ui.components:
+rules.components:
   title: 'Components'
   route_name: entity.rules_component.collection
   base_route: entity.rules_reaction_rule.collection
   weight: 2
 
-rules.ui.settings:
+rules.settings:
   title: 'Settings'
-  route_name: rules.ui.settings
+  route_name: rules.settings
   base_route: entity.rules_reaction_rule.collection
   weight: 3

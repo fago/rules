@@ -1,1 +1,82 @@
-# Currently all routes are declared in Rules UI.
+# Declaration of Rules routings.
+
+
+### Rules settings form
+rules.settings:
+  path: '/admin/config/workflow/rules/settings'
+  defaults:
+    _controller: '\Drupal\rules\Controller\RulesController::settingsForm'
+    _title: 'Rules settings'
+  requirements:
+    _permission: 'administer rules'
+
+
+### Rules Reactions
+entity.rules_reaction_rule.collection:
+  path: '/admin/config/workflow/rules'
+  defaults:
+    _entity_list: 'rules_reaction_rule'
+    _title: 'Rules'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+entity.rules_reaction_rule.add_form:
+  path: '/admin/config/workflow/rules/reactions/add'
+  defaults:
+    _entity_form: 'rules_reaction_rule.add'
+    _title: 'Add reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+entity.rules_reaction_rule.edit_form:
+  path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}'
+  defaults:
+    _entity_form: 'rules_reaction_rule.edit'
+    _title: 'Edit reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+entity.rules_reaction_rule.delete_form:
+  path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}'
+  defaults:
+    _entity_form: 'rules_reaction_rule.delete'
+    _title: 'Delete reaction rule'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
+
+
+### Rules Components
+entity.rules_component.collection:
+  path: '/admin/config/workflow/rules/components'
+  defaults:
+  # Calls the list controller, defined in the annotation of the rules component entity.
+    _entity_list: 'rules_component'
+    _title: 'Rules components'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.add_form:
+  path: '/admin/config/workflow/rules/components/add'
+  defaults:
+    _entity_form: 'rules_component.add'
+    _title: 'Add component'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.edit_form:
+  path: '/admin/config/workflow/rules/components/edit/{rules_component}'
+  defaults:
+    _entity_form: 'rules_component.edit'
+    _title: 'Edit component'
+  requirements:
+    _permission: 'administer rules+administer rules components'
+
+entity.rules_component.delete_form:
+  path: '/admin/config/workflow/rules/components/delete/{rules_component}'
+  defaults:
+    _entity_form: 'rules_component.delete'
+    _title: 'Delete component'
+  options:
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer rules+administer rules components'

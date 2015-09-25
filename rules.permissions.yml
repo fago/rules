@@ -1,9 +1,6 @@
 # Most of the time administrators will be able to administer both reactions,
 # components and settings. But permissions are split up in such a way it
 # should be possible to have 'light' and 'root' rules administrators.
-#
-# Permissions are declared in Rules (not Rules UI) so other contrib modules
-# can make use of it.
 administer rules:
   title: 'Administer Rules'
   description: 'Administer all Rules configurations and settings.'

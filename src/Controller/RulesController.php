@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Rules UI controller.
+ * Rules controller.
  */
 
-namespace Drupal\rules_ui\Controller;
+namespace Drupal\rules\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 
 /**
- * Returns responses for Rules UI routes.
+ * Returns responses for Rules routes.
  */
-class RulesUiController extends ControllerBase {
+class RulesController extends ControllerBase {
   /**
    * Returns the settings page.
    *
