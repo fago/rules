@@ -67,7 +67,9 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
         'entity_type_id' => $entity_type_id,
         'context' => [],
         'provides' => [
-          'entity' => new ContextDefinition("entity:$entity_type_id", $entity_type->getLabel()),
+          'entity' => ContextDefinition::create("entity:$entity_type_id")
+            ->setLabel($entity_type->getLabel())
+            ->setRequired(TRUE)
         ],
       ] + $base_plugin_definition;
       // Add a required context for the bundle key, and optional contexts for
@@ -82,9 +84,11 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
 
         $required = ($field_name == $bundle_key);
         $multiple = ($definition->getCardinality() === 1) ? FALSE : TRUE;
-        $this->derivatives["entity:$entity_type_id"]['context'][$field_name] = new ContextDefinition(
-          $definition->getType(), $definition->getLabel(), $required, $multiple, $definition->getDescription()
-        );
+        $this->derivatives["entity:$entity_type_id"]['context'][$field_name] = ContextDefinition::create($definition->getType())
+          ->setLabel($definition->getLabel())
+          ->setRequired($required)
+          ->setMultiple($multiple)
+          ->setDescription($definition->getDescription());
       }
     }
 
