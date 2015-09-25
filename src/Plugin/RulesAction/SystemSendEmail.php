@@ -8,8 +8,6 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Mail\MailManager;
-use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -99,16 +97,24 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
   }
 
   /**
-   * {@inheritdoc}
+   * Send a system email.
+   *
+   * @param string[] $to
+   *   Email addresses of the recipients.
+   * @param string $subject
+   *   Subject of the email.
+   * @param string $message
+   *   Email message text.
+   * @param string|null $reply
+   *   (optional) Reply to email address.
+   * @param \Drupal\Core\Language\LanguageInterface|null $language
+   *   (optional) Language code.
    */
-  public function execute() {
-    $to = $this->getContextValue('to');
-    $reply = $this->getContextValue('reply');
-    $language = $this->getContextValue('language');
+  protected function doExecute($to, $subject, $message, $reply = NULL, LanguageInterface $language = NULL) {
     $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_SITE_DEFAULT;
     $params = [
-      'subject' => $this->getContextValue('subject'),
-      'message' => $this->getContextValue('message'),
+      'subject' => $subject,
+      'message' => $message,
     ];
     // Set a unique key for this mail.
     $key = 'rules_action_mail_' . $this->getPluginId();
