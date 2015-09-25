@@ -37,12 +37,14 @@ use Drupal\Core\Entity\EntityInterface;
 class DataListContains extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Evaluate whether the list has the item.
+   *
+   * @param array|ListInterface $list
+   *   List to be searched.
+   * @param mixed $item
+   *   Item to be found in list.
    */
-  public function evaluate() {
-    $list = $this->getContextValue('list');
-    $item = $this->getContextValue('item');
-
+  protected function doEvaluate($list, $item) {
     if ($item instanceof EntityInterface && $id = $item->id()) {
       // Check for equal items using the identifier if there is one.
       foreach ($list as $list_item) {
