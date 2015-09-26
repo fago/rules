@@ -68,10 +68,12 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
   }
 
   /**
-   * {@inheritdoc}
+   * Delete an existing alias.
+   *
+   * @param string $alias
+   *   Alias to be deleted.
    */
-  public function execute() {
-    $alias = $this->getContextValue('alias');
+  protected function doExecute($alias) {
     $this->aliasStorage->delete(['alias' => $alias]);
   }
 
