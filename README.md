@@ -41,21 +41,21 @@ and a checkout of the Rules module in the modules folder.
 
 #### Unit tests only
 
-    cd /path/to/drupal-8/core
-    ./vendor/bin/phpunit ../modules/rules/tests/src/Unit
-    ./vendor/bin/phpunit ../modules/rules/tests/src/Integration
+    cd /path/to/drupal-8
+    ./vendor/bin/phpunit modules/rules/tests/src/Unit
+    ./vendor/bin/phpunit modules/rules/tests/src/Integration
 
 #### Unit test and kernel tests
 
 Make sure to use your DB connection details for the SIMPLETEST_DB.
 
-    cd /path/to/drupal-8/core
+    cd /path/to/drupal-8
     export SIMPLETEST_DB=mysql://drupal-8:password@localhost/drupal-8
-    ./vendor/bin/phpunit ../modules/rules
+    ./vendor/bin/phpunit modules/rules
 
 Example for executing one single test file during development:
 
-    ./vendor/bin/phpunit ../modules/rules/tests/src/Integration/Action/DataSetTest.php
+    ./vendor/bin/phpunit modules/rules/tests/src/Integration/Action/DataSetTest.php
 
 You can also execute the test cases from the web interface at
 ``/admin/config/development/testing``.
