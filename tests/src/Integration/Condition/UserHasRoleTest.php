@@ -51,7 +51,7 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
     $authenticated = $this->prophesize(RoleInterface::class);
     $authenticated->id()->willReturn('authenticated');
     $editor = $this->prophesize(RoleInterface::class);
-    $editor->id()->willReturn('authenticated');
+    $editor->id()->willReturn('editor');
     $administrator = $this->prophesize(RoleInterface::class);
     $administrator->id()->willReturn('administrator');
 

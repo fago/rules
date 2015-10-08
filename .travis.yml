@@ -43,10 +43,12 @@ before_script:
   # Download Drupal 8 core.
   - travis_retry git clone --branch 8.0.x --depth 1 http://git.drupal.org/project/drupal.git
   - cd drupal
+  # Apply context patch from https://www.drupal.org/node/2583135
+  - wget -q -O - https://www.drupal.org/files/issues/context-typed-data-2583135-2.patch | patch -p1
 
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
 
 script:
   # Run the PHPUnit tests which also include the kernel tests.
-  - ./core/vendor/phpunit/phpunit/phpunit -c ./core/phpunit.xml.dist ./modules/rules
+  - ./vendor/phpunit/phpunit/phpunit -c ./core/phpunit.xml.dist ./modules/rules

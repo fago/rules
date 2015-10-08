@@ -8,6 +8,7 @@
 namespace Drupal\rules\Context;
 
 use Drupal\Component\Utility\SafeMarkup;
+use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
@@ -54,7 +55,9 @@ trait ContextHandlerTrait {
             '@plugin' => $plugin->getPluginId(),
           ]));
         }
-        $plugin->getContext($name)->setContextData($typed_data);
+        $context = $plugin->getContext($name);
+        $new_context = Context::createFromContext($context, $typed_data);
+        $plugin->setContext($name, $new_context);
       }
       elseif (isset($this->configuration['context_values'])
         && array_key_exists($name, $this->configuration['context_values'])
@@ -67,7 +70,9 @@ trait ContextHandlerTrait {
           ]));
         }
 
-        $plugin->getContext($name)->setContextValue($this->configuration['context_values'][$name]);
+        $context = $plugin->getContext($name);
+        $new_context = Context::createFromContext($context, $this->configuration['context_values'][$name]);
+        $plugin->setContext($name, $new_context);
       }
       elseif ($definition->isRequired()) {
         throw new RulesEvaluationException(SafeMarkup::format('Required context @name is missing for plugin @plugin.', [
@@ -92,10 +97,10 @@ trait ContextHandlerTrait {
       // Avoid name collisions in the rules state: provided variables can be
       // renamed.
       if (isset($this->configuration['provides_mapping'][$name])) {
-        $state->addVariable($this->configuration['provides_mapping'][$name], $plugin->getProvidedContext($name));
+        $state->addVariable($this->configuration['provides_mapping'][$name], $plugin->getProvidedContext($name)->getContextData());
       }
       else {
-        $state->addVariable($name, $plugin->getProvidedContext($name));
+        $state->addVariable($name, $plugin->getProvidedContext($name)->getContextData());
       }
     }
   }

@@ -63,13 +63,13 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('field', 'potato-field')
       ->setContextValue('user', $account->reveal());
 
-    $this->entityAccess->access($entity->reveal(), 'view', Language::LANGCODE_DEFAULT, $account->reveal())
+    $this->entityAccess->access($entity->reveal(), 'view', $account->reveal())
       ->willReturn(TRUE)
       ->shouldBeCalledTimes(1);
-    $this->entityAccess->access($entity->reveal(), 'edit', Language::LANGCODE_DEFAULT, $account->reveal())
+    $this->entityAccess->access($entity->reveal(), 'edit', $account->reveal())
       ->willReturn(TRUE)
       ->shouldBeCalledTimes(1);
-    $this->entityAccess->access($entity->reveal(), 'delete', Language::LANGCODE_DEFAULT, $account->reveal())
+    $this->entityAccess->access($entity->reveal(), 'delete', $account->reveal())
       ->willReturn(FALSE)
       ->shouldBeCalledTimes(1);
 

@@ -52,7 +52,7 @@ function rules_user_logout($account) {
 /**
  * Implements hook_entity_view().
  */
-function rules_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode, $langcode) {
+function rules_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   // Only handle content entities and ignore config entities.
   if ($entity instanceof ContentEntityInterface) {
     $entity_type_id = $entity->getEntityTypeId();

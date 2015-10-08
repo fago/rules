@@ -85,11 +85,11 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
           // token service.
           if ($rules_state->hasVariable($var_name)) {
             $variable = $rules_state->getVariable($var_name);
-            $token_type = $variable->getContextDefinition()->getDataType();
+            $token_type = $variable->getDataDefinition()->getDataType();
             // The Token system does not know about "enity:" data type prefixes,
             // so we have to remove them.
             $token_type = str_replace('entity:', '', $token_type);
-            $data = [$token_type => $variable->getContextValue()];
+            $data = [$token_type => $variable->getValue()];
             $replacements += $this->tokenService->generate($token_type, $tokens, $data, ['sanitize' => FALSE], $bubbleable_metdata);
           }
           else {

@@ -40,7 +40,7 @@ interface ContextProviderInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *   If the requested provided context is not set.
    *
-   * @return \Drupal\Component\Plugin\Context\ContextInterface
+   * @return \Drupal\Core\Plugin\Context\ContextInterface
    *   The context object.
    */
   public function getProvidedContext($name);

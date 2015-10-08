@@ -77,7 +77,7 @@ class PathAliasExists extends RulesConditionBase implements ContainerFactoryPlug
    */
   public function evaluate() {
     $alias = $this->getContextValue('alias');
-    $language = $this->getContext('language')->getContextData() ? $this->getContextValue('language')->getId() : NULL;
+    $language = $this->getContext('language')->hasContextValue() ? $this->getContextValue('language')->getId() : NULL;
     $path = $this->aliasManager->getPathByAlias($alias, $language);
     return $path != $alias;
   }

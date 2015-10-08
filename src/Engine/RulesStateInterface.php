@@ -8,7 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\Core\Plugin\Context\ContextInterface;
+use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
  * Defines an interface for the rules state.
@@ -20,10 +20,10 @@ interface RulesStateInterface {
    *
    * @param string $name
    *   The variable name.
-   * @param \Drupal\Core\Plugin\Context\ContextInterface $context
-   *   The variable wrapped as context.
+   * @param \Drupal\Core\TypedData\TypedDataInterface $data
+   *   The variable wrapped as typed data.
    */
-  public function addVariable($name, ContextInterface $context);
+  public function addVariable($name, TypedDataInterface $data);
 
   /**
    * Gets a variable.
@@ -31,8 +31,8 @@ interface RulesStateInterface {
    * @param string $name
    *   The name of the variable to return.
    *
-   * @return \Drupal\Core\Plugin\Context\ContextInterface
-   *   The variable wrapped as context.
+   * @return \Drupal\Core\TypedData\TypedDataInterface
+   *   The variable wrapped as typed data.
    *
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   Throws a RulesEvaluationException if the variable does not exist in the

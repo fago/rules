@@ -42,7 +42,7 @@ class UserHasRole extends RulesConditionBase {
   public function evaluate() {
     $account = $this->getContextValue('user');
     $roles = $this->getContextValue('roles');
-    $operation = $this->getContext('operation')->getContextData() ? $this->getContextValue('operation') : 'AND';
+    $operation = $this->getContext('operation')->hasContextValue() ? $this->getContextValue('operation') : 'AND';
 
     $rids = array_map(function ($role) {
       return $role->id();
