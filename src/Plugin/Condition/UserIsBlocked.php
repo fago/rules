@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\rules\Core\RulesConditionBase;
+use Drupal\user\UserInterface;
 
 /**
  * Provides a 'User is blocked' condition.
@@ -28,10 +29,15 @@ use Drupal\rules\Core\RulesConditionBase;
 class UserIsBlocked extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Check if user is blocked.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   The account to check.
+   *
+   * @return bool
+   *   TRUE if the account is blocked.
    */
-  public function evaluate() {
-    $account = $this->getContextValue('user');
+  public function doEvaluate(UserInterface $account) {
     return $account->isBlocked();
   }
 
