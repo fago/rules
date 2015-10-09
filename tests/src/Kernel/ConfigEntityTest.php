@@ -38,7 +38,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
   public function testSavingEmptyRule() {
     $rule = $this->expressionManager->createRule();
     $config_entity = $this->storage->create([
-      'id' => 'test_rule'
+      'id' => 'test_rule',
     ])->setExpression($rule);
     $config_entity->save();
   }
@@ -49,7 +49,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
   public function testConfigAction() {
     $action = $this->expressionManager->createAction('rules_test_log');
     $config_entity = $this->storage->create([
-      'id' => 'test_rule'
+      'id' => 'test_rule',
     ])->setExpression($action);
     $config_entity->save();
 
@@ -76,7 +76,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $rule->addAction('rules_test_log');
 
     $config_entity = $this->storage->create([
-      'id' => 'test_rule'
+      'id' => 'test_rule',
     ])->setExpression($rule);
     $config_entity->save();
 
@@ -97,12 +97,12 @@ class ConfigEntityTest extends RulesDrupalTestBase {
       'context_definitions' => [
         'test' => ContextDefinition::create('string')
           ->setLabel('Test string')
-          ->toArray()
+          ->toArray(),
       ],
     ]);
 
     $config_entity = $this->storage->create([
-      'id' => 'test_rule'
+      'id' => 'test_rule',
     ])->setExpression($rule);
     $config_entity->save();
 
@@ -121,7 +121,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $rule = $this->expressionManager->createReactionRule();
     $storage = $this->container->get('entity.manager')->getStorage('rules_reaction_rule');
     $config_entity = $storage->create([
-      'id' => 'test_rule'
+      'id' => 'test_rule',
     ])->setExpression($rule);
     $config_entity->save();
   }

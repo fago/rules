@@ -7,10 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
-use Drupal\Core\Session\SessionManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides "Unblock User" action.

@@ -28,4 +28,5 @@ class RulesActionManagerTest extends RulesIntegrationTestBase {
       }
     }
   }
+
 }

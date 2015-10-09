@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
@@ -16,7 +15,6 @@ use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\ExpressionManager;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;

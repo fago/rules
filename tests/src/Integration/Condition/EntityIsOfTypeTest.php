@@ -52,4 +52,5 @@ class EntityIsOfTypeTest extends RulesEntityIntegrationTestBase {
     $this->condition->setContextValue('type', 'taxonomy_term');
     $this->assertFalse($this->condition->evaluate());
   }
+
 }

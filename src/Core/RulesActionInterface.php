@@ -45,4 +45,5 @@ interface RulesActionInterface extends ExecutableInterface, ContextAwarePluginIn
    *   access is either explicitly forbidden or "no opinion".
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE);
+
 }

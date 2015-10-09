@@ -10,7 +10,6 @@ namespace Drupal\Tests\rules\Integration\Condition;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Language\Language;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 use Drupal\user\UserInterface;
 
@@ -90,4 +89,5 @@ class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
     $this->condition->setContextValue('operation', 'delete');
     $this->assertFalse($this->condition->evaluate());
   }
+
 }

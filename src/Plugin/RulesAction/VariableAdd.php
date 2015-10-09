@@ -34,4 +34,5 @@ class VariableAdd extends RulesActionBase {
   public function execute() {
     $this->setProvidedValue('variable_added', $this->getContext('value')->getContextValue());
   }
+
 }

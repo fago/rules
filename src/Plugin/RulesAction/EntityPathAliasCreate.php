@@ -84,4 +84,5 @@ class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryP
     $langcode = $entity->language()->getId();
     $this->aliasStorage->save($path, $alias, $langcode);
   }
+
 }

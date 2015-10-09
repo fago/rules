@@ -203,7 +203,7 @@ class RuleTest extends RulesUnitTestBase {
       'context_definitions' => [
         'node' => ContextDefinition::create('entity:node')
           ->setLabel('node')
-          ->toArray()
+          ->toArray(),
       ],
     ], 'rules_rule', [], $this->expressionManager->reveal());
     $context_definition = $rule->getContextDefinition('node');
@@ -218,7 +218,7 @@ class RuleTest extends RulesUnitTestBase {
       'provided_definitions' => [
         'node' => ContextDefinition::create('entity:node')
           ->setLabel('node')
-          ->toArray()
+          ->toArray(),
       ],
     ], 'rules_rule', [], $this->expressionManager->reveal());
     $provided_definition = $rule->getProvidedContextDefinition('node');

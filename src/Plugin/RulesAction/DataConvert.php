@@ -66,12 +66,15 @@ class DataConvert extends RulesActionBase {
         case 'up':
           $value = ceil($value);
           break;
+
         case 'down':
           $value = floor($value);
           break;
+
         case 'round':
           $value = round($value);
           break;
+
         default:
           throw new \InvalidArgumentException(SafeMarkup::format('Unknown rounding behavior: @rounding_behavior', [
             '@rounding_behavior' => $rounding_behavior,
@@ -83,12 +86,15 @@ class DataConvert extends RulesActionBase {
       case 'float':
         $result = floatval($value);
         break;
+
       case 'integer':
         $result = intval($value);
         break;
+
       case 'string':
         $result = strval($value);
         break;
+
       default:
         throw new \InvalidArgumentException(SafeMarkup::format('Unknown target type: @type', [
           '@type' => $target_type,
@@ -97,4 +103,5 @@ class DataConvert extends RulesActionBase {
 
     $this->setProvidedValue('conversion_result', $result);
   }
+
 }

@@ -92,7 +92,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     // If the plugin id has been set already, keep it if not specified.
     if (isset($this->configuration['condition_id'])) {
       $configuration += [
-        'condition_id' => $this->configuration['condition_id']
+        'condition_id' => $this->configuration['condition_id'],
       ];
     }
     return parent::setConfiguration($configuration);

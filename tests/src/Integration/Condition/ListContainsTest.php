@@ -39,8 +39,8 @@ class ListContainsTest extends RulesIntegrationTestBase {
    */
   public function testConditionEvaluation() {
 
-    // Test array of string values
-    $list = ['One','Two','Three'];
+    // Test array of string values.
+    $list = ['One', 'Two', 'Three'];
 
     // Test that the list doesn't contain 'Zero'.
     $this->condition
@@ -72,7 +72,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
       ->setContextValue('item', 'Four');
     $this->assertFalse($this->condition->evaluate());
 
-    // Create array of mock entities
+    // Create array of mock entities.
     $entity_zero = $this->prophesizeEntity(EntityInterface::class);
     $entity_zero->id()->willReturn('entity_zero_id');
 
@@ -88,7 +88,7 @@ class ListContainsTest extends RulesIntegrationTestBase {
     $entity_four = $this->prophesizeEntity(EntityInterface::class);
     $entity_four->id()->willReturn('entity_four_id');
 
-    // Test array of entities
+    // Test array of entities.
     $entity_list = [$entity_one->reveal(), $entity_two->reveal(), $entity_three->reveal()];
 
     // Test that the list of entities doesn't contain entity 'entity_zero'.
@@ -121,4 +121,5 @@ class ListContainsTest extends RulesIntegrationTestBase {
       ->setContextValue('item', $entity_four->reveal());
     $this->assertFalse($this->condition->evaluate());
   }
+
 }

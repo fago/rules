@@ -201,7 +201,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
    * @return \Drupal\Core\TypedData\TypedDataInterface
    *   The created object.
    */
-  protected function getTypedData($data_type, $value)  {
+  protected function getTypedData($data_type, $value) {
     $definition = $this->typedDataManager->createDataDefinition($data_type);
     $data = $this->typedDataManager->create($definition);
     $data->setValue($value);

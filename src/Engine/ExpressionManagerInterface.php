@@ -73,4 +73,5 @@ interface ExpressionManagerInterface extends PluginManagerInterface {
    *   The created 'or' condition container.
    */
   public function createOr();
+
 }

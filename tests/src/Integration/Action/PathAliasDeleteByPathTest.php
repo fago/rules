@@ -68,4 +68,5 @@ class PathAliasDeleteByPathTest extends RulesIntegrationTestBase {
 
     $this->action->execute();
   }
+
 }

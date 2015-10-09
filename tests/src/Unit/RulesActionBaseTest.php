@@ -20,6 +20,7 @@ class RulesActionBaseTest extends RulesUnitTestBase {
    * Tests that a missing label throwa an exception.
    *
    * @expectedException \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *
    * @covers ::summary
    */
   public function testSummaryThrowingException() {

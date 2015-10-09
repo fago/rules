@@ -206,7 +206,6 @@ class RulesComponent extends ConfigEntityBase {
 
     // @todo Handle dependencies of plugins that are provided by various modules
     //   here.
-
     return $this->dependencies;
   }
 

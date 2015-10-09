@@ -35,4 +35,5 @@ class EntityIsNew extends RulesConditionBase {
     $provided_entity = $this->getContextValue('entity');
     return $provided_entity->isNew();
   }
+
 }

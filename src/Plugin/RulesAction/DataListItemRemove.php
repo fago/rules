@@ -45,4 +45,5 @@ class DataListItemRemove extends RulesActionBase {
 
     $this->setContextValue('list', $list);
   }
+
 }

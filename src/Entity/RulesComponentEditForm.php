@@ -30,4 +30,5 @@ class RulesComponentEditForm extends RulesComponentFormBase {
     parent::save($form, $form_state);
     drupal_set_message($this->t('Component %label has been updated.', ['%label' => $this->entity->label()]));
   }
+
 }

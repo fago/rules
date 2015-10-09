@@ -10,7 +10,6 @@ namespace Drupal\Tests\rules\Integration\Action;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
-use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserRoleRemove
@@ -96,4 +95,5 @@ class UserRoleRemoveTest extends RulesEntityIntegrationTestBase {
 
     $this->assertNotEquals($this->action->autoSaveContext(), ['user'], 'Action returns the user context name for auto saving.');
   }
+
 }

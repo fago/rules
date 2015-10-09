@@ -27,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class TokenProcessor extends PluginBase implements DataProcessorInterface, ContainerFactoryPluginInterface {
 
   /**
-   * The token service
+   * The token service.
    *
    * @var Token
    */

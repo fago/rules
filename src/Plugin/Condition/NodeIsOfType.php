@@ -38,4 +38,5 @@ class NodeIsOfType extends RulesConditionBase {
     $types = $this->getContextValue('types');
     return in_array($node->getType(), $types);
   }
+
 }

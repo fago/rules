@@ -9,7 +9,6 @@ namespace Drupal\rules\Entity\Controller;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
-use Drupal\Core\Url;
 
 /**
  * Defines a class to build a listing of RulesComponent entities.

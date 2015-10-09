@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\ExpressionBase
+ * Contains \Drupal\rules\Engine\ExpressionBase.
  */
 
 namespace Drupal\rules\Engine;

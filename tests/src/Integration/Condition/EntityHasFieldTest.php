@@ -54,4 +54,5 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
     $this->condition->setContextValue('field', 'non-existing-field');
     $this->assertFalse($this->condition->evaluate());
   }
+
 }

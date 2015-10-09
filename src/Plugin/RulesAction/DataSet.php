@@ -29,6 +29,7 @@ use Drupal\rules\Core\RulesActionBase;
  *     )
  *   }
  * )
+ *
  * @todo Add various input restrictions: selector on 'data'.
  * @todo 'allow NULL' for both 'data' and 'value'?
  */

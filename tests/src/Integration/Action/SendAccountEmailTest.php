@@ -60,6 +60,7 @@ namespace Drupal\Tests\rules\Integration\Action {
       $notifications = _user_mail_notify();
       $this->assertSame([$mail_type => 1], $notifications);
     }
+
   }
 
 }

@@ -57,4 +57,5 @@ class DataListItemRemoveTest extends RulesIntegrationTestBase {
     // The second item should be removed from the list.
     $this->assertArrayEquals(['One', 'Three'], array_values($this->action->getContextValue('list')));
   }
+
 }

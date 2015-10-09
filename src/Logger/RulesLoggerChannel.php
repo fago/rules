@@ -8,7 +8,6 @@
 namespace Drupal\rules\Logger;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Logger\LoggerChannel;
 use Psr\Log\LoggerTrait;
 

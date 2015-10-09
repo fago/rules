@@ -90,7 +90,7 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
     $storage = $this->entityManager->getStorage($entity_type_id);
     $entity = $storage->load($entity_id);
     // @todo Refine the provided context definition for 'entity'. Example: if
-    //  the loaded entity is a node then the provided context definition should
+    //   the loaded entity is a node then the provided context definition should
     //  use the type node. We don't have an API for that yet.
     $this->setProvidedValue('entity', $entity);
   }

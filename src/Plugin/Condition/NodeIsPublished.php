@@ -34,4 +34,5 @@ class NodeIsPublished extends RulesConditionBase {
     $node = $this->getContextValue('node');
     return $node->isPublished();
   }
+
 }

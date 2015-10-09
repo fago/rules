@@ -84,4 +84,5 @@ class RulesAndTest extends RulesUnitTestBase {
 
     $this->assertFalse($this->and->execute(), 'Two false conditions return FALSE.');
   }
+
 }

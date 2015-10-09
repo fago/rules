@@ -60,4 +60,5 @@ class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('bundle', 'page');
     $this->assertFalse($this->condition->evaluate());
   }
+
 }

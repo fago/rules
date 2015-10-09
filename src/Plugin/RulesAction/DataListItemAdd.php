@@ -53,7 +53,7 @@ class DataListItemAdd extends RulesActionBase {
     $unique = ($this->getContextValue('unique') ? $this->getContextValue('unique') : FALSE);
     // Optionally, only add the list item if it is not yet contained.
     if (!((bool) $unique && in_array($item, $list))) {
-      if ($position === 'start' ) {
+      if ($position === 'start') {
         array_unshift($list, $item);
       }
       else {
@@ -62,4 +62,5 @@ class DataListItemAdd extends RulesActionBase {
     }
     $this->setContextValue('list', $list);
   }
+
 }

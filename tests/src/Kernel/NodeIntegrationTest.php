@@ -100,20 +100,20 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     // auto saving.
     // @see \Drupal\rules_test\Plugin\RulesAction\TestNodeAction
     $action = $this->expressionManager->createAction('rules_test_node')
-    ->setConfiguration([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('Node')
-          ->toArray(),
-        'title' => ContextDefinition::create('string')
-          ->setLabel('Title')
-          ->toArray(),
-      ]
-    ] + ContextConfig::create()
+      ->setConfiguration([
+        'context_definitions' => [
+          'node' => ContextDefinition::create('entity:node')
+            ->setLabel('Node')
+            ->toArray(),
+          'title' => ContextDefinition::create('string')
+            ->setLabel('Title')
+            ->toArray(),
+        ],
+      ] + ContextConfig::create()
         ->map('node', 'node')
         ->map('title', 'title')
         ->toArray()
-    );
+      );
 
     $action->setContextValue('node', $node);
     $action->setContextValue('title', 'new title');

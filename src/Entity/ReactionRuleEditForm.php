@@ -30,4 +30,5 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
     parent::save($form, $form_state);
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
   }
+
 }

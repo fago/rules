@@ -44,4 +44,5 @@ class EntityIsNewTest extends RulesEntityIntegrationTestBase {
     $this->condition->setContextValue('entity', $entity->reveal());
     $this->assertTrue($this->condition->evaluate());
   }
+
 }

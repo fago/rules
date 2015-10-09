@@ -79,7 +79,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
     // If the plugin id has been set already, keep it if not specified.
     if (isset($this->configuration['action_id'])) {
       $configuration += [
-        'action_id' => $this->configuration['action_id']
+        'action_id' => $this->configuration['action_id'],
       ];
     }
     return parent::setConfiguration($configuration);

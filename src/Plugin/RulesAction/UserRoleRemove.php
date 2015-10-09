@@ -26,7 +26,6 @@ use Drupal\rules\Core\RulesActionBase;
  *     )
  *   }
  * )
- *
  */
 class UserRoleRemove extends RulesActionBase {
 
@@ -69,5 +68,5 @@ class UserRoleRemove extends RulesActionBase {
     }
     return [];
   }
-}
 
+}

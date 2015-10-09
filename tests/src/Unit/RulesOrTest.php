@@ -85,4 +85,5 @@ class RulesOrTest extends RulesUnitTestBase {
 
     $this->assertFalse($this->or->execute(), 'Two false conditions return FALSE.');
   }
+
 }

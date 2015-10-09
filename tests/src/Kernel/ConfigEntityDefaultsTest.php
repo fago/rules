@@ -29,7 +29,7 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   public static $modules = ['rules', 'rules_test_default_component', 'user', 'system'];
 
   /**
-   * Disable strict config schema checking for now
+   * Disable strict config schema checking for now.
    *
    * @todo: Fix once config schema has been improved.
    *

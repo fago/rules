@@ -25,7 +25,7 @@ class AutoSaveTest extends RulesEntityIntegrationTestBase {
   public function testActionAutoSave() {
     $rule = $this->rulesExpressionManager->createRule([
       'context_definitions' => [
-        'entity' => ContextDefinition::create('entity')->toArray()
+        'entity' => ContextDefinition::create('entity')->toArray(),
       ],
     ]);
     // Just leverage the entity save action, which by default uses auto-saving.

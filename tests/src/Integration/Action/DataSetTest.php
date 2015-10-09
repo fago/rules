@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\rules\Integration\Action;
 
-use Drupal\rules\Core\RulesActionInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 

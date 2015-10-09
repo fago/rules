@@ -74,4 +74,5 @@ class PathAliasDeleteByAlias extends RulesActionBase implements ContainerFactory
     $alias = $this->getContextValue('alias');
     $this->aliasStorage->delete(['alias' => $alias]);
   }
+
 }

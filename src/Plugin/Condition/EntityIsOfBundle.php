@@ -50,4 +50,5 @@ class EntityIsOfBundle extends RulesConditionBase {
     // values.
     return $entity_bundle == $specified_bundle && $entity_type == $specified_type;
   }
+
 }

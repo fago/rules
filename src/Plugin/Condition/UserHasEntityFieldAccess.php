@@ -9,7 +9,6 @@ namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -97,4 +96,5 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
     $items = $entity->get($field);
     return $access->fieldAccess($operation, $definition, $account, $items);
   }
+
 }

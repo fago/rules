@@ -134,4 +134,5 @@ class DataCalculateValueTest extends RulesIntegrationTestBase {
     $result = $this->action->getProvidedContext('result')->getContextValue();
     $this->assertEquals(max($input_1, $input_2), $result, "Max calculation correct");
   }
+
 }

@@ -67,7 +67,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
       'context_definitions' => [
         'test' => ContextDefinition::create('string')
           ->setLabel('Test string')
-          ->toArray()
+          ->toArray(),
       ],
     ]);
 

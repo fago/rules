@@ -43,4 +43,5 @@ class EntityIsOfType extends RulesConditionBase {
     // Check to see whether the entity's type matches the specified value.
     return $entity_type == $specified_type;
   }
+
 }

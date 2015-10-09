@@ -28,4 +28,5 @@ class ConditionManagerTest extends RulesIntegrationTestBase {
       }
     }
   }
+
 }
