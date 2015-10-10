@@ -37,7 +37,7 @@ class UserIsBlocked extends RulesConditionBase {
    * @return bool
    *   TRUE if the account is blocked.
    */
-  public function doEvaluate(UserInterface $account) {
+  protected function doEvaluate(UserInterface $account) {
     return $account->isBlocked();
   }
 
