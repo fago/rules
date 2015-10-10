@@ -10,6 +10,8 @@ namespace Drupal\rules\Plugin\Condition;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -76,25 +78,34 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
   }
 
   /**
-   * {@inheritdoc}
+   * Evaluate if the user has access to the field of an entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The entity to check access on.
+   * @param string $field
+   *   The name of the field to check access on.
+   * @param string $operation
+   *   The operation access should be checked for. Usually one of "view" or
+   *   "edit".
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The user account to test access against.
+   *
+   * @return bool
+   *   TRUE if the user has access to the field on the entity, FALSE otherwise.
    */
-  public function evaluate() {
-    $entity = $this->getContextValue('entity');
-    $field = $this->getContextValue('field');
+  protected function doEvaluate(ContentEntityInterface $entity, $field, $operation, AccountInterface $user) {
     if (!$entity->hasField($field)) {
       return FALSE;
     }
 
-    $operation = $this->getContextValue('operation');
-    $account = $this->getContextValue('user');
     $access = $this->entityManager->getAccessControlHandler($entity->getEntityTypeId());
-    if (!$access->access($entity, $operation, $account)) {
+    if (!$access->access($entity, $operation, $user)) {
       return FALSE;
     }
 
     $definition = $entity->getFieldDefinition($field);
     $items = $entity->get($field);
-    return $access->fieldAccess($operation, $definition, $account, $items);
+    return $access->fieldAccess($operation, $definition, $user, $items);
   }
 
 }
