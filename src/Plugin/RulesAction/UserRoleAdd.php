@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\user\UserInterface;
 
 /**
  * Provides a 'Add user role' action.
@@ -40,11 +41,14 @@ class UserRoleAdd extends RulesActionBase {
   protected $saveLater = FALSE;
 
   /**
-   * {@inheritdoc}
+   * Assign role to a user.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   User object.
+   * @param \Drupal\user\RoleInterface[] $roles
+   *   Array of UserRoles to assign.
    */
-  public function execute() {
-    $account = $this->getContextValue('user');
-    $roles = $this->getContextValue('roles');
+  protected function doExecute(UserInterface $account, array $roles) {
     foreach ($roles as $role) {
       // Skip adding the role to the user if they already have it.
       if (!$account->hasRole($role->id())) {
