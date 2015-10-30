@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesConditionBase;
 
 /**
@@ -37,18 +38,25 @@ use Drupal\rules\Core\RulesConditionBase;
 class EntityIsOfBundle extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Check if a provided entity is of a specific type and bundle.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check the bundle and type of.
+   * @param string $type
+   *   The type to check for.
+   * @param string $bundle
+   *   The bundle to check for.
+   *
+   * @return bool
+   *   TRUE if the provided entity is of the provided type and bundle.
    */
-  public function evaluate() {
-    $provided_entity = $this->getContextValue('entity');
-    $specified_type = $this->getContextValue('type');
-    $specified_bundle = $this->getContextValue('bundle');
-    $entity_type = $provided_entity->getEntityTypeId();
-    $entity_bundle = $provided_entity->bundle();
+  protected function doEvaluate(EntityInterface $entity, $type, $bundle) {
+    $entity_type = $entity->getEntityTypeId();
+    $entity_bundle = $entity->bundle();
 
     // Check to see whether the entity's bundle and type match the specified
     // values.
-    return $entity_bundle == $specified_bundle && $entity_type == $specified_type;
+    return $entity_bundle == $bundle && $entity_type == $type;
   }
 
 }
