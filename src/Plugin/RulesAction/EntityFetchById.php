@@ -86,7 +86,7 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
    * @param int $entity_id
    *   The entity id.
    */
-  public function doExecute($entity_type_id, $entity_id) {
+  protected function doExecute($entity_type_id, $entity_id) {
     $storage = $this->entityManager->getStorage($entity_type_id);
     $entity = $storage->load($entity_id);
     // @todo Refine the provided context definition for 'entity'. Example: if

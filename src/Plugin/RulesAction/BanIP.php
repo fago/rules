@@ -90,7 +90,7 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
    * @param string $ip
    *   (optional) The IP address that should be banned.
    */
-  public function doExecute($ip = NULL) {
+  protected function doExecute($ip = NULL) {
     if (!isset($ip)) {
       $ip = $this->request->getClientIp();
     }
