@@ -40,13 +40,19 @@ use Drupal\rules\Core\RulesConditionBase;
 class DataListCountIs extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Compare the value to the count of the list.
+   *
+   * @param array $list
+   *   The list to compare the value to.
+   * @param string $operator
+   *   The type of comparison to do, may be one of '==', '<', or '>'.
+   * @param int $value
+   *   The value of that the count is to compare to.
+   *
+   * @return bool
+   *   TRUE if the comparison returns true.
    */
-  public function evaluate() {
-    $list = $this->getContextValue('list');
-    $operator = $this->getContextValue('operator');
-    $value = $this->getContextValue('value');
-
+  protected function doEvaluate($list, $operator, $value) {
     switch ($operator) {
       case '==':
         return count($list) == $value;
