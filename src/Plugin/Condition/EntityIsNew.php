@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesConditionBase;
 
 /**
@@ -29,11 +30,16 @@ use Drupal\rules\Core\RulesConditionBase;
 class EntityIsNew extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Check if the provided entity is new.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to check.
+   *
+   * @return bool
+   *   TRUE if the provided entity is new.
    */
-  public function evaluate() {
-    $provided_entity = $this->getContextValue('entity');
-    return $provided_entity->isNew();
+  protected function doEvaluate(EntityInterface $entity) {
+    return $entity->isNew();
   }
 
 }
