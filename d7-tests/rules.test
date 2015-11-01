@@ -1400,7 +1400,7 @@ class RulesIntegrationTestCase extends DrupalWebTestCase {
 
     $node = $this->drupalCreateNode(array('title' => 'foo'));
     $rule->execute($node);
-    $this->assertEqual($node->title, 'bar', "Data comparision using IN operation evaluates to TRUE.");
+    $this->assertEqual($node->title, 'bar', "Data comparison using IN operation evaluates to TRUE.");
 
 
     // Test Condition: Data is empty.

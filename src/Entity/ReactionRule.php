@@ -210,7 +210,7 @@ class ReactionRule extends ConfigEntityBase {
   public function calculateDependencies() {
     parent::calculateDependencies();
 
-    // Ensure that the Reaction rule is dependant on the module that
+    // Ensure that the Reaction rule is dependent on the module that
     // implements the component.
     $this->addDependency('module', $this->module);
 

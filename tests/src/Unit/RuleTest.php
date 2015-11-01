@@ -196,7 +196,7 @@ class RuleTest extends RulesUnitTestBase {
   }
 
   /**
-   * Tests that a context definiton object is created from configuration.
+   * Tests that a context definition object is created from configuration.
    */
   public function testContextDefinitionFromConfig() {
     $rule = new Rule([
