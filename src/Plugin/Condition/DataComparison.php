@@ -24,6 +24,7 @@ use Drupal\rules\Core\RulesConditionBase;
  *     "operator" = @ContextDefinition("string",
  *       label = @Translation("Operator"),
  *       description = @Translation("The comparison operator."),
+ *       default_value = "==",
  *       required = FALSE
  *     ),
  *     "value" = @ContextDefinition("any",
@@ -39,13 +40,25 @@ use Drupal\rules\Core\RulesConditionBase;
 class DataComparison extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Evaluate the data comparison.
+   *
+   * @param mixed $data
+   *   Supplied data to test.
+   * @param string $operator
+   *   Data comparison operator. Typically one of:
+   *     - "=="
+   *     - "<"
+   *     - ">"
+   *     - "contains" (for strings or arrays)
+   *     - "IN" (for arrays or lists).
+   * @param mixed $value
+   *   The value to be compared against $data.
+   *
+   * @return bool
+   *   The evaluation of the condition.
    */
-  public function evaluate() {
-    $data = $this->getContextValue('data');
-    $operator = $this->getContext('operator')->getContextData() ? $this->getContextValue('operator') : '==';
-    $value = $this->getContextValue('value');
-
+  protected function doEvaluate($data, $operator, $value) {
+    $operator = $operator ? $operator : '==';
     switch ($operator) {
       case '<':
         return $data < $value;
