@@ -12,6 +12,8 @@ use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * Base class for testing Rules Event definitions.
+ *
+ * @group rules_events
  */
 abstract class EventTestBase extends RulesEntityIntegrationTestBase {
 

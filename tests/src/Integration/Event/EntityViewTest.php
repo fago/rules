@@ -11,6 +11,8 @@ namespace Drupal\Tests\rules\Integration\Event;
  * Checks that the entity view events are defined.
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityViewDeriver
+ *
+ * @group rules_events
  */
 class EntityViewTest extends EventTestBase {
 

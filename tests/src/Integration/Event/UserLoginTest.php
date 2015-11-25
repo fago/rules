@@ -9,6 +9,8 @@ namespace Drupal\Tests\rules\Integration\Event;
 
 /**
  * Checks that the event "rules_user_login" is correctly defined.
+ *
+ * @group rules_events
  */
 class UserLoginTest extends EventTestBase {
 

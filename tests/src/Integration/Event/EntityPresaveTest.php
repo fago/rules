@@ -11,6 +11,8 @@ namespace Drupal\Tests\rules\Integration\Event;
  * Checks that the entity presave events are defined.
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityPresaveDeriver
+ *
+ * @group rules_events
  */
 class EntityPresaveTest extends EventTestBase {
 

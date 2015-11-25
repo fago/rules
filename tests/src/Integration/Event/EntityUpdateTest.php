@@ -11,6 +11,8 @@ namespace Drupal\Tests\rules\Integration\Event;
  * Checks that the entity update events are defined.
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityUpdateDeriver
+ *
+ * @group rules_events
  */
 class EntityUpdateTest extends EventTestBase {
 

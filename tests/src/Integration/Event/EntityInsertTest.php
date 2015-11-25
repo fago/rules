@@ -11,6 +11,8 @@ namespace Drupal\Tests\rules\Integration\Event;
  * Checks that the entity insert events are defined.
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityInsertDeriver
+ *
+ * @group rules_events
  */
 class EntityInsertTest extends EventTestBase {
 

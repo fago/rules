@@ -11,6 +11,8 @@ namespace Drupal\Tests\rules\Integration\Event;
  * Checks that the entity delete events are defined.
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver
+ *
+ * @group rules_events
  */
 class EntityDeleteTest extends EventTestBase {
 
