@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\node\NodeInterface;
 use Drupal\rules\Core\RulesConditionBase;
 
 /**
@@ -31,11 +32,17 @@ use Drupal\rules\Core\RulesConditionBase;
 class NodeIsOfType extends RulesConditionBase {
 
   /**
-   * {@inheritdoc}
+   * Check if a node is of a specific set of types.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node to check for a type.
+   * @param string[] $types
+   *   An array of type names as strings.
+   *
+   * @return bool
+   *   TRUE if the node type is in the array of types.
    */
-  public function evaluate() {
-    $node = $this->getContextValue('node');
-    $types = $this->getContextValue('types');
+  protected function doEvaluate(NodeInterface $node, array $types) {
     return in_array($node->getType(), $types);
   }
 
