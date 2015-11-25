@@ -51,14 +51,26 @@ class RulesState implements RulesStateInterface {
   protected $currentlyBlocked;
 
   /**
-   * Creates a new RulesState object.
+   * Creates the object.
    *
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $variables
-   *   Variables to initialize this state with (optional).
+   *   (optional) Variables to initialize this state with.
+   *
+   * @return static
    */
-  public function __construct($variables = []) {
-    $this->variables = $variables;
+  public static function create($variables = []) {
+    return new static($variables);
     // @todo Initialize the global "site" variable.
+  }
+
+  /**
+   * Constructs the object.
+   *
+   * @param \Drupal\Core\TypedData\TypedDataInterface[] $variables
+   *   (optional) Variables to initialize this state with.
+   */
+  protected function __construct($variables) {
+    $this->variables = $variables;
   }
 
   /**
@@ -156,6 +168,7 @@ class RulesState implements RulesStateInterface {
    */
   public function saveChangesLater($selector) {
     $this->saveLater[$selector] = TRUE;
+    return $this;
   }
 
   /**
@@ -174,6 +187,7 @@ class RulesState implements RulesStateInterface {
         $typed_data->getRoot()->getValue()->save();
       }
     }
+    return $this;
   }
 
 }

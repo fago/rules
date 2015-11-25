@@ -22,6 +22,8 @@ interface RulesStateInterface {
    *   The variable name.
    * @param \Drupal\Core\TypedData\TypedDataInterface $data
    *   The variable wrapped as typed data.
+   *
+   * @return static
    */
   public function addVariable($name, TypedDataInterface $data);
 
@@ -75,11 +77,15 @@ interface RulesStateInterface {
    * @param string $selector
    *   The data selector that specifies the target object to be saved. Example:
    *   node:uid:entity.
+   *
+   * @return static
    */
   public function saveChangesLater($selector);
 
   /**
    * Saves all variables that have been marked for auto saving.
+   *
+   * @return static
    */
   public function autoSave();
 

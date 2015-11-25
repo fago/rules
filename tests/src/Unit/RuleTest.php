@@ -8,13 +8,16 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
+use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 use Drupal\rules\Plugin\RulesExpression\RulesOr;
 use Drupal\rules\Plugin\RulesExpression\ActionSet;
 use Prophecy\Argument;
+use Prophecy\Prophecy\MethodProphecy;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
@@ -196,33 +199,23 @@ class RuleTest extends RulesUnitTestBase {
   }
 
   /**
-   * Tests that a context definition object is created from configuration.
+   * Tests executing a rule given some context.
    */
-  public function testContextDefinitionFromConfig() {
-    $rule = new Rule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('node')
-          ->toArray(),
-      ],
-    ], 'rules_rule', [], $this->expressionManager->reveal());
-    $context_definition = $rule->getContextDefinition('node');
-    $this->assertSame($context_definition->getDataType(), 'entity:node');
-  }
+  public function testRuleExecutionWithContext() {
+    $rule = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
+    $expression = $this->prophesize(ExpressionInterface::class);
+    $prophecy = $expression->executeWithState(Argument::any());
+    /** @var $prophecy \Prophecy\Prophecy\MethodProphecy */
+    $prophecy
+      ->shouldBeCalledTimes(1);
+    $rule->addExpressionObject($expression->reveal());
+    $entity = $this->prophesize(EntityInterface::class);
 
-  /**
-   * Tests that provided context definitons are created from configuration.
-   */
-  public function testProvidedDefinitionFromConfig() {
-    $rule = new Rule([
-      'provided_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('node')
-          ->toArray(),
-      ],
-    ], 'rules_rule', [], $this->expressionManager->reveal());
-    $provided_definition = $rule->getProvidedContextDefinition('node');
-    $this->assertSame($provided_definition->getDataType(), 'entity:node');
+    RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node')
+        ->setLabel('node'))
+      ->setContextValue('node', $entity)
+      ->execute();
   }
 
 }
