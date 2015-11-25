@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
@@ -72,12 +73,19 @@ class PathHasAlias extends RulesConditionBase implements ContainerFactoryPluginI
   }
 
   /**
-   * {@inheritdoc}
+   * Check if a URL path has a URL alias.
+   *
+   * @param string $path
+   *   The path to check.
+   * @param \Drupal\Core\Language\LanguageInterface|null $language
+   *   An optional language to look up the path in.
+   *
+   * @return bool
+   *   TRUE if the path has an alias in the given language.
    */
-  public function evaluate() {
-    $path = $this->getContextValue('path');
-    $language = $this->getContext('language')->hasContextValue() ? $this->getContextValue('language')->getId() : NULL;
-    $alias = $this->aliasManager->getAliasByPath($path, $language);
+  protected function doEvaluate($path, LanguageInterface $language = NULL) {
+    $langcode = is_null($language) ? NULL : $language->getId();
+    $alias = $this->aliasManager->getAliasByPath($path, $langcode);
     return $alias != $path;
   }
 
