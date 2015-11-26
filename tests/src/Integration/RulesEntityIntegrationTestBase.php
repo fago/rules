@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Config\Entity\ConfigEntityType;
 use Drupal\Core\Entity\EntityAccessControlHandlerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -53,15 +54,48 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
     $this->languageManager->getCurrentLanguage()->willReturn($language->reveal());
     $this->languageManager->getLanguages()->willReturn([$language->reveal()]);
 
-    $entityType = new ContentEntityType([
-      'id' => 'test',
-      'label' => 'Test',
-      'entity_keys' => [
-        'bundle' => 'bundle',
+    // We need to support multiple entity types, including a test type:
+    $type_info = [
+      'test' => [
+        'id' => 'test',
+        'label' => 'Test',
+        'entity_keys' => [
+          'bundle' => 'bundle',
+        ],
       ],
-    ]);
+      'user' => [
+        'id' => 'user',
+        'label' => 'Test User',
+        'entity_keys' => [
+          'bundle' => 'user',
+        ],
+      ],
+      'node' => [
+        'id' => 'node',
+        'label' => 'Test Node',
+        'entity_keys' => [
+          'bundle' => 'dummy',
+        ],
+      ],
+    ];
+
+    $type_array = [];
+
+    foreach ($type_info as $type => $info) {
+      $entity_type = new ContentEntityType($info);
+      $type_array[$type] = $entity_type;
+    }
+
+    // We need a user_role mock as well.
+    $role_entity_info = [
+      'id' => 'user_role',
+      'label' => 'Test Role',
+    ];
+    $role_type = new ConfigEntityType($role_entity_info);
+    $type_array['user_role'] = $role_type;
+
     $this->entityManager->getDefinitions()
-      ->willReturn(['test' => $entityType]);
+      ->willReturn($type_array);
 
     $this->entityAccess = $this->prophesize(EntityAccessControlHandlerInterface::class);
 
@@ -69,8 +103,9 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->willReturn($this->entityAccess->reveal());
 
     // The base field definitions for our test entity aren't used, and would
-    // require additional mocking.
-    $this->entityManager->getBaseFieldDefinitions('test')->willReturn([]);
+    // require additional mocking. It doesn't appear that any of our tests rely on this
+    // for any other entity type that we are mocking.
+    $this->entityManager->getBaseFieldDefinitions(Argument::any())->willReturn([]);
 
     // Return some dummy bundle information for now, so that the entity manager
     // does not call out to the config entity system to get bundle information.
