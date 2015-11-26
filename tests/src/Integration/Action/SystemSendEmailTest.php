@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 use Prophecy\Argument;
@@ -43,11 +44,13 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
     $this->logger = $this->prophesize(LoggerInterface::class);
+    $logger_factory = $this->prophesize(LoggerChannelFactoryInterface::class);
+    $logger_factory->get('rules')->willReturn($this->logger->reveal());
 
     $this->mailManager = $this->prophesize(MailManagerInterface::class);
 
     // @todo this is wrong, the logger is no factory.
-    $this->container->set('logger.factory', $this->logger->reveal());
+    $this->container->set('logger.factory', $logger_factory->reveal());
     $this->container->set('plugin.manager.mail', $this->mailManager->reveal());
 
     $this->action = $this->actionManager->createInstance('rules_send_email');
@@ -89,11 +92,10 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
       ->willReturn(['result' => TRUE])
       ->shouldBeCalledTimes(1);
 
-    $this->logger->log(
-      LogLevel::NOTICE,
+    $this->logger->notice(
       // @todo assert the actual message here, but PHPunit goes into an endless
       // loop with that.
-      Argument::any()
+      Argument::any(), Argument::any()
     )->shouldBeCalledTimes(1);
 
     $this->action->execute();
@@ -125,11 +127,10 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
       ->willReturn(['result' => TRUE])
       ->shouldBeCalledTimes(1);
 
-    $this->logger->log(
-      LogLevel::NOTICE,
+    $this->logger->notice(
       // @todo assert the actual message here, but PHPunit goes into an endless
       // with that.
-      Argument::any()
+      Argument::any(), Argument::any()
     )->shouldBeCalledTimes(1);
 
     $this->action->execute();

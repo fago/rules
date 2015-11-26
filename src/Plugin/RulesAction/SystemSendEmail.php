@@ -54,6 +54,8 @@ use Drupal\Core\Language\LanguageInterface;
 class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The logger channel the action will write log messages to.
+   *
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
@@ -91,7 +93,7 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('logger.factory'),
+      $container->get('logger.factory')->get('rules'),
       $container->get('plugin.manager.mail')
     );
   }
@@ -122,7 +124,7 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
     $recipients = implode(', ', $to);
     $message = $this->mailManager->mail('rules', $key, $recipients, $langcode, $params, $reply);
     if ($message['result']) {
-      $this->logger->log(LogLevel::NOTICE, $this->t('Successfully sent email to %recipient', ['%recipient' => $recipients]));
+      $this->logger->notice('Successfully sent email to %recipient', ['%recipient' => $recipients]);
     }
 
   }
