@@ -23,6 +23,7 @@ use Drupal\rules\Core\RulesActionBase;
  *     ),
  *     "rounding_behavior" = @ContextDefinition("string",
  *       label = @Translation("Rounding behavior"),
+ *       default_value = NULL,
  *       required = false
  *     )
  *   },

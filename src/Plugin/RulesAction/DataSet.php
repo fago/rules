@@ -25,6 +25,7 @@ use Drupal\rules\Core\RulesActionBase;
  *     "value" = @ContextDefinition("any",
  *       label = @Translation("Value"),
  *       description = @Translation("The new value to set for the specified data."),
+ *       default_value = NULL,
  *       required = FALSE
  *     )
  *   }

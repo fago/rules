@@ -38,11 +38,13 @@ use Drupal\Core\Language\LanguageInterface;
  *     "reply" = @ContextDefinition("email",
  *       label = @Translation("Reply to"),
  *       description = @Translation("The mail's reply-to address. Leave it empty to use the site-wide configured address."),
+ *       default_value = NULL,
  *       required = FALSE,
  *     ),
  *     "language" = @ContextDefinition("language",
  *       label = @Translation("Language"),
  *       description = @Translation("If specified, the language used for getting the mail message and subject."),
+ *       default_value = NULL,
  *       required = FALSE,
  *     ),
  *   }

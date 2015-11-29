@@ -28,11 +28,13 @@ use Drupal\rules\Core\RulesActionBase;
  *     "unique" = @ContextDefinition("boolean",
  *       label = @Translation("Enforce uniqueness"),
  *       description = @Translation("Only add the item to the list if it is not yet contained."),
+ *       default_value = FALSE,
  *       required = FALSE
  *     ),
  *     "pos" = @ContextDefinition("string",
  *       label = @Translation("Insert position"),
  *       description = @Translation("Position to insert the item."),
+ *       default_value = "end",
  *       required = FALSE
  *     )
  *   }

@@ -27,6 +27,7 @@ use Drupal\rules\Core\RulesConditionBase;
  *     "operation" = @ContextDefinition("string",
  *       label = @Translation("Match roles"),
  *       description = @Translation("If matching against all selected roles, the user must have <em>all</em> the roles selected."),
+ *       default_value = "AND",
  *       required = FALSE
  *     )
  *   }
