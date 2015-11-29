@@ -10,6 +10,8 @@ namespace Drupal\rules\Plugin\RulesAction;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
+ * Provides an 'Add a variable' action.
+ *
  * @RulesAction(
  *   id = "rules_variable_add",
  *   label = @Translation("Add a variable"),
@@ -29,10 +31,13 @@ use Drupal\rules\Core\RulesActionBase;
 class VariableAdd extends RulesActionBase {
 
   /**
-   * Executes the plugin.
+   * Add a variable.
+   *
+   * @param mixed $value
+   *   The variable to add.
    */
-  public function execute() {
-    $this->setProvidedValue('variable_added', $this->getContext('value')->getContextValue());
+  protected function doExecute($value) {
+    $this->setProvidedValue('variable_added', $value);
   }
 
 }
