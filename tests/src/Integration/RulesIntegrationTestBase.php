@@ -171,8 +171,9 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->aliasManager = $this->prophesize(AliasManagerInterface::class);
 
+    // Keep the deprecated entity manager around because it is still used in a
+    // few places.
     $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-    $this->entityManager->getDefinitions()->willReturn([]);
 
     $this->entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
     $this->entityTypeManager->getDefinitions()->willReturn([]);
