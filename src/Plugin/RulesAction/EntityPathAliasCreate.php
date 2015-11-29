@@ -8,6 +8,7 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Path\AliasStorageInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -69,12 +70,14 @@ class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryP
   }
 
   /**
-   * {@inheritdoc}
+   * Creates entity path alias.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity that should get an alias.
+   * @param string $alias
+   *   The alias to be created.
    */
-  public function execute() {
-    $alias = $this->getContextValue('alias');
-    $entity = $this->getContextValue('entity');
-
+  protected function doExecute(EntityInterface $entity, $alias) {
     // We need to save the entity before we can get its internal path.
     if ($entity->isNew()) {
       $entity->save();
