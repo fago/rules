@@ -32,13 +32,15 @@ use Drupal\rules\Core\RulesActionBase;
  */
 class DataListItemRemove extends RulesActionBase {
 
-  /**
-   * {@inheritdoc}
-   */
-  public function execute() {
-    $list = $this->getContextValue('list');
-    $item = $this->getContextValue('item');
-
+   /**
+    * Removes an item from a list.
+    *
+    * @param array $list
+    *   An array to remove an item from.
+    * @param mixed $item
+    *   An item to remove from the array.
+    */
+  protected function doExecute($list, $item) {
     foreach (array_keys($list, $item) as $key) {
       unset($list[$key]);
     }
