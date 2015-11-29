@@ -97,6 +97,13 @@ class RulesComponent extends ConfigEntityBase {
   protected $expression_id;
 
   /**
+   * Array of context definitions, keyed by context name.
+   *
+   * @var \Drupal\rules\Context\ContextDefinitionInterface[]
+   */
+  protected $context_definitions = [];
+
+  /**
    * The expression plugin specific configuration as nested array.
    *
    * @var array
@@ -144,6 +151,43 @@ class RulesComponent extends ConfigEntityBase {
     $this->expression = $expression;
     $this->expression_id = $expression->getPluginId();
     $this->configuration = $expression->getConfiguration();
+    return $this;
+  }
+
+  /**
+   * Gets the configured component.
+   *
+   * @return \Drupal\rules\Engine\RulesComponent
+   *   The component.
+   */
+  public function getComponent() {
+    $component = \Drupal\rules\Engine\RulesComponent::create($this->getExpression())
+    foreach ($this->context_definitions as $name => $definition) {
+      $component->addContextDefinition($name, $definition);
+    }
+    return $component;
+  }
+
+  /**
+   * Gets the definitions of the used context.
+   *
+   * @return \Drupal\rules\Context\ContextDefinitionInterface
+   *   The array of context definitions, keyed by context name.
+   */
+  public function getContextDefinitions() {
+    return $this->context_definitions;
+  }
+
+  /**
+   * Sets the definitions of the used context.
+   *
+   * @param \Drupal\rules\Context\ContextDefinitionInterface $definitions
+   *   The array of context definitions, keyed by context name.
+   *
+   * @return $this
+   */
+  public function setContextDefinitions(ContextDefinitionInterface $definitions) {
+    $this->context_definitions = $definitions;
     return $this;
   }
 

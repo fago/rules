@@ -25,6 +25,11 @@ rules.component.*:
     expression_id:
       type: string
       label: 'Rules expression plugin ID'
+    context_definitions:
+      type: sequence
+      label: 'Context definitions'
+      sequence:
+        - type: rules.context.definition
     configuration:
       type: rules_expression.[%parent.expression_id]
       label: 'Configuration'
@@ -149,11 +154,6 @@ rules_expression.rules_rule:
     id:
       type: string
       label: 'Plugin ID'
-    context_definitions:
-      type: sequence
-      label: 'Context definitions'
-      sequence:
-        - type: rules.context.definition
     conditions:
       type: rules_expression.[id]
       label: 'Conditions'
