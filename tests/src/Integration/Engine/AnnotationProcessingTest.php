@@ -7,8 +7,9 @@
 
 namespace Drupal\Tests\rules\Integration\Engine;
 
-use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
+use Drupal\Core\Annotation\Translation;
 use Drupal\Core\Session\SessionManagerInterface;
+use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * Tests processing of the ContextDefinition annotation.
@@ -23,9 +24,36 @@ class AnnotationProcessingTest extends RulesIntegrationTestBase {
   public function setUp() {
     parent::setUp();
     $this->enableModule('user');
+    // Some of our plugins assume sessions exist:
     $session_manager = $this->prophesize(SessionManagerInterface::class);
     $this->container->set('session_manager', $session_manager->reveal());
   }
+
+  /**
+   * Make sure @ Translation annotations do not leak out into the wild.
+   */
+  public function testTranslationSquelching() {
+    // Get a sample Rules plugin.
+    $plugin = $this->conditionManager->createInstance('rules_list_contains');
+    $context = $plugin->getContext('list');
+    $definition = $context->getContextDefinition();
+
+    // These can reasonable be string or TranslatableMarkup, but never
+    // a Translation object.
+    $label = $definition->getLabel();
+    $description = $definition->getDescription();
+    $this->assertFalse($label instanceof Translation, 'Label is not a Translation object');
+    $this->assertFalse($description instanceof Translation, 'Description is not a Translation object');
+
+    // Check also the toArray() path.
+    $definition = $context->getContextDefinition();
+    $values = $definition->toArray();
+    $label = $values['label'];
+    $description = $values['description'];
+    $this->assertFalse($label instanceof Translation, "\$values['label'] is not a Translation object");
+    $this->assertFalse($description instanceof Translation, "\$values['description'] is not a Translation object");
+  }
+
 
   /**
    * Tests if our ContextDefinition annotations are correctly processed.
