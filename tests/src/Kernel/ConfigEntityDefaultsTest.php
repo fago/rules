@@ -60,21 +60,19 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   public function testDefaultComponents() {
     $config_entity = $this->storage->load('rules_test_default_component');
 
-    /** @var $config_entity RulesComponent */
-    $expression = $config_entity
-      ->getExpression();
-
     $user = $this->entityManager->getStorage('user')
       ->create(array('mail' => 'test@example.com'));
 
-    $expression
+    /** @var $config_entity \Drupal\rules\Entity\RulesComponent */
+    $config_entity
+      ->getComponent()
       ->setContextValue('user', $user)
       ->execute();
 
     // Test that the action was executed correctly.
     $messages = drupal_get_messages();
     $message_string = isset($messages['status'][0]) ? (string) $messages['status'][0] : NULL;
-    $this->assertEqual($message_string, 'test@example.com');
+    $this->assertEquals($message_string, 'test@example.com');
   }
 
 }

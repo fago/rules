@@ -9,6 +9,7 @@ namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\RulesComponent;
 
 /**
  * Test using the Rules API with nodes.
@@ -58,13 +59,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $user->save();
     $node->setOwner($user);
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('Node')
-          ->toArray(),
-      ],
-    ]);
+    $rule = $this->expressionManager->createRule();
 
     // Test that the long detailed data selector works.
     $rule->addCondition('rules_test_string_condition', ContextConfig::create()
@@ -77,8 +72,11 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     );
 
     $rule->addAction('rules_test_log');
-    $rule->setContextValue('node', $node);
-    $rule->execute();
+
+    RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->setContextValue('node', $node)
+      ->execute();
   }
 
   /**
@@ -100,25 +98,18 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     // auto saving.
     // @see \Drupal\rules_test\Plugin\RulesAction\TestNodeAction
     $action = $this->expressionManager->createAction('rules_test_node')
-      ->setConfiguration([
-        'context_definitions' => [
-          'node' => ContextDefinition::create('entity:node')
-            ->setLabel('Node')
-            ->toArray(),
-          'title' => ContextDefinition::create('string')
-            ->setLabel('Title')
-            ->toArray(),
-        ],
-      ] + ContextConfig::create()
+      ->setConfiguration(ContextConfig::create()
         ->map('node', 'node')
         ->map('title', 'title')
         ->toArray()
       );
 
-    $action->setContextValue('node', $node);
-    $action->setContextValue('title', 'new title');
-    $action->execute();
-
+    RulesComponent::create($action)
+      ->addContextDefinition('node', ContextDefinition::create('enity:node'))
+      ->addContextDefinition('title', ContextDefinition::create('string'))
+      ->setContextValue('node', $node)
+      ->setContextValue('title', 'new title')
+      ->execute();
     $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been saved.');
   }
 
@@ -155,21 +146,20 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')->toArray(),
-        'message' => ContextDefinition::create('string')->toArray(),
-        'type' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('node', $node);
-    $rule->setContextValue('message', 'Hello [node:uid:entity:name:value]!');
-    $rule->setContextValue('type', 'status');
-    $rule->addExpressionObject($action);
-    $rule->execute();
+    $rule = $this->expressionManager->createRule()
+      ->addExpressionObject($action);
+
+    RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->addContextDefinition('message', ContextDefinition::create('string'))
+      ->addContextDefinition('type', ContextDefinition::create('string'))
+      ->setContextValue('node', $node)
+      ->setContextValue('message', 'Hello [node:uid:entity:name:value]!')
+      ->setContextValue('type', 'status')
+      ->execute();
 
     $messages = drupal_set_message();
-    $this->assertEqual((string) $messages['status'][0], 'Hello klausi!');
+    $this->assertEquals((string) $messages['status'][0], 'Hello klausi!');
   }
 
   /**
@@ -199,21 +189,20 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')->toArray(),
-        'message' => ContextDefinition::create('string')->toArray(),
-        'type' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('node', $node);
-    $rule->setContextValue('message', 'The node was created in the year [node:created:custom:Y]');
-    $rule->setContextValue('type', 'status');
-    $rule->addExpressionObject($action);
-    $rule->execute();
+    $rule = $this->expressionManager->createRule()
+      ->addExpressionObject($action);
+
+    RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->addContextDefinition('message', ContextDefinition::create('string'))
+      ->addContextDefinition('type', ContextDefinition::create('string'))
+      ->setContextValue('node', $node)
+      ->setContextValue('message', 'The node was created in the year [node:created:custom:Y]')
+      ->setContextValue('type', 'status')
+      ->execute();
 
     $messages = drupal_set_message();
-    $this->assertEqual((string) $messages['status'][0], 'The node was created in the year 1970');
+    $this->assertEquals((string) $messages['status'][0], 'The node was created in the year 1970');
   }
 
   /**
@@ -240,18 +229,17 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')->toArray(),
-        'new_title' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('node', $node);
-    $rule->setContextValue('new_title', 'new title');
-    $rule->addExpressionObject($action);
-    $rule->execute();
+    $rule = $this->expressionManager->createRule()
+      ->addExpressionObject($action);
 
-    $this->assertEqual('new title', $node->getTitle());
+    RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->addContextDefinition('new_title', ContextDefinition::create('string'))
+      ->setContextValue('node', $node)
+      ->setContextValue('new_title', 'new title')
+      ->execute();
+
+    $this->assertEquals('new title', $node->getTitle());
     $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been auto-saved.');
   }
 

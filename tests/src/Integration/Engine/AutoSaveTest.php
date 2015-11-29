@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
-use Drupal\rules\Engine\RulesState;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**

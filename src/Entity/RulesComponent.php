@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 
 /**

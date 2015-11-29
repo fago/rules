@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
+use Drupal\Core\TypedData\TypedDataManagerInterface;
 
 /**
  * Handles executable Rules components.
@@ -58,7 +59,7 @@ class RulesComponent {
    * @return static
    */
   public static function create(ExpressionInterface $expression) {
-    return new static($expression);
+    return new static($expression, \Drupal::typedDataManager());
   }
 
   /**
@@ -66,10 +67,12 @@ class RulesComponent {
    *
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
    *   The expression of the component.
+   * @param \Drupal\Core\TypedData\TypedDataManagerInterface $typed_data_manager
+   *   The typed data manager.
    */
-  protected function __construct($expression) {
+  protected function __construct($expression, TypedDataManagerInterface $typed_data_manager) {
     $this->state = RulesState::create();
-    $this->typedDataManager = \Drupal::typedDataManager();
+    $this->typedDataManager = $typed_data_manager;
     $this->expression = $expression;
   }
 
