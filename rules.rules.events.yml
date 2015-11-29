@@ -33,3 +33,6 @@ rules_entity_update:
 rules_entity_view:
   label: 'Viewing an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityViewDeriver'
+rules_system_cron:
+  label: 'Cron maintenance tasks are performed'
+  category: 'System'

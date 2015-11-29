@@ -101,4 +101,32 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $this->assertRulesLogEntryExists('action called');
   }
 
+  /**
+   * Test that the cron hook triggers the Rules event listener.
+   */
+  public function testCronEvent() {
+    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_system_cron']);
+    $rule->addCondition('rules_test_true');
+    $rule->addAction('rules_test_log');
+
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_reaction_rule',
+      'event' => 'rules_system_cron',
+      'configuration' => $rule->getConfiguration(),
+    ]);
+    $config_entity->save();
+
+    // Rebuild the container so that the newly configured event gets picked up.
+    $this->container->get('kernel')->rebuildContainer();
+    // The logger instance has changed, refresh it.
+    $this->logger = $this->container->get('logger.channel.rules');
+
+    // Run cron.
+    $this->container->get('cron')->run();
+
+    // Test that the action in the rule logged something.
+    $this->assertRulesLogEntryExists('action called');
+  }
+
 }

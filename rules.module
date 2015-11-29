@@ -12,6 +12,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\rules\Event\EntityEvent;
 use Drupal\rules\Event\UserLoginEvent;
 use Drupal\rules\Event\UserLogoutEvent;
+use Drupal\rules\Event\SystemCronEvent;
 
 /**
  * Implements hook_help().
@@ -114,3 +115,11 @@ function rules_entity_update(EntityInterface $entity) {
   }
 }
 
+/**
+ * Implements hook_cron().
+ */
+function rules_cron() {
+  $event = new SystemCronEvent();
+  $event_dispatcher = \Drupal::service('event_dispatcher');
+  $event_dispatcher->dispatch(SystemCronEvent::EVENT_NAME, $event);
+}
