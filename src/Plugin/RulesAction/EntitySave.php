@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
@@ -41,13 +42,15 @@ class EntitySave extends RulesActionBase {
   protected $saveLater = TRUE;
 
   /**
-   * {@inheritdoc}
+   * Saves the Entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to be saved.
    */
-  public function execute() {
+  protected function doExecute(EntityInterface $entity, $immediate) {
     // We only need to do something here if the immediate flag is set, otherwise
     // the entity will be auto-saved after the execution.
-    if ((bool) $this->getContextValue('immediate')) {
-      $entity = $this->getContextValue('entity');
+    if ((bool) $immediate) {
       $entity->save();
       $this->saveLater = FALSE;
     }
