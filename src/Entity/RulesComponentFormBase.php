@@ -68,7 +68,7 @@ abstract class RulesComponentFormBase extends EntityForm {
    */
   public function exists($id) {
     $type = $this->entity->getEntityTypeId();
-    return (bool) $this->entityManager->getStorage($type)->load($id);
+    return (bool) $this->entityTypeManager->getStorage($type)->load($id);
   }
 
 }

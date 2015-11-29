@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -51,11 +51,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityFetchByField extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a EntityFetchByField object.
@@ -66,12 +66,12 @@ class EntityFetchByField extends RulesActionBase implements ContainerFactoryPlug
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -82,7 +82,7 @@ class EntityFetchByField extends RulesActionBase implements ContainerFactoryPlug
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -99,7 +99,7 @@ class EntityFetchByField extends RulesActionBase implements ContainerFactoryPlug
    * Execute the action within the given context.
    */
   protected function doExecute($entity_type, $field_name, $field_value, $limit = NULL) {
-    $storage = $this->entityManager->getStorage($entity_type);
+    $storage = $this->entityTypeManager->getStorage($entity_type);
 
     // When retrieving entities, if $limit is not set there is no need to use
     // the query object directly.

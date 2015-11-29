@@ -29,7 +29,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->storage = $this->container->get('entity.manager')->getStorage('rules_component');
+    $this->storage = $this->container->get('entity_type.manager')->getStorage('rules_component');
   }
 
   /**
@@ -119,7 +119,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
    */
   public function testReactionRuleSaving() {
     $rule = $this->expressionManager->createReactionRule();
-    $storage = $this->container->get('entity.manager')->getStorage('rules_reaction_rule');
+    $storage = $this->container->get('entity_type.manager')->getStorage('rules_reaction_rule');
     $config_entity = $storage->create([
       'id' => 'test_rule',
     ])->setExpression($rule);

@@ -65,7 +65,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     $entityStorage = $this->prophesize(EntityStorageInterface::class);
     $entityStorage->loadByProperties([$field_name => $field_value])
       ->willReturn($entities);
-    $this->entityManager->getStorage($entity_type)
+    $this->entityTypeManager->getStorage($entity_type)
       ->willReturn($entityStorage->reveal());
 
     // Set context values for EntityFetchByField action and execute.
@@ -117,7 +117,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     $entityStorage->getQuery()
       ->willReturn($query)
       ->shouldBeCalledTimes(1);
-    $this->entityManager->getStorage($entity_type)
+    $this->entityTypeManager->getStorage($entity_type)
       ->willReturn($entityStorage->reveal())
       ->shouldBeCalledTimes(1);
 
@@ -154,7 +154,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     $entityStorage = $this->prophesize(EntityStorageInterface::class);
     $entityStorage->loadByProperties([$field_name => $field_value])
       ->willReturn($entities);
-    $this->entityManager->getStorage($entity_type)
+    $this->entityTypeManager->getStorage($entity_type)
       ->willReturn($entityStorage->reveal())
       ->shouldBeCalledTimes(1);
 

@@ -94,21 +94,27 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
     $role_type = new ConfigEntityType($role_entity_info);
     $type_array['user_role'] = $role_type;
 
+    $this->entityTypeManager->getDefinitions()
+      ->willReturn($type_array);
     $this->entityManager->getDefinitions()
       ->willReturn($type_array);
 
     $this->entityAccess = $this->prophesize(EntityAccessControlHandlerInterface::class);
 
-    $this->entityManager->getAccessControlHandler(Argument::any())
+    $this->entityTypeManager->getAccessControlHandler(Argument::any())
       ->willReturn($this->entityAccess->reveal());
 
     // The base field definitions for our test entity aren't used, and would
     // require additional mocking. It doesn't appear that any of our tests rely on this
     // for any other entity type that we are mocking.
+    $this->entityFieldManager->getBaseFieldDefinitions(Argument::any())->willReturn([]);
     $this->entityManager->getBaseFieldDefinitions(Argument::any())->willReturn([]);
 
     // Return some dummy bundle information for now, so that the entity manager
     // does not call out to the config entity system to get bundle information.
+    $this->entityTypeBundleInfo->getBundleInfo(Argument::any())
+      ->willReturn(['test' => ['label' => 'Test']]);
+
     $this->entityManager->getBundleInfo(Argument::any())
       ->willReturn(['test' => ['label' => 'Test']]);
 

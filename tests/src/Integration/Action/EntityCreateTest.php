@@ -62,11 +62,11 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
       ->willReturn(self::ENTITY_REPLACEMENT);
 
     // Return the mocked storage controller.
-    $this->entityManager->getStorage('test')
+    $this->entityTypeManager->getStorage('test')
       ->willReturn($entityTypeStorage->reveal());
 
     // Return a mocked list of base fields definitions.
-    $this->entityManager->getBaseFieldDefinitions('test')
+    $this->entityFieldManager->getBaseFieldDefinitions('test')
       ->willReturn(['bundle' => $bundleFieldDefinition->reveal()]);
 
     // Instantiate the action we are testing.

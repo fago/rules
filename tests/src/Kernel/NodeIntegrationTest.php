@@ -39,18 +39,18 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * Tests that a complex data selector can be applied to nodes.
    */
   public function testNodeDataSelector() {
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
       ]);
 
-    $user = $entity_manager->getStorage('user')
+    $user = $entity_type_manager->getStorage('user')
       ->create([
         'name' => 'test value',
       ]);
@@ -85,12 +85,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * Tests that a node is automatically saved after being changed in an action.
    */
   public function testNodeAutoSave() {
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
@@ -126,18 +126,18 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * Tests that tokens in action parameters get replaced.
    */
   public function testTokenReplacements() {
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
       ]);
 
-    $user = $entity_manager->getStorage('user')
+    $user = $entity_type_manager->getStorage('user')
       ->create([
         'name' => 'klausi',
       ]);
@@ -176,12 +176,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * Tests that date formatting tokens on node fields get replaced.
    */
   public function testDateTokens() {
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
@@ -220,12 +220,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
    * Tests that the data set action works on nodes.
    */
   public function testDataSet() {
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',

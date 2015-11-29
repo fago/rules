@@ -37,7 +37,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->storage = $this->container->get('entity.manager')->getStorage('rules_reaction_rule');
+    $this->storage = $this->container->get('entity_type.manager')->getStorage('rules_reaction_rule');
   }
 
   /**

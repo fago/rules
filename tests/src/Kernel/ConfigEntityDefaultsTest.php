@@ -38,19 +38,19 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   protected $strictConfigSchema = FALSE;
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
-    $this->entityManager = $this->container->get('entity.manager');
-    $this->storage = $this->entityManager->getStorage('rules_component');
+    $this->entityTypeManager = $this->container->get('entity_type.manager');
+    $this->storage = $this->entityTypeManager->getStorage('rules_component');
     $this->installConfig(['rules_test_default_component']);
   }
 
@@ -64,7 +64,7 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
     $expression = $config_entity
       ->getExpression();
 
-    $user = $this->entityManager->getStorage('user')
+    $user = $this->entityTypeManager->getStorage('user')
       ->create(array('mail' => 'test@example.com'));
 
     $expression

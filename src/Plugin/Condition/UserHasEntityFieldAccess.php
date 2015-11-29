@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -42,11 +42,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a UserHasEntityFieldAccess object.
@@ -57,12 +57,12 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -73,7 +73,7 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -98,7 +98,7 @@ class UserHasEntityFieldAccess extends RulesConditionBase implements ContainerFa
       return FALSE;
     }
 
-    $access = $this->entityManager->getAccessControlHandler($entity->getEntityTypeId());
+    $access = $this->entityTypeManager->getAccessControlHandler($entity->getEntityTypeId());
     if (!$access->access($entity, $operation, $user)) {
       return FALSE;
     }

@@ -19,6 +19,6 @@ services:
     arguments: ['@container.namespaces', '@module_handler']
   rules.event_subscriber:
     class: Drupal\rules\EventSubscriber\GenericEventSubscriber
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
     tags:
       - { name: 'event_subscriber' }
