@@ -22,3 +22,7 @@ services:
     arguments: ['@entity_type.manager']
     tags:
       - { name: 'event_subscriber' }
+  rules.redirect_event_subscriber:
+    class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
+    tags:
+      - { name: 'event_subscriber' }
