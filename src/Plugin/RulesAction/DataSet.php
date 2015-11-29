@@ -36,11 +36,16 @@ use Drupal\rules\Core\RulesActionBase;
 class DataSet extends RulesActionBase {
 
   /**
-   * {@inheritdoc}
+   * Executes the Plugin.
+   *
+   * @param mixed $data
+   *   Original value of an element which is being updated.
+   * @param mixed $value
+   *   A new value which is being set to an element identified by data selector.
    */
-  public function execute() {
+  protected function doExecute($data, $value) {
     $typed_data = $this->getContext('data')->getContextData();
-    $typed_data->setValue($this->getContextValue('value'));
+    $typed_data->setValue($value);
   }
 
   /**
