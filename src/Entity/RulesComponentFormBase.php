@@ -44,7 +44,7 @@ abstract class RulesComponentFormBase extends EntityForm {
       '#title' => $this->t('Tag'),
       '#default_value' => $this->entity->getTag(),
       '#description' => $this->t('Enter a tag here'),
-      '#required' => TRUE,
+      '#required' => FALSE,
     ];
 
     $form['description'] = [
