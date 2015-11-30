@@ -43,13 +43,15 @@ class DataConvert extends RulesActionBase {
 
   /**
    * Executes the plugin.
+   *
+   * @param mixed $value
+   *   The input value.
+   * @param string $target_type
+   *   The target type the value should be converted into.
+   * @param string $rounding_behavior
+   *   The behaviour for rounding.
    */
-  public function execute() {
-    $value = $this->getContextValue('value');
-
-    $target_type = $this->getContextValue('target_type');
-    $rounding_behavior = $this->getContextValue('rounding_behavior');
-
+  protected function doExecute($value, $target_type, $rounding_behavior) {
     // @todo: Add support for objects implementing __toString().
     if (!is_scalar($value)) {
       throw new \InvalidArgumentException('Only scalar values are supported.');
