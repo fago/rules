@@ -107,7 +107,7 @@ class ContextIntegrationTest extends RulesDrupalTestBase {
 
     // Test the assignment restriction on the entity fetch action as an example.
     $entity_fetch_action = $action_manager->createInstance('rules_entity_fetch_by_id');
-    $context_definition = $entity_fetch_action->getContextDefinition('entity_type_id');
+    $context_definition = $entity_fetch_action->getContextDefinition('type');
     $this->assertEqual($context_definition->getAssignmentRestriction(), 'input');
   }
 

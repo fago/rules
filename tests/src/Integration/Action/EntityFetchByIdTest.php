@@ -48,22 +48,36 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
    * @covers ::execute
    */
   public function testActionExecution() {
+    $entity_type = 'entity_test';
+
     // Prepare entity storage to return dummy entity on the 'load' execution.
     $entity = $this->prophesize(EntityInterface::class);
     $entityStorage = $this->prophesize(EntityStorageInterface::class);
     $entityStorage->load(1)->willReturn($entity->reveal())
       ->shouldBeCalledTimes(1);
-    $this->entityTypeManager->getStorage('test')
+    $this->entityTypeManager->getStorage($entity_type)
       ->willReturn($entityStorage->reveal())
       ->shouldBeCalledTimes(1);
 
+    // Set context values for EntityFetchByField action and execute.
     $this->action
-      ->setContextValue('entity_type_id', 'test')
+      ->setContextValue('type', $entity_type)
       ->setContextValue('entity_id', 1)
       ->execute();
+    // Test that entity load with type 'test' and id '1' should return the dummy entity.
+    $this->assertEquals($entity->reveal(), $this->action->getProvidedContext('entity_fetched')->getContextValue('entity_fetched'), 'Action returns the loaded entity for fetching entity by id.');
+  }
 
-    // Entity load with type 'test' and id '1' should return the dummy entity.
-    $this->assertEquals($entity->reveal(), $this->action->getProvidedContext('entity')->getContextValue('entity'), 'Action returns the loaded entity for fetching entity by id.');
+  /**
+   * @covers ::refineContextDefinitions
+   */
+  public function testRefiningContextDefinitions() {
+    $this->action->setContextValue('type', 'entity_test');
+    $this->action->refineContextDefinitions();
+    $this->assertEquals(
+      $this->action->getProvidedContextDefinition('entity_fetched')
+        ->getDataType(), 'entity:entity_test'
+    );
   }
 
 }

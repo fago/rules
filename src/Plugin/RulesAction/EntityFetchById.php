@@ -20,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Fetch entity by id"),
  *   category = @Translation("Entity"),
  *   context = {
- *     "entity_type_id" = @ContextDefinition("string",
+ *     "type" = @ContextDefinition("string",
  *       label = @Translation("Entity type"),
- *       description = @Translation("Specifies the type of entity that should be fetched."),
+ *       description = @Translation("Specifies the type of the entity that should be fetched."),
  *       assignment_restriction = "input"
  *     ),
  *     "entity_id" = @ContextDefinition("integer",
@@ -31,8 +31,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     )
  *   },
  *   provides = {
- *     "entity" = @ContextDefinition("entity",
- *       label = @Translation("Entity")
+ *     "entity_fetched" = @ContextDefinition("entity",
+ *       label = @Translation("Fetched entity")
  *     )
  *   }
  * )
@@ -79,20 +79,27 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions() {
+    if ($type = $this->getContextValue('type')) {
+      $this->pluginDefinition['provides']['entity_fetched']->setDataType("entity:$type");
+    }
+  }
+
+  /**
    * Executes the action with the given context.
    *
-   * @param int $entity_type_id
+   * @param string $entity_type
    *   The entity type id.
    * @param int $entity_id
    *   The entity id.
    */
-  protected function doExecute($entity_type_id, $entity_id) {
-    $storage = $this->entityTypeManager->getStorage($entity_type_id);
+  protected function doExecute($entity_type, $entity_id) {
+    $storage = $this->entityTypeManager->getStorage($entity_type);
     $entity = $storage->load($entity_id);
-    // @todo Refine the provided context definition for 'entity'. Example: if
-    //   the loaded entity is a node then the provided context definition should
-    //  use the type node. We don't have an API for that yet.
-    $this->setProvidedValue('entity', $entity);
+
+    $this->setProvidedValue('entity_fetched', $entity);
   }
 
 }
