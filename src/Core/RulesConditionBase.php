@@ -9,6 +9,7 @@ namespace Drupal\rules\Core;
 
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\rules\Context\ContextProviderTrait;
+use Drupal\rules\Core\ConfigurationAccessControlTrait;
 
 /**
  * Base class for rules conditions.
@@ -19,6 +20,7 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
 
   use ContextProviderTrait;
   use ExecutablePluginTrait;
+  use ConfigurationAccessControlTrait;
 
   /**
    * {@inheritdoc}

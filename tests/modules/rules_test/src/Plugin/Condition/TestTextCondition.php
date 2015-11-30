@@ -19,7 +19,8 @@ use Drupal\rules\Core\RulesConditionBase;
  *     "text" = @ContextDefinition("string",
  *       label = @Translation("Text to compare")
  *     )
- *   }
+ *   },
+ *   configure_permissions = { "access test configuration" }
  * )
  */
 class TestTextCondition extends RulesConditionBase {

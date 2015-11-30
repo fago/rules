@@ -12,6 +12,10 @@ use \Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery as CoreAnnotatedClassD
 
 /**
  * Extends the annotation class discovery for usage with Rules context.
+ *
+ * We modify the annotations classes for ContextDefinition and for Condition.
+ * This class makes sure that our plugin managers apply these.
+ *
  */
 class AnnotatedClassDiscovery extends CoreAnnotatedClassDiscovery {
 
@@ -24,9 +28,10 @@ class AnnotatedClassDiscovery extends CoreAnnotatedClassDiscovery {
       // reader on our own, so we can control the order of namespaces.
       $this->annotationReader = new SimpleAnnotationReader();
 
-      // Make sure to add our namespace first, so our ContextDefinition class
-      // gets picked.
+      // Make sure to add our namespace first, so our ContextDefinition and
+      // Condition annotations gets picked.
       $this->annotationReader->addNamespace('Drupal\rules\Context\Annotation');
+      $this->annotationReader->addNamespace('Drupal\rules\Core\Annotation');
       // Add the namespaces from the main plugin annotation, like @EntityType.
       $namespace = substr($this->pluginDefinitionAnnotationName, 0, strrpos($this->pluginDefinitionAnnotationName, '\\'));
       $this->annotationReader->addNamespace($namespace);

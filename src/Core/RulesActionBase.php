@@ -7,10 +7,11 @@
 
 namespace Drupal\rules\Core;
 
-use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\rules\Context\ContextProviderTrait;
+use Drupal\rules\Core\ConfigurationAccessControlTrait;
 
 /**
  * Base class for rules actions.
@@ -19,6 +20,7 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
 
   use ContextProviderTrait;
   use ExecutablePluginTrait;
+  use ConfigurationAccessControlTrait;
 
   /**
    * The plugin configuration.
@@ -86,7 +88,7 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     // Just deny access per default for now.
     if ($return_as_object) {
-      return new AccessResultForbidden();
+      return AccessResult::forbidden();
     }
     return FALSE;
   }

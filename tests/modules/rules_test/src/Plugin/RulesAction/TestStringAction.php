@@ -20,6 +20,7 @@ use Drupal\rules\Core\RulesActionBase;
  *       label = @Translation("Text to concatenate")
  *     )
  *   },
+ *   configure_permissions = { "access test configuration" },
  *   provides = {
  *     "concatenated" = @ContextDefinition("string",
  *       label = @Translation("Concatenated result")
