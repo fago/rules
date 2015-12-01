@@ -5,9 +5,9 @@
 The Rules module allows site administrators to define conditionally executed
 actions based on occurring events (ECA-rules).
 
-* Project homepage: http://drupal.org/project/rules
+* Project homepage: https://www.drupal.org/project/rules
 * #d8rules initiative: http://d8rules.org/
-* Documentation: http://thefubhy.gitbooks.io/rules
+* Documentation: https://thefubhy.gitbooks.io/rules
 
 ## Contributing
 
@@ -20,7 +20,7 @@ pull requests.
 
 There are a few conventions that should be followed when contributing:
 
-* Always create an issue in the [drupal.org Rules issue queue](http://drupal.org/project/issues/rules)
+* Always create an issue in the [drupal.org Rules issue queue](https://www.drupal.org/project/issues/rules)
   for every pull request you are working on.
 * Always cross-reference the Issue in the Pull Request and the Pull Request in
   the issue.
@@ -32,7 +32,7 @@ There are a few conventions that should be followed when contributing:
   for more information on how to do that.
 
 For further information on how to contribute please refer to
-[our documentation](http://thefubhy.gitbooks.io/rules/content/).
+[our documentation](https://thefubhy.gitbooks.io/rules/content/).
 
 ## Executing the automated tests
 
