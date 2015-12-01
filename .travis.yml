@@ -40,8 +40,6 @@ before_script:
   # Download Drupal 8 core.
   - travis_retry git clone --branch 8.0.x --depth 1 http://git.drupal.org/project/drupal.git
   - cd drupal
-  # Apply PHP 7 compatibility patch https://www.drupal.org/node/2616498
-  - wget -q -O - https://www.drupal.org/files/issues/2616498-12.patch | patch -p1
 
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
