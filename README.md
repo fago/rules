@@ -45,12 +45,14 @@ and a checkout of the Rules module in the modules folder.
     ../vendor/bin/phpunit ../modules/rules/tests/src/Unit
     ../vendor/bin/phpunit ../modules/rules/tests/src/Integration
 
-#### Unit test and kernel tests
+#### Unit tests and kernel/web tests
 
-Make sure to use your DB connection details for the SIMPLETEST_DB.
+Make sure to use your DB connection details for the SIMPLETEST_DB and the URL to
+your local Drupal installation for SIMPLETEST_BASE_URL.
 
     cd /path/to/drupal-8/core
     export SIMPLETEST_DB=mysql://drupal-8:password@localhost/drupal-8
+    export SIMPLETEST_BASE_URL=http://drupal-8.localhost
     ../vendor/bin/phpunit ../modules/rules
 
 Example for executing one single test file during development:
