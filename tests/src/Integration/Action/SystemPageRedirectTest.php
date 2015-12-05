@@ -90,7 +90,7 @@ namespace Drupal\Tests\rules\Integration\Action {
       $this->parameterBag = $this->prophesize(ParameterBag::class);
 
       // Mock a request, and set our mocked parameter bag as it attributes
-      //property.
+      // property.
       $this->currentRequest = $this->prophesize(Request::class);
       $this->currentRequest->attributes = $this->parameterBag->reveal();
 

@@ -26,9 +26,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  *       label = @Translation("URL"),
  *       description = @Translation("A Drupal path, path alias, or external URL to redirect to. Enter (optional) queries after ? and (optional) anchor after #."),
  *     ),
-  *   }
+ *   }
  * )
- *
  */
 class SystemPageRedirect extends RulesActionBase implements ContainerFactoryPluginInterface {
 

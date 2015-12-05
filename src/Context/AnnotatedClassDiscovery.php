@@ -15,7 +15,6 @@ use \Drupal\Core\Plugin\Discovery\AnnotatedClassDiscovery as CoreAnnotatedClassD
  *
  * We modify the annotations classes for ContextDefinition and for Condition.
  * This class makes sure that our plugin managers apply these.
- *
  */
 class AnnotatedClassDiscovery extends CoreAnnotatedClassDiscovery {
 

@@ -13,7 +13,6 @@ use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 use Prophecy\Argument;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemSendEmail

@@ -1,7 +1,6 @@
 <?php
 
 /**
- *
  * @file
  * Contains \Drupal\rules\Tests\ConfigEntityDefaultsTest.
  */
@@ -16,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
  * Tests rules redirect action event subscriber.
  *
  * @coversDefaultClass \Drupal\rules\EventSubscriber\RedirectEventSubscriber
+ *
  * @group rules
  */
 class RedirectEventSubscriberTest extends RulesDrupalTestBase {

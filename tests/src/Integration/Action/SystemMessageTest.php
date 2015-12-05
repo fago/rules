@@ -130,11 +130,16 @@ namespace Drupal\Tests\rules\Integration\Action {
       }
       return $messages;
     }
+
   }
 }
 
 namespace {
   if (!function_exists('drupal_set_message')) {
+
+    /**
+     * Dummy replacement for testing.
+     */
     function &drupal_set_message($message = NULL, $type = 'status', $repeat = FALSE) {
       static $messages = NULL;
 

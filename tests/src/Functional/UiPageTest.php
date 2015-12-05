@@ -15,6 +15,7 @@ use Drupal\simpletest\BrowserTestBase;
  * @group rules_ui
  *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class UiPageTest extends BrowserTestBase {

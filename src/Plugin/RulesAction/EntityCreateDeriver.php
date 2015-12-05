@@ -32,10 +32,10 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
    */
   protected $entityTypeManager;
   /**
-  * The entity field manager
-  *
-  * @var \Drupal\Core\Entity\EntityFieldManagerInterface;
-  */
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface;
+   */
   protected $entityFieldManager;
   /**
    * Creates a new EntityCreateDeriver object.
@@ -76,7 +76,7 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
         'provides' => [
           'entity' => ContextDefinition::create("entity:$entity_type_id")
             ->setLabel($entity_type->getLabel())
-            ->setRequired(TRUE)
+            ->setRequired(TRUE),
         ],
       ] + $base_plugin_definition;
       // Add a required context for the bundle key, and optional contexts for
