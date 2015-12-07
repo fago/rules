@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
@@ -24,6 +25,7 @@ use Drupal\rules\Core\RulesActionBase;
  *     "immediate" = @ContextDefinition("boolean",
  *       label = @Translation("Force saving immediately"),
  *       description = @Translation("Usually saving is postponed till the end of the evaluation, so that multiple saves can be fold into one. If this set, saving is forced to happen immediately."),
+ *       default_value = NULL,
  *       required = FALSE
  *     )
  *   }
@@ -41,13 +43,17 @@ class EntitySave extends RulesActionBase {
   protected $saveLater = TRUE;
 
   /**
-   * {@inheritdoc}
+   * Saves the Entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to be saved.
+   * @param bool $immediate
+   *   (optional) Save the entity immediately.
    */
-  public function execute() {
+  protected function doExecute(EntityInterface $entity, $immediate) {
     // We only need to do something here if the immediate flag is set, otherwise
     // the entity will be auto-saved after the execution.
-    if ((bool) $this->getContextValue('immediate')) {
-      $entity = $this->getContextValue('entity');
+    if ((bool) $immediate) {
       $entity->save();
       $this->saveLater = FALSE;
     }

@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\rules\Engine\RulesStateInterface;
@@ -49,11 +48,9 @@ trait ContextHandlerTrait {
         $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name]);
 
         if ($typed_data->getValue() === NULL && !$definition->isAllowedNull()) {
-          throw new RulesEvaluationException(SafeMarkup::format('The value of data selector @selector is NULL, but the context @name in @plugin requires a value.', [
-            '@selector' => $this->configuration['context_mapping'][$name],
-            '@name' => $name,
-            '@plugin' => $plugin->getPluginId(),
-          ]));
+          throw new RulesEvaluationException('The value of data selector '
+            . $this->configuration['context_mapping'][$name] . " is NULL, but the context $name in "
+            . $plugin->getPluginId() . ' requires a value.');
         }
         $context = $plugin->getContext($name);
         $new_context = Context::createFromContext($context, $typed_data);
@@ -64,10 +61,8 @@ trait ContextHandlerTrait {
       ) {
 
         if ($this->configuration['context_values'][$name] === NULL && !$definition->isAllowedNull()) {
-          throw new RulesEvaluationException(SafeMarkup::format('The context value for @name is NULL, but the context @name in @plugin requires a value.', [
-            '@name' => $name,
-            '@plugin' => $plugin->getPluginId(),
-          ]));
+          throw new RulesEvaluationException("The context value for $name is NULL, but the context $name in "
+            . $plugin->getPluginId() . ' requires a value.');
         }
 
         $context = $plugin->getContext($name);
@@ -75,10 +70,8 @@ trait ContextHandlerTrait {
         $plugin->setContext($name, $new_context);
       }
       elseif ($definition->isRequired()) {
-        throw new RulesEvaluationException(SafeMarkup::format('Required context @name is missing for plugin @plugin.', [
-          '@name' => $name,
-          '@plugin' => $plugin->getPluginId(),
-        ]));
+        throw new RulesEvaluationException("Required context $name is missing for plugin "
+          . $plugin->getPluginId() . '.');
       }
     }
   }

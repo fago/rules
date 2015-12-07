@@ -100,7 +100,11 @@ class UserRoleAddTest extends RulesEntityIntegrationTestBase {
     // Test adding of three roles role.
     $this->action
       ->setContextValue('user', $account->reveal())
-      ->setContextValue('roles', [$manager->reveal(), $editor->reveal(), $administrator->reveal()])
+      ->setContextValue('roles', [
+        $manager->reveal(),
+        $editor->reveal(),
+        $administrator->reveal(),
+      ])
       ->execute();
 
     $this->assertEquals($this->action->autoSaveContext(), ['user'], 'Action returns the user context name for auto saving.');

@@ -39,4 +39,11 @@ class RulesExpression extends Plugin {
    */
   public $type = '';
 
+  /**
+   * The class name of the form for displaying/editing this expression.
+   *
+   * @var string
+   */
+  public $form_class;
+
 }

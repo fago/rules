@@ -84,6 +84,7 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
     parent::save($form, $form_state);
 
     drupal_set_message($this->t('Reaction rule %label has been created.', ['%label' => $this->entity->label()]));
+    $form_state->setRedirect('entity.rules_reaction_rule.edit_form', ['rules_reaction_rule' => $this->entity->id()]);
   }
 
 }

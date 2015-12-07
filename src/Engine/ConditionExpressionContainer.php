@@ -132,4 +132,11 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
     return $configuration;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getIterator() {
+    return new \ArrayIterator($this->conditions);
+  }
+
 }

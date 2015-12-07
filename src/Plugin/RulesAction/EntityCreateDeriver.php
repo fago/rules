@@ -9,7 +9,8 @@ namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Plugin\Discovery\ContainerDeriverInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -25,22 +26,28 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
   use StringTranslationTrait;
 
   /**
-   * The entity manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
-
+  protected $entityTypeManager;
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface;
+   */
+  protected $entityFieldManager;
   /**
    * Creates a new EntityCreateDeriver object.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
    */
-  public function __construct(EntityManagerInterface $entity_manager, TranslationInterface $string_translation) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityFieldManagerInterface $entity_field_manager, TranslationInterface $string_translation) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityFieldManager = $entity_field_manager;
     $this->stringTranslation = $string_translation;
   }
 
@@ -48,14 +55,14 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
-    return new static($container->get('entity.manager'), $container->get('string_translation'));
+    return new static($container->get('entity_type.manager'), $container->get('entity_field.manager'), $container->get('string_translation'));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDerivativeDefinitions($base_plugin_definition) {
-    foreach ($this->entityManager->getDefinitions() as $entity_type_id => $entity_type) {
+    foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
       // Only allow content entities and ignore configuration entities.
       if (!$entity_type instanceof ContentEntityTypeInterface) {
         continue;
@@ -69,14 +76,14 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
         'provides' => [
           'entity' => ContextDefinition::create("entity:$entity_type_id")
             ->setLabel($entity_type->getLabel())
-            ->setRequired(TRUE)
+            ->setRequired(TRUE),
         ],
       ] + $base_plugin_definition;
       // Add a required context for the bundle key, and optional contexts for
       // other required base fields. This matches the storage create() behavior,
       // where only the bundle requirement is enforced.
       $bundle_key = $entity_type->getKey('bundle');
-      $base_field_definitions = $this->entityManager->getBaseFieldDefinitions($entity_type_id);
+      $base_field_definitions = $this->entityFieldManager->getBaseFieldDefinitions($entity_type_id);
       foreach ($base_field_definitions as $field_name => $definition) {
         if ($field_name != $bundle_key && !$definition->isRequired()) {
           continue;

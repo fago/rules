@@ -24,6 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     "ip" = @ContextDefinition("string",
  *       label = @Translation("IP Address"),
  *       description = @Translation("Ban an IP using the Ban Module. If no IP is provided, the current user IP is used."),
+ *       default_value = NULL,
  *       required = false
  *     )
  *   }
@@ -73,14 +74,14 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\ban\BanIpManagerInterface $banManager
+   * @param \Drupal\ban\BanIpManagerInterface $ban_manager
    *   The ban manager.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The corresponding request.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, BanIpManagerInterface $banManager, Request $request) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BanIpManagerInterface $ban_manager, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->banManager = $banManager;
+    $this->banManager = $ban_manager;
     $this->request = $request;
   }
 

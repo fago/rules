@@ -15,7 +15,8 @@ use Drupal\rules\Engine\RulesStateInterface;
  *
  * @RulesExpression(
  *   id = "rules_and",
- *   label = @Translation("Condition set (AND)")
+ *   label = @Translation("Condition set (AND)"),
+ *   form_class = "\Drupal\rules\Form\Expression\ConditionContainerForm"
  * )
  */
 class RulesAnd extends ConditionExpressionContainer {
@@ -26,6 +27,7 @@ class RulesAnd extends ConditionExpressionContainer {
    * @todo: Remove this once we added the API to access configured conditions.
    *
    * @return bool
+   *   TRUE if there are no conditions, FALSE otherwise.
    */
   public function isEmpty() {
     return empty($this->conditions);

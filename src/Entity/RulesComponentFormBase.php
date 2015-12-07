@@ -19,14 +19,20 @@ abstract class RulesComponentFormBase extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['label'] = [
+    $form['settings'] = array(
+      '#type' => 'details',
+      '#title' => $this->t('Settings'),
+      '#open' => $this->entity->isNew(),
+    );
+
+    $form['settings']['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#default_value' => $this->entity->label(),
       '#required' => TRUE,
     ];
 
-    $form['id'] = [
+    $form['settings']['id'] = [
       '#type' => 'machine_name',
       '#description' => $this->t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
       '#disabled' => !$this->entity->isNew(),
@@ -39,15 +45,15 @@ abstract class RulesComponentFormBase extends EntityForm {
     ];
 
     // @todo enter a real tag field here.
-    $form['tag'] = [
+    $form['settings']['tag'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Tag'),
       '#default_value' => $this->entity->getTag(),
       '#description' => $this->t('Enter a tag here'),
-      '#required' => TRUE,
+      '#required' => FALSE,
     ];
 
-    $form['description'] = [
+    $form['settings']['description'] = [
       '#type' => 'textarea',
       '#default_value' => $this->entity->getDescription(),
       '#description' => $this->t('Enter a description for this component.'),
@@ -68,7 +74,7 @@ abstract class RulesComponentFormBase extends EntityForm {
    */
   public function exists($id) {
     $type = $this->entity->getEntityTypeId();
-    return (bool) $this->entityManager->getStorage($type)->load($id);
+    return (bool) $this->entityTypeManager->getStorage($type)->load($id);
   }
 
 }

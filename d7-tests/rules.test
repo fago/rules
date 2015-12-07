@@ -9,6 +9,8 @@
  * left in this file still needs to be ported.
  */
 
+// @codingStandardsIgnoreStart
+
 class RulesTestCase extends DrupalWebTestCase {
 
   static function getInfo() {

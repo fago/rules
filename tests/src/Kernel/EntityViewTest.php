@@ -43,15 +43,15 @@ class EntityViewTest extends RulesDrupalTestBase {
    */
   public function testEntityViewHook() {
     // Create a node.
-    $entity_manager = $this->container->get('entity.manager');
-    $entity_manager->getStorage('node_type')
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
       ->create([
         'type' => 'page',
         'display_submitted' => FALSE,
       ])
       ->save();
 
-    $node = $entity_manager->getStorage('node')
+    $node = $entity_type_manager->getStorage('node')
       ->create([
         'title' => 'test',
         'type' => 'page',
@@ -60,7 +60,7 @@ class EntityViewTest extends RulesDrupalTestBase {
 
     // Build the node render array and render it, so that hook_entity_view() is
     // invoked.
-    $view_builder = $entity_manager->getViewBuilder('node');
+    $view_builder = $entity_type_manager->getViewBuilder('node');
     $build = $view_builder->view($node);
     $this->container->get('renderer')->renderPlain($build);
   }

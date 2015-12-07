@@ -62,11 +62,11 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     }
 
     // Create dummy entity storage object.
-    $entityStorage = $this->prophesize(EntityStorageInterface::class);
-    $entityStorage->loadByProperties([$field_name => $field_value])
+    $entity_storage = $this->prophesize(EntityStorageInterface::class);
+    $entity_storage->loadByProperties([$field_name => $field_value])
       ->willReturn($entities);
-    $this->entityManager->getStorage($entity_type)
-      ->willReturn($entityStorage->reveal());
+    $this->entityTypeManager->getStorage($entity_type)
+      ->willReturn($entity_storage->reveal());
 
     // Set context values for EntityFetchByField action and execute.
     $this->action->setContextValue('type', $entity_type)
@@ -74,7 +74,8 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('field_value', $field_value)
       ->execute();
 
-    // Test that executing action without a value for limit returns the dummy entities array.
+    // Test that executing action without a value for limit returns the dummy
+    // entities array.
     $this->assertEquals($entities, $this->action->getProvidedContext('entity_fetched')->getContextValue('entity_fetched'));
   }
 
@@ -110,15 +111,15 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->shouldBeCalledTimes(1);
 
     // Create dummy entity storage object.
-    $entityStorage = $this->prophesize(EntityStorageInterface::class);
-    $entityStorage->loadMultiple($entity_ids)
+    $entity_storage = $this->prophesize(EntityStorageInterface::class);
+    $entity_storage->loadMultiple($entity_ids)
       ->willReturn($entities)
       ->shouldBeCalledTimes(1);
-    $entityStorage->getQuery()
+    $entity_storage->getQuery()
       ->willReturn($query)
       ->shouldBeCalledTimes(1);
-    $this->entityManager->getStorage($entity_type)
-      ->willReturn($entityStorage->reveal())
+    $this->entityTypeManager->getStorage($entity_type)
+      ->willReturn($entity_storage->reveal())
       ->shouldBeCalledTimes(1);
 
     // Set context values for EntityFetchByField action and execute.
@@ -128,16 +129,17 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('limit', $limit)
       ->execute();
 
-    // Test that executing action with a value for limit returns the dummy entities array.
+    // Test that executing action with a value for limit returns the dummy
+    // entities array.
     $this->assertEquals($entities, $this->action->getProvidedContext('entity_fetched')->getContextValue('entity_fetched'));
   }
 
   /**
-   * Tests that the context provided by the action execution has the correct entity type.
+   * Tests that the action execution loads the entity from storage.
    *
    * @covers ::execute
    */
-  function testActionExecutionProvidedContextEntityType() {
+  public function testActionExecutionProvidedContextEntityType() {
     // Create variables for action context values.
     $entity_type = 'entity_test';
     $field_name = 'test_field';
@@ -151,11 +153,11 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
     }
 
     // Create dummy entity storage object.
-    $entityStorage = $this->prophesize(EntityStorageInterface::class);
-    $entityStorage->loadByProperties([$field_name => $field_value])
+    $entity_storage = $this->prophesize(EntityStorageInterface::class);
+    $entity_storage->loadByProperties([$field_name => $field_value])
       ->willReturn($entities);
-    $this->entityManager->getStorage($entity_type)
-      ->willReturn($entityStorage->reveal())
+    $this->entityTypeManager->getStorage($entity_type)
+      ->willReturn($entity_storage->reveal())
       ->shouldBeCalledTimes(1);
 
     // Set context values for EntityFetchByField action and execute.
@@ -163,8 +165,6 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('field_name', $field_name)
       ->setContextValue('field_value', $field_value)
       ->execute();
-
-    // @todo Test that the provided context has the correct entity type.
   }
 
   /**
@@ -172,7 +172,7 @@ class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
    */
   public function testRefiningContextDefinitions() {
     $this->action->setContextValue('type', 'entity_test');
-    $this->action->refineContextdefinitions();
+    $this->action->refineContextDefinitions();
     $this->assertEquals(
       $this->action->getProvidedContextDefinition('entity_fetched')
         ->getDataType(), 'entity:entity_test'

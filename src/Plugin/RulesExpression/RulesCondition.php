@@ -49,16 +49,16 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Condition\ConditionManager $conditionManager
+   * @param \Drupal\Core\Condition\ConditionManager $condition_manager
    *   The condition manager.
    * @param \Drupal\rules\Context\DataProcessorManager $processor_manager
    *   The data processor plugin manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $conditionManager, DataProcessorManager $processor_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConditionManager $condition_manager, DataProcessorManager $processor_manager) {
     // Make sure defaults are applied.
     $configuration += $this->defaultConfiguration();
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->conditionManager = $conditionManager;
+    $this->conditionManager = $condition_manager;
     $this->processorManager = $processor_manager;
   }
 
@@ -148,6 +148,14 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
       $this->contextDefinitions = $condition->getContextDefinitions();
     }
     return $this->contextDefinitions;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    $definition = $this->conditionManager->getDefinition($this->configuration['condition_id']);
+    return $this->t('Condition: @label', ['@label' => $definition['label']]);
   }
 
 }

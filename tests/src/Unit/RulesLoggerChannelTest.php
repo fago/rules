@@ -32,7 +32,7 @@ class RulesLoggerChannelTest extends UnitTestCase {
    * @param string $psr3_log_error_level
    *   Allowed PSR3 log level.
    * @param int $expect_log
-   *   Amount of logs to be created
+   *   Amount of logs to be created.
    * @param string $message
    *   Log message.
    *
@@ -62,10 +62,38 @@ class RulesLoggerChannelTest extends UnitTestCase {
    */
   public function providerTestLog() {
     return [
-      [LogLevel::DEBUG, RfcLogLevel::DEBUG, 0, LogLevel::DEBUG, 0, 'apple'],
-      [LogLevel::CRITICAL, RfcLogLevel::CRITICAL, 1, LogLevel::DEBUG, 1, 'banana'],
-      [LogLevel::CRITICAL, RfcLogLevel::CRITICAL, 1, LogLevel::DEBUG, 1, 'orange'],
-      [LogLevel::INFO, RfcLogLevel::INFO, 1, LogLevel::CRITICAL, 0, 'cucumber'],
+      [
+        LogLevel::DEBUG,
+        RfcLogLevel::DEBUG,
+        0,
+        LogLevel::DEBUG,
+        0,
+        'apple',
+      ],
+      [
+        LogLevel::CRITICAL,
+        RfcLogLevel::CRITICAL,
+        1,
+        LogLevel::DEBUG,
+        1,
+        'banana',
+      ],
+      [
+        LogLevel::CRITICAL,
+        RfcLogLevel::CRITICAL,
+        1,
+        LogLevel::DEBUG,
+        1,
+        'orange',
+      ],
+      [
+        LogLevel::INFO,
+        RfcLogLevel::INFO,
+        1,
+        LogLevel::CRITICAL,
+        0,
+        'cucumber',
+      ],
     ];
   }
 

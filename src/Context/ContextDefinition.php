@@ -80,11 +80,11 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
     }
     // Default to Rules context definition class.
     $values['class'] = isset($values['class']) ? $values['class'] : '\Drupal\rules\Context\ContextDefinition';
-    if (!isset($values['type'])) {
-      $values['type'] = 'any';
+    if (!isset($values['value'])) {
+      $values['value'] = 'any';
     }
 
-    $definition = $values['class']::create($values['type']);
+    $definition = $values['class']::create($values['value']);
     foreach (array_intersect_key(static::$nameMap, $values) as $key => $name) {
       $definition->$name = $values[$key];
     }

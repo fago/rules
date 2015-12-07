@@ -63,7 +63,9 @@ class UserUnblockTest extends RulesEntityIntegrationTestBase {
 
   /**
    * Test execute() method for users with different status.
+   *
    * @dataProvider userProvider
+   *
    * @covers ::execute
    */
   public function testUnblockUser($active, $authenticated, $expects, $autosave_names) {

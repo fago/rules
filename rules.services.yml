@@ -14,11 +14,20 @@ services:
   logger.channel.rules:
     class: Drupal\rules\Logger\RulesLoggerChannel
     arguments: ['@config.factory']
+  logger.ruleslog:
+    class: Drupal\rules\Logger\RulesLog
+    tags:
+      - { name: logger }
+    arguments: ['@event_dispatcher', '@logger.log_message_parser']
   plugin.manager.rules_component:
     class: Drupal\rules\Plugin\RulesComponentManager
     arguments: ['@container.namespaces', '@module_handler']
   rules.event_subscriber:
     class: Drupal\rules\EventSubscriber\GenericEventSubscriber
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: 'event_subscriber' }
+  rules.redirect_event_subscriber:
+    class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }

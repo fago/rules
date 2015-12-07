@@ -89,7 +89,11 @@ class ListContainsTest extends RulesIntegrationTestBase {
     $entity_four->id()->willReturn('entity_four_id');
 
     // Test array of entities.
-    $entity_list = [$entity_one->reveal(), $entity_two->reveal(), $entity_three->reveal()];
+    $entity_list = [
+      $entity_one->reveal(),
+      $entity_two->reveal(),
+      $entity_three->reveal(),
+    ];
 
     // Test that the list of entities doesn't contain entity 'entity_zero'.
     $this->condition

@@ -9,7 +9,7 @@ namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Fetch entity by id"),
  *   category = @Translation("Entity"),
  *   context = {
- *     "entity_type_id" = @ContextDefinition("string",
+ *     "type" = @ContextDefinition("string",
  *       label = @Translation("Entity type"),
- *       description = @Translation("Specifies the type of entity that should be fetched."),
+ *       description = @Translation("Specifies the type of the entity that should be fetched."),
  *       assignment_restriction = "input"
  *     ),
  *     "entity_id" = @ContextDefinition("integer",
@@ -31,8 +31,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     )
  *   },
  *   provides = {
- *     "entity" = @ContextDefinition("entity",
- *       label = @Translation("Entity")
+ *     "entity_fetched" = @ContextDefinition("entity",
+ *       label = @Translation("Fetched entity")
  *     )
  *   }
  * )
@@ -43,11 +43,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The entity manager service.
+   * The entity type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs a EntityFetchById object.
@@ -58,12 +58,12 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -74,25 +74,32 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions() {
+    if ($type = $this->getContextValue('type')) {
+      $this->pluginDefinition['provides']['entity_fetched']->setDataType("entity:$type");
+    }
   }
 
   /**
    * Executes the action with the given context.
    *
-   * @param int $entity_type_id
+   * @param string $entity_type
    *   The entity type id.
    * @param int $entity_id
    *   The entity id.
    */
-  protected function doExecute($entity_type_id, $entity_id) {
-    $storage = $this->entityManager->getStorage($entity_type_id);
+  protected function doExecute($entity_type, $entity_id) {
+    $storage = $this->entityTypeManager->getStorage($entity_type);
     $entity = $storage->load($entity_id);
-    // @todo Refine the provided context definition for 'entity'. Example: if
-    //   the loaded entity is a node then the provided context definition should
-    //  use the type node. We don't have an API for that yet.
-    $this->setProvidedValue('entity', $entity);
+
+    $this->setProvidedValue('entity_fetched', $entity);
   }
 
 }

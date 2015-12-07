@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\Condition;
 
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesConditionBase;
@@ -27,6 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *     "language" = @ContextDefinition("language",
  *       label = @Translation("Language"),
  *       description = @Translation("If specified, the language for which the URL alias applies."),
+ *       default_value = NULL,
  *       required = FALSE
  *     )
  *   }
@@ -73,12 +75,20 @@ class PathAliasExists extends RulesConditionBase implements ContainerFactoryPlug
   }
 
   /**
-   * {@inheritdoc}
+   * Check if a path alias exists.
+   *
+   * @param string $alias
+   *   The alias to see if exists.
+   * @param \Drupal\Core\Language\LanguageInterface|null $language
+   *   The language to use.
+   *
+   * @return bool
+   *   TRUE if the system path does not match the given alias (ie: the alias
+   *   exists).
    */
-  public function evaluate() {
-    $alias = $this->getContextValue('alias');
-    $language = $this->getContext('language')->hasContextValue() ? $this->getContextValue('language')->getId() : NULL;
-    $path = $this->aliasManager->getPathByAlias($alias, $language);
+  protected function doEvaluate($alias, LanguageInterface $language = NULL) {
+    $lang_code = is_null($language) ? NULL : $language->getId();
+    $path = $this->aliasManager->getPathByAlias($alias, $lang_code);
     return $path != $alias;
   }
 

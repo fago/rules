@@ -57,7 +57,10 @@ class DataIsEmptyTest extends RulesIntegrationTestBase {
 
     // These should all return FALSE.
     // A non-empty array.
-    $context = Context::createFromContext($context, $this->getTypedData('list', [1, 2, 3]));
+    $context = Context::createFromContext(
+      $context,
+      $this->getTypedData('list', [1, 2, 3])
+    );
     $this->condition->setContext('data', $context);
     $this->assertFalse($this->condition->evaluate());
 

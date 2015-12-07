@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\rules\Core\RulesActionBase;
 
 /**
@@ -24,6 +23,7 @@ use Drupal\rules\Core\RulesActionBase;
  *     ),
  *     "rounding_behavior" = @ContextDefinition("string",
  *       label = @Translation("Rounding behavior"),
+ *       default_value = NULL,
  *       required = false
  *     )
  *   },
@@ -43,13 +43,15 @@ class DataConvert extends RulesActionBase {
 
   /**
    * Executes the plugin.
+   *
+   * @param mixed $value
+   *   The input value.
+   * @param string $target_type
+   *   The target type the value should be converted into.
+   * @param string $rounding_behavior
+   *   The behaviour for rounding.
    */
-  public function execute() {
-    $value = $this->getContextValue('value');
-
-    $target_type = $this->getContextValue('target_type');
-    $rounding_behavior = $this->getContextValue('rounding_behavior');
-
+  protected function doExecute($value, $target_type, $rounding_behavior) {
     // @todo: Add support for objects implementing __toString().
     if (!is_scalar($value)) {
       throw new \InvalidArgumentException('Only scalar values are supported.');
@@ -76,9 +78,7 @@ class DataConvert extends RulesActionBase {
           break;
 
         default:
-          throw new \InvalidArgumentException(SafeMarkup::format('Unknown rounding behavior: @rounding_behavior', [
-            '@rounding_behavior' => $rounding_behavior,
-          ]));
+          throw new \InvalidArgumentException("Unknown rounding behavior: $rounding_behavior");
       }
     }
 
@@ -96,9 +96,7 @@ class DataConvert extends RulesActionBase {
         break;
 
       default:
-        throw new \InvalidArgumentException(SafeMarkup::format('Unknown target type: @type', [
-          '@type' => $target_type,
-        ]));
+        throw new \InvalidArgumentException("Unknown target type: $target_type");
     }
 
     $this->setProvidedValue('conversion_result', $result);

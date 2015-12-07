@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\DataReferenceInterface;
@@ -85,9 +84,7 @@ class RulesState implements RulesStateInterface {
    */
   public function getVariable($name) {
     if (!array_key_exists($name, $this->variables)) {
-      throw new RulesEvaluationException(SafeMarkup::format('Unable to get variable @name, it is not defined.', [
-        '@name' => $name,
-      ]));
+      throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
     }
     return $this->variables[$name];
   }
@@ -116,9 +113,7 @@ class RulesState implements RulesStateInterface {
       if ($typed_data instanceof DataReferenceInterface) {
         $typed_data = $typed_data->getTarget();
         if ($typed_data === NULL) {
-          throw new RulesEvaluationException(SafeMarkup::format('Unable to apply data selector @current_selector. The specified reference is NULL.', [
-            '@current_selector' => $current_selector,
-          ]));
+          throw new RulesEvaluationException("Unable to apply data selector $current_selector. The specified reference is NULL.");
         }
       }
 
@@ -146,17 +141,11 @@ class RulesState implements RulesStateInterface {
         }
         catch (\InvalidArgumentException $e) {
           // In case of an exception, re-throw it.
-          throw new RulesEvaluationException(SafeMarkup::format('Unable to apply data selector @current_selector: @error', [
-            '@current_selector' => $current_selector,
-            '@error' => $e->getMessage(),
-          ]));
+          throw new RulesEvaluationException("Unable to apply data selector $current_selector: " . $e->getMessage());
         }
       }
       else {
-        throw new RulesEvaluationException(SafeMarkup::format('Unable to apply data selector @current_selector. The specified variable is not a list or a complex structure: @name.', [
-          '@current_selector' => $current_selector,
-          '@name' => $name,
-        ]));
+        throw new RulesEvaluationException("Unable to apply data selector $current_selector. The specified variable is not a list or a complex structure: $name.");
       }
     }
 

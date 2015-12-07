@@ -9,9 +9,6 @@ php:
 
 matrix:
   allow_failures:
-    # PHP 7 testing is disabled for now since Drupal installation throws
-    # errors. See https://www.drupal.org/node/2454439
-    - php: 7
     # We cannot use hhvm-nightly since that does not work in Travis CI's old
     # Ubuntu 12.04.
     - php: hhvm
@@ -47,6 +44,22 @@ before_script:
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
 
+  # Start a web server on port 8888, run in the background; wait for
+  # initialization.
+  - nohup php -S localhost:8888 > /dev/null 2>&1 &
+  # @todo the following command does not work in the Travis CI container, so we
+  # just assume that the webserver is running after the composer commands.
+  #- until netstat -an 2>/dev/null | grep '8888.*LISTEN'; do true; done
+
+  # Export web server URL for browser tests.
+  - export SIMPLETEST_BASE_URL=http://localhost:8888
+
+  # Install PHPCS to check for Drupal coding standards.
+  - composer global require drupal/coder
+  - ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+
 script:
   # Run the PHPUnit tests which also include the kernel tests.
   - ./vendor/phpunit/phpunit/phpunit -c ./core/phpunit.xml.dist ./modules/rules
+  # Check for coding standards violations
+  - cd modules/rules && ~/.composer/vendor/bin/phpcs

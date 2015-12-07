@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\EventSubscriber;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -20,18 +20,18 @@ class GenericEventSubscriber implements EventSubscriberInterface {
   /**
    * The entity manager used for loading reaction rule config entities.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -74,7 +74,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
    */
   public function onRulesEvent(Event $event, $event_name) {
     // Load reaction rule config entities by $event_name.
-    $storage = $this->entityManager->getStorage('rules_reaction_rule');
+    $storage = $this->entityTypeManager->getStorage('rules_reaction_rule');
     // @todo Only load active reaction rules here.
     $configs = $storage->loadByProperties(['event' => $event_name]);
 

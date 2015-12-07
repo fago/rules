@@ -64,7 +64,7 @@ class EntityCreate extends RulesActionBase implements ContainerFactoryPluginInte
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')->getStorage($plugin_definition['entity_type_id'])
+      $container->get('entity_type.manager')->getStorage($plugin_definition['entity_type_id'])
     );
   }
 

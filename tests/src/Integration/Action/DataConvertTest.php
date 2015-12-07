@@ -124,7 +124,7 @@ class DataConvertTest extends RulesIntegrationTestBase {
    */
   public function testInvalidRoundingBehaviorException() {
     $value = 5.5;
-    $rounding_behavior = $this->getRandomGenerator()->name();
+    $rounding_behavior = 'invalid rounding';
     $this->executeAction($value, 'integer', $rounding_behavior);
   }
 
@@ -137,7 +137,7 @@ class DataConvertTest extends RulesIntegrationTestBase {
    */
   public function testInvalidTargetTypeException() {
     $value = 5.5;
-    $target_type = $this->getRandomGenerator()->name();
+    $target_type = 'invalid type';
     $this->executeAction($value, $target_type);
   }
 

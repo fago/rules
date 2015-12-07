@@ -98,8 +98,8 @@ class RulesConditionTest extends UnitTestCase {
       ->shouldBeCalledTimes(1);
 
     $condition = new RulesCondition([
-        'condition_id' => 'test_condition',
-      ] + ContextConfig::create()
+      'condition_id' => 'test_condition',
+    ] + ContextConfig::create()
         // We don't care about the data processor plugin name and
         // configuration since we will use a mock anyway.
         ->process('test', 'foo', [])
@@ -156,12 +156,12 @@ class RulesConditionTest extends UnitTestCase {
       ->shouldBeCalledTimes(1);
 
     // Create a condition which is negated.
-    $conditionExpression = new RulesCondition([
+    $condition_expression = new RulesCondition([
       'condition_id' => 'test_condition',
       'negate' => TRUE,
     ], '', [], $this->conditionManager->reveal(), $this->processorManager->reveal());
 
-    $this->assertFalse($conditionExpression->execute());
+    $this->assertFalse($condition_expression->execute());
   }
 
 }

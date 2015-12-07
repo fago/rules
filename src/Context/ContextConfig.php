@@ -35,7 +35,7 @@ class ContextConfig {
    *   (optional) Some initial values to set. In the same format as returned
    *   from static::toArray().
    *
-   * @return static
+   * @return $this
    */
   public static function create(array $values = []) {
     return new static($values);

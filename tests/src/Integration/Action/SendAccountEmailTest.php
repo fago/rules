@@ -67,11 +67,15 @@ namespace Drupal\Tests\rules\Integration\Action {
 
 namespace {
 
-  /**
+  /*
    * We fake the _user_mail_notify() when using unit tests and we adapt it so
    * that we can get how many times the function was called with a specific $op.
    */
   if (!function_exists('_user_mail_notify')) {
+
+    /**
+     * Dummy replacement for testing.
+     */
     function _user_mail_notify($op = NULL, $account = NULL, $langcode = NULL) {
       static $notifications_sent;
       if (!empty($op)) {

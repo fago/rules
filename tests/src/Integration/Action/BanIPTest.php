@@ -71,12 +71,12 @@ class BanIPTest extends RulesIntegrationTestBase {
    *
    * @covers ::execute
    */
-  public function testActionExecutionWithContextIPv4() {
+  public function testActionExecutionWithContextIpv4() {
     // TEST-NET-1 IPv4.
-    $IPv4 = '192.0.2.0';
-    $this->action->setContextValue('ip', $IPv4);
+    $ipv4 = '192.0.2.0';
+    $this->action->setContextValue('ip', $ipv4);
 
-    $this->banManager->banIp($IPv4)->shouldBeCalledTimes(1);
+    $this->banManager->banIp($ipv4)->shouldBeCalledTimes(1);
 
     $this->action->execute();
 
@@ -94,12 +94,12 @@ class BanIPTest extends RulesIntegrationTestBase {
    *
    * @covers ::execute
    */
-  public function testActionExecutionWithContextIPv6() {
+  public function testActionExecutionWithContextIpv6() {
     // TEST-NET-1 IPv4 '192.0.2.0' converted to IPv6.
-    $IPv6 = '2002:0:0:0:0:0:c000:200';
-    $this->action->setContextValue('ip', $IPv6);
+    $ipv6 = '2002:0:0:0:0:0:c000:200';
+    $this->action->setContextValue('ip', $ipv6);
 
-    $this->banManager->banIp($IPv6)->shouldBeCalledTimes(1);
+    $this->banManager->banIp($ipv6)->shouldBeCalledTimes(1);
 
     $this->action->execute();
 
@@ -112,7 +112,7 @@ class BanIPTest extends RulesIntegrationTestBase {
    *
    * @covers ::execute
    */
-  public function testActionExecutionWithoutContextIP() {
+  public function testActionExecutionWithoutContextIp() {
     // TEST-NET-1 IPv4.
     $ip = '192.0.2.0';
 
