@@ -60,7 +60,7 @@ trait ContextProviderTrait {
   }
 
   /**
-   * @see \Drupal\rules\Context\ContextProviderInterface.
+   * @see \Drupal\rules\Context\ContextProviderInterface
    */
   public function getProvidedContextDefinitions() {
     $definition = $this->getPluginDefinition();

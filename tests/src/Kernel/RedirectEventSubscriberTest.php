@@ -5,7 +5,6 @@
  * Contains \Drupal\rules\Tests\ConfigEntityDefaultsTest.
  */
 
-
 namespace Drupal\Tests\rules\Kernel;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;

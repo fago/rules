@@ -52,11 +52,11 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
 
     // Prepare entity storage to return dummy entity on the 'load' execution.
     $entity = $this->prophesize(EntityInterface::class);
-    $entityStorage = $this->prophesize(EntityStorageInterface::class);
-    $entityStorage->load(1)->willReturn($entity->reveal())
+    $entity_storage = $this->prophesize(EntityStorageInterface::class);
+    $entity_storage->load(1)->willReturn($entity->reveal())
       ->shouldBeCalledTimes(1);
     $this->entityTypeManager->getStorage($entity_type)
-      ->willReturn($entityStorage->reveal())
+      ->willReturn($entity_storage->reveal())
       ->shouldBeCalledTimes(1);
 
     // Set context values for EntityFetchByField action and execute.
@@ -64,7 +64,8 @@ class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
       ->setContextValue('type', $entity_type)
       ->setContextValue('entity_id', 1)
       ->execute();
-    // Test that entity load with type 'test' and id '1' should return the dummy entity.
+    // Test that entity load with type 'test' and id '1' should return the
+    // dummy entity.
     $this->assertEquals($entity->reveal(), $this->action->getProvidedContext('entity_fetched')->getContextValue('entity_fetched'), 'Action returns the loaded entity for fetching entity by id.');
   }
 

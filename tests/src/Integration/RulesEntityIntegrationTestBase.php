@@ -105,8 +105,8 @@ abstract class RulesEntityIntegrationTestBase extends RulesIntegrationTestBase {
       ->willReturn($this->entityAccess->reveal());
 
     // The base field definitions for our test entity aren't used, and would
-    // require additional mocking. It doesn't appear that any of our tests rely on this
-    // for any other entity type that we are mocking.
+    // require additional mocking. It doesn't appear that any of our tests rely
+    // on this for any other entity type that we are mocking.
     $this->entityFieldManager->getBaseFieldDefinitions(Argument::any())->willReturn([]);
     $this->entityManager->getBaseFieldDefinitions(Argument::any())->willReturn([]);
 

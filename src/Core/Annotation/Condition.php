@@ -23,7 +23,8 @@ class Condition extends CoreConditionAnnotation {
    *
    * @var string[]
    *   Array of permission strings as declared in a *.permissions.yml file. If
-   *   any one of these permissions apply for the relevant user, we allow access.
+   *   any one of these permissions apply for the relevant user, we allow
+   *   access.
    *
    *   The key should be used as follows. Note that we add a space between "@"
    *   and "Condition", since we do not want to trigger the annotation parser

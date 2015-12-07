@@ -26,7 +26,9 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
    *
    * @var array
    */
-  public static $modules = ['rules', 'rules_test_default_component', 'user', 'system'];
+  public static $modules = ['rules', 'rules_test_default_component', 'user',
+    'system',
+  ];
 
   /**
    * Disable strict config schema checking for now.
@@ -60,7 +62,7 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   public function testDefaultComponents() {
     $config_entity = $this->storage->load('rules_test_default_component');
 
-    /** @var $config_entity RulesComponent */
+    /** @var RulesComponent $config_entity */
     $expression = $config_entity
       ->getExpression();
 

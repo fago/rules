@@ -90,8 +90,8 @@ class DataComparisonTest extends RulesIntegrationTestBase {
    * @covers ::evaluate
    */
   public function testConditionEvaluationOperatorContains() {
-    // Test that when the data string contains the value string, and the operator
-    // is 'CONTAINS', TRUE is returned.
+    // Test that when the data string contains the value string, and the
+    // operator is 'CONTAINS', TRUE is returned.
     $this->condition
       ->setContextValue('data', 'Big Llama')
       ->setContextValue('operator', 'contains')

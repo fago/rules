@@ -13,8 +13,8 @@ use Drupal\rules\Context\ContextConfig;
  * Defines a common interface for expressions containing other expressions.
  *
  * Usually expression containers also implement the
- * ActionExpressionContainerInterface or ConditionExpressionContainerInterface in order
- * to denote whether it contains action or condition expressions.
+ * ActionExpressionContainerInterface or ConditionExpressionContainerInterface
+ * in order to denote whether it contains action or condition expressions.
  */
 interface ExpressionContainerInterface extends ExpressionInterface {
 

@@ -136,10 +136,10 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $this->enabledModules = new \ArrayObject();
     $this->enabledModules['rules'] = TRUE;
     $this->enabledModules['rules_test'] = TRUE;
-    $enabledModules = $this->enabledModules;
+    $enabled_modules = $this->enabledModules;
     $this->moduleHandler->moduleExists(Argument::type('string'))
-      ->will(function ($arguments) use ($enabledModules) {
-        return [$arguments[0], $enabledModules[$arguments[0]]];
+      ->will(function ($arguments) use ($enabled_modules) {
+        return [$arguments[0], $enabled_modules[$arguments[0]]];
       });
 
     // Wed don't care about alter() calls on the module handler.
@@ -248,6 +248,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
    *   The interface that should be mocked, example: EntityInterface::class.
    *
    * @return \Drupal\Core\Entity\EntityInterface|\Prophecy\Prophecy\ProphecyInterface
+   *   The mocked entity.
    */
   protected function prophesizeEntity($interface) {
     $entity = $this->prophesize($interface);

@@ -7,11 +7,12 @@
 
 namespace Drupal\rules\Plugin\RulesAction;
 
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Provides "Send email" rules action.
@@ -77,10 +78,10 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
    *   The plugin implementation definition.
    * @param \Psr\Log\LoggerInterface $logger
    *   The alias storage service.
-   * @param $mail_manager
-   *   The alias mail manager service.
+   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
+   *   The mail manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerInterface $logger, $mail_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerInterface $logger, MailManagerInterface $mail_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->logger = $logger;
     $this->mailManager = $mail_manager;

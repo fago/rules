@@ -26,6 +26,7 @@ class RulesAnd extends ConditionExpressionContainer {
    * @todo: Remove this once we added the API to access configured conditions.
    *
    * @return bool
+   *   TRUE if there are no conditions, FALSE otherwise.
    */
   public function isEmpty() {
     return empty($this->conditions);

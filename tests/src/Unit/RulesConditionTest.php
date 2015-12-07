@@ -157,7 +157,7 @@ class RulesConditionTest extends UnitTestCase {
       ->shouldBeCalledTimes(1);
 
     // Create a condition which is negated.
-    $conditionExpression = new RulesCondition([
+    $condition_expression = new RulesCondition([
       'condition_id' => 'test_condition',
       'negate' => TRUE,
     ], '', [], $this->conditionManager->reveal(), $this->processorManager->reveal());
@@ -168,7 +168,7 @@ class RulesConditionTest extends UnitTestCase {
       ->willReturn([])
       ->shouldBeCalledTimes(1);
 
-    $this->assertFalse($conditionExpression->execute());
+    $this->assertFalse($condition_expression->execute());
   }
 
 }

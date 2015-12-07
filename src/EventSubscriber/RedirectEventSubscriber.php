@@ -18,10 +18,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class RedirectEventSubscriber implements EventSubscriberInterface {
 
   /**
-   * Checks is a redirect rules action was executed, and redirects to the
-   * provided url.
+   * Checks if a redirect rules action was executed.
+   *
+   * Redirects to the provided url if there is one.
    *
    * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
+   *   The response event.
    */
   public function checkRedirectIssued(FilterResponseEvent $event) {
     $request = $event->getRequest();
@@ -37,7 +39,7 @@ class RedirectEventSubscriber implements EventSubscriberInterface {
    * @return array
    *   An array of event listener definitions.
    */
-  static function getSubscribedEvents() {
+  public static function getSubscribedEvents() {
     $events[KernelEvents::RESPONSE][] = array('checkRedirectIssued');
     return $events;
   }

@@ -38,36 +38,36 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
     // Prepare mocked bundle field definition. This is needed because
     // EntityCreateDeriver adds required contexts for required fields, and
     // assumes that the bundle field is required.
-    $bundleFieldDefinition = $this->prophesize(BaseFieldDefinition::class);
+    $bundle_field_definition = $this->prophesize(BaseFieldDefinition::class);
 
     // The next methods are mocked because EntityCreateDeriver executes them,
     // and the mocked field definition is instantiated without the necessary
     // information.
-    $bundleFieldDefinition->getCardinality()->willReturn(1)
+    $bundle_field_definition->getCardinality()->willReturn(1)
       ->shouldBeCalledTimes(1);
 
-    $bundleFieldDefinition->getType()->willReturn('string')
+    $bundle_field_definition->getType()->willReturn('string')
       ->shouldBeCalledTimes(1);
 
-    $bundleFieldDefinition->getLabel()->willReturn('Bundle')
+    $bundle_field_definition->getLabel()->willReturn('Bundle')
       ->shouldBeCalledTimes(1);
 
-    $bundleFieldDefinition->getDescription()
+    $bundle_field_definition->getDescription()
       ->willReturn('Bundle mock description')
       ->shouldBeCalledTimes(1);
 
     // Prepare mocked entity storage.
-    $entityTypeStorage = $this->prophesize(EntityStorageBase::class);
-    $entityTypeStorage->create(['bundle' => 'test'])
+    $entity_type_storage = $this->prophesize(EntityStorageBase::class);
+    $entity_type_storage->create(['bundle' => 'test'])
       ->willReturn(self::ENTITY_REPLACEMENT);
 
     // Return the mocked storage controller.
     $this->entityTypeManager->getStorage('test')
-      ->willReturn($entityTypeStorage->reveal());
+      ->willReturn($entity_type_storage->reveal());
 
     // Return a mocked list of base fields definitions.
     $this->entityFieldManager->getBaseFieldDefinitions('test')
-      ->willReturn(['bundle' => $bundleFieldDefinition->reveal()]);
+      ->willReturn(['bundle' => $bundle_field_definition->reveal()]);
 
     // Instantiate the action we are testing.
     $this->action = $this->actionManager->createInstance('rules_entity_create:entity:test');
