@@ -16,7 +16,7 @@ use Drupal\rules\Context\ContextConfig;
  * ActionExpressionContainerInterface or ConditionExpressionContainerInterface
  * in order to denote whether it contains action or condition expressions.
  */
-interface ExpressionContainerInterface extends ExpressionInterface {
+interface ExpressionContainerInterface extends ExpressionInterface, \IteratorAggregate {
 
   /**
    * Creates and adds an expression.

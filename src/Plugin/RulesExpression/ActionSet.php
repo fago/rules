@@ -124,4 +124,11 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
     return $configuration;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getIterator() {
+    return new \ArrayIterator($this->actions);
+  }
+
 }

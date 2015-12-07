@@ -150,4 +150,12 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     return $this->contextDefinitions;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getLabel() {
+    $definition = $this->conditionManager->getDefinition($this->configuration['condition_id']);
+    return $this->t('Condition: @label', ['@label' => $definition['label']]);
+  }
+
 }

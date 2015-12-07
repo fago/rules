@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Storage handler for reaction rule config entities.
+ *
+ * @todo Create an interface for this.
  */
 class ReactionRuleStorage extends ConfigEntityStorage {
 

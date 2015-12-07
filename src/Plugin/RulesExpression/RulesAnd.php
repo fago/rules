@@ -15,7 +15,8 @@ use Drupal\rules\Engine\RulesStateInterface;
  *
  * @RulesExpression(
  *   id = "rules_and",
- *   label = @Translation("Condition set (AND)")
+ *   label = @Translation("Condition set (AND)"),
+ *   form_class = "\Drupal\rules\Form\Expression\ConditionContainerForm"
  * )
  */
 class RulesAnd extends ConditionExpressionContainer {
