@@ -19,7 +19,7 @@ interface RulesStateInterface {
   /**
    * Adds a state variable based on its definition and value.
    *
-   * @param $name
+   * @param string $name
    *   The context variable name.
    * @param \Drupal\rules\Context\ContextDefinitionInterface $definition
    *   The context definition of the variable.

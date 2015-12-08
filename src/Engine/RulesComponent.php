@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\TypedData\TypedDataManagerInterface;
 use Drupal\rules\Context\ContextDefinitionInterface;
 
 /**
@@ -61,7 +60,7 @@ class RulesComponent {
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
    *   The expression of the component.
    */
-  protected function __construct($expression) {
+  protected function __construct(ExpressionInterface $expression) {
     $this->state = RulesState::create();
     $this->expression = $expression;
   }
@@ -89,7 +88,7 @@ class RulesComponent {
   /**
    * Adds a context definition.
    *
-   * @param $name
+   * @param string $name
    *   The name of the context to add.
    * @param \Drupal\rules\Context\ContextDefinitionInterface $definition
    *   The definition to add.

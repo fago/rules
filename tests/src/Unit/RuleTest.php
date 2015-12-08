@@ -7,13 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
-use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\rules\Context\ContextDefinitionInterface;
-use Drupal\rules\Engine\ConditionExpressionInterface;
-use Drupal\Core\TypedData\TypedDataManagerInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
-use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;

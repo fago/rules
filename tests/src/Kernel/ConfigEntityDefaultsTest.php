@@ -65,7 +65,6 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
     $user = $this->entityTypeManager->getStorage('user')
       ->create(array('mail' => 'test@example.com'));
 
-    /** @var $config_entity \Drupal\rules\Entity\RulesComponent */
     $config_entity
       ->getComponent()
       ->setContextValue('user', $user)

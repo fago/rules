@@ -16,6 +16,7 @@ use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
  * Tests the Rules component class.
  *
  * @group rules
+ *
  * @cover RulesComponent
  */
 class RulesComponentTest extends RulesIntegrationTestBase {
@@ -39,4 +40,5 @@ class RulesComponentTest extends RulesIntegrationTestBase {
     // Ensure the provided context is returned.
     // $this->assertTrue(isset($result['concatenated']) && $result['concatenated'] == 'foo.foo');
   }
+
 }
