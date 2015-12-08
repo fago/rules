@@ -7,8 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
+use Drupal\rules\Context\ContextDefinitionInterface;
 
 /**
  * Handles executable Rules components.
@@ -37,13 +37,6 @@ class RulesComponent {
   protected $providedContextDefinitions;
 
   /**
-   * The typed data manager.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManagerInterface
-   */
-  protected $typedDataManager;
-
-  /**
    * The expression.
    *
    * @var \Drupal\rules\Engine\ExpressionInterface
@@ -59,7 +52,7 @@ class RulesComponent {
    * @return static
    */
   public static function create(ExpressionInterface $expression) {
-    return new static($expression, \Drupal::typedDataManager());
+    return new static($expression);
   }
 
   /**
@@ -67,13 +60,30 @@ class RulesComponent {
    *
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
    *   The expression of the component.
-   * @param \Drupal\Core\TypedData\TypedDataManagerInterface $typed_data_manager
-   *   The typed data manager.
    */
-  protected function __construct($expression, TypedDataManagerInterface $typed_data_manager) {
+  protected function __construct($expression) {
     $this->state = RulesState::create();
-    $this->typedDataManager = $typed_data_manager;
     $this->expression = $expression;
+  }
+
+  /**
+   * Gets the expression of the component.
+   *
+   * @return \Drupal\rules\Engine\ExpressionInterface
+   *   The expression.
+   */
+  public function getExpression() {
+    return $this->expression;
+  }
+
+  /**
+   * Gets the execution state.
+   *
+   * @return \Drupal\rules\Engine\RulesStateInterface
+   *   The execution state for this component.
+   */
+  public function getState() {
+    return $this->state;
   }
 
   /**
@@ -81,7 +91,7 @@ class RulesComponent {
    *
    * @param $name
    *   The name of the context to add.
-   * @param \Drupal\Core\Plugin\Context\ContextDefinitionInterface $definition
+   * @param \Drupal\rules\Context\ContextDefinitionInterface $definition
    *   The definition to add.
    *
    * @return $this
@@ -89,6 +99,16 @@ class RulesComponent {
   public function addContextDefinition($name, ContextDefinitionInterface $definition) {
     $this->contextDefinitions[$name] = $definition;
     return $this;
+  }
+
+  /**
+   * Gets definitions for the context used by this component.
+   *
+   * @return \Drupal\rules\Context\ContextDefinitionInterface[]
+   *   The array of context definitions, keyed by context name.
+   */
+  public function getContextDefinitions() {
+    return $this->contextDefinitions;
   }
 
   /**
@@ -108,11 +128,7 @@ class RulesComponent {
     if (!isset($this->contextDefinitions[$name])) {
       throw new \LogicException("The specified context '$name' is not defined.");
     }
-    $data = $this->typedDataManager->create(
-      $this->contextDefinitions[$name]->getDataDefinition(),
-      $value
-    );
-    $this->state->addVariable($name, $data);
+    $this->state->addVariable($name, $this->contextDefinitions[$name], $value);
     return $this;
   }
 

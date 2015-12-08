@@ -62,7 +62,7 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
   public function testDefaultComponents() {
     $config_entity = $this->storage->load('rules_test_default_component');
 
-    $user = $this->entityManager->getStorage('user')
+    $user = $this->entityTypeManager->getStorage('user')
       ->create(array('mail' => 'test@example.com'));
 
     /** @var $config_entity \Drupal\rules\Entity\RulesComponent */

@@ -7,8 +7,8 @@
 
 namespace Drupal\Tests\rules\Integration\Engine;
 
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 

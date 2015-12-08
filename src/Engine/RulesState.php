@@ -13,6 +13,7 @@ use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
@@ -50,6 +51,13 @@ class RulesState implements RulesStateInterface {
   protected $currentlyBlocked;
 
   /**
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManagerInterface|null
+   */
+  protected $typedDataManager;
+
+  /**
    * Creates the object.
    *
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $variables
@@ -73,10 +81,36 @@ class RulesState implements RulesStateInterface {
   }
 
   /**
+   * Gets the typed data manager.
+   *
+   * @return \Drupal\Core\TypedData\TypedDataManagerInterface
+   *   The manager.
+   */
+  protected function getTypedDataManager() {
+    if (!isset($this->typedDataManager)) {
+      $this->typedDataManager = \Drupal::typedDataManager();
+    }
+    return $this->typedDataManager;
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function addVariable($name, TypedDataInterface $data) {
+  public function addVariable($name, ContextDefinitionInterface $definition, $value) {
+    $data = $this->getTypedDataManager()->create(
+      $definition->getDataDefinition(),
+      $value
+    );
+    $this->addVariableData($name, $data);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addVariableData($name, TypedDataInterface $data) {
     $this->variables[$name] = $data;
+    return $this;
   }
 
   /**
@@ -87,6 +121,13 @@ class RulesState implements RulesStateInterface {
       throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
     }
     return $this->variables[$name];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getVariableValue($name) {
+    return $this->getVariable($name)->getValue();
   }
 
   /**

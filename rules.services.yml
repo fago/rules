@@ -24,7 +24,7 @@ services:
     arguments: ['@container.namespaces', '@module_handler']
   rules.event_subscriber:
     class: Drupal\rules\EventSubscriber\GenericEventSubscriber
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@plugin.manager.rules_event']
     tags:
       - { name: 'event_subscriber' }
   rules.redirect_event_subscriber:

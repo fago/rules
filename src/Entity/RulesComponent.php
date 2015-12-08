@@ -8,7 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\rules\Context\ContextDefinitionInterface;
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\ExpressionInterface;
 
 /**
@@ -40,6 +40,7 @@ use Drupal\rules\Engine\ExpressionInterface;
  *     "tag",
  *     "core",
  *     "expression_id",
+ *     "context_definitions",
  *     "configuration",
  *   },
  *   links = {
@@ -97,9 +98,9 @@ class RulesComponent extends ConfigEntityBase {
   protected $expression_id;
 
   /**
-   * Array of context definitions, keyed by context name.
+   * Array of context definitions arrays, keyed by context name.
    *
-   * @var \Drupal\rules\Context\ContextDefinitionInterface[]
+   * @var array[]
    */
   protected $context_definitions = [];
 
@@ -161,33 +162,54 @@ class RulesComponent extends ConfigEntityBase {
    *   The component.
    */
   public function getComponent() {
-    $component = \Drupal\rules\Engine\RulesComponent::create($this->getExpression())
+    $component = \Drupal\rules\Engine\RulesComponent::create($this->getExpression());
     foreach ($this->context_definitions as $name => $definition) {
-      $component->addContextDefinition($name, $definition);
+      $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
     }
     return $component;
   }
 
   /**
+   * Sets the Rules component to be stored.
+   *
+   * @param \Drupal\rules\Engine\RulesComponent $component
+   *   The component.
+   *
+   * @return $this
+   */
+  public function setComponent(\Drupal\rules\Engine\RulesComponent $component) {
+    $this->setExpression($component->getExpression());
+    $this->setContextDefinitions($component->getContextDefinitions());
+    return $this;
+  }
+
+  /**
    * Gets the definitions of the used context.
    *
-   * @return \Drupal\rules\Context\ContextDefinitionInterface
-   *   The array of context definitions, keyed by context name.
+   * @return \Drupal\rules\Context\ContextDefinitionInterface[]
+   *   The array of context definition, keyed by context name.
    */
   public function getContextDefinitions() {
-    return $this->context_definitions;
+    $definitions = [];
+    foreach ($this->context_definitions as $name => $definition) {
+      $definitions[$name] = ContextDefinition::createFromArray($definition);
+    }
+    return $definitions;
   }
 
   /**
    * Sets the definitions of the used context.
    *
-   * @param \Drupal\rules\Context\ContextDefinitionInterface $definitions
+   * @param \Drupal\rules\Context\ContextDefinitionInterface[] $definitions
    *   The array of context definitions, keyed by context name.
    *
    * @return $this
    */
-  public function setContextDefinitions(ContextDefinitionInterface $definitions) {
-    $this->context_definitions = $definitions;
+  public function setContextDefinitions($definitions) {
+    $this->context_definitions = [];
+    foreach ($definitions as $name => $definition) {
+      $this->context_definitions[$name] = $definition->toArray();
+    }
     return $this;
   }
 

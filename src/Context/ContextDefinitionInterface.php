@@ -65,4 +65,12 @@ interface ContextDefinitionInterface extends ContextDefinitionInterfaceCore {
    */
   public function setAssignmentRestriction($restriction);
 
+  /**
+   * Exports the definition as an array.
+   *
+   * @return array
+   *   An array with values for all definition keys.
+   */
+  public function toArray();
+
 }

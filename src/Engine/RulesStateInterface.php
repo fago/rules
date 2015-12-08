@@ -9,6 +9,7 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\rules\Context\ContextDefinitionInterface;
 
 /**
  * Defines an interface for the rules state.
@@ -16,16 +17,30 @@ use Drupal\Core\TypedData\TypedDataInterface;
 interface RulesStateInterface {
 
   /**
-   * Adds the given variable to the given execution state.
+   * Adds a state variable based on its definition and value.
+   *
+   * @param $name
+   *   The context variable name.
+   * @param \Drupal\rules\Context\ContextDefinitionInterface $definition
+   *   The context definition of the variable.
+   * @param mixed $value
+   *   The variable value.
+   *
+   * @return $this
+   */
+  public function addVariable($name, ContextDefinitionInterface $definition, $value);
+
+  /**
+   * Adds a state variable from some typed data object.
    *
    * @param string $name
    *   The variable name.
    * @param \Drupal\Core\TypedData\TypedDataInterface $data
    *   The variable wrapped as typed data.
    *
-   * @return static
+   * @return $this
    */
-  public function addVariable($name, TypedDataInterface $data);
+  public function addVariableData($name, TypedDataInterface $data);
 
   /**
    * Gets a variable.
@@ -41,6 +56,21 @@ interface RulesStateInterface {
    *   state.
    */
   public function getVariable($name);
+
+  /**
+   * Gets the value of a variable.
+   *
+   * @param string $name
+   *   The name of the variable to return the value for.
+   *
+   * @return mixed
+   *   The variable value.
+   *
+   * @throws \Drupal\rules\Exception\RulesEvaluationException
+   *   Throws a RulesEvaluationException if the variable does not exist in the
+   *   state.
+   */
+  public function getVariableValue($name);
 
   /**
    * Checks if a variable exists by name in the Rules state.

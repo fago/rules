@@ -44,7 +44,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that the user login hook triggers the Rules event listener.
    */
   public function testUserLoginEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_user_login']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log',
       ContextConfig::create()
@@ -105,7 +105,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that the cron hook triggers the Rules event listener.
    */
   public function testCronEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_system_cron']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log');
 
@@ -133,7 +133,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that a Logger message trigger the Rules logger listener.
    */
   public function testSystemLoggerEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_system_logger_event']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log');
 
