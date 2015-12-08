@@ -105,7 +105,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
       );
 
     RulesComponent::create($action)
-      ->addContextDefinition('node', ContextDefinition::create('enity:node'))
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
       ->addContextDefinition('title', ContextDefinition::create('string'))
       ->setContextValue('node', $node)
       ->setContextValue('title', 'new title')
