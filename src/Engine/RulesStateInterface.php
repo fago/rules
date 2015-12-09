@@ -108,14 +108,14 @@ interface RulesStateInterface {
    *   The data selector that specifies the target object to be saved. Example:
    *   node:uid:entity.
    *
-   * @return static
+   * @return $this
    */
   public function saveChangesLater($selector);
 
   /**
    * Saves all variables that have been marked for auto saving.
    *
-   * @return static
+   * @return $this
    */
   public function autoSave();
 

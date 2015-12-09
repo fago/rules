@@ -10,7 +10,6 @@ namespace Drupal\rules\EventSubscriber;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Engine\RulesEventManager;
 use Drupal\rules\Engine\RulesState;
-use Drupal\rules\Entity\ReactionRule;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -108,7 +107,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
 
     // Loop over all rules and execute them.
     foreach ($configs as $config) {
-      /** @var ReactionRule $config */
+      /** @var \Drupal\rules\Entity\ReactionRule $config */
       $config->getExpression()
         ->executeWithState($state);
     }

@@ -98,7 +98,7 @@ class RulesComponent extends ConfigEntityBase {
   protected $expression_id;
 
   /**
-   * Array of context definitions arrays, keyed by context name.
+   * Array of context definition arrays, keyed by context name.
    *
    * @var array[]
    */
