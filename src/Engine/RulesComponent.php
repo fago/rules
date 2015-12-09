@@ -119,7 +119,7 @@ class RulesComponent {
    * @return $this
    */
   public function provideContext($name) {
-    $this->providedContext[$name] = $name;
+    $this->providedContext[] = $name;
     return $this;
   }
 
