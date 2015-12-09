@@ -13,6 +13,7 @@ use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\TypedData\TypedDataTrait;
 use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
 
@@ -23,6 +24,8 @@ use Drupal\rules\Exception\RulesEvaluationException;
  * for elements in the current PHP-variable-scope.
  */
 class RulesState implements RulesStateInterface {
+
+  use TypedDataTrait;
 
   /**
    * Globally keeps the ids of rules blocked due to recursion prevention.
@@ -51,13 +54,6 @@ class RulesState implements RulesStateInterface {
   protected $currentlyBlocked;
 
   /**
-   * The typed data manager.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataManagerInterface|null
-   */
-  protected $typedDataManager;
-
-  /**
    * Creates the object.
    *
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $variables
@@ -78,19 +74,6 @@ class RulesState implements RulesStateInterface {
    */
   protected function __construct($variables) {
     $this->variables = $variables;
-  }
-
-  /**
-   * Gets the typed data manager.
-   *
-   * @return \Drupal\Core\TypedData\TypedDataManagerInterface
-   *   The manager.
-   */
-  protected function getTypedDataManager() {
-    if (!isset($this->typedDataManager)) {
-      $this->typedDataManager = \Drupal::typedDataManager();
-    }
-    return $this->typedDataManager;
   }
 
   /**
