@@ -29,11 +29,11 @@ class RulesComponent {
   protected $contextDefinitions;
 
   /**
-   * Definitions for the context provided by the component.
+   * List of context names that is provided back to the caller.
    *
-   * @var \Drupal\rules\Context\ContextDefinitionInterface[]
+   * @var string[]
    */
-  protected $providedContextDefinitions;
+  protected $providedContext = [];
 
   /**
    * The expression.
@@ -111,6 +111,29 @@ class RulesComponent {
   }
 
   /**
+   * Marks the given context to be provided back to the caller.
+   *
+   * @param string $name
+   *   The name of the context to provide.
+   *
+   * @return $this
+   */
+  public function provideContext($name) {
+    $this->providedContext[$name] = $name;
+    return $this;
+  }
+
+  /**
+   * Returns the names of context that is provided back to the caller.
+   *
+   * @return string[]
+   *   The names of the context that is provided back.
+   */
+  public function getProvidedContext() {
+    return $this->providedContext;
+  }
+
+  /**
    * Sets the value of a context.
    *
    * @param string $name
@@ -135,23 +158,30 @@ class RulesComponent {
    * Executes the component with the previously set context.
    *
    * @return mixed[]
-   *   The array of provided context values.
+   *   The array of provided context values, keyed by context name.
    *
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   Thrown if the Rules expression triggers errors during execution.
    */
   public function execute() {
-    $result = $this->expression->executeWithState($this->state);
+    $this->expression->executeWithState($this->state);
     $this->state->autoSave();
+    $result = [];
+    foreach ($this->providedContext as $name) {
+      $result[$name] = $this->state->getVariableValue($name);
+    }
     return $result;
   }
 
   /**
    * Executes the component with the given values.
    *
-   * @return mixed[]
+   * @param mixed[] $arguments
    *   The array of arguments; i.e., an array keyed by name of the defined
    *   context and the context value as argument.
+   *
+   * @return mixed[]
+   *   The array of provided context values, keyed by context name.
    *
    * @throws \LogicException
    *   Thrown if the context is not defined.

@@ -33,12 +33,12 @@ class RulesComponentTest extends RulesIntegrationTestBase {
 
     $result = RulesComponent::create($rule)
       ->addContextDefinition('text', ContextDefinition::create('string'))
+      ->provideContext('concatenated')
       ->setContextValue('text', 'foo')
       ->execute();
 
-    // @todo: Provide variables back.
     // Ensure the provided context is returned.
-    // $this->assertTrue(isset($result['concatenated']) && $result['concatenated'] == 'foo.foo');
+    $this->assertTrue(isset($result['concatenated']) && $result['concatenated'] == 'foofoo');
   }
 
 }
