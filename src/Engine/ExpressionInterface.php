@@ -22,7 +22,7 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    *
    * Note that this does not auto-save any changes.
    *
-   * @param \Drupal\rules\Engine\RulesStateInterface $state
+   * @param \Drupal\rules\Engine\ExecutionStateInterface $state
    *   The state with all the execution variables in it.
    *
    * @return null|bool
@@ -32,7 +32,7 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   Thrown if the Rules expression triggers errors during execution.
    */
-  public function executeWithState(RulesStateInterface $state);
+  public function executeWithState(ExecutionStateInterface $state);
 
   /**
    * Returns the form handling class for this expression.

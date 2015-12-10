@@ -12,7 +12,7 @@ use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\DataProcessorManager;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 use Drupal\rules\Core\RulesConditionInterface;
 use Drupal\Tests\UnitTestCase;
@@ -133,7 +133,7 @@ class RulesConditionTest extends UnitTestCase {
       ->shouldBeCalledTimes(1);
 
     // Build some mocked execution state.
-    $state = $this->prophesize(RulesStateInterface::class);
+    $state = $this->prophesize(ExecutionStateInterface::class);
     $prophecy = $state->getVariable('test');
     /** @var \Prophecy\Prophecy\MethodProphecy $prophecy */
     $prophecy->willReturn('old_value');

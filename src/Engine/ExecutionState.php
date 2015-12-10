@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesState.
+ * Contains \Drupal\rules\Engine\ExecutionState.
  */
 
 namespace Drupal\rules\Engine;
@@ -18,12 +18,12 @@ use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
- * The rules evaluation state.
+ * The rules execution state.
  *
  * A rule element may clone the state, so any added variables are only visible
  * for elements in the current PHP-variable-scope.
  */
-class RulesState implements RulesStateInterface {
+class ExecutionState implements ExecutionStateInterface {
 
   use TypedDataTrait;
 

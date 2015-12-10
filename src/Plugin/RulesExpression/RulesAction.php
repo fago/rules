@@ -14,7 +14,7 @@ use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExpressionBase;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -88,7 +88,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesStateInterface $state) {
+  public function executeWithState(ExecutionStateInterface $state) {
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
 
     // We have to forward the context values from our configuration to the

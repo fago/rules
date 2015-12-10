@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Kernel;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
-use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Engine\ExecutionState;
 
 /**
  * Test using the Rules API to create and evaluate rules.
@@ -111,7 +111,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
       ->provideAs('provided_text', 'newname')
     );
 
-    $state = RulesState::create();
+    $state = ExecutionState::create();
     $rule->executeWithState($state);
 
     // Check that the newly named variable exists and has the provided value.
@@ -141,7 +141,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
       ->provideAs('concatenated', 'concatenated2')
     );
 
-    $state = RulesState::create();
+    $state = ExecutionState::create();
     $rule->executeWithState($state);
 
     // Check that the created variables exists and have the provided values.

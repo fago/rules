@@ -9,7 +9,7 @@ namespace Drupal\rules\EventSubscriber;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Engine\RulesEventManager;
-use Drupal\rules\Engine\RulesState;
+use Drupal\rules\Engine\ExecutionState;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -92,7 +92,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
 
     // Set up an execution state with the event context.
     $event_definition = $this->eventManager->getDefinition($event_name);
-    $state = RulesState::create();
+    $state = ExecutionState::create();
     foreach ($event_definition['context'] as $context_name => $context_definition) {
       // If this is a GenericEvent get the context for the rule from the event
       // arguments.

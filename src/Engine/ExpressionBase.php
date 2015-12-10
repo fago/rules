@@ -82,7 +82,7 @@ abstract class ExpressionBase extends PluginBase implements ExpressionInterface 
    */
   public function execute() {
     // If there is no state given, we have to assume no required context.
-    $state = RulesState::create();
+    $state = ExecutionState::create();
     $result = $this->executeWithState($state);
     // Save specifically registered variables in the end after execution.
     $state->autoSave();

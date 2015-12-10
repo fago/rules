@@ -8,7 +8,7 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
@@ -85,7 +85,7 @@ abstract class RulesConditionContainerTestStub extends ConditionExpressionContai
   /**
    * {@inheritdoc}
    */
-  public function evaluate(RulesStateInterface $state) {
+  public function evaluate(ExecutionStateInterface $state) {
     return TRUE;
   }
 

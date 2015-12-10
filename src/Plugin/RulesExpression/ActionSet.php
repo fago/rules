@@ -14,7 +14,7 @@ use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -104,7 +104,7 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesStateInterface $state) {
+  public function executeWithState(ExecutionStateInterface $state) {
     foreach ($this->actions as $action) {
       $action->executeWithState($state);
     }
