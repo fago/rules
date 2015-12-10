@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\RulesStateInterface.
+ * Contains \Drupal\rules\Engine\ExecutionStateInterface.
  */
 
 namespace Drupal\rules\Engine;
@@ -14,7 +14,7 @@ use Drupal\rules\Context\ContextDefinitionInterface;
 /**
  * Defines an interface for the rules state.
  */
-interface RulesStateInterface {
+interface ExecutionStateInterface {
 
   /**
    * Adds a state variable based on its definition and value.

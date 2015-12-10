@@ -17,7 +17,7 @@ class RulesComponent {
   /**
    * The rules execution state.
    *
-   * @var \Drupal\rules\Engine\RulesStateInterface
+   * @var \Drupal\rules\Engine\ExecutionStateInterface
    */
   protected $state;
 
@@ -61,7 +61,7 @@ class RulesComponent {
    *   The expression of the component.
    */
   protected function __construct(ExpressionInterface $expression) {
-    $this->state = RulesState::create();
+    $this->state = ExecutionState::create();
     $this->expression = $expression;
   }
 
@@ -78,7 +78,7 @@ class RulesComponent {
   /**
    * Gets the execution state.
    *
-   * @return \Drupal\rules\Engine\RulesStateInterface
+   * @return \Drupal\rules\Engine\ExecutionStateInterface
    *   The execution state for this component.
    */
   public function getState() {
@@ -189,7 +189,7 @@ class RulesComponent {
    *   Thrown if the Rules expression triggers errors during execution.
    */
   public function executeWithArguments(array $arguments) {
-    $this->state = RulesState::create();
+    $this->state = ExecutionState::create();
     foreach ($arguments as $name => $value) {
       $this->setContextValue($name, $value);
     }

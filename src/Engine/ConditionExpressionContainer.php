@@ -93,7 +93,7 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   /**
    * {@inheritdoc}
    */
-  public function executeWithState(RulesStateInterface $rules_state) {
+  public function executeWithState(ExecutionStateInterface $rules_state) {
     $result = $this->evaluate($rules_state);
     return $this->isNegated() ? !$result : $result;
   }
@@ -101,7 +101,7 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   /**
    * Returns the final result after executing the conditions.
    */
-  abstract public function evaluate(RulesStateInterface $rules_state);
+  abstract public function evaluate(ExecutionStateInterface $rules_state);
 
   /**
    * {@inheritdoc}

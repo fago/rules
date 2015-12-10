@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Integration\Engine;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -80,7 +80,7 @@ class RulesComponentTest extends RulesIntegrationTestBase {
   public function testGetState() {
     $rule = $this->rulesExpressionManager->createRule();
     $component = RulesComponent::create($rule);
-    $this->assertInstanceOf(RulesStateInterface::class, $component->getState());
+    $this->assertInstanceOf(ExecutionStateInterface::class, $component->getState());
 
     // Test that set context values are available in the state.
     $component

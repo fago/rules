@@ -11,7 +11,7 @@ use Drupal\Core\Plugin\ContextAwarePluginInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Context\ContextHandlerTrait
@@ -45,7 +45,7 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
       ->shouldBeCalled(1);
     $plugin->getPluginId()->willReturn('testplugin')->shouldBeCalledTimes(1);
 
-    $state = $this->prophesize(RulesStateInterface::class);
+    $state = $this->prophesize(ExecutionStateInterface::class);
 
     // Make the 'mapContext' method visible.
     $reflection = new \ReflectionClass($trait);

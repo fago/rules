@@ -8,7 +8,7 @@
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Engine\ExpressionManagerInterface;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 use Drupal\rules\Plugin\RulesExpression\RulesOr;
@@ -112,7 +112,7 @@ class RuleTest extends RulesUnitTestBase {
   public function testActionExecution() {
     // The method on the test action must be called once.
     $this->testActionExpression->executeWithState(
-      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
+      Argument::type(ExecutionStateInterface::class))->shouldBeCalledTimes(1);
 
     $this->rule
       ->addExpressionObject($this->trueConditionExpression->reveal())
@@ -128,7 +128,7 @@ class RuleTest extends RulesUnitTestBase {
   public function testConditionFails() {
     // The execute method on the action must never be called.
     $this->testActionExpression->executeWithState(
-      Argument::type(RulesStateInterface::class))->shouldNotBeCalled();
+      Argument::type(ExecutionStateInterface::class))->shouldNotBeCalled();
 
     $this->rule
       ->addExpressionObject($this->falseConditionExpression->reveal())
@@ -144,7 +144,7 @@ class RuleTest extends RulesUnitTestBase {
   public function testTwoConditionsTrue() {
     // The method on the test action must be called once.
     $this->testActionExpression->executeWithState(
-      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
+      Argument::type(ExecutionStateInterface::class))->shouldBeCalledTimes(1);
 
     $this->rule
       ->addExpressionObject($this->trueConditionExpression->reveal())
@@ -161,7 +161,7 @@ class RuleTest extends RulesUnitTestBase {
   public function testTwoConditionsFalse() {
     // The execute method on the action must never be called.
     $this->testActionExpression->executeWithState(
-      Argument::type(RulesStateInterface::class))->shouldNotBeCalled();
+      Argument::type(ExecutionStateInterface::class))->shouldNotBeCalled();
 
     $this->rule
       ->addExpressionObject($this->trueConditionExpression->reveal())
@@ -177,7 +177,7 @@ class RuleTest extends RulesUnitTestBase {
    */
   public function testNestedRules() {
     $this->testActionExpression->executeWithState(
-      Argument::type(RulesStateInterface::class))->shouldBeCalledTimes(1);
+      Argument::type(ExecutionStateInterface::class))->shouldBeCalledTimes(1);
 
     $nested = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
     // We need to replace the action and conditon container to not have the same

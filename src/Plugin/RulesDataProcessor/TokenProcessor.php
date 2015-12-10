@@ -12,7 +12,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Utility\Token;
 use Drupal\rules\Context\DataProcessorInterface;
-use Drupal\rules\Engine\RulesStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -65,7 +65,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
   /**
    * {@inheritdoc}
    */
-  public function process($value, RulesStateInterface $rules_state) {
+  public function process($value, ExecutionStateInterface $rules_state) {
     $replacements = [];
     // The Token API requires this metadata object, but it is useless for us
     // here so we just always pass the same instance and ignore it.
