@@ -7,6 +7,10 @@ php:
   - 7
   - hhvm
 
+env:
+  - DRUPAL_CORE=8.0.x
+  - DRUPAL_CORE=8.1.x
+
 matrix:
   allow_failures:
     # We cannot use hhvm-nightly since that does not work in Travis CI's old
@@ -38,7 +42,7 @@ before_script:
   # Export database variable for kernel tests.
   - export SIMPLETEST_DB=mysql://root:@127.0.0.1/rules
   # Download Drupal 8 core.
-  - travis_retry git clone --branch 8.0.x --depth 1 http://git.drupal.org/project/drupal.git
+  - travis_retry git clone --branch $DRUPAL_CORE --depth 1 http://git.drupal.org/project/drupal.git
   - cd drupal
 
   # Reference rules in build site.
