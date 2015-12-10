@@ -36,7 +36,6 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    */
   public function setUp() {
     parent::setUp();
-
     $this->storage = $this->container->get('entity_type.manager')->getStorage('rules_reaction_rule');
   }
 
@@ -44,7 +43,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that the user login hook triggers the Rules event listener.
    */
   public function testUserLoginEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_user_login']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log',
       ContextConfig::create()
@@ -53,7 +52,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_reaction_rule',
+      'expression_id' => 'rules_rule',
       'event' => 'rules_user_login',
       'configuration' => $rule->getConfiguration(),
     ]);
@@ -76,13 +75,13 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that the user logout hook triggers the Rules event listener.
    */
   public function testUserLogoutEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_user_logout']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log');
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_reaction_rule',
+      'expression_id' => 'rules_rule',
       'event' => 'rules_user_logout',
       'configuration' => $rule->getConfiguration(),
     ]);
@@ -105,13 +104,13 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that the cron hook triggers the Rules event listener.
    */
   public function testCronEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_system_cron']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log');
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_reaction_rule',
+      'expression_id' => 'rules_rule',
       'event' => 'rules_system_cron',
       'configuration' => $rule->getConfiguration(),
     ]);
@@ -133,13 +132,13 @@ class EventIntegrationTest extends RulesDrupalTestBase {
    * Test that a Logger message trigger the Rules logger listener.
    */
   public function testSystemLoggerEvent() {
-    $rule = $this->expressionManager->createInstance('rules_reaction_rule', ['event' => 'rules_system_logger_event']);
+    $rule = $this->expressionManager->createRule();
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log');
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_reaction_rule',
+      'expression_id' => 'rules_rule',
       'event' => 'rules_system_logger_event',
       'configuration' => $rule->getConfiguration(),
     ]);

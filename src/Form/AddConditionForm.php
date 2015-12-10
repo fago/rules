@@ -11,8 +11,8 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Entity\ReactionRule;
 use Drupal\rules\Entity\ReactionRuleStorage;
-use Drupal\rules\Plugin\RulesExpression\ReactionRule;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

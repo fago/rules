@@ -9,6 +9,7 @@ namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
@@ -30,16 +31,15 @@ class ContextIntegrationTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'null_context' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('null_context', NULL);
-    $rule->addExpressionObject($action);
+    $rule = $this->expressionManager->createRule()
+      ->addExpressionObject($action);
+
+    $component = RulesComponent::create($rule)
+      ->addContextDefinition('null_context', ContextDefinition::create('string'))
+      ->setContextValue('null_context', NULL);
 
     try {
-      $rule->execute();
+      $component->execute();
       $this->fail('No exception thrown when required context value is NULL');
     }
     catch (RulesEvaluationException $e) {
@@ -85,18 +85,18 @@ class ContextIntegrationTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'null_variable' => ContextDefinition::create('string')->toArray(),
-        'new_value' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('null_variable', NULL);
-    $rule->setContextValue('new_value', 'new value');
-    $rule->addExpressionObject($action);
-    $rule->execute();
+    $rule = $this->expressionManager->createRule()
+      ->addExpressionObject($action);
 
-    $this->assertEqual('new value', $rule->getContextValue('null_variable'));
+    $component = RulesComponent::create($rule)
+      ->addContextDefinition('null_variable', ContextDefinition::create('string'))
+      ->addContextDefinition('new_value', ContextDefinition::create('string'))
+      ->setContextValue('null_variable', NULL)
+      ->setContextValue('new_value', 'new value');
+
+    $component->execute();
+
+    $this->assertEquals('new value', $component->getState()->getVariableValue('null_variable'));
   }
 
   /**
@@ -108,7 +108,7 @@ class ContextIntegrationTest extends RulesDrupalTestBase {
     // Test the assignment restriction on the entity fetch action as an example.
     $entity_fetch_action = $action_manager->createInstance('rules_entity_fetch_by_id');
     $context_definition = $entity_fetch_action->getContextDefinition('type');
-    $this->assertEqual($context_definition->getAssignmentRestriction(), 'input');
+    $this->assertEquals($context_definition->getAssignmentRestriction(), 'input');
   }
 
 }

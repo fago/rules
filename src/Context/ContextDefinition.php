@@ -48,10 +48,7 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
   protected $assignmentRestriction = NULL;
 
   /**
-   * Exports the definition as an array.
-   *
-   * @return array
-   *   An array with values for all definition keys.
+   * {@inheritdoc}
    */
   public function toArray() {
     $values = [];

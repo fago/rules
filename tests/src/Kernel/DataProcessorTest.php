@@ -9,6 +9,7 @@ namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Engine\RulesComponent;
 
 /**
  * Test the data processor plugins during Rules evaluation.
@@ -36,21 +37,21 @@ class DataProcessorTest extends RulesDrupalTestBase {
         ->toArray()
     );
 
-    $rule = $this->expressionManager->createRule([
-      'context_definitions' => [
-        'message' => ContextDefinition::create('string')->toArray(),
-        'type' => ContextDefinition::create('string')->toArray(),
-      ],
-    ]);
-    $rule->setContextValue('message', 1);
-    $rule->setContextValue('type', 'status');
-    $rule->addExpressionObject($action);
-    $rule->execute();
+    $component = RulesComponent::create($this->expressionManager->createRule())
+      ->addContextDefinition('message', ContextDefinition::create('string'))
+      ->addContextDefinition('type', ContextDefinition::create('string'))
+      ->setContextValue('message', 1)
+      ->setContextValue('type', 'status');
+
+    $component->getExpression()
+      ->addExpressionObject($action);
+
+    $component->execute();
 
     $messages = drupal_set_message();
     // The original value was 1 and the processor adds 1, so the result should
     // be 2.
-    $this->assertEqual((string) $messages['status'][0], '2');
+    $this->assertEquals((string) $messages['status'][0], '2');
   }
 
 }

@@ -7,16 +7,13 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Plugin\ContextAwarePluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Context\ContextProviderTrait;
 
 /**
  * Base class for rules actions.
  */
-abstract class ExpressionBase extends ContextAwarePluginBase implements ExpressionInterface {
-
-  use ContextProviderTrait;
+abstract class ExpressionBase extends PluginBase implements ExpressionInterface {
 
   /**
    * The plugin configuration.
@@ -84,13 +81,8 @@ abstract class ExpressionBase extends ContextAwarePluginBase implements Expressi
    * Executes a rules expression.
    */
   public function execute() {
-    $contexts = $this->getContexts();
-    $variables = [];
-    foreach ($contexts as $name => $context) {
-      $variables[$name] = $context->getContextData();
-    }
-
-    $state = new RulesState($variables);
+    // If there is no state given, we have to assume no required context.
+    $state = RulesState::create();
     $result = $this->executeWithState($state);
     // Save specifically registered variables in the end after execution.
     $state->autoSave();

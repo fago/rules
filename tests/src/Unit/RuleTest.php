@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\rules\Unit;
 
-use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\RulesStateInterface;
 use Drupal\rules\Plugin\RulesExpression\Rule;
@@ -193,36 +192,6 @@ class RuleTest extends RulesUnitTestBase {
       ->addExpressionObject($this->trueConditionExpression->reveal())
       ->addExpressionObject($nested)
       ->execute();
-  }
-
-  /**
-   * Tests that a context definition object is created from configuration.
-   */
-  public function testContextDefinitionFromConfig() {
-    $rule = new Rule([
-      'context_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('node')
-          ->toArray(),
-      ],
-    ], 'rules_rule', [], $this->expressionManager->reveal());
-    $context_definition = $rule->getContextDefinition('node');
-    $this->assertSame($context_definition->getDataType(), 'entity:node');
-  }
-
-  /**
-   * Tests that provided context definitons are created from configuration.
-   */
-  public function testProvidedDefinitionFromConfig() {
-    $rule = new Rule([
-      'provided_definitions' => [
-        'node' => ContextDefinition::create('entity:node')
-          ->setLabel('node')
-          ->toArray(),
-      ],
-    ], 'rules_rule', [], $this->expressionManager->reveal());
-    $provided_definition = $rule->getProvidedContextDefinition('node');
-    $this->assertSame($provided_definition->getDataType(), 'entity:node');
   }
 
 }
