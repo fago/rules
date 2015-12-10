@@ -27,9 +27,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * nest several rules into one rule. This is the functionality of so called
  * "rule sets" in Drupal 7.
  *
+ * @todo rename the form class to just RuleForm.
+ *
  * @RulesExpression(
  *   id = "rules_rule",
- *   label = @Translation("A rule, executing actions when conditions are met.")
+ *   label = @Translation("A rule, executing actions when conditions are met."),
+ *   form_class = "\Drupal\rules\Form\Expression\ReactionRuleForm"
  * )
  */
 class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPluginInterface {

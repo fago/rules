@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Functional;
 use Drupal\simpletest\BrowserTestBase;
 
 /**
- * Tests that the Rules UI pages a reachable.
+ * Tests that the Rules UI pages are reachable.
  *
  * @group rules_ui
  *
@@ -28,18 +28,53 @@ class UiPageTest extends BrowserTestBase {
   public static $modules = ['rules'];
 
   /**
+   * We use the minimal profile because we want to test local action links.
+   *
+   * @var string
+   */
+  protected $profile = 'minimal';
+
+  /**
    * Tests that the reaction rule listing page works.
    */
   public function testReactionRulePage() {
     $account = $this->drupalCreateUser(['administer rules']);
     $this->drupalLogin($account);
 
-    // Visit a Drupal page that requires login.
     $this->drupalGet('admin/config/workflow/rules');
     $this->assertSession()->statusCodeEquals(200);
 
     // Test that there is an empty reaction rule listing.
     $this->assertSession()->pageTextContains('There is no Reaction Rule yet.');
+  }
+
+  /**
+   * Tests that creating a reaction rule works.
+   */
+  public function testCreateReactionRule() {
+    $account = $this->drupalCreateUser(['administer rules']);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('admin/config/workflow/rules');
+    $this->getSession()->getPage()->findLink('Add reaction rule')->click();
+
+    $this->getSession()->getPage()->findField('Label')->setValue('Test rule');
+    $this->getSession()->getPage()->findField('Machine-readable name')->setValue('test_rule');
+    $this->getSession()->getPage()->findButton('Save')->click();
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Reaction rule Test rule has been created.');
+
+    $this->getSession()->getPage()->findLink('Add condition')->click();
+
+    $this->getSession()->getPage()->findField('Condition')->setValue('rules_node_is_promoted');
+    $this->getSession()->getPage()->findButton('Continue')->click();
+
+    $this->getSession()->getPage()->findField('Node')->setValue('1');
+    $this->getSession()->getPage()->findButton('Save')->click();
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Your changes have been saved.');
   }
 
 }

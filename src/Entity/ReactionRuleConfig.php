@@ -95,7 +95,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
    *
    * @var string
    */
-  protected $expression_id = 'rules_reaction_rule';
+  protected $expression_id = 'rules_rule';
 
   /**
    * The expression plugin specific configuration as nested array.
