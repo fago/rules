@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 
 /**
- * Defines a class to build a listing of RulesComponent entities.
+ * Defines a class to build a listing of RulesComponentConfig entities.
  *
  * @see \Drupal\rules\Entity\RulesComponent
  */
@@ -52,7 +52,7 @@ class RulesComponentListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\rules\Entity\RulesComponent */
+    /* @var $entity \Drupal\rules\Entity\RulesComponentConfig */
     $row['id'] = $entity->id();
     $row['label'] = $this->getLabel($entity);
     // @todo: maybe link somewhere

@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 
 /**
- * Defines a class to build a listing of ReactionRule entities.
+ * Defines a class to build a listing of ReactionRuleConfig entities.
  *
  * @see \Drupal\rules\Entity\ReactionRule
  */
@@ -37,7 +37,7 @@ class RulesReactionListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\rules\Entity\ReactionRule */
+    /* @var $entity \Drupal\rules\Entity\ReactionRuleConfig */
     $row['id'] = $entity->id();
     $row['label'] = $this->getLabel($entity);
     $row['description'] = $entity->getDescription();

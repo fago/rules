@@ -107,7 +107,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
 
     // Loop over all rules and execute them.
     foreach ($configs as $config) {
-      /** @var \Drupal\rules\Entity\ReactionRule $config */
+      /** @var \Drupal\rules\Entity\ReactionRuleConfig $config */
       $config->getExpression()
         ->executeWithState($state);
     }
