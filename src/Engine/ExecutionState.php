@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
@@ -119,10 +120,21 @@ class ExecutionState implements ExecutionStateInterface {
   /**
    * {@inheritdoc}
    */
-  public function applyDataSelector($selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
-    $parts = explode(':', $selector, 2);
-    $typed_data = $this->getVariable($parts[0]);
-    return $this->getTypedDataManager()->applyDataSelector($typed_data, $parts[1], $langcode);
+  public function fetchByPropertyPath($property_path, $langcode = NULL) {
+    try {
+      $parts = explode('.', $property_path);
+      $var_name = array_shift($parts);
+      return $this
+        ->getTypedDataManager()
+        ->getDataFetcher()
+        ->fetchBySubPaths($this->getVariable($var_name), $parts, $langcode);
+    }
+    catch (\InvalidArgumentException $e) {
+      throw new RulesEvaluationException($e->getMessage());
+    }
+    catch (MissingDataException $e) {
+      throw new RulesEvaluationException($e->getMessage());
+    }
   }
 
   /**
@@ -139,7 +151,7 @@ class ExecutionState implements ExecutionStateInterface {
   public function autoSave() {
     // Make changes permanent.
     foreach ($this->saveLater as $selector => $flag) {
-      $typed_data = $this->applyDataSelector($selector);
+      $typed_data = $this->fetchByPropertyPath($selector);
       // The returned data can be NULL, only save it if we actually have
       // something here.
       if ($typed_data) {

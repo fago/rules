@@ -45,7 +45,7 @@ trait ContextHandlerTrait {
     foreach ($context_definitions as $name => $definition) {
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name])) {
-        $typed_data = $state->applyDataSelector($this->configuration['context_mapping'][$name]);
+        $typed_data = $state->fetchByPropertyPath($this->configuration['context_mapping'][$name]);
 
         if ($typed_data->getValue() === NULL && !$definition->isAllowedNull()) {
           throw new RulesEvaluationException('The value of data selector '

@@ -57,8 +57,8 @@ class ContextConfig {
    *
    * @param string $context_name
    *   The name of the context.
-   * @param string $selector
-   *   A valid data selector; e.g., "node:uid:target_id".
+   * @param string $property_path
+   *   A valid property path; e.g., "node.uid.target_id".
    *
    * @throws \LogicException
    *   Thrown if a context value and map are set for a given context at the same
@@ -66,11 +66,11 @@ class ContextConfig {
    *
    * @return $this
    */
-  public function map($context_name, $selector) {
+  public function map($context_name, $property_path) {
     if (isset($this->config['context_values'][$context_name])) {
       throw new \LogicException("Cannot map a context value and pre-define it at the same time.");
     }
-    $this->config['context_mapping'][$context_name] = $selector;
+    $this->config['context_mapping'][$context_name] = $property_path;
     return $this;
   }
 

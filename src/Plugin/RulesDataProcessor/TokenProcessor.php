@@ -77,7 +77,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
         // Remove the opening and closing bracket to form a data selector.
         $data_selector = substr($token, 1, -1);
         try {
-          $replacement_data = $rules_state->applyDataSelector($data_selector);
+          $replacement_data = $rules_state->fetchByPropertyPath($data_selector);
           $replacements[$token] = $replacement_data->getString();
         }
         catch (RulesEvaluationException $exception) {

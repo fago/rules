@@ -7,30 +7,19 @@
 
 namespace Drupal\rules\TypedData;
 
-use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\TypedData\TypedDataManagerInterface as CoreTypedDataManagerInterface;
 
 /**
  * Enhanced version of the core typed data manager interface.
  */
-interface TypedDataManagerInterface extends \Drupal\Core\TypedData\TypedDataManagerInterface {
+interface TypedDataManagerInterface extends CoreTypedDataManagerInterface {
 
   /**
-   * Returns a value as specified in the selector.
+   * Gets the data fetcher.
    *
-   * @param \Drupal\Core\TypedData\TypedDataInterface $typed_data
-   *   The data from which to select a value.
-   * @param string $selector
-   *   The selector string, e.g. "uid:entity:mail:value".
-   * @param string $langcode
-   *   (optional) The language code used to get the argument value if the
-   *   argument value should be translated. Defaults to
-   *   LanguageInterface::LANGCODE_NOT_SPECIFIED.
-   *
-   * @return \Drupal\Core\TypedData\TypedDataInterface
-   *   The variable wrapped as typed data.
-   *
-   * @throws \Drupal\rules\Exception\RulesEvaluationException
-   *   Throws a RulesEvaluationException in case the selector cannot be applied.
+   * @return \Drupal\rules\TypedData\DataFetcherInterface
+   *   The data fetcher.
    */
-  public function applyDataSelector(TypedDataInterface $typed_data, $selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED);
+  public function getDataFetcher();
+
 }

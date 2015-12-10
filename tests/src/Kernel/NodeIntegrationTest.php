@@ -63,12 +63,12 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     // Test that the long detailed data selector works.
     $rule->addCondition('rules_test_string_condition', ContextConfig::create()
-      ->map('text', 'node:uid:0:entity:name:0:value')
+      ->map('text', 'node.uid.0.entity.name.0.value')
     );
 
     // Test that the shortened data selector without list indices.
     $rule->addCondition('rules_test_string_condition', ContextConfig::create()
-      ->map('text', 'node:uid:entity:name:value')
+      ->map('text', 'node.uid.entity.name.value')
     );
 
     $rule->addAction('rules_test_log');

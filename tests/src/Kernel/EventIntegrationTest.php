@@ -47,7 +47,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $rule->addCondition('rules_test_true');
     $rule->addAction('rules_test_log',
       ContextConfig::create()
-        ->map('message', 'account:name:0:value')
+        ->map('message', 'account.name.0.value')
     );
 
     $config_entity = $this->storage->create([
