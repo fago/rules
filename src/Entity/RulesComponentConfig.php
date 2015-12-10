@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Entity\RulesComponent.
+ * Contains Drupal\rules\Entity\RulesComponentConfig.
  */
 
 namespace Drupal\rules\Entity;
@@ -50,7 +50,7 @@ use Drupal\rules\Engine\ExpressionInterface;
  *   }
  * )
  */
-class RulesComponent extends ConfigEntityBase {
+class RulesComponentConfig extends ConfigEntityBase {
 
   /**
    * The unique ID of the Rules component.

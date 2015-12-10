@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\rules\Entity\ReactionRule;
+use Drupal\rules\Entity\ReactionRuleConfig;
 use Drupal\rules\Entity\ReactionRuleStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -62,7 +62,7 @@ class AddConditionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ReactionRule $rules_reaction_rule = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $rules_reaction_rule = NULL) {
     // @todo why is the reaction rule not passed upcasted? Why is it even
     // possible that it is a string here?
     $this->reactionRuleId = $rules_reaction_rule;
