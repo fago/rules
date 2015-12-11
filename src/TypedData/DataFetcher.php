@@ -71,7 +71,7 @@ class DataFetcher implements DataFetcherInterface {
       }
       return $typed_data;
     }
-    catch (\MissingDataException $e) {
+    catch (MissingDataException $e) {
       $selector = implode('.', $sub_paths);
       throw new MissingDataException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
     }
