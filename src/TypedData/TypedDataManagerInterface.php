@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\TypedData\TypedDataManagerInterface
+ * Contains Drupal\rules\TypedData\TypedDataManagerInterface.
  */
 
 namespace Drupal\rules\TypedData;
