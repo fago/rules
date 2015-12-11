@@ -16,11 +16,11 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
-use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
 use Drupal\rules\Engine\ExpressionManager;
+use Drupal\rules\TypedData\TypedDataManager;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
@@ -55,9 +55,8 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
    */
   protected $entityTypeBundledInfo;
 
-
   /**
-   * @var \Drupal\Core\TypedData\TypedDataManager
+   * @var \Drupal\rules\TypedData\TypedDataManagerInterface
    */
   protected $typedDataManager;
 

@@ -39,7 +39,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   /**
    * Tests that a complex data selector can be applied to nodes.
    */
-  public function testNodeDataSelector() {
+  public function testNodePropertyPath() {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
@@ -224,7 +224,7 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
     $action = $this->expressionManager->createInstance('rules_action',
       ContextConfig::create()
         ->setConfigKey('action_id', 'rules_data_set')
-        ->map('data', 'node:title')
+        ->map('data', 'node.title')
         ->map('value', 'new_title')
         ->toArray()
     );

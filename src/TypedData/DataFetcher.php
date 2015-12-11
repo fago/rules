@@ -8,8 +8,10 @@
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\TypedData\ComplexDataInterface;
+use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\TypedData\ListInterface;
+use Drupal\Core\TypedData\TranslatableInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
@@ -64,7 +66,7 @@ class DataFetcher implements DataFetcherInterface {
           $typed_data = $typed_data->get($name);
         }
         else {
-          throw new \InvalidArgumentException("The specified property is not a list or a complex structure.");
+          throw new \InvalidArgumentException("The parent property is not a list or a complex structure.");
         }
       }
       return $typed_data;
@@ -75,7 +77,7 @@ class DataFetcher implements DataFetcherInterface {
     }
     catch (\InvalidArgumentException $e) {
       $selector = implode('.', $sub_paths);
-      throw new InvalidArgumentException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
+      throw new \InvalidArgumentException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
     }
   }
 

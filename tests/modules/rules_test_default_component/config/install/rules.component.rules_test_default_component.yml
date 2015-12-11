@@ -26,6 +26,6 @@ configuration:
         context_values:
           type: 'status'
         context_mapping:
-          message: 'user:mail:value'
+          message: 'user.mail.value'
         context_processors: {  }
         provides_mapping: {  }

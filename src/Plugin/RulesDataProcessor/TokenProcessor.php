@@ -74,10 +74,10 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
     // replacements are done by using the data selector logic.
     foreach ($this->tokenService->scan($value) as $var_name => $tokens) {
       foreach ($tokens as $token) {
-        // Remove the opening and closing bracket to form a data selector.
-        $data_selector = substr($token, 1, -1);
         try {
-          $replacement_data = $rules_state->fetchByPropertyPath($data_selector);
+          // Remove the opening and closing bracket to form a property path.
+          $property_path = str_replace(':', '.', substr($token, 1, -1));
+          $replacement_data = $rules_state->fetchByPropertyPath($property_path);
           $replacements[$token] = $replacement_data->getString();
         }
         catch (RulesEvaluationException $exception) {
