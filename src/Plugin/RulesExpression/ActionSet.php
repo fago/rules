@@ -7,11 +7,13 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ExpressionBase;
+use Drupal\rules\Engine\ExpressionContainerInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
@@ -36,6 +38,13 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
   protected $actions = [];
 
   /**
+   * The UUID generating service.
+   *
+   * @var \Drupal\Component\Uuid\UuidInterface
+   */
+  protected $uuidService;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -46,10 +55,13 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
    *   The plugin implementation definition.
    * @param \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
    *   The rules expression plugin manager.
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
+   *   The UUID generating service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManagerInterface $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManagerInterface $expression_manager, UuidInterface $uuid_service) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
+    $this->uuidService = $uuid_service;
 
     $configuration += ['actions' => []];
     foreach ($configuration['actions'] as $action_config) {
@@ -66,7 +78,8 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.rules_expression')
+      $container->get('plugin.manager.rules_expression'),
+      $container->get('uuid')
     );
   }
 
@@ -77,7 +90,7 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
     if (!$expression instanceof ActionExpressionInterface) {
       throw new InvalidExpressionException();
     }
-    $this->actions[] = $expression;
+    $this->actions[$this->uuidService->generate()] = $expression;
     return $this;
   }
 
@@ -118,8 +131,8 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
     // We need to update the configuration in case actions have been added or
     // changed.
     $configuration['actions'] = [];
-    foreach ($this->actions as $action) {
-      $configuration['actions'][] = $action->getConfiguration();
+    foreach ($this->actions as $uuid => $action) {
+      $configuration['actions'][$uuid] = $action->getConfiguration();
     }
     return $configuration;
   }
@@ -129,6 +142,42 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
    */
   public function getIterator() {
     return new \ArrayIterator($this->actions);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpression($uuid) {
+    if (isset($this->actions[$uuid])) {
+      return $this->actions[$uuid];
+    }
+    foreach ($this->actions as $action) {
+      if ($action instanceof ExpressionContainerInterface) {
+        $nested_action = $action->getExpression($uuid);
+        if ($nested_action) {
+          return $nested_action;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteExpression($uuid) {
+    if (isset($this->actions[$uuid])) {
+      unset($this->actions[$uuid]);
+      return TRUE;
+    }
+    foreach ($this->actions as $action) {
+      if ($action instanceof ExpressionContainerInterface
+        && $action->deleteExpression($uuid)
+      ) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }

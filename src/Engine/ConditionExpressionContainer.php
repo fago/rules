@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Exception\InvalidExpressionException;
@@ -25,6 +26,13 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   protected $conditions = [];
 
   /**
+   * The UUID generating service.
+   *
+   * @var \Drupal\Component\Uuid\UuidInterface
+   */
+  protected $uuidService;
+
+  /**
    * Constructs a new class instance.
    *
    * @param array $configuration
@@ -35,10 +43,13 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
    *   The plugin implementation definition.
    * @param \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
    *   The rules expression plugin manager.
+   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
+   *   The UUID generating service.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExpressionManagerInterface $expression_manager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExpressionManagerInterface $expression_manager, UuidInterface $uuid_service) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
+    $this->uuidService = $uuid_service;
 
     $configuration += ['conditions' => []];
     foreach ($configuration['conditions'] as $condition_config) {
@@ -55,7 +66,8 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.rules_expression')
+      $container->get('plugin.manager.rules_expression'),
+      $container->get('uuid')
     );
   }
 
@@ -66,7 +78,7 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
     if (!$expression instanceof ConditionExpressionInterface) {
       throw new InvalidExpressionException();
     }
-    $this->conditions[] = $expression;
+    $this->conditions[$this->uuidService->generate()] = $expression;
     return $this;
   }
 
@@ -126,8 +138,8 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
     // We need to update the configuration in case conditions have been added or
     // changed.
     $configuration['conditions'] = [];
-    foreach ($this->conditions as $condition) {
-      $configuration['conditions'][] = $condition->getConfiguration();
+    foreach ($this->conditions as $uuid => $condition) {
+      $configuration['conditions'][$uuid] = $condition->getConfiguration();
     }
     return $configuration;
   }
@@ -137,6 +149,42 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
    */
   public function getIterator() {
     return new \ArrayIterator($this->conditions);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpression($uuid) {
+    if (isset($this->conditions[$uuid])) {
+      return $this->conditions[$uuid];
+    }
+    foreach ($this->conditions as $condition) {
+      if ($condition instanceof ExpressionContainerInterface) {
+        $nested_condition = $condition->getExpression($uuid);
+        if ($nested_condition) {
+          return $nested_condition;
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteExpression($uuid) {
+    if (isset($this->conditions[$uuid])) {
+      unset($this->conditions[$uuid]);
+      return TRUE;
+    }
+    foreach ($this->conditions as $condition) {
+      if ($condition instanceof ExpressionContainerInterface
+        && $condition->deleteExpression($uuid)
+      ) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
 }

@@ -191,4 +191,26 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
     return $this->actions->getIterator();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpression($uuid) {
+    $condition = $this->conditions->getExpression($uuid);
+    if ($condition) {
+      return $condition;
+    }
+    return $this->actions->getExpression($uuid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteExpression($uuid) {
+    $deleted = $this->conditions->deleteExpression($uuid);
+    if (!$deleted) {
+      $deleted = $this->actions->deleteExpression($uuid);
+    }
+    return $deleted;
+  }
+
 }

@@ -7,13 +7,14 @@
 
 namespace Drupal\Tests\rules\Integration;
 
+use Drupal\Component\Uuid\Php;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\TypedData\TypedDataManager;
@@ -38,7 +39,6 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
    * @var \Drupal\Core\Entity\EntityManagerInterface|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $entityManager;
-
 
   /**
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\Prophecy\Prophecy\ProphecyInterface
@@ -195,6 +195,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $container->set('plugin.manager.rules_data_processor', $this->rulesDataProcessorManager);
     $container->set('typed_data_manager', $this->typedDataManager);
     $container->set('string_translation', $this->getStringTranslationStub());
+    $container->set('uuid', new Php());
 
     \Drupal::setContainer($container);
     $this->container = $container;
