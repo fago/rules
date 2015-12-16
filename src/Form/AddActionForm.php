@@ -2,42 +2,42 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Form\AddConditionForm.
+ * Contains \Drupal\rules\Form\AddActionForm.
  */
 
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Entity\ReactionRuleConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * UI form for adding a Rules condition.
+ * UI form for adding a Rules action.
  */
-class AddConditionForm extends FormBase {
+class AddActionForm extends FormBase {
 
   /**
-   * The condition plugin manager.
+   * The action plugin manager.
    *
-   * @var \Drupal\rules\Condition\ConditionManager
+   * @var \Drupal\rules\Core\RulesActionManagerInterface
    */
-  protected $conditionManager;
+  protected $actionManager;
 
   /**
    * Creates a new object of this class.
    */
-  public function __construct(ConditionManager $condition_manager) {
-    $this->conditionManager = $condition_manager;
+  public function __construct(RulesActionManagerInterface $action_manager) {
+    $this->actionManager = $action_manager;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('plugin.manager.condition'));
+    return new static($container->get('plugin.manager.rules_action'));
   }
 
   /**
@@ -45,21 +45,21 @@ class AddConditionForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $reaction_config = NULL) {
     $form_state->set('reaction_config', $reaction_config);
-    $condition_name = $form_state->getValue('condition');
+    $action_name = $form_state->getValue('action');
 
     // Step 1 of the multistep form.
-    if (!$condition_name) {
-      $condition_definitions = $this->conditionManager->getGroupedDefinitions();
+    if (!$action_name) {
+      $action_definitions = $this->actionManager->getGroupedDefinitions();
       $options = [];
-      foreach ($condition_definitions as $group => $definitions) {
+      foreach ($action_definitions as $group => $definitions) {
         foreach ($definitions as $id => $definition) {
           $options[$group][$id] = $definition['label'];
         }
       }
 
-      $form['condition'] = [
+      $form['action'] = [
         '#type' => 'select',
-        '#title' => $this->t('Condition'),
+        '#title' => $this->t('Action'),
         '#options' => $options,
         '#required' => TRUE,
         '#empty_value' => $this->t('- Select -'),
@@ -73,19 +73,18 @@ class AddConditionForm extends FormBase {
       return $form;
     }
 
-    /** @var \Drupal\rules\Core\RulesConditionInterface $condition */
-    $condition = $this->conditionManager->createInstance($condition_name);
+    $action = $this->actionManager->createInstance($action_name);
 
     // Step 2 of the form.
     $form['summary'] = [
-      '#markup' => $condition->summary(),
+      '#markup' => $action->summary(),
     ];
-    $form['condition'] = [
+    $form['action'] = [
       '#type' => 'value',
-      '#value' => $condition_name,
+      '#value' => $action_name,
     ];
 
-    $context_defintions = $condition->getContextDefinitions();
+    $context_defintions = $action->getContextDefinitions();
 
     $form['context']['#tree'] = TRUE;
     foreach ($context_defintions as $context_name => $context_definition) {
@@ -110,7 +109,7 @@ class AddConditionForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'rules_reaction_condition_add';
+    return 'rules_reaction_action_add';
   }
 
   /**
@@ -126,7 +125,7 @@ class AddConditionForm extends FormBase {
         $context_config->setValue($context_name, $value);
       }
 
-      $expression->addCondition($form_state->getValue('condition'), $context_config);
+      $expression->addAction($form_state->getValue('action'), $context_config);
       // Set the expression again so that the config is copied over to the
       // config entity.
       $reaction_config->setExpression($expression);

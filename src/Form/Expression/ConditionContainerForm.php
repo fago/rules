@@ -57,7 +57,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
             '#links' => [
               'delete' => [
                 'title' => $this->t('Delete'),
-                'url' => Url::fromRoute('rules.reaction_rule.condition.delete', [
+                'url' => Url::fromRoute('rules.reaction_rule.expression.delete', [
                   'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
                   'uuid' => $uuid,
                 ]),
@@ -75,7 +75,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
       '#link' => [
         'title' => $this->t('Add condition'),
         'url' => Url::fromRoute('rules.reaction_rule.condition.add', [
-          'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
+          'reaction_config' => $this->conditionContainer->getRoot()->getConfigEntityId(),
         ]),
       ],
     ];

@@ -25,7 +25,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @RulesExpression(
  *   id = "rules_action_set",
- *   label = @Translation("Action set")
+ *   label = @Translation("Action set"),
+ *   form_class = "\Drupal\rules\Form\Expression\ActionSetForm"
  * )
  */
 class ActionSet extends ExpressionBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
