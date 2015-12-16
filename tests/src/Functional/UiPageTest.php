@@ -77,4 +77,18 @@ class UiPageTest extends BrowserTestBase {
     $this->assertSession()->pageTextContains('Your changes have been saved.');
   }
 
+  /**
+   * Tests that deleting an expression from a rule works.
+   */
+  public function testDeleteExpressionInRule() {
+    // Setup a rule with one condition.
+    $this->testCreateReactionRule();
+
+    $this->getSession()->getPage()->findLink('Delete')->click();
+    $this->assertSession()->pageTextContains('Are you sure you want to delete Condition: Node is promoted from Test rule?');
+
+    $this->getSession()->getPage()->findButton('Delete')->click();
+    $this->assertSession()->pageTextContains('Your changes have been saved.');
+  }
+
 }

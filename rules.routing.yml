@@ -93,3 +93,16 @@ rules.reaction_rule.condition.add:
     _admin_route: TRUE
   requirements:
     _permission: 'administer rules+administer rules reactions'
+
+rules.reaction_rule.condition.delete:
+  path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}/delete/{uuid}'
+  defaults:
+    _form: '\Drupal\rules\Form\DeleteExpressionForm'
+    _title: 'Delete expression'
+  options:
+    parameters:
+      rules_reaction_rule:
+        type: entity:rules_reaction_rule
+    _admin_route: TRUE
+  requirements:
+    _permission: 'administer rules+administer rules reactions'

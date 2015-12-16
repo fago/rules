@@ -64,9 +64,9 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
     $this->uuidService = $uuid_service;
 
     $configuration += ['actions' => []];
-    foreach ($configuration['actions'] as $action_config) {
+    foreach ($configuration['actions'] as $uuid => $action_config) {
       $action = $expression_manager->createInstance($action_config['id'], $action_config);
-      $this->addExpressionObject($action);
+      $this->actions[$uuid] = $action;
     }
   }
 

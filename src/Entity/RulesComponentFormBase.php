@@ -40,6 +40,7 @@ abstract class RulesComponentFormBase extends EntityForm {
       '#machine_name' => [
         'exists' => [$this, 'exists'],
         'replace_pattern' => '([^a-z0-9_]+)|(^custom$)',
+        'source' => ['settings', 'label'],
         'error' => $this->t('The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores. Additionally, it can not be the reserved word "custom".'),
       ],
     ];

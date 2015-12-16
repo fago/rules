@@ -48,10 +48,28 @@ class ConditionContainerForm implements ExpressionFormInterface {
       '#empty' => t('None'),
     );
 
-    foreach ($this->conditionContainer as $condition) {
-      $form['conditions']['table']['#rows'][] = [$condition->getLabel()];
+    foreach ($this->conditionContainer as $uuid => $condition) {
+      $form['conditions']['table']['#rows'][] = [
+        'element' => $condition->getLabel(),
+        'operations' => [
+          'data' => [
+            '#type' => 'dropbutton',
+            '#links' => [
+              'delete' => [
+                'title' => $this->t('Delete'),
+                'url' => Url::fromRoute('rules.reaction_rule.condition.delete', [
+                  'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
+                  'uuid' => $uuid,
+                ]),
+              ],
+            ],
+          ],
+        ],
+      ];
     }
 
+    // @todo Put this into the table as last row and style it like it was in
+    // Drupal 7 Rules.
     $form['add_condition'] = [
       '#theme' => 'menu_local_action',
       '#link' => [

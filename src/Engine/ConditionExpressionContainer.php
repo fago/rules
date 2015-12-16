@@ -52,9 +52,9 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
     $this->uuidService = $uuid_service;
 
     $configuration += ['conditions' => []];
-    foreach ($configuration['conditions'] as $condition_config) {
+    foreach ($configuration['conditions'] as $uuid => $condition_config) {
       $condition = $this->expressionManager->createInstance($condition_config['id'], $condition_config);
-      $this->addExpressionObject($condition);
+      $this->conditions[$uuid] = $condition;
     }
   }
 

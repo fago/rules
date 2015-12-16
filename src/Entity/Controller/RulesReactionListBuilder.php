@@ -13,7 +13,7 @@ use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 /**
  * Defines a class to build a listing of ReactionRuleConfig entities.
  *
- * @see \Drupal\rules\Entity\ReactionRule
+ * @see \Drupal\rules\Entity\ReactionRuleConfig
  */
 class RulesReactionListBuilder extends ConfigEntityListBuilder {
 
