@@ -11,4 +11,7 @@
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
   </rule>
+
+  <!-- We always want short array syntax only. -->
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 </ruleset>
