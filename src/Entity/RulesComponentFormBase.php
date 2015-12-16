@@ -19,11 +19,11 @@ abstract class RulesComponentFormBase extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['settings'] = array(
+    $form['settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Settings'),
       '#open' => $this->entity->isNew(),
-    );
+    ];
 
     $form['settings']['label'] = [
       '#type' => 'textfield',

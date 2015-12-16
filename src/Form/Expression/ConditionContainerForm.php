@@ -37,16 +37,16 @@ class ConditionContainerForm implements ExpressionFormInterface {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['conditions'] = array(
+    $form['conditions'] = [
       '#type' => 'container',
-    );
+    ];
 
-    $form['conditions']['table'] = array(
+    $form['conditions']['table'] = [
       '#theme' => 'table',
       '#caption' => $this->t('Conditions'),
-      '#header' => array($this->t('Elements'), $this->t('Operations')),
+      '#header' => [$this->t('Elements'), $this->t('Operations')],
       '#empty' => t('None'),
-    );
+    ];
 
     foreach ($this->conditionContainer as $uuid => $condition) {
       $form['conditions']['table']['#rows'][] = [
