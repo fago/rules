@@ -13,10 +13,6 @@ use Drupal\simpletest\BrowserTestBase;
  * Tests that the Rules UI pages are reachable.
  *
  * @group rules_ui
- *
- * @runTestsInSeparateProcesses
- *
- * @preserveGlobalState disabled
  */
 class UiPageTest extends BrowserTestBase {
 
