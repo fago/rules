@@ -66,7 +66,7 @@ class UiPageTest extends BrowserTestBase {
     $this->getSession()->getPage()->findField('Condition')->setValue('rules_node_is_promoted');
     $this->getSession()->getPage()->findButton('Continue')->click();
 
-    $this->getSession()->getPage()->findField('Node')->setValue('1');
+    $this->getSession()->getPage()->findField('context[node][setting]')->setValue('1');
     $this->getSession()->getPage()->findButton('Save')->click();
 
     $this->assertSession()->statusCodeEquals(200);
