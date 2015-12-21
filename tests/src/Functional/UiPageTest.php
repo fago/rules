@@ -7,14 +7,12 @@
 
 namespace Drupal\Tests\rules\Functional;
 
-use Drupal\simpletest\BrowserTestBase;
-
 /**
  * Tests that the Rules UI pages are reachable.
  *
  * @group rules_ui
  */
-class UiPageTest extends BrowserTestBase {
+class UiPageTest extends RulesBrowserTestBase {
 
   /**
    * Modules to enable.
@@ -52,22 +50,22 @@ class UiPageTest extends BrowserTestBase {
     $this->drupalLogin($account);
 
     $this->drupalGet('admin/config/workflow/rules');
-    $this->getSession()->getPage()->findLink('Add reaction rule')->click();
+    $this->clickLink('Add reaction rule');
 
-    $this->getSession()->getPage()->findField('Label')->setValue('Test rule');
-    $this->getSession()->getPage()->findField('Machine-readable name')->setValue('test_rule');
-    $this->getSession()->getPage()->findButton('Save')->click();
+    $this->fillField('Label', 'Test rule');
+    $this->fillField('Machine-readable name', 'test_rule');
+    $this->pressButton('Save');
 
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Reaction rule Test rule has been created.');
 
-    $this->getSession()->getPage()->findLink('Add condition')->click();
+    $this->clickLink('Add condition');
 
-    $this->getSession()->getPage()->findField('Condition')->setValue('rules_node_is_promoted');
-    $this->getSession()->getPage()->findButton('Continue')->click();
+    $this->fillField('Condition', 'rules_node_is_promoted');
+    $this->pressButton('Continue');
 
-    $this->getSession()->getPage()->findField('context[node][setting]')->setValue('1');
-    $this->getSession()->getPage()->findButton('Save')->click();
+    $this->fillField('context[node][setting]', '1');
+    $this->pressButton('Save');
 
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->pageTextContains('Your changes have been saved.');
@@ -80,10 +78,10 @@ class UiPageTest extends BrowserTestBase {
     // Setup a rule with one condition.
     $this->testCreateReactionRule();
 
-    $this->getSession()->getPage()->findLink('Delete')->click();
+    $this->clickLink('Delete');
     $this->assertSession()->pageTextContains('Are you sure you want to delete Condition: Node is promoted from Test rule?');
 
-    $this->getSession()->getPage()->findButton('Delete')->click();
+    $this->pressButton('Delete');
     $this->assertSession()->pageTextContains('Your changes have been saved.');
   }
 
