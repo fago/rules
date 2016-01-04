@@ -19,6 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class AddActionForm extends FormBase {
 
+  use ContextFormTrait;
+
   /**
    * The action plugin manager.
    *
@@ -45,7 +47,7 @@ class AddActionForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $reaction_config = NULL) {
     $form_state->set('reaction_config', $reaction_config);
-    $action_name = $form_state->getValue('action');
+    $action_name = $form_state->get('action');
 
     // Step 1 of the multistep form.
     if (!$action_name) {
@@ -73,9 +75,9 @@ class AddActionForm extends FormBase {
       return $form;
     }
 
+    // Step 2 of the form.
     $action = $this->actionManager->createInstance($action_name);
 
-    // Step 2 of the form.
     $form['summary'] = [
       '#markup' => $action->summary(),
     ];
@@ -88,12 +90,7 @@ class AddActionForm extends FormBase {
 
     $form['context']['#tree'] = TRUE;
     foreach ($context_defintions as $context_name => $context_definition) {
-      $form['context'][$context_name] = [
-        '#type' => 'textfield',
-        '#title' => $context_definition->getLabel(),
-        '#description' => $context_definition->getDescription(),
-        '#required' => $context_definition->isRequired(),
-      ];
+      $form = $this->buildContextForm($form, $form_state, $context_name, $context_definition);
     }
 
     $form['save'] = [
@@ -122,7 +119,12 @@ class AddActionForm extends FormBase {
 
       $context_config = ContextConfig::create();
       foreach ($form_state->getValue('context') as $context_name => $value) {
-        $context_config->setValue($context_name, $value);
+        if ($form_state->get("context_$context_name") == 'selector') {
+          $context_config->map($context_name, $value['setting']);
+        }
+        else {
+          $context_config->setValue($context_name, $value['setting']);
+        }
       }
 
       $expression->addAction($form_state->getValue('action'), $context_config);
@@ -138,6 +140,7 @@ class AddActionForm extends FormBase {
       ]);
     }
     else {
+      $form_state->set('action', $form_state->getValue('action'));
       $form_state->setRebuild();
     }
   }

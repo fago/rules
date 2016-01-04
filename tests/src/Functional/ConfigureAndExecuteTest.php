@@ -84,8 +84,8 @@ class ConfigureAndExecuteTest extends RulesBrowserTestBase {
     $this->fillField('Action', 'rules_system_message');
     $this->pressButton('Continue');
 
-    $this->fillField('context[message]', 'Title matched "Test title"!');
-    $this->fillField('context[type]', 'status');
+    $this->fillField('context[message][setting]', 'Title matched "Test title"!');
+    $this->fillField('context[type][setting]', 'status');
     $this->pressButton('Save');
 
     // Rebuild the container so that the new Rules event is picked up.
