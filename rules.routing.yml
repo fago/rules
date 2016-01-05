@@ -32,7 +32,7 @@ entity.rules_reaction_rule.edit_form:
   path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}'
   defaults:
     _entity_form: 'rules_reaction_rule.edit'
-    _title_callback: '\Drupal\rules\Entity\ReactionRuleEditForm::getTitle'
+    _title_callback: '\Drupal\rules\Form\ReactionRuleEditForm::getTitle'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -66,7 +66,7 @@ entity.rules_component.edit_form:
   path: '/admin/config/workflow/rules/components/edit/{rules_component}'
   defaults:
     _entity_form: 'rules_component.edit'
-    _title_callback: '\Drupal\rules\Entity\RulesComponentEditForm::getTitle'
+    _title_callback: '\Drupal\rules\Form\RulesComponentEditForm::getTitle'
   requirements:
     _permission: 'administer rules+administer rules components'
 

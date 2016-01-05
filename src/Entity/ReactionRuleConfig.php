@@ -18,10 +18,10 @@ use Drupal\rules\Engine\ExpressionInterface;
  *   label = @Translation("Reaction Rule"),
  *   handlers = {
  *     "storage" = "Drupal\rules\Entity\ReactionRuleStorage",
- *     "list_builder" = "Drupal\rules\Entity\Controller\RulesReactionListBuilder",
+ *     "list_builder" = "Drupal\rules\Controller\RulesReactionListBuilder",
  *     "form" = {
- *        "add" = "\Drupal\rules\Entity\ReactionRuleAddForm",
- *        "edit" = "\Drupal\rules\Entity\ReactionRuleEditForm",
+ *        "add" = "\Drupal\rules\Form\ReactionRuleAddForm",
+ *        "edit" = "\Drupal\rules\Form\ReactionRuleEditForm",
  *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
  *      }
  *   },

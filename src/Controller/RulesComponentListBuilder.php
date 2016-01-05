@@ -2,20 +2,20 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\Controller\RulesReactionListBuilder.
+ * Contains \Drupal\rules\Controller\RulesComponentListBuilder.
  */
 
-namespace Drupal\rules\Entity\Controller;
+namespace Drupal\rules\Controller;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 
 /**
- * Defines a class to build a listing of ReactionRuleConfig entities.
+ * Defines a class to build a listing of RulesComponentConfig entities.
  *
- * @see \Drupal\rules\Entity\ReactionRuleConfig
+ * @see \Drupal\rules\Entity\RulesComponent
  */
-class RulesReactionListBuilder extends ConfigEntityListBuilder {
+class RulesComponentListBuilder extends ConfigEntityListBuilder {
 
   /**
    * {@inheritdoc}
@@ -37,9 +37,11 @@ class RulesReactionListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\rules\Entity\ReactionRuleConfig */
+    /* @var $entity \Drupal\rules\Entity\RulesComponentConfig */
     $row['id'] = $entity->id();
     $row['label'] = $this->getLabel($entity);
+    // @todo: maybe link somewhere
+    /* $entity->link($this->getLabel($entity)) */
     $row['description'] = $entity->getDescription();
     $row['tag'] = $entity->getTag();
     return $row + parent::buildRow($entity);

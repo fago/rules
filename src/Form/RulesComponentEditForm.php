@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\RulesComponentEditForm.
+ * Contains \Drupal\rules\Form\RulesComponentEditForm.
  */
 
-namespace Drupal\rules\Entity;
+namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 

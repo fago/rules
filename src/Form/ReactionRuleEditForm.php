@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\ReactionRuleEditForm.
+ * Contains \Drupal\rules\Form\ReactionRuleEditForm.
  */
 
-namespace Drupal\rules\Entity;
+namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Engine\RulesEventManager;
