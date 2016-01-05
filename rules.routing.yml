@@ -32,7 +32,7 @@ entity.rules_reaction_rule.edit_form:
   path: '/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}'
   defaults:
     _entity_form: 'rules_reaction_rule.edit'
-    _title: 'Edit reaction rule'
+    _title_callback: '\Drupal\rules\Entity\ReactionRuleEditForm::getTitle'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -40,7 +40,6 @@ entity.rules_reaction_rule.delete_form:
   path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}'
   defaults:
     _entity_form: 'rules_reaction_rule.delete'
-    _title: 'Delete reaction rule'
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -67,7 +66,7 @@ entity.rules_component.edit_form:
   path: '/admin/config/workflow/rules/components/edit/{rules_component}'
   defaults:
     _entity_form: 'rules_component.edit'
-    _title: 'Edit component'
+    _title_callback: '\Drupal\rules\Entity\RulesComponentEditForm::getTitle'
   requirements:
     _permission: 'administer rules+administer rules components'
 
@@ -75,7 +74,6 @@ entity.rules_component.delete_form:
   path: '/admin/config/workflow/rules/components/delete/{rules_component}'
   defaults:
     _entity_form: 'rules_component.delete'
-    _title: 'Delete component'
   options:
     _admin_route: TRUE
   requirements:

@@ -72,4 +72,11 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
   }
 
+  /**
+   * Title callback: also display the rule label.
+   */
+  public function getTitle($rules_reaction_rule) {
+    return $this->t('Edit reaction rule "@label"', ['@label' => $rules_reaction_rule->label()]);
+  }
+
 }

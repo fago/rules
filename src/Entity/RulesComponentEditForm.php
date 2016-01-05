@@ -31,4 +31,11 @@ class RulesComponentEditForm extends RulesComponentFormBase {
     drupal_set_message($this->t('Component %label has been updated.', ['%label' => $this->entity->label()]));
   }
 
+  /**
+   * Title callback: also display the rule label.
+   */
+  public function getTitle($rules_component) {
+    return $this->t('Edit rules component "@label"', ['@label' => $rules_component->label()]);
+  }
+
 }
