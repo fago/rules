@@ -15,6 +15,8 @@ use Drupal\rules\Plugin\RulesExpression\RuleInterface;
  */
 class ReactionRuleForm implements ExpressionFormInterface {
 
+  use ExpressionFormTrait;
+
   /**
    * The rule expression object this form is for.
    *
