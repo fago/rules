@@ -48,12 +48,14 @@ trait ContextFormTrait {
         ':url' => 'https://www.drupal.org/node/1300042',
       ]) : '';
 
-    $default_value = '';
     if (isset($configuration['context_values'][$context_name])) {
       $default_value = $configuration['context_values'][$context_name];
     }
-    if (isset($configuration['context_mapping'][$context_name])) {
+    elseif (isset($configuration['context_mapping'][$context_name])) {
       $default_value = $configuration['context_mapping'][$context_name];
+    }
+    else {
+      $default_value = $context_definition->getDefaultValue();
     }
     $form['context'][$context_name]['setting'] = [
       '#type' => 'textfield',
