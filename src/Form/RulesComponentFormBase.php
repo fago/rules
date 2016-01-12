@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\RulesComponentFormBase.
+ * Contains \Drupal\rules\Form\RulesComponentFormBase.
  */
 
-namespace Drupal\rules\Entity;
+namespace Drupal\rules\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -19,11 +19,11 @@ abstract class RulesComponentFormBase extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['settings'] = array(
+    $form['settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Settings'),
       '#open' => $this->entity->isNew(),
-    );
+    ];
 
     $form['settings']['label'] = [
       '#type' => 'textfield',
@@ -40,6 +40,7 @@ abstract class RulesComponentFormBase extends EntityForm {
       '#machine_name' => [
         'exists' => [$this, 'exists'],
         'replace_pattern' => '([^a-z0-9_]+)|(^custom$)',
+        'source' => ['settings', 'label'],
         'error' => $this->t('The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores. Additionally, it can not be the reserved word "custom".'),
       ],
     ];

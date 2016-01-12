@@ -24,4 +24,14 @@ interface ExpressionFormInterface {
    */
   public function form(array $form, FormStateInterface $form_state);
 
+  /**
+   * Form submission callback to save changes for the expression.
+   *
+   * @param array $form
+   *   The form array.
+   * @param FormStateInterface $form_state
+   *   The current form state.
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state);
+
 }

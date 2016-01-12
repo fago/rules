@@ -51,7 +51,7 @@ class RulesLog implements LoggerInterface {
    *
    * @todo: create a TypedData logger-entry object: https://www.drupal.org/node/2625238
    */
-  public function log($level, $message, array $context = array()) {
+  public function log($level, $message, array $context = []) {
     // Remove any backtraces since they may contain an unserializable variable.
     unset($context['backtrace']);
 
@@ -59,7 +59,7 @@ class RulesLog implements LoggerInterface {
     // translated too in runtime.
     $message_placeholders = $this->parser->parseMessagePlaceholders($message, $context);
 
-    $logger_entry = array(
+    $logger_entry = [
       'uid' => $context['uid'],
       'type' => $context['channel'],
       'message' => $message,
@@ -70,7 +70,7 @@ class RulesLog implements LoggerInterface {
       'referer' => $context['referer'],
       'hostname' => $context['ip'],
       'timestamp' => $context['timestamp'],
-    );
+    ];
 
     // Dispatch logger_entry event.
     $event = new SystemLoggerEvent($logger_entry, ['logger_entry' => $logger_entry]);

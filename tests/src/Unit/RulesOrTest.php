@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\Component\Uuid\Php;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Plugin\RulesExpression\RulesOr;
 use Prophecy\Argument;
@@ -30,7 +31,7 @@ class RulesOrTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->or = new RulesOr([], '', [], $this->expressionManager->reveal());
+    $this->or = new RulesOr([], '', [], $this->expressionManager->reveal(), new Php());
   }
 
   /**

@@ -27,9 +27,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * nest several rules into one rule. This is the functionality of so called
  * "rule sets" in Drupal 7.
  *
+ * @todo rename the form class to just RuleForm.
+ *
  * @RulesExpression(
  *   id = "rules_rule",
- *   label = @Translation("A rule, executing actions when conditions are met.")
+ *   label = @Translation("A rule, executing actions when conditions are met."),
+ *   form_class = "\Drupal\rules\Form\Expression\ReactionRuleForm"
  * )
  */
 class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPluginInterface {
@@ -186,6 +189,28 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
   public function getIterator() {
     // Just pass up the actions for iterating over.
     return $this->actions->getIterator();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExpression($uuid) {
+    $condition = $this->conditions->getExpression($uuid);
+    if ($condition) {
+      return $condition;
+    }
+    return $this->actions->getExpression($uuid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteExpression($uuid) {
+    $deleted = $this->conditions->deleteExpression($uuid);
+    if (!$deleted) {
+      $deleted = $this->actions->deleteExpression($uuid);
+    }
+    return $deleted;
   }
 
 }

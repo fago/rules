@@ -7,18 +7,12 @@
 
 namespace Drupal\Tests\rules\Functional;
 
-use Drupal\simpletest\BrowserTestBase;
-
 /**
- * Tests that the Rules UI pages a reachable.
+ * Tests that the Rules UI pages are reachable.
  *
  * @group rules_ui
- *
- * @runTestsInSeparateProcesses
- *
- * @preserveGlobalState disabled
  */
-class UiPageTest extends BrowserTestBase {
+class UiPageTest extends RulesBrowserTestBase {
 
   /**
    * Modules to enable.
@@ -28,18 +22,67 @@ class UiPageTest extends BrowserTestBase {
   public static $modules = ['rules'];
 
   /**
+   * We use the minimal profile because we want to test local action links.
+   *
+   * @var string
+   */
+  protected $profile = 'minimal';
+
+  /**
    * Tests that the reaction rule listing page works.
    */
   public function testReactionRulePage() {
     $account = $this->drupalCreateUser(['administer rules']);
     $this->drupalLogin($account);
 
-    // Visit a Drupal page that requires login.
     $this->drupalGet('admin/config/workflow/rules');
     $this->assertSession()->statusCodeEquals(200);
 
     // Test that there is an empty reaction rule listing.
     $this->assertSession()->pageTextContains('There is no Reaction Rule yet.');
+  }
+
+  /**
+   * Tests that creating a reaction rule works.
+   */
+  public function testCreateReactionRule() {
+    $account = $this->drupalCreateUser(['administer rules']);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('admin/config/workflow/rules');
+    $this->clickLink('Add reaction rule');
+
+    $this->fillField('Label', 'Test rule');
+    $this->fillField('Machine-readable name', 'test_rule');
+    $this->pressButton('Save');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Reaction rule Test rule has been created.');
+
+    $this->clickLink('Add condition');
+
+    $this->fillField('Condition', 'rules_node_is_promoted');
+    $this->pressButton('Continue');
+
+    $this->fillField('context[node][setting]', '1');
+    $this->pressButton('Save');
+
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains('Your changes have been saved.');
+  }
+
+  /**
+   * Tests that deleting an expression from a rule works.
+   */
+  public function testDeleteExpressionInRule() {
+    // Setup a rule with one condition.
+    $this->testCreateReactionRule();
+
+    $this->clickLink('Delete');
+    $this->assertSession()->pageTextContains('Are you sure you want to delete Condition: Node is promoted from Test rule?');
+
+    $this->pressButton('Delete');
+    $this->assertSession()->pageTextContains('Your changes have been saved.');
   }
 
 }

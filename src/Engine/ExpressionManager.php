@@ -9,6 +9,7 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\rules\Annotation\RulesExpression;
 
 /**
  * Plugin manager for all Rules expressions.
@@ -27,9 +28,9 @@ class ExpressionManager extends DefaultPluginManager implements ExpressionManage
   /**
    * {@inheritdoc}
    */
-  public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = 'Drupal\rules\Annotation\RulesExpression') {
+  public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = RulesExpression::class) {
     $this->alterInfo('rules_expression');
-    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, 'Drupal\rules\Engine\ExpressionInterface', $plugin_definition_annotation_name);
+    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, ExpressionInterface::class, $plugin_definition_annotation_name);
   }
 
   /**
