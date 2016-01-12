@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\rules\Context\ContextDefinitionInterface;
 

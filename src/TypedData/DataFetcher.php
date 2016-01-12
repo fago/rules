@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\TypedData\DataFetcher
+ * Contains Drupal\rules\TypedData\DataFetcher.
  */
 
 namespace Drupal\rules\TypedData;

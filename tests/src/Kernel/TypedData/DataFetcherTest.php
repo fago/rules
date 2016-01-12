@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\Tests\rules\Kernel\TypedData\DataFetcherTest
+ * Contains Drupal\Tests\rules\Kernel\TypedData\DataFetcherTest.
  */
 
 namespace Drupal\Tests\rules\Kernel\TypedData;
@@ -10,7 +10,7 @@ namespace Drupal\Tests\rules\Kernel\TypedData;
 use \Drupal\KernelTests\KernelTestBase;
 
 /**
- * Class DataFetcherTest
+ * Class DataFetcherTest.
  *
  * @group rules
  *
