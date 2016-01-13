@@ -31,3 +31,6 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  typed_data.placeholder_resolver:
+    class: Drupal\rules\Context\PlaceholderResolver
+    arguments: ['@typed_data_manager']

@@ -5,117 +5,38 @@
  * Contains \Drupal\rules\Context\PlaceholderResolver.
  */
 
-namespace Drupal\rules\Context;
+namespace Drupal\rules\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
-use Drupal\Core\TypedData\TypedDataInterface;
-use Drupal\rules\TypedData\TypedDataManagerTrait;
+use Drupal\rules\Context\AttachmentsInterface;
+use Drupal\rules\Context\CacheableDependencyInterface;
 
 /**
- * Class PlaceholderResolver.
+ * Resolver for placeholder tokens based upon typed data.
+ *
+ * This is a Typed Data based alternative to the token service, see
+ * \Drupal\Core\Utility\Token.
  */
 class PlaceholderResolver {
 
-  use TypedDataManagerTrait;
-
   /**
-   * Definitions for the context used.
+   * The typed data manager.
    *
-   * @var \Drupal\rules\Context\ContextDefinitionInterface[]
+   * @var \Drupal\rules\TypedData\TypedDataManagerInterface
    */
-  protected $contextDefinitions;
-
-  /**
-   * Array of data for the defined contexts, keyed by context name.
-   *
-   * @var \Drupal\Core\TypedData\TypedDataInterface[]
-   */
-  protected $contextData;
-
-  /**
-   * The language code to use when resolving replacements.
-   *
-   * @var string|null
-   */
-  protected $langcode;
+  protected $typedDataManager;
 
   /**
    * Constructs the object.
    *
-   * @return static
+   * @param \Drupal\rules\TypedData\TypedDataManagerInterface $typed_data_manager
+   *   The typed data manager.
    */
-  public static function create() {
-    return new static();
-  }
-
-  /**
-   * Constructs the object.
-   */
-  protected function __construct() { }
-
-  /**
-   * Adds a context definition.
-   *
-   * @param string $name
-   *   The name of the context to add.
-   * @param \Drupal\rules\Context\ContextDefinitionInterface $definition
-   *   The definition to add.
-   *
-   * @throws \LogicException
-   *   Thrown if there is already a context with the given name defined.
-   *
-   * @return $this
-   */
-  public function addContextDefinition($name, ContextDefinitionInterface $definition) {
-    if (isset($this->contextDefinitions[$name])) {
-      throw new \LogicException("A context with the name '$name' is already defined.");
-    }
-    $this->contextDefinitions[$name] = $definition;
-    return $this;
-  }
-
-  /**
-   * Sets the value of a context.
-   *
-   * @param string $name
-   *   The name.
-   * @param mixed $value
-   *   The context value.
-   *
-   * @throws \LogicException
-   *   Thrown if the passed context is not defined.
-   *
-   * @return $this
-   */
-  public function setContextValue($name, $value) {
-    if (!isset($this->contextDefinitions[$name])) {
-      throw new \LogicException("The specified context '$name' is not defined.");
-    }
-    $this->state->addContext($name, $this->contextDefinitions[$name], $value);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addContext($name, ContextDefinitionInterface $definition, $value) {
-    $this->addContextDefinition($name, $definition);
-    $data = $this->getTypedDataManager()->create(
-      $definition->getDataDefinition(),
-      $value
-    );
-    $this->addContextData($name, $data);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addContextData($name, TypedDataInterface $data) {
-    $this->contextData[$name] = $data;
-    return $this;
+  public function __construct(TypedDataManagerInterface $typed_data_manager) {
+    $this->typedDataManager = $typed_data_manager;
   }
 
   /**
@@ -125,15 +46,16 @@ class PlaceholderResolver {
    *   An HTML string containing replaceable tokens. The caller is responsible
    *   for calling \Drupal\Component\Utility\Html::escape() in case the $text
    *   was plain text.
-   * @param bool $clear_missing
-   *   (optional) Whether to clear missing placeholders; i.e., placeholders
-   *   having no replacement value are removed from the final text.
-   *
+   * @param \Drupal\Core\TypedData\TypedDataInterface[] $data
+   *   The data to use for generating values for the placeholder, keyed by
+   *   name.
    * @param array $options
    *   (optional) A keyed array of settings and flags to control the token
    *   replacement process. Supported options are:
    *   - langcode: A language code to be used when generating locale-sensitive
    *     tokens.
+   *   - clear: A boolean flag indicating that tokens should be removed from the
+   *     final text if no replacement value can be generated. Defaults to FALSE.
    * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata|null
    *   (optional) An object to which static::generate() and the hooks and
    *   functions that it invokes will add their required bubbleable metadata.
@@ -156,7 +78,11 @@ class PlaceholderResolver {
    *   An array of replacement values for the placeholders contained in the
    *   text, keyed by placeholder.
    */
-  public function resolvePlaceholders($text, $clear_missing = TRUE, BubbleableMetadata $bubbleable_metadata = NULL) {
+  public function resolvePlaceholders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL) {
+    $options += [
+      'langcode' => NULL,
+      'clear' => FALSE,
+    ];
     $placeholder_by_context = $this->scan($text);
     if (empty($placeholder_by_context)) {
       return $text;
@@ -171,11 +97,16 @@ class PlaceholderResolver {
     }
 
     $replacements = array();
-    $data_fetcher = $this->getTypedDataManager()->getDataFetcher();
+    $data_fetcher = $this->typedDataManager->getDataFetcher();
     foreach ($placeholder_by_context as $name => $placeholders) {
       foreach ($placeholders as $placeholder) {
         try {
-          $value = $data_fetcher->fetchBySubPaths($this->contextData[$name], explode(':', $placeholder), $this->langcode);
+          if (!isset($data[$name])) {
+            throw new MissingDataException();
+          }
+          $fetched_data = $data_fetcher->fetchBySubPaths($data[$name], explode(':', $placeholder), $options['langcode']);
+          $value = $fetched_data->getString();
+          // @todo: Add token formatting support here.
           // Escape the tokens, unless they are explicitly markup.
           $replacements[$placeholder] = $value instanceof MarkupInterface ? $value : new HtmlEscapedText($value);
         }
@@ -194,8 +125,16 @@ class PlaceholderResolver {
    *
    * @param string $text
    *   The text containing the placeholders.
-   * @param bool $clear_missing
-   *   (optional) Whether to clear missing placeholders.
+   * @param \Drupal\Core\TypedData\TypedDataInterface[] $data
+   *   The data to use for generating values for the placeholder, keyed by
+   *   name.
+   * @param array $options
+   *   (optional) A keyed array of settings and flags to control the token
+   *   replacement process. Supported options are:
+   *   - langcode: A language code to be used when generating locale-sensitive
+   *     tokens.
+   *   - clear: A boolean flag indicating that tokens should be removed from the
+   *     final text if no replacement value can be generated. Defaults to FALSE.
    *
    * @return string
    *   The result is the entered HTML text with tokens replaced. The
@@ -206,8 +145,8 @@ class PlaceholderResolver {
    *   otherwise for example the result can be put into #markup, in which case
    *   it would be sanitized by Xss::filterAdmin().
    */
-  public function replacePlaceHolders($text, $clear_missing = TRUE) {
-    $replacements = $this->resolvePlaceholders($text, $clear_missing);
+  public function replacePlaceHolders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL) {
+    $replacements = $this->resolvePlaceholders($text, $data, $options, $bubbleable_metadata);
 
     $placeholders = array_keys($replacements);
     $values = array_values($replacements);
