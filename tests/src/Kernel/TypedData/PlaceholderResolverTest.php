@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
+use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -155,6 +156,36 @@ class PlaceholderResolverTest extends KernelTestBase {
     $this->assertEquals('test [node:title:1:value]', $result);
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], ['clear' => TRUE]);
     $this->assertEquals('test ', $result);
+  }
+
+  /**
+   * @cover replacePlaceHolders
+   */
+  public function testStringEncoding() {
+    $this->node->title->value = '<b>XSS</b>';
+    $text = 'test [node:title]';
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $this->assertEquals('test ' . new HtmlEscapedText('<b>XSS</b>'), $result);
+  }
+
+  /**
+   * @cover replacePlaceHolders
+   */
+  public function testIntegerPlaceholder() {
+    $this->node->field_integer->value = 3;
+    $text = 'test [node:field_integer:0:value]';
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $this->assertEquals('test 3', $result);
+  }
+
+  /**
+   * @cover replacePlaceHolders
+   */
+  public function testListPlaceholder() {
+    $this->node->field_integer = [1, 2];
+    $text = 'test [node:field_integer]';
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $this->assertEquals('test 1, 2', $result);
   }
 
 }
