@@ -32,5 +32,5 @@ services:
     tags:
       - { name: 'event_subscriber' }
   typed_data.placeholder_resolver:
-    class: Drupal\rules\Context\PlaceholderResolver
+    class: Drupal\rules\TypedData\PlaceholderResolver
     arguments: ['@typed_data_manager']

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Context\PlaceholderResolver.
+ * Contains \Drupal\rules\TypedData\PlaceholderResolver.
  */
 
 namespace Drupal\rules\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Render\AttachmentsInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
-use Drupal\rules\Context\AttachmentsInterface;
-use Drupal\rules\Context\CacheableDependencyInterface;
 
 /**
  * Resolver for placeholder tokens based upon typed data.
@@ -59,20 +59,7 @@ class PlaceholderResolver {
    * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata|null
    *   (optional) An object to which static::generate() and the hooks and
    *   functions that it invokes will add their required bubbleable metadata.
-   *
-   *   To ensure that the metadata associated with the token replacements gets
-   *   attached to the same render array that contains the token-replaced text,
-   *   callers of this method are encouraged to pass in a BubbleableMetadata
-   *   object and apply it to the corresponding render array. For example:
-   *   @code
-   *     $bubbleable_metadata = new BubbleableMetadata();
-   *     $build['#markup'] = $token_service->replace('Tokens: [node:nid] [current-user:uid]', ['node' => $node], [], $bubbleable_metadata);
-   *     $bubbleable_metadata->applyTo($build);
-   *   @endcode
-   *
-   *   When the caller does not pass in a BubbleableMetadata object, this
-   *   method creates a local one, and applies the collected metadata to the
-   *   Renderer's currently active render context.
+   *   Refer to ::replacePlaceHolders() for further details.
    *
    * @return \Drupal\Component\Render\MarkupInterface[]
    *   An array of replacement values for the placeholders contained in the
@@ -83,35 +70,35 @@ class PlaceholderResolver {
       'langcode' => NULL,
       'clear' => FALSE,
     ];
-    $placeholder_by_context = $this->scan($text);
-    if (empty($placeholder_by_context)) {
+    $placeholder_by_data = $this->scan($text);
+    if (empty($placeholder_by_data)) {
       return $text;
     }
 
     // @todo: Add metadata from each step while fetching data.
     $bubbleable_metadata = $bubbleable_metadata ?: new BubbleableMetadata();
-    foreach ($this->contextData as $object) {
+    foreach ($data as $object) {
       if ($object instanceof CacheableDependencyInterface || $object instanceof AttachmentsInterface) {
         $bubbleable_metadata->addCacheableDependency($object);
       }
     }
 
-    $replacements = array();
+    $replacements = [];
     $data_fetcher = $this->typedDataManager->getDataFetcher();
-    foreach ($placeholder_by_context as $name => $placeholders) {
-      foreach ($placeholders as $placeholder) {
+    foreach ($placeholder_by_data as $data_name => $placeholders) {
+      foreach ($placeholders as $sub_path => $placeholder) {
         try {
-          if (!isset($data[$name])) {
+          if (!isset($data[$data_name])) {
             throw new MissingDataException();
           }
-          $fetched_data = $data_fetcher->fetchBySubPaths($data[$name], explode(':', $placeholder), $options['langcode']);
+          $fetched_data = $data_fetcher->fetchBySubPaths($data[$data_name], explode(':', $sub_path), $options['langcode']);
           $value = $fetched_data->getString();
           // @todo: Add token formatting support here.
           // Escape the tokens, unless they are explicitly markup.
           $replacements[$placeholder] = $value instanceof MarkupInterface ? $value : new HtmlEscapedText($value);
         }
         catch (MissingDataException $e) {
-          if (!empty($clear_missing)) {
+          if (!empty($options['clear'])) {
             $replacements[$placeholder] = '';
           }
         }
@@ -122,6 +109,16 @@ class PlaceholderResolver {
 
   /**
    * Replaces the placeholders in the given text.
+   *
+   * To ensure that the metadata associated with the token replacements gets
+   * attached to the render array that contains the token-replaced text, callers
+   * of this method are encouraged to pass in a BubbleableMetadata object and
+   * apply it to the corresponding render array. For example:
+   * @code
+   *     $bubbleable_metadata = new BubbleableMetadata();
+   *     $build['#markup'] = $token_service->replacePlaceHolders('Tokens: [node:nid] [current-user:uid]', ['node' => $node->getTypedData()], [], $bubbleable_metadata);
+   *     $bubbleable_metadata->applyTo($build);
+   * @endcode
    *
    * @param string $text
    *   The text containing the placeholders.
@@ -135,6 +132,9 @@ class PlaceholderResolver {
    *     tokens.
    *   - clear: A boolean flag indicating that tokens should be removed from the
    *     final text if no replacement value can be generated. Defaults to FALSE.
+   * @param \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata|null
+   *   (optional) An object to which static::generate() and the hooks and
+   *   functions that it invokes will add their required bubbleable metadata.
    *
    * @return string
    *   The result is the entered HTML text with tokens replaced. The
@@ -161,7 +161,7 @@ class PlaceholderResolver {
    *   The text to be scanned for possible tokens.
    *
    * @return array
-   *   An associative array of discovered tokens, grouped by context name.
+   *   An associative array of discovered tokens, grouped by data name.
    */
   public function scan($text) {
     // Matches tokens with the following pattern: [$name:$property_path]
@@ -180,8 +180,9 @@ class PlaceholderResolver {
 
     // Iterate through the matches, building an associative array containing
     // $tokens grouped by $types, pointing to the version of the token found in
-    // the source text. For example, $results['node']['title'] = '[node:title]';
-    $results = array();
+    // the source text. For example,
+    // $results['node']['title'] = '[node:title]';.
+    $results = [];
     for ($i = 0; $i < count($tokens); $i++) {
       $results[$names[$i]][$tokens[$i]] = $matches[0][$i];
     }
