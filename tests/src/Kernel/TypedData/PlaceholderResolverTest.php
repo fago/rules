@@ -9,6 +9,7 @@ namespace Drupal\Tests\rules\Kernel\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -150,11 +151,11 @@ class PlaceholderResolverTest extends KernelTestBase {
    */
   public function testPlaceholdersWithMissingData() {
     $text = 'test [node:title:1:value]';
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, []);
     $this->assertEquals('test [node:title:1:value]', $result);
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], ['clear' => FALSE]);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, ['clear' => FALSE]);
     $this->assertEquals('test [node:title:1:value]', $result);
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], ['clear' => TRUE]);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, ['clear' => TRUE]);
     $this->assertEquals('test ', $result);
   }
 
@@ -164,7 +165,7 @@ class PlaceholderResolverTest extends KernelTestBase {
   public function testStringEncoding() {
     $this->node->title->value = '<b>XSS</b>';
     $text = 'test [node:title]';
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test ' . new HtmlEscapedText('<b>XSS</b>'), $result);
   }
 
@@ -174,7 +175,7 @@ class PlaceholderResolverTest extends KernelTestBase {
   public function testIntegerPlaceholder() {
     $this->node->field_integer->value = 3;
     $text = 'test [node:field_integer:0:value]';
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 3', $result);
   }
 
@@ -184,8 +185,22 @@ class PlaceholderResolverTest extends KernelTestBase {
   public function testListPlaceholder() {
     $this->node->field_integer = [1, 2];
     $text = 'test [node:field_integer]';
-    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], []);
+    $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 1, 2', $result);
+  }
+
+  /**
+   * @cover replacePlaceHolders
+   */
+  public function testBubbleableMetadata() {
+    // Make sure the bubbleable metadata added by the fetcher is properly passed
+    // though.
+    $bubbleable_metadata = new BubbleableMetadata();
+    // Save the node, so it gets a cache tag.
+    $this->node->save();
+    $this->placeholderResolver->replacePlaceHolders('test [node:field_integer]', ['node' => $this->node->getTypedData()], $bubbleable_metadata);
+    $expected = ['node:' . $this->node->id()];
+    $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
   }
 
 }

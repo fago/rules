@@ -8,6 +8,7 @@
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
 use Drupal\Core\Entity\TypedData\EntityDataDefinition;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -212,6 +213,19 @@ class DataFetcherTest extends KernelTestBase {
   /**
    * @cover fetchByPropertyPath
    * @expectedException \Drupal\Core\TypedData\Exception\MissingDataException
+   */
+  public function testFetchingNotExistingListItem() {
+    $this->node->field_integer->setValue([]);
+
+    // This will throw an exception.
+    $this->typedDataManager->getDataFetcher()
+      ->fetchByPropertyPath($this->node->getTypedData(), 'field_integer.0')
+      ->getValue();
+  }
+
+  /**
+   * @cover fetchByPropertyPath
+   * @expectedException \Drupal\Core\TypedData\Exception\MissingDataException
    * @expectedExceptionMessageRegExp #Unable to apply data selector 'field_integer.0.value' at 'field_integer':.*#
    */
   public function testFetchingFromEmptyData() {
@@ -220,6 +234,39 @@ class DataFetcherTest extends KernelTestBase {
     $this->typedDataManager->getDataFetcher()
       ->fetchByPropertyPath($data_empty, 'field_integer.0.value')
       ->getValue();
+  }
+
+  /**
+   * @cover fetchByPropertyPath
+   */
+  public function testBubbleableMetadata() {
+    $this->node->field_integer->setValue([]);
+    // Save the node, so that it gets an ID and it has a cache tag.
+    $this->node->save();
+    // Also add a user for testing cache tags of references.
+    $user = $this->entityTypeManager->getStorage('user')
+      ->create([
+        'name' => 'test',
+        'type' => 'user',
+      ]);
+    $user->save();
+    $this->node->uid->entity = $user;
+
+    $bubbleable_metadata = new BubbleableMetadata();
+    $this->typedDataManager->getDataFetcher()
+      ->fetchByPropertyPath($this->node->getTypedData(), 'title.value', $bubbleable_metadata)
+      ->getValue();
+
+    $expected = ['node:' . $this->node->id()];
+    $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
+
+    // Test cache tags of references are added correctly.
+    $this->typedDataManager->getDataFetcher()
+      ->fetchByPropertyPath($this->node->getTypedData(), 'uid.entity.name', $bubbleable_metadata)
+      ->getValue();
+
+    $expected = ['node:' . $this->node->id(), 'user:' . $user->id()];
+    $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
   }
 
 }

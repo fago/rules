@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\TypedData;
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
@@ -21,6 +22,8 @@ interface DataFetcherInterface {
    *   The data from which to select a value.
    * @param string $property_path
    *   The property path string, e.g. "uid.entity.mail.value".
+   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
+   *   (optional) An object to which required bubbleable metadata will be added.
    * @param string $langcode
    *   (optional) The language code used to get the argument value if the
    *   argument value should be translated. Defaults to NULL.
@@ -35,7 +38,7 @@ interface DataFetcherInterface {
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */
-  public function fetchByPropertyPath(TypedDataInterface $typed_data, $property_path, $langcode = NULL);
+  public function fetchByPropertyPath(TypedDataInterface $typed_data, $property_path, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL);
 
   /**
    * Fetches data based upon the given sub-paths.
@@ -58,6 +61,6 @@ interface DataFetcherInterface {
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */
-  public function fetchBySubPaths(TypedDataInterface $typed_data, array $sub_paths, $langcode = NULL);
+  public function fetchBySubPaths(TypedDataInterface $typed_data, array $sub_paths, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL);
 
 }

@@ -27,6 +27,9 @@ interface PlaceholderResolverInterface {
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $data
    *   The data to use for generating values for the placeholder, keyed by
    *   name.
+   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
+   *   (optional) An object to which required bubbleable metadata will be added.
+   *   Refer to ::replacePlaceHolders() for further details.
    * @param array $options
    *   (optional) A keyed array of settings and flags to control the token
    *   replacement process. Supported options are:
@@ -34,16 +37,12 @@ interface PlaceholderResolverInterface {
    *     tokens.
    *   - clear: A boolean flag indicating that tokens should be removed from the
    *     final text if no replacement value can be generated. Defaults to FALSE.
-   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
-   *   (optional) An object to which static::generate() and the hooks and
-   *   functions that it invokes will add their required bubbleable metadata.
-   *   Refer to ::replacePlaceHolders() for further details.
    *
    * @return \Drupal\Component\Render\MarkupInterface[]
    *   An array of replacement values for the placeholders contained in the
    *   text, keyed by placeholder.
    */
-  public function resolvePlaceholders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL);
+  public function resolvePlaceholders($text, array $data = [], BubbleableMetadata $bubbleable_metadata = NULL, array $options = []);
 
   /**
    * Replaces the placeholders in the given text.
@@ -65,6 +64,8 @@ interface PlaceholderResolverInterface {
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $data
    *   The data to use for generating values for the placeholder, keyed by
    *   name.
+   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
+   *   (optional) An object to which required bubbleable metadata will be added.
    * @param array $options
    *   (optional) A keyed array of settings and flags to control the token
    *   replacement process. Supported options are:
@@ -73,9 +74,6 @@ interface PlaceholderResolverInterface {
    *   - clear: A boolean flag indicating that tokens should be removed from the
    *     final text if no replacement value can be generated. Defaults to
    *     FALSE.
-   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
-   *   (optional) An object to which static::generate() and the hooks and
-   *   functions that it invokes will add their required bubbleable metadata.
    *
    * @return string
    *   The result is the entered HTML text with tokens replaced. The
@@ -86,7 +84,7 @@ interface PlaceholderResolverInterface {
    *   otherwise for example the result can be put into #markup, in which case
    *   it would be sanitized by Xss::filterAdmin().
    */
-  public function replacePlaceHolders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL);
+  public function replacePlaceHolders($text, array $data = [], BubbleableMetadata $bubbleable_metadata = NULL, array $options = []);
 
   /**
    * Builds a list of all placeholder tokens that appear in the text.

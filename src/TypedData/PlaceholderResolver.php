@@ -9,8 +9,6 @@ namespace Drupal\rules\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
-use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\Core\Render\AttachmentsInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 
@@ -39,7 +37,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
   /**
    * {@inheritdoc}
    */
-  public function resolvePlaceholders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL) {
+  public function resolvePlaceholders($text, array $data = [], BubbleableMetadata $bubbleable_metadata = NULL, array $options = []) {
     $options += [
       'langcode' => NULL,
       'clear' => FALSE,
@@ -49,23 +47,15 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
       return $text;
     }
 
-    // @todo: Add metadata from each step while fetching data.
-    $bubbleable_metadata = $bubbleable_metadata ?: new BubbleableMetadata();
-    foreach ($data as $object) {
-      if ($object instanceof CacheableDependencyInterface || $object instanceof AttachmentsInterface) {
-        $bubbleable_metadata->addCacheableDependency($object);
-      }
-    }
-
     $replacements = [];
     $data_fetcher = $this->typedDataManager->getDataFetcher();
     foreach ($placeholder_by_data as $data_name => $placeholders) {
       foreach ($placeholders as $sub_path => $placeholder) {
         try {
           if (!isset($data[$data_name])) {
-            throw new MissingDataException();
+            throw new MissingDataException("There is no data with the name '$data_name' available.");
           }
-          $fetched_data = $data_fetcher->fetchBySubPaths($data[$data_name], explode(':', $sub_path), $options['langcode']);
+          $fetched_data = $data_fetcher->fetchBySubPaths($data[$data_name], explode(':', $sub_path), $bubbleable_metadata, $options['langcode']);
           $value = $fetched_data->getString();
           // @todo: Add token formatting support here.
           // Escape the tokens, unless they are explicitly markup.
@@ -84,8 +74,8 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
   /**
    * {@inheritdoc}
    */
-  public function replacePlaceHolders($text, array $data = [], array $options = [], BubbleableMetadata $bubbleable_metadata = NULL) {
-    $replacements = $this->resolvePlaceholders($text, $data, $options, $bubbleable_metadata);
+  public function replacePlaceHolders($text, array $data = [], BubbleableMetadata $bubbleable_metadata = NULL, array $options = []) {
+    $replacements = $this->resolvePlaceholders($text, $data, $bubbleable_metadata, $options);
 
     $placeholders = array_keys($replacements);
     $values = array_values($replacements);
