@@ -7,8 +7,12 @@
   <!--Blacklist of coding standard rules that are not yet fixed. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
+    <exclude name="Drupal.Commenting.FunctionComment.EmptyThrows"/>
     <exclude name="Drupal.Commenting.FunctionComment.IncorrectTypeHint"/>
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
   </rule>
+
+  <!-- We always want short array syntax only. -->
+  <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 </ruleset>

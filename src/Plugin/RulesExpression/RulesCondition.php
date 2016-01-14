@@ -24,7 +24,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @RulesExpression(
  *   id = "rules_condition",
- *   label = @Translation("An executable condition.")
+ *   label = @Translation("Condition"),
+ *   form_class = "\Drupal\rules\Form\Expression\ConditionForm"
  * )
  */
 class RulesCondition extends ExpressionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
@@ -154,8 +155,21 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    * {@inheritdoc}
    */
   public function getLabel() {
-    $definition = $this->conditionManager->getDefinition($this->configuration['condition_id']);
-    return $this->t('Condition: @label', ['@label' => $definition['label']]);
+    if (!empty($this->configuration['condition_id'])) {
+      $definition = $this->conditionManager->getDefinition($this->configuration['condition_id']);
+      return $this->t('Condition: @label', ['@label' => $definition['label']]);
+    }
+    return parent::getLabel();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormHandler() {
+    if (isset($this->pluginDefinition['form_class'])) {
+      $class_name = $this->pluginDefinition['form_class'];
+      return new $class_name($this, $this->conditionManager);
+    }
   }
 
 }

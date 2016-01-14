@@ -22,7 +22,7 @@ use Drupal\user\UserInterface;
  *       label = @Translation("User")
  *     ),
  *     "roles" = @ContextDefinition("entity:user_role",
- *       label = @Translation("Entity"),
+ *       label = @Translation("Roles"),
  *       multiple = TRUE
  *     ),
  *     "operation" = @ContextDefinition("string",

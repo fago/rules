@@ -18,10 +18,10 @@ use Drupal\rules\Engine\ExpressionInterface;
  *   id = "rules_component",
  *   label = @Translation("Rules component"),
  *   handlers = {
- *     "list_builder" = "Drupal\rules\Entity\Controller\RulesComponentListBuilder",
+ *     "list_builder" = "Drupal\rules\Controller\RulesComponentListBuilder",
  *     "form" = {
- *        "add" = "\Drupal\rules\Entity\RulesComponentAddForm",
- *        "edit" = "\Drupal\rules\Entity\RulesComponentEditForm",
+ *        "add" = "\Drupal\rules\Form\RulesComponentAddForm",
+ *        "edit" = "\Drupal\rules\Form\RulesComponentEditForm",
  *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
  *      }
  *   },

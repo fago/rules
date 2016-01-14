@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Entity\ReactionRuleEditForm.
+ * Contains \Drupal\rules\Form\ReactionRuleEditForm.
  */
 
-namespace Drupal\rules\Entity;
+namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Engine\RulesEventManager;
@@ -70,6 +70,13 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
+  }
+
+  /**
+   * Title callback: also display the rule label.
+   */
+  public function getTitle($rules_reaction_rule) {
+    return $this->t('Edit reaction rule "@label"', ['@label' => $rules_reaction_rule->label()]);
   }
 
 }

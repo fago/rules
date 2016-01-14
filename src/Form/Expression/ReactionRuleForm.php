@@ -15,6 +15,8 @@ use Drupal\rules\Plugin\RulesExpression\RuleInterface;
  */
 class ReactionRuleForm implements ExpressionFormInterface {
 
+  use ExpressionFormTrait;
+
   /**
    * The rule expression object this form is for.
    *
@@ -36,7 +38,9 @@ class ReactionRuleForm implements ExpressionFormInterface {
     $conditions_form_handler = $this->rule->getConditions()->getFormHandler();
     $form = $conditions_form_handler->form($form, $form_state);
 
-    // @todo Add action container form here.
+    $actions_form_handler = $this->rule->getActions()->getFormHandler();
+    $form = $actions_form_handler->form($form, $form_state);
+
     return $form;
   }
 

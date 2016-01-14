@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
+use Drupal\Component\Uuid\Php;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Plugin\RulesExpression\RulesAnd;
 use Prophecy\Argument;
@@ -30,7 +31,7 @@ class RulesAndTest extends RulesUnitTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->and = new RulesAnd([], '', [], $this->expressionManager->reveal());
+    $this->and = new RulesAnd([], '', [], $this->expressionManager->reveal(), new Php());
   }
 
   /**

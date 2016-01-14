@@ -173,7 +173,7 @@ namespace {
      * Mock the batch_get() function.
      */
     function &batch_get() {
-      static $batch = array();
+      static $batch = [];
       return $batch;
     }
 

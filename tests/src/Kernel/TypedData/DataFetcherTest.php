@@ -63,17 +63,17 @@ class DataFetcherTest extends KernelTestBase {
       ->save();
 
     // Create a multi-value integer field for testing.
-    FieldStorageConfig::create(array(
+    FieldStorageConfig::create([
       'field_name' => 'field_integer',
       'type' => 'integer',
       'entity_type' => 'node',
       'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
-    ))->save();
-    FieldConfig::create(array(
+    ])->save();
+    FieldConfig::create([
       'field_name' => 'field_integer',
       'entity_type' => 'node',
       'bundle' => 'page',
-    ))->save();
+    ])->save();
 
     $this->installSchema('system', ['sequences']);
     $this->installEntitySchema('user');
@@ -105,7 +105,7 @@ class DataFetcherTest extends KernelTestBase {
     $this->assertEquals(
       $this->node->title->value,
       $this->typedDataManager->getDataFetcher()
-        ->fetchBySubPaths($this->node->getTypedData(), array('title', '0', 'value'))
+        ->fetchBySubPaths($this->node->getTypedData(), ['title', '0', 'value'])
         ->getValue()
     );
   }
