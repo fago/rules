@@ -35,7 +35,7 @@ class DataFetcher implements DataFetcherInterface {
 
     try {
       foreach ($sub_paths as $name) {
-        $current_selector = $current_selector ? $current_selector . '.' . $name : $name;
+        $current_selector[] = $name;
 
         // If the current data is just a reference then directly dereference the
         // target.
@@ -55,6 +55,15 @@ class DataFetcher implements DataFetcherInterface {
           // we just ignore that and continue with the current object.
         }
 
+        // If an accessed list item is not existing, $typed_data will be NULL.
+        if (!isset($typed_data)) {
+          // Error was at previous selector, thus remove last selector.
+          array_pop($current_selector);
+          $selector_string = implode('.', $sub_paths);
+          $current_selector_string = implode('.', $current_selector);
+          throw new MissingDataException("Unable to apply data selector '$selector_string' at '$current_selector_string'");
+        }
+
         // If this is a list but the selector is not an integer, we forward the
         // selection to the first element in the list.
         if ($typed_data instanceof ListInterface && !ctype_digit($name)) {
@@ -66,17 +75,20 @@ class DataFetcher implements DataFetcherInterface {
           $typed_data = $typed_data->get($name);
         }
         else {
-          throw new \InvalidArgumentException("The parent property is not a list or a complex structure.");
+          $current_selector_string = implode('.', $current_selector);
+          throw new \InvalidArgumentException("The parent property is not a list or a complex structure at '$current_selector_string'.");
         }
       }
       return $typed_data;
     }
     catch (MissingDataException $e) {
       $selector = implode('.', $sub_paths);
+      $current_selector = implode('.', $current_selector);
       throw new MissingDataException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
     }
     catch (\InvalidArgumentException $e) {
       $selector = implode('.', $sub_paths);
+      $current_selector = implode('.', $current_selector);
       throw new \InvalidArgumentException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
     }
   }
