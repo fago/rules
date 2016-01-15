@@ -7,8 +7,6 @@
 
 namespace Drupal\Tests\rules\Kernel;
 
-use Drupal\Component\FileCache\FileCacheFactory;
-use Drupal\Core\Site\Settings;
 use Drupal\KernelTests\KernelTestBase;
 
 /**
