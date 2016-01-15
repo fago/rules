@@ -68,7 +68,6 @@ class ActionForm implements ExpressionFormInterface {
         '#title' => $this->t('Action'),
         '#options' => $options,
         '#required' => TRUE,
-        '#empty_value' => $this->t('- Select -'),
       ];
       $form['continue'] = [
         '#type' => 'submit',

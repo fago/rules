@@ -69,7 +69,6 @@ class ConditionForm implements ExpressionFormInterface {
         '#title' => $this->t('Condition'),
         '#options' => $options,
         '#required' => TRUE,
-        '#empty_value' => $this->t('- Select -'),
       ];
       $form['continue'] = [
         '#type' => 'submit',

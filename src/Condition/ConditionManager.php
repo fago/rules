@@ -29,4 +29,20 @@ class ConditionManager extends CoreConditionManager {
     return $this->discovery;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefinitions() {
+    $definitions = parent::getDefinitions();
+    // Make sure that all definitions have a category to avoid PHP notices in
+    // CategorizingPluginManagerTrait.
+    // @todo fix this in core in CategorizingPluginManagerTrait.
+    foreach ($definitions as &$definition) {
+      if (!isset($definition['category'])) {
+        $definition['category'] = $this->t('Other');
+      }
+    }
+    return $definitions;
+  }
+
 }

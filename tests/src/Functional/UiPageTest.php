@@ -54,6 +54,8 @@ class UiPageTest extends RulesBrowserTestBase {
 
     $this->fillField('Label', 'Test rule');
     $this->fillField('Machine-readable name', 'test_rule');
+    $this->fillField('React on event', 'rules_entity_insert:node');
+
     $this->pressButton('Save');
 
     $this->assertSession()->statusCodeEquals(200);

@@ -70,7 +70,6 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       '#title' => $this->t('React on event'),
       '#options' => $options,
       '#required' => TRUE,
-      '#empty_value' => $this->t('- Select -'),
       '#description' => $this->t('Whenever the event occurs, rule evaluation is triggered.'),
     ];
 
