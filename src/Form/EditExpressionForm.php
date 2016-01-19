@@ -10,11 +10,14 @@ namespace Drupal\rules\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Entity\ReactionRuleConfig;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * UI form to edit an expression like a condition or action in a rule.
  */
 class EditExpressionForm extends FormBase {
+
+  use TempStoreTrait;
 
   /**
    * The reaction rule config the expression is edited on.
@@ -66,9 +69,8 @@ class EditExpressionForm extends FormBase {
     // Set the expression again so that the config is copied over to the
     // config entity.
     $this->ruleConfig->setExpression($rule_expression);
-    $this->ruleConfig->save();
 
-    drupal_set_message($this->t('Your changes have been saved.'));
+    $this->saveToTempStore();
 
     $form_state->setRedirect('entity.rules_reaction_rule.edit_form', [
       'rules_reaction_rule' => $this->ruleConfig->id(),

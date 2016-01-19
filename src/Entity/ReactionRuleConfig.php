@@ -22,7 +22,8 @@ use Drupal\rules\Engine\ExpressionInterface;
  *     "form" = {
  *        "add" = "\Drupal\rules\Form\ReactionRuleAddForm",
  *        "edit" = "\Drupal\rules\Form\ReactionRuleEditForm",
- *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
+ *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm",
+ *        "break_lock" = "\Drupal\rules\Form\BreakLockForm"
  *      }
  *   },
  *   admin_permission = "administer rules",
@@ -46,7 +47,8 @@ use Drupal\rules\Engine\ExpressionInterface;
  *   links = {
  *     "collection" = "/admin/config/workflow/rules",
  *     "edit-form" = "/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}",
- *     "delete-form" = "/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}"
+ *     "delete-form" = "/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}",
+ *     "break-lock-form" = "/admin/config/workflow/rules/reactions/break-lock/{rules_reaction_rule}"
  *   }
  * )
  */

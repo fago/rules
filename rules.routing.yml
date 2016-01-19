@@ -33,6 +33,11 @@ entity.rules_reaction_rule.edit_form:
   defaults:
     _entity_form: 'rules_reaction_rule.edit'
     _title_callback: '\Drupal\rules\Form\ReactionRuleEditForm::getTitle'
+  options:
+    parameters:
+      rules_reaction_rule:
+        tempstore: TRUE
+        type: entity:rules_reaction_rule
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -43,6 +48,13 @@ entity.rules_reaction_rule.delete_form:
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
+entity.rules_reaction_rule.break_lock_form:
+  path: '/admin/config/workflow/rules/reactions/break-lock/{rules_reaction_rule}'
+  defaults:
+    _entity_form: 'rules_reaction_rule.break_lock'
+    _title: 'Break lock'
+  requirements:
+    _permission: 'administer rules+administer rules reactions'
 
 ### Rules Components
 entity.rules_component.collection:
@@ -88,6 +100,7 @@ rules.reaction_rule.expression.add:
     parameters:
       reaction_config:
         type: entity:rules_reaction_rule
+        tempstore: TRUE
     _admin_route: TRUE
   requirements:
     _permission: 'administer rules+administer rules reactions'
@@ -101,6 +114,7 @@ rules.reaction_rule.expression.edit:
     parameters:
       reaction_config:
         type: entity:rules_reaction_rule
+        tempstore: TRUE
     _admin_route: TRUE
   requirements:
     _permission: 'administer rules+administer rules reactions'
@@ -114,6 +128,7 @@ rules.reaction_rule.expression.delete:
     parameters:
       rules_reaction_rule:
         type: entity:rules_reaction_rule
+        tempstore: TRUE
     _admin_route: TRUE
   requirements:
     _permission: 'administer rules+administer rules reactions'

@@ -17,6 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class DeleteExpressionForm extends ConfirmFormBase {
 
+  use TempStoreTrait;
+
   /**
    * The reaction rule config the expression is deleted from.
    *
@@ -86,9 +88,9 @@ class DeleteExpressionForm extends ConfirmFormBase {
     // Set the expression again so that the config is copied over to the
     // config entity.
     $this->ruleConfig->setExpression($expression);
-    $this->ruleConfig->save();
 
-    drupal_set_message($this->t('Your changes have been saved.'));
+    $this->saveToTempStore();
+
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

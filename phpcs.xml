@@ -2,6 +2,10 @@
 <ruleset name="rules">
   <description>Default PHP CodeSniffer configuration for Rules.</description>
   <file>.</file>
+
+  <!-- Exclude generated code files. -->
+  <exclude-pattern>src/ProxyClass/ParamConverter/RulesTempConverter.php</exclude-pattern>
+
   <arg name="extensions" value="inc,install,module,php,profile,test,theme,yml"/>
 
   <!--Blacklist of coding standard rules that are not yet fixed. -->

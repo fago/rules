@@ -34,3 +34,10 @@ services:
   typed_data.placeholder_resolver:
     class: Drupal\rules\TypedData\PlaceholderResolver
     arguments: ['@typed_data_manager']
+
+  paramconverter.rules:
+    class: Drupal\rules\ParamConverter\RulesTempConverter
+    arguments: ['@entity.manager', '@user.shared_tempstore']
+    tags:
+      - { name: paramconverter, priority: 10 }
+    lazy: true

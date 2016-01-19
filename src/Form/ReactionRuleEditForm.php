@@ -16,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ReactionRuleEditForm extends RulesComponentFormBase {
 
+  use TempStoreTrait;
+
   /**
    * The event plugin manager.
    *
@@ -44,6 +46,8 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
+    $this->addLockInformation($form);
+
     $event_name = $this->entity->getEvent();
     $event_definition = $this->eventManager->getDefinition($event_name);
     $form['event']['#markup'] = $this->t('Event: @label (@name)', [
@@ -69,6 +73,9 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
+    // Also remove the temporarily stored rule, it has been persisted now.
+    $this->deleteFromTempStore();
+
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
   }
 
@@ -77,6 +84,15 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    */
   public function getTitle($rules_reaction_rule) {
     return $this->t('Edit reaction rule "@label"', ['@label' => $rules_reaction_rule->label()]);
+  }
+
+  /**
+   * Returns the entity object, which is the rules config on this class.
+   *
+   * @see \Drupal\rules\Form\TempStoreTrait
+   */
+  protected function getRuleConfig() {
+    return $this->entity;
   }
 
 }
