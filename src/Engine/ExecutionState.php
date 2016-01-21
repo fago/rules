@@ -9,9 +9,9 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\TypedData\TypedDataInterface;
+use Drupal\Core\TypedData\TypedDataTrait;
 use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
-use Drupal\rules\TypedData\TypedDataManagerTrait;
 
 /**
  * The rules execution state.
@@ -21,7 +21,7 @@ use Drupal\rules\TypedData\TypedDataManagerTrait;
  */
 class ExecutionState implements ExecutionStateInterface {
 
-  use TypedDataManagerTrait;
+  use TypedDataTrait;
 
   /**
    * Globally keeps the ids of rules blocked due to recursion prevention.
