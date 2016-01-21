@@ -4,10 +4,10 @@
  * @file
  * Contains \Drupal\rules\TypedData\DataFilterInterface.
  */
+
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\Core\TypedData\TypedDataInterface;
 
 /**
  * Interface for for data filters.
@@ -96,8 +96,8 @@ interface DataFilterInterface {
    * @param string[] $arguments
    *   The array of filter arguments.
    *
-   * @return string[]
-   *   An array of (translated) validation error messages. If the arguments are
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup[]|string[]
+   *   An array of translated validation error messages. If the arguments are
    *   valid, an empty array must be returned.
    */
   public function validateArguments(DataDefinitionInterface $definition, array $arguments);

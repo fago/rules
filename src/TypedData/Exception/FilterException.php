@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains  Drupal\rules\TypedData\Exception\FilterException;
+ * Contains  Drupal\rules\TypedData\Exception\FilterException.
  */
 
 namespace Drupal\rules\TypedData\Exception;
@@ -13,4 +13,4 @@ namespace Drupal\rules\TypedData\Exception;
  * Data filters should provide separate exception classes for any possible
  * problem.
  */
-abstract class FilterException extends \Exception { }
+abstract class FilterException extends \Exception {}

@@ -2,12 +2,13 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\TypedDataFilter\DefaultFilter
+ * Contains Drupal\rules\Plugin\TypedDataFilter\DefaultFilter.
  */
 
 namespace Drupal\rules\Plugin\TypedDataFilter;
 
 use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\Core\TypedData\Type\StringInterface;
 use Drupal\rules\TypedData\DataFilterBase;
 
 /**
@@ -32,7 +33,7 @@ class DefaultFilter extends DataFilterBase {
    * {@inheritdoc}
    */
   public function canFilter(DataDefinitionInterface $definition) {
-    return $definition->getClass() instanceof StringInterface;
+    return is_subclass_of($definition->getClass(), StringInterface::class);
   }
 
   /**
@@ -53,15 +54,17 @@ class DefaultFilter extends DataFilterBase {
    * {@inheritdoc}
    */
   public function validateArguments(DataDefinitionInterface $definition, array $arguments) {
-    // Ensure the provided value is given for this data.
-    $violations = $this->getTypedDataManager()
-      ->create($definition, $arguments[0])
-      ->validate();
-    $return = [];
-    foreach ($violations as $violation) {
-      $return[] = $violation->getMessage();
+    $errors = parent::validateArguments($definition, $arguments);
+    if (isset($arguments[0])) {
+      // Ensure the provided value is given for this data.
+      $violations = $this->getTypedDataManager()
+        ->create($definition, $arguments[0])
+        ->validate();
+      foreach ($violations as $violation) {
+        $errors[] = $violation->getMessage();
+      }
     }
-    return $return;
+    return $errors;
   }
 
 }

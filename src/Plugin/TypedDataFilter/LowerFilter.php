@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Plugin\TypedDataFilter\LowerFilter
+ * Contains \Drupal\rules\Plugin\TypedDataFilter\LowerFilter.
  */
 
 namespace Drupal\rules\Plugin\TypedDataFilter;
@@ -10,7 +10,6 @@ namespace Drupal\rules\Plugin\TypedDataFilter;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\Type\StringInterface;
-use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\rules\TypedData\DataFilterBase;
 
 /**
@@ -34,7 +33,7 @@ class LowerFilter extends DataFilterBase {
    * {@inheritdoc}
    */
   public function canFilter(DataDefinitionInterface $definition) {
-    return $definition->getClass() instanceof StringInterface;
+    return is_subclass_of($definition->getClass(), StringInterface::class);
   }
 
   /**
