@@ -42,7 +42,7 @@ before_script:
   # Export database variable for kernel tests.
   - export SIMPLETEST_DB=mysql://root:@127.0.0.1/rules
   # Download Drupal 8 core.
-  - travis_retry git clone --branch $DRUPAL_CORE --depth 1 http://git.drupal.org/project/drupal.git
+  - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://git.drupal.org/project/drupal.git
   - cd drupal
 
   # Reference rules in build site.
