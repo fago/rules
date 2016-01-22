@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\NodeIntegrationTest.
+ * Contains \Drupal\rules\Tests\CoreIntegrationTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;
@@ -10,13 +10,14 @@ namespace Drupal\Tests\rules\Kernel;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
+use Drupal\user\Entity\User;
 
 /**
- * Test using the Rules API with nodes.
+ * Test using Drupal core integration of Rules API.
  *
  * @group rules
  */
-class NodeIntegrationTest extends RulesDrupalTestBase {
+class CoreIntegrationTest extends RulesDrupalTestBase {
 
   /**
    * Modules to enable.
@@ -37,9 +38,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests that a complex data selector can be applied to nodes.
+   * Tests that a complex data selector can be applied to entities.
    */
-  public function testNodePropertyPath() {
+  public function testEntityPropertyPath() {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
@@ -80,9 +81,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests that a node is automatically saved after being changed in an action.
+   * Tests that an entity is automatically saved after being changed.
    */
-  public function testNodeAutoSave() {
+  public function testEntityAutoSave() {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
@@ -163,9 +164,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests that date formatting tokens on node fields get replaced.
+   * Tests that tokens used to format entity fields get replaced.
    */
-  public function testDateTokens() {
+  public function testTokenFormattingReplacements() {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
@@ -206,9 +207,9 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests that the data set action works on nodes.
+   * Tests that the data set action works on entities.
    */
-  public function testDataSet() {
+  public function testDataSetEntities() {
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
       ->create(['type' => 'page'])
@@ -241,6 +242,28 @@ class NodeIntegrationTest extends RulesDrupalTestBase {
 
     $this->assertEquals('new title', $node->getTitle());
     $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been auto-saved.');
+  }
+
+  /**
+   * Tests using global context.
+   */
+  public function testGlobalContext() {
+    $account = User::create([
+      'name' => 'hubert',
+    ]);
+    $account->save();
+    $this->container->get('current_user')->setAccount($account);
+
+    $rule = $this->expressionManager->createRule()
+      ->addAction('rules_system_message', ContextConfig::create()
+        ->map('message', '@user.current_user_context:current_user.name.value')
+        ->setValue('type', 'status')
+      );
+    RulesComponent::create($rule)
+      ->execute();
+
+    $messages = drupal_set_message();
+    $this->assertEquals((string) $messages['status'][0], 'hubert');
   }
 
 }

@@ -11,6 +11,7 @@ use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\Core\TypedData\TypedDataTrait;
 use Drupal\rules\Context\ContextDefinitionInterface;
+use Drupal\rules\Context\GlobalContextRepositoryTrait;
 use Drupal\rules\Exception\RulesEvaluationException;
 
 /**
@@ -21,6 +22,7 @@ use Drupal\rules\Exception\RulesEvaluationException;
  */
 class ExecutionState implements ExecutionStateInterface {
 
+  use GlobalContextRepositoryTrait;
   use TypedDataTrait;
 
   /**
@@ -96,8 +98,14 @@ class ExecutionState implements ExecutionStateInterface {
    * {@inheritdoc}
    */
   public function getVariable($name) {
+    // If there is no such variable, lazy-add global context variables. That
+    // way can safe time fetching global context if its not needed.
     if (!array_key_exists($name, $this->variables)) {
-      throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
+      $contexts = $this->getGlobalContextRepository()->getRuntimeContexts([$name]);
+      if (!array_key_exists($name, $contexts)) {
+        throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
+      }
+      $this->addVariableData($name, $contexts[$name]->getContextData());
     }
     return $this->variables[$name];
   }
@@ -121,8 +129,16 @@ class ExecutionState implements ExecutionStateInterface {
    */
   public function fetchDataByPropertyPath($property_path, $langcode = NULL) {
     try {
+      // Support global context names as variable name by ignoring points in
+      // the service name; e.g. @user.current_user_context:current_user.name.
+      if ($property_path[0] == '@') {
+        list($service, $property_path) = explode(':', $property_path, 2);
+      }
       $parts = explode('.', $property_path);
       $var_name = array_shift($parts);
+      if (isset($service)) {
+        $var_name = $service . ':' . $var_name;
+      }
       return $this
         ->getTypedDataManager()
         ->getDataFetcher()
