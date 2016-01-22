@@ -10,7 +10,7 @@ namespace Drupal\rules\TypedData;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 
 /**
- * Interface for for data filters.
+ * Interface for data filters.
  *
  * Data filters allow filtering data values by a simple, possibly user inputted
  * string like default(0), or format_date('short'). Data filters are may be
