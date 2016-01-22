@@ -51,9 +51,7 @@ before_script:
   # Start a web server on port 8888, run in the background; wait for
   # initialization.
   - nohup php -S localhost:8888 > /dev/null 2>&1 &
-  # @todo the following command does not work in the Travis CI container, so we
-  # just assume that the webserver is running after the composer commands.
-  #- until netstat -an 2>/dev/null | grep '8888.*LISTEN'; do true; done
+  - until curl -s localhost:8888; do true; done > /dev/null
 
   # Export web server URL for browser tests.
   - export SIMPLETEST_BASE_URL=http://localhost:8888
