@@ -13,8 +13,10 @@ use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\IntegrityCheckTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,6 +34,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterface, ActionExpressionInterface {
 
   use ContextHandlerTrait;
+  use IntegrityCheckTrait;
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -155,6 +158,15 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
       $class_name = $this->pluginDefinition['form_class'];
       return new $class_name($this, $this->actionManager);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+    $action = $this->actionManager->createInstance($this->configuration['action_id']);
+
+    return $this->doCheckIntegrity($action, $metadata_state);
   }
 
 }

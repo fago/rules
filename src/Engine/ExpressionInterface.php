@@ -84,4 +84,18 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    */
   public function getLabel();
 
+  /**
+   * Verifies that this expression is configured correctly.
+   *
+   * Example: all variable names used in the expression are available.
+   *
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The configuration state used to hold available data definitions of
+   *   variables.
+   *
+   * @return \Drupal\rules\Engine\IntegrityViolationList
+   *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state);
+
 }

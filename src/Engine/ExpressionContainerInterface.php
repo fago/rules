@@ -39,14 +39,19 @@ interface ExpressionContainerInterface extends ExpressionInterface, \IteratorAgg
    *
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
    *   The expression object.
+   * @param bool $return_uuid
+   *   FALSE if the method should return this object for chaining, TRUE if it
+   *   should return the newly created UUID for the added expression.
    *
    * @throws \Drupal\rules\Exception\InvalidExpressionException
    *   Thrown if the wrong expression is passed; e.g. if a condition expression
    *   is added to an action expression container.
    *
-   * @return $this
+   * @return $this|string
+   *   Depending on the $return_uuid parameter either this object or the newly
+   *   created UUID for the added expression.
    */
-  public function addExpressionObject(ExpressionInterface $expression);
+  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE);
 
   /**
    * Looks up the expression by UUID in this container.

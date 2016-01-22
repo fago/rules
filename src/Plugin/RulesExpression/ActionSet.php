@@ -12,11 +12,13 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Engine\ExecutionMetadataStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExpressionContainerInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
-use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\IntegrityViolationList;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -87,12 +89,13 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(ExpressionInterface $expression) {
+  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE) {
     if (!$expression instanceof ActionExpressionInterface) {
       throw new InvalidExpressionException();
     }
-    $this->actions[$this->uuidService->generate()] = $expression;
-    return $this;
+    $uuid = $this->uuidService->generate();
+    $this->actions[$uuid] = $expression;
+    return $return_uuid ? $uuid : $this;
   }
 
   /**
@@ -179,6 +182,21 @@ class ActionSet extends ExpressionBase implements ActionExpressionContainerInter
       }
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+    $violation_list = new IntegrityViolationList();
+    foreach ($this->actions as $uuid => $action) {
+      $action_violations = $action->checkIntegrity($metadata_state);
+      foreach ($action_violations as $violation) {
+        $violation->setUuid($uuid);
+      }
+      $violation_list->addAll($action_violations);
+    }
+    return $violation_list;
   }
 
 }

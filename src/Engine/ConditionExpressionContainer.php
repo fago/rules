@@ -74,12 +74,13 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(ExpressionInterface $expression) {
+  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE) {
     if (!$expression instanceof ConditionExpressionInterface) {
       throw new InvalidExpressionException();
     }
-    $this->conditions[$this->uuidService->generate()] = $expression;
-    return $this;
+    $uuid = $this->uuidService->generate();
+    $this->conditions[$uuid] = $expression;
+    return $return_uuid ? $uuid : $this;
   }
 
   /**
@@ -185,6 +186,21 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
       }
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+    $violation_list = new IntegrityViolationList();
+    foreach ($this->conditions as $uuid => $condition) {
+      $condition_violations = $condition->checkIntegrity($metadata_state);
+      foreach ($condition_violations as $violation) {
+        $violation->setUuid($uuid);
+      }
+      $violation_list->addAll($condition_violations);
+    }
+    return $violation_list;
   }
 
 }

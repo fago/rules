@@ -10,6 +10,7 @@ namespace Drupal\rules\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
+use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Entity\ReactionRuleConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,7 +19,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class AddExpressionForm extends FormBase {
 
-  use TempStoreTrait;
+  use TempStoreTrait {
+    validateForm as lockValidateForm;
+  }
 
   /**
    * The Rules expression manager to get expression plugins.
@@ -73,6 +76,33 @@ class AddExpressionForm extends FormBase {
    */
   public function getFormId() {
     return 'rules_expression_add';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $this->lockValidateForm($form, $form_state);
+
+    // In order to validdate the whole rule we need to invoke the submission
+    // handler of the expression form. That way the expression is changed and we
+    // can validate the change for integrity afterwards.
+    $expression = $this->expressionManager->createInstance($this->expressionId);
+    $form_handler = $expression->getFormHandler();
+    $form_handler->submitForm($form, $form_state);
+
+    $validation_config = clone $this->ruleConfig;
+    $rule_expression = $validation_config->getExpression();
+    $uuid = $rule_expression->addExpressionObject($expression, TRUE);
+
+    $all_violations = RulesComponent::create($rule_expression)
+      ->addContextDefinitionsFrom($validation_config)
+      ->checkIntegrity();
+    $local_violations = $all_violations->getFor($uuid);
+
+    foreach ($local_violations as $violation) {
+      $form_state->setError($form, $violation->getMessage());
+    }
   }
 
   /**

@@ -121,6 +121,13 @@ class ReactionRuleConfig extends ConfigEntityBase {
   protected $module = 'rules';
 
   /**
+   * The event name this reaction rule is reacting on.
+   *
+   * @var string
+   */
+  protected $event;
+
+  /**
    * Sets a Rules expression instance for this Reaction rule.
    *
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
@@ -220,6 +227,15 @@ class ReactionRuleConfig extends ConfigEntityBase {
     // @todo Handle dependencies of plugins that are provided by various modules
     //   here.
     return $this->dependencies;
+  }
+
+  /**
+   * Magic clone method.
+   */
+  public function __clone() {
+    // Remove the reference to the expression object in the clone so that the
+    // expression object tree is created from scratch.
+    unset($this->expression);
   }
 
 }

@@ -9,14 +9,15 @@ namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
-use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 use Drupal\rules\Engine\ConditionExpressionInterface;
+use Drupal\rules\Engine\ExecutionMetadataStateInterface;
+use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
-use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Exception\InvalidExpressionException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -149,17 +150,17 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(ExpressionInterface $expression) {
+  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE) {
     if ($expression instanceof ConditionExpressionInterface) {
-      $this->conditions->addExpressionObject($expression);
+      $result = $this->conditions->addExpressionObject($expression, $return_uuid);
     }
     elseif ($expression instanceof ActionExpressionInterface) {
-      $this->actions->addExpressionObject($expression);
+      $result = $this->actions->addExpressionObject($expression, $return_uuid);
     }
     else {
       throw new InvalidExpressionException();
     }
-    return $this;
+    return $return_uuid ? $result : $this;
   }
 
   /**
@@ -211,6 +212,15 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
       $deleted = $this->actions->deleteExpression($uuid);
     }
     return $deleted;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+    $violation_list = $this->conditions->checkIntegrity($metadata_state);
+    $violation_list->addAll($this->actions->checkIntegrity($metadata_state));
+    return $violation_list;
   }
 
 }

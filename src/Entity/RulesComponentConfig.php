@@ -276,4 +276,13 @@ class RulesComponentConfig extends ConfigEntityBase {
     return $this->dependencies;
   }
 
+  /**
+   * Magic clone method.
+   */
+  public function __clone() {
+    // Remove the reference to the expression object in the clone so that the
+    // expression object tree is created from scratch.
+    unset($this->expression);
+  }
+
 }

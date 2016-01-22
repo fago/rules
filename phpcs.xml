@@ -14,6 +14,7 @@
     <exclude name="Drupal.Commenting.FunctionComment.EmptyThrows"/>
     <exclude name="Drupal.Commenting.FunctionComment.IncorrectTypeHint"/>
     <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
+    <exclude name="Drupal.Commenting.FunctionComment.$InReturnType"/>
     <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
   </rule>
 

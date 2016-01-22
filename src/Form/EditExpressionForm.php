@@ -9,6 +9,7 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Entity\ReactionRuleConfig;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -17,7 +18,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class EditExpressionForm extends FormBase {
 
-  use TempStoreTrait;
+  use TempStoreTrait {
+    validateForm as lockValidateForm;
+  }
 
   /**
    * The reaction rule config the expression is edited on.
@@ -55,6 +58,31 @@ class EditExpressionForm extends FormBase {
    */
   public function getFormId() {
     return 'rules_expression_edit';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $this->lockValidateForm($form, $form_state);
+
+    // In order to validdate the whole rule we need to invoke the submission
+    // handler of the expression form. That way the expression is changed and we
+    // can validate the change for integrity afterwards.
+    $validation_config = clone $this->ruleConfig;
+    $rule_expression = $validation_config->getExpression();
+    $expression = $rule_expression->getExpression($this->uuid);
+    $form_handler = $expression->getFormHandler();
+    $form_handler->submitForm($form, $form_state);
+
+    $all_violations = RulesComponent::create($rule_expression)
+      ->addContextDefinitionsFrom($validation_config)
+      ->checkIntegrity();
+    $local_violations = $all_violations->getFor($this->uuid);
+
+    foreach ($local_violations as $violation) {
+      $form_state->setError($form, $violation->getMessage());
+    }
   }
 
   /**

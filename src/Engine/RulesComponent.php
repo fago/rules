@@ -7,7 +7,9 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\rules\Context\ContextDefinitionInterface;
+use Drupal\rules\Entity\ReactionRuleConfig;
 
 /**
  * Handles executable Rules components.
@@ -26,7 +28,7 @@ class RulesComponent {
    *
    * @var \Drupal\rules\Context\ContextDefinitionInterface[]
    */
-  protected $contextDefinitions;
+  protected $contextDefinitions = [];
 
   /**
    * List of context names that is provided back to the caller.
@@ -108,6 +110,29 @@ class RulesComponent {
    */
   public function getContextDefinitions() {
     return $this->contextDefinitions;
+  }
+
+  /**
+   * Adds the configured context definitions from the config entity.
+   *
+   * Example: for a reaction rule config all context definitions of the event
+   * will be added.
+   *
+   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $rules_config
+   *   The config entity.
+   *
+   * @return $this
+   */
+  public function addContextDefinitionsFrom(ConfigEntityInterface $rules_config) {
+    if ($rules_config instanceof ReactionRuleConfig) {
+      $event_name = $rules_config->getEvent();
+      // @todo Use setter injection for the service.
+      $event_definition = \Drupal::service('plugin.manager.rules_event')->getDefinition($event_name);
+      foreach ($event_definition['context'] as $context_name => $context_definition) {
+        $this->addContextDefinition($context_name, $context_definition);
+      }
+    }
+    return $this;
   }
 
   /**
@@ -194,6 +219,22 @@ class RulesComponent {
       $this->setContextValue($name, $value);
     }
     return $this->execute();
+  }
+
+  /**
+   * Verifies that the given expression is valid with the defined context.
+   *
+   * @return \Drupal\rules\Engine\IntegrityViolationList
+   *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
+   */
+  public function checkIntegrity() {
+    $data_definitions = [];
+    foreach ($this->contextDefinitions as $name => $context_definition) {
+      $data_definitions[$name] = $context_definition->getDataDefinition();
+    }
+
+    $metadata_state = ExecutionMetadataState::create($data_definitions);
+    return $this->expression->checkIntegrity($metadata_state);
   }
 
 }
