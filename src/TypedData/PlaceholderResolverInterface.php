@@ -93,7 +93,12 @@ interface PlaceholderResolverInterface {
    *   The text to be scanned for possible tokens.
    *
    * @return array
-   *   An associative array of discovered tokens, grouped by data name.
+   *   An associative array of discovered placeholder tokens, grouped by data
+   *   name. For each data name, the value is another associative array
+   *   containing the completed, discovered placeholder and the main placeholder
+   *   part as key; i.e. the placeholder without brackets and data name. For
+   *   example, for the placeholder [data:property:property|filter] the
+   *   main placeholder part is 'property:property|filter'.
    */
   public function scan($text);
 

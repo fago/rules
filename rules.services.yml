@@ -33,7 +33,7 @@ services:
       - { name: 'event_subscriber' }
   typed_data.placeholder_resolver:
     class: Drupal\rules\TypedData\PlaceholderResolver
-    arguments: ['@typed_data_manager']
+    arguments: ['@typed_data_manager', '@plugin.manager.typed_data_filter']
   paramconverter.rules:
     class: Drupal\rules\ParamConverter\RulesTempConverter
     arguments: ['@entity.manager', '@user.shared_tempstore']

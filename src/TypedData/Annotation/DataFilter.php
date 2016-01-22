@@ -32,11 +32,4 @@ class DataFilter extends Plugin {
    */
   public $label;
 
-  /**
-   * Whether the filtered value is allowed to be NULL or not.
-   *
-   * @var bool
-   */
-  protected $allowNull = FALSE;
-
 }

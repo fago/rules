@@ -68,6 +68,14 @@ interface DataFilterInterface {
   public function getNumberOfRequiredArguments();
 
   /**
+   * Defines whether the filter is able to process NULL values.
+   *
+   * @return bool
+   *   Whether the filter is able to process NULL values.
+   */
+  public function allowsNullValues();
+
+  /**
    * Suggests some possible argument values based on user input.
    *
    * This is used to provide sensible auto-completion.

@@ -51,6 +51,13 @@ abstract class DataFilterBase implements DataFilterInterface {
   /**
    * {@inheritdoc}
    */
+  public function allowsNullValues() {
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function suggestArgument(DataDefinitionInterface $definition, array $arguments, $input = '') {
     return [];
   }

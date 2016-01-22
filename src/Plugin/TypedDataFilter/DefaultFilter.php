@@ -17,7 +17,6 @@ use Drupal\rules\TypedData\DataFilterBase;
  * @DataFilter(
  *   id = "default",
  *   label = @Translation("Applies a default-value if there is no value."),
- *   allowNull = true,
  * )
  */
 class DefaultFilter extends DataFilterBase {
@@ -41,6 +40,13 @@ class DefaultFilter extends DataFilterBase {
    */
   public function filtersTo(DataDefinitionInterface $definition, array $arguments) {
     return $definition;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function allowsNullValues() {
+    return TRUE;
   }
 
   /**

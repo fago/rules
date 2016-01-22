@@ -99,12 +99,14 @@ class PlaceholderResolverTest extends KernelTestBase {
    * @cover scan
    */
   public function testScanningForPlaceholders() {
-    $text = 'token [example:foo] and [example:foo:bar]';
+    $text = 'token [example:foo] and [example:foo:bar] just as [example:foo|default(bar)] and [ example:whitespace ]';
     $placeholders = $this->placeholderResolver->scan($text);
     $this->assertEquals([
       'example' => [
         'foo' => '[example:foo]',
         'foo:bar' => '[example:foo:bar]',
+        'foo|default(bar)' => '[example:foo|default(bar)]',
+        'whitespace' => '[ example:whitespace ]',
       ],
     ], $placeholders);
   }
@@ -187,6 +189,22 @@ class PlaceholderResolverTest extends KernelTestBase {
     $text = 'test [node:field_integer]';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 1, 2', $result);
+  }
+
+  /**
+   * @cover replacePlaceHolders
+   */
+  public function testApplyingFilters() {
+    $this->node->field_integer = [1, 2, NULL];
+    $this->node->title->value = NULL;
+    $result = $this->placeholderResolver->replacePlaceHolders("test [node:field_integer:2:value|default('0')]", ['node' => $this->node->getTypedData()]);
+    $this->assertEquals('test 0', $result);
+    $result = $this->placeholderResolver->replacePlaceHolders("test [node:title:value|default('tEsT')|lower]", ['node' => $this->node->getTypedData()]);
+    $this->assertEquals('test test', $result);
+
+    // Test filter expressions with whitespaces.
+    $result = $this->placeholderResolver->replacePlaceHolders("test [ node:title:value | default('tEsT') | lower ]", ['node' => $this->node->getTypedData()]);
+    $this->assertEquals('test test', $result);
   }
 
   /**
