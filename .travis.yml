@@ -5,7 +5,9 @@ php:
   - 5.5
   - 5.6
   - 7
-  - hhvm
+  # HHVM is disabled for now because we have not figured out yet how to start a
+  # web server for the browser tests.
+  #- hhvm
 
 env:
   - DRUPAL_CORE=8.0.x
@@ -15,7 +17,7 @@ matrix:
   allow_failures:
     # We cannot use hhvm-nightly since that does not work in Travis CI's old
     # Ubuntu 12.04.
-    - php: hhvm
+    #- php: hhvm
   # Don't wait for the allowed failures to build.
   fast_finish: true
 
@@ -23,6 +25,11 @@ mysql:
   database: rules
   username: root
   encoding: utf8
+
+# Cache composer downloads because cloning Coder form drupal.org is very slow :-(
+cache:
+  directories:
+    - $HOME/.composer
 
 before_script:
   # Remove Xdebug as we don't need it and it causes
@@ -41,8 +48,8 @@ before_script:
   - mysql -e 'create database rules'
   # Export database variable for kernel tests.
   - export SIMPLETEST_DB=mysql://root:@127.0.0.1/rules
-  # Download Drupal 8 core.
-  - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://git.drupal.org/project/drupal.git
+  # Download Drupal 8 core from the Github mirror because it is faster.
+  - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git
   - cd drupal
 
   # Reference rules in build site.
