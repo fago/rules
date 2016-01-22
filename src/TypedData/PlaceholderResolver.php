@@ -78,7 +78,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
               if (!$filter->allowsNullValues() && !isset($value)) {
                 throw new MissingDataException("There is no data value for filter '$filter_id' to work on.");
               }
-              $value = $filter->filter($definition, $value, $arguments);
+              $value = $filter->filter($definition, $value, $arguments, $bubbleable_metadata);
               $definition = $filter->filtersTo($definition, $arguments);
             }
           }

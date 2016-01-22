@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\TypedData;
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 
 /**
@@ -29,11 +30,13 @@ interface DataFilterInterface {
    *   The value for which to apply the filter.
    * @param array $arguments
    *   The array of filter arguments.
+   * @param \Drupal\Core\Render\BubbleableMetadata|null $bubbleable_metadata
+   *   (optional) An object to which required bubbleable metadata will be added.
    *
    * @return mixed
    *   The resulting data value.
    */
-  public function filter(DataDefinitionInterface $definition, $value, array $arguments);
+  public function filter(DataDefinitionInterface $definition, $value, array $arguments, BubbleableMetadata $bubbleable_metadata = NULL);
 
   /**
    * Determines whether data based upon the given definition can be filtered.

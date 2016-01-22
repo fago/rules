@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\TypedDataFilter;
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\Type\StringInterface;
@@ -25,7 +26,7 @@ class LowerFilter extends DataFilterBase {
   /**
    * {@inheritdoc}
    */
-  public function filter(DataDefinitionInterface $definition, $value, array $arguments) {
+  public function filter(DataDefinitionInterface $definition, $value, array $arguments, BubbleableMetadata $bubbleable_metadata = NULL) {
     return strtolower($value);
   }
 

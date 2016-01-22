@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Plugin\TypedDataFilter;
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\Type\StringInterface;
 use Drupal\rules\TypedData\DataFilterBase;
@@ -24,7 +25,7 @@ class DefaultFilter extends DataFilterBase {
   /**
    * {@inheritdoc}
    */
-  public function filter(DataDefinitionInterface $definition, $value, array $arguments) {
+  public function filter(DataDefinitionInterface $definition, $value, array $arguments, BubbleableMetadata $bubbleable_metadata = NULL) {
     return isset($value) ? $value : $arguments[0];
   }
 
