@@ -191,7 +191,7 @@ class DataFetcherTest extends KernelTestBase {
    * @expectedException \InvalidArgumentException
    * @expectedExceptionMessage Unable to apply data selector 'field_invalid.0.value' at 'field_invalid'
    */
-  public function festFetchingInvalidProperty() {
+  public function testFetchingInvalidProperty() {
     // This should trigger an exception.
     $this->typedDataManager->getDataFetcher()
       ->fetchByPropertyPath($this->node->getTypedData(), 'field_invalid.0.value')
