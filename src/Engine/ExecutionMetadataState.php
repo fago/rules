@@ -9,17 +9,17 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\Core\TypedData\TypedDataTrait;
 use Drupal\rules\Context\GlobalContextRepositoryTrait;
 use Drupal\rules\Exception\RulesIntegrityException;
+use Drupal\rules\TypedData\DataFetcherTrait;
 
 /**
  * The state used during configuration time holding data definitions.
  */
 class ExecutionMetadataState implements ExecutionMetadataStateInterface {
 
+  use DataFetcherTrait;
   use GlobalContextRepositoryTrait;
-  use TypedDataTrait;
 
   /**
    * The known data definitions.
@@ -94,7 +94,6 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
         $var_name = $service . ':' . $var_name;
       }
       return $this
-        ->getTypedDataManager()
         ->getDataFetcher()
         ->fetchDefinitionBySubPaths($this->getDataDefinition($var_name), $parts, $langcode);
     }

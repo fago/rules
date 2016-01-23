@@ -31,9 +31,11 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  typed_data.data_fetcher:
+    class: Drupal\rules\TypedData\DataFetcher
   typed_data.placeholder_resolver:
     class: Drupal\rules\TypedData\PlaceholderResolver
-    arguments: ['@typed_data_manager', '@plugin.manager.typed_data_filter']
+    arguments: ['@typed_data.data_fetcher', '@plugin.manager.typed_data_filter']
   paramconverter.rules:
     class: Drupal\rules\ParamConverter\RulesTempConverter
     arguments: ['@entity.manager', '@user.shared_tempstore']

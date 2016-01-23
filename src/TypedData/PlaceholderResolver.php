@@ -11,6 +11,7 @@ use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
+use Drupal\rules\TypedData\DataFetcherInterface;
 
 /**
  * Resolver for placeholder tokens based upon typed data.
@@ -20,9 +21,9 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
   /**
    * The typed data manager.
    *
-   * @var \Drupal\rules\TypedData\TypedDataManagerInterface
+   * @var \Drupal\rules\TypedData\DataFetcherInterface
    */
-  protected $typedDataManager;
+  protected $dataFetcher;
 
   /**
    * The data filter manager.
@@ -34,13 +35,13 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
   /**
    * Constructs the object.
    *
-   * @param \Drupal\rules\TypedData\TypedDataManagerInterface $typed_data_manager
+   * @param \Drupal\rules\TypedData\DataFetcherInterface $data_fetcher
    *   The typed data manager.
    * @param \Drupal\rules\TypedData\DataFilterManagerInterface $data_filter_manager
    *   The data filter manager.
    */
-  public function __construct(TypedDataManagerInterface $typed_data_manager, DataFilterManagerInterface $data_filter_manager) {
-    $this->typedDataManager = $typed_data_manager;
+  public function __construct(DataFetcherInterface $data_fetcher, DataFilterManagerInterface $data_filter_manager) {
+    $this->dataFetcher = $data_fetcher;
     $this->dataFilterManager = $data_filter_manager;
   }
 
@@ -58,7 +59,6 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
     }
 
     $replacements = [];
-    $data_fetcher = $this->typedDataManager->getDataFetcher();
     foreach ($placeholder_by_data as $data_name => $placeholders) {
       foreach ($placeholders as $placeholder_main_part => $placeholder) {
         try {
@@ -66,7 +66,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
             throw new MissingDataException("There is no data with the name '$data_name' available.");
           }
           list ($property_sub_paths, $filters) = $this->parseMainPlaceholderPart($placeholder_main_part, $placeholder);
-          $fetched_data = $data_fetcher->fetchDataBySubPaths($data[$data_name], $property_sub_paths, $bubbleable_metadata, $options['langcode']);
+          $fetched_data = $this->dataFetcher->fetchDataBySubPaths($data[$data_name], $property_sub_paths, $bubbleable_metadata, $options['langcode']);
 
           // Apply filters.
           if ($filters) {

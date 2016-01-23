@@ -31,6 +31,13 @@ class DataFetcherTest extends KernelTestBase {
   protected $typedDataManager;
 
   /**
+   * The data fetcher object we want to test.
+   *
+   * @var \Drupal\rules\TypedData\DataFetcherInterface
+   */
+  protected $dataFetcher;
+
+  /**
    * A node used for testing.
    *
    * @var \Drupal\node\NodeInterface
@@ -57,6 +64,7 @@ class DataFetcherTest extends KernelTestBase {
   public function setUp() {
     parent::setUp();
     $this->typedDataManager = $this->container->get('typed_data_manager');
+    $this->dataFetcher = $this->container->get('typed_data.data_fetcher');
 
     $this->entityTypeManager = $this->container->get('entity_type.manager');
     $this->entityTypeManager->getStorage('node_type')
@@ -93,7 +101,7 @@ class DataFetcherTest extends KernelTestBase {
   public function testFetchingByBasicPropertyPath() {
     $this->assertEquals(
       $this->node->title->value,
-      $this->typedDataManager->getDataFetcher()
+      $this->dataFetcher
         ->fetchDataByPropertyPath($this->node->getTypedData(), 'title.0.value')
         ->getValue()
     );
@@ -105,7 +113,7 @@ class DataFetcherTest extends KernelTestBase {
   public function testFetchingByBasicSubPath() {
     $this->assertEquals(
       $this->node->title->value,
-      $this->typedDataManager->getDataFetcher()
+      $this->dataFetcher
         ->fetchDataBySubPaths(
           $this->node->getTypedData(),
           ['title', '0', 'value']
@@ -125,7 +133,7 @@ class DataFetcherTest extends KernelTestBase {
       ]);
     $this->node->uid->entity = $user;
 
-    $fetched_user = $this->typedDataManager->getDataFetcher()
+    $fetched_user = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'uid.entity')
       ->getValue();
     $this->assertSame($fetched_user, $user);
@@ -142,7 +150,7 @@ class DataFetcherTest extends KernelTestBase {
       ]);
     $this->node->uid->entity = $user;
 
-    $fetched_value = $this->typedDataManager->getDataFetcher()
+    $fetched_value = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'uid.entity.name.value')
       ->getValue();
     $this->assertSame($fetched_value, 'test');
@@ -152,7 +160,7 @@ class DataFetcherTest extends KernelTestBase {
    * @cover fetchDataByPropertyPath
    */
   public function testFetchingNonExistingEntityReference() {
-    $fetched_user = $this->typedDataManager->getDataFetcher()
+    $fetched_user = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'uid.0.entity')
       ->getValue();
     $this->assertNull($fetched_user);
@@ -164,12 +172,12 @@ class DataFetcherTest extends KernelTestBase {
   public function testFetchingValueAtValidPositions() {
     $this->node->field_integer->setValue(['0' => 1, '1' => 2]);
 
-    $fetched_value = $this->typedDataManager->getDataFetcher()
+    $fetched_value = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_integer.0.value')
       ->getValue();
     $this->assertEquals($fetched_value, 1);
 
-    $fetched_value = $this->typedDataManager->getDataFetcher()
+    $fetched_value = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_integer.1.value')
       ->getValue();
     $this->assertEquals($fetched_value, 2);
@@ -184,7 +192,7 @@ class DataFetcherTest extends KernelTestBase {
     $this->node->field_integer->setValue([]);
 
     // This should trigger an exception.
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_integer.0.value')
       ->getValue();
   }
@@ -196,7 +204,7 @@ class DataFetcherTest extends KernelTestBase {
    */
   public function testFetchingInvalidProperty() {
     // This should trigger an exception.
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_invalid.0.value')
       ->getValue();
   }
@@ -207,7 +215,7 @@ class DataFetcherTest extends KernelTestBase {
   public function testFetchingEmptyProperty() {
     $this->node->field_integer->setValue([]);
 
-    $fetched_value = $this->typedDataManager->getDataFetcher()
+    $fetched_value = $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_integer')
       ->getValue();
     $this->assertEquals($fetched_value, []);
@@ -221,7 +229,7 @@ class DataFetcherTest extends KernelTestBase {
     $this->node->field_integer->setValue([]);
 
     // This will throw an exception.
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'field_integer.0')
       ->getValue();
   }
@@ -234,7 +242,7 @@ class DataFetcherTest extends KernelTestBase {
   public function testFetchingFromEmptyData() {
     $data_empty = $this->typedDataManager->create(EntityDataDefinition::create('node'));
     // This should trigger an exception.
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($data_empty, 'field_integer.0.value')
       ->getValue();
   }
@@ -256,7 +264,7 @@ class DataFetcherTest extends KernelTestBase {
     $this->node->uid->entity = $user;
 
     $bubbleable_metadata = new BubbleableMetadata();
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'title.value', $bubbleable_metadata)
       ->getValue();
 
@@ -264,7 +272,7 @@ class DataFetcherTest extends KernelTestBase {
     $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
 
     // Test cache tags of references are added correctly.
-    $this->typedDataManager->getDataFetcher()
+    $this->dataFetcher
       ->fetchDataByPropertyPath($this->node->getTypedData(), 'uid.entity.name', $bubbleable_metadata)
       ->getValue();
 

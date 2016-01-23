@@ -45,8 +45,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->dataFetcher = $this->container->get('typed_data_manager')
-      ->getDataFetcher();
+    $this->dataFetcher = $this->container->get('typed_data.data_fetcher');
 
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')

@@ -18,11 +18,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\Context\LazyContextRepository;
+use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
 use Drupal\rules\Engine\ExpressionManager;
-use Drupal\rules\TypedData\TypedDataManager;
+use Drupal\rules\TypedData\DataFetcher;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
@@ -57,7 +58,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $entityTypeBundledInfo;
 
   /**
-   * @var \Drupal\rules\TypedData\TypedDataManagerInterface
+   * @var \Drupal\Core\TypedData\TypedDataManagerInterface
    */
   protected $typedDataManager;
 
@@ -123,6 +124,13 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $classResolver;
 
   /**
+   * The data fetcher service.
+   *
+   * @var \Drupal\rules\TypedData\DataFetcher
+   */
+  protected $dataFetcher;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -184,6 +192,8 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $this->entityTypeBundleInfo = $this->prophesize(EntityTypeBundleInfoInterface::class);
     $this->entityTypeBundleInfo->getBundleInfo()->willReturn([]);
 
+    $this->dataFetcher = new DataFetcher();
+
     $container->set('entity.manager', $this->entityManager->reveal());
     $container->set('entity_type.manager', $this->entityTypeManager->reveal());
     $container->set('entity_field.manager', $this->entityFieldManager->reveal());
@@ -197,6 +207,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $container->set('typed_data_manager', $this->typedDataManager);
     $container->set('string_translation', $this->getStringTranslationStub());
     $container->set('uuid', new Php());
+    $container->set('typed_data.data_fetcher', $this->dataFetcher);
 
     \Drupal::setContainer($container);
     $this->container = $container;

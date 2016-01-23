@@ -23,10 +23,6 @@ class RulesServiceProvider extends ServiceProviderBase {
     // Overrides the core condition plugin manager service with our own.
     $definition = $container->getDefinition('plugin.manager.condition');
     $definition->setClass(ConditionManager::class);
-
-    // Add in the enhanced typed data manager.
-    $definition = $container->getDefinition('typed_data_manager');
-    $definition->setClass('Drupal\rules\TypedData\TypedDataManager');
   }
 
 }
