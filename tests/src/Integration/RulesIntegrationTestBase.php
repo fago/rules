@@ -17,6 +17,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
+use Drupal\Core\Plugin\Context\LazyContextRepository;
 use Drupal\rules\Condition\ConditionManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
@@ -187,6 +188,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $container->set('entity_type.manager', $this->entityTypeManager->reveal());
     $container->set('entity_field.manager', $this->entityFieldManager->reveal());
     $container->set('entity_type.bundle.info', $this->entityTypeBundleInfo->reveal());
+    $container->set('context.repository', new LazyContextRepository($container, []));
     $container->set('path.alias_manager', $this->aliasManager->reveal());
     $container->set('plugin.manager.rules_action', $this->actionManager);
     $container->set('plugin.manager.condition', $this->conditionManager);
