@@ -68,7 +68,7 @@ interface DataFetcherInterface {
    * Fetches a data definition based upon the given property path.
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $data_definition
-   *   The data defintion from which to retrieve a nested definition.
+   *   The data definition from which to retrieve a nested definition.
    * @param string $property_path
    *   The property path string, e.g. "uid.entity.mail.value".
    * @param string $langcode
@@ -88,7 +88,7 @@ interface DataFetcherInterface {
    * Fetches a data definition based upon the given sub-paths.
    *
    * @param \Drupal\Core\TypedData\DataDefinitionInterface $data_definition
-   *   The data defintion from which to retrieve a nested definition.
+   *   The data definition from which to retrieve a nested definition.
    * @param string[] $sub_paths
    *   A list of sub paths; i.e., a property path separated into its parts.
    * @param string $langcode
