@@ -98,7 +98,7 @@ interface ExecutionStateInterface {
    * @throws \Drupal\rules\Exception\RulesEvaluationException
    *   Throws a RulesEvaluationException in case the selector cannot be applied.
    */
-  public function fetchByPropertyPath($property_path, $langcode = NULL);
+  public function fetchDataByPropertyPath($property_path, $langcode = NULL);
 
   /**
    * Mark a variable to be saved later when the execution is finished.

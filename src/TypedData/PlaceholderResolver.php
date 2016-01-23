@@ -66,7 +66,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
             throw new MissingDataException("There is no data with the name '$data_name' available.");
           }
           list ($property_sub_paths, $filters) = $this->parseMainPlaceholderPart($placeholder_main_part, $placeholder);
-          $fetched_data = $data_fetcher->fetchBySubPaths($data[$data_name], $property_sub_paths, $bubbleable_metadata, $options['langcode']);
+          $fetched_data = $data_fetcher->fetchDataBySubPaths($data[$data_name], $property_sub_paths, $bubbleable_metadata, $options['langcode']);
 
           // Apply filters.
           if ($filters) {

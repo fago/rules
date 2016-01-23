@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
+use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
  * Provides shared integrity checking methods for conditions and actions.
@@ -29,16 +30,19 @@ trait IntegrityCheckTrait {
   protected function doCheckIntegrity(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
     $context_definitions = $plugin->getContextDefinitions();
+
     foreach ($context_definitions as $name => $definition) {
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name])) {
-        $data_definition = $metadata_state->applyDataSelector($this->configuration['context_mapping'][$name]);
-
-        if ($data_definition === NULL) {
+        try {
+          $data_definition = $metadata_state->fetchDefinitionByPropertyPath($this->configuration['context_mapping'][$name]);
+        }
+        catch (RulesIntegrityException $e) {
           $violation = new IntegrityViolation();
-          $violation->setMessage($this->t('Data selector %selector for context %context_name is invalid.', [
+          $violation->setMessage($this->t('Data selector %selector for context %context_name is invalid. @message', [
             '%selector' => $this->configuration['context_mapping'][$name],
             '%context_name' => $definition->getLabel(),
+            '@message' => $e->getMessage(),
           ]));
           $violation->setContextName($name);
           $violation_list->add($violation);

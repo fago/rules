@@ -9,11 +9,15 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\Core\TypedData\TypedDataTrait;
+use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
  * The state used during configuration time holding data definitions.
  */
 class ExecutionMetadataState implements ExecutionMetadataStateInterface {
+
+  use TypedDataTrait;
 
   /**
    * The known data definitions.
@@ -52,7 +56,10 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    * {@inheritdoc}
    */
   public function getDataDefinition($name) {
-    // @todo do we need this?
+    if (!array_key_exists($name, $this->dataDefinitions)) {
+      throw new RulesIntegrityException("Unable to get variable $name, it is not defined.");
+    }
+    return $this->dataDefinitions[$name];
   }
 
   /**
@@ -65,14 +72,19 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
   /**
    * {@inheritdoc}
    */
-  public function applyDataSelector($selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
-    // @todo This will be moved to the data fetcher service.
-    $parts = explode('.', $selector, 2);
-
-    if (isset($this->dataDefinitions[$parts[0]])) {
-      return $this->dataDefinitions[$parts[0]];
+  public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
+    try {
+      $parts = explode('.', $property_path);
+      $var_name = array_shift($parts);
+      return $this
+        ->getTypedDataManager()
+        ->getDataFetcher()
+        ->fetchDefinitionBySubPaths($this->getDataDefinition($var_name), $parts, $langcode);
     }
-    return NULL;
+    catch (\InvalidArgumentException $e) {
+      // Pass on the original exception in the exception trace.
+      throw new RulesIntegrityException($e->getMessage(), 0, $e);
+    }
   }
 
 }

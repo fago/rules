@@ -10,9 +10,13 @@ namespace Drupal\rules\TypedData;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Render\AttachmentsInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
+use Drupal\Core\TypedData\DataDefinitionInterface;
+use Drupal\Core\TypedData\DataReferenceDefinitionInterface;
 use Drupal\Core\TypedData\DataReferenceInterface;
 use Drupal\Core\TypedData\Exception\MissingDataException;
+use Drupal\Core\TypedData\ListDataDefinitionInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\PrimitiveInterface;
 use Drupal\Core\TypedData\TranslatableInterface;
@@ -26,15 +30,15 @@ class DataFetcher implements DataFetcherInterface {
   /**
    * {@inheritdoc}
    */
-  public function fetchByPropertyPath(TypedDataInterface $typed_data, $property_path, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL) {
+  public function fetchDataByPropertyPath(TypedDataInterface $typed_data, $property_path, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL) {
     $sub_paths = explode('.', $property_path);
-    return $this->fetchBySubPaths($typed_data, $sub_paths, $bubbleable_metadata, $langcode);
+    return $this->fetchDataBySubPaths($typed_data, $sub_paths, $bubbleable_metadata, $langcode);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function fetchBySubPaths(TypedDataInterface $typed_data, array $sub_paths, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL) {
+  public function fetchDataBySubPaths(TypedDataInterface $typed_data, array $sub_paths, BubbleableMetadata $bubbleable_metadata = NULL, $langcode = NULL) {
     $current_selector = [];
     $bubbleable_metadata = $bubbleable_metadata ?: new BubbleableMetadata();
 
@@ -98,6 +102,65 @@ class DataFetcher implements DataFetcherInterface {
       $current_selector = implode('.', $current_selector);
       throw new \InvalidArgumentException("Unable to apply data selector '$selector' at '$current_selector': " . $e->getMessage());
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fetchDefinitionByPropertyPath(DataDefinitionInterface $data_definition, $property_path, $langcode = NULL) {
+    $sub_paths = explode('.', $property_path);
+    return $this->fetchDefinitionBySubPaths($data_definition, $sub_paths, $langcode);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function fetchDefinitionBySubPaths(DataDefinitionInterface $data_definition, array $sub_paths, $langcode = NULL) {
+    $current_selector = [];
+
+    foreach ($sub_paths as $name) {
+      $current_selector[] = $name;
+
+      // If the current data is just a reference then directly dereference the
+      // target.
+      if ($data_definition instanceof DataReferenceDefinitionInterface) {
+        $data_definition = $data_definition->getTargetDefinition();
+      }
+
+      // If this is a list but the selector is not an integer, we forward the
+      // selection to the first element in the list.
+      if ($data_definition instanceof ListDataDefinitionInterface && !ctype_digit($name)) {
+        $data_definition = $data_definition->getItemDefinition();
+      }
+
+      // Drill down to the next step in the data selector.
+      if ($data_definition instanceof ComplexDataDefinitionInterface) {
+        $data_definition = $data_definition->getPropertyDefinition($name);
+      }
+      elseif ($data_definition instanceof ListDataDefinitionInterface) {
+        $data_definition = $data_definition->getItemDefinition();
+      }
+      else {
+        $current_selector_string = implode('.', $current_selector);
+        if (count($current_selector) > 1) {
+          $parent_property = $current_selector[count($current_selector) - 2];
+          throw new \InvalidArgumentException("The data selector '$current_selector_string' cannot be applied because the parent property '$parent_property' is not a list or a complex structure");
+        }
+        else {
+          $type = $data_definition->getDataType();
+          throw new \InvalidArgumentException("The data selector '$current_selector_string' cannot be applied because the definition of type '$type' is not a list or a complex structure");
+        }
+      }
+
+      // If an accessed property is not existing, $data_definition will be
+      // NULL.
+      if (!isset($data_definition)) {
+        $selector_string = implode('.', $sub_paths);
+        $current_selector_string = implode('.', $current_selector);
+        throw new \InvalidArgumentException("Unable to apply data selector '$selector_string' at '$current_selector_string'");
+      }
+    }
+    return $data_definition;
   }
 
   /**

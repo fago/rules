@@ -66,16 +66,16 @@ interface ExecutionMetadataStateInterface {
   /**
    * Applies a data selector and returns the corresponding data definition.
    *
-   * @todo move this to the data fetcher service.
-   *
-   * @param string $selector
-   *   The selector, example: "node:title:value".
+   * @param string $property_path
+   *   The property path, example: "node:title:value".
    * @param string $langcode
    *   The langauge code.
    *
-   * @return \Drupal\Core\TypedData\DataDefinitionInterface|null
-   *   A data definition if the selector could be applied, NULL otherwise.
+   * @return \Drupal\Core\TypedData\DataDefinitionInterface
+   *   A data definition if the property path could be applied.
+   *
+   * @throws \Drupal\rules\Exception\RulesIntegrityException
    */
-  public function applyDataSelector($selector, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED);
+  public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED);
 
 }

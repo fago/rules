@@ -77,7 +77,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
         try {
           // Remove the opening and closing bracket to form a property path.
           $property_path = str_replace(':', '.', substr($token, 1, -1));
-          $replacement_data = $rules_state->fetchByPropertyPath($property_path);
+          $replacement_data = $rules_state->fetchDataByPropertyPath($property_path);
           $replacements[$token] = $replacement_data->getString();
         }
         catch (RulesEvaluationException $exception) {
