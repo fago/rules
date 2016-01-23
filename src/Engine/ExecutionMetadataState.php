@@ -10,6 +10,7 @@ namespace Drupal\rules\Engine;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataTrait;
+use Drupal\rules\Context\GlobalContextRepositoryTrait;
 use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
@@ -17,6 +18,7 @@ use Drupal\rules\Exception\RulesIntegrityException;
  */
 class ExecutionMetadataState implements ExecutionMetadataStateInterface {
 
+  use GlobalContextRepositoryTrait;
   use TypedDataTrait;
 
   /**
@@ -31,7 +33,6 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    */
   public static function create($data_definitions = []) {
     return new static($data_definitions);
-    // @todo Initialize the global "site" variable.
   }
 
   /**
@@ -42,6 +43,14 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    */
   protected function __construct($data_definitions) {
     $this->dataDefinitions = $data_definitions;
+    // Add definitions of all global contexts.
+    $contexts = $this->getGlobalContextRepository()->getAvailableContexts();
+    foreach ($contexts as $name => $context) {
+      $this->addDataDefinition($name, $context
+        ->getContextDefinition()
+        ->getDataDefinition()
+      );
+    }
   }
 
   /**
@@ -74,8 +83,16 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    */
   public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
     try {
+      // Support global context names as variable name by ignoring points in
+      // the service name; e.g. @user.current_user_context:current_user.name.
+      if ($property_path[0] == '@') {
+        list($service, $property_path) = explode(':', $property_path, 2);
+      }
       $parts = explode('.', $property_path);
       $var_name = array_shift($parts);
+      if (isset($service)) {
+        $var_name = $service . ':' . $var_name;
+      }
       return $this
         ->getTypedDataManager()
         ->getDataFetcher()

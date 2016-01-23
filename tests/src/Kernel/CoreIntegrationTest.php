@@ -259,8 +259,9 @@ class CoreIntegrationTest extends RulesDrupalTestBase {
         ->map('message', '@user.current_user_context:current_user.name.value')
         ->setValue('type', 'status')
       );
-    RulesComponent::create($rule)
-      ->execute();
+    $component = RulesComponent::create($rule);
+    $this->assertEquals(0, $component->checkIntegrity()->count());
+    $component->execute();
 
     $messages = drupal_set_message();
     $this->assertEquals((string) $messages['status'][0], 'hubert');

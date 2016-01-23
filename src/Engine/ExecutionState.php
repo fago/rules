@@ -61,7 +61,6 @@ class ExecutionState implements ExecutionStateInterface {
    */
   public static function create($variables = []) {
     return new static($variables);
-    // @todo Initialize the global "site" variable.
   }
 
   /**
