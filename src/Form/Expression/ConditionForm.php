@@ -92,10 +92,10 @@ class ConditionForm implements ExpressionFormInterface {
       '#value' => $condition_name,
     ];
 
-    $context_defintions = $condition->getContextDefinitions();
+    $context_definitions = $condition->getContextDefinitions();
 
     $form['context']['#tree'] = TRUE;
-    foreach ($context_defintions as $context_name => $context_definition) {
+    foreach ($context_definitions as $context_name => $context_definition) {
       $form = $this->buildContextForm($form, $form_state, $context_name, $context_definition, $configuration);
     }
 

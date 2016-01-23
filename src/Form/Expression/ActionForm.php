@@ -90,10 +90,10 @@ class ActionForm implements ExpressionFormInterface {
       '#value' => $action_name,
     ];
 
-    $context_defintions = $action->getContextDefinitions();
+    $context_definitions = $action->getContextDefinitions();
 
     $form['context']['#tree'] = TRUE;
-    foreach ($context_defintions as $context_name => $context_definition) {
+    foreach ($context_definitions as $context_name => $context_definition) {
       $form = $this->buildContextForm($form, $form_state, $context_name, $context_definition, $configuration);
     }
 
