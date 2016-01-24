@@ -27,6 +27,13 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   protected $dataFetcher;
 
   /**
+   * The typed data manager.
+   *
+   * @var \Drupal\Core\TypedData\TypedDataManagerInterface
+   */
+  protected $typedDataManager;
+
+  /**
    * The data definition of our page node used for testing.
    *
    * @var \Drupal\Core\Entity\TypedData\EntityDataDefinitionInterface
@@ -46,6 +53,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
   public function setUp() {
     parent::setUp();
     $this->dataFetcher = $this->container->get('typed_data.data_fetcher');
+    $this->typedDataManager = $this->container->get('typed_data_manager');
 
     $entity_type_manager = $this->container->get('entity_type.manager');
     $entity_type_manager->getStorage('node_type')
@@ -239,6 +247,21 @@ class DataDefinitionFetcherTest extends KernelTestBase {
     // This should trigger an exception.
     $this->dataFetcher->fetchDefinitionByPropertyPath(
       $definition,
+      'unknown_property'
+    );
+  }
+
+  /**
+   * @covers ::fetchDefinitionByPropertyPath
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage The data selector 'unknown_property' cannot be applied because the definition of type 'integer' is not a list or a complex structure
+   */
+  public function testFetchingAtInvalidPosition() {
+    $list_definition = $this->typedDataManager->createListDataDefinition('integer');
+
+    // This should trigger an exception.
+    $this->dataFetcher->fetchDefinitionByPropertyPath(
+      $list_definition,
       'unknown_property'
     );
   }

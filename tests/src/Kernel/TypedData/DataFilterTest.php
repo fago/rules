@@ -23,7 +23,7 @@ class DataFiterTest extends KernelTestBase {
   /**
    * The typed data manager.
    *
-   * @var \Drupal\rules\TypedData\TypedDataManagerInterface
+   * @var \Drupal\Core\TypedData\TypedDataManagerInterface
    */
   protected $typedDataManager;
 
