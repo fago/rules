@@ -99,14 +99,8 @@ class ExecutionState implements ExecutionStateInterface {
    * {@inheritdoc}
    */
   public function getVariable($name) {
-    // If there is no such variable, lazy-add global context variables. That
-    // way can safe time fetching global context if its not needed.
-    if (!array_key_exists($name, $this->variables)) {
-      $contexts = $this->getGlobalContextRepository()->getRuntimeContexts([$name]);
-      if (!array_key_exists($name, $contexts)) {
-        throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
-      }
-      $this->addVariableData($name, $contexts[$name]->getContextData());
+    if (!$this->hasVariable($name)) {
+      throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
     }
     return $this->variables[$name];
   }
@@ -122,7 +116,19 @@ class ExecutionState implements ExecutionStateInterface {
    * {@inheritdoc}
    */
   public function hasVariable($name) {
-    return array_key_exists($name, $this->variables);
+    if (!array_key_exists($name, $this->variables)) {
+      // If there is no such variable, lazy-add global context variables. That
+      // way can safe time fetching global context if its not needed.
+      if (!($name[0] === '@' && strpos($name, ':') !== FALSE)) {
+        return FALSE;
+      }
+      $contexts = $this->getGlobalContextRepository()->getRuntimeContexts([$name]);
+      if (!array_key_exists($name, $contexts)) {
+        return FALSE;
+      }
+      $this->addVariableData($name, $contexts[$name]->getContextData());
+    }
+    return TRUE;
   }
 
   /**

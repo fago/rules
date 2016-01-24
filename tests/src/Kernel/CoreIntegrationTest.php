@@ -261,8 +261,21 @@ class CoreIntegrationTest extends RulesDrupalTestBase {
       );
     $component = RulesComponent::create($rule);
     $this->assertEquals(0, $component->checkIntegrity()->count());
-    $component->execute();
 
+    // Ensure the execution-state is aware of global context.
+    $result = $component->getState()
+      ->hasVariable('@user.current_user_context:current_user');
+    $this->assertTrue($result);
+    // Test asking for non-existing variables.
+    $this->assertFalse($component->getState()
+      ->hasVariable('@user.current_user_context:invalid'));
+    $this->assertFalse($component->getState()
+      ->hasVariable('@user.invalid_service'));
+    $this->assertFalse($component->getState()
+      ->hasVariable('invalid-var'));
+
+    // Test using global context during execution.
+    $component->execute();
     $messages = drupal_set_message();
     $this->assertEquals((string) $messages['status'][0], 'hubert');
   }
