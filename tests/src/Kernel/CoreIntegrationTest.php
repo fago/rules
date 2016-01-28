@@ -155,7 +155,7 @@ class CoreIntegrationTest extends RulesDrupalTestBase {
       ->addContextDefinition('message', ContextDefinition::create('string'))
       ->addContextDefinition('type', ContextDefinition::create('string'))
       ->setContextValue('node', $node)
-      ->setContextValue('message', 'Hello [node:uid:entity:name:value]!')
+      ->setContextValue('message', 'Hello {{ node:uid:entity:name:value }}!')
       ->setContextValue('type', 'status')
       ->execute();
 
@@ -198,7 +198,7 @@ class CoreIntegrationTest extends RulesDrupalTestBase {
       ->addContextDefinition('message', ContextDefinition::create('string'))
       ->addContextDefinition('type', ContextDefinition::create('string'))
       ->setContextValue('node', $node)
-      ->setContextValue('message', 'The node was created in the year [node:created:custom:Y]')
+      ->setContextValue('message', "The node was created in the year {{ node:created:value | format_date('custom', 'Y') }}")
       ->setContextValue('type', 'status')
       ->execute();
 

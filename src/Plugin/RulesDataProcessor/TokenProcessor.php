@@ -9,29 +9,27 @@ namespace Drupal\rules\Plugin\RulesDataProcessor;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\Core\Utility\Token;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
-use Drupal\rules\Exception\RulesEvaluationException;
+use Drupal\rules\TypedData\PlaceholderResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A data processor for token replacements.
+ * A data processor for placeholder token replacements.
  *
  * @RulesDataProcessor(
  *   id = "rules_tokens",
- *   label = @Translation("Token replacements")
+ *   label = @Translation("Placeholder token replacements")
  * )
  */
 class TokenProcessor extends PluginBase implements DataProcessorInterface, ContainerFactoryPluginInterface {
 
   /**
-   * The token service.
+   * The placeholder resolver.
    *
-   * @var Token
+   * @var \Drupal\rules\TypedData\PlaceholderResolverInterface
    */
-  protected $tokenService;
+  protected $placeholderResovler;
 
   /**
    * Constructs a TokenProcessor object.
@@ -42,12 +40,12 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Utility\Token $token_service
-   *   The token service.
+   * @param \Drupal\rules\TypedData\PlaceholderResolverInterface $placeholder_resolver
+   *   The placeholder resolver.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token_service) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, PlaceholderResolverInterface $placeholder_resolver) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->tokenService = $token_service;
+    $this->placeholderResovler = $placeholder_resolver;
   }
 
   /**
@@ -58,7 +56,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('token')
+      $container->get('typed_data.placeholder_resolver')
     );
   }
 
@@ -66,45 +64,15 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    * {@inheritdoc}
    */
   public function process($value, ExecutionStateInterface $rules_state) {
-    $replacements = [];
-    // The Token API requires this metadata object, but it is useless for us
-    // here so we just always pass the same instance and ignore it.
-    $bubbleable_metdata = new BubbleableMetadata();
-    // We only use the token service to scan for tokens in the text. The
-    // replacements are done by using the data selector logic.
-    foreach ($this->tokenService->scan($value) as $var_name => $tokens) {
-      foreach ($tokens as $token) {
-        try {
-          // Remove the opening and closing bracket to form a property path.
-          $property_path = str_replace(':', '.', substr($token, 1, -1));
-          $replacement_data = $rules_state->fetchDataByPropertyPath($property_path);
-          $replacements[$token] = $replacement_data->getString();
-        }
-        catch (RulesEvaluationException $exception) {
-          // Data selector is invalid, so try to resolve the token with the
-          // token service.
-          if ($rules_state->hasVariable($var_name)) {
-            $variable = $rules_state->getVariable($var_name);
-            $token_type = $variable->getDataDefinition()->getDataType();
-            // The Token system does not know about "enity:" data type prefixes,
-            // so we have to remove them.
-            $token_type = str_replace('entity:', '', $token_type);
-            $data = [$token_type => $variable->getValue()];
-            $replacements += $this->tokenService->generate($token_type, $tokens, $data, ['sanitize' => FALSE], $bubbleable_metdata);
-          }
-          else {
-            $replacements += $this->tokenService->generate($var_name, $tokens, [], ['sanitize' => FALSE], $bubbleable_metdata);
-          }
-          // Remove tokens if no replacement value is found.
-          $replacements += array_fill_keys($tokens, '');
-        }
-      }
+    $data = [];
+    $placeholders_by_data = $this->placeholderResovler->scan($value);
+    foreach ($placeholders_by_data as $variable_name => $placeholders) {
+      // Note that accessing an unavailable variable will throw an evaluation
+      // exception. That's exactly what needs to happen. Invalid tokens must
+      // be checked when checking integrity.
+      $data[$variable_name] = $rules_state->getVariable($variable_name);
     }
-
-    // Apply the replacements now.
-    $tokens = array_keys($replacements);
-    $values = array_values($replacements);
-    return str_replace($tokens, $values, $value);
+    return $this->placeholderResovler->replacePlaceHolders($value, $data);
   }
 
 }

@@ -12,6 +12,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\TypedData\DataDefinition;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
@@ -115,6 +116,14 @@ class PlaceholderResolverTest extends KernelTestBase {
         'whitespace' => '{{ example:whitespace }}',
       ],
     ], $placeholders);
+    // Test a simple placeholder with filters only.
+    $text = "text {{ date | filter }} text";
+    $placeholders = $this->placeholderResolver->scan($text);
+    $this->assertEquals([
+      'date' => [
+        '| filter' => '{{ date | filter }}',
+      ],
+    ], $placeholders);
   }
 
   /**
@@ -126,6 +135,18 @@ class PlaceholderResolverTest extends KernelTestBase {
     $expected = [
       '{{node:title}}' => 'test',
       '{{node:title:value}}' => 'test',
+    ];
+    $this->assertEquals($expected, $result);
+
+    // Test a placeholder without accessing a property.
+    $text = 'test {{string}}';
+    $result = $this->placeholderResolver->resolvePlaceholders($text, [
+      'string' => $this->typedDataManager->create(
+      DataDefinition::create('string'), 'replacement'
+      ),
+    ]);
+    $expected = [
+      '{{string}}' => 'replacement',
     ];
     $this->assertEquals($expected, $result);
   }
@@ -211,6 +232,19 @@ class PlaceholderResolverTest extends KernelTestBase {
     // Test filter expressions with whitespaces.
     $result = $this->placeholderResolver->replacePlaceHolders("test {{ node:title:value | default('tEsT') | lower }}", ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test test', $result);
+
+    // Test a filter expression on data without accessing a property.
+    $text = 'test {{string | lower}}';
+    $result = $this->placeholderResolver->replacePlaceHolders($text, [
+      'string' => $this->typedDataManager->create(DataDefinition::create('string'), 'Replacement'),
+    ]);
+    $this->assertEquals('test replacement', $result);
+
+    $text = "The year is {{ date | format_date('custom', 'Y') }}.";
+    $result = $this->placeholderResolver->replacePlaceHolders($text, [
+      'date' => $this->typedDataManager->create(DataDefinition::create('timestamp'), '3600'),
+    ]);
+    $this->assertEquals('The year is 1970.', $result);
   }
 
   /**

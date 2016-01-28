@@ -54,7 +54,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
     ];
     $placeholder_by_data = $this->scan($text);
     if (empty($placeholder_by_data)) {
-      return $text;
+      return [];
     }
 
     $replacements = [];
@@ -126,12 +126,17 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
    *   Thrown if in invalid placeholders are to be parsed.
    */
   protected function parseMainPlaceholderPart($main_part, $placeholder) {
+    if (!$main_part) {
+      return [[], []];
+    }
     $properties = explode(':', $main_part);
     $last_part = array_pop($properties);
-    $filter_expressions = explode('|', $last_part);
-    // The first part, before the first |, is actually the last property.
+    $filter_expressions = array_filter(explode('|', $last_part));
+    // If there is a property, the first part, before the first |, is it.
     // Also be sure to remove potential whitespace after the last property.
-    $properties[] = rtrim(array_shift($filter_expressions));
+    if ($main_part[0] != '|') {
+      $properties[] = rtrim(array_shift($filter_expressions));
+    }
     $filters = [];
 
     foreach ($filter_expressions as $expression) {
@@ -178,9 +183,9 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
     // $name may not contain : or whitespace characters, but $property_path may.
     preg_match_all('/
       \{\{             # {{ - pattern start
-      ([^\{\}:]+)  # match $type not containing whitespace : { or }
-      :              # : - separator
-      ([^\{\}]+)     # match $name not containing { or }
+      ([^\{\}:|]+)      # match $type not containing whitespace : { or }
+      ((:|\|)          # : - separator
+      ([^\{\}]+))?     # match $name not containing { or }
       \}\}             # }} - pattern end
       /x', $text, $matches);
 
@@ -193,7 +198,9 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
     // $results['node']['title'] = '[node:title]';.
     $results = [];
     for ($i = 0; $i < count($tokens); $i++) {
-      $results[ltrim($names[$i])][rtrim($tokens[$i])] = $matches[0][$i];
+      // Remove leading whitespaces and ":", but not the | denoting a filter.
+      $main_part = trim($tokens[$i], ": \t\n\r\0\x0B");
+      $results[trim($names[$i])][$main_part] = $matches[0][$i];
     }
 
     return $results;

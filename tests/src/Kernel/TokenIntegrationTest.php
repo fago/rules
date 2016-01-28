@@ -12,7 +12,7 @@ use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
 
 /**
- * Test using the Rules API with the Token system.
+ * Test using the Rules API with the placeholder token replacement system.
  *
  * @group rules
  */
@@ -25,8 +25,8 @@ class TokenIntegrationTest extends RulesDrupalTestBase {
     // Configure a simple rule with one action. and token replacements enabled.
     $action = $this->expressionManager->createInstance('rules_action',
       ContextConfig::create()
-        ->map('message', 'message')
-        ->map('type', 'type')
+        ->setValue('message', "The date is {{ date | format_date('custom', 'Y-m') }}!")
+        ->setValue('type', 'status')
         ->process('message', 'rules_tokens')
         ->setConfigKey('action_id', 'rules_system_message')
         ->toArray()
@@ -35,15 +35,15 @@ class TokenIntegrationTest extends RulesDrupalTestBase {
     $rule = $this->expressionManager->createRule();
     $rule->addExpressionObject($action);
     RulesComponent::create($rule)
-      ->addContextDefinition('message', ContextDefinition::create('string'))
-      ->addContextDefinition('type', ContextDefinition::create('string'))
-      ->setContextValue('message', 'The date is [date:custom:Y-m]!')
-      ->setContextValue('type', 'status')
+      ->addContextDefinition('date', ContextDefinition::create('timestamp'))
+      ->setContextValue('date', REQUEST_TIME)
       ->execute();
 
     $messages = drupal_set_message();
-    $date = format_date(time(), 'custom', 'Y-m');
-    $this->assertEqual((string) $messages['status'][0], "The date is $date!");
+    /** @var \Drupal\Core\Datetime\DateFormatterInterface $date_formatter */
+    $date_formatter = $this->container->get('date.formatter');
+    $date = $date_formatter->format(REQUEST_TIME, 'custom', 'Y-m');
+    $this->assertEquals("The date is $date!", (string) $messages['status'][0]);
   }
 
 }
