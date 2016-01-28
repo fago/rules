@@ -99,14 +99,14 @@ class PlaceholderResolverTest extends KernelTestBase {
    * @cover scan
    */
   public function testScanningForPlaceholders() {
-    $text = 'token [example:foo] and [example:foo:bar] just as [example:foo|default(bar)] and [ example:whitespace ]';
+    $text = 'token {{example:foo}} and {{example:foo:bar}} just as {{example:foo|default(bar)}} and {{ example:whitespace }}';
     $placeholders = $this->placeholderResolver->scan($text);
     $this->assertEquals([
       'example' => [
-        'foo' => '[example:foo]',
-        'foo:bar' => '[example:foo:bar]',
-        'foo|default(bar)' => '[example:foo|default(bar)]',
-        'whitespace' => '[ example:whitespace ]',
+        'foo' => '{{example:foo}}',
+        'foo:bar' => '{{example:foo:bar}}',
+        'foo|default(bar)' => '{{example:foo|default(bar)}}',
+        'whitespace' => '{{ example:whitespace }}',
       ],
     ], $placeholders);
   }
@@ -115,11 +115,11 @@ class PlaceholderResolverTest extends KernelTestBase {
    * @cover resolvePlaceholders
    */
   public function testResolvingPlaceholders() {
-    $text = 'test [node:title] and [node:title:value]';
+    $text = 'test {{node:title}} and {{node:title:value}}';
     $result = $this->placeholderResolver->resolvePlaceholders($text, ['node' => $this->node->getTypedData()]);
     $expected = [
-      '[node:title]' => 'test',
-      '[node:title:value]' => 'test',
+      '{{node:title}}' => 'test',
+      '{{node:title:value}}' => 'test',
     ];
     $this->assertEquals($expected, $result);
   }
@@ -128,7 +128,7 @@ class PlaceholderResolverTest extends KernelTestBase {
    * @cover replacePlaceHolders
    */
   public function testReplacePlaceholders() {
-    $text = 'test [node:title] and [node:title:value]';
+    $text = 'test {{node:title}} and {{node:title:value}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test test and test', $result);
   }
@@ -143,7 +143,7 @@ class PlaceholderResolverTest extends KernelTestBase {
         'type' => 'user',
       ]);
     $this->node->uid->entity = $user;
-    $text = 'test [node:title] and [node:uid:entity:name]';
+    $text = 'test {{node:title}} and {{node:uid:entity:name}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test test and test', $result);
   }
@@ -152,11 +152,11 @@ class PlaceholderResolverTest extends KernelTestBase {
    * @cover replacePlaceHolders
    */
   public function testPlaceholdersWithMissingData() {
-    $text = 'test [node:title:1:value]';
+    $text = 'test {{node:title:1:value}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, []);
-    $this->assertEquals('test [node:title:1:value]', $result);
+    $this->assertEquals('test {{node:title:1:value}}', $result);
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, ['clear' => FALSE]);
-    $this->assertEquals('test [node:title:1:value]', $result);
+    $this->assertEquals('test {{node:title:1:value}}', $result);
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()], NULL, ['clear' => TRUE]);
     $this->assertEquals('test ', $result);
   }
@@ -166,7 +166,7 @@ class PlaceholderResolverTest extends KernelTestBase {
    */
   public function testStringEncoding() {
     $this->node->title->value = '<b>XSS</b>';
-    $text = 'test [node:title]';
+    $text = 'test {{node:title}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test ' . new HtmlEscapedText('<b>XSS</b>'), $result);
   }
@@ -176,7 +176,7 @@ class PlaceholderResolverTest extends KernelTestBase {
    */
   public function testIntegerPlaceholder() {
     $this->node->field_integer->value = 3;
-    $text = 'test [node:field_integer:0:value]';
+    $text = 'test {{node:field_integer:0:value}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 3', $result);
   }
@@ -186,7 +186,7 @@ class PlaceholderResolverTest extends KernelTestBase {
    */
   public function testListPlaceholder() {
     $this->node->field_integer = [1, 2];
-    $text = 'test [node:field_integer]';
+    $text = 'test {{node:field_integer}}';
     $result = $this->placeholderResolver->replacePlaceHolders($text, ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 1, 2', $result);
   }
@@ -197,13 +197,13 @@ class PlaceholderResolverTest extends KernelTestBase {
   public function testApplyingFilters() {
     $this->node->field_integer = [1, 2, NULL];
     $this->node->title->value = NULL;
-    $result = $this->placeholderResolver->replacePlaceHolders("test [node:field_integer:2:value|default('0')]", ['node' => $this->node->getTypedData()]);
+    $result = $this->placeholderResolver->replacePlaceHolders("test {{node:field_integer:2:value|default('0')}}", ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test 0', $result);
-    $result = $this->placeholderResolver->replacePlaceHolders("test [node:title:value|default('tEsT')|lower]", ['node' => $this->node->getTypedData()]);
+    $result = $this->placeholderResolver->replacePlaceHolders("test {{node:title:value|default('tEsT')|lower}}", ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test test', $result);
 
     // Test filter expressions with whitespaces.
-    $result = $this->placeholderResolver->replacePlaceHolders("test [ node:title:value | default('tEsT') | lower ]", ['node' => $this->node->getTypedData()]);
+    $result = $this->placeholderResolver->replacePlaceHolders("test {{ node:title:value | default('tEsT') | lower }}", ['node' => $this->node->getTypedData()]);
     $this->assertEquals('test test', $result);
   }
 
@@ -216,7 +216,7 @@ class PlaceholderResolverTest extends KernelTestBase {
     $bubbleable_metadata = new BubbleableMetadata();
     // Save the node, so it gets a cache tag.
     $this->node->save();
-    $this->placeholderResolver->replacePlaceHolders('test [node:field_integer]', ['node' => $this->node->getTypedData()], $bubbleable_metadata);
+    $this->placeholderResolver->replacePlaceHolders('test {{node:field_integer}}', ['node' => $this->node->getTypedData()], $bubbleable_metadata);
     $expected = ['node:' . $this->node->id()];
     $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
   }

@@ -11,7 +11,6 @@ use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
-use Drupal\rules\TypedData\DataFetcherInterface;
 
 /**
  * Resolver for placeholder tokens based upon typed data.
@@ -174,15 +173,15 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
    * {@inheritdoc}
    */
   public function scan($text) {
-    // Matches tokens with the following pattern: [$name:$property_path]
-    // $name and $property_path may not contain [ ] characters.
+    // Matches tokens with the following pattern: {{ $name:$property_path }}
+    // $name and $property_path may not contain {{ }} characters.
     // $name may not contain : or whitespace characters, but $property_path may.
     preg_match_all('/
-      \[             # [ - pattern start
-      ([^\[\]:]+)  # match $type not containing whitespace : [ or ]
+      \{\{             # {{ - pattern start
+      ([^\{\}:]+)  # match $type not containing whitespace : { or }
       :              # : - separator
-      ([^\[\]]+)     # match $name not containing [ or ]
-      \]             # ] - pattern end
+      ([^\{\}]+)     # match $name not containing { or }
+      \}\}             # }} - pattern end
       /x', $text, $matches);
 
     $names = $matches[1];
