@@ -54,7 +54,7 @@ function rules_help($route_name, RouteMatchInterface $route_match) {
 function rules_user_login($account) {
   // Set the account twice on the event: as the main subject but also in the
   // list of arguments.
-  $event = new UserLoginEvent($account, ['account' => $account]);
+  $event = new UserLoginEvent($account);
   $event_dispatcher = \Drupal::service('event_dispatcher');
   $event_dispatcher->dispatch(UserLoginEvent::EVENT_NAME, $event);
 }
