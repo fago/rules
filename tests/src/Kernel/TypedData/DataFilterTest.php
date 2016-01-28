@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -48,6 +49,10 @@ class DataFiterTest extends KernelTestBase {
     parent::setUp();
     $this->typedDataManager = $this->container->get('typed_data_manager');
     $this->dataFilterManager = $this->container->get('plugin.manager.typed_data_filter');
+
+    // Make sure default date formats are there for testing the format_date
+    // filter.
+    $this->installConfig(['system']);
   }
 
   /**
@@ -87,6 +92,42 @@ class DataFiterTest extends KernelTestBase {
     $this->assertEquals('default', $filter->filter($data->getDataDefinition(), $data->getValue(), ['default']));
     $data->setValue('non-default');
     $this->assertEquals('non-default', $filter->filter($data->getDataDefinition(), $data->getValue(), ['default']));
+  }
+
+  /**
+   * @cover \Drupal\rules\Plugin\TypedDataFilter\FormatDateFilter
+   */
+  public function testFormatDateFilter() {
+    $filter = $this->dataFilterManager->createInstance('format_date');
+    $data = $this->typedDataManager->create(DataDefinition::create('timestamp'), 3700);
+
+    $this->assertTrue($filter->canFilter($data->getDataDefinition()));
+    $this->assertFalse($filter->canFilter(DataDefinition::create('any')));
+
+    $this->assertEquals('string', $filter->filtersTo($data->getDataDefinition(), [])->getDataType());
+
+    $fails = $filter->validateArguments($data->getDataDefinition(), []);
+    $this->assertEquals(0, count($fails));
+    $fails = $filter->validateArguments($data->getDataDefinition(), ['medium']);
+    $this->assertEquals(0, count($fails));
+    $fails = $filter->validateArguments($data->getDataDefinition(), ['invalid-format']);
+    $this->assertEquals(1, count($fails));
+    $fails = $filter->validateArguments($data->getDataDefinition(), ['custom']);
+    $this->assertEquals(1, count($fails));
+    $fails = $filter->validateArguments($data->getDataDefinition(), ['custom', 'Y']);
+    $this->assertEquals(0, count($fails));
+
+    /** @var DateFormatterInterface $date_formatter */
+    $date_formatter = $this->container->get('date.formatter');
+    $this->assertEquals($date_formatter->format(3700), $filter->filter($data->getDataDefinition(), $data->getValue(), []));
+    $this->assertEquals($date_formatter->format(3700, 'short'), $filter->filter($data->getDataDefinition(), $data->getValue(), ['short']));
+    $this->assertEquals('1970', $filter->filter($data->getDataDefinition(), $data->getValue(), ['custom', 'Y']));
+
+    // Verify the filter works with non-timestamp data as well.
+    $data = $this->typedDataManager->create(DataDefinition::create('datetime_iso8601'), "1970-01-01T10:10:10+00:00");
+    $this->assertTrue($filter->canFilter($data->getDataDefinition()));
+    $this->assertEquals('string', $filter->filtersTo($data->getDataDefinition(), [])->getDataType());
+    $this->assertEquals('1970', $filter->filter($data->getDataDefinition(), $data->getValue(), ['custom', 'Y']));
   }
 
 }
