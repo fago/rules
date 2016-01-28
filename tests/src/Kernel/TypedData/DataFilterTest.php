@@ -7,7 +7,8 @@
 
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
-use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Datetime\Entity\DateFormat;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\KernelTests\KernelTestBase;
 
@@ -117,7 +118,7 @@ class DataFiterTest extends KernelTestBase {
     $fails = $filter->validateArguments($data->getDataDefinition(), ['custom', 'Y']);
     $this->assertEquals(0, count($fails));
 
-    /** @var DateFormatterInterface $date_formatter */
+    /** @var \Drupal\Core\Datetime\DateFormatterInterface $date_formatter */
     $date_formatter = $this->container->get('date.formatter');
     $this->assertEquals($date_formatter->format(3700), $filter->filter($data->getDataDefinition(), $data->getValue(), []));
     $this->assertEquals($date_formatter->format(3700, 'short'), $filter->filter($data->getDataDefinition(), $data->getValue(), ['short']));
@@ -128,6 +129,14 @@ class DataFiterTest extends KernelTestBase {
     $this->assertTrue($filter->canFilter($data->getDataDefinition()));
     $this->assertEquals('string', $filter->filtersTo($data->getDataDefinition(), [])->getDataType());
     $this->assertEquals('1970', $filter->filter($data->getDataDefinition(), $data->getValue(), ['custom', 'Y']));
+
+    // Test cache dependencies of date format config entities are added in.
+    $metadata = new BubbleableMetadata();
+    $filter->filter($data->getDataDefinition(), $data->getValue(), ['short'], $metadata);
+    $this->assertEquals(DateFormat::load('short')->getCacheTags(), $metadata->getCacheTags());
+    $metadata = new BubbleableMetadata();
+    $filter->filter($data->getDataDefinition(), $data->getValue(), ['custom', 'Y'], $metadata);
+    $this->assertEquals([], $metadata->getCacheTags());
   }
 
 }

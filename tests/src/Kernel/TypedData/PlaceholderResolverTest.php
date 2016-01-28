@@ -8,6 +8,8 @@
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\field\Entity\FieldConfig;
@@ -93,6 +95,10 @@ class PlaceholderResolverTest extends KernelTestBase {
         'title' => 'test',
         'type' => 'page',
       ]);
+
+    // Make sure default date formats are there for testing the format_date
+    // filter.
+    $this->installConfig(['system']);
   }
 
   /**
@@ -218,6 +224,12 @@ class PlaceholderResolverTest extends KernelTestBase {
     $this->node->save();
     $this->placeholderResolver->replacePlaceHolders('test {{node:field_integer}}', ['node' => $this->node->getTypedData()], $bubbleable_metadata);
     $expected = ['node:' . $this->node->id()];
+    $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
+
+    // Ensure cache tags of filters are added in.
+    $bubbleable_metadata = new BubbleableMetadata();
+    $this->placeholderResolver->replacePlaceHolders("test {{ node:created:value | format_date('medium') }}", ['node' => $this->node->getTypedData()], $bubbleable_metadata);
+    $expected = Cache::mergeTags(['node:' . $this->node->id()], DateFormat::load('medium')->getCacheTags());
     $this->assertEquals($expected, $bubbleable_metadata->getCacheTags());
   }
 

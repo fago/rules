@@ -18,7 +18,7 @@ use Drupal\rules\TypedData\DataFilterBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A data filter lowering all string characters.
+ * A data filter for formatting dates.
  *
  * @DataFilter(
  *   id = "format_date",
