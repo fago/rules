@@ -7,6 +7,8 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+
 /**
  * Collection of integrity violations.
  */
@@ -26,6 +28,18 @@ class IntegrityViolationList extends \ArrayIterator {
     foreach ($other_list as $violation) {
       $this[] = $violation;
     }
+  }
+
+  /**
+   * Creates a new violation with the message and adds it to this list.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslatableMarkup $message
+   *   The violation message.
+   */
+  public function addViolationWithMessage(TranslatableMarkup $message) {
+    $violation = new IntegrityViolation();
+    $violation->setMessage($message);
+    $this[] = $violation;
   }
 
   /**

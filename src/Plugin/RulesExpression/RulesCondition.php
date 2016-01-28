@@ -13,9 +13,10 @@ use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
-use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\IntegrityCheckTrait;
+use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -179,6 +180,18 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    * {@inheritdoc}
    */
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+    $violation_list = new IntegrityViolationList();
+    if (empty($this->configuration['condition_id'])) {
+      $violation_list->addViolationWithMessage($this->t('Condition plugin ID is missing'));
+      return $violation_list;
+    }
+    if (!$this->conditionManager->hasDefinition($this->configuration['condition_id'])) {
+      $violation_list->addViolationWithMessage($this->t('Condition plugin %plugin_id does not exist', [
+        '%plugin_id' => $this->configuration['condition_id'],
+      ]));
+      return $violation_list;
+    }
+
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);

@@ -84,4 +84,117 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     );
   }
 
+  /**
+   * Tests that an invalid condition plugin ID results in a violation.
+   */
+  public function testInvalidCondition() {
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addCondition('invalid_condition_id');
+
+    $violations = RulesComponent::create($rule)->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violations));
+    $this->assertEquals('Condition plugin <em class="placeholder">invalid_condition_id</em> does not exist', (string) $violations[0]->getMessage());
+  }
+
+  /**
+   * Tests that a missing condition plugin ID results in a violation.
+   */
+  public function testMissingCondition() {
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addCondition('');
+
+    $violations = RulesComponent::create($rule)->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violations));
+    $this->assertEquals('Condition plugin ID is missing', (string) $violations[0]->getMessage());
+  }
+
+  /**
+   * Tests that an invalid action plugin ID results in a violation.
+   */
+  public function testInvalidAction() {
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addAction('invalid_action_id');
+
+    $violations = RulesComponent::create($rule)->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violations));
+    $this->assertEquals('Action plugin <em class="placeholder">invalid_action_id</em> does not exist', (string) $violations[0]->getMessage());
+  }
+
+  /**
+   * Tests that a missing action plugin ID results in a violation.
+   */
+  public function testMissingAction() {
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addAction('');
+
+    $violations = RulesComponent::create($rule)->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violations));
+    $this->assertEquals('Action plugin ID is missing', (string) $violations[0]->getMessage());
+  }
+
+  /**
+   * Tests invalid characters in provided variables.
+   */
+  public function testInvalidProvidedName() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    // The condition provides a "provided_text" variable.
+    $rule->addCondition('rules_test_provider', ContextConfig::create()
+      ->provideAs('provided_text', 'invalid_näme')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->checkIntegrity();
+    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(
+      'Provided variable name <em class="placeholder">invalid_näme</em> contains not allowed characters.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests the input restrction on contexts.
+   */
+  public function testInputRestriction() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    $rule->addAction('rules_entity_fetch_by_id', ContextConfig::create()
+      // The entity type must be configured as value, so this provokes the
+      // violation.
+      ->map('type', 'variable_1')
+      ->setValue('entity_id', 1)
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('variable_1', ContextDefinition::create('string'))
+      ->checkIntegrity();
+    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(
+      'The context <em class="placeholder">Entity type</em> may not be configured using a selector.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests the data selector restriction on contexts.
+   */
+  public function testSelectorRestriction() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    $rule->addAction('rules_data_set', ContextConfig::create()
+      // Setting a data value is only possible with a selector, this will
+      // trigger the violation.
+      ->setValue('data', 'some value')
+      ->setValue('value', 'some new value')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->checkIntegrity();
+    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(
+      'The context <em class="placeholder">Data</em> may only be configured using a selector.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
 }

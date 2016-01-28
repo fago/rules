@@ -20,7 +20,8 @@ use Drupal\rules\Core\RulesActionBase;
  *     "data" = @ContextDefinition("any",
  *       label = @Translation("Data"),
  *       description = @Translation("Specifies the data to be modified using a data selector, e.g. 'node:author:name'."),
- *       allow_null = TRUE
+ *       allow_null = TRUE,
+ *       assignment_restriction = "selector"
  *     ),
  *     "value" = @ContextDefinition("any",
  *       label = @Translation("Value"),
