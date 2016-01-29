@@ -14,6 +14,14 @@ use Drupal\Core\Render\BubbleableMetadata;
  *
  * This is a Typed Data based alternative to the token service, see
  * \Drupal\Core\Utility\Token.
+ *
+ * Placeholder tokens use the format {{ data.property.property|filter1 }},
+ * while filters may be piped and can have arguments; e.g.,
+ * {{ data | filter1 | filter2('argument1', 'argument') }}
+ *
+ * The name of the filter refers to the filter plugin ID. The arguments which
+ * are allowed or even required depend on the filter plugin, see
+ * \Drupal\rules\TypedData\DataFilterInterface.
  */
 interface PlaceholderResolverInterface {
 
@@ -97,8 +105,8 @@ interface PlaceholderResolverInterface {
    *   name. For each data name, the value is another associative array
    *   containing the completed, discovered placeholder and the main placeholder
    *   part as key; i.e. the placeholder without brackets and data name. For
-   *   example, for the placeholder [data:property:property|filter] the
-   *   main placeholder part is 'property:property|filter'.
+   *   example, for the placeholder {{ data.property.property|filter }} the
+   *   main placeholder part is 'property.property|filter'.
    */
   public function scan($text);
 
