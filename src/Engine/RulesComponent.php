@@ -175,7 +175,7 @@ class RulesComponent {
     if (!isset($this->contextDefinitions[$name])) {
       throw new \LogicException("The specified context '$name' is not defined.");
     }
-    $this->state->addVariable($name, $this->contextDefinitions[$name], $value);
+    $this->state->setVariable($name, $this->contextDefinitions[$name], $value);
     return $this;
   }
 

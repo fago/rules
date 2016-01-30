@@ -90,10 +90,10 @@ trait ContextHandlerTrait {
       // Avoid name collisions in the rules state: provided variables can be
       // renamed.
       if (isset($this->configuration['provides_mapping'][$name])) {
-        $state->addVariableData($this->configuration['provides_mapping'][$name], $plugin->getProvidedContext($name)->getContextData());
+        $state->setVariableData($this->configuration['provides_mapping'][$name], $plugin->getProvidedContext($name)->getContextData());
       }
       else {
-        $state->addVariableData($name, $plugin->getProvidedContext($name)->getContextData());
+        $state->setVariableData($name, $plugin->getProvidedContext($name)->getContextData());
       }
     }
   }

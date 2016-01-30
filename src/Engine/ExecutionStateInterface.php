@@ -16,7 +16,7 @@ use Drupal\rules\Context\ContextDefinitionInterface;
 interface ExecutionStateInterface {
 
   /**
-   * Adds a state variable based on its definition and value.
+   * Sets a state variable based on its definition and value.
    *
    * @param string $name
    *   The context variable name.
@@ -27,10 +27,10 @@ interface ExecutionStateInterface {
    *
    * @return $this
    */
-  public function addVariable($name, ContextDefinitionInterface $definition, $value);
+  public function setVariable($name, ContextDefinitionInterface $definition, $value);
 
   /**
-   * Adds a state variable from some typed data object.
+   * Sets a state variable with some typed data object.
    *
    * @param string $name
    *   The variable name.
@@ -39,7 +39,7 @@ interface ExecutionStateInterface {
    *
    * @return $this
    */
-  public function addVariableData($name, TypedDataInterface $data);
+  public function setVariableData($name, TypedDataInterface $data);
 
   /**
    * Gets a variable.
