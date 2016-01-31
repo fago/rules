@@ -97,6 +97,11 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   protected function actions(array $form, FormStateInterface $form_state) {
     $actions = parent::actions($form, $form_state);
     $actions['submit']['#value'] = $this->t('Save');
+    $actions['cancel'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Cancel'),
+      '#submit' => ['::cancel'],
+    ];
     return $actions;
   }
 
@@ -117,6 +122,15 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
     }
 
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
+  }
+
+  /**
+   * Form submission handler for the 'cancel' action.
+   */
+  public function cancel(array $form, FormStateInterface $form_state) {
+    $this->deleteFromTempStore();
+    drupal_set_message($this->t('Canceled.'));
+    $form_state->setRedirect('entity.rules_reaction_rule.collection');
   }
 
   /**

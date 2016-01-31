@@ -77,6 +77,33 @@ class UiPageTest extends RulesBrowserTestBase {
   }
 
   /**
+   * Tests that cancelling an expression from a rule works.
+   */
+  public function testCancelExpressionInRule() {
+    $this->drupalGet('admin/config/workflow/rules');
+    $rules_url = $this->getSession()->getCurrentUrl();
+
+    // Setup a rule with one condition.
+    $this->testCreateReactionRule();
+
+    $this->clickLink('Add condition');
+    $this->fillField('Condition', 'rules_node_is_promoted');
+    $this->pressButton('Continue');
+
+    $this->fillField('context[node][setting]', '1');
+    $this->pressButton('Save');
+
+    $this->assertSession()->pageTextContains('You have unsaved changes.');
+
+    // Edit and cancel.
+    $this->drupalGet('admin/config/workflow/rules/reactions/edit/test_rule');
+    $this->pressButton('Cancel');
+    $this->assertSession()->pageTextContains('Canceled.');
+
+    $this->assertEquals($rules_url, $this->getSession()->getCurrentUrl());
+  }
+
+  /**
    * Tests that deleting an expression from a rule works.
    */
   public function testDeleteExpressionInRule() {

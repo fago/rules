@@ -60,6 +60,10 @@ class TempStorageTest extends RulesBrowserTestBase {
     $this->drupalGet('admin/config/workflow/rules/reactions/edit/test_rule');
     $this->assertSession()->pageTextContains('This rule is being edited by user ' . $account_1->getUsername() . ', and is therefore locked from editing by others.');
 
+    $this->pressButton('Cancel');
+    $this->assertSession()->pageTextNotContains('Canceled.');
+    $this->assertSession()->pageTextContains('This rule is being edited by user ' . $account_1->getUsername() . ', and is therefore locked from editing by others.');
+
     $this->pressButton('Save');
     $this->assertSession()->pageTextNotContains('Reaction rule Test rule has been updated.');
     $this->assertSession()->pageTextContains('This rule is being edited by user ' . $account_1->getUsername() . ', and is therefore locked from editing by others.');
