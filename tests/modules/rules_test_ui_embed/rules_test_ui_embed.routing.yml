@@ -1,0 +1,8 @@
+
+rules_test_ui_embed.settings:
+  path: '/admin/config/user-interface/css'
+  defaults:
+    _form: 'Drupal\rules_test_ui_embed\Form\SettingsForm'
+    _title: 'CSS rules'
+  requirements:
+    _permission: 'administer rules'

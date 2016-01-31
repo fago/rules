@@ -1,0 +1,13 @@
+rules_test_ui_embed.settings:
+  type: config_object
+  label: 'Rules Test UI embedding settings'
+  mapping:
+    conditions:
+      # todo: Add in Rules config schema type once implemented.
+      type: sequence
+      label: Rules Conditions
+    css:
+      type: sequence
+      sequence:
+        type: mapping
+        label: CSS files

@@ -1,0 +1,4 @@
+conditions: []
+css:
+  - module: rulest_test_ui_embed
+    file: css/test.css

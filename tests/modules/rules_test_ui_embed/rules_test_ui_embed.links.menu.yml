@@ -1,0 +1,6 @@
+rules_test_ui_embed.settings:
+  title: 'CSS rules'
+  parent: system.admin_config_ui
+  description: 'Configure CSS to be active based on certain conditions met.'
+  route_name: rules_test_ui_embed.settings
+  weight: 10
