@@ -91,10 +91,6 @@ class ConfigureAndExecuteTest extends RulesBrowserTestBase {
     // One more save to permanently store the rule.
     $this->pressButton('Save');
 
-    // Rebuild the container so that the new Rules event is picked up.
-    $this->drupalGet('admin/config/development/performance');
-    $this->pressButton('Clear all caches');
-
     // Add a node now and check if our rule triggers.
     $this->drupalGet('node/add/article');
     $this->fillField('Title', 'Test title');
