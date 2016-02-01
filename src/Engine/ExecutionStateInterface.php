@@ -83,6 +83,16 @@ interface ExecutionStateInterface {
   public function hasVariable($name);
 
   /**
+   * Removes a variable from the state if it is set.
+   *
+   * @param string $name
+   *   The name of the variable to remove.
+   *
+   * @return $this
+   */
+  public function removeVariable($name);
+
+  /**
    * Returns a value as specified in the selector.
    *
    * @param string $property_path

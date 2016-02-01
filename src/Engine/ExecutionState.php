@@ -134,6 +134,16 @@ class ExecutionState implements ExecutionStateInterface {
   /**
    * {@inheritdoc}
    */
+  public function removeVariable($name) {
+    if (array_key_exists($name, $this->variables)) {
+      unset($this->variables[$name]);
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function fetchDataByPropertyPath($property_path, $langcode = NULL) {
     try {
       // Support global context names as variable name by ignoring points in

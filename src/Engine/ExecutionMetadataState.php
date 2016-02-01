@@ -81,6 +81,16 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
   /**
    * {@inheritdoc}
    */
+  public function removeDataDefinition($name) {
+    if (array_key_exists($name, $this->dataDefinitions)) {
+      unset($this->dataDefinitions[$name]);
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED) {
     try {
       // Support global context names as variable name by ignoring points in

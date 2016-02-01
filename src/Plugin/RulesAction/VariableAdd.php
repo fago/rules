@@ -17,6 +17,10 @@ use Drupal\rules\Core\RulesActionBase;
  *   label = @Translation("Add a variable"),
  *   category = @Translation("Variable"),
  *   context = {
+ *     "type" = @ContextDefinition("string",
+ *       label = @Translation("Type"),
+ *       assignment_restriction = "input"
+ *     ),
  *     "value" = @ContextDefinition("any",
  *       label = @Translation("Value")
  *     ),
@@ -33,11 +37,22 @@ class VariableAdd extends RulesActionBase {
   /**
    * Add a variable.
    *
+   * @param string $type
+   *   The data type the new variable is of.
    * @param mixed $value
    *   The variable to add.
    */
-  protected function doExecute($value) {
+  protected function doExecute($type, $value) {
     $this->setProvidedValue('variable_added', $value);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions() {
+    if ($type = $this->getContextValue('type')) {
+      $this->pluginDefinition['provides']['variable_added']->setDataType($type);
+    }
   }
 
 }

@@ -32,6 +32,7 @@ class VariableAddTest extends RulesIntegrationTestBase {
 
     /** @var \Drupal\rules\Plugin\RulesAction\VariableAdd $action */
     $action = $this->actionManager->createInstance('rules_variable_add');
+    $action->setContextValue('type', 'string');
     $action->setContextValue('value', $variable);
     $action->execute();
 

@@ -24,6 +24,8 @@ use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
 use Drupal\rules\Engine\ExpressionManager;
 use Drupal\rules\TypedData\DataFetcher;
+use Drupal\rules\TypedData\DataFilterManager;
+use Drupal\rules\TypedData\PlaceholderResolver;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
@@ -131,6 +133,20 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $dataFetcher;
 
   /**
+   * The placeholder resolver service.
+   *
+   * @var \Drupal\rules\TypedData\PlaceholderResolver
+   */
+  protected $placeholderResolver;
+
+  /**
+   * The data filter manager.
+   *
+   * @var \Drupal\rules\TypedData\DataFilterManager
+   */
+  protected $dataFilterManager;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -194,6 +210,9 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->dataFetcher = new DataFetcher();
 
+    $this->dataFilterManager = new DataFilterManager($this->namespaces, $this->moduleHandler->reveal());
+    $this->placeholderResolver = new PlaceholderResolver($this->dataFetcher, $this->dataFilterManager);
+
     $container->set('entity.manager', $this->entityManager->reveal());
     $container->set('entity_type.manager', $this->entityTypeManager->reveal());
     $container->set('entity_field.manager', $this->entityFieldManager->reveal());
@@ -208,6 +227,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $container->set('string_translation', $this->getStringTranslationStub());
     $container->set('uuid', new Php());
     $container->set('typed_data.data_fetcher', $this->dataFetcher);
+    $container->set('typed_data.placeholder_resolver', $this->placeholderResolver);
 
     \Drupal::setContainer($container);
     $this->container = $container;
