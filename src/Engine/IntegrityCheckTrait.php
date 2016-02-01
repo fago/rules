@@ -79,15 +79,23 @@ trait IntegrityCheckTrait {
       $provided_context_definitions = $plugin->getProvidedContextDefinitions();
 
       foreach ($provided_context_definitions as $name => $definition) {
-        if (isset($this->configuration['provides_mapping'][$name])
-          && !preg_match('/^[0-9a-zA-Z_]*$/', $this->configuration['provides_mapping'][$name])
-        ) {
-          $violation = new IntegrityViolation();
-          $violation->setMessage($this->t('Provided variable name %name contains not allowed characters.', [
-            '%name' => $this->configuration['provides_mapping'][$name],
-          ]));
-          $violation->setContextName($name);
-          $violation_list->add($violation);
+        if (isset($this->configuration['provides_mapping'][$name])) {
+          if (!preg_match('/^[0-9a-zA-Z_]*$/', $this->configuration['provides_mapping'][$name])) {
+            $violation = new IntegrityViolation();
+            $violation->setMessage($this->t('Provided variable name %name contains not allowed characters.', [
+              '%name' => $this->configuration['provides_mapping'][$name],
+            ]));
+            $violation->setContextName($name);
+            $violation_list->add($violation);
+          }
+
+          // Populate the state with the new variable that is provided by this
+          // plugin. That is necessary so that the integrity check in subsequent
+          // actions knows about the variable and does not throw violations.
+          $metadata_state->setDataDefinition($this->configuration['provides_mapping'][$name], $definition->getDataDefinition());
+        }
+        else {
+          $metadata_state->setDataDefinition($name, $definition->getDataDefinition());
         }
       }
     }

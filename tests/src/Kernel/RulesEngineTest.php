@@ -20,6 +20,14 @@ use Drupal\rules\Engine\ExecutionState;
 class RulesEngineTest extends RulesDrupalTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+    $this->installEntitySchema('user');
+  }
+
+  /**
    * Tests creating a rule and iterating over the rule elements.
    */
   public function testRuleCreation() {
@@ -94,8 +102,13 @@ class RulesEngineTest extends RulesDrupalTestBase {
     );
 
     $rule->addAction('rules_test_log');
-    $rule->execute();
 
+    $component = RulesComponent::create($rule);
+
+    $violations = $component->checkIntegrity();
+    $this->assertEquals(0, iterator_count($violations));
+
+    $component->execute();
     // Test that the action logged something.
     $this->assertRulesLogEntryExists('action called');
   }
