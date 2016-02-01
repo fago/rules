@@ -31,7 +31,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     $violation_list = RulesComponent::create($rule)
       ->addContextDefinition('entity', ContextDefinition::create('entity'))
       ->checkIntegrity();
-    $this->assertEquals(iterator_count($violation_list), 0);
+    $this->assertEquals(0, iterator_count($violation_list));
   }
 
   /**
@@ -45,7 +45,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
 
     $violation_list = RulesComponent::create($rule)
       ->checkIntegrity();
-    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(1, iterator_count($violation_list));
     $violation = $violation_list[0];
     $this->assertEquals(
       'Data selector <em class="placeholder">unknown_variable</em> for context <em class="placeholder">Entity</em> is invalid. Unable to get variable unknown_variable, it is not defined.',
@@ -145,7 +145,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
 
     $violation_list = RulesComponent::create($rule)
       ->checkIntegrity();
-    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(1, iterator_count($violation_list));
     $this->assertEquals(
       'Provided variable name <em class="placeholder">invalid_näme</em> contains not allowed characters.',
       (string) $violation_list[0]->getMessage()
@@ -168,7 +168,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     $violation_list = RulesComponent::create($rule)
       ->addContextDefinition('variable_1', ContextDefinition::create('string'))
       ->checkIntegrity();
-    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(1, iterator_count($violation_list));
     $this->assertEquals(
       'The context <em class="placeholder">Entity type</em> may not be configured using a selector.',
       (string) $violation_list[0]->getMessage()
@@ -190,10 +190,100 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
 
     $violation_list = RulesComponent::create($rule)
       ->checkIntegrity();
-    $this->assertEquals(iterator_count($violation_list), 1);
+    $this->assertEquals(1, iterator_count($violation_list));
     $this->assertEquals(
       'The context <em class="placeholder">Data</em> may only be configured using a selector.',
       (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests that a primitive context is assigned something that matches.
+   */
+  public function testPrimitiveTypeViolation() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    // The condition expects a string but we pass a list, which will trigger the
+    // violation.
+    $rule->addCondition('rules_test_string_condition', ContextConfig::create()
+      ->map('text', 'list_variable')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('list_variable', ContextDefinition::create('list'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+    $this->assertEquals(
+      'Expected a primitive data type for context <em class="placeholder">Text to compare</em> but got a list data type instead.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests that a list context is assigned something that matches.
+   */
+  public function testListTypeViolation() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    // The condition expects a list for the type context but we pass a node
+    // which will trigger the violation.
+    $rule->addCondition('rules_node_is_of_type', ContextConfig::create()
+      ->map('node', 'node')
+      ->map('types', 'node')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+    $this->assertEquals(
+      'Expected a list data type for context <em class="placeholder">Content types</em> but got a entity:node data type instead.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests that a complex data context is assigned something that matches.
+   */
+  public function testComplexTypeViolation() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    // The condition expects a node context but gets a list instead which cause
+    // the violation.
+    $rule->addCondition('rules_node_is_of_type', ContextConfig::create()
+      ->map('node', 'list_variable')
+      ->map('types', 'list_variable')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('list_variable', ContextDefinition::create('list'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+    $this->assertEquals(
+      'Expected a complex data type for context <em class="placeholder">Node</em> but got a list data type instead.',
+      (string) $violation_list[0]->getMessage()
+    );
+  }
+
+  /**
+   * Tests that an absent required context triggers a violation.
+   */
+  public function testMissingRequiredContext() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    // The condition is completely unconfigured, missing 2 required contexts.
+    $rule->addCondition('rules_node_is_of_type');
+
+    $violation_list = RulesComponent::create($rule)
+      ->checkIntegrity();
+    $this->assertEquals(2, iterator_count($violation_list));
+    $this->assertEquals(
+      'The required context <em class="placeholder">Node</em> is missing.',
+      (string) $violation_list[0]->getMessage()
+    );
+    $this->assertEquals(
+      'The required context <em class="placeholder">Content types</em> is missing.',
+      (string) $violation_list[1]->getMessage()
     );
   }
 

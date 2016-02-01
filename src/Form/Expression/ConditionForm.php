@@ -74,6 +74,8 @@ class ConditionForm implements ExpressionFormInterface {
         '#type' => 'submit',
         '#value' => $this->t('Continue'),
         '#name' => 'continue',
+        // Only validate the selected condition in the first step.
+        '#limit_validation_errors' => [['condition']],
         '#submit' => [static::class . '::submitFirstStep'],
       ];
 
