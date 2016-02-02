@@ -169,7 +169,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testSwappedCoreServices() {
     $condition_manager = $this->container->get('plugin.manager.condition');
-    $this->assertTrue($condition_manager instanceof \Drupal\rules\Condition\ConditionManager);
+    $this->assertTrue($condition_manager instanceof \Drupal\rules\Core\ConditionManager);
   }
 
 }

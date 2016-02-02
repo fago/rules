@@ -11,7 +11,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Plugin\ContextAwarePluginBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\rules\Context\ContextProviderTrait;
-use Drupal\rules\Core\ConfigurationAccessControlTrait;
 
 /**
  * Base class for rules actions.

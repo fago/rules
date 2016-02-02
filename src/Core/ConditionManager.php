@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Condition\ConditionManager.
+ * Contains \Drupal\rules\Core\ConditionManager.
  */
 
-namespace Drupal\rules\Condition;
+namespace Drupal\rules\Core;
 
 use Drupal\Core\Condition\ConditionManager as CoreConditionManager;
 use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;

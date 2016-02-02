@@ -19,7 +19,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Plugin\Context\LazyContextRepository;
 use Drupal\Core\TypedData\TypedDataManager;
-use Drupal\rules\Condition\ConditionManager;
+use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
 use Drupal\rules\Engine\ExpressionManager;
@@ -75,7 +75,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   protected $aliasManager;
 
   /**
-   * @var \Drupal\rules\Condition\ConditionManager
+   * @var \Drupal\rules\Core\ConditionManager
    */
   protected $conditionManager;
 

@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Contains \Drupal\rules\Core\RulesDefaultEventHandler.
+ */
+
+namespace Drupal\rules\Core;
+
+use Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Core\Plugin\PluginBase;
+
+/**
+ * Default event handler class.
+ */
+class RulesDefaultEventHandler extends PluginBase implements RulesEventHandlerInterface {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getContextDefinitions() {
+    $definition = $this->getPluginDefinition();
+    if ($this instanceof RulesConfigurableEventHandlerInterface) {
+      $this->refineContextDefinitions();
+    }
+    return !empty($definition['context']) ? $definition['context'] : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getContextDefinition($name) {
+    $definition = $this->getPluginDefinition();
+    if (empty($definition['context'][$name])) {
+      throw new ContextException(sprintf("The %s context is not a valid context.", $name));
+    }
+    return $definition['context'][$name];
+  }
+
+}

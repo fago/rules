@@ -9,7 +9,7 @@ namespace Drupal\rules;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
-use Drupal\rules\Condition\ConditionManager;
+use Drupal\rules\Core\ConditionManager;
 
 /**
  * Swaps out the core condition manager.
