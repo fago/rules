@@ -93,12 +93,12 @@ class AddExpressionForm extends FormBase {
 
     $validation_config = clone $this->ruleConfig;
     $rule_expression = $validation_config->getExpression();
-    $uuid = $rule_expression->addExpressionObject($expression, TRUE);
+    $rule_expression->addExpressionObject($expression);
 
     $all_violations = RulesComponent::create($rule_expression)
       ->addContextDefinitionsFrom($validation_config)
       ->checkIntegrity();
-    $local_violations = $all_violations->getFor($uuid);
+    $local_violations = $all_violations->getFor($expression->getUuid());
 
     foreach ($local_violations as $violation) {
       $form_state->setError($form, $violation->getMessage());

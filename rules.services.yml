@@ -1,7 +1,7 @@
 services:
   plugin.manager.rules_expression:
     class: Drupal\rules\Engine\ExpressionManager
-    arguments: ['@container.namespaces', '@module_handler']
+    arguments: ['@container.namespaces', '@module_handler', '@uuid']
   plugin.manager.rules_action:
     class: Drupal\rules\Core\RulesActionManager
     parent: default_plugin_manager

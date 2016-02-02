@@ -181,7 +181,9 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->actionManager = new RulesActionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler->reveal());
     $this->conditionManager = new ConditionManager($this->namespaces, $this->cacheBackend, $this->moduleHandler->reveal());
-    $this->rulesExpressionManager = new ExpressionManager($this->namespaces, $this->moduleHandler->reveal());
+
+    $uuid_service = new Php();
+    $this->rulesExpressionManager = new ExpressionManager($this->namespaces, $this->moduleHandler->reveal(), $uuid_service);
 
     $this->classResolver = $this->prophesize(ClassResolverInterface::class);
 
@@ -225,7 +227,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
     $container->set('plugin.manager.rules_data_processor', $this->rulesDataProcessorManager);
     $container->set('typed_data_manager', $this->typedDataManager);
     $container->set('string_translation', $this->getStringTranslationStub());
-    $container->set('uuid', new Php());
+    $container->set('uuid', $uuid_service);
     $container->set('typed_data.data_fetcher', $this->dataFetcher);
     $container->set('typed_data.placeholder_resolver', $this->placeholderResolver);
 

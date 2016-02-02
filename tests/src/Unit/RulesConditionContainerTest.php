@@ -7,7 +7,6 @@
 
 namespace Drupal\Tests\rules\Unit;
 
-use Drupal\Component\Uuid\Php;
 use Drupal\rules\Engine\ConditionExpressionContainer;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
@@ -36,7 +35,6 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
         'test_id',
         [],
         $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-        new Php(),
       ], $class, TRUE, TRUE, TRUE, $methods
     );
   }
@@ -92,10 +90,9 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $container->addExpressionObject($this->trueConditionExpression->reveal());
-    $uuid = $container->getIterator()->key();
+    $uuid = $this->trueConditionExpression->reveal()->getUuid();
     $this->assertSame($this->trueConditionExpression->reveal(), $container->getExpression($uuid));
     $this->assertFalse($container->getExpression('invalid UUID'));
   }
@@ -109,7 +106,6 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $container->addExpressionObject($this->trueConditionExpression->reveal());
 
@@ -118,13 +114,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $nested_container->addExpressionObject($this->falseConditionExpression->reveal());
 
     $container->addExpressionObject($nested_container);
 
-    $uuid = $nested_container->getIterator()->key();
+    $uuid = $this->falseConditionExpression->reveal()->getUuid();
     $this->assertSame($this->falseConditionExpression->reveal(), $container->getExpression($uuid));
   }
 
@@ -137,13 +132,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $container->addExpressionObject($this->trueConditionExpression->reveal());
     $container->addExpressionObject($this->falseConditionExpression->reveal());
 
     // Delete the first condition.
-    $uuid = $container->getIterator()->key();
+    $uuid = $this->trueConditionExpression->reveal()->getUuid();
     $this->assertTrue($container->deleteExpression($uuid));
     foreach ($container as $condition) {
       $this->assertSame($this->falseConditionExpression->reveal(), $condition);
@@ -161,7 +155,6 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $container->addExpressionObject($this->trueConditionExpression->reveal());
 
@@ -170,13 +163,12 @@ class RulesConditionContainerTest extends RulesUnitTestBase {
       'test_id',
       [],
       $this->prophesize(ExpressionManagerInterface::class)->reveal(),
-      new Php(),
     ], '', TRUE);
     $nested_container->addExpressionObject($this->falseConditionExpression->reveal());
 
     $container->addExpressionObject($nested_container);
 
-    $uuid = $nested_container->getIterator()->key();
+    $uuid = $this->falseConditionExpression->reveal()->getUuid();
     $this->assertTrue($container->deleteExpression($uuid));
     $this->assertEquals(0, count($nested_container->getIterator()));
   }

@@ -54,17 +54,21 @@ abstract class RulesUnitTestBase extends UnitTestCase {
     parent::setUp();
 
     $this->trueConditionExpression = $this->prophesize(ConditionExpressionInterface::class);
+    $this->trueConditionExpression->getUuid()->willReturn('true_uuid1');
 
     $this->trueConditionExpression->execute()->willReturn(TRUE);
     $this->trueConditionExpression->executeWithState(
       Argument::type(ExecutionStateInterface::class))->willReturn(TRUE);
 
     $this->falseConditionExpression = $this->prophesize(ConditionExpressionInterface::class);
+    $this->falseConditionExpression->getUuid()->willReturn('false_uuid1');
+
     $this->falseConditionExpression->execute()->willReturn(FALSE);
     $this->falseConditionExpression->executeWithState(
       Argument::type(ExecutionStateInterface::class))->willReturn(FALSE);
 
     $this->testActionExpression = $this->prophesize(ActionExpressionInterface::class);
+    $this->testActionExpression->getUuid()->willReturn('action_uuid1');
 
     $this->expressionManager = $this->prophesize(ExpressionManagerInterface::class);
   }

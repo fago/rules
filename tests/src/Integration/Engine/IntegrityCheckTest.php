@@ -73,7 +73,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     // Get the UUID of the second action.
     $iterator = $rule->getIterator();
     $iterator->next();
-    $uuid = $iterator->key();
+    $uuid = $iterator->current()->getUuid();
 
     $uuid_violations = $all_violations->getFor($uuid);
     $this->assertEquals(1, count($uuid_violations));

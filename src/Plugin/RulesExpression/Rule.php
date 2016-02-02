@@ -150,17 +150,17 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE) {
+  public function addExpressionObject(ExpressionInterface $expression) {
     if ($expression instanceof ConditionExpressionInterface) {
-      $result = $this->conditions->addExpressionObject($expression, $return_uuid);
+      $result = $this->conditions->addExpressionObject($expression);
     }
     elseif ($expression instanceof ActionExpressionInterface) {
-      $result = $this->actions->addExpressionObject($expression, $return_uuid);
+      $result = $this->actions->addExpressionObject($expression);
     }
     else {
       throw new InvalidExpressionException();
     }
-    return $return_uuid ? $result : $this;
+    return $this;
   }
 
   /**

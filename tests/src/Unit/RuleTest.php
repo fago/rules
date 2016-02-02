@@ -7,9 +7,9 @@
 
 namespace Drupal\Tests\rules\Unit;
 
-use Drupal\Component\Uuid\Php;
-use Drupal\rules\Engine\ExpressionManagerInterface;
+use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Plugin\RulesExpression\ActionSet;
 use Drupal\rules\Plugin\RulesExpression\Rule;
 use Drupal\rules\Plugin\RulesExpression\RulesAction;
@@ -59,14 +59,13 @@ class RuleTest extends RulesUnitTestBase {
 
     $this->expressionManager = $this->prophesize(ExpressionManagerInterface::class);
 
-    $uuid_service = new Php();
-    $this->conditions = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal(), $uuid_service);
+    $this->conditions = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal());
     $this->expressionManager->createInstance('rules_and', [])->willReturn($this->conditions);
 
-    $this->actions = new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal(), $uuid_service);
+    $this->actions = new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal());
     $this->expressionManager->createInstance('rules_action_set', [])->willReturn($this->actions);
 
-    $this->rule = new Rule([], 'rules_rule', [], $this->expressionManager->reveal(), $uuid_service);
+    $this->rule = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
   }
 
   /**
@@ -86,11 +85,11 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::getConditions
    */
   public function testSetConditionsGetConditions() {
-    $or = new RulesOr([], 'rules_or', [], $this->expressionManager->reveal(), new Php());
+    $or = new RulesOr([], 'rules_or', [], $this->expressionManager->reveal());
     $this->rule->setConditions($or);
     $this->assertSame($or, $this->rule->getConditions());
 
-    $and = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal(), new Php());
+    $and = new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal());
     $this->rule->setConditions($and);
     $this->assertSame($and, $this->rule->getConditions());
   }
@@ -102,7 +101,7 @@ class RuleTest extends RulesUnitTestBase {
    * @covers ::getActions
    */
   public function testSetActionsGetActions() {
-    $action_set = new ActionSet([], '', [], $this->expressionManager->reveal(), new Php());
+    $action_set = new ActionSet([], '', [], $this->expressionManager->reveal());
     $this->rule->setActions($action_set);
     $this->assertSame($action_set, $this->rule->getActions());
   }
@@ -149,9 +148,15 @@ class RuleTest extends RulesUnitTestBase {
     $this->testActionExpression->executeWithState(
       Argument::type(ExecutionStateInterface::class))->shouldBeCalledTimes(1);
 
+    $second_condition = $this->prophesize(ConditionExpressionInterface::class);
+    $second_condition->getUuid()->willReturn('true_uuid2');
+
+    $second_condition->executeWithState(Argument::type(ExecutionStateInterface::class))
+      ->willReturn(TRUE);
+
     $this->rule
       ->addExpressionObject($this->trueConditionExpression->reveal())
-      ->addExpressionObject($this->trueConditionExpression->reveal())
+      ->addExpressionObject($second_condition->reveal())
       ->addExpressionObject($this->testActionExpression->reveal())
       ->execute();
   }
@@ -185,8 +190,8 @@ class RuleTest extends RulesUnitTestBase {
     $nested = new Rule([], 'rules_rule', [], $this->expressionManager->reveal());
     // We need to replace the action and conditon container to not have the same
     // instances as in the outer rule.
-    $nested->setConditions(new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal(), new Php()));
-    $nested->setActions(new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal(), new Php()));
+    $nested->setConditions(new RulesAnd([], 'rules_and', [], $this->expressionManager->reveal()));
+    $nested->setActions(new ActionSet([], 'rules_action_set', [], $this->expressionManager->reveal()));
 
     $nested->addExpressionObject($this->trueConditionExpression->reveal())
       ->addExpressionObject($this->testActionExpression->reveal());
@@ -203,12 +208,12 @@ class RuleTest extends RulesUnitTestBase {
   public function testLookupExpression() {
     // Test Conditions.
     $this->rule->addExpressionObject($this->trueConditionExpression->reveal());
-    $uuid = $this->rule->getConditions()->getIterator()->key();
+    $uuid = $this->trueConditionExpression->reveal()->getUuid();
     $this->assertSame($this->trueConditionExpression->reveal(), $this->rule->getExpression($uuid));
 
     // Test actions.
     $this->rule->addExpressionObject($this->testActionExpression->reveal());
-    $uuid = $this->rule->getActions()->getIterator()->key();
+    $uuid = $this->testActionExpression->reveal()->getUuid();
     $this->assertSame($this->testActionExpression->reveal(), $this->rule->getExpression($uuid));
 
     $this->assertFalse($this->rule->getExpression('invalid UUID'));
@@ -223,28 +228,29 @@ class RuleTest extends RulesUnitTestBase {
     $this->rule->addExpressionObject($this->falseConditionExpression->reveal());
     $this->rule->addExpressionObject($this->testActionExpression->reveal());
     $second_action = $this->prophesize(RulesAction::class);
+    $second_action->getUuid()->willReturn('action_uuid2');
     $this->rule->addExpressionObject($second_action->reveal());
 
     // Delete the first action.
-    $uuid = $this->rule->getIterator()->key();
+    $uuid = $this->testActionExpression->reveal()->getUuid();
     $this->rule->deleteExpression($uuid);
     $this->assertEquals(2, count($this->rule->getConditions()->getIterator()));
     $this->assertEquals(1, count($this->rule->getActions()->getIterator()));
 
     // Delete the second condition.
-    $uuid = $this->rule->getConditions()->getIterator()->key();
+    $uuid = $this->falseConditionExpression->reveal()->getUuid();
     $this->rule->deleteExpression($uuid);
     $this->assertEquals(1, count($this->rule->getConditions()->getIterator()));
     $this->assertEquals(1, count($this->rule->getActions()->getIterator()));
 
-    // Delete the first action.
-    $uuid = $this->rule->getIterator()->key();
+    // Delete the remaining action.
+    $uuid = $second_action->reveal()->getUuid();
     $this->rule->deleteExpression($uuid);
     $this->assertEquals(1, count($this->rule->getConditions()->getIterator()));
     $this->assertEquals(0, count($this->rule->getActions()->getIterator()));
 
     // Delete the remaining condition, rule should be empty now.
-    $uuid = $this->rule->getConditions()->getIterator()->key();
+    $uuid = $this->trueConditionExpression->reveal()->getUuid();
     $this->rule->deleteExpression($uuid);
     $this->assertEquals(0, count($this->rule->getConditions()->getIterator()));
     $this->assertEquals(0, count($this->rule->getActions()->getIterator()));

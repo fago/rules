@@ -49,7 +49,7 @@ class ActionSetForm implements ExpressionFormInterface {
       '#empty' => t('None'),
     ];
 
-    foreach ($this->actionSet as $uuid => $action) {
+    foreach ($this->actionSet as $action) {
       $form['action_table']['table']['#rows'][] = [
         'element' => $action->getLabel(),
         'operations' => [
@@ -60,14 +60,14 @@ class ActionSetForm implements ExpressionFormInterface {
                 'title' => $this->t('Edit'),
                 'url' => Url::fromRoute('rules.reaction_rule.expression.edit', [
                   'reaction_config' => $this->actionSet->getRoot()->getConfigEntityId(),
-                  'uuid' => $uuid,
+                  'uuid' => $action->getUuid(),
                 ]),
               ],
               'delete' => [
                 'title' => $this->t('Delete'),
                 'url' => Url::fromRoute('rules.reaction_rule.expression.delete', [
                   'rules_reaction_rule' => $this->actionSet->getRoot()->getConfigEntityId(),
-                  'uuid' => $uuid,
+                  'uuid' => $action->getUuid(),
                 ]),
               ],
             ],

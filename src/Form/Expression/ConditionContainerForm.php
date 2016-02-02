@@ -49,7 +49,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
       '#empty' => t('None'),
     ];
 
-    foreach ($this->conditionContainer as $uuid => $condition) {
+    foreach ($this->conditionContainer as $condition) {
       $form['conditions']['table']['#rows'][] = [
         'element' => $condition->getLabel(),
         'operations' => [
@@ -60,14 +60,14 @@ class ConditionContainerForm implements ExpressionFormInterface {
                 'title' => $this->t('Edit'),
                 'url' => Url::fromRoute('rules.reaction_rule.expression.edit', [
                   'reaction_config' => $this->conditionContainer->getRoot()->getConfigEntityId(),
-                  'uuid' => $uuid,
+                  'uuid' => $condition->getUuid(),
                 ]),
               ],
               'delete' => [
                 'title' => $this->t('Delete'),
                 'url' => Url::fromRoute('rules.reaction_rule.expression.delete', [
                   'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
-                  'uuid' => $uuid,
+                  'uuid' => $condition->getUuid(),
                 ]),
               ],
             ],

@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\rules\Annotation\RulesExpression;
@@ -19,18 +20,32 @@ use Drupal\rules\Annotation\RulesExpression;
 class ExpressionManager extends DefaultPluginManager implements ExpressionManagerInterface {
 
   /**
-   * A map from class names to plugin ids.
+   * The UUID generating service.
    *
-   * @var string[]
+   * @var \Drupal\Component\Uuid\UuidInterface
    */
-  protected $classNamePluginIdMap;
+  protected $uuidService;
+
+  /**
+   * Constructor.
+   */
+  public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, UuidInterface $uuid_service, $plugin_definition_annotation_name = RulesExpression::class) {
+    $this->alterInfo('rules_expression');
+    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, ExpressionInterface::class, $plugin_definition_annotation_name);
+    $this->uuidService = $uuid_service;
+  }
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(\Traversable $namespaces, ModuleHandlerInterface $module_handler, $plugin_definition_annotation_name = RulesExpression::class) {
-    $this->alterInfo('rules_expression');
-    parent::__construct('Plugin/RulesExpression', $namespaces, $module_handler, ExpressionInterface::class, $plugin_definition_annotation_name);
+  public function createInstance($plugin_id, array $configuration = []) {
+    $instance = parent::createInstance($plugin_id, $configuration);
+
+    // Make sure that the instance has a UUID and generate one if necessary.
+    if (!$instance->getUuid()) {
+      $instance->setUuid($this->uuidService->generate());
+    }
+    return $instance;
   }
 
   /**

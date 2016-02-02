@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Exception\InvalidExpressionException;
@@ -26,13 +25,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
   protected $actions = [];
 
   /**
-   * The UUID generating service.
-   *
-   * @var \Drupal\Component\Uuid\UuidInterface
-   */
-  protected $uuidService;
-
-  /**
    * Constructor.
    *
    * @param array $configuration
@@ -43,18 +35,15 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    *   The plugin implementation definition.
    * @param \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
    *   The rules expression plugin manager.
-   * @param \Drupal\Component\Uuid\UuidInterface $uuid_service
-   *   The UUID generating service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManagerInterface $expression_manager, UuidInterface $uuid_service) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExpressionManagerInterface $expression_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->expressionManager = $expression_manager;
-    $this->uuidService = $uuid_service;
 
     $configuration += ['actions' => []];
-    foreach ($configuration['actions'] as $uuid => $action_config) {
+    foreach ($configuration['actions'] as $action_config) {
       $action = $expression_manager->createInstance($action_config['id'], $action_config);
-      $this->actions[$uuid] = $action;
+      $this->actions[] = $action;
     }
   }
 
@@ -66,21 +55,22 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.rules_expression'),
-      $container->get('uuid')
+      $container->get('plugin.manager.rules_expression')
     );
   }
 
   /**
    * {@inheritdoc}
    */
-  public function addExpressionObject(ExpressionInterface $expression, $return_uuid = FALSE) {
+  public function addExpressionObject(ExpressionInterface $expression) {
     if (!$expression instanceof ActionExpressionInterface) {
-      throw new InvalidExpressionException();
+      throw new InvalidExpressionException('Only action expressions can be added to an action container.');
     }
-    $uuid = $this->uuidService->generate();
-    $this->actions[$uuid] = $expression;
-    return $return_uuid ? $uuid : $this;
+    if ($this->getExpression($expression->getUuid())) {
+      throw new InvalidExpressionException('An action with the same UUID already exists in the container.');
+    }
+    $this->actions[] = $expression;
+    return $this;
   }
 
   /**
@@ -111,8 +101,8 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     // We need to update the configuration in case actions have been added or
     // changed.
     $configuration['actions'] = [];
-    foreach ($this->actions as $uuid => $action) {
-      $configuration['actions'][$uuid] = $action->getConfiguration();
+    foreach ($this->actions as $action) {
+      $configuration['actions'][] = $action->getConfiguration();
     }
     return $configuration;
   }
@@ -128,10 +118,10 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    * {@inheritdoc}
    */
   public function getExpression($uuid) {
-    if (isset($this->actions[$uuid])) {
-      return $this->actions[$uuid];
-    }
     foreach ($this->actions as $action) {
+      if ($action->getUuid() === $uuid) {
+        return $action;
+      }
       if ($action instanceof ExpressionContainerInterface) {
         $nested_action = $action->getExpression($uuid);
         if ($nested_action) {
@@ -146,11 +136,11 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    * {@inheritdoc}
    */
   public function deleteExpression($uuid) {
-    if (isset($this->actions[$uuid])) {
-      unset($this->actions[$uuid]);
-      return TRUE;
-    }
-    foreach ($this->actions as $action) {
+    foreach ($this->actions as $index => $action) {
+      if ($action->getUuid() === $uuid) {
+        unset($this->actions[$index]);
+        return TRUE;
+      }
       if ($action instanceof ExpressionContainerInterface
         && $action->deleteExpression($uuid)
       ) {
@@ -165,10 +155,10 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    */
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
-    foreach ($this->actions as $uuid => $action) {
+    foreach ($this->actions as $action) {
       $action_violations = $action->checkIntegrity($metadata_state);
       foreach ($action_violations as $violation) {
-        $violation->setUuid($uuid);
+        $violation->setUuid($action->getUuid());
       }
       $violation_list->addAll($action_violations);
     }

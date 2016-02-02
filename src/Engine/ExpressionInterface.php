@@ -98,4 +98,20 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    */
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state);
 
+  /**
+   * Returns the UUID of this expression if it is nested in another expression.
+   *
+   * @return string|null
+   *   The UUID if this expression is nested or NULL if it does not have a UUID.
+   */
+  public function getUuid();
+
+  /**
+   * Sets the UUID of this expression in an expression tree.
+   *
+   * @param string $uuid
+   *   The UUID to set.
+   */
+  public function setUuid($uuid);
+
 }

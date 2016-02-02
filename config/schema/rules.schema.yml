@@ -72,6 +72,9 @@ rules_expression:
   id:
     type: string
     label: 'Plugin ID'
+  uuid:
+    type: string
+    label: 'UUID'
 
 rules_expression.rules_condition:
   type: rules_expression
@@ -80,6 +83,9 @@ rules_expression.rules_condition:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     condition_id:
       type: string
       label: 'Condition plugin ID'
@@ -94,6 +100,9 @@ rules_expression.rules_action:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     action_id:
       type: string
       label: 'Action plugin ID'
@@ -125,6 +134,9 @@ rules_expression.rules_and:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     negate:
       type: boolean
       label: 'Negate'
@@ -141,6 +153,9 @@ rules_expression.rules_action_set:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     actions:
       type: sequence
       label: 'Actions'
@@ -154,6 +169,9 @@ rules_expression.rules_rule:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     conditions:
       type: rules_expression.[id]
       label: 'Conditions'
@@ -168,6 +186,9 @@ rules_expression.rules_reaction_rule:
     id:
       type: string
       label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
     event:
       type: string
       label: 'Event'
