@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\RulesDrupalTestBase.
+ * Contains \Drupal\Tests\rules\Kernel\RulesDrupalTestBase.
  */
 
 namespace Drupal\Tests\rules\Kernel;

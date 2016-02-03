@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\ContextIntegrationTest.
+ * Contains \Drupal\Tests\rules\Kernel\ContextIntegrationTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\ConfigEntityTest.
+ * Contains \Drupal\Tests\rules\Kernel\ConfigEntityTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

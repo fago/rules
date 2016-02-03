@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\EventIntegrationTest.
+ * Contains \Drupal\Tests\rules\Kernel\EventIntegrationTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

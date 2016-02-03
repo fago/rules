@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\CoreIntegrationTest.
+ * Contains \Drupal\Tests\rules\Kernel\CoreIntegrationTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

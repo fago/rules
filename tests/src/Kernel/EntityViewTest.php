@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\EntityViewTest.
+ * Contains \Drupal\Tests\rules\Kernel\EntityViewTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

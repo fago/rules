@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\DataProcessorTest.
+ * Contains \Drupal\Tests\rules\Kernel\DataProcessorTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;

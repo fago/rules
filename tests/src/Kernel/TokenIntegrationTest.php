@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Tests\TokenIntegrationTest.
+ * Contains \Drupal\Tests\rules\Kernel\TokenIntegrationTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;
