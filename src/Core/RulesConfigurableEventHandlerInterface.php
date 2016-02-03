@@ -19,9 +19,9 @@ use Symfony\Component\EventDispatcher\Event;
  * which is used for triggering reaction rules.
  *
  * For example, the fully-qualified event name of an event for viewing an
- * article node would be "node_view--article", whereas "node_view" is the base
- * event name and "article" the event suffix as returned
- * from ::getEventNameSuffix().
+ * article node would be "rules_entity_view:node--article", whereas
+ * "rules_entity_view:node" is the base event name and "article" the event
+ * suffix as returned from ::getEventNameSuffix().
  *
  * The event name suffix must be generated from the event data at run-time,
  * while the configured plugin has to determine it based upon the event
@@ -44,8 +44,8 @@ interface RulesConfigurableEventHandlerInterface extends RulesEventHandlerInterf
    *
    * @return string[]
    *   The array of qualified event name suffixes to add; e.g, 'article' if
-   *   the fully-qualified event "node_view--article" should be triggered in
-   *   addition to base event "node_view".
+   *   the fully-qualified event "rules_entity_view:node--article" should be
+   *   triggered in addition to base event "rules_entity_view:node".
    */
   public static function determineQualifiedEvents(Event $event, $event_name, array &$event_definition);
 
@@ -53,6 +53,7 @@ interface RulesConfigurableEventHandlerInterface extends RulesEventHandlerInterf
    * Provides a human readable summary of the event's configuration.
    *
    * @return string|\Drupal\Component\Render\MarkupInterface
+   *   The human readable summary.
    */
   public function summary();
 
