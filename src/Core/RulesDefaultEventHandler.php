@@ -30,11 +30,11 @@ class RulesDefaultEventHandler extends PluginBase implements RulesEventHandlerIn
    * {@inheritdoc}
    */
   public function getContextDefinition($name) {
-    $definition = $this->getPluginDefinition();
-    if (empty($definition['context'][$name])) {
+    $definitions = $this->getContextDefinitions();
+    if (empty($definitions[$name])) {
       throw new ContextException(sprintf("The %s context is not a valid context.", $name));
     }
-    return $definition['context'][$name];
+    return $definitions[$name];
   }
 
 }
