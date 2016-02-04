@@ -9,7 +9,7 @@ namespace Drupal\rules\EventSubscriber;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Core\RulesConfigurableEventHandlerInterface;
-use Drupal\rules\Engine\RulesEventManager;
+use Drupal\rules\Core\RulesEventManager;
 use Drupal\rules\Engine\ExecutionState;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -30,7 +30,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
   /**
    * The Rules event manager.
    *
-   * @var \Drupal\rules\Engine\RulesEventManager
+   * @var \Drupal\rules\Core\RulesEventManager
    */
   protected $eventManager;
 
@@ -39,7 +39,7 @@ class GenericEventSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\rules\Engine\RulesEventManager $event_manager
+   * @param \Drupal\rules\Core\RulesEventManager $event_manager
    *   The Rules event manager.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, RulesEventManager $event_manager) {

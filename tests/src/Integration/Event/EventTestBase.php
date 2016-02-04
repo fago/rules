@@ -7,7 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Event;
 
-use Drupal\rules\Engine\RulesEventManager;
+use Drupal\rules\Core\RulesEventManager;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
 
 /**
@@ -20,7 +20,7 @@ abstract class EventTestBase extends RulesEntityIntegrationTestBase {
   /**
    * The Rules event plugin manager.
    *
-   * @var \Drupal\rules\Engine\RulesEventManager
+   * @var \Drupal\rules\Core\RulesEventManager
    */
   protected $eventManager;
 

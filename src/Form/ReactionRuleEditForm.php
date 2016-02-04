@@ -9,7 +9,7 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\DrupalKernelInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Engine\RulesEventManager;
+use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -24,7 +24,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   /**
    * The event plugin manager.
    *
-   * @var \Drupal\rules\Engine\RulesEventManager
+   * @var \Drupal\rules\Core\RulesEventManager
    */
   protected $eventManager;
 
@@ -52,7 +52,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   /**
    * Constructs a new object of this class.
    *
-   * @param \Drupal\rules\Engine\RulesEventManager $event_manager
+   * @param \Drupal\rules\Core\RulesEventManager $event_manager
    *   The event plugin manager.
    */
   public function __construct(RulesEventManager $event_manager, EventDispatcherInterface $event_dispatcher, EventSubscriberInterface $generic_event_subscriber, DrupalKernelInterface $drupal_kernel) {

@@ -6,7 +6,7 @@ services:
     class: Drupal\rules\Core\RulesActionManager
     parent: default_plugin_manager
   plugin.manager.rules_event:
-    class: Drupal\rules\Engine\RulesEventManager
+    class: Drupal\rules\Core\RulesEventManager
     arguments: ['@module_handler']
   plugin.manager.rules_data_processor:
     class: Drupal\rules\Context\DataProcessorManager
