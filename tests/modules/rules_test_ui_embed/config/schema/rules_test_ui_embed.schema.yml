@@ -6,8 +6,15 @@ rules_test_ui_embed.settings:
       # todo: Add in Rules config schema type once implemented.
       type: sequence
       label: Rules Conditions
+      sequence:
+        type: undefined
     css:
       type: sequence
       sequence:
         type: mapping
         label: CSS files
+        mapping:
+          module:
+            type: string
+          file:
+            type: string

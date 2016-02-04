@@ -15,8 +15,6 @@ use Drupal\Core\Plugin\Discovery\ContainerDerivativeDiscoveryDecorator;
 use Drupal\Core\Plugin\Discovery\YamlDiscovery;
 use Drupal\Core\Plugin\Factory\ContainerFactory;
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Core\RulesDefaultEventHandler;
-use Drupal\rules\Core\RulesEventHandlerInterface;
 
 /**
  * Plugin manager for Rules events that can be triggered.
