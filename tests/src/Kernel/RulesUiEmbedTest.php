@@ -11,6 +11,8 @@ use Drupal\rules\Core\RulesUiDefaultHandler;
 
 /**
  * Tests embedding the Rules UI.
+ *
+ * @group rules
  */
 class RulesUiEmbedTest extends RulesDrupalTestBase {
 
