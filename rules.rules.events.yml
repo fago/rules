@@ -21,6 +21,7 @@ kernel.request:
 rules_entity_presave:
   label: 'Before saving an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityPresaveDeriver'
+  class: '\Drupal\rules\EventHandler\EventHandlerEntityBundle'
 rules_entity_delete:
   label: 'After deleting an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver'
