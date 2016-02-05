@@ -25,15 +25,19 @@ rules_entity_presave:
 rules_entity_delete:
   label: 'After deleting an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver'
+  class: '\Drupal\rules\EventHandler\EventHandlerEntityBundle'
 rules_entity_insert:
   label: 'After saving a new entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityInsertDeriver'
+  class: '\Drupal\rules\EventHandler\EventHandlerEntityBundle'
 rules_entity_update:
   label: 'After updating an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityUpdateDeriver'
+  class: '\Drupal\rules\EventHandler\EventHandlerEntityBundle'
 rules_entity_view:
   label: 'Viewing an entity'
   deriver: '\Drupal\rules\Plugin\RulesEvent\EntityViewDeriver'
+  class: '\Drupal\rules\EventHandler\EventHandlerEntityBundle'
 rules_system_cron:
   label: 'Cron maintenance tasks are performed'
   category: 'System'
