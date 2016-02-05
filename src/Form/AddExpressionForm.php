@@ -84,12 +84,9 @@ class AddExpressionForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $this->lockValidateForm($form, $form_state);
 
-    // In order to validdate the whole rule we need to invoke the submission
-    // handler of the expression form. That way the expression is changed and we
-    // can validate the change for integrity afterwards.
     $expression = $this->expressionManager->createInstance($this->expressionId);
     $form_handler = $expression->getFormHandler();
-    $form_handler->submitForm($form, $form_state);
+    $form_handler->validateForm($form, $form_state);
 
     $validation_config = clone $this->ruleConfig;
     $rule_expression = $validation_config->getExpression();

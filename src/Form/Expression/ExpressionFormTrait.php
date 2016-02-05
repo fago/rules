@@ -22,4 +22,12 @@ trait ExpressionFormTrait {
   public function submitForm(array &$form, FormStateInterface $form_state) {
   }
 
+  /**
+   * Implements ExpressionFormInterface::validateForm().
+   *
+   * Empty default implementation.
+   */
+  public function validateForm(array $form, FormStateInterface $form_state) {
+  }
+
 }
