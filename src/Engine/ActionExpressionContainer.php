@@ -157,9 +157,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     $violation_list = new IntegrityViolationList();
     foreach ($this->actions as $action) {
       $action_violations = $action->checkIntegrity($metadata_state);
-      foreach ($action_violations as $violation) {
-        $violation->setUuid($action->getUuid());
-      }
       $violation_list->addAll($action_violations);
     }
     return $violation_list;

@@ -35,10 +35,13 @@ class IntegrityViolationList extends \ArrayIterator {
    *
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $message
    *   The violation message.
+   * @param string $uuid
+   *   (Optional) UUID of the expression where the violation occurred.
    */
-  public function addViolationWithMessage(TranslatableMarkup $message) {
+  public function addViolationWithMessage(TranslatableMarkup $message, $uuid = NULL) {
     $violation = new IntegrityViolation();
     $violation->setMessage($message);
+    $violation->setUuid($uuid);
     $this[] = $violation;
   }
 

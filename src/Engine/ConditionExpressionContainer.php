@@ -185,9 +185,6 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
     $violation_list = new IntegrityViolationList();
     foreach ($this->conditions as $condition) {
       $condition_violations = $condition->checkIntegrity($metadata_state);
-      foreach ($condition_violations as $violation) {
-        $violation->setUuid($condition->getUuid());
-      }
       $violation_list->addAll($condition_violations);
     }
     return $violation_list;
