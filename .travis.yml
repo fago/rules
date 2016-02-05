@@ -59,10 +59,8 @@ before_script:
   # installing Drupal 8.1.
   - if [ "$DRUPAL_CORE" = "8.1.x" ]; then composer self-update && composer install; fi
 
-  # Start a web server on port 8888, run in the background; wait for
-  # initialization.
-  - nohup php -S localhost:8888 > /dev/null 2>&1 &
-  - until curl -s localhost:8888; do true; done > /dev/null
+  # Start a web server on port 8888, run in the background.
+  - php -S localhost:8888 &
 
   # Export web server URL for browser tests.
   - export SIMPLETEST_BASE_URL=http://localhost:8888
