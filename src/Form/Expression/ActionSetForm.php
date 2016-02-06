@@ -58,14 +58,14 @@ class ActionSetForm implements ExpressionFormInterface {
             '#links' => [
               'edit' => [
                 'title' => $this->t('Edit'),
-                'url' => Url::fromRoute('rules.reaction_rule.expression.edit', [
-                  'reaction_config' => $this->actionSet->getRoot()->getConfigEntityId(),
+                'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.edit', [
+                  'rules_reaction_rule' => $this->actionSet->getRoot()->getConfigEntityId(),
                   'uuid' => $action->getUuid(),
                 ]),
               ],
               'delete' => [
                 'title' => $this->t('Delete'),
-                'url' => Url::fromRoute('rules.reaction_rule.expression.delete', [
+                'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.delete', [
                   'rules_reaction_rule' => $this->actionSet->getRoot()->getConfigEntityId(),
                   'uuid' => $action->getUuid(),
                 ]),
@@ -82,8 +82,8 @@ class ActionSetForm implements ExpressionFormInterface {
       '#theme' => 'menu_local_action',
       '#link' => [
         'title' => $this->t('Add action'),
-        'url' => Url::fromRoute('rules.reaction_rule.expression.add', [
-          'reaction_config' => $this->actionSet->getRoot()->getConfigEntityId(),
+        'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.add', [
+          'rules_reaction_rule' => $this->actionSet->getRoot()->getConfigEntityId(),
           'expression_id' => 'rules_action',
         ]),
       ],

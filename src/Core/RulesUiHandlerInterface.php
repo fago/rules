@@ -2,10 +2,12 @@
 
 /**
  * @file
- * Contains Drupal\rules\Core\RulesUiHandlerInterface.
+ * Contains \Drupal\rules\Core\RulesUiHandlerInterface.
  */
 
 namespace Drupal\rules\Core;
+
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Interface for Rules UI handlers.
@@ -16,5 +18,13 @@ namespace Drupal\rules\Core;
  * @todo: Implement.
  */
 interface RulesUiHandlerInterface {
+
+  /**
+   * Registers the routes as need for the UI.
+   *
+   * @param \Symfony\Component\Routing\RouteCollection $collection
+   *   The route collection to which to add the routes.
+   */
+  public function registerRoutes(RouteCollection $collection);
 
 }

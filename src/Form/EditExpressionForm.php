@@ -39,11 +39,11 @@ class EditExpressionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $reaction_config = NULL, $uuid = NULL) {
-    $this->ruleConfig = $reaction_config;
+  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $rules_reaction_rule = NULL, $uuid = NULL) {
+    $this->ruleConfig = $rules_reaction_rule;
     $this->uuid = $uuid;
 
-    $rule_expression = $reaction_config->getExpression();
+    $rule_expression = $rules_reaction_rule->getExpression();
     $expression_inside = $rule_expression->getExpression($uuid);
     if (!$expression_inside) {
       throw new NotFoundHttpException();
@@ -108,8 +108,8 @@ class EditExpressionForm extends FormBase {
   /**
    * Provides the page title on the form.
    */
-  public function getTitle(ReactionRuleConfig $reaction_config, $uuid) {
-    $rule_expression = $reaction_config->getExpression();
+  public function getTitle(ReactionRuleConfig $rules_reaction_rule, $uuid) {
+    $rule_expression = $rules_reaction_rule->getExpression();
     $expression_inside = $rule_expression->getExpression($uuid);
     return $this->t('Edit @expression', ['@expression' => $expression_inside->getLabel()]);
   }

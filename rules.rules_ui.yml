@@ -1,0 +1,3 @@
+rules.reaction_rules:
+  label: 'Manage reaction rules.'
+  base_route: entity.rules_reaction_rule.edit_form

@@ -61,8 +61,8 @@ class AddExpressionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $reaction_config = NULL, $expression_id = NULL) {
-    $this->ruleConfig = $reaction_config;
+  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $rules_reaction_rule = NULL, $expression_id = NULL) {
+    $this->ruleConfig = $rules_reaction_rule;
     $this->expressionId = $expression_id;
 
     $expression = $this->expressionManager->createInstance($expression_id);
@@ -126,7 +126,7 @@ class AddExpressionForm extends FormBase {
   /**
    * Provides the page title on the form.
    */
-  public function getTitle(ReactionRuleConfig $reaction_config, $expression_id) {
+  public function getTitle(ReactionRuleConfig $rules_reaction_rule, $expression_id) {
     $expression = $this->expressionManager->createInstance($expression_id);
     return $this->t('Add @expression', ['@expression' => $expression->getLabel()]);
   }

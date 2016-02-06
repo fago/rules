@@ -34,6 +34,11 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  rules.ui_route_subscriber:
+    class: Drupal\rules\Routing\UiRouteSubscriber
+    arguments: ['@plugin.manager.rules_ui']
+    tags:
+      - { name: 'event_subscriber' }
   typed_data.data_fetcher:
     class: Drupal\rules\TypedData\DataFetcher
   typed_data.placeholder_resolver:
