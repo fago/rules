@@ -47,6 +47,7 @@ abstract class RulesBrowserTestBase extends BrowserTestBase {
    *   Link id, title, text or image alt.
    *
    * @return \Behat\Mink\Element\NodeElement|null
+   *   The link node element.
    */
   public function findLink($locator) {
     return $this->getSession()->getPage()->findLink($locator);
@@ -59,6 +60,7 @@ abstract class RulesBrowserTestBase extends BrowserTestBase {
    *   Input id, name or label.
    *
    * @return \Behat\Mink\Element\NodeElement|null
+   *   The input field element.
    */
   public function findField($locator) {
     return $this->getSession()->getPage()->findField($locator);
@@ -71,6 +73,7 @@ abstract class RulesBrowserTestBase extends BrowserTestBase {
    *   Button id, value or alt.
    *
    * @return \Behat\Mink\Element\NodeElement|null
+   *   The button node element.
    */
   public function findButton($locator) {
     return $this->getSession()->getPage()->findButton($locator);

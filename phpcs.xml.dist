@@ -8,14 +8,17 @@
 
   <arg name="extensions" value="inc,install,module,php,profile,test,theme,yml"/>
 
+  <rule ref="Drupal.NamingConventions.ValidVariableName.LowerCamelName">
+    <!-- Annotations must use the same property names as in the configuration. -->
+    <exclude-pattern>src/Annotation</exclude-pattern>
+    <exclude-pattern>src/Core/Annotation</exclude-pattern>
+    <exclude-pattern>src/Core/RulesUiDefinition.php</exclude-pattern>
+  </rule>
+
   <!--Blacklist of coding standard rules that are not yet fixed. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
-    <exclude name="Drupal.Commenting.FunctionComment.EmptyThrows"/>
     <exclude name="Drupal.Commenting.FunctionComment.IncorrectTypeHint"/>
-    <exclude name="Drupal.Commenting.FunctionComment.MissingReturnComment"/>
-    <exclude name="Drupal.Commenting.FunctionComment.$InReturnType"/>
-    <exclude name="Drupal.NamingConventions.ValidVariableName.LowerCamelName"/>
   </rule>
 
   <!-- We always want short array syntax only. -->
