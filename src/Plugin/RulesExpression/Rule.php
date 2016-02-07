@@ -152,10 +152,10 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
    */
   public function addExpressionObject(ExpressionInterface $expression) {
     if ($expression instanceof ConditionExpressionInterface) {
-      $result = $this->conditions->addExpressionObject($expression);
+      $this->conditions->addExpressionObject($expression);
     }
     elseif ($expression instanceof ActionExpressionInterface) {
-      $result = $this->actions->addExpressionObject($expression);
+      $this->actions->addExpressionObject($expression);
     }
     else {
       throw new InvalidExpressionException();
