@@ -18,7 +18,6 @@
   <!--Blacklist of coding standard rules that are not yet fixed. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
-    <exclude name="Drupal.Commenting.FunctionComment.IncorrectTypeHint"/>
   </rule>
 
   <!-- We always want short array syntax only. -->
