@@ -8,6 +8,7 @@
 namespace Drupal\rules\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\Core\Routing\RoutingEvents;
 use Drupal\rules\Core\RulesUiManagerInterface;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -41,6 +42,17 @@ class UiRouteSubscriber extends RouteSubscriberBase {
       $ui_handler = $this->rulesUiManager->createInstance($name);
       $ui_handler->registerRoutes($collection);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getSubscribedEvents() {
+    $events = parent::getSubscribedEvents();
+    // Should run after AdminRouteSubscriber so the routes can inherit admin
+    // status of the edit routes on entities. Therefore priority -210.
+    $events[RoutingEvents::ALTER] = ['onAlterRoutes', -210];
+    return $events;
   }
 
 }
