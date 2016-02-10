@@ -67,7 +67,7 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
       throw new InvalidExpressionException('Only condition expressions can be added to a condition container.');
     }
     if ($this->getExpression($expression->getUuid())) {
-      throw new InvalidExpressionException('An action with the same UUID already exists in the container.');
+      throw new InvalidExpressionException('A condition with the same UUID already exists in the container.');
     }
     $this->conditions[] = $expression;
     return $this;
@@ -188,6 +188,32 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
       $violation_list->addAll($condition_violations);
     }
     return $violation_list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    if ($until) {
+      if ($this->getUuid() === $until->getUuid()) {
+        return TRUE;
+      }
+      foreach ($this->conditions as $condition) {
+        if ($condition->getUuid() === $until->getUuid()) {
+          return TRUE;
+        }
+        $found = $condition->prepareExecutionMetadataState($metadata_state, $until);
+        if ($found) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    }
+
+    foreach ($this->conditions as $condition) {
+      $condition->prepareExecutionMetadataState($metadata_state);
+    }
+    return TRUE;
   }
 
 }

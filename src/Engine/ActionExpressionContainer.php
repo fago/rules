@@ -162,4 +162,30 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     return $violation_list;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    if ($until) {
+      if ($this->getUuid() === $until->getUuid()) {
+        return TRUE;
+      }
+      foreach ($this->actions as $action) {
+        if ($action->getUuid() === $until->getUuid()) {
+          return TRUE;
+        }
+        $found = $action->prepareExecutionMetadataState($metadata_state, $until);
+        if ($found) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    }
+
+    foreach ($this->actions as $action) {
+      $action->prepareExecutionMetadataState($metadata_state);
+    }
+    return TRUE;
+  }
+
 }
