@@ -10,6 +10,8 @@ namespace Drupal\Tests\rules\Kernel;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\rules\Context\ContextConfig;
+use Drupal\rules\Event\EntityEvent;
 
 /**
  * Tests events with qualified name.
@@ -95,30 +97,50 @@ class EventHandlerTest extends RulesDrupalTestBase {
    * Tests EventHandlerEntityBundle execution.
    */
   public function testEntityBundleHandlerExecution() {
-    // @todo Add node.field_integer.0.value to rules log message, read result.
-    //$this->node->field_integer->setValue(['0' => 1, '1' => 2]);
-
-    // Create rule with the 'rules_entity_presave:node--page' event.
-    $rule = $this->expressionManager->createRule();
-    $rule->addAction('rules_test_log');
-    $config_entity = $this->storage->create([
-      'id' => 'test_rule',
+    // Create rule1 with the 'rules_entity_presave:node--page' event.
+    $rule1 = $this->expressionManager->createRule();
+    $rule1->addAction('rules_test_log',
+      ContextConfig::create()
+        ->map('message', 'node.field_integer.0.value')
+    );
+    $config_entity1 = $this->storage->create([
+      'id' => 'test_rule1',
       'expression_id' => 'rules_rule',
       'event' => 'rules_entity_presave:node--page',
-      'configuration' => $rule->getConfiguration(),
+      'configuration' => $rule1->getConfiguration(),
     ]);
-    $config_entity->save();
+    $config_entity1->save();
+
+    // Create rule2 with the 'rules_entity_presave:node' event.
+    $rule2 = $this->expressionManager->createRule();
+    $rule2->addAction('rules_test_log',
+      ContextConfig::create()
+        ->map('message', 'node.field_integer.1.value')
+    );
+    $config_entity2 = $this->storage->create([
+      'id' => 'test_rule2',
+      'expression_id' => 'rules_rule',
+      'event' => 'rules_entity_presave:node',
+      'configuration' => $rule2->getConfiguration(),
+    ]);
+    $config_entity2->save();
+
+    // The logger instance has changed, refresh it.
+    $this->logger = $this->container->get('logger.channel.rules');
+
+    // Add node.field_integer.0.value to rules log message, read result.
+    $this->node->field_integer->setValue(['0' => 11, '1' => 22]);
 
     // Trigger node save.
-    $this->node->save();
-    // @todo Should we better dispatch rules_entity_presave:node event instead?
-    /*$entity_type_id = $this->node->getEntityTypeId();
+    $entity_type_id = $this->node->getEntityTypeId();
     $event = new EntityEvent($this->node, [$entity_type_id => $this->node]);
     $event_dispatcher = \Drupal::service('event_dispatcher');
-    $event_dispatcher->dispatch("rules_entity_presave:$entity_type_id", $event);*/
+    $event_dispatcher->dispatch("rules_entity_presave:$entity_type_id", $event);
 
-    // Test that the action in the rule logged node value.
-    $this->assertRulesLogEntryExists('action called');
+    // Test that the action in the rule1 logged node value.
+    $this->assertRulesLogEntryExists(11, 1);
+    // Test that the action in the rule2 logged node value.
+    $this->assertRulesLogEntryExists(22, 0);
   }
 
 }
