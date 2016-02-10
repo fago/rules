@@ -30,6 +30,11 @@ rules.component.*:
       label: 'Context definitions'
       sequence:
         - type: rules.context.definition
+    provided_context_definitions:
+      type: sequence
+      label: 'Provided context definitions'
+      sequence:
+        - type: rules.context.definition
     configuration:
       type: rules_expression.[%parent.expression_id]
       label: 'Configuration'

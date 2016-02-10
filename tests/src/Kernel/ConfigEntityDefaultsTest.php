@@ -26,8 +26,8 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
    *
    * @var array
    */
-  public static $modules = ['rules', 'rules_test_default_component', 'user',
-    'system',
+  public static $modules = ['rules', 'rules_test',
+    'rules_test_default_component', 'user', 'system',
   ];
 
   /**
@@ -65,7 +65,7 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
     $user = $this->entityTypeManager->getStorage('user')
       ->create(['mail' => 'test@example.com']);
 
-    $config_entity
+    $result = $config_entity
       ->getComponent()
       ->setContextValue('user', $user)
       ->execute();
@@ -74,6 +74,8 @@ class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
     $messages = drupal_get_messages();
     $message_string = isset($messages['status'][0]) ? (string) $messages['status'][0] : NULL;
     $this->assertEquals($message_string, 'test@example.com');
+
+    $this->assertEquals('test@example.comtest@example.com', $result['concatenated']);
   }
 
 }
