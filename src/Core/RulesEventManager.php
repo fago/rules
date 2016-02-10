@@ -60,4 +60,22 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
     }
   }
 
+  /**
+   * Returns the base name of a configured event name.
+   *
+   * For a configured event name like node_view--article the base event name
+   * node_view is returned.
+   *
+   * @return string
+   *   The event base name.
+   */
+  static public function rulesGetEventBaseName($event_name) {
+    // Cut off any suffix from a configured event name.
+    if (strpos($event_name, '--') !== FALSE) {
+      $parts = explode('--', $event_name, 2);
+      return $parts[0];
+    }
+    return $event_name;
+  }
+
 }

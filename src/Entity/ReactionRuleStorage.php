@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -84,6 +85,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
     $events = [];
     foreach ($this->loadMultiple() as $rules_config) {
       $event = $rules_config->getEvent();
+      $event = RulesEventManager::rulesGetEventBaseName($event);
       if ($event && !isset($events[$event])) {
         $events[$event] = $event;
       }
