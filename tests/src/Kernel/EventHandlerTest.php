@@ -10,7 +10,6 @@ namespace Drupal\Tests\rules\Kernel;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\rules\Context\ContextConfig;
 
 /**
  * Tests events with qualified name.
@@ -96,14 +95,12 @@ class EventHandlerTest extends RulesDrupalTestBase {
    * Tests EventHandlerEntityBundle execution.
    */
   public function testEntityBundleHandlerExecution() {
-    $this->node->field_integer->setValue(['0' => 1, '1' => 2]);
+    // @todo Add node.field_integer.0.value to rules log message, read result.
+    //$this->node->field_integer->setValue(['0' => 1, '1' => 2]);
 
-    // Create rule with an action 'rules_entity_presave:node--page'.
+    // Create rule with the 'rules_entity_presave:node--page' event.
     $rule = $this->expressionManager->createRule();
-    $rule->addAction('rules_test_log',
-      ContextConfig::create()
-        ->map('message', 'node.field_integer.0.value')
-    );
+    $rule->addAction('rules_test_log');
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
@@ -112,11 +109,16 @@ class EventHandlerTest extends RulesDrupalTestBase {
     ]);
     $config_entity->save();
 
-    // @todo Better dispatch presave event.
+    // Trigger node save.
     $this->node->save();
+    // @todo Should we better dispatch rules_entity_presave:node event instead?
+    /*$entity_type_id = $this->node->getEntityTypeId();
+    $event = new EntityEvent($this->node, [$entity_type_id => $this->node]);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch("rules_entity_presave:$entity_type_id", $event);*/
 
     // Test that the action in the rule logged node value.
-    $this->assertRulesLogEntryExists('1');
+    $this->assertRulesLogEntryExists('action called');
   }
 
 }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\EventHandler\EventHandlerBase.
+ * Contains \Drupal\rules\EventHandler\ConfigurableEventHandlerBase.
  */
 
 namespace Drupal\rules\EventHandler;
@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Base class for event handler.
  */
-abstract class EventHandlerBase extends RulesDefaultEventHandler implements RulesConfigurableEventHandlerInterface {
+abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler implements RulesConfigurableEventHandlerInterface {
 
   /**
    * The event configuration.
@@ -28,21 +28,21 @@ abstract class EventHandlerBase extends RulesDefaultEventHandler implements Rule
    * @inheritdoc
    */
   public static function determineQualifiedEvents(Event $event, $event_name, array &$event_definition) {
-    return array();
+    // Nothing to do by default.
   }
 
   /**
    * @inheritdoc
    */
   public function summary() {
-    return '';
+    // Nothing to do by default.
   }
 
   /**
    * @inheritdoc
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    return $form;
+    // Nothing to do by default.
   }
 
   /**
@@ -87,7 +87,7 @@ abstract class EventHandlerBase extends RulesDefaultEventHandler implements Rule
    * @inheritdoc
    */
   public function getEventNameSuffix() {
-    return '';
+    // Nothing to do by default.
   }
 
   /**
