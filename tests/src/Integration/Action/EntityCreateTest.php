@@ -91,7 +91,7 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
       ]);
 
     // Instantiate the action we are testing.
-    $this->action = $this->actionManager->createInstance('rules_entity_create:entity:test');
+    $this->action = $this->actionManager->createInstance('rules_entity_create:test');
   }
 
   /**

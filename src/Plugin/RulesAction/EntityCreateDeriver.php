@@ -68,7 +68,7 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
         continue;
       }
 
-      $this->derivatives["entity:$entity_type_id"] = [
+      $this->derivatives[$entity_type_id] = [
         'label' => $this->t('Create a new @entity_type', ['@entity_type' => $entity_type->getLowercaseLabel()]),
         'category' => $entity_type->getLabel(),
         'entity_type_id' => $entity_type_id,
@@ -101,7 +101,7 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
           $context_definition->setAssignmentRestriction(ContextDefinition::ASSIGNMENT_RESTRICTION_INPUT);
         }
 
-        $this->derivatives["entity:$entity_type_id"]['context'][$field_name] = $context_definition;
+        $this->derivatives[$entity_type_id]['context'][$field_name] = $context_definition;
       }
     }
 
