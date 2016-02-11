@@ -69,7 +69,7 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
    * @return string
    *   The event base name.
    *
-   * @see RulesConfigurableEventHandlerInterface::getEventNameSuffix()
+   * @see \Drupal\rules\Core\RulesConfigurableEventHandlerInterface::getEventNameSuffix()
    */
   public function getEventBaseName($event_name) {
     // Cut off any suffix from a configured event name.

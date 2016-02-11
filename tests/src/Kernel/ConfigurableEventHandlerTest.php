@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\Tests\rules\Integration\Engine\EventHandlerTest.
+ * Contains \Drupal\Tests\rules\Integration\Engine\ConfigurableEventHandlerTest.
  */
 
 namespace Drupal\Tests\rules\Kernel;
@@ -18,7 +18,7 @@ use Drupal\rules\Event\EntityEvent;
  *
  * @group rules
  */
-class EventHandlerTest extends RulesDrupalTestBase {
+class ConfigurableEventHandlerTest extends RulesDrupalTestBase {
 
   /**
    * {@inheritdoc}
@@ -79,9 +79,12 @@ class EventHandlerTest extends RulesDrupalTestBase {
   /**
    * Tests ConfigurableEventHandlerEntityBundle.
    *
+   * Test that rules are triggered correctly based upon the fully qualified
+   * event name as well as the base event name.
+   *
    * @todo Add integrity check that node.field_integer is detected by Rules.
    */
-  public function testEntityBundleHandler() {
+  public function testConfigurableEventHandler() {
     // Create rule1 with the 'rules_entity_presave:node--page' event.
     $rule1 = $this->expressionManager->createRule();
     $rule1->addAction('rules_test_log',

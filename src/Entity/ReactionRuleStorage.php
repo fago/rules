@@ -43,7 +43,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   /**
    * The event manager.
    *
-   * @var RulesEventManager
+   * @var \Drupal\rules\Core\RulesEventManager
    */
   protected $eventManager;
 
@@ -71,7 +71,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   /**
    * Gets the event manager.
    *
-   * @return RulesEventManager
+   * @return \Drupal\rules\Core\RulesEventManager
    *   The event manager.
    */
   protected function eventManager() {

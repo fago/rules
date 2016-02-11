@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\EventHandler;
 
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -23,6 +24,48 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
       $events_suffixes[] = $event->getSubject()->bundle();
     }
     return $events_suffixes;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function summary() {
+    // Nothing to do by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    // Nothing to do by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate() {
+    // Nothing to check by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEventNameSuffix() {
+    // Nothing to do by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions() {
+    // Nothing to refine by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    // Nothing to calculate by default.
   }
 
 }
