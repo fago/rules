@@ -54,7 +54,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'event' => 'rules_user_login',
+      'events' => [['event_name' => 'rules_user_login']],
       'configuration' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
@@ -81,7 +81,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'event' => 'rules_user_logout',
+      'events' => [['event_name' => 'rules_user_logout']],
       'configuration' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
@@ -108,7 +108,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'event' => 'rules_system_cron',
+      'events' => [['event_name' => 'rules_system_cron']],
       'configuration' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
@@ -134,7 +134,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'event' => 'rules_system_logger_event',
+      'events' => [['event_name' => 'rules_system_logger_event']],
       'configuration' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
@@ -183,6 +183,40 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     // Test that the action in the rule logged something.
     $this->assertRulesLogEntryExists('action called');
+  }
+
+  /**
+   * Test that rules config supports multiple events.
+   */
+  public function testMultipleEvents() {
+    $rule = $this->expressionManager->createRule();
+    $rule->addCondition('rules_test_true');
+    $rule->addAction('rules_test_log');
+
+    $config_entity = $this->storage->create([
+      'id' => 'test_rule',
+      'expression_id' => 'rules_rule',
+      'events' => [
+        ['event_name' => 'rules_user_login'],
+        ['event_name' => 'rules_user_logout'],
+      ],
+      'configuration' => $rule->getConfiguration(),
+    ]);
+    $config_entity->save();
+
+    // The logger instance has changed, refresh it.
+    $this->logger = $this->container->get('logger.channel.rules');
+
+    $account = User::create(['name' => 'test_user']);
+    // Invoke the hook manually which should trigger the rules_user_login event.
+    rules_user_login($account);
+    // Invoke the hook manually which should trigger the rules_user_logout
+    // event.
+    rules_user_logout($account);
+
+    // Test that the action in the rule logged something.
+    $this->assertRulesLogEntryExists('action called');
+    $this->assertRulesLogEntryExists('action called', 1);
   }
 
 }
