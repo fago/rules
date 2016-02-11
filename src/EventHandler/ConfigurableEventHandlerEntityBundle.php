@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\Event;
 class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase {
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public static function determineQualifiedEvents(Event $event, $event_name, array &$event_definition) {
     $events_suffixes = [];

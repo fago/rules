@@ -41,6 +41,13 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   protected $drupalKernel;
 
   /**
+   * The event manager.
+   *
+   * @var RulesEventManager
+   */
+  protected $eventManager;
+
+  /**
    * Constructs a ReactionRuleStorage object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -59,6 +66,19 @@ class ReactionRuleStorage extends ConfigEntityStorage {
 
     $this->stateService = $state_service;
     $this->drupalKernel = $drupal_kernel;
+  }
+
+  /**
+   * Gets the event manager.
+   *
+   * @return RulesEventManager
+   *   The event manager.
+   */
+  protected function eventManager() {
+    if (!$this->eventManager) {
+      $this->eventManager = new RulesEventManager($this->moduleHandler());
+    }
+    return $this->eventManager;
   }
 
   /**
@@ -85,7 +105,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
     $events = [];
     foreach ($this->loadMultiple() as $rules_config) {
       $event = $rules_config->getEvent();
-      $event = RulesEventManager::rulesGetEventBaseName($event);
+      $event = $this->eventManager()->getEventBaseName($event);
       if ($event && !isset($events[$event])) {
         $events[$event] = $event;
       }

@@ -77,26 +77,11 @@ class EventHandlerTest extends RulesDrupalTestBase {
   }
 
   /**
-   * Tests EventHandlerEntityBundle configuration.
+   * Tests ConfigurableEventHandlerEntityBundle.
+   *
+   * @todo Add integrity check that node.field_integer is detected by Rules.
    */
-  public function testEntityBundleHandlerConfiguration() {
-    // Create rule with an action 'rules_entity_presave:node–-page'.
-    $rule = $this->expressionManager->createRule();
-    $config_entity = $this->storage->create([
-      'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
-      'event' => 'rules_entity_presave:node-–page',
-      'configuration' => $rule->getConfiguration(),
-    ]);
-    $config_entity->save();
-
-    // @todo Add integrity check that node.field_integer is detected by Rules.
-  }
-
-  /**
-   * Tests EventHandlerEntityBundle execution.
-   */
-  public function testEntityBundleHandlerExecution() {
+  public function testEntityBundleHandler() {
     // Create rule1 with the 'rules_entity_presave:node--page' event.
     $rule1 = $this->expressionManager->createRule();
     $rule1->addAction('rules_test_log',
@@ -107,8 +92,7 @@ class EventHandlerTest extends RulesDrupalTestBase {
       'id' => 'test_rule1',
       'expression_id' => 'rules_rule',
       'event' => 'rules_entity_presave:node--page',
-      'configuration' => $rule1->getConfiguration(),
-    ]);
+    ])->setExpression($rule1);
     $config_entity1->save();
 
     // Create rule2 with the 'rules_entity_presave:node' event.
@@ -121,8 +105,7 @@ class EventHandlerTest extends RulesDrupalTestBase {
       'id' => 'test_rule2',
       'expression_id' => 'rules_rule',
       'event' => 'rules_entity_presave:node',
-      'configuration' => $rule2->getConfiguration(),
-    ]);
+    ])->setExpression($rule2);
     $config_entity2->save();
 
     // The logger instance has changed, refresh it.

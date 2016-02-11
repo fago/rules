@@ -25,35 +25,35 @@ abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler imp
   protected $configuration = array();
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public static function determineQualifiedEvents(Event $event, $event_name, array &$event_definition) {
     // Nothing to do by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function summary() {
     // Nothing to do by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Nothing to do by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function validate() {
     // Nothing to check by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function extractConfigurationFormValues(array &$form, FormStateInterface $form_state) {
     foreach ($this->defaultConfiguration() as $key => $configuration) {
@@ -62,14 +62,14 @@ abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler imp
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getConfiguration() {
     return $this->configuration;
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
     $this->configuration = $configuration + $this->defaultConfiguration();
@@ -77,28 +77,28 @@ abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler imp
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function defaultConfiguration() {
     return array();
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function getEventNameSuffix() {
     // Nothing to do by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function refineContextDefinitions() {
     // Nothing to refine by default.
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function calculateDependencies() {
     // Nothing to calculate by default.

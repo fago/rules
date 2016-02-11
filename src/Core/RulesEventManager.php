@@ -61,15 +61,17 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
   }
 
   /**
-   * Returns the base name of a configured event name.
+   * Gets the base name of a configured event name.
    *
-   * For a configured event name like node_view--article the base event name
-   * node_view is returned.
+   * For a configured event name like {EVENT_NAME}--{SUFFIX}, the base event
+   * name {EVENT_NAME} is returned.
    *
    * @return string
    *   The event base name.
+   *
+   * @see RulesConfigurableEventHandlerInterface::getEventNameSuffix()
    */
-  static public function rulesGetEventBaseName($event_name) {
+  public function getEventBaseName($event_name) {
     // Cut off any suffix from a configured event name.
     if (strpos($event_name, '--') !== FALSE) {
       $parts = explode('--', $event_name, 2);
