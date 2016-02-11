@@ -23,7 +23,7 @@ class EventHandlerTest extends RulesDrupalTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rules', 'rules_test', 'system', 'node', 'field', 'user'];
+  public static $modules = ['rules', 'system', 'node', 'field', 'user'];
 
   /**
    * The entity storage for Rules config entities.
