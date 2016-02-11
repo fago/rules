@@ -22,7 +22,7 @@ abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler imp
    *
    * @var array
    */
-  protected $configuration = array();
+  protected $configuration = [];
 
   /**
    * {@inheritdoc}
@@ -80,7 +80,7 @@ abstract class ConfigurableEventHandlerBase extends RulesDefaultEventHandler imp
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**
