@@ -161,7 +161,7 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'event' => KernelEvents::REQUEST,
+      'events' => [['event_name' => KernelEvents::REQUEST]],
       'configuration' => $rule->getConfiguration(),
     ]);
     $config_entity->save();

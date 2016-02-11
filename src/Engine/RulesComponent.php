@@ -125,11 +125,12 @@ class RulesComponent {
    */
   public function addContextDefinitionsFrom(ConfigEntityInterface $rules_config) {
     if ($rules_config instanceof ReactionRuleConfig) {
-      $event_name = $rules_config->getEvent();
-      // @todo Use setter injection for the service.
-      $event_definition = \Drupal::service('plugin.manager.rules_event')->getDefinition($event_name);
-      foreach ($event_definition['context'] as $context_name => $context_definition) {
-        $this->addContextDefinition($context_name, $context_definition);
+      foreach ($rules_config->getEvents() as $event) {
+        // @todo Use setter injection for the service.
+        $event_definition = \Drupal::service('plugin.manager.rules_event')->getDefinition($event['event_name']);
+        foreach ($event_definition['context'] as $context_name => $context_definition) {
+          $this->addContextDefinition($context_name, $context_definition);
+        }
       }
     }
     return $this;

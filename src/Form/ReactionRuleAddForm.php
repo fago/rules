@@ -65,7 +65,8 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       }
     }
 
-    $form['event'] = [
+    $form['events']['#tree'] = TRUE;
+    $form['events'][]['event_name'] = [
       '#type' => 'select',
       '#title' => $this->t('React on event'),
       '#options' => $options,

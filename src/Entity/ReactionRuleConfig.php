@@ -36,7 +36,7 @@ use Drupal\rules\Engine\ExpressionInterface;
  *   config_export = {
  *     "id",
  *     "label",
- *     "event",
+ *     "events",
  *     "module",
  *     "description",
  *     "tag",
@@ -121,11 +121,15 @@ class ReactionRuleConfig extends ConfigEntityBase {
   protected $module = 'rules';
 
   /**
-   * The event name this reaction rule is reacting on.
+   * The events this reaction rule is reacting on.
    *
-   * @var string
+   * Events array, key - numeric index, value - event array with next structure:
+   *   - event_name: string with the event machine name.
+   *   - configuration: an array containing the event configuration.
+   *
+   * @var array
    */
-  protected $event;
+  protected $events;
 
   /**
    * Sets a Rules expression instance for this Reaction rule.
@@ -208,10 +212,10 @@ class ReactionRuleConfig extends ConfigEntityBase {
   }
 
   /**
-   * Returns the event on which this rule will trigger.
+   * Returns the array of events on which this rule will trigger.
    */
-  public function getEvent() {
-    return $this->event;
+  public function getEvents() {
+    return $this->events;
   }
 
   /**
