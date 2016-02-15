@@ -196,38 +196,6 @@ rules_expression.rules_rule:
       type: rules_expression.[id]
       label: 'Actions'
 
-rules_expression.rules_reaction_rule:
-  type: rules_expression
-  label: "Reaction Rule"
-  mapping:
-    id:
-      type: string
-      label: 'Plugin ID'
-    uuid:
-      type: string
-      label: 'UUID'
-    events:
-      type: sequence
-      label: 'Events'
-      sequence:
-        type: mapping
-        label: 'Event'
-        mapping:
-          event_name:
-            type: string
-            label: 'Name'
-          configuration:
-            type: sequence
-            label: 'Configuration'
-            sequence:
-              type: mapping
-    conditions:
-      type: rules_expression.[id]
-      label: 'Conditions'
-    actions:
-      type: rules_expression.[id]
-      label: 'Actions'
-
 rules.context.definition:
   type: mapping
   label: 'Context definition'

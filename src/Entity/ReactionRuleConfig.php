@@ -123,7 +123,8 @@ class ReactionRuleConfig extends ConfigEntityBase {
   /**
    * The events this reaction rule is reacting on.
    *
-   * Events array, key - numeric index, value - event array with next structure:
+   * Events array. The array is numerically indexed and contains arrays with the
+   * following structure:
    *   - event_name: string with the event machine name.
    *   - configuration: an array containing the event configuration.
    *
@@ -212,10 +213,30 @@ class ReactionRuleConfig extends ConfigEntityBase {
   }
 
   /**
-   * Returns the array of events on which this rule will trigger.
+   * Gets configuration of all events the rule is reacting on.
+   *
+   * @return array
+   *   The events array. The array is numerically indexed and contains arrays
+   *   with the following structure:
+   *     - event_name: string with the event machine name.
+   *     - configuration: an array containing the event configuration.
    */
   public function getEvents() {
     return $this->events;
+  }
+
+  /**
+   * Gets fully qualified names of all events the rule is reacting on.
+   *
+   * @return string[]
+   *   The array of fully qualified event names of the rule.
+   */
+  public function getEventNames() {
+    $names = [];
+    foreach ($this->events as $event) {
+      $names[] = $event['event_name'];
+    }
+    return $names;
   }
 
   /**

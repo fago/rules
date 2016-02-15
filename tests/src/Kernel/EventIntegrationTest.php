@@ -196,12 +196,12 @@ class EventIntegrationTest extends RulesDrupalTestBase {
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
       'expression_id' => 'rules_rule',
-      'events' => [
-        ['event_name' => 'rules_user_login'],
-        ['event_name' => 'rules_user_logout'],
-      ],
-      'configuration' => $rule->getConfiguration(),
     ]);
+    $config_entity->set('events', [
+      ['event_name' => 'rules_user_login'],
+      ['event_name' => 'rules_user_logout'],
+    ]);
+    $config_entity->set('configuration', $rule->getConfiguration());
     $config_entity->save();
 
     // The logger instance has changed, refresh it.
