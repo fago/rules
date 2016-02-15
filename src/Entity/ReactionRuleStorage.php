@@ -60,25 +60,15 @@ class ReactionRuleStorage extends ConfigEntityStorage {
    *   The language manager.
    * @param \Drupal\Core\State\StateInterface $state_service
    *   The state service.
+   * @param \Drupal\rules\Core\RulesEventManager $event_manager
+   *   The Rules event manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state_service, DrupalKernelInterface $drupal_kernel) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state_service, DrupalKernelInterface $drupal_kernel, RulesEventManager $event_manager) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
 
     $this->stateService = $state_service;
     $this->drupalKernel = $drupal_kernel;
-  }
-
-  /**
-   * Gets the event manager.
-   *
-   * @return \Drupal\rules\Core\RulesEventManager
-   *   The event manager.
-   */
-  protected function eventManager() {
-    if (!$this->eventManager) {
-      $this->eventManager = new RulesEventManager($this->moduleHandler());
-    }
-    return $this->eventManager;
+    $this->eventManager = $event_manager;
   }
 
   /**
@@ -91,7 +81,8 @@ class ReactionRuleStorage extends ConfigEntityStorage {
       $container->get('uuid'),
       $container->get('language_manager'),
       $container->get('state'),
-      $container->get('kernel')
+      $container->get('kernel'),
+      $container->get('plugin.manager.rules_event')
     );
   }
 
@@ -105,7 +96,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
     $events = [];
     foreach ($this->loadMultiple() as $rules_config) {
       $event = $rules_config->getEvent();
-      $event = $this->eventManager()->getEventBaseName($event);
+      $event = $this->eventManager->getEventBaseName($event);
       if ($event && !isset($events[$event])) {
         $events[$event] = $event;
       }
