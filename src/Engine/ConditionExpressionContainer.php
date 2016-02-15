@@ -143,6 +143,16 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   }
 
   /**
+   * PHP magic __clone function.
+   */
+  public function __clone() {
+    // Implement a deep clone.
+    foreach ($this->conditions as &$condition) {
+      $condition = clone $condition;
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getExpression($uuid) {

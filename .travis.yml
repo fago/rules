@@ -15,6 +15,10 @@ env:
 
 matrix:
   allow_failures:
+    # There are weird segmentation faults in the UI with PHP 5.6.5 (which travis
+    # uses). As everything works with other versions and 5.6.18 we allow 5.6 to
+    # fail for now. See https://www.drupal.org/node/2659028.
+    - php: 5.6
     # We cannot use hhvm-nightly since that does not work in Travis CI's old
     # Ubuntu 12.04.
     #- php: hhvm

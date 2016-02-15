@@ -15,6 +15,14 @@ use Drupal\Component\Plugin\PluginManagerInterface;
 interface ExpressionManagerInterface extends PluginManagerInterface {
 
   /**
+   * {@inheritdoc}
+   *
+   * @return \Drupal\rules\Engine\ExpressionInterface
+   *   A fully configured plugin instance.
+   */
+  public function createInstance($plugin_id, array $configuration = []);
+
+  /**
    * Creates a new rule.
    *
    * @param array $configuration

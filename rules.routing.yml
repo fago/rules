@@ -25,6 +25,8 @@ entity.rules_reaction_rule.add_form:
   defaults:
     _entity_form: 'rules_reaction_rule.add'
     _title: 'Add reaction rule'
+  options:
+    _rules_ui: rules.reaction_rules
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -38,6 +40,7 @@ entity.rules_reaction_rule.edit_form:
       rules_reaction_rule:
         tempstore: TRUE
         type: entity:rules_reaction_rule
+    _rules_ui: rules.reaction_rules
   requirements:
     _permission: 'administer rules+administer rules reactions'
 
@@ -45,14 +48,8 @@ entity.rules_reaction_rule.delete_form:
   path: '/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}'
   defaults:
     _entity_form: 'rules_reaction_rule.delete'
-  requirements:
-    _permission: 'administer rules+administer rules reactions'
-
-entity.rules_reaction_rule.break_lock_form:
-  path: '/admin/config/workflow/rules/reactions/break-lock/{rules_reaction_rule}'
-  defaults:
-    _entity_form: 'rules_reaction_rule.break_lock'
-    _title: 'Break lock'
+  options:
+    _rules_ui: rules.reaction_rules
   requirements:
     _permission: 'administer rules+administer rules reactions'
 

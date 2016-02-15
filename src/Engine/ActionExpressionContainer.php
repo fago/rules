@@ -115,6 +115,16 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
   }
 
   /**
+   * PHP magic __clone function.
+   */
+  public function __clone() {
+    // Implement a deep clone.
+    foreach ($this->actions as &$action) {
+      $action = clone $action;
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getExpression($uuid) {
