@@ -125,8 +125,8 @@ class ReactionRuleConfig extends ConfigEntityBase {
    *
    * Events array. The array is numerically indexed and contains arrays with the
    * following structure:
-   *   - event_name: string with the event machine name.
-   *   - configuration: an array containing the event configuration.
+   *   - event_name: String with the event machine name.
+   *   - configuration: An array containing the event configuration.
    *
    * @var array
    */
@@ -218,8 +218,8 @@ class ReactionRuleConfig extends ConfigEntityBase {
    * @return array
    *   The events array. The array is numerically indexed and contains arrays
    *   with the following structure:
-   *     - event_name: string with the event machine name.
-   *     - configuration: an array containing the event configuration.
+   *     - event_name: String with the event machine name.
+   *     - configuration: An array containing the event configuration.
    */
   public function getEvents() {
     return $this->events;
