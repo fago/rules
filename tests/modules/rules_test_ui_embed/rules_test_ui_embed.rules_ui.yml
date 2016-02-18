@@ -1,3 +1,5 @@
 rules_test_ui_embed.settings_conditions:
   label: 'Conditions embedded in Rules-test-UI-embed module settings'
   base_route: rules_test_ui_embed.settings
+  settings:
+    config_parameter: rules_reaction_rule

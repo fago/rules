@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Core\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
 
@@ -52,7 +53,7 @@ use Drupal\rules\Engine\RulesComponent;
  *   }
  * )
  */
-class ReactionRuleConfig extends ConfigEntityBase {
+class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentProviderInterface {
 
   /**
    * The unique ID of the Reaction Rule.
@@ -159,13 +160,11 @@ class ReactionRuleConfig extends ConfigEntityBase {
   }
 
   /**
-   * Gets the Rules component that is invoked when the events are dispatched.
+   * {@inheritdoc}
    *
+   * Gets the Rules component that is invoked when the events are dispatched.
    * The returned component has the definitions of the available event context
    * set.
-   *
-   * @return \Drupal\rules\Engine\RulesComponent
-   *   The Rules component.
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
@@ -174,12 +173,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
   }
 
   /**
-   * Updates the configuration based upon the given component.
-   *
-   * @param \Drupal\rules\Engine\RulesComponent $component
-   *   The component containing the configuration to set.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function updateFromComponent(RulesComponent $component) {
     // Note that the available context definitions stem from the configured

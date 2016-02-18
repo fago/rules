@@ -9,6 +9,7 @@ namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Core\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
 
@@ -52,7 +53,7 @@ use Drupal\rules\Engine\RulesComponent;
  *   }
  * )
  */
-class RulesComponentConfig extends ConfigEntityBase {
+class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentProviderInterface {
 
   /**
    * The unique ID of the Rules component.
@@ -165,10 +166,7 @@ class RulesComponentConfig extends ConfigEntityBase {
   }
 
   /**
-   * Gets the configured component.
-   *
-   * @return \Drupal\rules\Engine\RulesComponent
-   *   The component.
+   * {@inheritdoc}
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
@@ -182,14 +180,9 @@ class RulesComponentConfig extends ConfigEntityBase {
   }
 
   /**
-   * Sets the Rules component to be stored.
-   *
-   * @param \Drupal\rules\Engine\RulesComponent $component
-   *   The component.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
-  public function setComponent(RulesComponent $component) {
+  public function updateFromComponent(RulesComponent $component) {
     $this->setExpression($component->getExpression());
     $this->setContextDefinitions($component->getContextDefinitions());
     return $this;
