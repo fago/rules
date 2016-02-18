@@ -25,7 +25,7 @@ class RedirectEventSubscriberTest extends RulesDrupalTestBase {
   public function setUp() {
     parent::setUp();
 
-    $this->installSchema('system', ['router', 'url_alias']);
+    $this->installSchema('system', ['router']);
     $this->container->get('router.builder')->rebuild();
   }
 
