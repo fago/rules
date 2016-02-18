@@ -15,6 +15,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -40,6 +41,13 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   protected $drupalKernel;
 
   /**
+   * The event manager.
+   *
+   * @var \Drupal\rules\Core\RulesEventManager
+   */
+  protected $eventManager;
+
+  /**
    * Constructs a ReactionRuleStorage object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -52,12 +60,15 @@ class ReactionRuleStorage extends ConfigEntityStorage {
    *   The language manager.
    * @param \Drupal\Core\State\StateInterface $state_service
    *   The state service.
+   * @param \Drupal\rules\Core\RulesEventManager $event_manager
+   *   The Rules event manager.
    */
-  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state_service, DrupalKernelInterface $drupal_kernel) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory, UuidInterface $uuid_service, LanguageManagerInterface $language_manager, StateInterface $state_service, DrupalKernelInterface $drupal_kernel, RulesEventManager $event_manager) {
     parent::__construct($entity_type, $config_factory, $uuid_service, $language_manager);
 
     $this->stateService = $state_service;
     $this->drupalKernel = $drupal_kernel;
+    $this->eventManager = $event_manager;
   }
 
   /**
@@ -70,7 +81,8 @@ class ReactionRuleStorage extends ConfigEntityStorage {
       $container->get('uuid'),
       $container->get('language_manager'),
       $container->get('state'),
-      $container->get('kernel')
+      $container->get('kernel'),
+      $container->get('plugin.manager.rules_event')
     );
   }
 
@@ -84,6 +96,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
     $events = [];
     foreach ($this->loadMultiple() as $rules_config) {
       foreach ($rules_config->getEventNames() as $event_name) {
+        $event_name = $this->eventManager->getEventBaseName($event_name);
         if (!isset($events[$event_name])) {
           $events[$event_name] = $event_name;
         }
