@@ -91,6 +91,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
     $this->rulesUiHandler->validateLock($form, $form_state);
+    $this->rulesUiHandler->getFormHandler()->validateForm($form, $form_state);
   }
 
   /**
@@ -111,8 +112,10 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    parent::save($form, $form_state);
+    $this->rulesUiHandler->getFormHandler()->submitForm($form, $form_state);
 
+    // Persist changes by saving the entity.
+    parent::save($form, $form_state);
     // Also remove the temporarily stored rule, it has been persisted now.
     $this->rulesUiHandler->clearTemporaryStorage();
 

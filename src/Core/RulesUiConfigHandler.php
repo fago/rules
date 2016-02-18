@@ -85,8 +85,9 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
   /**
    * Gets the edited config object.
    *
-   * @return \Drupal\Core\Config\Entity\ConfigEntityBase|\Drupal\Core\Config\Config
-   *   The config entity or the editable config object.
+   * @return \Drupal\rules\Core\RulesUiComponentProviderInterface|\Drupal\Core\Config\Config
+   *   The component provider object (usually a config entity) or the editable
+   *   config object.
    */
   public function getConfig() {
     $config = $this->fetchFromTempStore();
@@ -126,7 +127,7 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
     }
     else {
       $configuration = $config->get($this->pluginDefinition->settings['config_key']);
-      // todo.
+      return RulesComponent::createFromConfiguration($configuration);
     }
   }
 
@@ -139,7 +140,7 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
       $config->updateFromComponent($component);
     }
     else {
-      // todo.
+      $config->set($this->pluginDefinition->settings['config_key'], $component->getConfiguration());
     }
     $this->storeToTempStore($config);
   }
@@ -147,9 +148,35 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
   /**
    * {@inheritdoc}
    */
-  public function getBaseRouteUrl() {
+  public function getBaseRouteUrl(array $options = []) {
     // See Url::fromRouteMatch()
-    return Url::fromRoute($this->pluginDefinition->base_route, $this->currentRouteMatch->getRawParameters()->all());
+    return Url::fromRoute(
+      $this->pluginDefinition->base_route,
+      $this->currentRouteMatch->getRawParameters()->all(),
+      $options
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUrlFromRoute($route_suffix, array $route_parameters, array $options = []) {
+    // See Url::fromRouteMatch()
+    return Url::fromRoute(
+      $this->pluginDefinition->base_route . '.' . $route_suffix,
+      $route_parameters + $this->currentRouteMatch->getRawParameters()->all(),
+      $options
+    );
+  }
+
+  /**
+   * Gets the form handler for the component's expression.
+   *
+   * @return \Drupal\rules\Form\Expression\ExpressionFormInterface|null
+   *   The form handling object if there is one, NULL otherwise.
+   */
+  public function getFormHandler() {
+    return $this->getComponent()->getExpression()->getFormHandler();
   }
 
 }

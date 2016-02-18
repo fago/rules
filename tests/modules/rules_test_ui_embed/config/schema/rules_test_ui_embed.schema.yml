@@ -3,11 +3,8 @@ rules_test_ui_embed.settings:
   label: 'Rules Test UI embedding settings'
   mapping:
     conditions:
-      # todo: Add in Rules config schema type once implemented.
-      type: sequence
+      type: rules_component
       label: Rules Conditions
-      sequence:
-        type: undefined
     css:
       type: sequence
       sequence:

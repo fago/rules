@@ -1,4 +1,11 @@
-conditions: []
+conditions:
+  expression:
+    id: rules_and
+  context_definitions:
+    css_file:
+      type: 'string'
+      label: CSS file
+      description: 'The CSS file for which to evaluate the conditions.'
 css:
   - module: rulest_test_ui_embed
     file: css/test.css
