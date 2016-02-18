@@ -130,7 +130,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
    *
    * @var array
    */
-  protected $events;
+  protected $events = [];
 
   /**
    * Sets a Rules expression instance for this Reaction rule.
