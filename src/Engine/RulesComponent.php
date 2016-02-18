@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Context\ContextDefinitionInterface;
 
 /**
@@ -55,6 +56,28 @@ class RulesComponent {
   }
 
   /**
+   * Creates a component based on the given configuration array.
+   *
+   * @param array $configuration
+   *   The component configuration, as returned from ::getConfiguration().
+   *
+   * @return static
+   */
+  public static function createFromConfiguration(array $configuration) {
+    // @todo: Can we improve this use dependency injection somehow?
+    $expression_manager = \Drupal::service('plugin.manager.rules_expression');
+    $expression = $expression_manager->createInstance($configuration['expression']['id'], $configuration['expression']);
+    $component = static::create($expression);
+    foreach ($configuration['context_definitions'] as $name => $definition) {
+      $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
+    }
+    foreach ($configuration['provided_context'] as $name) {
+      $component->provideContext($name);
+    }
+    return $component;
+  }
+
+  /**
    * Constructs the object.
    *
    * @param \Drupal\rules\Engine\ExpressionInterface $expression
@@ -73,6 +96,27 @@ class RulesComponent {
    */
   public function getExpression() {
     return $this->expression;
+  }
+
+  /**
+   * Gets the configuration array of this component.
+   *
+   * @return array
+   *   The configuration of this component. It contains the following keys:
+   *   - expression: The configuration of the contained expression, including a
+   *     nested 'id' key.
+   *   - context_definitions: Array of context definition arrays, keyed by
+   *     context name.
+   *   - provided_context: The names of the context that is provided back.
+   */
+  public function getConfiguration() {
+    return [
+      'expression' => $this->expression->getConfiguration(),
+      'context_definitions' => array_map(function (ContextDefinitionInterface $definition) {
+        return $definition->toArray();
+      }, $this->contextDefinitions),
+      'provided_context' => $this->providedContext,
+    ];
   }
 
   /**

@@ -63,11 +63,11 @@ rules_component:
       label: 'Context definitions'
       sequence:
         - type: rules.context.definition
-    provided_context_definitions:
+    provided_context:
       type: sequence
-      label: 'Provided context definitions'
+      label: 'Names of provided context'
       sequence:
-        - type: rules.context.definition
+        - type: string
     expression:
       type: rules_expression.[id]
       label: 'Expression configuration'

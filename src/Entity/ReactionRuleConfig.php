@@ -97,7 +97,9 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
    *
    * @var array
    */
-  protected $expression = [];
+  protected $expression = [
+    'id' => 'rules_rule',
+  ];
 
   /**
    * Stores a reference to the executable expression version of this component.

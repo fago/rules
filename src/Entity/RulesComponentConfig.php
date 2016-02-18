@@ -93,14 +93,9 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   /**
    * The component configuration as nested array.
    *
+   * See \Drupal\rules\Engine\RulesComponent::getConfiguration()
+   *
    * @var array
-   * An array with the following keys:
-   * - expression: The configuration of the contained expression, including a
-   *   nested 'id' key.
-   * - context_definitions: Array of context definition arrays, keyed by context
-   *   name.
-   * - provided_context_definitions: Array of provided context definition
-   *   arrays, keyed by context name.
    */
   protected $component = [];
 
@@ -142,7 +137,6 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function setExpression(ExpressionInterface $expression) {
     $this->expression = $expression;
-    //$this->expression_id = $expression->getPluginId();
     $this->component['expression'] = $expression->getConfiguration();
     return $this;
   }
@@ -151,22 +145,14 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * {@inheritdoc}
    */
   public function getComponent() {
-    $component = RulesComponent::create($this->getExpression());
-    foreach ($this->component['context_definitions'] as $name => $definition) {
-      $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
-    }
-    foreach ($this->component['provided_context_definitions'] as $name => $definition) {
-      $component->provideContext($name);
-    }
-    return $component;
+    return RulesComponent::createFromConfiguration($this->component);
   }
 
   /**
    * {@inheritdoc}
    */
   public function updateFromComponent(RulesComponent $component) {
-    $this->setExpression($component->getExpression());
-    $this->setContextDefinitions($component->getContextDefinitions());
+    $this->component = $component->getConfiguration();
     return $this;
   }
 
@@ -201,32 +187,25 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   }
 
   /**
-   * Gets the provided definitions of this component.
+   * Returns the names of context that is provided back to the caller.
    *
-   * @return \Drupal\rules\Context\ContextDefinitionInterface[]
-   *   The array of provided context definitions, keyed by context name.
+   * @return string[]
+   *   The names of the context that is provided back.
    */
-  public function getProvidedContextDefinitions() {
-    $definitions = [];
-    foreach ($this->component['provided_context_definitions'] as $name => $definition) {
-      $definitions[$name] = ContextDefinition::createFromArray($definition);
-    }
-    return $definitions;
+  public function getProvidedContext() {
+    return $this->component['provided_context'];
   }
 
   /**
-   * Sets the provided definitions of this component.
+   * Sets the names of the context that is provided back to the caller.
    *
-   * @param \Drupal\rules\Context\ContextDefinitionInterface[] $definitions
-   *   The array of provided context definitions, keyed by context name.
+   * @param string[] $names
+   *   The names of the context that is provided back.
    *
    * @return $this
    */
-  public function setProvidedContextDefinitions($definitions) {
-    $this->component['provided_context_definitions'] = [];
-    foreach ($definitions as $name => $definition) {
-      $this->component['provided_context_definitions'][$name] = $definition->toArray();
-    }
+  public function setProvidedContext($names) {
+    $this->component['provided_context'] = $names;
     return $this;
   }
 
