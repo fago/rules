@@ -22,22 +22,8 @@ rules.component.*:
     core:
       type: string
       label: 'Drupal version'
-    expression_id:
-      type: string
-      label: 'Rules expression plugin ID'
-    context_definitions:
-      type: sequence
-      label: 'Context definitions'
-      sequence:
-        - type: rules.context.definition
-    provided_context_definitions:
-      type: sequence
-      label: 'Provided context definitions'
-      sequence:
-        - type: rules.context.definition
-    configuration:
-      type: rules_expression.[%parent.expression_id]
-      label: 'Configuration'
+    component:
+      type: rules_component
 
 rules.reaction.*:
   type: config_entity
@@ -64,12 +50,27 @@ rules.reaction.*:
     core:
       type: string
       label: 'Drupal version'
-    expression_id:
-      type: string
-      label: 'Rules expression plugin ID'
-    configuration:
-      type: rules_expression.[%parent.expression_id]
-      label: 'Configuration'
+    expression:
+      type: rules_expression.[id]
+      label: 'Expression configuration'
+
+rules_component:
+  type: mapping
+  label: 'Rules component (embedded)'
+  mapping:
+    context_definitions:
+      type: sequence
+      label: 'Context definitions'
+      sequence:
+        - type: rules.context.definition
+    provided_context_definitions:
+      type: sequence
+      label: 'Provided context definitions'
+      sequence:
+        - type: rules.context.definition
+    expression:
+      type: rules_expression.[id]
+      label: 'Expression configuration'
 
 rules_expression:
   type: mapping

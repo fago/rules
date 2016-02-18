@@ -53,9 +53,8 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
       'event' => 'rules_user_login',
-      'configuration' => $rule->getConfiguration(),
+      'expression' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
 
@@ -80,9 +79,8 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
       'event' => 'rules_user_logout',
-      'configuration' => $rule->getConfiguration(),
+      'expression' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
 
@@ -107,9 +105,8 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
       'event' => 'rules_system_cron',
-      'configuration' => $rule->getConfiguration(),
+      'expression' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
 
@@ -133,9 +130,8 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
       'event' => 'rules_system_logger_event',
-      'configuration' => $rule->getConfiguration(),
+      'expression' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
 
@@ -160,9 +156,8 @@ class EventIntegrationTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-      'expression_id' => 'rules_rule',
       'event' => KernelEvents::REQUEST,
-      'configuration' => $rule->getConfiguration(),
+      'expression' => $rule->getConfiguration(),
     ]);
     $config_entity->save();
 

@@ -7,36 +7,36 @@ module: rules
 description: 'Tests adding Rules component by default.'
 tag: 'test'
 core: 8.x
-expression_id: rules_rule
-context_definitions:
-  user:
-    type: 'entity:user'
-    label: User
-    description: 'The user whose mail address to print.'
-provided_context_definitions:
-  concatenated:
-    type: 'string'
-    label: 'String result'
-    description: 'Some concatenated string'
-configuration:
-  id: rules_rule
-  conditions:
-    id: rules_and
-    conditions: {}
-  actions:
-    id: rules_action_set
+component:
+  context_definitions:
+    user:
+      type: 'entity:user'
+      label: User
+      description: 'The user whose mail address to print.'
+  provided_context_definitions:
+    concatenated:
+      type: 'string'
+      label: 'String result'
+      description: 'Some concatenated string'
+  expression:
+    id: rules_rule
+    conditions:
+      id: rules_and
+      conditions: {}
     actions:
-      - id: rules_action
-        action_id: rules_system_message
-        context_values:
-          type: 'status'
-        context_mapping:
-          message: 'user.mail.value'
-        context_processors: {  }
-        provides_mapping: {  }
-      - id: rules_action
-        action_id: rules_test_string
-        context_mapping:
-          text: 'user.mail.value'
-        context_processors: {  }
-        provides_mapping: {  }
+      id: rules_action_set
+      actions:
+        - id: rules_action
+          action_id: rules_system_message
+          context_values:
+            type: 'status'
+          context_mapping:
+            message: 'user.mail.value'
+          context_processors: {  }
+          provides_mapping: {  }
+        - id: rules_action
+          action_id: rules_test_string
+          context_mapping:
+            text: 'user.mail.value'
+          context_processors: {  }
+          provides_mapping: {  }

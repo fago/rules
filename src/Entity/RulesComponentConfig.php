@@ -41,10 +41,7 @@ use Drupal\rules\Engine\RulesComponent;
  *     "description",
  *     "tag",
  *     "core",
- *     "expression_id",
- *     "context_definitions",
- *     "provided_context_definitions",
- *     "configuration",
+ *     "component",
  *   },
  *   links = {
  *     "collection" = "/admin/config/workflow/rules/components",
@@ -94,32 +91,18 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   protected $core = \Drupal::CORE_COMPATIBILITY;
 
   /**
-   * The Rules expression plugin ID that the configuration is for.
-   *
-   * @var string
-   */
-  protected $expression_id;
-
-  /**
-   * Array of context definition arrays, keyed by context name.
-   *
-   * @var array[]
-   */
-  protected $context_definitions = [];
-
-  /**
-   * Array of provided context definition arrays, keyed by context name.
-   *
-   * @var array[]
-   */
-  protected $provided_context_definitions = [];
-
-  /**
-   * The expression plugin specific configuration as nested array.
+   * The component configuration as nested array.
    *
    * @var array
+   * An array with the following keys:
+   * - expression: The configuration of the contained expression, including a
+   *   nested 'id' key.
+   * - context_definitions: Array of context definition arrays, keyed by context
+   *   name.
+   * - provided_context_definitions: Array of provided context definition
+   *   arrays, keyed by context name.
    */
-  protected $configuration = [];
+  protected $component = [];
 
   /**
    * Stores a reference to the executable expression version of this component.
@@ -144,9 +127,8 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   public function getExpression() {
     // Ensure that an executable Rules expression is available.
     if (!isset($this->expression)) {
-      $this->expression = $this->getExpressionManager()->createInstance($this->expression_id, $this->configuration);
+      $this->expression = $this->getExpressionManager()->createInstance($this->component['expression']['id'], $this->component['expression']);
     }
-
     return $this->expression;
   }
 
@@ -160,8 +142,8 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function setExpression(ExpressionInterface $expression) {
     $this->expression = $expression;
-    $this->expression_id = $expression->getPluginId();
-    $this->configuration = $expression->getConfiguration();
+    //$this->expression_id = $expression->getPluginId();
+    $this->component['expression'] = $expression->getConfiguration();
     return $this;
   }
 
@@ -170,10 +152,10 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
-    foreach ($this->context_definitions as $name => $definition) {
+    foreach ($this->component['context_definitions'] as $name => $definition) {
       $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
     }
-    foreach ($this->provided_context_definitions as $name => $definition) {
+    foreach ($this->component['provided_context_definitions'] as $name => $definition) {
       $component->provideContext($name);
     }
     return $component;
@@ -196,7 +178,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function getContextDefinitions() {
     $definitions = [];
-    foreach ($this->context_definitions as $name => $definition) {
+    foreach ($this->component['context_definitions'] as $name => $definition) {
       $definitions[$name] = ContextDefinition::createFromArray($definition);
     }
     return $definitions;
@@ -211,9 +193,9 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * @return $this
    */
   public function setContextDefinitions($definitions) {
-    $this->context_definitions = [];
+    $this->component['context_definitions'] = [];
     foreach ($definitions as $name => $definition) {
-      $this->context_definitions[$name] = $definition->toArray();
+      $this->component['context_definitions'][$name] = $definition->toArray();
     }
     return $this;
   }
@@ -226,7 +208,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function getProvidedContextDefinitions() {
     $definitions = [];
-    foreach ($this->provided_context_definitions as $name => $definition) {
+    foreach ($this->component['provided_context_definitions'] as $name => $definition) {
       $definitions[$name] = ContextDefinition::createFromArray($definition);
     }
     return $definitions;
@@ -241,9 +223,9 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * @return $this
    */
   public function setProvidedContextDefinitions($definitions) {
-    $this->provided_context_definitions = [];
+    $this->component['provided_context_definitions'] = [];
     foreach ($definitions as $name => $definition) {
-      $this->provided_context_definitions[$name] = $definition->toArray();
+      $this->component['provided_context_definitions'][$name] = $definition->toArray();
     }
     return $this;
   }
