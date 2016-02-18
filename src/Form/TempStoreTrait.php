@@ -13,7 +13,13 @@ use Drupal\Core\Url;
 use Drupal\user\SharedTempStoreFactory;
 
 /**
- * Provides methods for modified rules configurations in temporary storage.
+ * Provides methods for modified rules components in temporary storage.
+ *
+ * Note that this implements the lock-related methods of
+ * \Drupal\rules\Core\RulesUiHandlerInterface.
+ *
+ * @see \Drupal\rules\Core\RulesUiHandlerInterface
+ * @see \Drupal\rules\Core\RulesUiConfigHandler
  */
 trait TempStoreTrait {
 
@@ -25,11 +31,18 @@ trait TempStoreTrait {
   protected $tempStoreFactory;
 
   /**
-   * The temporary store for the rules configuration.
+   * The temporary store for the rules component.
    *
    * @var \Drupal\user\SharedTempStore
    */
   protected $tempStore;
+
+  /**
+   * The currently active rules UI handler.
+   *
+   * @var \Drupal\rules\Core\RulesUiHandlerInterface
+   */
+  protected $rulesUiHandler;
 
   /**
    * The date formatter service.
@@ -77,7 +90,7 @@ trait TempStoreTrait {
   /**
    * Setter injection for the date formatter service.
    *
-   * @param \Drupal\rules\Form\DateFormatterInterface $date_formatter
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The service.
    */
   public function setDateFormatter(DateFormatterInterface $date_formatter) {
@@ -98,36 +111,50 @@ trait TempStoreTrait {
   }
 
   /**
-   * Gets the temporary storage repository from the factory.
+   * Gets the currently active RulesUI's handler.
    *
-   * @return \Drupal\user\SharedTempStore
-   *   The shareds storage.
+   * @return \Drupal\rules\Core\RulesUiHandlerInterface
+   *   The RulesUI handler.
    */
-  protected function getTempStore() {
-    if (!isset($this->tempStore)) {
-      $this->tempStore = $this->getTempStoreFactory()->get($this->getRuleConfig()->getEntityTypeId());
-    }
-    return $this->tempStore;
+  protected function getRulesUiHandler() {
+    // Usually the trait is used on the RulesUI handler.
+    return $this;
   }
 
   /**
-   * Saves the rule configuration to the temporary storage.
+   * Fetches the stored data from the temporary storage.
+   *
+   * @return mixed|null
+   *   The stored data or NULL if the temp store is empty.
    */
-  protected function saveToTempStore() {
-    $this->getTempStore()->set($this->getRuleConfig()->id(), $this->getRuleConfig());
+  protected function fetchFromTempStore() {
+    return $this->getTempStore()->get($this->getTempStoreItemId());
   }
 
   /**
-   * Determines if the rule coniguration is locked for the current user.
+   * Stores some data in the temporary storage.
    *
-   * @return bool
-   *   TRUE if locked, FALSE otherwise.
+   * @param mixed $data
+   *   The data to store.
    */
-  protected function isLocked() {
+  protected function storeToTempStore($data) {
+    $this->getTempStore()->set($this->getTempStoreItemId(), $data);
+  }
+
+  /**
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::clearTemporaryStorage()
+   */
+  public function clearTemporaryStorage() {
+    $this->getTempStore()->delete($this->getTempStoreItemId());
+  }
+
+  /**
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::isLocked()
+   */
+  public function isLocked() {
     // If there is an object in the temporary storage from another user then
-    // this configuration is locked.
-    if ($this->getTempStore()->get($this->getRuleConfig()->id())
-      && !$this->getTempStore()->getIfOwner($this->getRuleConfig()->id())
+    // this component is locked.
+    if ($this->getTempStore()->get($this->getTempStoreItemId()) && !$this->getTempStore()->getIfOwner($this->getTempStoreItemId())
     ) {
       return TRUE;
     }
@@ -135,54 +162,53 @@ trait TempStoreTrait {
   }
 
   /**
-   * Provides information which user at which time locked the rule for editing.
+   * Generates the temp store item's ID to use for the edited component.
    *
-   * @return object
-   *   StdClass object as provided by \Drupal\user\SharedTempStore.
+   * @return string
+   *   The temp store ID.
    */
-  protected function getLockMetaData() {
-    return $this->getTempStore()->getMetadata($this->getRuleConfig()->id());
+  private function getTempStoreItemId() {
+    // The internal path is unique for the currently edited component.
+    return $this->getRulesUiHandler()->getBaseRouteUrl()->getInternalPath();
   }
 
   /**
-   * Checks if the rule has been modified and is present in the storage.
+   * Gets the temporary storage repository from the factory.
    *
-   * @return bool
-   *   TRUE if the rule has been modified, FALSE otherwise.
+   * @return \Drupal\user\SharedTempStore
+   *   The shareds storage.
    */
-  protected function isEdited() {
-    if ($this->getTempStore()->get($this->getRuleConfig()->id())) {
+  private function getTempStore() {
+    if (!isset($this->tempStore)) {
+      $this->tempStore = $this->getTempStoreFactory()->get($this->getRulesUiHandler()->getPluginId());
+    }
+    return $this->tempStore;
+  }
+
+  /**
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::getLockMetaData()
+   */
+  public function getLockMetaData() {
+    return $this->getTempStore()->getMetadata($this->getTempStoreItemId());
+  }
+
+  /**
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::isEdited()
+   */
+  public function isEdited() {
+    if ($this->getTempStore()->get($this->getTempStoreItemId())) {
       return TRUE;
     }
     return FALSE;
   }
 
   /**
-   * Removed the current rule configuration from the temporary storage.
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::addLockInformation()
    */
-  protected function deleteFromTempStore() {
-    $this->getTempStore()->delete($this->getRuleConfig()->id());
-  }
-
-  /**
-   * Provides the config entity object that is dealt with in the temp store.
-   *
-   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface
-   *   The rules config entity.
-   */
-  protected function getRuleConfig() {
-    return $this->ruleConfig;
-  }
-
-  /**
-   * Adds a message to the form if the rule configuration is locked/modified.
-   *
-   * @param array $form
-   *   The form render array.
-   */
-  protected function addLockInformation(array &$form) {
+  public function addLockInformation() {
+    $build = [];
     if ($this->isLocked()) {
-      $form['locked'] = [
+      $build['locked'] = [
         '#type' => 'container',
         '#attributes' => [
           'class' => ['rules-locked', 'messages', 'messages--warning'],
@@ -192,7 +218,7 @@ trait TempStoreTrait {
       ];
     }
     else {
-      $form['changed'] = [
+      $build['changed'] = [
         '#type' => 'container',
         '#attributes' => [
           'class' => ['rules-changed', 'messages', 'messages--warning'],
@@ -201,15 +227,16 @@ trait TempStoreTrait {
         '#weight' => -10,
       ];
       if (!$this->isEdited()) {
-        $form['changed']['#attributes']['class'][] = 'js-hide';
+        $build['changed']['#attributes']['class'][] = 'js-hide';
       }
     }
+    return $build;
   }
 
   /**
-   * Validation callback that prevents editing locked rule configs.
+   * @see \Drupal\rules\Core\RulesUiHandlerInterface::validateLock()
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateLock(array &$form, FormStateInterface $form_state) {
     if ($this->isLocked()) {
       $form_state->setError($form, $this->lockInformationMessage());
     }
@@ -221,7 +248,7 @@ trait TempStoreTrait {
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   The message suitable to be shown in the UI.
    */
-  protected function lockInformationMessage() {
+  private function lockInformationMessage() {
     $lock = $this->getLockMetaData();
     $username = [
       '#theme' => 'username',
@@ -230,11 +257,10 @@ trait TempStoreTrait {
     $lock_message_substitutions = [
       '@user' => drupal_render($username),
       '@age' => $this->getDateFormatter()->formatTimeDiffSince($lock->updated),
-      ':url' => Url::fromRoute('entity.rules_reaction_rule.break_lock_form', [
-        'rules_reaction_rule' => $this->getRuleConfig()->id(),
-      ])->toString(),
+      '@component_type' => $this->getRulesUiHandler()->getPluginDefinition()->component_type_label,
+      ':url' => Url::fromRoute($this->getRulesUiHandler()->getPluginDefinition()->base_route . '.break_lock', \Drupal::routeMatch()->getRawParameters()->all())->toString(),
     ];
-    return $this->t('This rule is being edited by user @user, and is therefore locked from editing by others. This lock is @age old. Click here to <a href=":url">break this lock</a>.', $lock_message_substitutions);
+    return $this->t('This @component_type is being edited by user @user, and is therefore locked from editing by others. This lock is @age old. Click here to <a href=":url">break this lock</a>.', $lock_message_substitutions);
   }
 
 }

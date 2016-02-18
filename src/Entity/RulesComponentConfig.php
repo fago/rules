@@ -10,6 +10,7 @@ namespace Drupal\rules\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\ExpressionInterface;
+use Drupal\rules\Engine\RulesComponent;
 
 /**
  * Rules component configuration entity to persistently store configuration.
@@ -170,7 +171,7 @@ class RulesComponentConfig extends ConfigEntityBase {
    *   The component.
    */
   public function getComponent() {
-    $component = \Drupal\rules\Engine\RulesComponent::create($this->getExpression());
+    $component = RulesComponent::create($this->getExpression());
     foreach ($this->context_definitions as $name => $definition) {
       $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
     }
@@ -188,7 +189,7 @@ class RulesComponentConfig extends ConfigEntityBase {
    *
    * @return $this
    */
-  public function setComponent(\Drupal\rules\Engine\RulesComponent $component) {
+  public function setComponent(RulesComponent $component) {
     $this->setExpression($component->getExpression());
     $this->setContextDefinitions($component->getContextDefinitions());
     return $this;

@@ -9,6 +9,7 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Core\RulesEventManager;
+use Drupal\rules\Core\RulesUiConfigHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,14 +17,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ReactionRuleEditForm extends RulesComponentFormBase {
 
-  use TempStoreTrait;
-
   /**
    * The event plugin manager.
    *
    * @var \Drupal\rules\Core\RulesEventManager
    */
   protected $eventManager;
+
+  /**
+   * The RulesUI handler of the currently active UI.
+   *
+   * @var \Drupal\rules\Core\RulesUiConfigHandler
+   */
+  protected $rulesUiHandler;
 
   /**
    * Constructs a new object of this class.
@@ -45,8 +51,27 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   /**
    * {@inheritdoc}
    */
+  public function buildForm(array $form, FormStateInterface $form_state, RulesUiConfigHandler $rules_ui_handler = NULL) {
+    // Overridden such we can receive further route parameters.
+    $this->rulesUiHandler = $rules_ui_handler;
+    return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareEntity() {
+    parent::prepareEntity();
+    // Replace the config entity with the latest entity from temp store, so any
+    // interim changes are picked up.
+    $this->entity = $this->rulesUiHandler->getConfig();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function form(array $form, FormStateInterface $form_state) {
-    $this->addLockInformation($form);
+    $form['locked'] = $this->rulesUiHandler->addLockInformation();
 
     foreach ($this->entity->getEventNames() as $key => $event_name) {
       $event_definition = $this->eventManager->getDefinition($event_name);
@@ -59,9 +84,18 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
         ]),
       ];
     }
-    $form_handler = $this->entity->getExpression()->getFormHandler();
+    $form_handler = $this->rulesUiHandler->getComponent()
+      ->getExpression()->getFormHandler();
     $form = $form_handler->form($form, $form_state);
     return parent::form($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $this->rulesUiHandler->validateLock($form, $form_state);
   }
 
   /**
@@ -83,8 +117,9 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    */
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
+
     // Also remove the temporarily stored rule, it has been persisted now.
-    $this->deleteFromTempStore();
+    $this->rulesUiHandler->clearTemporaryStorage();
 
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));
   }
@@ -93,7 +128,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * Form submission handler for the 'cancel' action.
    */
   public function cancel(array $form, FormStateInterface $form_state) {
-    $this->deleteFromTempStore();
+    $this->rulesUiHandler->clearTemporaryStorage();
     drupal_set_message($this->t('Canceled.'));
     $form_state->setRedirect('entity.rules_reaction_rule.collection');
   }
@@ -103,15 +138,6 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    */
   public function getTitle($rules_reaction_rule) {
     return $this->t('Edit reaction rule "@label"', ['@label' => $rules_reaction_rule->label()]);
-  }
-
-  /**
-   * Returns the entity object, which is the rules config on this class.
-   *
-   * @see \Drupal\rules\Form\TempStoreTrait
-   */
-  protected function getRuleConfig() {
-    return $this->entity;
   }
 
 }

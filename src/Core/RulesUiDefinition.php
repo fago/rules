@@ -54,7 +54,16 @@ class RulesUiDefinition implements PluginDefinitionInterface {
    *
    * @var string
    */
-  public $class = RulesUiDefaultHandler::class;
+  public $class = RulesUiConfigHandler::class;
+
+  /**
+   * Array of handler-specific settings.
+   *
+   * Check the documentation of the ui handler for further details.
+   *
+   * @var array
+   */
+  public $settings = [];
 
   /**
    * The plugin provider; e.g., the module.
@@ -80,6 +89,28 @@ class RulesUiDefinition implements PluginDefinitionInterface {
    * @var string|null
    */
   public $permissions;
+
+  /**
+   * The label used for referring to the component (optional).
+   *
+   * If omitted, a handler-specific fallback logic is applied. For example,
+   * the RulesUiConfigHandler assumes a config entity and uses its label()
+   * method.
+   *
+   * @ingroup plugin_translatable
+   *
+   * @var string|null
+   */
+  public $component_label;
+
+  /**
+   * The label used for referring to the component type.
+   *
+   * @ingroup plugin_translatable
+   *
+   * @var string|null
+   */
+  public $component_type_label = 'component';
 
   /**
    * {@inheritdoc}

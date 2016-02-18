@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains Drupal\rules\Core\RulesUiManagerInterface.
+ * Contains \Drupal\rules\Core\RulesUiManagerInterface.
  */
 
 namespace Drupal\rules\Core;
