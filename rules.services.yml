@@ -34,14 +34,18 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  rules.ui_route_enhancer:
+    class: Drupal\rules\Routing\RulesUiRouteEnhancer
+    arguments: ['@plugin.manager.rules_ui']
+    tags:
+      - { name: route_enhancer }
+  rules.ui_route_subscriber:
+    class: Drupal\rules\Routing\RulesUiRouteSubscriber
+    arguments: ['@plugin.manager.rules_ui']
+    tags:
+      - { name: 'event_subscriber' }
   typed_data.data_fetcher:
     class: Drupal\rules\TypedData\DataFetcher
   typed_data.placeholder_resolver:
     class: Drupal\rules\TypedData\PlaceholderResolver
     arguments: ['@typed_data.data_fetcher', '@plugin.manager.typed_data_filter']
-  paramconverter.rules:
-    class: Drupal\rules\ParamConverter\RulesTempConverter
-    arguments: ['@entity.manager', '@user.shared_tempstore']
-    tags:
-      - { name: paramconverter, priority: 10 }
-    lazy: true

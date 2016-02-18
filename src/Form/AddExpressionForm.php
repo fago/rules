@@ -7,21 +7,17 @@
 
 namespace Drupal\rules\Form;
 
-use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rules\Core\RulesUiHandlerInterface;
+use Drupal\rules\Engine\ExpressionContainerInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\RulesComponent;
-use Drupal\rules\Entity\ReactionRuleConfig;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * UI form to add an expression like a condition or action to a rule.
  */
-class AddExpressionForm extends FormBase {
-
-  use TempStoreTrait {
-    validateForm as lockValidateForm;
-  }
+class AddExpressionForm extends EditExpressionForm {
 
   /**
    * The Rules expression manager to get expression plugins.
@@ -29,13 +25,6 @@ class AddExpressionForm extends FormBase {
    * @var ExpressionManagerInterface
    */
   protected $expressionManager;
-
-  /**
-   * The reaction rule config the expression is added to.
-   *
-   * @var \Drupal\rules\Entity\ReactionRuleConfig
-   */
-  protected $ruleConfig;
 
   /**
    * The expression ID that is added, example: 'rules_action'.
@@ -61,47 +50,41 @@ class AddExpressionForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $reaction_config = NULL, $expression_id = NULL) {
-    $this->ruleConfig = $reaction_config;
+  public function buildForm(array $form, FormStateInterface $form_state, RulesUiHandlerInterface $rules_ui_handler = NULL, $uuid = NULL, $expression_id = NULL) {
     $this->expressionId = $expression_id;
+    $this->uuid = $uuid;
 
-    $expression = $this->expressionManager->createInstance($expression_id);
-    $form_handler = $expression->getFormHandler();
-    $form = $form_handler->form($form, $form_state);
-    return $form;
+    // When initially adding the expression, we have to initialize the object
+    // and add the expression.
+    if (!$this->uuid) {
+      // Before we add our edited expression to the component's expression,
+      // we clone it such that we do not change the source component until
+      // the form has been successfully submitted.
+      $component = clone $rules_ui_handler->getComponent();
+      $this->uuid = $this->getEditedExpression($component)->getUuid();
+      $form_state->set('component', $component);
+      $form_state->set('uuid', $this->uuid);
+    }
+
+    return parent::buildForm($form, $form_state, $rules_ui_handler, $this->uuid);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
-    return 'rules_expression_add';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    $this->lockValidateForm($form, $form_state);
-
-    // In order to validdate the whole rule we need to invoke the submission
-    // handler of the expression form. That way the expression is changed and we
-    // can validate the change for integrity afterwards.
-    $expression = $this->expressionManager->createInstance($this->expressionId);
-    $form_handler = $expression->getFormHandler();
-    $form_handler->submitForm($form, $form_state);
-
-    $validation_config = clone $this->ruleConfig;
-    $rule_expression = $validation_config->getExpression();
-    $rule_expression->addExpressionObject($expression);
-
-    $all_violations = RulesComponent::create($rule_expression)
-      ->addContextDefinitionsFrom($validation_config)
-      ->checkIntegrity();
-    $local_violations = $all_violations->getFor($expression->getUuid());
-
-    foreach ($local_violations as $violation) {
-      $form_state->setError($form, $violation->getMessage());
+  protected function getEditedExpression(RulesComponent $component) {
+    $component_expression = $component->getExpression();
+    if (!$component_expression instanceof ExpressionContainerInterface) {
+      throw new \LogicException('Cannot add expression to expression of type ' . $component_expression->getPluginId());
+    }
+    if ($this->uuid && $expression = $component_expression->getExpression($this->uuid)) {
+      return $expression;
+    }
+    else {
+      $expression = $this->expressionManager->createInstance($this->expressionId);
+      $rule_expression = $component->getExpression();
+      $rule_expression->addExpressionObject($expression);
+      return $expression;
     }
   }
 
@@ -109,28 +92,16 @@ class AddExpressionForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $expression = $this->expressionManager->createInstance($this->expressionId);
-    $form_handler = $expression->getFormHandler();
-    $form_handler->submitForm($form, $form_state);
-
-    $rule_expression = $this->ruleConfig->getExpression();
-    $rule_expression->addExpressionObject($expression);
-    // Set the expression again so that the config is copied over to the
-    // config entity.
-    $this->ruleConfig->setExpression($rule_expression);
-
-    $this->saveToTempStore();
-
-    $form_state->setRedirect('entity.rules_reaction_rule.edit_form', [
-      'rules_reaction_rule' => $this->ruleConfig->id(),
-    ]);
+    parent::submitForm($form, $form_state);
+    $form_state->setRedirect('entity.rules_reaction_rule.edit_form', $this->getRouteMatch()->getRawParameters()->all());
   }
 
   /**
    * Provides the page title on the form.
    */
-  public function getTitle(ReactionRuleConfig $reaction_config, $expression_id) {
-    $expression = $this->expressionManager->createInstance($expression_id);
+  public function getTitle(RulesUiHandlerInterface $rules_ui_handler, $expression_id) {
+    $this->expressionId = $expression_id;
+    $expression = $this->expressionManager->createInstance($this->expressionId);
     return $this->t('Add @expression', ['@expression' => $expression->getLabel()]);
   }
 

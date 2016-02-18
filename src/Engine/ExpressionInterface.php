@@ -8,6 +8,7 @@
 namespace Drupal\rules\Engine;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Executable\ExecutableInterface;
 
 /**
@@ -15,7 +16,7 @@ use Drupal\Core\Executable\ExecutableInterface;
  *
  * @see \Drupal\rules\Engine\ExpressionManager
  */
-interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInterface {
+interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInterface, PluginInspectionInterface {
 
   /**
    * Execute the expression with a given Rules state.
@@ -113,5 +114,31 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    *   The UUID to set.
    */
   public function setUuid($uuid);
+
+  /**
+   * Prepares the execution metadata state by adding variables to it.
+   *
+   * If this expression contains other expressions then the metadata state is
+   * set up recursively. If a $until expression is specified then the setup will
+   * stop right before that expression. This is useful for inspecting the state
+   * at a certain point in the expression tree, for example to do autocompletion
+   * of available variables in the state.
+   *
+   * The difference to fully preparing the state is that not all variables are
+   * available in the middle of the expression tree. Preparing with
+   * $until = NULL reflects the execution metadata state at the end of the
+   * expression.
+   *
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The execution metadata state to populate variables in.
+   * @param \Drupal\rules\Engine\ExpressionInterface $until
+   *   (optional) A nested expression if this expression is a container.
+   *   Preparation of the sate will happen right before that expression.
+   *
+   * @return bool
+   *   TRUE if $until is NULL or the nested expression was found in the tree,
+   *   FALSE otherwise.
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL);
 
 }

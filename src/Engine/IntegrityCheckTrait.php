@@ -54,6 +54,7 @@ trait IntegrityCheckTrait {
             '@message' => $e->getMessage(),
           ]));
           $violation->setContextName($name);
+          $violation->setUuid($this->getUuid());
           $violation_list->add($violation);
         }
 
@@ -65,6 +66,7 @@ trait IntegrityCheckTrait {
             '%context_name' => $context_definition->getLabel(),
           ]));
           $violation->setContextName($name);
+          $violation->setUuid($this->getUuid());
           $violation_list->add($violation);
         }
       }
@@ -77,6 +79,7 @@ trait IntegrityCheckTrait {
             '%context_name' => $context_definition->getLabel(),
           ]));
           $violation->setContextName($name);
+          $violation->setUuid($this->getUuid());
           $violation_list->add($violation);
         }
       }
@@ -86,6 +89,7 @@ trait IntegrityCheckTrait {
           '%context_name' => $context_definition->getLabel(),
         ]));
         $violation->setContextName($name);
+        $violation->setUuid($this->getUuid());
         $violation_list->add($violation);
       }
     }
@@ -94,29 +98,23 @@ trait IntegrityCheckTrait {
       $provided_context_definitions = $plugin->getProvidedContextDefinitions();
 
       foreach ($provided_context_definitions as $name => $context_definition) {
-        if (isset($this->configuration['provides_mapping'][$name])) {
-          if (!preg_match('/^[0-9a-zA-Z_]*$/', $this->configuration['provides_mapping'][$name])) {
-            $violation = new IntegrityViolation();
-            $violation->setMessage($this->t('Provided variable name %name contains not allowed characters.', [
-              '%name' => $this->configuration['provides_mapping'][$name],
-            ]));
-            $violation->setContextName($name);
-            $violation_list->add($violation);
-          }
-
-          // Populate the state with the new variable that is provided by this
-          // plugin. That is necessary so that the integrity check in subsequent
-          // actions knows about the variable and does not throw violations.
-          $metadata_state->setDataDefinition(
-            $this->configuration['provides_mapping'][$name],
-            $context_definition->getDataDefinition()
-          );
-        }
-        else {
-          $metadata_state->setDataDefinition($name, $context_definition->getDataDefinition());
+        if (isset($this->configuration['provides_mapping'][$name])
+          && !preg_match('/^[0-9a-zA-Z_]*$/', $this->configuration['provides_mapping'][$name])
+        ) {
+          $violation = new IntegrityViolation();
+          $violation->setMessage($this->t('Provided variable name %name contains not allowed characters.', [
+            '%name' => $this->configuration['provides_mapping'][$name],
+          ]));
+          $violation->setContextName($name);
+          $violation->setUuid($this->getUuid());
+          $violation_list->add($violation);
         }
       }
     }
+
+    // Make sure that all provided variables by this plugin are added to the
+    // execution metadata state.
+    $this->addProvidedVariablesToExecutionMetadataState($plugin, $metadata_state);
 
     return $violation_list;
   }
@@ -162,7 +160,37 @@ trait IntegrityCheckTrait {
         '@provided_type' => $provided->getDataType(),
       ]));
       $violation->setContextName($context_name);
+      $violation->setUuid($this->getUuid());
       $violation_list->add($violation);
+    }
+  }
+
+  /**
+   * Adds provided variables to the execution metadata state.
+   *
+   * @param CoreContextAwarePluginInterface $plugin
+   *   The action or condition plugin that may provide variables.
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The excution metadata state to add variables to.
+   */
+  public function addProvidedVariablesToExecutionMetadataState(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
+    if ($plugin instanceof ContextProviderInterface) {
+      $provided_context_definitions = $plugin->getProvidedContextDefinitions();
+
+      foreach ($provided_context_definitions as $name => $context_definition) {
+        if (isset($this->configuration['provides_mapping'][$name])) {
+          // Populate the state with the new variable that is provided by this
+          // plugin. That is necessary so that the integrity check in subsequent
+          // actions knows about the variable and does not throw violations.
+          $metadata_state->setDataDefinition(
+            $this->configuration['provides_mapping'][$name],
+            $context_definition->getDataDefinition()
+          );
+        }
+        else {
+          $metadata_state->setDataDefinition($name, $context_definition->getDataDefinition());
+        }
+      }
     }
   }
 

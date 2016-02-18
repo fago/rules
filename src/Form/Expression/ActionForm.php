@@ -47,14 +47,15 @@ class ActionForm implements ExpressionFormInterface {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $action_name = $form_state->get('action');
+    $action_id = $form_state->get('action_id');
     $configuration = $this->actionExpression->getConfiguration();
-    if (empty($action_name) && !empty($configuration['action_id'])) {
-      $action_name = $configuration['action_id'];
+    if (empty($action_id) && !empty($configuration['action_id'])) {
+      $action_id = $configuration['action_id'];
+      $form_state->set('action_id', $action_id);
     }
 
     // Step 1 of the multistep form.
-    if (!$action_name) {
+    if (!$action_id) {
       $action_definitions = $this->actionManager->getGroupedDefinitions();
       $options = [];
       foreach ($action_definitions as $group => $definitions) {
@@ -63,7 +64,7 @@ class ActionForm implements ExpressionFormInterface {
         }
       }
 
-      $form['action'] = [
+      $form['action_id'] = [
         '#type' => 'select',
         '#title' => $this->t('Action'),
         '#options' => $options,
@@ -74,7 +75,7 @@ class ActionForm implements ExpressionFormInterface {
         '#value' => $this->t('Continue'),
         '#name' => 'continue',
         // Only validate the selected action in the first step.
-        '#limit_validation_errors' => [['action']],
+        '#limit_validation_errors' => [['action_id']],
         '#submit' => [static::class . '::submitFirstStep'],
       ];
 
@@ -82,14 +83,10 @@ class ActionForm implements ExpressionFormInterface {
     }
 
     // Step 2 of the form.
-    $action = $this->actionManager->createInstance($action_name);
+    $action = $this->actionManager->createInstance($action_id);
 
     $form['summary'] = [
       '#markup' => $action->summary(),
-    ];
-    $form['action'] = [
-      '#type' => 'value',
-      '#value' => $action_name,
     ];
 
     $context_definitions = $action->getContextDefinitions();
@@ -109,10 +106,23 @@ class ActionForm implements ExpressionFormInterface {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array $form, FormStateInterface $form_state) {
+    // Only if there is an action selected already we can validate something.
+    if ($form_state->get('action_id')) {
+      // Invoke the submission handler which will setup the expression being
+      // edited in the form. That way the expression is ready for other
+      // validation handlers.
+      $this->submitForm($form, $form_state);
+    }
+  }
+
+  /**
    * Submit callback: save the selected action in the first step.
    */
-  public function submitFirstStep(array &$form, FormStateInterface $form_state) {
-    $form_state->set('action', $form_state->getValue('action'));
+  public static function submitFirstStep(array &$form, FormStateInterface $form_state) {
+    $form_state->set('action_id', $form_state->getValue('action_id'));
     $form_state->setRebuild();
   }
 
@@ -120,6 +130,10 @@ class ActionForm implements ExpressionFormInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Nothing todo as long as the first step is not completed.
+    if (!$form_state->get('action_id')) {
+      return;
+    }
     $context_config = ContextConfig::create();
     foreach ($form_state->getValue('context') as $context_name => $value) {
       if ($form_state->get("context_$context_name") == 'selector') {
@@ -130,7 +144,7 @@ class ActionForm implements ExpressionFormInterface {
       }
     }
     $configuration = $context_config->toArray();
-    $configuration['action_id'] = $form_state->getValue('action');
+    $configuration['action_id'] = $form_state->get('action_id');
     $this->actionExpression->setConfiguration($configuration);
   }
 

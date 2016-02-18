@@ -16,6 +16,7 @@ use Drupal\rules\Engine\ActionExpressionInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\IntegrityCheckTrait;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -167,19 +168,31 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
     if (empty($this->configuration['action_id'])) {
-      $violation_list->addViolationWithMessage($this->t('Action plugin ID is missing'));
+      $violation_list->addViolationWithMessage($this->t('Action plugin ID is missing'), $this->getUuid());
       return $violation_list;
     }
     if (!$this->actionManager->hasDefinition($this->configuration['action_id'])) {
       $violation_list->addViolationWithMessage($this->t('Action plugin %plugin_id does not exist', [
         '%plugin_id' => $this->configuration['action_id'],
-      ]));
+      ]), $this->getUuid());
       return $violation_list;
     }
 
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
 
     return $this->doCheckIntegrity($action, $metadata_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    $action = $this->actionManager->createInstance($this->configuration['action_id']);
+    $this->addProvidedVariablesToExecutionMetadataState($action, $metadata_state);
+    if ($until) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }

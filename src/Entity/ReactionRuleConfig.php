@@ -9,6 +9,7 @@ namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\rules\Engine\ExpressionInterface;
+use Drupal\rules\Engine\RulesComponent;
 
 /**
  * Reaction rule configuration entity to persistently store configuration.
@@ -22,8 +23,7 @@ use Drupal\rules\Engine\ExpressionInterface;
  *     "form" = {
  *        "add" = "\Drupal\rules\Form\ReactionRuleAddForm",
  *        "edit" = "\Drupal\rules\Form\ReactionRuleEditForm",
- *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm",
- *        "break_lock" = "\Drupal\rules\Form\BreakLockForm"
+ *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm"
  *      }
  *   },
  *   admin_permission = "administer rules",
@@ -48,7 +48,7 @@ use Drupal\rules\Engine\ExpressionInterface;
  *     "collection" = "/admin/config/workflow/rules",
  *     "edit-form" = "/admin/config/workflow/rules/reactions/edit/{rules_reaction_rule}",
  *     "delete-form" = "/admin/config/workflow/rules/reactions/delete/{rules_reaction_rule}",
- *     "break-lock-form" = "/admin/config/workflow/rules/reactions/break-lock/{rules_reaction_rule}"
+ *     "break-lock-form" = "/admin/config/workflow/rules/reactions/edit/break-lock/{rules_reaction_rule}"
  *   }
  * )
  */
@@ -142,7 +142,6 @@ class ReactionRuleConfig extends ConfigEntityBase {
     return $this;
   }
 
-
   /**
    * Gets a Rules expression instance for this Reaction rule.
    *
@@ -157,6 +156,36 @@ class ReactionRuleConfig extends ConfigEntityBase {
     }
 
     return $this->expression;
+  }
+
+  /**
+   * Gets the Rules component that is invoked when the events are dispatched.
+   *
+   * The returned component has the definitions of the available event context
+   * set.
+   *
+   * @return \Drupal\rules\Engine\RulesComponent
+   *   The Rules component.
+   */
+  public function getComponent() {
+    $component = RulesComponent::create($this->getExpression());
+    $component->addContextDefinitionsForEvents([$this->getEvent()]);
+    return $component;
+  }
+
+  /**
+   * Updates the configuration based upon the given component.
+   *
+   * @param \Drupal\rules\Engine\RulesComponent $component
+   *   The component containing the configuration to set.
+   *
+   * @return $this
+   */
+  public function updateFromComponent(RulesComponent $component) {
+    // Note that the available context definitions stem from the configured
+    // events, which are handled separately.
+    $this->setExpression($component->getExpression());
+    return $this;
   }
 
   /**

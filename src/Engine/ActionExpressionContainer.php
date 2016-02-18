@@ -115,6 +115,16 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
   }
 
   /**
+   * PHP magic __clone function.
+   */
+  public function __clone() {
+    // Implement a deep clone.
+    foreach ($this->actions as &$action) {
+      $action = clone $action;
+    }
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getExpression($uuid) {
@@ -157,12 +167,35 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     $violation_list = new IntegrityViolationList();
     foreach ($this->actions as $action) {
       $action_violations = $action->checkIntegrity($metadata_state);
-      foreach ($action_violations as $violation) {
-        $violation->setUuid($action->getUuid());
-      }
       $violation_list->addAll($action_violations);
     }
     return $violation_list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    if ($until) {
+      if ($this->getUuid() === $until->getUuid()) {
+        return TRUE;
+      }
+      foreach ($this->actions as $action) {
+        if ($action->getUuid() === $until->getUuid()) {
+          return TRUE;
+        }
+        $found = $action->prepareExecutionMetadataState($metadata_state, $until);
+        if ($found) {
+          return TRUE;
+        }
+      }
+      return FALSE;
+    }
+
+    foreach ($this->actions as $action) {
+      $action->prepareExecutionMetadataState($metadata_state);
+    }
+    return TRUE;
   }
 
 }

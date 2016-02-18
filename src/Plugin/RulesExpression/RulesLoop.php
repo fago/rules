@@ -11,6 +11,7 @@ use Drupal\Core\TypedData\ListDataDefinitionInterface;
 use Drupal\rules\Engine\ActionExpressionContainer;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Drupal\rules\Exception\RulesIntegrityException;
 
@@ -89,6 +90,48 @@ class RulesLoop extends ActionExpressionContainer {
       '%list' => $this->configuration['list'],
     ]));
     return $violation_list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    if ($until && $this->getUuid() === $until->getUuid()) {
+      return TRUE;
+    }
+
+    $list_item_name = isset($this->configuration['list_item']) ? $this->configuration['list_item'] : 'list_item';
+    try {
+      $list_definition = $metadata_state->fetchDefinitionByPropertyPath($this->configuration['list']);
+      $list_item_definition = $list_definition->getItemDefinition();
+      $metadata_state->setDataDefinition($list_item_name, $list_item_definition);
+    }
+    catch (RulesIntegrityException $e) {
+      // Silently eat the exception: we just continue without adding the list
+      // item definition to the state.
+    }
+
+    if ($until) {
+      foreach ($this->actions as $action) {
+        if ($action->getUuid() === $until->getUuid()) {
+          return TRUE;
+        }
+        $found = $action->prepareExecutionMetadataState($metadata_state, $until);
+        if ($found) {
+          return TRUE;
+        }
+      }
+      // Remove the list item variable after the loop, it is out of scope now.
+      $metadata_state->removeDataDefinition($list_item_name);
+      return FALSE;
+    }
+
+    foreach ($this->actions as $action) {
+      $action->prepareExecutionMetadataState($metadata_state);
+    }
+    // Remove the list item variable after the loop, it is out of scope now.
+    $metadata_state->removeDataDefinition($list_item_name);
+    return TRUE;
   }
 
 }

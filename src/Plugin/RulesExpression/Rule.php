@@ -28,11 +28,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * nest several rules into one rule. This is the functionality of so called
  * "rule sets" in Drupal 7.
  *
- * @todo rename the form class to just RuleForm.
- *
  * @RulesExpression(
  *   id = "rules_rule",
- *   label = @Translation("A rule, executing actions when conditions are met."),
+ *   label = @Translation("Rule"),
  *   form_class = "\Drupal\rules\Form\Expression\ReactionRuleForm"
  * )
  */
@@ -152,10 +150,10 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
    */
   public function addExpressionObject(ExpressionInterface $expression) {
     if ($expression instanceof ConditionExpressionInterface) {
-      $result = $this->conditions->addExpressionObject($expression);
+      $this->conditions->addExpressionObject($expression);
     }
     elseif ($expression instanceof ActionExpressionInterface) {
-      $result = $this->actions->addExpressionObject($expression);
+      $this->actions->addExpressionObject($expression);
     }
     else {
       throw new InvalidExpressionException();
@@ -221,6 +219,32 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
     $violation_list = $this->conditions->checkIntegrity($metadata_state);
     $violation_list->addAll($this->actions->checkIntegrity($metadata_state));
     return $violation_list;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    if ($until) {
+      $found = $this->conditions->prepareExecutionMetadataState($metadata_state, $until);
+      if (!$found) {
+        $found = $this->actions->prepareExecutionMetadataState($metadata_state, $until);
+      }
+      return $found;
+    }
+    $this->conditions->prepareExecutionMetadataState($metadata_state);
+    $this->actions->prepareExecutionMetadataState($metadata_state);
+    return TRUE;
+  }
+
+  /**
+   * PHP magic __clone function.
+   */
+  public function __clone() {
+    $this->actions = clone $this->actions;
+    $this->actions->setRoot($this->getRoot());
+    $this->conditions = clone $this->conditions;
+    $this->conditions->setRoot($this->getRoot());
   }
 
 }

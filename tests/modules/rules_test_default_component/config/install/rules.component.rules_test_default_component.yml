@@ -13,6 +13,11 @@ context_definitions:
     type: 'entity:user'
     label: User
     description: 'The user whose mail address to print.'
+provided_context_definitions:
+  concatenated:
+    type: 'string'
+    label: 'String result'
+    description: 'Some concatenated string'
 configuration:
   id: rules_rule
   conditions:
@@ -27,5 +32,11 @@ configuration:
           type: 'status'
         context_mapping:
           message: 'user.mail.value'
+        context_processors: {  }
+        provides_mapping: {  }
+      - id: rules_action
+        action_id: rules_test_string
+        context_mapping:
+          text: 'user.mail.value'
         context_processors: {  }
         provides_mapping: {  }

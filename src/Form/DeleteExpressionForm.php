@@ -9,7 +9,7 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Entity\ReactionRuleConfig;
+use Drupal\rules\Core\RulesUiHandlerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -17,21 +17,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class DeleteExpressionForm extends ConfirmFormBase {
 
-  use TempStoreTrait;
-
-  /**
-   * The reaction rule config the expression is deleted from.
-   *
-   * @var \Drupal\rules\Entity\ReactionRuleConfig
-   */
-  protected $ruleConfig;
-
   /**
    * The UUID of the expression in the rule.
    *
    * @var string
    */
   protected $uuid;
+
+  /**
+   * The RulesUI handler of the currently active UI.
+   *
+   * @var \Drupal\rules\Core\RulesUiHandlerInterface
+   */
+  protected $rulesUiHandler;
 
   /**
    * {@inheritdoc}
@@ -43,8 +41,8 @@ class DeleteExpressionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ReactionRuleConfig $rules_reaction_rule = NULL, $uuid = NULL) {
-    $this->ruleConfig = $rules_reaction_rule;
+  public function buildForm(array $form, FormStateInterface $form_state, RulesUiHandlerInterface $rules_ui_handler = NULL, $uuid = NULL) {
+    $this->rulesUiHandler = $rules_ui_handler;
     $this->uuid = $uuid;
     return parent::buildForm($form, $form_state);
   }
@@ -60,7 +58,7 @@ class DeleteExpressionForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getQuestion() {
-    $rule_expression = $this->ruleConfig->getExpression();
+    $rule_expression = $this->rulesUiHandler->getComponent()->getExpression();
     $expression_inside = $rule_expression->getExpression($this->uuid);
     if (!$expression_inside) {
       throw new NotFoundHttpException();
@@ -68,7 +66,7 @@ class DeleteExpressionForm extends ConfirmFormBase {
 
     return $this->t('Are you sure you want to delete %title from %rule?', [
       '%title' => $expression_inside->getLabel(),
-      '%rule' => $this->ruleConfig->label(),
+      '%rule' => $this->rulesUiHandler->getComponentLabel(),
     ]);
   }
 
@@ -76,21 +74,16 @@ class DeleteExpressionForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return $this->ruleConfig->urlInfo();
+    return $this->rulesUiHandler->getBaseRouteUrl();
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $expression = $this->ruleConfig->getExpression();
-    $expression->deleteExpression($this->uuid);
-    // Set the expression again so that the config is copied over to the
-    // config entity.
-    $this->ruleConfig->setExpression($expression);
-
-    $this->saveToTempStore();
-
+    $component = $this->rulesUiHandler->getComponent();
+    $component->getExpression()->deleteExpression($this->uuid);
+    $this->rulesUiHandler->updateComponent($component);
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

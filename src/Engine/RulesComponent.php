@@ -7,9 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\rules\Context\ContextDefinitionInterface;
-use Drupal\rules\Entity\ReactionRuleConfig;
 
 /**
  * Handles executable Rules components.
@@ -113,19 +111,16 @@ class RulesComponent {
   }
 
   /**
-   * Adds the configured context definitions from the config entity.
+   * Adds the available event context for the given events.
    *
-   * Example: for a reaction rule config all context definitions of the event
-   * will be added.
-   *
-   * @param \Drupal\Core\Config\Entity\ConfigEntityInterface $rules_config
-   *   The config entity.
+   * @param string[] $event_names
+   *   The event names; e.g., as configured for a reaction rule.
    *
    * @return $this
    */
-  public function addContextDefinitionsFrom(ConfigEntityInterface $rules_config) {
-    if ($rules_config instanceof ReactionRuleConfig) {
-      $event_name = $rules_config->getEvent();
+  public function addContextDefinitionsForEvents(array $event_names) {
+    foreach ($event_names as $event_name) {
+      // @todo: Correctly handle multiple events to intersect available context.
       // @todo Use setter injection for the service.
       $event_definition = \Drupal::service('plugin.manager.rules_event')->getDefinition($event_name);
       foreach ($event_definition['context'] as $context_name => $context_definition) {
@@ -228,13 +223,35 @@ class RulesComponent {
    *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
    */
   public function checkIntegrity() {
+    $metadata_state = $this->getMetadataState();
+    return $this->expression->checkIntegrity($metadata_state);
+  }
+
+  /**
+   * Gets the metadata state with all context definitions as variables in it.
+   *
+   * Describes the metadata state before execution - only context definitions
+   * are set as variables.
+   *
+   * @return \Drupal\rules\Engine\ExecutionMetadataStateInterface
+   *   The execution metadata state populated with context definitions.
+   */
+  public function getMetadataState() {
     $data_definitions = [];
     foreach ($this->contextDefinitions as $name => $context_definition) {
       $data_definitions[$name] = $context_definition->getDataDefinition();
     }
 
-    $metadata_state = ExecutionMetadataState::create($data_definitions);
-    return $this->expression->checkIntegrity($metadata_state);
+    return ExecutionMetadataState::create($data_definitions);
+  }
+
+  /**
+   * PHP magic __clone function.
+   */
+  public function __clone() {
+    // Implement a deep clone.
+    $this->state = clone $this->state;
+    $this->expression = clone $this->expression;
   }
 
 }

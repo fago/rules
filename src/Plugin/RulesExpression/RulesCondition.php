@@ -15,6 +15,7 @@ use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
+use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\IntegrityCheckTrait;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -182,13 +183,13 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
     if (empty($this->configuration['condition_id'])) {
-      $violation_list->addViolationWithMessage($this->t('Condition plugin ID is missing'));
+      $violation_list->addViolationWithMessage($this->t('Condition plugin ID is missing'), $this->getUuid());
       return $violation_list;
     }
     if (!$this->conditionManager->hasDefinition($this->configuration['condition_id'])) {
       $violation_list->addViolationWithMessage($this->t('Condition plugin %plugin_id does not exist', [
         '%plugin_id' => $this->configuration['condition_id'],
-      ]));
+      ]), $this->getUuid());
       return $violation_list;
     }
 
@@ -197,6 +198,18 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     ]);
 
     return $this->doCheckIntegrity($condition, $metadata_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+    $condition = $this->actionManager->createInstance($this->configuration['condition_id']);
+    $this->addProvidedVariablesToExecutionMetadataState($condition, $metadata_state);
+    if ($until) {
+      return FALSE;
+    }
+    return TRUE;
   }
 
 }
