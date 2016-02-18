@@ -174,7 +174,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
-    $component->addContextDefinitionsForEvents([$this->getEvent()]);
+    $component->addContextDefinitionsForEvents($this->getEventNames());
     return $component;
   }
 
