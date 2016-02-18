@@ -7,6 +7,7 @@
 
 namespace Drupal\rules\Engine;
 
+use Drupal\Core\Entity\DependencyTrait;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Context\ContextDefinitionInterface;
 
@@ -14,6 +15,8 @@ use Drupal\rules\Context\ContextDefinitionInterface;
  * Handles executable Rules components.
  */
 class RulesComponent {
+
+  use DependencyTrait;
 
   /**
    * The rules execution state.
@@ -64,6 +67,10 @@ class RulesComponent {
    * @return static
    */
   public static function createFromConfiguration(array $configuration) {
+    $configuration += [
+      'context_definitions' => [],
+      'provided_context' => [],
+    ];
     // @todo: Can we improve this use dependency injection somehow?
     $expression_manager = \Drupal::service('plugin.manager.rules_expression');
     $expression = $expression_manager->createInstance($configuration['expression']['id'], $configuration['expression']);
@@ -287,6 +294,22 @@ class RulesComponent {
     }
 
     return ExecutionMetadataState::create($data_definitions);
+  }
+
+  /**
+   * Calculates dependencies for the component.
+   *
+   * @return array
+   *   An array of dependencies grouped by type (config, content, module,
+   *   theme).
+   *
+   * @see \Drupal\Component\Plugin\DependentPluginInterface::calculateDependencies()
+   */
+  public function calculateDependencies() {
+    // @todo: Complete implementation and add test coverage.
+    $this->addDependency('module', 'rules');
+    $this->addDependencies($this->getExpression()->calculateDependencies());
+    return $this->dependencies;
   }
 
   /**

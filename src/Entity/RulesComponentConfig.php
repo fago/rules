@@ -100,11 +100,11 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   protected $component = [];
 
   /**
-   * Stores a reference to the executable expression version of this component.
+   * Stores a reference to the component object.
    *
-   * @var \Drupal\rules\Engine\ExpressionInterface
+   * @var \Drupal\rules\Engine\RulesComponent
    */
-  protected $expression;
+  protected $componentObject;
 
   /**
    * The module implementing this Rules component.
@@ -120,11 +120,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    *   A Rules expression instance.
    */
   public function getExpression() {
-    // Ensure that an executable Rules expression is available.
-    if (!isset($this->expression)) {
-      $this->expression = $this->getExpressionManager()->createInstance($this->component['expression']['id'], $this->component['expression']);
-    }
-    return $this->expression;
+    return $this->getComponent()->getExpression();
   }
 
   /**
@@ -136,8 +132,8 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * @return $this
    */
   public function setExpression(ExpressionInterface $expression) {
-    $this->expression = $expression;
     $this->component['expression'] = $expression->getConfiguration();
+    unset($this->componentObject);
     return $this;
   }
 
@@ -145,7 +141,10 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * {@inheritdoc}
    */
   public function getComponent() {
-    return RulesComponent::createFromConfiguration($this->component);
+    if (!isset($this->componentObject)) {
+      $this->componentObject = RulesComponent::createFromConfiguration($this->component);
+    }
+    return $this->componentObject;
   }
 
   /**
@@ -153,6 +152,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function updateFromComponent(RulesComponent $component) {
     $this->component = $component->getConfiguration();
+    $this->componentObject = $component;
     return $this;
   }
 
@@ -210,24 +210,11 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   }
 
   /**
-   * Returns the Rules expression manager.
-   *
-   * @todo Actually we should use dependency injection here, but is that even
-   *   possible with config entities? How?
-   *
-   * @return \Drupal\rules\Engine\ExpressionManager
-   *   The Rules expression manager.
-   */
-  protected function getExpressionManager() {
-    return \Drupal::service('plugin.manager.rules_expression');
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function createDuplicate() {
     $duplicate = parent::createDuplicate();
-    unset($duplicate->expression);
+    unset($duplicate->componentObject);
     return $duplicate;
   }
 
@@ -262,13 +249,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function calculateDependencies() {
     parent::calculateDependencies();
-
-    // Ensure that the Rules component is dependent on the module that
-    // implements the component.
-    $this->addDependency('module', $this->module);
-
-    // @todo Handle dependencies of plugins that are provided by various modules
-    //   here.
+    $this->addDependencies($this->getComponent()->calculateDependencies());
     return $this->dependencies;
   }
 
