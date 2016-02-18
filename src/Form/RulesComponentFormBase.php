@@ -19,6 +19,10 @@ abstract class RulesComponentFormBase extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
+    // Specify the wrapper div used by #ajax.
+    $form['#prefix'] = '<div id="rules-form-wrapper">';
+    $form['#suffix'] = '</div>';
+
     $form['settings'] = [
       '#type' => 'details',
       '#title' => $this->t('Settings'),
@@ -76,6 +80,34 @@ abstract class RulesComponentFormBase extends EntityForm {
   public function exists($id) {
     $type = $this->entity->getEntityTypeId();
     return (bool) $this->entityTypeManager->getStorage($type)->load($id);
+  }
+
+  /**
+   * Get default form #ajax properties.
+   *
+   * @param string $effect
+   *   (optional) The jQuery effect to use when placing the new HTML (used with
+   *   'wrapper'). Valid options are 'none' (default), 'slide', or 'fade'.
+   *
+   * @return array
+   */
+  public function getDefaultAjax($effect = 'none') {
+    return array(
+      'callback' => '::reloadForm',
+      'wrapper' => 'rules-form-wrapper',
+      'effect' => $effect,
+      'speed' => 'fast',
+    );
+  }
+
+  /**
+   * Ajax callback to reload the form.
+   *
+   * @return array
+   *   The reloaded form.
+   */
+  public function reloadForm(array $form, FormStateInterface $form_state) {
+    return $form;
   }
 
 }
