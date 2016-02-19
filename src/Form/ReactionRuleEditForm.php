@@ -75,7 +75,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
 
     foreach ($this->entity->getEventNames() as $key => $event_name) {
       $event_definition = $this->eventManager->getDefinition($event_name);
-      $form['event'][$key] = [
+      $form['events'][$key] = [
         '#type' => 'item',
         '#title' => $this->t('Events:'),
         '#markup' => $this->t('@label (@name)', [

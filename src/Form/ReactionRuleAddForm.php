@@ -8,6 +8,7 @@
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rules\Core\RulesConfigurableEventHandlerInterface;
 use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -75,6 +76,14 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       '#description' => $this->t('Whenever the event occurs, rule evaluation is triggered.'),
     ];
 
+    $form['event_configuration'] = array();
+    if ($values = $form_state->getValue('events')) {
+      $event_name = $values[0]['event_name'];
+      if ($handler = $this->getEventHandler($event_name)) {
+        $form['event_configuration'] = $handler->buildConfigurationForm(array(), $form_state);
+      }
+    }
+
     return $form;
   }
 
@@ -82,10 +91,38 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    $event_name = $form_state->getValue('events')[0]['event_name'];
+    if ($handler = $this->getEventHandler($event_name)) {
+      $handler->extractConfigurationFormValues($form['event_configuration'], $form_state);
+      // @todo Save in 2 places?
+      $this->entity->set('configuration', $handler->getConfiguration());
+      $this->entity->set('events', [['event_name' => $event_name . '--' . $handler->getConfiguration()['bundle']]]);
+      // @todo Exception: The "rules_entity_view:node–article" plugin does not exist.
+    }
     parent::save($form, $form_state);
 
     drupal_set_message($this->t('Reaction rule %label has been created.', ['%label' => $this->entity->label()]));
     $form_state->setRedirect('entity.rules_reaction_rule.edit_form', ['rules_reaction_rule' => $this->entity->id()]);
+  }
+
+  /**
+   * Gets event handler class.
+   *
+   * @param $event_name
+   *   The event base name.
+   * @param array $configuration
+   *   The event configuration.
+   *
+   * @return \Drupal\rules\Core\RulesConfigurableEventHandlerInterface|null
+   *   The event handler, null if there is no proper handler.
+   */
+  protected function getEventHandler($event_name, $configuration = []) {
+    $event_definition = $this->eventManager->getDefinition($event_name);
+    $handler_class = $event_definition['class'];
+    if (is_subclass_of($handler_class, RulesConfigurableEventHandlerInterface::class)) {
+      $handler = new $handler_class($configuration, $this->eventManager->getEventBaseName($event_name));
+      return $handler;
+    }
   }
 
 }
