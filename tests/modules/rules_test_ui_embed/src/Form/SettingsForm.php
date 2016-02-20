@@ -91,6 +91,9 @@ class SettingsForm extends ConfigFormBase {
       ->set('css.0.file', $form_state->getValue('css_file'))
       ->save();
 
+    // Remove the temporarily stored config, it has been persisted now.
+    $this->rulesUiHandler->clearTemporaryStorage();
+
     parent::submitForm($form, $form_state);
   }
 
