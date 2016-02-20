@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @RulesExpression(
  *   id = "rules_rule",
  *   label = @Translation("Rule"),
- *   form_class = "\Drupal\rules\Form\Expression\ReactionRuleForm"
+ *   form_class = "\Drupal\rules\Form\Expression\RuleForm"
  * )
  */
 class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPluginInterface {
