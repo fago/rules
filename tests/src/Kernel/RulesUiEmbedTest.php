@@ -41,10 +41,7 @@ class RulesUiEmbedTest extends RulesDrupalTestBase {
 
     $this->installConfig(['system']);
     $this->installConfig(['rules_test_ui_embed']);
-    $this->installSchema('system', ['router', 'sequences']);
-
-    // Make sure that the module routes get picked when used during rendering.
-    $this->container->get('router.builder')->rebuild();
+    $this->installSchema('system', ['sequences']);
   }
 
   /**
