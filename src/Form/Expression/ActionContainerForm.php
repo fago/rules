@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Form\Expression\ActionSetForm.
+ * Contains \Drupal\rules\Form\Expression\ActionContainerForm.
  */
 
 namespace Drupal\rules\Form\Expression;
@@ -13,9 +13,9 @@ use Drupal\rules\Core\RulesUiHandlerTrait;
 use Drupal\rules\Engine\ActionExpressionContainerInterface;
 
 /**
- * Form view structure for Rules action sets.
+ * Form handler for action containers.
  */
-class ActionSetForm implements ExpressionFormInterface {
+class ActionContainerForm implements ExpressionFormInterface {
 
   use StringTranslationTrait;
   use RulesUiHandlerTrait;
