@@ -97,6 +97,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
     $actions['submit']['#value'] = $this->t('Save');
     $actions['cancel'] = [
       '#type' => 'submit',
+      '#limit_validation_errors' => [['locked']],
       '#value' => $this->t('Cancel'),
       '#submit' => ['::cancel'],
     ];
