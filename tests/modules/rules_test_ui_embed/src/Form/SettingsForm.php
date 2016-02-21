@@ -65,8 +65,8 @@ class SettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
-    $form['conditions'] = $this->rulesUiHandler->getFormHandler()
-      ->form([], $form_state);
+    $form['conditions'] = $this->rulesUiHandler->getForm()
+      ->buildForm([], $form_state);
 
     return $form;
   }
@@ -76,7 +76,7 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    $this->rulesUiHandler->getFormHandler()
+    $this->rulesUiHandler->getForm()
       ->validateForm($form['conditions'], $form_state);
   }
 
@@ -84,14 +84,14 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->rulesUiHandler->getFormHandler()
+    $this->rulesUiHandler->getForm()
       ->submitForm($form['conditions'], $form_state);
 
     $this->config('rules_test_ui_embed.settings')
       ->set('css.0.file', $form_state->getValue('css_file'))
       ->save();
 
-    // Remove the temporarily stored config, it has been persisted now.
+    // Also remove the temporarily stored component, it has been persisted now.
     $this->rulesUiHandler->clearTemporaryStorage();
 
     parent::submitForm($form, $form_state);

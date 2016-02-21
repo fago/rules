@@ -14,6 +14,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\rules\Engine\RulesComponent;
+use Drupal\rules\Form\EmbeddedComponentForm;
 use Drupal\rules\Form\TempStoreTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -170,13 +171,10 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
   }
 
   /**
-   * Gets the form handler for the component's expression.
-   *
-   * @return \Drupal\rules\Form\Expression\ExpressionFormInterface|null
-   *   The form handling object if there is one, NULL otherwise.
+   * {@inheritdoc}
    */
-  public function getFormHandler() {
-    return $this->getComponent()->getExpression()->getFormHandler();
+  public function getForm() {
+    return new EmbeddedComponentForm($this);
   }
 
 }

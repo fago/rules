@@ -55,12 +55,12 @@ interface RulesUiHandlerInterface extends PluginInspectionInterface {
   public function updateComponent(RulesComponent $component);
 
   /**
-   * Gets the form handler for the component's expression.
+   * Gets the component form, ready to be embedded in some other form.
    *
-   * @return \Drupal\rules\Form\Expression\ExpressionFormInterface|null
-   *   The form handling object if there is one, NULL otherwise.
+   * @return \Drupal\Core\Form\FormInterface
+   *   The form object.
    */
-  public function getFormHandler();
+  public function getForm();
 
   /**
    * Clears any temporary storage.
