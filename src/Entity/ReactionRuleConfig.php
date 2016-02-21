@@ -146,7 +146,6 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
     // Ensure that an executable Rules expression is available.
     if (!isset($this->expressionObject)) {
       $this->expressionObject = $this->getExpressionManager()->createInstance($this->expression['id'], $this->expression);
-      $this->expressionObject->setConfigEntityId($this->id());
     }
     return $this->expressionObject;
   }

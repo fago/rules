@@ -132,19 +132,6 @@ abstract class ExpressionBase extends PluginBase implements ExpressionInterface 
     $this->root = $root;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfigEntityId() {
-    return $this->configEntityId;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setConfigEntityId($id) {
-    $this->configEntityId = $id;
-  }
 
   /**
    * {@inheritdoc}
