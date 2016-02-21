@@ -9,6 +9,8 @@ namespace Drupal\Tests\rules\Functional;
 
 /**
  * Functional test for the embedded Rules example implementation.
+ *
+ * @group Rules
  */
 class RulesUiEmbedTest extends RulesBrowserTestBase {
 
