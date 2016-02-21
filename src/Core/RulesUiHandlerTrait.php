@@ -30,7 +30,20 @@ trait RulesUiHandlerTrait {
    *   The handler, or NULL if this is no rules_ui enabled route.
    */
   public function getRulesUiHandler() {
-    return \Drupal::request()->attributes->get('rules_ui_handler');
+    if (!isset($this->rulesUiHandler)) {
+      $this->rulesUiHandler = \Drupal::request()->attributes->get('rules_ui_handler');
+    }
+    return $this->rulesUiHandler;
+  }
+
+  /**
+   * Sets the Rules UI handler.
+   *
+   * @param \Drupal\rules\Core\RulesUiHandlerInterface $rules_ui_handler
+   *   The Rules UI handler to set.
+   */
+  public function setRulesUiHandler(RulesUiHandlerInterface $rules_ui_handler) {
+    $this->rulesUiHandler = $rules_ui_handler;
   }
 
 }
