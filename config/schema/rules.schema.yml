@@ -98,6 +98,26 @@ rules_expression.rules_condition:
     negate:
       type: boolean
       label: 'Negated'
+    context_values:
+      type: sequence
+      label: 'Context values'
+      sequence:
+        - type: string
+    context_mapping:
+      type: sequence
+      label: 'Context mapping'
+      sequence:
+        - type: string
+    context_processors:
+      type: sequence
+      label: 'Context processors'
+      sequence:
+        - type: string
+    provides_mapping:
+      type: sequence
+      label: 'Provided context mapping'
+      sequence:
+        - type: string
 
 rules_expression.rules_action:
   type: rules_expression
