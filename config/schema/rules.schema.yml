@@ -244,7 +244,7 @@ rules.settings:
   label: 'Rules settings'
   mapping:
     log_errors:
-      type: integer
+      type: string
       label: 'Logging of Rules evaluation errors'
     debug_log:
       type: boolean
@@ -253,5 +253,5 @@ rules.settings:
       type: boolean
       label: 'Show debug information'
     log_level:
-      type: integer
+      type: string
       label: 'Log level'
