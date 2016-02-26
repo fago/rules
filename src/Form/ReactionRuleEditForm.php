@@ -71,8 +71,6 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['locked'] = $this->rulesUiHandler->addLockInformation();
-
     foreach ($this->entity->getEventNames() as $key => $event_name) {
       $event_definition = $this->eventManager->getDefinition($event_name);
       $form['events'][$key] = [
@@ -84,9 +82,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
         ]),
       ];
     }
-    $form_handler = $this->rulesUiHandler->getComponent()
-      ->getExpression()->getFormHandler();
-    $form = $form_handler->form($form, $form_state);
+    $form = $this->rulesUiHandler->getForm()->buildForm($form, $form_state);
     return parent::form($form, $form_state);
   }
 
