@@ -74,7 +74,7 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       '#required' => TRUE,
       '#ajax' => $this->getDefaultAjax(),
       '#description' => $this->t('Whenever the event occurs, rule evaluation is triggered.'),
-      '#submit' => array('::submitForm'),
+      '#executes_submit_callback' => array('::submitForm'),
     ];
 
     $form['event_configuration'] = array();
