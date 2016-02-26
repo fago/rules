@@ -90,6 +90,7 @@ interface RulesConfigurableEventHandlerInterface extends RulesEventHandlerInterf
   public function validate();
 
   /**
+   * todo
    * Provides the event name suffix based upon the plugin configuration.
    *
    * If the event is configured and a suffix is provided, the event name Rules
@@ -98,7 +99,7 @@ interface RulesConfigurableEventHandlerInterface extends RulesEventHandlerInterf
    * @return string|false
    *   The suffix string, for FALSE if no suffix should be appended.
    */
-  public function getEventNameSuffix();
+  public function getEventNamePrefix();
 
   /**
    * Refines provided context definitions based upon plugin configuration.

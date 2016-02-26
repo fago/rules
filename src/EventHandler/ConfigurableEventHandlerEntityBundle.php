@@ -41,7 +41,7 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityType = $this->getEventNameSuffix();
+    $this->entityType = $this->getEventNamePrefix();
     $this->entityInfo = \Drupal::entityTypeManager()->getDefinition($this->entityType);
     $this->bundlesInfo = \Drupal::entityManager()->getBundleInfo($this->entityType);
     if (!$this->bundlesInfo) {
@@ -104,7 +104,7 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
   /**
    * {@inheritdoc}
    */
-  public function getEventNameSuffix() {
+  public function getEventNamePrefix() {
     $parts = explode(':', $this->pluginId);
     return $parts[1];
   }

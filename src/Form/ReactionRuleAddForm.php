@@ -74,6 +74,7 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       '#required' => TRUE,
       '#ajax' => $this->getDefaultAjax(),
       '#description' => $this->t('Whenever the event occurs, rule evaluation is triggered.'),
+      '#submit' => array('::submitForm'),
     ];
 
     $form['event_configuration'] = array();
@@ -90,13 +91,22 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
   /**
    * {@inheritdoc}
    */
-  public function save(array $form, FormStateInterface $form_state) {
-    $event_name = $form_state->getValue('events')[0]['event_name'];
-    if ($handler = $this->getEventHandler($event_name)) {
-      $handler->extractConfigurationFormValues($form['event_configuration'], $form_state);
-      $this->entity->set('configuration', $handler->getConfiguration());
-      $this->entity->set('events', [['event_name' => $event_name . '--' . $handler->getConfiguration()['bundle']]]);
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    $entity = parent::buildEntity($form, $form_state);
+    foreach ($entity->getEventBaseNames() as $event_name) {
+      if ($handler = $this->getEventHandler($event_name)) {
+        $handler->extractConfigurationFormValues($form['event_configuration'], $form_state);
+        $entity->set('configuration', $handler->getConfiguration());
+        $entity->set('events', [['event_name' => $event_name . '--' . $handler->getConfiguration()['bundle']]]);
+      }
     }
+    return $entity;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
 
     drupal_set_message($this->t('Reaction rule %label has been created.', ['%label' => $this->entity->label()]));
@@ -105,6 +115,8 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
 
   /**
    * Gets event handler class.
+   *
+   * Currently event handler is available only when the event is configurable.
    *
    * @param $event_name
    *   The event base name.
