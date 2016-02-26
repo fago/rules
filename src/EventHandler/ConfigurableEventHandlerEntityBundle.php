@@ -15,8 +15,25 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase {
 
+  /**
+   * The bundles information for the entity.
+   *
+   * @var array
+   */
   protected $bundlesInfo;
+
+  /**
+   * The entity info plugin definition.
+   *
+   * @var mixed
+   */
   protected $entityInfo;
+
+  /**
+   * The entity type.
+   *
+   * @var string
+   */
   protected $entityType;
 
   /**
@@ -25,7 +42,6 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityType = $this->getEventNameSuffix();
-    // @todo Do it in a non-deprecated way.
     $this->entityInfo = \Drupal::entityTypeManager()->getDefinition($this->entityType);
     $this->bundlesInfo = \Drupal::entityManager()->getBundleInfo($this->entityType);
     if (!$this->bundlesInfo) {
@@ -48,7 +64,10 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
    * {@inheritdoc}
    */
   public function summary() {
-    // Nothing to do by default.
+    $bundle = $this->configuration['bundle'];
+    $bundle_label = isset($this->bundlesInfo[$bundle]['label']) ? $this->bundlesInfo[$bundle]['label'] : $bundle;
+    $suffix = isset($bundle) ? ' ' . t('of @bundle-key %name', array('@bundle-key' => $this->entityInfo->getBundleLabel(), '%name' => $bundle_label)) : '';
+    return $this->pluginDefinition['label']->render() . $suffix;
   }
 
   /**

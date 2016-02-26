@@ -94,10 +94,8 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
     $event_name = $form_state->getValue('events')[0]['event_name'];
     if ($handler = $this->getEventHandler($event_name)) {
       $handler->extractConfigurationFormValues($form['event_configuration'], $form_state);
-      // @todo Save in 2 places?
       $this->entity->set('configuration', $handler->getConfiguration());
       $this->entity->set('events', [['event_name' => $event_name . '--' . $handler->getConfiguration()['bundle']]]);
-      // @todo Exception: The "rules_entity_view:node–article" plugin does not exist.
     }
     parent::save($form, $form_state);
 
@@ -120,7 +118,7 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
     $event_definition = $this->eventManager->getDefinition($event_name);
     $handler_class = $event_definition['class'];
     if (is_subclass_of($handler_class, RulesConfigurableEventHandlerInterface::class)) {
-      $handler = new $handler_class($configuration, $this->eventManager->getEventBaseName($event_name));
+      $handler = new $handler_class($configuration, $this->eventManager->getEventBaseName($event_name), $event_definition);
       return $handler;
     }
   }
