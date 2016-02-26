@@ -164,7 +164,7 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
-    $component->addContextDefinitionsForEvents($this->getEventNames());
+    $component->addContextDefinitionsForEvents($this->getEventBaseNames());
     return $component;
   }
 
@@ -249,6 +249,31 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
     $names = [];
     foreach ($this->events as $event) {
       $names[] = $event['event_name'];
+    }
+    return $names;
+  }
+
+  /**
+   * Gets the base names of all events the rule is reacting on.
+   *
+   * For a configured event name like {EVENT_NAME}--{SUFFIX}, the base event
+   * name {EVENT_NAME} is returned.
+   *
+   * @return string[]
+   *   The array of base event names of the rule.
+   *
+   * @see \Drupal\rules\Core\RulesConfigurableEventHandlerInterface::getEventNameSuffix()
+   */
+  public function getEventBaseNames() {
+    $names = [];
+    foreach ($this->events as $event) {
+      $event_name = $event['event_name'];
+      if (strpos($event_name, '--') !== FALSE) {
+        // Cut off any suffix from a configured event name.
+        $parts = explode('--', $event_name, 2);
+        $event_name =  $parts[0];
+      }
+      $names[] = $event_name;
     }
     return $names;
   }

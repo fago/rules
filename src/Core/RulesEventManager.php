@@ -64,7 +64,7 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
    * Gets the base name of a configured event name.
    *
    * For a configured event name like {EVENT_NAME}--{SUFFIX}, the base event
-   * name {EVENT_NAME} is returned.
+   * name {EVENT_NAME} is returned.s
    *
    * @return string
    *   The event base name.
