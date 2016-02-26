@@ -1,0 +1,116 @@
+rules_expression:
+  type: mapping
+  label: 'Rules expression'
+  id:
+    type: string
+    label: 'Plugin ID'
+  uuid:
+    type: string
+    label: 'UUID'
+
+rules_expression.rules_condition:
+  type: rules_expression
+  label: "Rules condition configuration"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
+    condition_id:
+      type: string
+      label: 'Condition plugin ID'
+    negate:
+      type: boolean
+      label: 'Negated'
+    context_values:
+      type: rules.condition.context_values.[%parent.condition_id]
+      label: 'Context values'
+    context_mapping:
+      type: rules.context.mapping
+      label: 'Context mapping'
+    context_processors:
+      type: rules.context.processors
+      label: 'Context processors'
+    provides_mapping:
+      type: rules.context.mapping
+      label: 'Provided context mapping'
+
+rules_expression.rules_action:
+  type: rules_expression
+  label: "Rules action configuration"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
+    action_id:
+      type: string
+      label: 'Action plugin ID'
+    context_values:
+      type: rules.action.context_values.[%parent.action_id]
+      label: 'Context values'
+    context_mapping:
+      type: rules.context.mapping
+      label: 'Context mapping'
+    context_processors:
+      type: rules.context.processors
+      label: 'Context processors'
+    provides_mapping:
+      type: rules.context.mapping
+      label: 'Provided context mapping'
+
+rules_expression.rules_and:
+  type: rules_expression
+  label: 'Rules And'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
+    negate:
+      type: boolean
+      label: 'Negate'
+    conditions:
+      type: sequence
+      label: 'Conditions'
+      sequence:
+        - type: rules_expression.[id]
+
+rules_expression.rules_action_set:
+  type: rules_expression
+  label: 'Action set'
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
+    actions:
+      type: sequence
+      label: 'Actions'
+      sequence:
+        - type: rules_expression.[id]
+
+rules_expression.rules_rule:
+  type: rules_expression
+  label: "Rule"
+  mapping:
+    id:
+      type: string
+      label: 'Plugin ID'
+    uuid:
+      type: string
+      label: 'UUID'
+    conditions:
+      type: rules_expression.[id]
+      label: 'Conditions'
+    actions:
+      type: rules_expression.[id]
+      label: 'Actions'

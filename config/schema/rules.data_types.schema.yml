@@ -1,0 +1,17 @@
+rules_component:
+  type: mapping
+  label: 'Rules component (embedded)'
+  mapping:
+    context_definitions:
+      type: sequence
+      label: 'Context definitions'
+      sequence:
+        - type: rules.context.definition
+    provided_context:
+      type: sequence
+      label: 'Names of provided context'
+      sequence:
+        - type: string
+    expression:
+      type: rules_expression.[id]
+      label: 'Expression configuration'

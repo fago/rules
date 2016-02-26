@@ -1,0 +1,38 @@
+rules.context.definition:
+  type: mapping
+  label: 'Context definition'
+  mapping:
+    type:
+      type: string
+      label: 'Type'
+    label:
+      type: text
+      label: 'Label'
+    description:
+      type: text
+      label: 'Description'
+
+rules.context.mapping:
+  type: sequence
+  label: 'Context mapping'
+  sequence:
+    - type: string
+
+rules.context.values:
+  type: mapping
+  label: 'Context values'
+  mapping:
+  # The entries depend on the plugin here. Plugins have to extend this and
+  # provide a suiting schema.
+
+rules.context.mapping:
+  type: sequence
+  label: 'Context mapping'
+  sequence:
+    - type: string
+
+rules.context.processors:
+  type: sequence
+  label: 'Context processors'
+  sequence:
+    - type: rules.context.processor.%key

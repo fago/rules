@@ -1,0 +1,25 @@
+rules.action.context_values.rules_system_message:
+  type: mapping
+  label: Message action context values
+  mapping:
+    message:
+      type: text
+    type:
+      type: string
+    repeat:
+      type: boolean
+
+rules.action.context_values.rules_send_email:
+  type: mapping
+  label: Send e-mail action context values
+  mapping:
+    to:
+      type: email
+    subject:
+      type: text
+    message:
+      type: text
+    reply:
+      type: email
+    language:
+      type: string
