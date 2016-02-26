@@ -93,7 +93,7 @@ class AddExpressionForm extends EditExpressionForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
-    $form_state->setRedirect('entity.rules_reaction_rule.edit_form', $this->getRouteMatch()->getRawParameters()->all());
+    $form_state->setRedirectUrl($this->rulesUiHandler->getBaseRouteUrl());
   }
 
   /**

@@ -55,6 +55,14 @@ interface RulesUiHandlerInterface extends PluginInspectionInterface {
   public function updateComponent(RulesComponent $component);
 
   /**
+   * Gets the component form, ready to be embedded in some other form.
+   *
+   * @return \Drupal\Core\Form\FormInterface
+   *   The form object.
+   */
+  public function getForm();
+
+  /**
    * Clears any temporary storage.
    *
    * Note that after clearing the temporary storage any unsaved changes are
@@ -65,10 +73,40 @@ interface RulesUiHandlerInterface extends PluginInspectionInterface {
   /**
    * Returns the URL of the base route, based on the current URL.
    *
+   * @param array $options
+   *   (optional) Options for generating the URL, as supported by
+   *   \Drupal\Core\Url::fromRoute().
+   *
    * @return \Drupal\Core\Url
-   *   The url of the base route.
+   *   The URL of the base route.
    */
-  public function getBaseRouteUrl();
+  public function getBaseRouteUrl(array $options = []);
+
+  /**
+   * Gets an URL for a Rules UI route.
+   *
+   * @param string $route_suffix
+   *   The Rules UI route suffix that is appended to the base route. Supported
+   *   routes are:
+   *   - expression.add: The add expression form.
+   *   - expression.edit: The edit expression form.
+   *   - expression.delete: The delete expression form.
+   *   - break.lock: The break lock form.
+   * @param array $route_parameters
+   *   (optional) An associative array of route parameter names and values.
+   *   Depending on the route, the required parameters are:
+   *   - expression-id: The expression plugin to add on expression.add.
+   *   - uuid: The UUID of the expression to be edited or deleted.
+   * @param array $options
+   *   (optional) Options for generating the URL, as supported by
+   *   \Drupal\Core\Url::fromRoute().
+   *
+   * @return \Drupal\Core\Url
+   *   The URL of the given route.
+   *
+   * @see \Drupal\rules\Routing\RulesUiRouteSubscriber::registerRoutes()
+   */
+  public function getUrlFromRoute($route_suffix, array $route_parameters, array $options = []);
 
   /**
    * Determines if the component is locked for the current user.

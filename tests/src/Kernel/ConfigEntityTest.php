@@ -56,8 +56,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
     $config_entity->save();
 
     $loaded_entity = $this->storage->load('test_rule');
-    $this->assertEqual($loaded_entity->get('expression_id'), 'rules_action', 'Expression ID was successfully loaded.');
-    $this->assertEqual($loaded_entity->get('configuration'), $action->getConfiguration(), 'Action configuration is the same after loading the config.');
+    $this->assertEquals($action->getConfiguration(), $loaded_entity->get('component')['expression'], 'Action configuration is the same after loading the config.');
 
     // Create the Rules expression object from the configuration.
     $expression = $loaded_entity->getExpression();
@@ -102,7 +101,7 @@ class ConfigEntityTest extends RulesDrupalTestBase {
 
     $config_entity = $this->storage->create([
       'id' => 'test_rule',
-    ])->setComponent($component);
+    ])->updateFromComponent($component);
     $config_entity->save();
 
     $loaded_entity = $this->storage->load('test_rule');

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Form\Expression\ReactionRuleForm.
+ * Contains \Drupal\rules\Form\Expression\RuleForm.
  */
 
 namespace Drupal\rules\Form\Expression;
@@ -11,9 +11,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Plugin\RulesExpression\RuleInterface;
 
 /**
- * Form view structure for Reaction Rules.
+ * Form view structure for rule expressions.
+ *
+ * @see \Drupal\rules\Plugin\RulesExpression\Rule
  */
-class ReactionRuleForm implements ExpressionFormInterface {
+class RuleForm implements ExpressionFormInterface {
 
   use ExpressionFormTrait;
 

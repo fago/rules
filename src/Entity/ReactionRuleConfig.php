@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Core\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
 
@@ -41,8 +42,7 @@ use Drupal\rules\Engine\RulesComponent;
  *     "description",
  *     "tag",
  *     "core",
- *     "expression_id",
- *     "configuration",
+ *     "expression",
  *   },
  *   links = {
  *     "collection" = "/admin/config/workflow/rules",
@@ -52,7 +52,7 @@ use Drupal\rules\Engine\RulesComponent;
  *   }
  * )
  */
-class ReactionRuleConfig extends ConfigEntityBase {
+class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentProviderInterface {
 
   /**
    * The unique ID of the Reaction Rule.
@@ -93,25 +93,20 @@ class ReactionRuleConfig extends ConfigEntityBase {
   protected $core = \Drupal::CORE_COMPATIBILITY;
 
   /**
-   * The Rules expression plugin ID that the configuration is for.
-   *
-   * @var string
-   */
-  protected $expression_id = 'rules_rule';
-
-  /**
    * The expression plugin specific configuration as nested array.
    *
    * @var array
    */
-  protected $configuration = [];
+  protected $expression = [
+    'id' => 'rules_rule',
+  ];
 
   /**
    * Stores a reference to the executable expression version of this component.
    *
    * @var \Drupal\rules\Engine\ExpressionInterface
    */
-  protected $expression;
+  protected $expressionObject;
 
   /**
    * The module implementing this Reaction rule.
@@ -141,9 +136,8 @@ class ReactionRuleConfig extends ConfigEntityBase {
    * @return $this
    */
   public function setExpression(ExpressionInterface $expression) {
-    $this->expression = $expression;
-    $this->expression_id = $expression->getPluginId();
-    $this->configuration = $expression->getConfiguration();
+    $this->expressionObject = $expression;
+    $this->expression = $expression->getConfiguration();
     return $this;
   }
 
@@ -155,22 +149,18 @@ class ReactionRuleConfig extends ConfigEntityBase {
    */
   public function getExpression() {
     // Ensure that an executable Rules expression is available.
-    if (!isset($this->expression)) {
-      $this->expression = $this->getExpressionManager()->createInstance($this->expression_id, $this->configuration);
-      $this->expression->setConfigEntityId($this->id());
+    if (!isset($this->expressionObject)) {
+      $this->expressionObject = $this->getExpressionManager()->createInstance($this->expression['id'], $this->expression);
     }
-
-    return $this->expression;
+    return $this->expressionObject;
   }
 
   /**
-   * Gets the Rules component that is invoked when the events are dispatched.
+   * {@inheritdoc}
    *
+   * Gets the Rules component that is invoked when the events are dispatched.
    * The returned component has the definitions of the available event context
    * set.
-   *
-   * @return \Drupal\rules\Engine\RulesComponent
-   *   The Rules component.
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
@@ -179,12 +169,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
   }
 
   /**
-   * Updates the configuration based upon the given component.
-   *
-   * @param \Drupal\rules\Engine\RulesComponent $component
-   *   The component containing the configuration to set.
-   *
-   * @return $this
+   * {@inheritdoc}
    */
   public function updateFromComponent(RulesComponent $component) {
     // Note that the available context definitions stem from the configured
@@ -211,7 +196,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
    */
   public function createDuplicate() {
     $duplicate = parent::createDuplicate();
-    unset($duplicate->expression);
+    unset($duplicate->expressionObject);
     return $duplicate;
   }
 
@@ -289,7 +274,7 @@ class ReactionRuleConfig extends ConfigEntityBase {
   public function __clone() {
     // Remove the reference to the expression object in the clone so that the
     // expression object tree is created from scratch.
-    unset($this->expression);
+    unset($this->expressionObject);
   }
 
 }
