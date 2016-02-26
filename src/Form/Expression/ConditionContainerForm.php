@@ -9,7 +9,7 @@ namespace Drupal\rules\Form\Expression;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Url;
+use Drupal\rules\Core\RulesUiHandlerTrait;
 use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 
 /**
@@ -18,6 +18,7 @@ use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 class ConditionContainerForm implements ExpressionFormInterface {
 
   use ExpressionFormTrait;
+  use RulesUiHandlerTrait;
   use StringTranslationTrait;
 
   /**
@@ -58,15 +59,13 @@ class ConditionContainerForm implements ExpressionFormInterface {
             '#links' => [
               'edit' => [
                 'title' => $this->t('Edit'),
-                'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.edit', [
-                  'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
+                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.edit', [
                   'uuid' => $condition->getUuid(),
                 ]),
               ],
               'delete' => [
                 'title' => $this->t('Delete'),
-                'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.delete', [
-                  'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
+                'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.delete', [
                   'uuid' => $condition->getUuid(),
                 ]),
               ],
@@ -82,8 +81,7 @@ class ConditionContainerForm implements ExpressionFormInterface {
       '#theme' => 'menu_local_action',
       '#link' => [
         'title' => $this->t('Add condition'),
-        'url' => Url::fromRoute('entity.rules_reaction_rule.edit_form.expression.add', [
-          'rules_reaction_rule' => $this->conditionContainer->getRoot()->getConfigEntityId(),
+        'url' => $this->getRulesUiHandler()->getUrlFromRoute('expression.add', [
           'expression_id' => 'rules_condition',
         ]),
       ],

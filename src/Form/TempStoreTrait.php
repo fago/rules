@@ -238,7 +238,7 @@ trait TempStoreTrait {
    */
   public function validateLock(array &$form, FormStateInterface $form_state) {
     if ($this->isLocked()) {
-      $form_state->setError($form, $this->lockInformationMessage());
+      $form_state->setErrorByName('locked', $this->lockInformationMessage());
     }
   }
 

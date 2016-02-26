@@ -61,23 +61,6 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
   public function setRoot(ExpressionInterface $root);
 
   /**
-   * Gets the config entity ID this expression is associatedd with.
-   *
-   * @return string|null
-   *   The config entity ID or NULL if the expression is not associated with a
-   *   config entity.
-   */
-  public function getConfigEntityId();
-
-  /**
-   * Sets the config entity this expression is associated with.
-   *
-   * @param string $id
-   *   The config entity ID.
-   */
-  public function setConfigEntityId($id);
-
-  /**
    * The label of this expression element that can be shown in the UI.
    *
    * @return string

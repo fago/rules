@@ -71,8 +71,6 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $form['locked'] = $this->rulesUiHandler->addLockInformation();
-
     foreach ($this->entity->getEventNames() as $key => $event_name) {
       $event_definition = $this->eventManager->getDefinition($event_name);
       $form['event'][$key] = [
@@ -84,9 +82,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
         ]),
       ];
     }
-    $form_handler = $this->rulesUiHandler->getComponent()
-      ->getExpression()->getFormHandler();
-    $form = $form_handler->form($form, $form_state);
+    $form = $this->rulesUiHandler->getForm()->buildForm($form, $form_state);
     return parent::form($form, $form_state);
   }
 
@@ -95,7 +91,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    $this->rulesUiHandler->validateLock($form, $form_state);
+    $this->rulesUiHandler->getForm()->validateForm($form, $form_state);
   }
 
   /**
@@ -106,6 +102,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
     $actions['submit']['#value'] = $this->t('Save');
     $actions['cancel'] = [
       '#type' => 'submit',
+      '#limit_validation_errors' => [['locked']],
       '#value' => $this->t('Cancel'),
       '#submit' => ['::cancel'],
     ];
@@ -116,9 +113,12 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    $this->rulesUiHandler->getForm()->submitForm($form, $form_state);
+
+    // Persist changes by saving the entity.
     parent::save($form, $form_state);
 
-    // Also remove the temporarily stored rule, it has been persisted now.
+    // Also remove the temporarily stored component, it has been persisted now.
     $this->rulesUiHandler->clearTemporaryStorage();
 
     drupal_set_message($this->t('Reaction rule %label has been updated.', ['%label' => $this->entity->label()]));

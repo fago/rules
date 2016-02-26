@@ -6,3 +6,5 @@ rules_test_ui_embed.settings:
     _title: 'CSS rules'
   requirements:
     _permission: 'administer rules'
+  options:
+    _rules_ui: rules_test_ui_embed.settings_conditions
