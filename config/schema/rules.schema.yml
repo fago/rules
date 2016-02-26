@@ -35,9 +35,21 @@ rules.reaction.*:
     label:
       type: label
       label: 'Label'
-    event:
-      type: string
-      label: 'Event'
+    events:
+      type: sequence
+      label: 'Events'
+      sequence:
+        type: mapping
+        label: 'Event'
+        mapping:
+          event_name:
+            type: string
+            label: 'Name'
+          configuration:
+            type: sequence
+            label: 'Configuration'
+            sequence:
+              type: mapping
     module:
       type: string
       label: 'Module'

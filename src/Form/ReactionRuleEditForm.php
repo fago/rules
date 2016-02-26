@@ -71,12 +71,17 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $event_name = $this->entity->getEvent();
-    $event_definition = $this->eventManager->getDefinition($event_name);
-    $form['event']['#markup'] = $this->t('Event: @label (@name)', [
-      '@label' => $event_definition['label'],
-      '@name' => $event_name,
-    ]);
+    foreach ($this->entity->getEventNames() as $key => $event_name) {
+      $event_definition = $this->eventManager->getDefinition($event_name);
+      $form['event'][$key] = [
+        '#type' => 'item',
+        '#title' => $this->t('Events:'),
+        '#markup' => $this->t('@label (@name)', [
+          '@label' => $event_definition['label'],
+          '@name' => $event_name,
+        ]),
+      ];
+    }
     $form = $this->rulesUiHandler->getForm()->buildForm($form, $form_state);
     return parent::form($form, $form_state);
   }

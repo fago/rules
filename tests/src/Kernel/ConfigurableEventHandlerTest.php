@@ -93,9 +93,11 @@ class ConfigurableEventHandlerTest extends RulesDrupalTestBase {
     );
     $config_entity1 = $this->storage->create([
       'id' => 'test_rule1',
-      'expression_id' => 'rules_rule',
-      'event' => 'rules_entity_presave:node--page',
-    ])->setExpression($rule1);
+    ]);
+    $config_entity1->set('events', [
+      ['event_name' => 'rules_entity_presave:node--page'],
+    ]);
+    $config_entity1->set('expression', $rule1->getConfiguration());
     $config_entity1->save();
 
     // Create rule2 with the 'rules_entity_presave:node' event.
@@ -106,9 +108,11 @@ class ConfigurableEventHandlerTest extends RulesDrupalTestBase {
     );
     $config_entity2 = $this->storage->create([
       'id' => 'test_rule2',
-      'expression_id' => 'rules_rule',
-      'event' => 'rules_entity_presave:node',
-    ])->setExpression($rule2);
+    ]);
+    $config_entity2->set('events', [
+      ['event_name' => 'rules_entity_presave:node'],
+    ]);
+    $config_entity2->set('expression', $rule2->getConfiguration());
     $config_entity2->save();
 
     // The logger instance has changed, refresh it.

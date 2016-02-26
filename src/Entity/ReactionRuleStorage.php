@@ -95,10 +95,11 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   protected function getRegisteredEvents() {
     $events = [];
     foreach ($this->loadMultiple() as $rules_config) {
-      $event = $rules_config->getEvent();
-      $event = $this->eventManager->getEventBaseName($event);
-      if ($event && !isset($events[$event])) {
-        $events[$event] = $event;
+      foreach ($rules_config->getEventNames() as $event_name) {
+        $event_name = $this->eventManager->getEventBaseName($event_name);
+        if (!isset($events[$event_name])) {
+          $events[$event_name] = $event_name;
+        }
       }
     }
     return $events;
@@ -119,10 +120,13 @@ class ReactionRuleStorage extends ConfigEntityStorage {
 
     // After the reaction rule is saved, we need to rebuild the container,
     // otherwise the reaction rule will not fire. However, we can do an
-    // optimization: if the event was already registered before, we do not have
-    // to rebuild the container.
-    if (empty($events_before[$entity->getEvent()])) {
-      $this->drupalKernel->rebuildContainer();
+    // optimization: if every event was already registered before, we do not
+    // have to rebuild the container.
+    foreach ($entity->getEventNames() as $event_name) {
+      if (empty($events_before[$event_name])) {
+        $this->drupalKernel->rebuildContainer();
+        break;
+      }
     }
 
     return $return;

@@ -37,7 +37,7 @@ use Drupal\rules\Engine\RulesComponent;
  *   config_export = {
  *     "id",
  *     "label",
- *     "event",
+ *     "events",
  *     "module",
  *     "description",
  *     "tag",
@@ -116,11 +116,16 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
   protected $module = 'rules';
 
   /**
-   * The event name this reaction rule is reacting on.
+   * The events this reaction rule is reacting on.
    *
-   * @var string
+   * Events array. The array is numerically indexed and contains arrays with the
+   * following structure:
+   *   - event_name: String with the event machine name.
+   *   - configuration: An array containing the event configuration.
+   *
+   * @var array
    */
-  protected $event;
+  protected $events = [];
 
   /**
    * Sets a Rules expression instance for this Reaction rule.
@@ -159,7 +164,7 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
    */
   public function getComponent() {
     $component = RulesComponent::create($this->getExpression());
-    $component->addContextDefinitionsForEvents([$this->getEvent()]);
+    $component->addContextDefinitionsForEvents($this->getEventNames());
     return $component;
   }
 
@@ -222,10 +227,30 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
   }
 
   /**
-   * Returns the event on which this rule will trigger.
+   * Gets configuration of all events the rule is reacting on.
+   *
+   * @return array
+   *   The events array. The array is numerically indexed and contains arrays
+   *   with the following structure:
+   *     - event_name: String with the event machine name.
+   *     - configuration: An array containing the event configuration.
    */
-  public function getEvent() {
-    return $this->event;
+  public function getEvents() {
+    return $this->events;
+  }
+
+  /**
+   * Gets fully qualified names of all events the rule is reacting on.
+   *
+   * @return string[]
+   *   The array of fully qualified event names of the rule.
+   */
+  public function getEventNames() {
+    $names = [];
+    foreach ($this->events as $event) {
+      $names[] = $event['event_name'];
+    }
+    return $names;
   }
 
   /**
