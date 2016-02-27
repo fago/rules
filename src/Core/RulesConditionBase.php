@@ -32,6 +32,20 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
   /**
    * {@inheritdoc}
    */
+  public function getContextValue($name) {
+    try {
+      return parent::getContextValue($name);
+    }
+    catch (ContextException $e) {
+      // Catch the undocumented exception thrown when no context value is set
+      // for a required context.
+      // @todo: Remove once https://www.drupal.org/node/2677162 is fixed.
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function negate($negate = TRUE) {
     $this->configuration['negate'] = $negate;
     return $this;

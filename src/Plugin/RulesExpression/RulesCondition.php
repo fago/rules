@@ -110,16 +110,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
       'negate' => $this->configuration['negate'],
     ]);
 
-    // We have to forward the context values from our configuration to the
-    // condition plugin.
-    $this->mapContext($condition, $state);
-
-    $condition->refineContextDefinitions();
-
-    // Send the context values through configured data processors before
-    // evaluating the condition.
-    $this->processData($condition, $state);
-
+    $this->prepareContext($condition, $state);
     $result = $condition->evaluate();
 
     // Now that the condition has been executed it can provide additional
@@ -180,8 +171,12 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
       'negate' => $this->configuration['negate'],
     ]);
-
-    return $this->checkContextConfigIntegrity($condition, $metadata_state);
+    // Prepare and refine the context before checking integrity, such that any
+    // context definition changes are respected while checking.
+    $this->prepareContext($condition);
+    $result = $this->checkContextConfigIntegrity($condition, $metadata_state);
+    $this->prepareExecutionMetadataState($metadata_state);
+    return $result;
   }
 
   /**
@@ -191,7 +186,12 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     if ($until && $this->getUuid() === $until->getUuid()) {
       return TRUE;
     }
-    $condition = $this->conditionManager->createInstance($this->configuration['condition_id']);
+    $condition = $this->conditionManager->createInstance($this->configuration['condition_id'], [
+      'negate' => $this->configuration['negate'],
+    ]);
+    // Make sure to refine context first, such that possibly refined definitions
+    // of provided context are respected.
+    $this->prepareContext($condition);
     $this->addProvidedContextDefinitions($condition, $metadata_state);
   }
 

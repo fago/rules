@@ -116,7 +116,8 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    * expression execution.
    *
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
-   *   The execution metadata state.
+   *   The execution metadata state, prepared until right before this
+   *   expression.
    * @param \Drupal\rules\Engine\ExpressionInterface $until
    *   (optional) The expression at which metadata preparation should be
    *   stopped. The preparation of the state will be stopped right before that

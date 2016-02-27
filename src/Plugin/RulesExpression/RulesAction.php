@@ -94,16 +94,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
   public function executeWithState(ExecutionStateInterface $state) {
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
 
-    // We have to forward the context values from our configuration to the
-    // action plugin.
-    $this->mapContext($action, $state);
-
-    $action->refineContextDefinitions();
-
-    // Send the context value through configured data processor before executing
-    // the action.
-    $this->processData($action, $state);
-
+    $this->prepareContext($action, $state);
     $action->execute();
 
     $auto_saves = $action->autoSaveContext();
@@ -156,7 +147,12 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
 
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
 
-    return $this->checkContextConfigIntegrity($action, $metadata_state);
+    // Prepare and refine the context before checking integrity, such that any
+    // context definition changes are respected while checking.
+    $this->prepareContext($action);
+    $result = $this->checkContextConfigIntegrity($action, $metadata_state);
+    $this->prepareExecutionMetadataState($metadata_state);
+    return $result;
   }
 
   /**
@@ -167,6 +163,9 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
       return TRUE;
     }
     $action = $this->actionManager->createInstance($this->configuration['action_id']);
+    // Make sure to refine context first, such that possibly refined definitions
+    // of provided context are respected.
+    $this->prepareContext($action);
     $this->addProvidedContextDefinitions($action, $metadata_state);
   }
 

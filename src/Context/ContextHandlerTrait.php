@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\Plugin\Context\Context;
+use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
@@ -31,7 +31,18 @@ trait ContextHandlerTrait {
   protected $processorManager;
 
   /**
-   * Maps variables from the execution state into the plugin context.
+   * Prepares plugin context based upon the set context configuration.
+   *
+   * If no execution state is given, the configuration is applied as far as
+   * possible. That means, the configured context values are set and context is
+   * refined.
+   * If an execution state is available, the plugin is prepared for execution
+   * by mapping the variables from the execution state into the plugin context
+   * and applying data processors.
+   * In addition, it is ensured that all required context is basically
+   * available as defined. This include the following checks:
+   *  - Required context must have a value set.
+   *  - Context may not have NULL values unless the plugin allows it.
    *
    * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin that is populated with context values.
@@ -39,40 +50,55 @@ trait ContextHandlerTrait {
    *   The Rules state containing available variables.
    *
    * @throws \Drupal\rules\Exception\RulesEvaluationException
-   *   In case a required context is missing for the plugin.
+   *   Thrown if an execution state is given, but some context is not satisfied;
+   *   e.g. a required context is missing.
    */
-  protected function mapContext(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $state) {
-    $context_definitions = $plugin->getContextDefinitions();
-    foreach ($context_definitions as $name => $definition) {
-      // Check if a data selector is configured that maps to the state.
-      if (isset($this->configuration['context_mapping'][$name])) {
-        $typed_data = $state->fetchDataByPropertyPath($this->configuration['context_mapping'][$name]);
+  protected function prepareContext(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $state = NULL) {
+    if (isset($this->configuration['context_values'])) {
+      foreach ($this->configuration['context_values'] as $name => $value) {
+        $plugin->setContextValue($name, $value);
+      }
+    }
+    if ($plugin instanceof ContextAwarePluginInterface) {
+      // Getting context values may lead to undocumented exceptions if context
+      // is not set right now. So catch those exceptions.
+      // @todo: Remove ones https://www.drupal.org/node/2677162 got fixed.
+      try {
+        $plugin->refineContextDefinitions();
+      }
+      catch (ContextException $e) {
+      }
+    }
 
-        if ($typed_data->getValue() === NULL && !$definition->isAllowedNull()) {
-          throw new RulesEvaluationException('The value of data selector '
-            . $this->configuration['context_mapping'][$name] . " is NULL, but the context $name in "
+    // If no execution state has been provided, we are done now.
+    if (!$state) {
+      return;
+    }
+
+    // Map context by apply data selectors.
+    if (isset($this->configuration['context_mapping'])) {
+      foreach ($this->configuration['context_mapping'] as $name => $selector) {
+        $typed_data = $state->fetchDataByPropertyPath($selector);
+        $plugin->setContextValue($name, $typed_data);
+      }
+    }
+    // Apply data processors.
+    $this->processData($plugin, $state);
+
+    // Finally, ensure all contexts are set as expected now.
+    foreach ($plugin->getContextDefinitions() as $name => $definition) {
+      if ($plugin->getContextValue($name) === NULL && $definition->isRequired()) {
+        // If a context mapping has been specified, the value might end up NULL
+        // but valid (e.g. a reference on an empty property). In that case
+        // isAllowedNull determines whether the context is conform.
+        if (!isset($this->configuration['context_mapping'][$name])) {
+          throw new RulesEvaluationException("Required context $name is missing for plugin "
+            . $plugin->getPluginId() . '.');
+        }
+        elseif (!$definition->isAllowedNull()) {
+          throw new RulesEvaluationException("The context for $name is NULL, but the context $name in "
             . $plugin->getPluginId() . ' requires a value.');
         }
-        $context = $plugin->getContext($name);
-        $new_context = Context::createFromContext($context, $typed_data);
-        $plugin->setContext($name, $new_context);
-      }
-      elseif (isset($this->configuration['context_values'])
-        && array_key_exists($name, $this->configuration['context_values'])
-      ) {
-
-        if ($this->configuration['context_values'][$name] === NULL && !$definition->isAllowedNull()) {
-          throw new RulesEvaluationException("The context value for $name is NULL, but the context $name in "
-            . $plugin->getPluginId() . ' requires a value.');
-        }
-
-        $context = $plugin->getContext($name);
-        $new_context = Context::createFromContext($context, $this->configuration['context_values'][$name]);
-        $plugin->setContext($name, $new_context);
-      }
-      elseif ($definition->isRequired()) {
-        throw new RulesEvaluationException("Required context $name is missing for plugin "
-          . $plugin->getPluginId() . '.');
       }
     }
   }

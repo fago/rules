@@ -172,10 +172,12 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    */
   public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
+    $this->prepareExecutionMetadataStateBeforeTraversal($metadata_state);
     foreach ($this->actions as $action) {
       $action_violations = $action->checkIntegrity($metadata_state);
       $violation_list->addAll($action_violations);
     }
+    $this->prepareExecutionMetadataStateAfterTraversal($metadata_state);
     return $violation_list;
   }
 
@@ -186,6 +188,7 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     if ($until && $this->getUuid() === $until->getUuid()) {
       return TRUE;
     }
+    $this->prepareExecutionMetadataStateBeforeTraversal($metadata_state);
     foreach ($this->actions as $action) {
       $found = $action->prepareExecutionMetadataState($metadata_state, $until);
       // If the expression was found, we need to stop.
@@ -193,6 +196,27 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
         return TRUE;
       }
     }
+    $this->prepareExecutionMetadataStateAfterTraversal($metadata_state);
+  }
+
+  /**
+   * Prepares execution metadata state before traversing through children.
+   *
+   * @see ::prepareExecutionMetadataState()
+   * @see ::checkIntegrity()
+   */
+  protected function prepareExecutionMetadataStateBeforeTraversal($metadata_state) {
+    // Any pre-traversal preparations need to be added here.
+  }
+
+  /**
+   * Prepares execution metadata state after traversing through children.
+   *
+   * @see ::prepareExecutionMetadataState()
+   * @see ::checkIntegrity()
+   */
+  protected function prepareExecutionMetadataStateAfterTraversal($metadata_state) {
+    // Any post-traversal preparations need to be added here.
   }
 
 }

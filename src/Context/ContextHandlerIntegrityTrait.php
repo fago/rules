@@ -7,7 +7,7 @@
 
 namespace Drupal\rules\Context;
 
-use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
+use Drupal\Core\Plugin\Context\ContextDefinitionInterface as CoreContextDefinitionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
@@ -41,9 +41,6 @@ trait ContextHandlerIntegrityTrait {
   protected function checkContextConfigIntegrity(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
     $context_definitions = $plugin->getContextDefinitions();
-
-    // @todo: First step, ensure context is refined and metadata is prepared.
-
 
     // Make sure that all provided variables by this plugin are added to the
     // execution metadata state.
@@ -137,7 +134,7 @@ trait ContextHandlerIntegrityTrait {
    * @param \Drupal\rules\Engine\IntegrityViolationList $violation_list
    *   The list of violations where new ones will be added.
    */
-  protected function checkDataTypeCompatible(ContextDefinitionInterface $context_definition, DataDefinitionInterface $provided, $context_name, IntegrityViolationList $violation_list) {
+  protected function checkDataTypeCompatible(CoreContextDefinitionInterface $context_definition, DataDefinitionInterface $provided, $context_name, IntegrityViolationList $violation_list) {
     $expected_class = $context_definition->getDataDefinition()->getClass();
     $provided_class = $provided->getClass();
     $expected_type_problem = NULL;

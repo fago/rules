@@ -82,7 +82,8 @@ class EntityFetchById extends RulesActionBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function refineContextDefinitions() {
-    if ($type = $this->getContextValue('type')) {
+    // @todo: Simplify ones https://www.drupal.org/node/2677162 got fixed.
+    if ($this->getContext('type')->hasContextValue() && $type = $this->getContextValue('type')) {
       $this->pluginDefinition['provides']['entity_fetched']->setDataType("entity:$type");
     }
   }
