@@ -217,6 +217,25 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
+   * Tests that refined context is respected when checking context.
+   */
+  public function testRefinedContextViolation() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    $action = $this->rulesExpressionManager->createAction('rules_variable_add', ContextConfig::create()
+      ->setValue('type', 'integer')
+      ->map('value', 'text')
+      ->toArray()
+    );
+    $rule->addExpressionObject($action);
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('text', ContextDefinition::create('string'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+  }
+
+  /**
    * Tests that a primitive context is assigned something that matches.
    */
   public function testPrimitiveTypeViolation() {
