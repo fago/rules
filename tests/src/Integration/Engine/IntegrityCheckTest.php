@@ -339,4 +339,24 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     $this->assertEquals($action->getUuid(), $violation_list[0]->getUuid());
   }
 
+  /**
+   * Tests using provided variables in sub-sequent actions passes checks.
+   */
+  public function testUsingProvidedVariables() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    $rule->addAction('rules_variable_add', ContextConfig::create()
+      ->setValue('type', 'any')
+      ->setValue('value', 'foo')
+    );
+    $rule->addAction('rules_variable_add', ContextConfig::create()
+      ->setValue('type', 'any')
+      ->map('value', 'variable_added')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->checkIntegrity();
+    $this->assertEquals(0, iterator_count($violation_list));
+  }
+
 }
