@@ -13,6 +13,9 @@ use Drupal\Core\Plugin\Context\Context;
 /**
  * A trait implementing the ContextProviderInterface.
  *
+ * This trait is intended for context aware plugins that want to provide
+ * context.
+ *
  * The trait requires the plugin to use configuration as defined by the
  * ContextConfig class.
  *

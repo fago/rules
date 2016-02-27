@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Engine\ConditionExpressionInterface;
@@ -16,7 +15,7 @@ use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Context\ContextIntegrityCheckTrait;
+use Drupal\rules\Context\ContextHandlerIntegrityTrait;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,8 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RulesCondition extends ExpressionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
 
-  use ContextHandlerTrait;
-  use \Drupal\rules\Context\ContextIntegrityCheckTrait;
+  use ContextHandlerIntegrityTrait;
 
   /**
    * The condition manager used to instantiate the condition plugin.
@@ -126,7 +124,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
 
     // Now that the condition has been executed it can provide additional
     // context which we will have to pass back in the evaluation state.
-    $this->mapProvidedContext($condition, $state);
+    $this->addProvidedContext($condition, $state);
 
     if ($this->isNegated()) {
       $result = !$result;
@@ -190,12 +188,11 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    * {@inheritdoc}
    */
   public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
-    $condition = $this->actionManager->createInstance($this->configuration['condition_id']);
-    $this->addProvidedVariablesToExecutionMetadataState($condition, $metadata_state);
-    if ($until) {
-      return FALSE;
+    if ($until && $this->getUuid() === $until->getUuid()) {
+      return TRUE;
     }
-    return TRUE;
+    $condition = $this->conditionManager->createInstance($this->configuration['condition_id']);
+    $this->addProvidedContextDefinitions($condition, $metadata_state);
   }
 
 }

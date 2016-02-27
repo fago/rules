@@ -20,9 +20,16 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   /**
    * List of conditions that are evaluated.
    *
-   * @var \Drupal\rules\Core\RulesConditionInterface[]
+   * @var \Drupal\rules\Engine\ConditionExpressionInterface[]
    */
   protected $conditions = [];
+
+  /**
+   * The expression manager.
+   *
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
+   */
+  protected $expressionManager;
 
   /**
    * Constructs a new class instance.
@@ -204,26 +211,16 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
    * {@inheritdoc}
    */
   public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
-    if ($until) {
-      if ($this->getUuid() === $until->getUuid()) {
+    if ($until && $this->getUuid() === $until->getUuid()) {
+      return TRUE;
+    }
+    foreach ($this->conditions as $condition) {
+      $found = $condition->prepareExecutionMetadataState($metadata_state, $until);
+      // If the expression was found, we need to stop.
+      if ($found) {
         return TRUE;
       }
-      foreach ($this->conditions as $condition) {
-        if ($condition->getUuid() === $until->getUuid()) {
-          return TRUE;
-        }
-        $found = $condition->prepareExecutionMetadataState($metadata_state, $until);
-        if ($found) {
-          return TRUE;
-        }
-      }
-      return FALSE;
     }
-
-    foreach ($this->conditions as $condition) {
-      $condition->prepareExecutionMetadataState($metadata_state);
-    }
-    return TRUE;
   }
 
 }

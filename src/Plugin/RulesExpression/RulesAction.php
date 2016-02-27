@@ -8,7 +8,6 @@
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
@@ -16,7 +15,7 @@ use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Context\ContextIntegrityCheckTrait;
+use Drupal\rules\Context\ContextHandlerIntegrityTrait;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,8 +33,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterface, ActionExpressionInterface {
 
-  use ContextHandlerTrait;
-  use \Drupal\rules\Context\ContextIntegrityCheckTrait;
+  use ContextHandlerIntegrityTrait;
 
   /**
    * The action manager used to instantiate the action plugin.
@@ -116,7 +114,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
 
     // Now that the action has been executed it can provide additional
     // context which we will have to pass back in the evaluation state.
-    $this->mapProvidedContext($action, $state);
+    $this->addProvidedContext($action, $state);
   }
 
   /**
@@ -165,12 +163,11 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
-    $action = $this->actionManager->createInstance($this->configuration['action_id']);
-    $this->addProvidedVariablesToExecutionMetadataState($action, $metadata_state);
-    if ($until) {
-      return FALSE;
+    if ($until && $this->getUuid() === $until->getUuid()) {
+      return TRUE;
     }
-    return TRUE;
+    $action = $this->actionManager->createInstance($this->configuration['action_id']);
+    $this->addProvidedContextDefinitions($action, $metadata_state);
   }
 
 }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\ContextIntegrityCheckTrait.
+ * Contains \Drupal\rules\Engine\ContextHandlerIntegrityTrait.
  */
 
 namespace Drupal\rules\Context;
@@ -20,9 +20,9 @@ use Drupal\rules\Engine\IntegrityViolationList;
 use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
- * Provides shared integrity checking methods for conditions and actions.
+ * Extends the context handler trait with support for checking integrity.
  */
-trait ContextIntegrityCheckTrait {
+trait ContextHandlerIntegrityTrait {
 
   use ContextHandlerTrait;
 
@@ -42,12 +42,18 @@ trait ContextIntegrityCheckTrait {
     $violation_list = new IntegrityViolationList();
     $context_definitions = $plugin->getContextDefinitions();
 
+    // @todo: First step, ensure context is refined and metadata is prepared.
+
+
+    // Make sure that all provided variables by this plugin are added to the
+    // execution metadata state.
+    $this->addProvidedContextDefinitions($plugin, $metadata_state);
+
     foreach ($context_definitions as $name => $context_definition) {
       // Check if a data selector is configured that maps to the state.
       if (isset($this->configuration['context_mapping'][$name])) {
         try {
-          $data_definition = $metadata_state->fetchDefinitionByPropertyPath($this->configuration['context_mapping'][$name]);
-
+          $data_definition = $this->getMappedDefinition($name, $metadata_state);
           $this->checkDataTypeCompatible($context_definition, $data_definition, $name, $violation_list);
         }
         catch (RulesIntegrityException $e) {
@@ -116,10 +122,6 @@ trait ContextIntegrityCheckTrait {
       }
     }
 
-    // Make sure that all provided variables by this plugin are added to the
-    // execution metadata state.
-    $this->addProvidedVariablesToExecutionMetadataState($plugin, $metadata_state);
-
     return $violation_list;
   }
 
@@ -169,33 +171,5 @@ trait ContextIntegrityCheckTrait {
     }
   }
 
-  /**
-   * Adds provided variables to the execution metadata state.
-   *
-   * @param CoreContextAwarePluginInterface $plugin
-   *   The action or condition plugin that may provide variables.
-   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
-   *   The execution metadata state to add variables to.
-   */
-  public function addProvidedVariablesToExecutionMetadataState(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
-    if ($plugin instanceof ContextProviderInterface) {
-      $provided_context_definitions = $plugin->getProvidedContextDefinitions();
-
-      foreach ($provided_context_definitions as $name => $context_definition) {
-        if (isset($this->configuration['provides_mapping'][$name])) {
-          // Populate the state with the new variable that is provided by this
-          // plugin. That is necessary so that the integrity check in subsequent
-          // actions knows about the variable and does not throw violations.
-          $metadata_state->setDataDefinition(
-            $this->configuration['provides_mapping'][$name],
-            $context_definition->getDataDefinition()
-          );
-        }
-        else {
-          $metadata_state->setDataDefinition($name, $context_definition->getDataDefinition());
-        }
-      }
-    }
-  }
 
 }

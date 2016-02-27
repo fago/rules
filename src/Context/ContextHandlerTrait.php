@@ -9,6 +9,7 @@ namespace Drupal\rules\Context;
 
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
+use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
 
@@ -30,7 +31,7 @@ trait ContextHandlerTrait {
   protected $processorManager;
 
   /**
-   * Maps variables from rules state into the plugin context.
+   * Maps variables from the execution state into the plugin context.
    *
    * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin that is populated with context values.
@@ -77,14 +78,40 @@ trait ContextHandlerTrait {
   }
 
   /**
-   * Maps provided context values from the plugin to the Rules state.
+   * Gets the definition of the data that is mapped to the given context.
    *
-   * @param ContextProviderInterface $plugin
-   *   The plugin where the context values are extracted.
+   * @param string $context_name
+   *   The name of the context.
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The metadata state containing metadata about available variables.
+   *
+   * @return \Drupal\Core\TypedData\DataDefinitionInterface|null
+   *   A data definition if the property path could be applied, or NULL if the
+   *   context is not mapped.
+   *
+   * @throws \Drupal\rules\Exception\RulesIntegrityException
+   *   Thrown if the data selector that is configured for the context is
+   *   invalid.
+   */
+  protected function getMappedDefinition($context_name, ExecutionMetadataStateInterface $metadata_state) {
+    if (isset($this->configuration['context_mapping'][$context_name])) {
+      return $metadata_state->fetchDefinitionByPropertyPath($this->configuration['context_mapping'][$context_name]);
+    }
+  }
+
+  /**
+   * Adds provided context values from the plugin to the execution state.
+   *
+   * @param CoreContextAwarePluginInterface $plugin
+   *   The context aware plugin of which to add provided context.
    * @param \Drupal\rules\Engine\ExecutionStateInterface $state
    *   The Rules state where the context variables are added.
    */
-  protected function mapProvidedContext(ContextProviderInterface $plugin, ExecutionStateInterface $state) {
+  protected function addProvidedContext(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $state) {
+    // If the plugin does not support providing context, there is nothing to do.
+    if (!$plugin instanceof ContextProviderInterface) {
+      return;
+    }
     $provides = $plugin->getProvidedContextDefinitions();
     foreach ($provides as $name => $provided_definition) {
       // Avoid name collisions in the rules state: provided variables can be
@@ -94,6 +121,36 @@ trait ContextHandlerTrait {
       }
       else {
         $state->setVariableData($name, $plugin->getProvidedContext($name)->getContextData());
+      }
+    }
+  }
+
+  /**
+   * Adds the definitions of provided context to the execution metadata state.
+   *
+   * @param CoreContextAwarePluginInterface $plugin
+   *   The context aware plugin of which to add provided context.
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The execution metadata state to add variables to.
+   */
+  protected function addProvidedContextDefinitions(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
+    // If the plugin does not support providing context, there is nothing to do.
+    if (!$plugin instanceof ContextProviderInterface) {
+      return;
+    }
+
+    foreach ($plugin->getProvidedContextDefinitions() as $name => $context_definition) {
+      if (isset($this->configuration['provides_mapping'][$name])) {
+        // Populate the state with the new variable that is provided by this
+        // plugin. That is necessary so that the integrity check in subsequent
+        // actions knows about the variable and does not throw violations.
+        $metadata_state->setDataDefinition(
+          $this->configuration['provides_mapping'][$name],
+          $context_definition->getDataDefinition()
+        );
+      }
+      else {
+        $metadata_state->setDataDefinition($name, $context_definition->getDataDefinition());
       }
     }
   }

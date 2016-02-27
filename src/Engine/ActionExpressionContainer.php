@@ -25,6 +25,13 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
   protected $actions = [];
 
   /**
+   * The expression manager.
+   *
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
+   */
+  protected $expressionManager;
+
+  /**
    * Constructor.
    *
    * @param array $configuration
@@ -176,26 +183,16 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    * {@inheritdoc}
    */
   public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
-    if ($until) {
-      if ($this->getUuid() === $until->getUuid()) {
+    if ($until && $this->getUuid() === $until->getUuid()) {
+      return TRUE;
+    }
+    foreach ($this->actions as $action) {
+      $found = $action->prepareExecutionMetadataState($metadata_state, $until);
+      // If the expression was found, we need to stop.
+      if ($found) {
         return TRUE;
       }
-      foreach ($this->actions as $action) {
-        if ($action->getUuid() === $until->getUuid()) {
-          return TRUE;
-        }
-        $found = $action->prepareExecutionMetadataState($metadata_state, $until);
-        if ($found) {
-          return TRUE;
-        }
-      }
-      return FALSE;
     }
-
-    foreach ($this->actions as $action) {
-      $action->prepareExecutionMetadataState($metadata_state);
-    }
-    return TRUE;
   }
 
 }

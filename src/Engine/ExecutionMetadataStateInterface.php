@@ -79,12 +79,13 @@ interface ExecutionMetadataStateInterface {
    * @param string $property_path
    *   The property path, example: "node:title:value".
    * @param string $langcode
-   *   The langauge code.
+   *   The language code.
    *
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   A data definition if the property path could be applied.
    *
    * @throws \Drupal\rules\Exception\RulesIntegrityException
+   *   Thrown if the property path is invalid.
    */
   public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED);
 
