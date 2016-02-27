@@ -217,25 +217,6 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests that refined context is respected when checking context.
-   */
-  public function testRefinedContextViolation() {
-    $rule = $this->rulesExpressionManager->createRule();
-
-    $action = $this->rulesExpressionManager->createAction('rules_variable_add', ContextConfig::create()
-      ->setValue('type', 'integer')
-      ->map('value', 'text')
-      ->toArray()
-    );
-    $rule->addExpressionObject($action);
-
-    $violation_list = RulesComponent::create($rule)
-      ->addContextDefinition('text', ContextDefinition::create('string'))
-      ->checkIntegrity();
-    $this->assertEquals(1, iterator_count($violation_list));
-  }
-
-  /**
    * Tests that a primitive context is assigned something that matches.
    */
   public function testPrimitiveTypeViolation() {
@@ -372,6 +353,44 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
       ->setValue('type', 'any')
       ->map('value', 'variable_added')
     );
+
+    $violation_list = RulesComponent::create($rule)
+      ->checkIntegrity();
+    $this->assertEquals(0, iterator_count($violation_list));
+  }
+
+  /**
+   * Tests that refined context is respected when checking context.
+   */
+  public function testRefinedContextViolation() {
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addAction('rules_variable_add', ContextConfig::create()
+      ->setValue('type', 'integer')
+      ->map('value', 'text')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('text', ContextDefinition::create('string'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+  }
+
+  /**
+   * Tests using provided variables with refined context.
+   */
+  public function testUsingRefinedProvidedVariables() {
+    $rule = $this->rulesExpressionManager->createRule();
+
+    $rule->addAction('rules_variable_add', ContextConfig::create()
+      ->setValue('type', 'string')
+      ->setValue('value', 'foo')
+    );
+    $rule->addAction('rules_system_message', ContextConfig::create()
+      ->map('message', 'variable_added')
+      ->setValue('type', 'status')
+    );
+    // The message action requires a string, thus if the context is not refined
+    // it will end up as "any" and integrity check would fail.
 
     $violation_list = RulesComponent::create($rule)
       ->checkIntegrity();
