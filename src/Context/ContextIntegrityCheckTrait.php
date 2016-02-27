@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Engine\IntegrityCheckTrait.
+ * Contains \Drupal\rules\Engine\ContextIntegrityCheckTrait.
  */
 
-namespace Drupal\rules\Engine;
+namespace Drupal\rules\Context;
 
 use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
@@ -14,13 +14,17 @@ use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\ListInterface;
 use Drupal\Core\TypedData\PrimitiveInterface;
 use Drupal\rules\Context\ContextDefinitionInterface as RulesContextDefinitionInterface;
-use Drupal\rules\Context\ContextProviderInterface;
+use Drupal\rules\Engine\ExecutionMetadataStateInterface;
+use Drupal\rules\Engine\IntegrityViolation;
+use Drupal\rules\Engine\IntegrityViolationList;
 use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
  * Provides shared integrity checking methods for conditions and actions.
  */
-trait IntegrityCheckTrait {
+trait ContextIntegrityCheckTrait {
+
+  use ContextHandlerTrait;
 
   /**
    * Performs the integrity check.
@@ -34,7 +38,7 @@ trait IntegrityCheckTrait {
    * @return \Drupal\rules\Engine\IntegrityViolationList
    *   The list of integrity violations.
    */
-  protected function doCheckIntegrity(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
+  protected function checkContextConfigIntegrity(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
     $violation_list = new IntegrityViolationList();
     $context_definitions = $plugin->getContextDefinitions();
 

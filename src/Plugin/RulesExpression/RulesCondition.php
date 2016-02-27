@@ -16,7 +16,7 @@ use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\ExpressionBase;
 use Drupal\rules\Engine\ExpressionInterface;
-use Drupal\rules\Engine\IntegrityCheckTrait;
+use Drupal\rules\Context\ContextIntegrityCheckTrait;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -35,7 +35,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class RulesCondition extends ExpressionBase implements ConditionExpressionInterface, ContainerFactoryPluginInterface {
 
   use ContextHandlerTrait;
-  use IntegrityCheckTrait;
+  use \Drupal\rules\Context\ContextIntegrityCheckTrait;
 
   /**
    * The condition manager used to instantiate the condition plugin.
@@ -183,7 +183,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
       'negate' => $this->configuration['negate'],
     ]);
 
-    return $this->doCheckIntegrity($condition, $metadata_state);
+    return $this->checkContextConfigIntegrity($condition, $metadata_state);
   }
 
   /**
