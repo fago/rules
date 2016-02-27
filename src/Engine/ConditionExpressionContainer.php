@@ -246,4 +246,5 @@ abstract class ConditionExpressionContainer extends ExpressionBase implements Co
   protected function prepareExecutionMetadataStateAfterTraversal($metadata_state) {
     // Any post-traversal preparations need to be added here.
   }
+
 }

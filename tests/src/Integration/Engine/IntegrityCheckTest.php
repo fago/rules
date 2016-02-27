@@ -391,7 +391,6 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     );
     // The message action requires a string, thus if the context is not refined
     // it will end up as "any" and integrity check would fail.
-
     $violation_list = RulesComponent::create($rule)
       ->checkIntegrity();
     $this->assertEquals(0, iterator_count($violation_list));

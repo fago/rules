@@ -22,7 +22,7 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
   /**
    * Tests that a missing required context triggers an exception.
    *
-   * @covers ::mapContext
+   * @covers ::prepareContext
    *
    * @expectedException \Drupal\rules\Exception\RulesEvaluationException
    *
@@ -43,13 +43,16 @@ class ContextHandlerTraitTest extends RulesUnitTestBase {
     $plugin->getContextDefinitions()
       ->willReturn(['test' => $context_definition->reveal()])
       ->shouldBeCalled(1);
+    $plugin->getContextValue('test')
+      ->willReturn(NULL)
+      ->shouldBeCalled(1);
     $plugin->getPluginId()->willReturn('testplugin')->shouldBeCalledTimes(1);
 
     $state = $this->prophesize(ExecutionStateInterface::class);
 
     // Make the 'mapContext' method visible.
     $reflection = new \ReflectionClass($trait);
-    $method = $reflection->getMethod('mapContext');
+    $method = $reflection->getMethod('prepareContext');
     $method->setAccessible(TRUE);
     $method->invokeArgs($trait, [$plugin->reveal(), $state->reveal()]);
   }

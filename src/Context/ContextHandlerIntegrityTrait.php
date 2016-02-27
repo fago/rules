@@ -168,5 +168,4 @@ trait ContextHandlerIntegrityTrait {
     }
   }
 
-
 }

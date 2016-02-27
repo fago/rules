@@ -11,7 +11,6 @@ use Drupal\Core\TypedData\ListDataDefinitionInterface;
 use Drupal\rules\Engine\ActionExpressionContainer;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
-use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\IntegrityViolationList;
 use Drupal\rules\Exception\RulesIntegrityException;
 
@@ -119,4 +118,5 @@ class RulesLoop extends ActionExpressionContainer {
     // Remove the list item variable after the loop, it is out of scope now.
     $metadata_state->removeDataDefinition($this->configuration['list_item']);
   }
+
 }
