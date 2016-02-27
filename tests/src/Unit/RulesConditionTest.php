@@ -101,7 +101,7 @@ class RulesConditionTest extends UnitTestCase {
     // Mock some original old value that will be replaced by the data processor.
     $this->trueCondition->getContextValue('test')
       ->willReturn('old_value')
-      ->shouldBeCalledTimes(1);
+      ->shouldBeCalled();
 
     // The outcome of the data processor needs to get set on the condition.
     $this->trueCondition->setContextValue('test', 'new_value')->shouldBeCalledTimes(1);

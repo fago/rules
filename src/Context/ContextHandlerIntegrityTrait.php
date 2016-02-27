@@ -9,10 +9,7 @@ namespace Drupal\rules\Context;
 
 use Drupal\Core\Plugin\Context\ContextDefinitionInterface as CoreContextDefinitionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
-use Drupal\Core\TypedData\ComplexDataInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
-use Drupal\Core\TypedData\ListInterface;
-use Drupal\Core\TypedData\PrimitiveInterface;
 use Drupal\rules\Context\ContextDefinitionInterface as RulesContextDefinitionInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\IntegrityViolation;
@@ -135,27 +132,11 @@ trait ContextHandlerIntegrityTrait {
    *   The list of violations where new ones will be added.
    */
   protected function checkDataTypeCompatible(CoreContextDefinitionInterface $context_definition, DataDefinitionInterface $provided, $context_name, IntegrityViolationList $violation_list) {
-    $expected_class = $context_definition->getDataDefinition()->getClass();
-    $provided_class = $provided->getClass();
-    $expected_type_problem = NULL;
-
-    if (is_subclass_of($expected_class, PrimitiveInterface::class)
-      && !is_subclass_of($provided_class, PrimitiveInterface::class)
-    ) {
-      $expected_type_problem = $this->t('primitive');
-    }
-    elseif (is_subclass_of($expected_class, ListInterface::class)
-      && !is_subclass_of($provided_class, ListInterface::class)
-    ) {
-      $expected_type_problem = $this->t('list');
-    }
-    elseif (is_subclass_of($expected_class, ComplexDataInterface::class)
-      && !is_subclass_of($provided_class, ComplexDataInterface::class)
-    ) {
-      $expected_type_problem = $this->t('complex');
-    }
-
-    if ($expected_type_problem) {
+    // Compare data types. For now, fail if they are not equal.
+    // @todo: Add support for matching based upon type-inheritance.
+    $target_type = $context_definition->getDataDefinition()->getDataType();
+    if ($target_type != 'any' && $target_type != $provided->getDataType()) {
+      $expected_type_problem = $context_definition->getDataDefinition()->getDataType();
       $violation = new IntegrityViolation();
       $violation->setMessage($this->t('Expected a @expected_type data type for context %context_name but got a @provided_type data type instead.', [
         '@expected_type' => $expected_type_problem,

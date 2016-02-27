@@ -235,7 +235,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
       ->checkIntegrity();
     $this->assertEquals(1, iterator_count($violation_list));
     $this->assertEquals(
-      'Expected a primitive data type for context <em class="placeholder">Text to compare</em> but got a list data type instead.',
+      'Expected a string data type for context <em class="placeholder">Text to compare</em> but got a list data type instead.',
       (string) $violation_list[0]->getMessage()
     );
     $this->assertEquals($condition->getUuid(), $violation_list[0]->getUuid());
@@ -287,7 +287,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
       ->checkIntegrity();
     $this->assertEquals(1, iterator_count($violation_list));
     $this->assertEquals(
-      'Expected a complex data type for context <em class="placeholder">Node</em> but got a list data type instead.',
+      'Expected a entity:node data type for context <em class="placeholder">Node</em> but got a list data type instead.',
       (string) $violation_list[0]->getMessage()
     );
     $this->assertEquals($condition->getUuid(), $violation_list[0]->getUuid());
