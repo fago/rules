@@ -7,10 +7,10 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
+use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
@@ -40,7 +40,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
   /**
    * The condition manager used to instantiate the condition plugin.
    *
-   * @var \Drupal\Core\Condition\ConditionManager
+   * @var \Drupal\rules\Core\ConditionManager
    */
   protected $conditionManager;
 
@@ -55,7 +55,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Condition\ConditionManager $condition_manager
+   * @param \Drupal\rules\Core\ConditionManager $condition_manager
    *   The condition manager.
    * @param \Drupal\rules\Context\DataProcessorManager $processor_manager
    *   The data processor plugin manager.
@@ -116,7 +116,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     // condition plugin.
     $this->mapContext($condition, $state);
 
-    $condition->refineContextdefinitions();
+    $condition->refineContextDefinitions();
 
     // Send the context values through configured data processors before
     // evaluating the condition.
@@ -140,20 +140,6 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
    */
   public function isNegated() {
     return !empty($this->configuration['negate']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getContextDefinitions() {
-    if (!isset($this->contextDefinitions)) {
-      // Pass up the context definitions from the condition plugin.
-      // @todo do not always create plugin instances here, the instance should
-      // be reused. Maybe that is what plugin bags are for?
-      $condition = $this->conditionManager->createInstance($this->configuration['condition_id']);
-      $this->contextDefinitions = $condition->getContextDefinitions();
-    }
-    return $this->contextDefinitions;
   }
 
   /**

@@ -20,4 +20,12 @@ use Drupal\Core\Plugin\Context\ContextAwarePluginManagerInterface;
  */
 interface RulesActionManagerInterface extends CategorizingPluginManagerInterface, ContextAwarePluginManagerInterface {
 
+  /**
+   * {@inheritdoc}
+   *
+   * @return \Drupal\rules\Core\RulesActionInterface
+   *   A fully configured plugin instance.
+   */
+  public function createInstance($plugin_id, array $configuration = []);
+
 }

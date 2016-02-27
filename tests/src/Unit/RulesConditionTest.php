@@ -7,7 +7,7 @@
 
 namespace Drupal\Tests\rules\Unit;
 
-use Drupal\Core\Condition\ConditionManager;
+use Drupal\rules\Core\ConditionManager;
 use Drupal\Core\Plugin\Context\ContextDefinitionInterface;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Context\ContextConfig;
@@ -28,7 +28,7 @@ class RulesConditionTest extends UnitTestCase {
   /**
    * The mocked condition manager.
    *
-   * @var \Drupal\Core\Condition\ConditionManager|\Prophecy\Prophecy\ProphecyInterface
+   * @var \Drupal\rules\Core\ConditionManager|\Prophecy\Prophecy\ProphecyInterface
    */
   protected $conditionManager;
 
@@ -71,22 +71,6 @@ class RulesConditionTest extends UnitTestCase {
     $this->conditionExpression = new RulesCondition(
       ['condition_id' => 'test_condition'], '', [],
       $this->conditionManager->reveal(), $this->processorManager->reveal());
-  }
-
-  /**
-   * Tests that context definitions are retrieved form the plugin.
-   */
-  public function testContextDefinitions() {
-    $context_definition = $this->prophesize(ContextDefinitionInterface::class);
-    $this->trueCondition->getContextDefinitions()
-      ->willReturn(['test' => $context_definition->reveal()])
-      ->shouldBeCalledTimes(1);
-
-    $this->conditionManager->createInstance('test_condition')
-      ->willReturn($this->trueCondition->reveal())
-      ->shouldBeCalledTimes(1);
-
-    $this->assertSame($this->conditionExpression->getContextDefinitions(), ['test' => $context_definition->reveal()]);
   }
 
   /**

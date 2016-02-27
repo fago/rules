@@ -18,6 +18,16 @@ class ConditionManager extends CoreConditionManager {
 
   /**
    * {@inheritdoc}
+   *
+   * @return \Drupal\rules\Core\RulesConditionInterface|\Drupal\Core\Condition\ConditionInterface
+   *   A fully configured plugin instance.
+   */
+  public function createInstance($plugin_id, array $configuration = []) {
+    return parent::createInstance($plugin_id, $configuration);
+  }
+
+  /**
+   * {@inheritdoc}
    */
   protected function getDiscovery() {
     if (!$this->discovery) {

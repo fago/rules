@@ -7,7 +7,6 @@
 
 namespace Drupal\rules\Plugin\RulesExpression;
 
-use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextHandlerTrait;
 use Drupal\rules\Context\DataProcessorManager;
@@ -101,7 +100,7 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
     // action plugin.
     $this->mapContext($action, $state);
 
-    $action->refineContextdefinitions();
+    $action->refineContextDefinitions();
 
     // Send the context value through configured data processor before executing
     // the action.
@@ -118,27 +117,6 @@ class RulesAction extends ExpressionBase implements ContainerFactoryPluginInterf
     // Now that the action has been executed it can provide additional
     // context which we will have to pass back in the evaluation state.
     $this->mapProvidedContext($action, $state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getContextDefinitions() {
-    // Pass up the context definitions from the action plugin.
-    $definition = $this->actionManager->getDefinition($this->configuration['action_id']);
-    return !empty($definition['context']) ? $definition['context'] : [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getContextDefinition($name) {
-    // Pass up the context definitions from the action plugin.
-    $definition = $this->actionManager->getDefinition($this->configuration['action_id']);
-    if (empty($definition['context'][$name])) {
-      throw new ContextException(sprintf("The %s context is not a valid context.", $name));
-    }
-    return $definition['context'][$name];
   }
 
   /**

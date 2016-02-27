@@ -171,7 +171,7 @@ trait IntegrityCheckTrait {
    * @param CoreContextAwarePluginInterface $plugin
    *   The action or condition plugin that may provide variables.
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
-   *   The excution metadata state to add variables to.
+   *   The execution metadata state to add variables to.
    */
   public function addProvidedVariablesToExecutionMetadataState(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
     if ($plugin instanceof ContextProviderInterface) {

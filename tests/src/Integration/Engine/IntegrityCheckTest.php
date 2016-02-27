@@ -166,7 +166,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
-   * Tests the input restrction on contexts.
+   * Tests the input restriction on contexts.
    */
   public function testInputRestriction() {
     $rule = $this->rulesExpressionManager->createRule();
@@ -299,7 +299,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
   public function testMissingRequiredContext() {
     $rule = $this->rulesExpressionManager->createRule();
 
-    // The condition is completely unconfigured, missing 2 required contexts.
+    // The condition is completely un-configured, missing 2 required contexts.
     $condition = $this->rulesExpressionManager->createCondition('rules_node_is_of_type');
     $rule->addExpressionObject($condition);
 
