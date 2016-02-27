@@ -69,20 +69,6 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
   public function getLabel();
 
   /**
-   * Verifies that this expression is configured correctly.
-   *
-   * Example: all variable names used in the expression are available.
-   *
-   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
-   *   The configuration state used to hold available data definitions of
-   *   variables.
-   *
-   * @return \Drupal\rules\Engine\IntegrityViolationList
-   *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
-   */
-  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state);
-
-  /**
    * Returns the UUID of this expression if it is nested in another expression.
    *
    * @return string|null
@@ -97,6 +83,29 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    *   The UUID to set.
    */
   public function setUuid($uuid);
+
+  /**
+   * Verifies that this expression is configured correctly.
+   *
+   * Example: All configured data selectors must be valid.
+   *
+   * Note that for checking integrity the execution metadata state must be
+   * passed prepared as achieved by ::prepareExecutionMetadataState() and the
+   * expression must apply all metadata state preparations during its integrity
+   * check as it does in ::prepareExecutionMetadataState().
+   * This allows for efficient integrity checks of expression trees; e.g. see
+   * \Drupal\rules\Engine\ActionExpressionContainer::checkIntegrity().
+   *
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The execution metadata state, prepared until right before this
+   *   expression.
+   *
+   * @return \Drupal\rules\Engine\IntegrityViolationList
+   *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
+   *
+   * @see ::prepareExecutionMetadataState()
+   */
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state);
 
   /**
    * Prepares the execution metadata state by adding metadata to it.
