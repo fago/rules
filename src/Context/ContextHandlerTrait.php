@@ -80,6 +80,9 @@ trait ContextHandlerTrait {
         $plugin->refineContextDefinitions($selected_data);
       }
       catch (ContextException $e) {
+        if (strpos($e->getMessage(), 'context is required') === FALSE) {
+          throw new RulesEvaluationException($e->getMessage());
+        }
       }
     }
 
@@ -115,6 +118,10 @@ trait ContextHandlerTrait {
    *   The plugin that is prepared.
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
    *   The metadata state, prepared for the current expression.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\ContextException
+   *   Thrown if the plugin tries to access some not-defined context. As this is
+   *   a developer error, this should not be caught.
    *
    * @see ::prepareContext()
    */

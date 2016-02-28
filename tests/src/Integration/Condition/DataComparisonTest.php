@@ -137,8 +137,8 @@ class DataComparisonTest extends RulesIntegrationTestBase {
       ->setContextValue('value', ['Llama', 'Kitten']);
     $this->assertTrue($this->condition->evaluate());
 
-    // Test that when the data array is not in the value array, and the operation
-    // is 'IN', FALSE is returned.
+    // Test that when the data array is not in the value array, and the
+    // operation is 'IN', FALSE is returned.
     $this->condition
       ->setContextValue('data', ['Llama'])
       ->setContextValue('operation', 'IN')
