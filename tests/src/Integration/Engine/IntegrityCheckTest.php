@@ -376,6 +376,32 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
   }
 
   /**
+   * Tests context can be refined based upon mapped context.
+   */
+  public function testRefiningContextBasedonMappedContext() {
+    // DataComparision condition refines context based on selected data. Thus
+    // it for the test and ensure checking integrity passes when the comparison
+    // value is of a compatible type and fails else.
+    $rule = $this->rulesExpressionManager->createRule();
+    $rule->addCondition('rules_data_comparison', ContextConfig::create()
+      ->map('data', 'text')
+      ->map('value', 'text2')
+    );
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('text', ContextDefinition::create('string'))
+      ->addContextDefinition('text2', ContextDefinition::create('string'))
+      ->checkIntegrity();
+    $this->assertEquals(0, iterator_count($violation_list));
+
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('text', ContextDefinition::create('string'))
+      ->addContextDefinition('text2', ContextDefinition::create('integer'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+  }
+
+  /**
    * Tests using provided variables with refined context.
    */
   public function testUsingRefinedProvidedVariables() {

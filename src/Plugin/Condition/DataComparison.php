@@ -81,4 +81,16 @@ class DataComparison extends RulesConditionBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function refineContextDefinitions(array $selected_data) {
+    if (isset($selected_data['data'])) {
+      $this->pluginDefinition['context']['value']->setDataType($selected_data['data']->getDataType());
+      if ($this->getContextValue('operation') == 'IN') {
+        $this->pluginDefinition['context']['value']->setMultiple();
+      }
+    }
+  }
+
 }
