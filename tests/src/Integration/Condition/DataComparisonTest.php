@@ -7,6 +7,7 @@
 
 namespace Drupal\Tests\rules\Integration\Condition;
 
+use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
@@ -198,6 +199,25 @@ class DataComparisonTest extends RulesIntegrationTestBase {
    */
   public function testSummary() {
     $this->assertEquals('Data comparison', $this->condition->summary());
+  }
+
+  /**
+   * @covers ::refineContextDefinitions
+   */
+  public function testRefineContextDefinitions() {
+    // When a string is selected for comparison, the value must be string also.
+    $this->condition->refineContextDefinitions([
+      'data' => DataDefinition::create('string'),
+    ]);
+    $this->assertEquals('string', $this->condition->getContextDefinition('value')->getDataType());
+
+    // IN operation requires a list of strings as value.
+    $this->condition->setContextValue('operation', 'IN');
+    $this->condition->refineContextDefinitions([
+      'data' => DataDefinition::create('string'),
+    ]);
+    $this->assertEquals('string', $this->condition->getContextDefinition('value')->getDataType());
+    $this->assertTrue($this->condition->getContextDefinition('value')->isMultiple());
   }
 
 }
