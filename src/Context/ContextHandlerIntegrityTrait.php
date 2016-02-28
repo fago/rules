@@ -87,7 +87,7 @@ trait ContextHandlerIntegrityTrait {
           $violation_list->add($violation);
         }
       }
-      elseif ($context_definition->isRequired()) {
+      elseif ($context_definition->isRequired() && $context_definition->getDefaultValue() === NULL) {
         $violation = new IntegrityViolation();
         $violation->setMessage($this->t('The required context %context_name is missing.', [
           '%context_name' => $context_definition->getLabel(),
