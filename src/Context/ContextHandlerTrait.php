@@ -151,6 +151,9 @@ trait ContextHandlerTrait {
         $plugin->refineContextDefinitions($selected_data);
       }
       catch (ContextException $e) {
+        if (strpos($e->getMessage(), 'context is required') === FALSE) {
+          throw $e;
+        }
       }
     }
   }

@@ -40,6 +40,9 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
       // Catch the undocumented exception thrown when no context value is set
       // for a required context.
       // @todo: Remove once https://www.drupal.org/node/2677162 is fixed.
+      if (strpos($e->getMessage(), 'context is required') === FALSE) {
+        throw $e;
+      }
     }
   }
 
