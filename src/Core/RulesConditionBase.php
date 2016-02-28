@@ -25,7 +25,7 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
   /**
    * {@inheritdoc}
    */
-  public function refineContextDefinitions() {
+  public function refineContextDefinitions(array $selected_data) {
     // Do not refine anything by default.
   }
 

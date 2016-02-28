@@ -49,7 +49,7 @@ class VariableAdd extends RulesActionBase {
   /**
    * {@inheritdoc}
    */
-  public function refineContextDefinitions() {
+  public function refineContextDefinitions(array $selected_data) {
     if ($type = $this->getContextValue('type')) {
       $this->pluginDefinition['context']['value']->setDataType($type);
       $this->pluginDefinition['provides']['variable_added']->setDataType($type);

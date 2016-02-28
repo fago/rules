@@ -34,7 +34,7 @@ class VariableAddTest extends RulesIntegrationTestBase {
     $action = $this->actionManager->createInstance('rules_variable_add');
     $action->setContextValue('type', 'string');
     $action->setContextValue('value', $variable);
-    $action->refineContextDefinitions();
+    $action->refineContextDefinitions([]);
     $action->execute();
 
     $result = $action->getProvidedContext('variable_added');

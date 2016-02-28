@@ -90,7 +90,7 @@ class EntityFetchByField extends RulesActionBase implements ContainerFactoryPlug
   /**
    * {@inheritdoc}
    */
-  public function refineContextDefinitions() {
+  public function refineContextDefinitions(array $selected_data) {
     if ($type = $this->getContextValue('type')) {
       $this->pluginDefinition['provides']['entity_fetched']->setDataType("entity:$type");
     }

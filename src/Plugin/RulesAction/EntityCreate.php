@@ -71,7 +71,7 @@ class EntityCreate extends RulesActionBase implements ContainerFactoryPluginInte
   /**
    * {@inheritdoc}
    */
-  public function refineContextDefinitions() {
+  public function refineContextDefinitions(array $selected_data) {
     if ($type = $this->entityTypeId) {
       $data_type = "entity:$type";
 

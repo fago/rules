@@ -46,7 +46,7 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
   /**
    * {@inheritdoc}
    */
-  public function refineContextDefinitions() {
+  public function refineContextDefinitions(array $selected_data) {
     // Do not refine anything by default.
   }
 

@@ -12,6 +12,7 @@ use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInte
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Exception\RulesEvaluationException;
+use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
  * Provides methods for handling context based on the plugin configuration.
@@ -33,12 +34,8 @@ trait ContextHandlerTrait {
   /**
    * Prepares plugin context based upon the set context configuration.
    *
-   * If no execution state is given, the configuration is applied as far as
-   * possible. That means, the configured context values are set and context is
-   * refined.
-   * If an execution state is available, the plugin is prepared for execution
-   * by mapping the variables from the execution state into the plugin context
-   * and applying data processors.
+   * The plugin is prepared for execution by mapping the variables from the
+   * execution state into the plugin context and applying data processors.
    * In addition, it is ensured that all required context is basically
    * available as defined. This include the following checks:
    *  - Required context must have a value set.
@@ -47,41 +44,45 @@ trait ContextHandlerTrait {
    * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin that is populated with context values.
    * @param \Drupal\rules\Engine\ExecutionStateInterface $state
-   *   The Rules state containing available variables.
+   *   The execution state containing available variables.
    *
    * @throws \Drupal\rules\Exception\RulesEvaluationException
-   *   Thrown if an execution state is given, but some context is not satisfied;
-   *   e.g. a required context is missing.
+   *   Thrown if some context is not satisfied; e.g. a required context is
+   *   missing.
+   *
+   * @see ::prepareContextWithMetadata()
    */
-  protected function prepareContext(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $state = NULL) {
+  protected function prepareContext(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $state) {
     if (isset($this->configuration['context_values'])) {
       foreach ($this->configuration['context_values'] as $name => $value) {
         $plugin->setContextValue($name, $value);
       }
     }
+
+    $selected_data = [];
+    // Map context by applying data selectors and collected the definitions of
+    // selected data for refining context definitions later. Note, that we must
+    // refine context definitions on execution time also, such that provided
+    // context gets the right metadata attached.
+    if (isset($this->configuration['context_mapping'])) {
+      foreach ($this->configuration['context_mapping'] as $name => $selector) {
+        $typed_data = $state->fetchDataByPropertyPath($selector);
+        $plugin->setContextValue($name, $typed_data);
+        $selected_data[$name] = $typed_data->getDataDefinition();
+      }
+    }
+
     if ($plugin instanceof ContextAwarePluginInterface) {
       // Getting context values may lead to undocumented exceptions if context
       // is not set right now. So catch those exceptions.
       // @todo: Remove ones https://www.drupal.org/node/2677162 got fixed.
       try {
-        $plugin->refineContextDefinitions();
+        $plugin->refineContextDefinitions($selected_data);
       }
       catch (ContextException $e) {
       }
     }
 
-    // If no execution state has been provided, we are done now.
-    if (!$state) {
-      return;
-    }
-
-    // Map context by apply data selectors.
-    if (isset($this->configuration['context_mapping'])) {
-      foreach ($this->configuration['context_mapping'] as $name => $selector) {
-        $typed_data = $state->fetchDataByPropertyPath($selector);
-        $plugin->setContextValue($name, $typed_data);
-      }
-    }
     // Apply data processors.
     $this->processData($plugin, $state);
 
@@ -99,6 +100,57 @@ trait ContextHandlerTrait {
           throw new RulesEvaluationException("The context for $name is NULL, but the context $name in "
             . $plugin->getPluginId() . ' requires a value.');
         }
+      }
+    }
+  }
+
+  /**
+   * Prepares plugin context based upon the set context configuration.
+   *
+   * The configuration is applied as far as possible without having execution
+   * time data. That means, the configured context values are set and context is
+   * refined while leveraging the definitions of selected data.
+   *
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
+   *   The plugin that is prepared.
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The metadata state, prepared for the current expression.
+   *
+   * @see ::prepareContext()
+   */
+  protected function prepareContextWithMetadata(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
+    if (isset($this->configuration['context_values'])) {
+      foreach ($this->configuration['context_values'] as $name => $value) {
+        $plugin->setContextValue($name, $value);
+      }
+    }
+
+    $selected_data = [];
+    // Collected the definitions of selected data for refining context
+    // definitions.
+    if (isset($this->configuration['context_mapping'])) {
+      // If no state is available, we need to fetch at least the definitions of
+      // selected data for refining context.
+      foreach ($this->configuration['context_mapping'] as $name => $selector) {
+        try {
+          $selected_data[$name] = $this->getMappedDefinition($name, $metadata_state);
+        }
+        catch (RulesIntegrityException $e) {
+          // Ignore invalid data selectors here, such that context gets refined
+          // as far as possible still and can be respected by the UI when fixing
+          // broken selectors.
+        }
+      }
+    }
+
+    if ($plugin instanceof ContextAwarePluginInterface) {
+      // Getting context values may lead to undocumented exceptions if context
+      // is not set right now. So catch those exceptions.
+      // @todo: Remove ones https://www.drupal.org/node/2677162 got fixed.
+      try {
+        $plugin->refineContextDefinitions($selected_data);
+      }
+      catch (ContextException $e) {
       }
     }
   }

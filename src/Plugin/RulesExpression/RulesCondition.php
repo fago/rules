@@ -173,7 +173,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     ]);
     // Prepare and refine the context before checking integrity, such that any
     // context definition changes are respected while checking.
-    $this->prepareContext($condition);
+    $this->prepareContextWithMetadata($condition, $metadata_state);
     $result = $this->checkContextConfigIntegrity($condition, $metadata_state);
     $this->prepareExecutionMetadataState($metadata_state);
     return $result;
@@ -191,7 +191,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     ]);
     // Make sure to refine context first, such that possibly refined definitions
     // of provided context are respected.
-    $this->prepareContext($condition);
+    $this->prepareContextWithMetadata($condition, $metadata_state);
     $this->addProvidedContextDefinitions($condition, $metadata_state);
   }
 
