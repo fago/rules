@@ -25,12 +25,6 @@ rules.context.values:
   # The entries depend on the plugin here. Plugins have to extend this and
   # provide a suiting schema.
 
-rules.context.mapping:
-  type: sequence
-  label: 'Context mapping'
-  sequence:
-    - type: string
-
 rules.context.processors:
   type: sequence
   label: 'Context processors'
