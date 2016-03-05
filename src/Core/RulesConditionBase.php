@@ -32,6 +32,13 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
   /**
    * {@inheritdoc}
    */
+  public function assertMetadata(array $selected_data) {
+    // Nothing to assert by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getContextValue($name) {
     try {
       return parent::getContextValue($name);

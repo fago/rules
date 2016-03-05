@@ -20,7 +20,8 @@ use Drupal\rules\Core\RulesConditionBase;
  *   context = {
  *     "entity" = @ContextDefinition("entity",
  *       label = @Translation("Entity"),
- *       description = @Translation("Specifies the entity for which to evaluate the condition.")
+ *       description = @Translation("Specifies the entity for which to evaluate the condition."),
+ *       assignment_restriction = "selector",
  *     ),
  *     "type" = @ContextDefinition("string",
  *       label = @Translation("Type"),
@@ -57,6 +58,16 @@ class EntityIsOfBundle extends RulesConditionBase {
     // Check to see whether the entity's bundle and type match the specified
     // values.
     return $entity_bundle == $bundle && $entity_type == $type;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function assertMetadata(array $selected_data) {
+    // Assert the checked bundle.
+    if (isset($selected_data['entity']) && $bundle = $this->getContextValue('bundle')) {
+      $selected_data['entity']->setBundles($this->getContextValue('bundle'));
+    }
   }
 
 }
