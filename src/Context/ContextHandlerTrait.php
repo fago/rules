@@ -132,6 +132,33 @@ trait ContextHandlerTrait {
       }
     }
 
+    if ($plugin instanceof ContextAwarePluginInterface) {
+      $selected_data = $this->getSelectedData($metadata_state);
+      // Getting context values may lead to undocumented exceptions if context
+      // is not set right now. So catch those exceptions.
+      // @todo: Remove ones https://www.drupal.org/node/2677162 got fixed.
+      try {
+        $plugin->refineContextDefinitions($selected_data);
+      }
+      catch (ContextException $e) {
+        if (strpos($e->getMessage(), 'context is required') === FALSE) {
+          throw $e;
+        }
+      }
+    }
+  }
+
+  /**
+   * Gets definitions of all selected data at configuration time.
+   *
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The metadata state.
+   *
+   * @return \Drupal\Core\TypedData\DataDefinitionInterface[]
+   *   An array of data definitions for context that is mapped using a data
+   *   selector, keyed by context name.
+   */
+  protected function getSelectedData(ExecutionMetadataStateInterface $metadata_state) {
     $selected_data = [];
     // Collected the definitions of selected data for refining context
     // definitions.
@@ -149,20 +176,7 @@ trait ContextHandlerTrait {
         }
       }
     }
-
-    if ($plugin instanceof ContextAwarePluginInterface) {
-      // Getting context values may lead to undocumented exceptions if context
-      // is not set right now. So catch those exceptions.
-      // @todo: Remove ones https://www.drupal.org/node/2677162 got fixed.
-      try {
-        $plugin->refineContextDefinitions($selected_data);
-      }
-      catch (ContextException $e) {
-        if (strpos($e->getMessage(), 'context is required') === FALSE) {
-          throw $e;
-        }
-      }
-    }
+    return $selected_data;
   }
 
   /**
@@ -241,6 +255,22 @@ trait ContextHandlerTrait {
         $metadata_state->setDataDefinition($name, $context_definition->getDataDefinition());
       }
     }
+  }
+
+  /**
+   * Asserts additional metadata.
+   *
+   * @param CoreContextAwarePluginInterface $plugin
+   *   The context aware plugin.
+   * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
+   *   The execution metadata state.
+   */
+  protected function assertMetadata(CoreContextAwarePluginInterface $plugin, ExecutionMetadataStateInterface $metadata_state) {
+    // If the plugin does not implement the Rules-enhanced interface, skip this.
+    if (!$plugin instanceof ContextAwarePluginInterface) {
+      return;
+    }
+    $plugin->assertMetadata($this->getSelectedData($metadata_state));
   }
 
   /**

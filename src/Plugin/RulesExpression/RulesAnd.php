@@ -47,4 +47,13 @@ class RulesAnd extends ConditionExpressionContainer {
     return !empty($this->conditions);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function allowsMetadataAssertions() {
+    // If the AND is not negated, all child-expressions must be executed - thus
+    // assertions can be added it.
+    return !$this->isNegated();
+  }
+
 }

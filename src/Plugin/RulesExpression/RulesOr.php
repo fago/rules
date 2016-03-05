@@ -34,4 +34,13 @@ class RulesOr extends ConditionExpressionContainer {
     return empty($this->conditions);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function allowsMetadataAssertions() {
+    // We cannot garantuee child expressions are executed, thus we cannot allow
+    // metadata assertions.
+    return FALSE;
+  }
+
 }

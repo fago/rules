@@ -99,13 +99,16 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
    *   The execution metadata state, prepared until right before this
    *   expression.
+   * @param bool $apply_assertions
+   *   (optional) Whether to apply metadata assertions while preparing the
+   *   execution metadata state. Defaults to TRUE.
    *
    * @return \Drupal\rules\Engine\IntegrityViolationList
    *   A list object containing \Drupal\rules\Engine\IntegrityViolation objects.
    *
    * @see ::prepareExecutionMetadataState()
    */
-  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state);
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state, $apply_assertions = TRUE);
 
   /**
    * Prepares the execution metadata state by adding metadata to it.
@@ -131,11 +134,18 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    *   (optional) The expression at which metadata preparation should be
    *   stopped. The preparation of the state will be stopped right before that
    *   expression.
+   * @param bool $apply_assertions
+   *   (optional) Whether to apply metadata assertions while preparing the
+   *   execution metadata state. Defaults to TRUE. Metadata assertions should
+   *   be only applied if the expression's execution is required for sub-sequent
+   *   expressions being executed. For example, if a condition is optional as
+   *   it is part of a logical OR expression, its assertions may not be applied.
+   *   Defaults to TRUE.
    *
    * @return true|null
    *   True if the metadata has been prepared and the $until expression was
    *   found in the tree. Null otherwise.
    */
-  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL);
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL, $apply_assertions = TRUE);
 
 }

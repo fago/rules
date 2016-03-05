@@ -55,7 +55,7 @@ class RulesLoop extends ActionExpressionContainer {
   /**
    * {@inheritdoc}
    */
-  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state, $apply_assertions = TRUE) {
     $violation_list = new IntegrityViolationList();
 
     if (empty($this->configuration['list'])) {
@@ -92,14 +92,23 @@ class RulesLoop extends ActionExpressionContainer {
     // So far all ok, so continue with checking integrity in contained actions.
     // The parent implementation will take care of invoking pre/post traversal
     // metadata state preparations.
-    $violation_list = parent::checkIntegrity($metadata_state);
+    $violation_list = parent::checkIntegrity($metadata_state, $apply_assertions);
     return $violation_list;
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function prepareExecutionMetadataStateBeforeTraversal($metadata_state) {
+  protected function allowsMetadataAssertions() {
+    // As the list can be empty, we cannot ensure child expressions are
+    // executed at all - thus no assertions can be added.
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function prepareExecutionMetadataStateBeforeTraversal(ExecutionMetadataStateInterface $metadata_state) {
     try {
       $list_definition = $metadata_state->fetchDefinitionByPropertyPath($this->configuration['list']);
       $list_item_definition = $list_definition->getItemDefinition();
@@ -114,7 +123,7 @@ class RulesLoop extends ActionExpressionContainer {
   /**
    * {@inheritdoc}
    */
-  protected function prepareExecutionMetadataStateAfterTraversal($metadata_state) {
+  protected function prepareExecutionMetadataStateAfterTraversal(ExecutionMetadataStateInterface $metadata_state) {
     // Remove the list item variable after the loop, it is out of scope now.
     $metadata_state->removeDataDefinition($this->configuration['list_item']);
   }

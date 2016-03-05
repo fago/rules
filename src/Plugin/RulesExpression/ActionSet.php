@@ -24,6 +24,13 @@ class ActionSet extends ActionExpressionContainer {
   /**
    * {@inheritdoc}
    */
+  protected function allowsMetadataAssertions() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executeWithState(ExecutionStateInterface $state) {
     foreach ($this->actions as $action) {
       $action->executeWithState($state);

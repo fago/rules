@@ -155,7 +155,7 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
   /**
    * {@inheritdoc}
    */
-  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
+  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state, $apply_assertions = TRUE) {
     $violation_list = new IntegrityViolationList();
     if (empty($this->configuration['condition_id'])) {
       $violation_list->addViolationWithMessage($this->t('Condition plugin ID is missing'), $this->getUuid());
@@ -175,14 +175,14 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     // context definition changes are respected while checking.
     $this->prepareContextWithMetadata($condition, $metadata_state);
     $result = $this->checkContextConfigIntegrity($condition, $metadata_state);
-    $this->prepareExecutionMetadataState($metadata_state);
+    $this->prepareExecutionMetadataState($metadata_state, NULL, $apply_assertions);
     return $result;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
+  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL, $apply_assertions = TRUE) {
     if ($until && $this->getUuid() === $until->getUuid()) {
       return TRUE;
     }
@@ -193,6 +193,9 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
     // of provided context are respected.
     $this->prepareContextWithMetadata($condition, $metadata_state);
     $this->addProvidedContextDefinitions($condition, $metadata_state);
+    if ($apply_assertions && !$this->isNegated()) {
+      $this->assertMetadata($condition, $metadata_state);
+    }
   }
 
 }

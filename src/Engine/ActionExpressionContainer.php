@@ -10,12 +10,11 @@ namespace Drupal\rules\Engine;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Exception\InvalidExpressionException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Container for actions.
  */
-abstract class ActionExpressionContainer extends ExpressionBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
+abstract class ActionExpressionContainer extends ExpressionContainerBase implements ActionExpressionContainerInterface, ContainerFactoryPluginInterface {
 
   /**
    * List of actions that will be executed.
@@ -23,13 +22,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
    * @var \Drupal\rules\Engine\ActionExpressionInterface[]
    */
   protected $actions = [];
-
-  /**
-   * The expression manager.
-   *
-   * @var \Drupal\rules\Engine\ExpressionManagerInterface
-   */
-  protected $expressionManager;
 
   /**
    * Constructor.
@@ -57,18 +49,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('plugin.manager.rules_expression')
-    );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function addExpressionObject(ExpressionInterface $expression) {
     if (!$expression instanceof ActionExpressionInterface) {
       throw new InvalidExpressionException('Only action expressions can be added to an action container.');
@@ -78,15 +58,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
     }
     $this->actions[] = $expression;
     return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addExpression($plugin_id, ContextConfig $config = NULL) {
-    return $this->addExpressionObject(
-      $this->expressionManager->createInstance($plugin_id, $config ? $config->toArray() : [])
-    );
   }
 
   /**
@@ -165,58 +136,6 @@ abstract class ActionExpressionContainer extends ExpressionBase implements Actio
       }
     }
     return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function checkIntegrity(ExecutionMetadataStateInterface $metadata_state) {
-    $violation_list = new IntegrityViolationList();
-    $this->prepareExecutionMetadataStateBeforeTraversal($metadata_state);
-    foreach ($this->actions as $action) {
-      $action_violations = $action->checkIntegrity($metadata_state);
-      $violation_list->addAll($action_violations);
-    }
-    $this->prepareExecutionMetadataStateAfterTraversal($metadata_state);
-    return $violation_list;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function prepareExecutionMetadataState(ExecutionMetadataStateInterface $metadata_state, ExpressionInterface $until = NULL) {
-    if ($until && $this->getUuid() === $until->getUuid()) {
-      return TRUE;
-    }
-    $this->prepareExecutionMetadataStateBeforeTraversal($metadata_state);
-    foreach ($this->actions as $action) {
-      $found = $action->prepareExecutionMetadataState($metadata_state, $until);
-      // If the expression was found, we need to stop.
-      if ($found) {
-        return TRUE;
-      }
-    }
-    $this->prepareExecutionMetadataStateAfterTraversal($metadata_state);
-  }
-
-  /**
-   * Prepares execution metadata state before traversing through children.
-   *
-   * @see ::prepareExecutionMetadataState()
-   * @see ::checkIntegrity()
-   */
-  protected function prepareExecutionMetadataStateBeforeTraversal($metadata_state) {
-    // Any pre-traversal preparations need to be added here.
-  }
-
-  /**
-   * Prepares execution metadata state after traversing through children.
-   *
-   * @see ::prepareExecutionMetadataState()
-   * @see ::checkIntegrity()
-   */
-  protected function prepareExecutionMetadataStateAfterTraversal($metadata_state) {
-    // Any post-traversal preparations need to be added here.
   }
 
 }
