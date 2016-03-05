@@ -14,6 +14,7 @@ php:
 env:
   - DRUPAL_CORE=8.0.x
   - DRUPAL_CORE=8.1.x
+  - DRUPAL_CORE=8.2.x
 
 matrix:
   allow_failures:
@@ -59,7 +60,9 @@ before_script:
 
   # Run composer install for Drupal 8.1. We need an up-to-date composer when
   # installing Drupal 8.1.
-  - if [ "$DRUPAL_CORE" = "8.1.x" ]; then composer self-update && composer install; fi
+  # Disabled for now because core still includes the vendor directory, see
+  # https://www.drupal.org/node/1475510
+  # - if [ "$DRUPAL_CORE" = "8.1.x" ]; then composer self-update && composer install; fi
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
