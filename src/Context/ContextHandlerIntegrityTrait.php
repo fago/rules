@@ -135,7 +135,12 @@ trait ContextHandlerIntegrityTrait {
     // Compare data types. For now, fail if they are not equal.
     // @todo: Add support for matching based upon type-inheritance.
     $target_type = $context_definition->getDataDefinition()->getDataType();
-    if ($target_type != 'any' && $target_type != $provided->getDataType()) {
+
+    // Special case any and entity target types for now.
+    if ($target_type == 'any' || ($target_type == 'entity' && strpos($provided->getDataType(), 'entity:') !== FALSE)) {
+      return;
+    }
+    if ($target_type != $provided->getDataType()) {
       $expected_type_problem = $context_definition->getDataDefinition()->getDataType();
       $violation = new IntegrityViolation();
       $violation->setMessage($this->t('Expected a @expected_type data type for context %context_name but got a @provided_type data type instead.', [

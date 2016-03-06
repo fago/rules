@@ -66,7 +66,8 @@ class EntityIsOfBundle extends RulesConditionBase {
   public function assertMetadata(array $selected_data) {
     // Assert the checked bundle.
     if (isset($selected_data['entity']) && $bundle = $this->getContextValue('bundle')) {
-      $selected_data['entity']->setBundles($this->getContextValue('bundle'));
+      $bundles = is_array($bundle) ? $bundle : [$bundle];
+      $selected_data['entity']->setBundles($bundles);
     }
   }
 
