@@ -7,9 +7,11 @@
 
 namespace Drupal\Tests\rules\Kernel;
 
+use Drupal\node\Entity\Node;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
+use Drupal\rules\Entity\RulesComponentConfig;
 use Drupal\user\Entity\User;
 
 /**
@@ -240,6 +242,45 @@ class CoreIntegrationTest extends RulesDrupalTestBase {
       ->setContextValue('new_title', 'new title')
       ->execute();
 
+    $this->assertEquals('new title', $node->getTitle());
+    $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been auto-saved.');
+  }
+
+  /**
+   * Tests that auto saving in a component executed as action works.
+   */
+  public function testComponentActionAutoSave() {
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $entity_type_manager->getStorage('node_type')
+      ->create(['type' => 'page'])
+      ->save();
+
+    $nested_rule = $this->expressionManager->createRule();
+    // Create a node entity with the action.
+    $nested_rule->addAction('rules_entity_create:node', ContextConfig::create()
+      ->setValue('type', 'page')
+    );
+    // Set the title of the new node so that it is marked for auto-saving.
+    $nested_rule->addAction('rules_data_set', ContextConfig::create()
+      ->map('data', 'entity.title')
+      ->setValue('value', 'new title')
+    );
+
+    $rules_config = new RulesComponentConfig([
+      'id' => 'test_rule',
+      'label' => 'Test rule',
+    ], 'rules_component');
+    $rules_config->setExpression($nested_rule);
+    $rules_config->save();
+
+    // Invoke the rules component in another rule.
+    $rule = $this->expressionManager->createRule();
+    $rule->addAction('rules_component:test_rule');
+
+    RulesComponent::create($rule)->execute();
+
+    $nodes = Node::loadMultiple();
+    $node = reset($nodes);
     $this->assertEquals('new title', $node->getTitle());
     $this->assertNotNull($node->id(), 'Node ID is set, which means that the node has been auto-saved.');
   }

@@ -69,7 +69,7 @@ class RulesComponent {
   public static function createFromConfiguration(array $configuration) {
     $configuration += [
       'context_definitions' => [],
-      'provided_context' => [],
+      'provided_context_definitions' => [],
     ];
     // @todo: Can we improve this use dependency injection somehow?
     $expression_manager = \Drupal::service('plugin.manager.rules_expression');
@@ -78,7 +78,7 @@ class RulesComponent {
     foreach ($configuration['context_definitions'] as $name => $definition) {
       $component->addContextDefinition($name, ContextDefinition::createFromArray($definition));
     }
-    foreach ($configuration['provided_context'] as $name) {
+    foreach ($configuration['provided_context_definitions'] as $name => $definition) {
       $component->provideContext($name);
     }
     return $component;
@@ -122,7 +122,7 @@ class RulesComponent {
       'context_definitions' => array_map(function (ContextDefinitionInterface $definition) {
         return $definition->toArray();
       }, $this->contextDefinitions),
-      'provided_context' => $this->providedContext,
+      'provided_context_definitions' => $this->providedContext,
     ];
   }
 

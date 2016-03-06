@@ -11,6 +11,7 @@ use Drupal\Component\Uuid\Php;
 use Drupal\Core\Cache\NullBackend;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -203,6 +204,11 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
 
     $this->entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
     $this->entityTypeManager->getDefinitions()->willReturn([]);
+
+    // Setup a rules_component storage mock which returns nothing by default.
+    $storage = $this->prophesize(ConfigEntityStorageInterface::class);
+    $storage->loadMultiple(NULL)->willReturn([]);
+    $this->entityTypeManager->getStorage('rules_component')->willReturn($storage->reveal());
 
     $this->entityFieldManager = $this->prophesize(EntityFieldManagerInterface::class);
     $this->entityFieldManager->getBaseFieldDefinitions()->willReturn([]);

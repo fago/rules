@@ -9,8 +9,11 @@ namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Entity\EntityStorageBase;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\TypedData\FieldItemDataDefinition;
+use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
+use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityCreate
@@ -43,23 +46,33 @@ class EntityCreateTest extends RulesEntityIntegrationTestBase {
     $bundle_field_definition_optional = $this->prophesize(BaseFieldDefinition::class);
     $bundle_field_definition_required = $this->prophesize(BaseFieldDefinition::class);
 
+    $property_definition = $this->prophesize(DataDefinitionInterface::class);
+    $property_definition->getDataType()->willReturn('string');
+
+    $item_definition = $this->prophesize(FieldItemDataDefinition::class);
+    $item_definition->getPropertyDefinition(Argument::any())
+      ->willReturn($property_definition->reveal());
+    $item_definition->getMainPropertyName()->willReturn('value');
+
     // The next methods are mocked because EntityCreateDeriver executes them,
     // and the mocked field definition is instantiated without the necessary
     // information.
+    $bundle_field_definition->getItemDefinition()
+      ->willReturn($item_definition->reveal());
     $bundle_field_definition->getCardinality()->willReturn(1)
       ->shouldBeCalledTimes(1);
-    $bundle_field_definition->getType()->willReturn('string')
-      ->shouldBeCalledTimes(1);
+    $bundle_field_definition->getType()->willReturn('string');
     $bundle_field_definition->getLabel()->willReturn('Bundle')
       ->shouldBeCalledTimes(1);
     $bundle_field_definition->getDescription()
       ->willReturn('Bundle mock description')
       ->shouldBeCalledTimes(1);
 
+    $bundle_field_definition_required->getItemDefinition()
+      ->willReturn($item_definition->reveal());
     $bundle_field_definition_required->getCardinality()->willReturn(1)
       ->shouldBeCalledTimes(1);
-    $bundle_field_definition_required->getType()->willReturn('string')
-      ->shouldBeCalledTimes(1);
+    $bundle_field_definition_required->getType()->willReturn('string');
     $bundle_field_definition_required->getLabel()->willReturn('Required field')
       ->shouldBeCalledTimes(1);
     $bundle_field_definition_required->getDescription()

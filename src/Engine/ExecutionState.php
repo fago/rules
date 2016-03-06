@@ -181,18 +181,21 @@ class ExecutionState implements ExecutionStateInterface {
   /**
    * {@inheritdoc}
    */
+  public function getAutoSaveSelectors() {
+    return array_keys($this->saveLater);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function autoSave() {
     // Make changes permanent.
     foreach ($this->saveLater as $selector => $flag) {
       $typed_data = $this->fetchDataByPropertyPath($selector);
-      // The returned data can be NULL, only save it if we actually have
-      // something here.
-      if ($typed_data) {
-        // Things that can be saved must have a save() method, right?
-        // Saving is always done at the root of the typed data tree, for example
-        // on the entity level.
-        $typed_data->getRoot()->getValue()->save();
-      }
+      // Things that can be saved must have a save() method, right?
+      // Saving is always done at the root of the typed data tree, for example
+      // on the entity level.
+      $typed_data->getRoot()->getValue()->save();
     }
     return $this;
   }

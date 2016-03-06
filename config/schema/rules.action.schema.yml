@@ -1,3 +1,10 @@
+# Per default the schema of arbitrary context values of an action cannot be
+# typed. Actions that need translatability or other features of the config
+# system must specify their context value schema explicitly, see examples below.
+rules.action.context_values.*:
+  type: ignore
+  label: Context values
+
 rules.action.context_values.rules_system_message:
   type: mapping
   label: Message action context values

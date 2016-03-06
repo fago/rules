@@ -164,8 +164,10 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    */
   public function getContextDefinitions() {
     $definitions = [];
-    foreach ($this->component['context_definitions'] as $name => $definition) {
-      $definitions[$name] = ContextDefinition::createFromArray($definition);
+    if (!empty($this->component['context_definitions'])) {
+      foreach ($this->component['context_definitions'] as $name => $definition) {
+        $definitions[$name] = ContextDefinition::createFromArray($definition);
+      }
     }
     return $definitions;
   }
@@ -187,25 +189,34 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   }
 
   /**
-   * Returns the names of context that is provided back to the caller.
+   * Gets the definitions of the provided context.
    *
-   * @return string[]
-   *   The names of the context that is provided back.
+   * @return \Drupal\rules\Context\ContextDefinitionInterface[]
+   *   The array of context definition, keyed by context name.
    */
-  public function getProvidedContext() {
-    return $this->component['provided_context'];
+  public function getProvidedContextDefinitions() {
+    $definitions = [];
+    if (!empty($this->component['provided_context_definitions'])) {
+      foreach ($this->component['provided_context_definitions'] as $name => $definition) {
+        $definitions[$name] = ContextDefinition::createFromArray($definition);
+      }
+    }
+    return $definitions;
   }
 
   /**
-   * Sets the names of the context that is provided back to the caller.
+   * Sets the definitions of the provided context.
    *
-   * @param string[] $names
-   *   The names of the context that is provided back.
+   * @param \Drupal\rules\Context\ContextDefinitionInterface[] $definitions
+   *   The array of context definitions, keyed by context name.
    *
    * @return $this
    */
-  public function setProvidedContext($names) {
-    $this->component['provided_context'] = $names;
+  public function setProvidedContextDefinitions($definitions) {
+    $this->component['provided_context_definitions'] = [];
+    foreach ($definitions as $name => $definition) {
+      $this->component['provided_context_definitions'][$name] = $definition->toArray();
+    }
     return $this;
   }
 

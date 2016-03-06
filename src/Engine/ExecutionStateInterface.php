@@ -122,6 +122,15 @@ interface ExecutionStateInterface {
   public function saveChangesLater($selector);
 
   /**
+   * Returns the list of variables that should be auto-saved after execution.
+   *
+   * @return string[]
+   *   The list of data selectors that specify the target object to be saved.
+   *   Example: node.uid.entity.
+   */
+  public function getAutoSaveSelectors();
+
+  /**
    * Saves all variables that have been marked for auto saving.
    *
    * @return $this

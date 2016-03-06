@@ -7,11 +7,11 @@ rules_component:
       label: 'Context definitions'
       sequence:
         - type: rules.context.definition
-    provided_context:
+    provided_context_definitions:
       type: sequence
-      label: 'Names of provided context'
+      label: 'Provided context definitions'
       sequence:
-        - type: string
+        - type: rules.context.definition
     expression:
       type: rules_expression.[id]
       label: 'Expression configuration'

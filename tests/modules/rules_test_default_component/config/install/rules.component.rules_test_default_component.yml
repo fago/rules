@@ -13,8 +13,11 @@ component:
       type: 'entity:user'
       label: User
       description: 'The user whose mail address to print.'
-  provided_context:
-    - concatenated
+  provided_context_definitions:
+    concatenated:
+      type: 'string'
+      label: Concatenated text
+      description: 'The concatenated text.'
   expression:
     id: rules_rule
     conditions:
