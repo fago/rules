@@ -34,16 +34,18 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
    *
    * @var string
    */
-  protected $entityType;
+  protected $entityTypeId;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityType = $this->getEventNameSuffix();
-    $this->entityInfo = \Drupal::entityTypeManager()->getDefinition($this->entityType);
-    $this->bundlesInfo = \Drupal::entityManager()->getBundleInfo($this->entityType);
+    $this->entityTypeId = $plugin_definition['entity_type_id'];
+    // @todo: This needs to use dependency injection.
+    $this->entityInfo = \Drupal::entityTypeManager()->getDefinition($this->entityTypeId);
+    // @tdo: use EntityTypeBundleInfo service.
+    $this->bundlesInfo = \Drupal::entityManager()->getBundleInfo($this->entityTypeId);
     if (!$this->bundlesInfo) {
       throw new \InvalidArgumentException('Unsupported event name passed.');
     }
@@ -98,29 +100,30 @@ class ConfigurableEventHandlerEntityBundle extends ConfigurableEventHandlerBase 
    * {@inheritdoc}
    */
   public function validate() {
-    // Nothing to check by default.
+    // Nothing to validate.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getEventNameSuffix() {
-    $parts = explode(':', $this->pluginId);
-    return $parts[1];
+    return isset($this->configuration['bundle']) ? $this->configuration['bundle'] : FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function refineContextDefinitions() {
-    // Nothing to refine by default.
+    if ($bundle = $this->getEventNameSuffix()) {
+      $this->pluginDefinition['context']['entity']->setBundles([$bundle]);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    // Nothing to calculate by default.
+    // @todo: Implement.
   }
 
 }
