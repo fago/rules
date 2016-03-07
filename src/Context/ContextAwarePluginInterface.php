@@ -54,6 +54,11 @@ interface ContextAwarePluginInterface extends CoreContextAwarePluginInterface {
    * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $selected_data
    *   An array of data definitions for context that is mapped using a data
    *   selector, keyed by context name.
+   *
+   * @return \Drupal\Core\TypedData\DataDefinitionInterface[]
+   *   An array of modified data definitions, keyed as the passed array. Note
+   *   data definitions need to be cloned *before* they are modified, such that
+   *   the changes do not propagate unintentionally.
    */
   public function assertMetadata(array $selected_data);
 

@@ -127,6 +127,14 @@ class RulesCondition extends ExpressionBase implements ConditionExpressionInterf
   /**
    * {@inheritdoc}
    */
+  public function negate($negate = TRUE) {
+    $this->configuration['negate'] = $negate;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isNegated() {
     return !empty($this->configuration['negate']);
   }

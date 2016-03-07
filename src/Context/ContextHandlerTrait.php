@@ -270,7 +270,16 @@ trait ContextHandlerTrait {
     if (!$plugin instanceof ContextAwarePluginInterface) {
       return;
     }
-    $plugin->assertMetadata($this->getSelectedData($metadata_state));
+    $changed_definitions = $plugin->assertMetadata($this->getSelectedData($metadata_state));
+
+    // Reverse the mapping and apply the changes.
+    foreach ($changed_definitions as $context_name => $definition) {
+      $selector = $this->configuration['context_mapping'][$context_name];
+      // @todo: Deal with selectors matching not a context name.
+      if (strpos($selector, '.') === FALSE) {
+        $metadata_state->setDataDefinition($selector, $definition);
+      }
+    }
   }
 
   /**

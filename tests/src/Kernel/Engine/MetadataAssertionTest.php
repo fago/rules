@@ -87,4 +87,85 @@ class MetadataAssertionTest extends RulesDrupalTestBase {
     $this->assertEquals(0, iterator_count($violation_list));
   }
 
+  /**
+   * Tests asserted metadata is handled correctly in OR and AND containers.
+   */
+  public function testAssertingWithLogicalOperations() {
+    // Add an nested AND and make sure it keeps working.
+    $rule = $this->expressionManager->createRule();
+    $and = $this->expressionManager->createAnd();
+    $and->addCondition('rules_entity_is_of_bundle', ContextConfig::create()
+      ->map('entity', 'node')
+      ->setValue('type', 'node')
+      ->setValue('bundle', 'page')
+    );
+    $rule->addExpressionObject($and);
+    $rule->addAction('rules_system_message', ContextConfig::create()
+      ->map('message', 'node.field_text.value')
+      ->setValue('type', 'status')
+    );
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->checkIntegrity();
+    $this->assertEquals(0, iterator_count($violation_list));
+
+    // Add an nested OR and make sure it is ignored.
+    $rule = $this->expressionManager->createRule();
+    $or = $this->expressionManager->createOr();
+    $or->addCondition('rules_entity_is_of_bundle', ContextConfig::create()
+      ->map('entity', 'node')
+      ->setValue('type', 'node')
+      ->setValue('bundle', 'page')
+    );
+    $rule->addExpressionObject($or);
+    $rule->addAction('rules_system_message', ContextConfig::create()
+      ->map('message', 'node.field_text.value')
+      ->setValue('type', 'status')
+    );
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+  }
+
+  /**
+   * Tests asserted metadata of negated conditions is ignored.
+   */
+  public function testAssertingOfNegatedConditions() {
+    // Negate the condition only and make sure it is ignored.
+    $rule = $this->expressionManager->createRule();
+    $rule->addCondition('rules_entity_is_of_bundle', ContextConfig::create()
+      ->map('entity', 'node')
+      ->setValue('type', 'node')
+      ->setValue('bundle', 'page')
+    )->negate(TRUE);
+    $rule->addAction('rules_system_message', ContextConfig::create()
+      ->map('message', 'node.field_text.value')
+      ->setValue('type', 'status')
+    );
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+
+    // Add an negated AND and make sure it is ignored.
+    $rule = $this->expressionManager->createRule();
+    $and = $this->expressionManager->createAnd();
+    $and->addCondition('rules_entity_is_of_bundle', ContextConfig::create()
+      ->map('entity', 'node')
+      ->setValue('type', 'node')
+      ->setValue('bundle', 'page')
+    );
+    $and->negate(TRUE);
+    $rule->addExpressionObject($and);
+    $rule->addAction('rules_system_message', ContextConfig::create()
+      ->map('message', 'node.field_text.value')
+      ->setValue('type', 'status')
+    );
+    $violation_list = RulesComponent::create($rule)
+      ->addContextDefinition('node', ContextDefinition::create('entity:node'))
+      ->checkIntegrity();
+    $this->assertEquals(1, iterator_count($violation_list));
+  }
+
 }

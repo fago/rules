@@ -58,6 +58,7 @@ abstract class RulesActionBase extends ContextAwarePluginBase implements RulesAc
    */
   public function assertMetadata(array $selected_data) {
     // Nothing to assert by default.
+    return [];
   }
 
   /**

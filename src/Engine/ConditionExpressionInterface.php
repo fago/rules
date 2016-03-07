@@ -12,6 +12,17 @@ namespace Drupal\rules\Engine;
  */
 interface ConditionExpressionInterface extends ExpressionInterface {
 
+
+  /**
+   * Negates the result after evaluating this condition.
+   *
+   * @param bool $negate
+   *   TRUE to indicate that the condition should be negated, FALSE otherwise.
+   *
+   * @return $this
+   */
+  public function negate($negate = TRUE);
+
   /**
    * Determines whether condition result will be negated.
    *

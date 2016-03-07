@@ -34,6 +34,7 @@ abstract class RulesConditionBase extends ConditionPluginBase implements RulesCo
    */
   public function assertMetadata(array $selected_data) {
     // Nothing to assert by default.
+    return [];
   }
 
   /**

@@ -103,8 +103,7 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function addCondition($condition_id, ContextConfig $config = NULL) {
-    $this->conditions->addCondition($condition_id, $config);
-    return $this;
+    return $this->conditions->addCondition($condition_id, $config);
   }
 
   /**
@@ -126,8 +125,7 @@ class Rule extends ExpressionBase implements RuleInterface, ContainerFactoryPlug
    * {@inheritdoc}
    */
   public function addAction($action_id, ContextConfig $config = NULL) {
-    $this->actions->addAction($action_id, $config);
-    return $this;
+    return $this->actions->addAction($action_id, $config);
   }
 
   /**
