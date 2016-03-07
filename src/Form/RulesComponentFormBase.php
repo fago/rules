@@ -9,11 +9,37 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rules\Engine\ExpressionManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the base form for rules add and edit forms.
  */
 abstract class RulesComponentFormBase extends EntityForm {
+
+  /**
+   * The Rules expression manager to get expression plugins.
+   *
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
+   */
+  protected $expressionManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('plugin.manager.rules_expression'));
+  }
+
+  /**
+   * Creates a new object of this class.
+   *
+   * @param \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
+   *   The expression manager.
+   */
+  public function __construct(ExpressionManagerInterface $expression_manager) {
+    $this->expressionManager = $expression_manager;
+  }
 
   /**
    * {@inheritdoc}

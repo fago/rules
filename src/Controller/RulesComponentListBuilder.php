@@ -29,7 +29,7 @@ class RulesComponentListBuilder extends ConfigEntityListBuilder {
     $header['id'] = $this->t('ID');
     $header['label'] = $this->t('Label');
     $header['description'] = $this->t('Description');
-    $header['tag'] = $this->t('Tag');
+    $header['tags'] = $this->t('Tag');
     return $header + parent::buildHeader();
   }
 
@@ -40,10 +40,8 @@ class RulesComponentListBuilder extends ConfigEntityListBuilder {
     /* @var $entity \Drupal\rules\Entity\RulesComponentConfig */
     $row['id'] = $entity->id();
     $row['label'] = $this->getLabel($entity);
-    // @todo: maybe link somewhere
-    /* $entity->link($this->getLabel($entity)) */
     $row['description'] = $entity->getDescription();
-    $row['tag'] = $entity->getTag();
+    $row['tags'] = implode(', ', $entity->getTags());
     return $row + parent::buildRow($entity);
   }
 

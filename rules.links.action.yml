@@ -9,7 +9,7 @@ rules_reaction_rule_add_action:
 
 # Rules component related actions.
 rules_component_add_action:
-  route_name: entity.rules_component.add_form
-  title: 'Add component'
+  route_name: entity.rules_component.add_form.rule
+  title: 'Add rule'
   appears_on:
     - entity.rules_component.collection

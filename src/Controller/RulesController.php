@@ -13,6 +13,7 @@ use Drupal\Core\Controller\ControllerBase;
  * Returns responses for Rules routes.
  */
 class RulesController extends ControllerBase {
+
   /**
    * Returns the settings page.
    *

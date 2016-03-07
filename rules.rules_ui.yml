@@ -4,3 +4,9 @@ rules.reaction_rules:
   component_type_label: rule
   settings:
     config_parameter: rules_reaction_rule
+rules.components:
+  label: 'Manage re-usabe components.'
+  base_route: entity.rules_component.edit_form
+  component_type_label: rule
+  settings:
+    config_parameter: rules_component

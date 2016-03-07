@@ -37,9 +37,6 @@ entity.rules_reaction_rule.edit_form:
     _title_callback: '\Drupal\rules\Form\ReactionRuleEditForm::getTitle'
   options:
     parameters:
-      rules_reaction_rule:
-        tempstore: TRUE
-        type: entity:rules_reaction_rule
     _rules_ui: rules.reaction_rules
   requirements:
     _permission: 'administer rules+administer rules reactions'
@@ -63,11 +60,13 @@ entity.rules_component.collection:
   requirements:
     _permission: 'administer rules+administer rules components'
 
-entity.rules_component.add_form:
-  path: '/admin/config/workflow/rules/components/add'
+entity.rules_component.add_form.rule:
+  path: '/admin/config/workflow/rules/components/add/rule'
   defaults:
     _entity_form: 'rules_component.add'
-    _title: 'Add component'
+    _title: 'Add rule'
+  options:
+    _rules_ui: rules.components
   requirements:
     _permission: 'administer rules+administer rules components'
 
@@ -76,6 +75,8 @@ entity.rules_component.edit_form:
   defaults:
     _entity_form: 'rules_component.edit'
     _title_callback: '\Drupal\rules\Form\RulesComponentEditForm::getTitle'
+  options:
+    _rules_ui: rules.components
   requirements:
     _permission: 'administer rules+administer rules components'
 
@@ -84,6 +85,6 @@ entity.rules_component.delete_form:
   defaults:
     _entity_form: 'rules_component.delete'
   options:
-    _admin_route: TRUE
+    _rules_ui: rules.components
   requirements:
     _permission: 'administer rules+administer rules components'
