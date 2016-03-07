@@ -21,6 +21,10 @@ interface ContextAwarePluginInterface extends CoreContextAwarePluginInterface {
    * already available upon which the definition of subsequent or provided
    * context can be refined.
    *
+   * Implement this method, when the plugin's context definitions need to be
+   * refined. When the selected data definitions should be refined, implement
+   * ::assertMetadata() instead.
+   *
    * Note that context gets refined at configuration and execution time of the
    * plugin.
    *
@@ -38,6 +42,10 @@ interface ContextAwarePluginInterface extends CoreContextAwarePluginInterface {
    * asserting the node type for a "Node is of type" condition. By doing so,
    * sub-sequent executed plugins are aware of the metadata and can build upon
    * it.
+   *
+   * Implement this method, when the selected data definitions need to be
+   * refined. When the plugin's context definitions should be refined, implement
+   * ::refineContextDefinitions() instead.
    *
    * Note that metadata is only asserted on configuration time. The plugin has
    * to ensure that the run-time data matches the asserted configuration if it
