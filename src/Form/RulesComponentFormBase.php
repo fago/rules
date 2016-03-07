@@ -46,11 +46,11 @@ abstract class RulesComponentFormBase extends EntityForm {
     ];
 
     // @todo enter a real tag field here.
-    $form['settings']['tag'] = [
+    $form['settings']['tags'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Tag'),
-      '#default_value' => $this->entity->getTag(),
-      '#description' => $this->t('Enter a tag here'),
+      '#title' => $this->t('Tags'),
+      '#default_value' => implode(', ', $this->entity->getTags()),
+      '#description' => $this->t('Enter a list of comma-separated tags here; e.g., "notification, publishing".'),
       '#required' => FALSE,
     ];
 
@@ -62,6 +62,16 @@ abstract class RulesComponentFormBase extends EntityForm {
     ];
 
     return parent::form($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    $entity = parent::buildEntity($form, $form_state);
+    $tags = array_map('trim', explode(',', $entity->get('tags')));
+    $entity->set('tags', $tags);
+    return $entity;
   }
 
   /**

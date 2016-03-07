@@ -13,9 +13,12 @@ rules.component.*:
     description:
       type: text
       label: 'Administrative description'
-    tag:
-      type: string
-      label: 'Tag'
+    tags:
+      type: sequence
+      label: Tags
+      sequence:
+        type: string
+        label: 'Tag'
     config_version:
       type: string
       label: 'Configuration schema version'
@@ -50,9 +53,12 @@ rules.reaction.*:
     description:
       type: text
       label: 'Administrative description'
-    tag:
-      type: string
-      label: 'Tag'
+    tags:
+      type: sequence
+      label: Tags
+      sequence:
+        type: string
+        label: 'Tag'
     config_version:
       type: string
       label: 'Configuration schema version'

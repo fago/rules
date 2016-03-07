@@ -49,7 +49,7 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
   /**
    * {@inheritdoc}
    */
-  public function createInstance($plugin_id, array $configuration = array()) {
+  public function createInstance($plugin_id, array $configuration = []) {
     // If a fully qualified event name is passed, be sure to get the base name
     // first.
     $plugin_id = $this->getEventBaseName($plugin_id);

@@ -39,7 +39,7 @@ use Drupal\rules\Engine\RulesComponent;
  *     "id",
  *     "label",
  *     "description",
- *     "tag",
+ *     "tags",
  *     "config_version",
  *     "component",
  *   },
@@ -76,12 +76,9 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   /**
    * The "tags" of a Rules component.
    *
-   * The tags are stored as a single string, though it is used as multiple tags
-   * for example in the rules overview.
-   *
-   * @var string
+   * @var string[]
    */
-  protected $tag = '';
+  protected $tags = [];
 
   /**
    * The config version the Rules component was created for.
@@ -242,10 +239,13 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   }
 
   /**
-   * Returns the tag.
+   * Returns the tags associated with this config.
+   *
+   * @return string[]
+   *   The numerically indexed array of tag names.
    */
-  public function getTag() {
-    return $this->tag;
+  public function getTags() {
+    return $this->tags;
   }
 
   /**
