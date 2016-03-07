@@ -9,7 +9,7 @@ namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\rules\Context\ContextDefinition;
-use Drupal\rules\Core\RulesUiComponentProviderInterface;
+use Drupal\rules\Ui\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
 

@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Core\RulesUiHandlerTrait.
+ * Contains \Drupal\rules\Ui\RulesUiHandlerTrait.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 /**
  * Trait for getting the rules_ui handler of the current request.
@@ -19,14 +19,14 @@ trait RulesUiHandlerTrait {
   /**
    * The rules UI handler.
    *
-   * @var \Drupal\rules\Core\RulesUiHandlerInterface
+   * @var \Drupal\rules\Ui\RulesUiHandlerInterface
    */
   protected $rulesUiHandler;
 
   /**
    * Gets the rules UI handler of the current route.
    *
-   * @return \Drupal\rules\Core\RulesUiHandlerInterface|null
+   * @return \Drupal\rules\Ui\RulesUiHandlerInterface|null
    *   The handler, or NULL if this is no rules_ui enabled route.
    */
   public function getRulesUiHandler() {
@@ -39,7 +39,7 @@ trait RulesUiHandlerTrait {
   /**
    * Sets the Rules UI handler.
    *
-   * @param \Drupal\rules\Core\RulesUiHandlerInterface $rules_ui_handler
+   * @param \Drupal\rules\Ui\RulesUiHandlerInterface $rules_ui_handler
    *   The Rules UI handler to set.
    */
   public function setRulesUiHandler(RulesUiHandlerInterface $rules_ui_handler) {

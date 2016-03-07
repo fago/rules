@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Form\TempStoreTrait.
+ * Contains \Drupal\rules\Ui\TempStoreTrait.
  */
 
-namespace Drupal\rules\Form;
+namespace Drupal\rules\Ui;
 
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -16,10 +16,10 @@ use Drupal\user\SharedTempStoreFactory;
  * Provides methods for modified rules components in temporary storage.
  *
  * Note that this implements the lock-related methods of
- * \Drupal\rules\Core\RulesUiHandlerInterface.
+ * \Drupal\rules\Ui\RulesUiHandlerInterface.
  *
- * @see \Drupal\rules\Core\RulesUiHandlerInterface
- * @see \Drupal\rules\Core\RulesUiConfigHandler
+ * @see \Drupal\rules\Ui\RulesUiHandlerInterface
+ * @see \Drupal\rules\Ui\RulesUiConfigHandler
  */
 trait TempStoreTrait {
 
@@ -40,7 +40,7 @@ trait TempStoreTrait {
   /**
    * The currently active rules UI handler.
    *
-   * @var \Drupal\rules\Core\RulesUiHandlerInterface
+   * @var \Drupal\rules\Ui\RulesUiHandlerInterface
    */
   protected $rulesUiHandler;
 
@@ -113,7 +113,7 @@ trait TempStoreTrait {
   /**
    * Gets the currently active RulesUI's handler.
    *
-   * @return \Drupal\rules\Core\RulesUiHandlerInterface
+   * @return \Drupal\rules\Ui\RulesUiHandlerInterface
    *   The RulesUI handler.
    */
   protected function getRulesUiHandler() {
@@ -142,14 +142,14 @@ trait TempStoreTrait {
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::clearTemporaryStorage()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::clearTemporaryStorage()
    */
   public function clearTemporaryStorage() {
     $this->getTempStore()->delete($this->getTempStoreItemId());
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::isLocked()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::isLocked()
    */
   public function isLocked() {
     // If there is an object in the temporary storage from another user then
@@ -186,14 +186,14 @@ trait TempStoreTrait {
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::getLockMetaData()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::getLockMetaData()
    */
   public function getLockMetaData() {
     return $this->getTempStore()->getMetadata($this->getTempStoreItemId());
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::isEdited()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::isEdited()
    */
   public function isEdited() {
     if ($this->getTempStore()->get($this->getTempStoreItemId())) {
@@ -203,7 +203,7 @@ trait TempStoreTrait {
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::addLockInformation()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::addLockInformation()
    */
   public function addLockInformation() {
     $build = [];
@@ -234,7 +234,7 @@ trait TempStoreTrait {
   }
 
   /**
-   * @see \Drupal\rules\Core\RulesUiHandlerInterface::validateLock()
+   * @see \Drupal\rules\Ui\RulesUiHandlerInterface::validateLock()
    */
   public function validateLock(array &$form, FormStateInterface $form_state) {
     if ($this->isLocked()) {

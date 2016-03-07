@@ -9,7 +9,7 @@ namespace Drupal\rules\Form\Expression;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\rules\Core\RulesUiHandlerTrait;
+use Drupal\rules\Ui\RulesUiHandlerTrait;
 use Drupal\rules\Engine\ConditionExpressionContainerInterface;
 
 /**

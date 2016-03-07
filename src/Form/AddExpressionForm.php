@@ -8,7 +8,7 @@
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Core\RulesUiHandlerInterface;
+use Drupal\rules\Ui\RulesUiHandlerInterface;
 use Drupal\rules\Engine\ExpressionContainerInterface;
 use Drupal\rules\Engine\ExpressionManagerInterface;
 use Drupal\rules\Engine\RulesComponent;

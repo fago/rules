@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Core\RulesUiHandlerInterface.
+ * Contains \Drupal\rules\Ui\RulesUiHandlerInterface.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,7 +22,7 @@ interface RulesUiHandlerInterface extends PluginInspectionInterface {
   /**
    * {@inheritdoc}
    *
-   * @return \Drupal\rules\Core\RulesUiDefinition
+   * @return \Drupal\rules\Ui\RulesUiDefinition
    *   The rules_ui plugin definition.
    */
   public function getPluginDefinition();

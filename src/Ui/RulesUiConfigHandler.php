@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains Drupal\rules\Core\RulesUiDefaultHandler.
+ * Contains Drupal\rules\Ui\RulesUiDefaultHandler.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -15,7 +15,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\rules\Engine\RulesComponent;
 use Drupal\rules\Form\EmbeddedComponentForm;
-use Drupal\rules\Form\TempStoreTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * marked as optional are required.
  * - config_parameter: The name of the routing parameter holding a config
  *   object providing the edited component. The parameter object must implement
- *   \Drupal\rules\Core\RulesUiComponentProviderInterface. Required, unless
+ *   \Drupal\rules\Ui\RulesUiComponentProviderInterface. Required, unless
  *   config_name and config_key are provided.
  * - config_name: The name of a (simple) configuration object containing the
  *   configuration data of the edited component. For example,
@@ -43,7 +42,7 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
   /**
    * The rules UI (plugin) definition.
    *
-   * @var \Drupal\rules\Core\RulesUiDefinition
+   * @var \Drupal\rules\Ui\RulesUiDefinition
    */
   protected $pluginDefinition;
 
@@ -86,7 +85,7 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
   /**
    * Gets the edited config object.
    *
-   * @return \Drupal\rules\Core\RulesUiComponentProviderInterface|\Drupal\Core\Config\Config
+   * @return \Drupal\rules\Ui\RulesUiComponentProviderInterface|\Drupal\Core\Config\Config
    *   The component provider object (usually a config entity) or the editable
    *   config object.
    */

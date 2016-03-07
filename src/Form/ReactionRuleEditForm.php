@@ -9,7 +9,7 @@ namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\rules\Core\RulesEventManager;
-use Drupal\rules\Core\RulesUiConfigHandler;
+use Drupal\rules\Ui\RulesUiConfigHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,7 +27,7 @@ class ReactionRuleEditForm extends RulesComponentFormBase {
   /**
    * The RulesUI handler of the currently active UI.
    *
-   * @var \Drupal\rules\Core\RulesUiConfigHandler
+   * @var \Drupal\rules\Ui\RulesUiConfigHandler
    */
   protected $rulesUiHandler;
 

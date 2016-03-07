@@ -8,7 +8,7 @@
 namespace Drupal\rules\Routing;
 
 use Drupal\Core\Routing\Enhancer\RouteEnhancerInterface;
-use Drupal\rules\Core\RulesUiManagerInterface;
+use Drupal\rules\Ui\RulesUiManagerInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
@@ -28,14 +28,14 @@ class RulesUiRouteEnhancer implements RouteEnhancerInterface {
   /**
    * The rules_ui plugin manager.
    *
-   * @var \Drupal\rules\Core\RulesUiManagerInterface
+   * @var \Drupal\rules\Ui\RulesUiManagerInterface
    */
   protected $rulesUiManager;
 
   /**
    * Constructs the object.
    *
-   * @param \Drupal\rules\Core\RulesUiManagerInterface $rules_ui_manager
+   * @param \Drupal\rules\Ui\RulesUiManagerInterface $rules_ui_manager
    *   The rules_ui plugin manager.
    */
   public function __construct(RulesUiManagerInterface $rules_ui_manager) {

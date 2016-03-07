@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Core\RulesUiManager.
+ * Contains \Drupal\rules\Ui\RulesUiManager.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -19,9 +19,9 @@ use Drupal\Core\Plugin\Factory\ContainerFactory;
  * Rules UIs are primarily defined in *.rules_ui.yml files. Usually, there is
  * no need to specify a 'class' as there is a suiting default handler class in
  * place. However, if done see the class must implement
- * \Drupal\rules\Core\RulesUiHandlerInterface.
+ * \Drupal\rules\Ui\RulesUiHandlerInterface.
  *
- * @see \Drupal\rules\Core\RulesUiHandlerInterface
+ * @see \Drupal\rules\Ui\RulesUiHandlerInterface
  */
 class RulesUiManager extends DefaultPluginManager implements RulesUiManagerInterface {
 

@@ -8,7 +8,7 @@
 namespace Drupal\rules\Form;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Core\RulesUiHandlerInterface;
+use Drupal\rules\Ui\RulesUiHandlerInterface;
 
 /**
  * Components form, ready to be embedded in some other form.
@@ -21,14 +21,14 @@ class EmbeddedComponentForm implements FormInterface {
   /**
    * The RulesUI handler of the currently active UI.
    *
-   * @var \Drupal\rules\Core\RulesUiHandlerInterface
+   * @var \Drupal\rules\Ui\RulesUiHandlerInterface
    */
   protected $rulesUiHandler;
 
   /**
    * Constructs the object.
    *
-   * @param \Drupal\rules\Core\RulesUiHandlerInterface $rules_ui_handler
+   * @param \Drupal\rules\Ui\RulesUiHandlerInterface $rules_ui_handler
    *   The UI handler of the edited component.
    */
   public function __construct(RulesUiHandlerInterface $rules_ui_handler) {

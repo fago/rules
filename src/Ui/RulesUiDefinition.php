@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Core\RulesUiDefinition.
+ * Contains \Drupal\rules\Ui\RulesUiDefinition.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\Definition\PluginDefinitionInterface;
 
@@ -15,7 +15,7 @@ use Drupal\Component\Plugin\Definition\PluginDefinitionInterface;
  * Note that the class is treated as value object. Thus, there is no special
  * interface for it.
  *
- * @see \Drupal\rules\Core\RulesUiManagerInterface
+ * @see \Drupal\rules\Ui\RulesUiManagerInterface
  */
 class RulesUiDefinition implements PluginDefinitionInterface {
 
@@ -50,7 +50,7 @@ class RulesUiDefinition implements PluginDefinitionInterface {
   /**
    * The rules UI handler class.
    *
-   * The class must implement \Drupal\rules\Core\RulesUiHandlerInterface.
+   * The class must implement \Drupal\rules\Ui\RulesUiHandlerInterface.
    *
    * @var string
    */

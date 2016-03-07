@@ -12,7 +12,7 @@ services:
     class: Drupal\rules\Context\DataProcessorManager
     arguments: ['@container.namespaces', '@module_handler']
   plugin.manager.rules_ui:
-    class: Drupal\rules\Core\RulesUiManager
+    class: Drupal\rules\Ui\RulesUiManager
     arguments: ['@module_handler']
   plugin.manager.typed_data_filter:
     class: Drupal\rules\TypedData\DataFilterManager

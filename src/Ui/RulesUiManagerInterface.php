@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\rules\Core\RulesUiManagerInterface.
+ * Contains \Drupal\rules\Ui\RulesUiManagerInterface.
  */
 
-namespace Drupal\rules\Core;
+namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 
@@ -25,7 +25,7 @@ interface RulesUiManagerInterface extends PluginManagerInterface {
    * @param array $configuration
    *   An array of configuration relevant to the plugin instance.
    *
-   * @return \Drupal\rules\Core\RulesUiHandlerInterface
+   * @return \Drupal\rules\Ui\RulesUiHandlerInterface
    *   A fully configured plugin instance.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
@@ -36,7 +36,7 @@ interface RulesUiManagerInterface extends PluginManagerInterface {
   /**
    * {@inheritdoc}
    *
-   * @return \Drupal\rules\Core\RulesUiDefinition|null
+   * @return \Drupal\rules\Ui\RulesUiDefinition|null
    *   A plugin definition, or NULL if the plugin ID is invalid and
    *   $exception_on_invalid is FALSE.
    */
@@ -45,7 +45,7 @@ interface RulesUiManagerInterface extends PluginManagerInterface {
   /**
    * {@inheritdoc}
    *
-   * @return \Drupal\rules\Core\RulesUiDefinition[]
+   * @return \Drupal\rules\Ui\RulesUiDefinition[]
    *   An array of plugin definitions (empty array if no definitions were
    *   found). Keys are plugin IDs.
    */

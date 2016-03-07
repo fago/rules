@@ -9,7 +9,7 @@ namespace Drupal\rules_test_ui_embed\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\rules\Core\RulesUiConfigHandler;
+use Drupal\rules\Ui\RulesUiConfigHandler;
 
 /**
  * Implements the settings form.
@@ -19,7 +19,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * The RulesUI handler of the currently active UI.
    *
-   * @var \Drupal\rules\Core\RulesUiConfigHandler
+   * @var \Drupal\rules\Ui\RulesUiConfigHandler
    */
   protected $rulesUiHandler;
 

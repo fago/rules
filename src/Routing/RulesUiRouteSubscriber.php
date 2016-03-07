@@ -9,8 +9,8 @@ namespace Drupal\rules\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Drupal\Core\Routing\RoutingEvents;
-use Drupal\rules\Core\RulesUiDefinition;
-use Drupal\rules\Core\RulesUiManagerInterface;
+use Drupal\rules\Ui\RulesUiDefinition;
+use Drupal\rules\Ui\RulesUiManagerInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -22,14 +22,14 @@ class RulesUiRouteSubscriber extends RouteSubscriberBase {
   /**
    * The rules UI manager.
    *
-   * @var \Drupal\rules\Core\RulesUiManagerInterface
+   * @var \Drupal\rules\Ui\RulesUiManagerInterface
    */
   protected $rulesUiManager;
 
   /**
    * Constructs the object.
    *
-   * @param \Drupal\rules\Core\RulesUiManagerInterface $rules_ui_manager
+   * @param \Drupal\rules\Ui\RulesUiManagerInterface $rules_ui_manager
    *   The rules UI manager.
    */
   public function __construct(RulesUiManagerInterface $rules_ui_manager) {
@@ -60,7 +60,7 @@ class RulesUiRouteSubscriber extends RouteSubscriberBase {
   /**
    * Registers the routes as needed for the UI.
    *
-   * @param \Drupal\rules\Core\RulesUiDefinition $ui_definition
+   * @param \Drupal\rules\Ui\RulesUiDefinition $ui_definition
    *   The definition of the RulesUI for which to register the routes.
    * @param \Symfony\Component\Routing\RouteCollection $collection
    *   The route collection to which to add the routes.
