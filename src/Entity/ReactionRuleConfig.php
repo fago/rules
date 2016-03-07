@@ -38,7 +38,6 @@ use Drupal\rules\Engine\RulesComponent;
  *     "id",
  *     "label",
  *     "events",
- *     "module",
  *     "description",
  *     "tag",
  *     "core",
@@ -107,13 +106,6 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
    * @var \Drupal\rules\Engine\ExpressionInterface
    */
   protected $expressionObject;
-
-  /**
-   * The module implementing this Reaction rule.
-   *
-   * @var string
-   */
-  protected $module = 'rules';
 
   /**
    * The events this reaction rule is reacting on.

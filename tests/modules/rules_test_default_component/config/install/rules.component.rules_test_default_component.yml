@@ -3,7 +3,6 @@ status: true
 dependencies: {}
 id: rules_test_default_component
 label: Rules test default component
-module: rules
 description: 'Tests adding Rules component by default.'
 tag: 'test'
 core: 8.x

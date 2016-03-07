@@ -10,9 +10,6 @@ rules.component.*:
     label:
       type: label
       label: 'Label'
-    module:
-      type: string
-      label: 'Module'
     description:
       type: text
       label: 'Administrative description'
@@ -50,9 +47,6 @@ rules.reaction.*:
             label: 'Configuration'
             sequence:
               type: mapping
-    module:
-      type: string
-      label: 'Module'
     description:
       type: text
       label: 'Administrative description'

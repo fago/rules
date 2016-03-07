@@ -37,7 +37,6 @@ use Drupal\rules\Engine\RulesComponent;
  *   config_export = {
  *     "id",
  *     "label",
- *     "module",
  *     "description",
  *     "tag",
  *     "core",
@@ -105,13 +104,6 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    * @var \Drupal\rules\Engine\RulesComponent
    */
   protected $componentObject;
-
-  /**
-   * The module implementing this Rules component.
-   *
-   * @var string
-   */
-  protected $module = 'rules';
 
   /**
    * Gets a Rules expression instance for this Rules component.
