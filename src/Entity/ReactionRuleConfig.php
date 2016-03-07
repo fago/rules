@@ -8,6 +8,7 @@
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\rules\Rules;
 use Drupal\rules\Ui\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
@@ -40,7 +41,7 @@ use Drupal\rules\Engine\RulesComponent;
  *     "events",
  *     "description",
  *     "tag",
- *     "core",
+ *     "config_version",
  *     "expression",
  *   },
  *   links = {
@@ -85,11 +86,11 @@ class ReactionRuleConfig extends ConfigEntityBase implements RulesUiComponentPro
   protected $tag = '';
 
   /**
-   * The core version the Reaction rule was created for.
+   * The version the Reaction rule was created for.
    *
    * @var int
    */
-  protected $core = \Drupal::CORE_COMPATIBILITY;
+  protected $config_version = Rules::CONFIG_VERSION;
 
   /**
    * The expression plugin specific configuration as nested array.

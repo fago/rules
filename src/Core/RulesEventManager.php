@@ -49,6 +49,26 @@ class RulesEventManager extends DefaultPluginManager implements CategorizingPlug
   /**
    * {@inheritdoc}
    */
+  public function createInstance($plugin_id, array $configuration = array()) {
+    // If a fully qualified event name is passed, be sure to get the base name
+    // first.
+    $plugin_id = $this->getEventBaseName($plugin_id);
+    return parent::createInstance($plugin_id, $configuration);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefinition($plugin_id, $exception_on_invalid = TRUE) {
+    // If a fully qualified event name is passed, be sure to get the base name
+    // first.
+    $plugin_id = $this->getEventBaseName($plugin_id);
+    return parent::getDefinition($plugin_id, $exception_on_invalid);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function processDefinition(&$definition, $plugin_id) {
     parent::processDefinition($definition, $plugin_id);
     if (!isset($definition['context'])) {

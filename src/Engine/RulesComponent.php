@@ -165,7 +165,8 @@ class RulesComponent {
    * Adds the available event context for the given events.
    *
    * @param string[] $event_names
-   *   The event names; e.g., as configured for a reaction rule.
+   *   The (fully qualified) event names; e.g., as configured for a reaction
+   * rule.
    *
    * @return $this
    */

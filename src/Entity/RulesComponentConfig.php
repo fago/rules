@@ -9,6 +9,7 @@ namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\rules\Context\ContextDefinition;
+use Drupal\rules\Rules;
 use Drupal\rules\Ui\RulesUiComponentProviderInterface;
 use Drupal\rules\Engine\ExpressionInterface;
 use Drupal\rules\Engine\RulesComponent;
@@ -39,7 +40,7 @@ use Drupal\rules\Engine\RulesComponent;
  *     "label",
  *     "description",
  *     "tag",
- *     "core",
+ *     "config_version",
  *     "component",
  *   },
  *   links = {
@@ -83,11 +84,11 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
   protected $tag = '';
 
   /**
-   * The core version the Rules component was created for.
+   * The config version the Rules component was created for.
    *
    * @var int
    */
-  protected $core = \Drupal::CORE_COMPATIBILITY;
+  protected $config_version = Rules::CONFIG_VERSION;
 
   /**
    * The component configuration as nested array.

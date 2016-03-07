@@ -16,9 +16,9 @@ rules.component.*:
     tag:
       type: string
       label: 'Tag'
-    core:
+    config_version:
       type: string
-      label: 'Drupal version'
+      label: 'Configuration schema version'
     component:
       type: rules_component
 
@@ -53,9 +53,9 @@ rules.reaction.*:
     tag:
       type: string
       label: 'Tag'
-    core:
+    config_version:
       type: string
-      label: 'Drupal version'
+      label: 'Configuration schema version'
     expression:
       type: rules_expression.[id]
       label: 'Expression configuration'

@@ -18,6 +18,11 @@ namespace Drupal\rules;
 class Rules {
 
   /**
+   * The current configuration schema version.
+   */
+  const CONFIG_VERSION = 3.0;
+
+  /**
    * Returns the Rules expression manager service.
    *
    * @return \Drupal\rules\Engine\ExpressionManager
