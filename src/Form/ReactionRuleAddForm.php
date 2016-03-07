@@ -8,6 +8,7 @@
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\rules\Core\RulesConfigurableEventHandlerInterface;
 use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -71,10 +72,35 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
       '#title' => $this->t('React on event'),
       '#options' => $options,
       '#required' => TRUE,
+      '#ajax' => $this->getDefaultAjax(),
       '#description' => $this->t('Whenever the event occurs, rule evaluation is triggered.'),
+      '#executes_submit_callback' => array('::submitForm'),
     ];
 
+    $form['event_configuration'] = array();
+    if ($values = $form_state->getValue('events')) {
+      $event_name = $values[0]['event_name'];
+      if ($handler = $this->getEventHandler($event_name)) {
+        $form['event_configuration'] = $handler->buildConfigurationForm(array(), $form_state);
+      }
+    }
+
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildEntity(array $form, FormStateInterface $form_state) {
+    $entity = parent::buildEntity($form, $form_state);
+    foreach ($entity->getEventBaseNames() as $event_name) {
+      if ($handler = $this->getEventHandler($event_name)) {
+        $handler->extractConfigurationFormValues($form['event_configuration'], $form_state);
+        $entity->set('configuration', $handler->getConfiguration());
+        $entity->set('events', [['event_name' => $event_name . '--' . $handler->getConfiguration()['bundle']]]);
+      }
+    }
+    return $entity;
   }
 
   /**
@@ -85,6 +111,28 @@ class ReactionRuleAddForm extends RulesComponentFormBase {
 
     drupal_set_message($this->t('Reaction rule %label has been created.', ['%label' => $this->entity->label()]));
     $form_state->setRedirect('entity.rules_reaction_rule.edit_form', ['rules_reaction_rule' => $this->entity->id()]);
+  }
+
+  /**
+   * Gets event handler class.
+   *
+   * Currently event handler is available only when the event is configurable.
+   *
+   * @param $event_name
+   *   The event base name.
+   * @param array $configuration
+   *   The event configuration.
+   *
+   * @return \Drupal\rules\Core\RulesConfigurableEventHandlerInterface|null
+   *   The event handler, null if there is no proper handler.
+   */
+  protected function getEventHandler($event_name, $configuration = []) {
+    $event_definition = $this->eventManager->getDefinition($event_name);
+    $handler_class = $event_definition['class'];
+    if (is_subclass_of($handler_class, RulesConfigurableEventHandlerInterface::class)) {
+      $handler = new $handler_class($configuration, $this->eventManager->getEventBaseName($event_name), $event_definition);
+      return $handler;
+    }
   }
 
 }
