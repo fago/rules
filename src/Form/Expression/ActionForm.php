@@ -12,6 +12,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Core\RulesActionManagerInterface;
 use Drupal\rules\Engine\ActionExpressionInterface;
+use Drupal\rules\Ui\RulesUiHandlerTrait;
 
 /**
  * UI form for adding/editing a Rules action.
@@ -20,6 +21,7 @@ class ActionForm implements ExpressionFormInterface {
 
   use ContextFormTrait;
   use StringTranslationTrait;
+  use RulesUiHandlerTrait;
 
   /**
    * The action plugin manager.

@@ -65,6 +65,14 @@ trait ContextFormTrait {
       '#default_value' => $default_value,
     ];
 
+    if ($mode == 'selector') {
+      $element = &$form['context'][$context_name]['setting'];
+      $url = $this->getRulesUiHandler()->getUrlFromRoute('autocomplete', []);
+      $element['#attributes']['class'][] = 'rules-autocomplete';
+      $element['#attributes']['data-autocomplete-path'] = $url->toString();
+      $element['#attached']['library'][] = 'rules/rules.autocomplete';
+    }
+
     $value = $mode == 'selector' ? $this->t('Switch to the direct input mode') : $this->t('Switch to data selection');
     $form['context'][$context_name]['switch_button'] = [
       '#type' => 'submit',

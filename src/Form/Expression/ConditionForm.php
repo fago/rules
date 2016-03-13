@@ -12,6 +12,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\ConditionExpressionInterface;
+use Drupal\rules\Ui\RulesUiHandlerTrait;
 
 /**
  * UI form for adding/editing a Rules condition.
@@ -20,6 +21,7 @@ class ConditionForm implements ExpressionFormInterface {
 
   use ContextFormTrait;
   use StringTranslationTrait;
+  use RulesUiHandlerTrait;
 
   /**
    * The condition plugin manager.
