@@ -36,7 +36,6 @@ entity.rules_reaction_rule.edit_form:
     _entity_form: 'rules_reaction_rule.edit'
     _title_callback: '\Drupal\rules\Form\ReactionRuleEditForm::getTitle'
   options:
-    parameters:
     _rules_ui: rules.reaction_rules
   requirements:
     _permission: 'administer rules+administer rules reactions'
