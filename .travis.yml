@@ -58,11 +58,9 @@ before_script:
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
 
-  # Run composer install for Drupal 8.1. We need an up-to-date composer when
-  # installing Drupal 8.1.
-  # Disabled for now because core still includes the vendor directory, see
-  # https://www.drupal.org/node/1475510
-  # - if [ "$DRUPAL_CORE" = "8.1.x" ]; then composer self-update && composer install; fi
+  # Run composer install for Drupal 8.1 and up. We need an up-to-date composer
+  # when installing Drupal 8.1.
+  - if [ "$DRUPAL_CORE" != "8.0.x" ]; then travis_retry composer self-update && travis_retry composer install; fi
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
