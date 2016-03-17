@@ -5,7 +5,7 @@
 rules.settings:
   path: '/admin/config/workflow/rules/settings'
   defaults:
-    _controller: '\Drupal\rules\Controller\RulesController::settingsForm'
+    _form: '\Drupal\rules\Form\RulesSettingsForm'
     _title: 'Rules settings'
   requirements:
     _permission: 'administer rules'
