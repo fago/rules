@@ -104,4 +104,19 @@ interface DataFetcherInterface {
    */
   public function fetchDefinitionBySubPaths(DataDefinitionInterface $data_definition, array $sub_paths, $langcode = NULL);
 
+  /**
+   * Provides autocomplete suggestions for an incomplete property path.
+   *
+   * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $data_definitions
+   *   A map of available data definitions that should be seareched. The array
+   *   keys are the first part of the property path.
+   * @param string $partial_property_path
+   *   The partial property path, example: "node.uid.ent".
+   *
+   * @return string[]
+   *   A list of autocomplete suggestions - valid property paths for one of the
+   *   provided data definitions.
+   */
+  public function autocompletePropertyPath(array $data_definitions, $partial_property_path);
+
 }
