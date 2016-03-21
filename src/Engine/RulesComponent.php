@@ -333,8 +333,12 @@ class RulesComponent {
    *   The expression in which the autocompletion will be executed. All
    *   variables in the exection metadata state up to that point are available.
    *
-   * @return string[]
-   *   An array of autocomplete suggestions.
+   * @return array[]
+   *   A list of autocomplete suggestions - valid property paths for one of the
+   *   provided data definitions. Each entry is an array with the following
+   *   keys:
+   *   - value: the data selecor property path.
+   *   - label: the human readable label suggestion.
    */
   public function autocomplete($partial_selector, ExpressionInterface $until = NULL) {
     // We use the integrity check to populate the execution metadata state with

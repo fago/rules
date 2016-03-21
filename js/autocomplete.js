@@ -60,6 +60,24 @@
   }
 
   /**
+   * Handles the autocomplete selection event.
+   *
+   * Restarts autocompleting when the selection ends in a dot, for nested data
+   * selectors.
+   *
+   * @param {object} event
+   *   The event object.
+   * @param {object} ui
+   *   The UI object holding the selected value.
+   */
+  function selectHandler(event, ui) {
+    var input_value = ui.item.value;
+    if (input_value.substr(input_value.length - 1) === '.') {
+      $(event.target).trigger('keydown');
+    }
+  }
+
+  /**
    * Override jQuery UI _renderItem function to output HTML by default.
    *
    * @param {jQuery} ul
@@ -141,6 +159,7 @@
     options: {
       source: sourceData,
       focus: focusHandler,
+      select: selectHandler,
       renderItem: renderItem,
       minLength: 0
     },

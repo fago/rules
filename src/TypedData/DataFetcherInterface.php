@@ -113,9 +113,12 @@ interface DataFetcherInterface {
    * @param string $partial_property_path
    *   The partial property path, example: "node.uid.ent".
    *
-   * @return string[]
+   * @return array[]
    *   A list of autocomplete suggestions - valid property paths for one of the
-   *   provided data definitions.
+   *   provided data definitions. Each entry is an array with the following
+   *   keys:
+   *   - value: the data selecor property path.
+   *   - label: the human readable label suggestion.
    */
   public function autocompletePropertyPath(array $data_definitions, $partial_property_path);
 

@@ -65,7 +65,16 @@ class AutocompleteTest extends RulesDrupalTestBase {
       ->addContextDefinition('entity', ContextDefinition::create('entity'))
       ->autocomplete('e', $action);
 
-    $this->assertSame(['entity'], $results);
+    $this->assertSame([
+      [
+        'value' => 'entity',
+        'label' => 'entity',
+      ],
+      [
+        'value' => 'entity.',
+        'label' => 'entity...',
+      ],
+    ], $results);
   }
 
   /**
@@ -80,49 +89,233 @@ class AutocompleteTest extends RulesDrupalTestBase {
 
     // Tests that "node.uid.en" returns the suggestion "node.uid.entity".
     $results = $component->autocomplete('node.uid.en');
-    $this->assertSame(['node.uid.entity'], $results);
+    $this->assertSame([
+      [
+        'value' => 'node.uid.entity',
+        'label' => 'node.uid.entity',
+      ],
+      [
+        'value' => 'node.uid.entity.',
+        'label' => 'node.uid.entity...',
+      ],
+    ], $results);
 
     // Tests that "node." returns all available fields on a node.
     $results = $component->autocomplete('node.');
     $expected = [
-      'node.changed',
-      'node.created',
-      'node.default_langcode',
-      'node.field_integer',
-      'node.langcode',
-      'node.nid',
-      'node.promote',
-      'node.revision_log',
-      'node.revision_timestamp',
-      'node.revision_translation_affected',
-      'node.revision_uid',
-      'node.status',
-      'node.sticky',
-      'node.title',
-      'node.type',
-      'node.uid',
-      'node.uuid',
-      'node.vid',
+      [
+        'value' => 'node.changed',
+        'label' => 'node.changed',
+      ],
+      [
+        'value' => 'node.changed.',
+        'label' => 'node.changed...',
+      ],
+      [
+        'value' => 'node.created',
+        'label' => 'node.created',
+      ],
+      [
+        'value' => 'node.created.',
+        'label' => 'node.created...',
+      ],
+      [
+        'value' => 'node.default_langcode',
+        'label' => 'node.default_langcode',
+      ],
+      [
+        'value' => 'node.default_langcode.',
+        'label' => 'node.default_langcode...',
+      ],
+      [
+        'value' => 'node.field_integer',
+        'label' => 'node.field_integer',
+      ],
+      [
+        'value' => 'node.field_integer.',
+        'label' => 'node.field_integer...',
+      ],
+      [
+        'value' => 'node.langcode',
+        'label' => 'node.langcode',
+      ],
+      [
+        'value' => 'node.langcode.',
+        'label' => 'node.langcode...',
+      ],
+      [
+        'value' => 'node.nid',
+        'label' => 'node.nid',
+      ],
+      [
+        'value' => 'node.nid.',
+        'label' => 'node.nid...',
+      ],
+      [
+        'value' => 'node.promote',
+        'label' => 'node.promote',
+      ],
+      [
+        'value' => 'node.promote.',
+        'label' => 'node.promote...',
+      ],
+      [
+        'value' => 'node.revision_log',
+        'label' => 'node.revision_log',
+      ],
+      [
+        'value' => 'node.revision_log.',
+        'label' => 'node.revision_log...',
+      ],
+      [
+        'value' => 'node.revision_timestamp',
+        'label' => 'node.revision_timestamp',
+      ],
+      [
+        'value' => 'node.revision_timestamp.',
+        'label' => 'node.revision_timestamp...',
+      ],
+      [
+        'value' => 'node.revision_translation_affected',
+        'label' => 'node.revision_translation_affected',
+      ],
+      [
+        'value' => 'node.revision_translation_affected.',
+        'label' => 'node.revision_translation_affected...',
+      ],
+      [
+        'value' => 'node.revision_uid',
+        'label' => 'node.revision_uid',
+      ],
+      [
+        'value' => 'node.revision_uid.',
+        'label' => 'node.revision_uid...',
+      ],
+      [
+        'value' => 'node.status',
+        'label' => 'node.status',
+      ],
+      [
+        'value' => 'node.status.',
+        'label' => 'node.status...',
+      ],
+      [
+        'value' => 'node.sticky',
+        'label' => 'node.sticky',
+      ],
+      [
+        'value' => 'node.sticky.',
+        'label' => 'node.sticky...',
+      ],
+      [
+        'value' => 'node.title',
+        'label' => 'node.title',
+      ],
+      [
+        'value' => 'node.title.',
+        'label' => 'node.title...',
+      ],
+      [
+        'value' => 'node.type',
+        'label' => 'node.type',
+      ],
+      [
+        'value' => 'node.type.',
+        'label' => 'node.type...',
+      ],
+      [
+        'value' => 'node.uid',
+        'label' => 'node.uid',
+      ],
+      [
+        'value' => 'node.uid.',
+        'label' => 'node.uid...',
+      ],
+      [
+        'value' => 'node.uuid',
+        'label' => 'node.uuid',
+      ],
+      [
+        'value' => 'node.uuid.',
+        'label' => 'node.uuid...',
+      ],
+      [
+        'value' => 'node.vid',
+        'label' => 'node.vid',
+      ],
+      [
+        'value' => 'node.vid.',
+        'label' => 'node.vid...',
+      ],
     ];
     $this->assertSame($expected, $results);
 
     // Tests that "node.uid.entity.na" returns "node.uid.entity.name".
     $results = $component->autocomplete('node.uid.entity.na');
-    $this->assertSame(['node.uid.entity.name'], $results);
+    $this->assertSame([
+      [
+        'value' => 'node.uid.entity.name',
+        'label' => 'node.uid.entity.name',
+      ],
+      [
+        'value' => 'node.uid.entity.name.',
+        'label' => 'node.uid.entity.name...',
+      ],
+    ], $results);
 
     // A multi-valued field should show numeric indices suggestions.
     $results = $component->autocomplete('node.field_integer.');
     $this->assertSame([
-      'node.field_integer.0',
-      'node.field_integer.1',
-      'node.field_integer.2',
-      'node.field_integer.value',
+      [
+        'value' => 'node.field_integer.0',
+        'label' => 'node.field_integer.0',
+      ],
+      [
+        'value' => 'node.field_integer.0.',
+        'label' => 'node.field_integer.0...',
+      ],
+      [
+        'value' => 'node.field_integer.1',
+        'label' => 'node.field_integer.1',
+      ],
+      [
+        'value' => 'node.field_integer.1.',
+        'label' => 'node.field_integer.1...',
+      ],
+      [
+        'value' => 'node.field_integer.2',
+        'label' => 'node.field_integer.2',
+      ],
+      [
+        'value' => 'node.field_integer.2.',
+        'label' => 'node.field_integer.2...',
+      ],
+      [
+        'value' => 'node.field_integer.value',
+        'label' => 'node.field_integer.value',
+      ],
     ], $results);
 
     // A single-valued field should not show numeric indices suggestions.
     $results = $component->autocomplete('node.title.');
     $this->assertSame([
-      'node.title.value',
+      [
+        'value' => 'node.title.value',
+        'label' => 'node.title.value',
+      ],
+    ], $results);
+
+    // A single-valued field should not show numeric indices suggestions.
+    $results = $component->autocomplete('n');
+    $this->assertSame([
+      [
+        'value' => 'node',
+        'label' => 'node',
+      ],
+      [
+        'value' => 'node.',
+        'label' => 'node...',
+      ],
     ], $results);
   }
 
@@ -140,9 +333,18 @@ class AutocompleteTest extends RulesDrupalTestBase {
 
     $results = $component->autocomplete('list.');
     $this->assertSame([
-      'list.0',
-      'list.1',
-      'list.2',
+      [
+        'value' => 'list.0',
+        'label' => 'list.0',
+      ],
+      [
+        'value' => 'list.1',
+        'label' => 'list.1',
+      ],
+      [
+        'value' => 'list.2',
+        'label' => 'list.2',
+      ],
     ], $results);
   }
 
