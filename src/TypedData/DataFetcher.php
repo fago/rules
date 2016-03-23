@@ -277,7 +277,11 @@ class DataFetcher implements DataFetcherInterface {
    *   - label: the human readable label suggestion.
    */
   protected function getAutocompleteSuggestion(DataDefinitionInterface $data_definition, $variable_name) {
-    $results[] = ['value' => $variable_name, 'label' => $variable_name];
+    $label = $variable_name;
+    if ($data_label = $data_definition->getLabel()) {
+      $label .= " ($data_label)";
+    }
+    $results[] = ['value' => $variable_name, 'label' => $label];
 
     // If the data definition is just a reference then directly dereference the
     // target.
@@ -288,7 +292,11 @@ class DataFetcher implements DataFetcherInterface {
     if ($data_definition instanceof ListDataDefinitionInterface
       || $data_definition instanceof ComplexDataDefinitionInterface
     ) {
-      $results[] = ['value' => "$variable_name.", 'label' => "$variable_name..."];
+      $label = "$variable_name...";
+      if ($data_label) {
+        $label .= " ($data_label)";
+      }
+      $results[] = ['value' => "$variable_name.", 'label' => $label];
     }
 
     return $results;

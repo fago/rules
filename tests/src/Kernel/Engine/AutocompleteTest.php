@@ -92,11 +92,11 @@ class AutocompleteTest extends RulesDrupalTestBase {
     $this->assertSame([
       [
         'value' => 'node.uid.entity',
-        'label' => 'node.uid.entity',
+        'label' => 'node.uid.entity (User)',
       ],
       [
         'value' => 'node.uid.entity.',
-        'label' => 'node.uid.entity...',
+        'label' => 'node.uid.entity... (User)',
       ],
     ], $results);
 
@@ -105,161 +105,169 @@ class AutocompleteTest extends RulesDrupalTestBase {
     $expected = [
       [
         'value' => 'node.changed',
-        'label' => 'node.changed',
+        'label' => 'node.changed (Changed)',
       ],
       [
         'value' => 'node.changed.',
-        'label' => 'node.changed...',
+        'label' => 'node.changed... (Changed)',
       ],
       [
         'value' => 'node.created',
-        'label' => 'node.created',
+        'label' => 'node.created (Authored on)',
       ],
       [
         'value' => 'node.created.',
-        'label' => 'node.created...',
+        'label' => 'node.created... (Authored on)',
       ],
       [
         'value' => 'node.default_langcode',
-        'label' => 'node.default_langcode',
+        'label' => 'node.default_langcode (Default translation)',
       ],
       [
         'value' => 'node.default_langcode.',
-        'label' => 'node.default_langcode...',
+        'label' => 'node.default_langcode... (Default translation)',
       ],
       [
         'value' => 'node.field_integer',
-        'label' => 'node.field_integer',
+        'label' => 'node.field_integer (field_integer)',
       ],
       [
         'value' => 'node.field_integer.',
-        'label' => 'node.field_integer...',
+        'label' => 'node.field_integer... (field_integer)',
       ],
       [
         'value' => 'node.langcode',
-        'label' => 'node.langcode',
+        'label' => 'node.langcode (Language)',
       ],
       [
         'value' => 'node.langcode.',
-        'label' => 'node.langcode...',
+        'label' => 'node.langcode... (Language)',
       ],
       [
         'value' => 'node.nid',
-        'label' => 'node.nid',
+        // @todo Remove this once Drupal 8.0.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 5), '8.1.0') === -1 ? 'node.nid (Node ID)' : 'node.nid (ID)',
       ],
       [
         'value' => 'node.nid.',
-        'label' => 'node.nid...',
+        // @todo Remove this once Drupal 8.0.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 5), '8.1.0') === -1 ? 'node.nid... (Node ID)' : 'node.nid... (ID)',
       ],
       [
         'value' => 'node.promote',
-        'label' => 'node.promote',
+        'label' => 'node.promote (Promoted to front page)',
       ],
       [
         'value' => 'node.promote.',
-        'label' => 'node.promote...',
+        'label' => 'node.promote... (Promoted to front page)',
       ],
       [
         'value' => 'node.revision_log',
-        'label' => 'node.revision_log',
+        'label' => 'node.revision_log (Revision log message)',
       ],
       [
         'value' => 'node.revision_log.',
-        'label' => 'node.revision_log...',
+        'label' => 'node.revision_log... (Revision log message)',
       ],
       [
         'value' => 'node.revision_timestamp',
-        'label' => 'node.revision_timestamp',
+        'label' => 'node.revision_timestamp (Revision timestamp)',
       ],
       [
         'value' => 'node.revision_timestamp.',
-        'label' => 'node.revision_timestamp...',
+        'label' => 'node.revision_timestamp... (Revision timestamp)',
       ],
       [
         'value' => 'node.revision_translation_affected',
-        'label' => 'node.revision_translation_affected',
+        'label' => 'node.revision_translation_affected (Revision translation affected)',
       ],
       [
         'value' => 'node.revision_translation_affected.',
-        'label' => 'node.revision_translation_affected...',
+        'label' => 'node.revision_translation_affected... (Revision translation affected)',
       ],
       [
         'value' => 'node.revision_uid',
-        'label' => 'node.revision_uid',
+        'label' => 'node.revision_uid (Revision user ID)',
       ],
       [
         'value' => 'node.revision_uid.',
-        'label' => 'node.revision_uid...',
+        'label' => 'node.revision_uid... (Revision user ID)',
       ],
       [
         'value' => 'node.status',
-        'label' => 'node.status',
+        'label' => 'node.status (Publishing status)',
       ],
       [
         'value' => 'node.status.',
-        'label' => 'node.status...',
+        'label' => 'node.status... (Publishing status)',
       ],
       [
         'value' => 'node.sticky',
-        'label' => 'node.sticky',
+        'label' => 'node.sticky (Sticky at top of lists)',
       ],
       [
         'value' => 'node.sticky.',
-        'label' => 'node.sticky...',
+        'label' => 'node.sticky... (Sticky at top of lists)',
       ],
       [
         'value' => 'node.title',
-        'label' => 'node.title',
+        'label' => 'node.title (Title)',
       ],
       [
         'value' => 'node.title.',
-        'label' => 'node.title...',
+        'label' => 'node.title... (Title)',
       ],
       [
         'value' => 'node.type',
-        'label' => 'node.type',
+        // @todo Remove this once Drupal 8.0.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 5), '8.1.0') === -1 ? 'node.type (Type)' : 'node.type (Content type)',
       ],
       [
         'value' => 'node.type.',
-        'label' => 'node.type...',
+        // @todo Remove this once Drupal 8.0.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 5), '8.1.0') === -1 ? 'node.type... (Type)' : 'node.type... (Content type)',
       ],
       [
         'value' => 'node.uid',
-        'label' => 'node.uid',
+        'label' => 'node.uid (Authored by)',
       ],
       [
         'value' => 'node.uid.',
-        'label' => 'node.uid...',
+        'label' => 'node.uid... (Authored by)',
       ],
       [
         'value' => 'node.uuid',
-        'label' => 'node.uuid',
+        'label' => 'node.uuid (UUID)',
       ],
       [
         'value' => 'node.uuid.',
-        'label' => 'node.uuid...',
+        'label' => 'node.uuid... (UUID)',
       ],
       [
         'value' => 'node.vid',
-        'label' => 'node.vid',
+        'label' => 'node.vid (Revision ID)',
       ],
       [
         'value' => 'node.vid.',
-        'label' => 'node.vid...',
+        'label' => 'node.vid... (Revision ID)',
       ],
     ];
-    $this->assertSame($expected, $results);
+    // Because this is a huge array run the assertion per entry because that is
+    // easier for debugging.
+    foreach ($expected as $index => $entry) {
+      $this->assertSame($entry, $results[$index]);
+    }
 
     // Tests that "node.uid.entity.na" returns "node.uid.entity.name".
     $results = $component->autocomplete('node.uid.entity.na');
     $this->assertSame([
       [
         'value' => 'node.uid.entity.name',
-        'label' => 'node.uid.entity.name',
+        'label' => 'node.uid.entity.name (Name)',
       ],
       [
         'value' => 'node.uid.entity.name.',
-        'label' => 'node.uid.entity.name...',
+        'label' => 'node.uid.entity.name... (Name)',
       ],
     ], $results);
 
@@ -292,7 +300,7 @@ class AutocompleteTest extends RulesDrupalTestBase {
       ],
       [
         'value' => 'node.field_integer.value',
-        'label' => 'node.field_integer.value',
+        'label' => 'node.field_integer.value (Integer value)',
       ],
     ], $results);
 
@@ -301,7 +309,7 @@ class AutocompleteTest extends RulesDrupalTestBase {
     $this->assertSame([
       [
         'value' => 'node.title.value',
-        'label' => 'node.title.value',
+        'label' => 'node.title.value (Text value)',
       ],
     ], $results);
 
