@@ -1,5 +1,7 @@
 language: php
-sudo: false
+# The Travis CI container mode has random functional test fails, so we must use
+# sudo here.
+sudo: true
 
 php:
   - 5.5
@@ -54,6 +56,9 @@ before_script:
   # Download Drupal 8 core from the Github mirror because it is faster.
   - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git
   - cd drupal
+  # Temporary core hack to get debug information when random test fails occur.
+  # See https://www.drupal.org/node/2659954
+  - wget -q -O - https://www.drupal.org/files/issues/core-debug_0.txt | patch -p1
 
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules

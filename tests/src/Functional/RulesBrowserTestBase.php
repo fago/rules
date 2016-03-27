@@ -38,6 +38,11 @@ abstract class RulesBrowserTestBase extends BrowserTestBase {
         $this->fail(sprintf('%s: %s in %s on line %d', $error_info[1], (string) $error_info[0], $error_info[2]['file'], $error_info[2]['line']));
       }
     }
+    // Temporary core hack to get debug information when random test fails
+    // occur. See https://www.drupal.org/node/2659954
+    if ($this->getSession()->getStatusCode() == 555) {
+      $this->fail($this->getSession()->getPage()->getContent());
+    }
   }
 
   /**
