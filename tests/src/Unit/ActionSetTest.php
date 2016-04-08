@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\ActionSetTest.
- */
-
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Engine\ActionExpressionInterface;

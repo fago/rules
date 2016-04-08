@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\NodeIsPublishedTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\node\NodeInterface;

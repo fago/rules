@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Exception\InvalidExpressionException.
- */
-
 namespace Drupal\rules\Exception;
 
 /**

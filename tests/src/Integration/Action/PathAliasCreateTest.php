@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\PathAliasCreateTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Language\LanguageInterface;

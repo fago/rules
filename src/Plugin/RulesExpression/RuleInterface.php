@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\RuleInterface.
- */
-
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Context\ContextConfig;

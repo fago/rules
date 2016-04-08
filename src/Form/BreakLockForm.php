@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\BreakLockForm.
- */
-
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

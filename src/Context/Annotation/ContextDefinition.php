@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Context\Annotation\ContextDefinition.
- */
-
 namespace Drupal\rules\Context\Annotation;
 
 use Drupal\Core\Annotation\ContextDefinition as CoreContextDefinition;

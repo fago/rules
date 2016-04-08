@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\PathHasAlias.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Language\LanguageInterface;

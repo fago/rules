@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\TypedData\PlaceholderResolver.
- */
-
 namespace Drupal\rules\TypedData;
 
 use Drupal\Component\Render\HtmlEscapedText;

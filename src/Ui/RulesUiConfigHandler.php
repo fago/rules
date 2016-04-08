@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\Ui\RulesUiDefaultHandler.
- */
-
 namespace Drupal\rules\Ui;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -59,7 +54,6 @@ class RulesUiConfigHandler extends PluginBase implements RulesUiHandlerInterface
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-
 
   /**
    * {@inheritdoc}

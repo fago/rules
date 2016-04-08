@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Context\DataProcessorInterface.
- */
-
 namespace Drupal\rules\Context;
 
 use Drupal\rules\Engine\ExecutionStateInterface;

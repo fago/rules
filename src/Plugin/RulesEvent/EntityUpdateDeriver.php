@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesEvent\EntityUpdateDeriver.
- */
-
 namespace Drupal\rules\Plugin\RulesEvent;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;

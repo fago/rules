@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Logger\RulesLog.
- */
-
 namespace Drupal\rules\Logger;
 
 use Drupal\Core\Logger\LogMessageParserInterface;

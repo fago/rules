@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\EntityHasFieldTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Entity\ContentEntityInterface;

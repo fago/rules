@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\RulesEngineTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
+use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Engine\RulesComponent;
@@ -169,7 +165,7 @@ class RulesEngineTest extends RulesDrupalTestBase {
    */
   public function testSwappedCoreServices() {
     $condition_manager = $this->container->get('plugin.manager.condition');
-    $this->assertTrue($condition_manager instanceof \Drupal\rules\Core\ConditionManager);
+    $this->assertTrue($condition_manager instanceof ConditionManager);
   }
 
 }

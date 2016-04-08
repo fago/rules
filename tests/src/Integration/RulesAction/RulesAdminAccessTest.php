@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\Tests\rules\Integration\RulesAction\RulesAdminAccessTest.
- */
 
 namespace Drupal\Tests\rules\Integration\RulesAction;
 

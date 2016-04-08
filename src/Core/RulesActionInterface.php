@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesActionInterface.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\rules\Context\ContextAwarePluginInterface;
 use Drupal\rules\Context\ContextProviderInterface;
-use Drupal\rules\Core\ConfigurationAccessControlInterface;
 
 /**
  * Extends the core ActionInterface to provide context.

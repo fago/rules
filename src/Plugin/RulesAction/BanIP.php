@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesAction\BanIP.
- */
-
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\ban\BanIpManagerInterface;

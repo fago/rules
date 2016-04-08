@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Context\DataProcessorManager.
- */
-
 namespace Drupal\rules\Context;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;

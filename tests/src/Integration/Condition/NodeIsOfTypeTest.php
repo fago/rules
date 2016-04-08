@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\NodeIsOfTypeTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\node\NodeInterface;

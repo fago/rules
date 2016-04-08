@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Engine\IntegrityCheckTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Engine;
 
 use Drupal\rules\Context\ContextConfig;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Context\ContextHandlerTrait.
- */
-
 namespace Drupal\rules\Context;
 
 use Drupal\Component\Plugin\Exception\ContextException;

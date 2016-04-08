@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ActionExpressionInterface.
- */
-
 namespace Drupal\rules\Engine;
 
 /**

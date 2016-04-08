@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase.
- */
-
 namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Core\Config\Entity\ConfigEntityType;

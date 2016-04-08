@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\NodeIsPublished.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\node\NodeInterface;

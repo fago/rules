@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\CoreIntegrationTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\node\Entity\Node;

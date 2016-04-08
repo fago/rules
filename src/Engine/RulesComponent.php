@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\RulesComponent.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Entity\DependencyTrait;

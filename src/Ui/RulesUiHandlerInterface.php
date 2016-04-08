@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Ui\RulesUiHandlerInterface.
- */
-
 namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

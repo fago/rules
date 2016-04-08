@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\Engine\MetadataAssertionTest.
- */
-
 namespace Drupal\Tests\rules\Kernel\Engine;
 
 use Drupal\field\Entity\FieldConfig;

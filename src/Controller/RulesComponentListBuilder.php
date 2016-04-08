@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Controller\RulesComponentListBuilder.
- */
-
 namespace Drupal\rules\Controller;
 
 use Drupal\Core\Entity\EntityInterface;

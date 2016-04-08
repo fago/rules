@@ -1,16 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ContextHandlerIntegrityTrait.
- */
-
 namespace Drupal\rules\Context;
 
 use Drupal\Core\Plugin\Context\ContextDefinitionInterface as CoreContextDefinitionInterface;
 use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
+//@codingStandardsIgnoreStart
 use Drupal\rules\Context\ContextDefinitionInterface as RulesContextDefinitionInterface;
+//@codingStandardsIgnoreEnd
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\IntegrityViolation;
 use Drupal\rules\Engine\IntegrityViolationList;

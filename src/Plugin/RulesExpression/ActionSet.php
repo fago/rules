@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesExpression\ActionSet.
- */
-
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\ActionExpressionContainer;

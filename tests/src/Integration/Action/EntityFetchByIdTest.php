@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Tests\Integration\Action\EntityFetchByIdTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Entity\EntityInterface;

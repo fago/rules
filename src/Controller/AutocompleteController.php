@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Rules controller.
- */
-
 namespace Drupal\rules\Controller;
 
 use Drupal\rules\Ui\RulesUiHandlerInterface;

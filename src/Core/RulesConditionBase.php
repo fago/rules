@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesConditionBase.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Core\Condition\ConditionPluginBase;
 use Drupal\rules\Context\ContextProviderTrait;
-use Drupal\rules\Core\ConfigurationAccessControlTrait;
 
 /**
  * Base class for rules conditions.

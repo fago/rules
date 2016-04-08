@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Ui\TempStoreTrait.
- */
-
 namespace Drupal\rules\Ui;
 
 use Drupal\Core\Datetime\DateFormatterInterface;

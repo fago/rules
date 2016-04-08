@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Functional\UiPageTest.
- */
-
 namespace Drupal\Tests\rules\Functional;
 
 /**

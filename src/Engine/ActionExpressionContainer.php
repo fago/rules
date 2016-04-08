@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ActionExpressionContainer.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;

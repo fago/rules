@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesDataProcessor\TokenProcessor.
- */
-
 namespace Drupal\rules\Plugin\RulesDataProcessor;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;

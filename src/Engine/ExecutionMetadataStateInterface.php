@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ExecutionMetadataStateInterface.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\Language\LanguageInterface;

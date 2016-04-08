@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesAction\PathAliasDeleteByPath.
- */
-
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Path\AliasStorageInterface;

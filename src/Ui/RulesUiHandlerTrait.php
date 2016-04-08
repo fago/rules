@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Ui\RulesUiHandlerTrait.
- */
-
 namespace Drupal\rules\Ui;
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\Expression\ExpressionFormTrait.
- */
-
 namespace Drupal\rules\Form\Expression;
 
 use Drupal\Core\Form\FormStateInterface;

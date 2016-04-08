@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\TypedDataFilter\LowerFilter.
- */
-
 namespace Drupal\rules\Plugin\TypedDataFilter;
 
 use Drupal\Core\Render\BubbleableMetadata;

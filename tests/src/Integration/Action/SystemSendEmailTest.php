@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\SystemSendEmailTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Language\LanguageInterface;
@@ -54,7 +49,6 @@ class SystemSendEmailTest extends RulesIntegrationTestBase {
 
     $this->action = $this->actionManager->createInstance('rules_send_email');
   }
-
 
   /**
    * Tests the summary.

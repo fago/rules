@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Logger\RulesLoggerChannel.
- */
-
 namespace Drupal\rules\Logger;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

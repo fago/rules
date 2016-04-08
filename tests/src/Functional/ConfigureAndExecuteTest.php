@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Functional\ConfigureAndExecuteTest.
- */
-
 namespace Drupal\Tests\rules\Functional;
 
 /**

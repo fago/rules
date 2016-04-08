@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\Tests\rules\Integration\Condition\ConditionAccessTest.
- */
 
 namespace Drupal\Tests\rules\Integration\Condition;
 

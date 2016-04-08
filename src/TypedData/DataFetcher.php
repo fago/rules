@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\TypedData\DataFetcher.
- */
-
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\Cache\CacheableDependencyInterface;

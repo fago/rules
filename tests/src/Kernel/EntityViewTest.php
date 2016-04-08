@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\EntityViewTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
 /**

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\DataIsEmptyTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\Plugin\Context\Context;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\RulesSettingsForm.
- */
-
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;

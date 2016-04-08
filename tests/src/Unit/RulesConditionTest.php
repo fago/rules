@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\RulesConditionTest.
- */
-
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Core\ConditionManager;
@@ -17,7 +12,6 @@ use Drupal\rules\Plugin\RulesExpression\RulesCondition;
 use Drupal\rules\Core\RulesConditionInterface;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
-
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesCondition

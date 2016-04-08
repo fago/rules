@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\EventHandler\ConfigurableEventHandlerBase.
- */
-
 namespace Drupal\rules\EventHandler;
 
 use Drupal\Core\Form\FormStateInterface;

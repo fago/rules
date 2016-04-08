@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Event\EntityViewTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Event;
 
 /**

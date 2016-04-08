@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\rules\Core\ConfigurationAccessControlInterface.
- */
 
 namespace Drupal\rules\Core;
 

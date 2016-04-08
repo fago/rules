@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\Tests\rules\Kernel\TypedData\DataDefinitionFetcherTest.
- */
-
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
 use Drupal\KernelTests\KernelTestBase;

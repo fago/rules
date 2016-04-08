@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\ConfigEntityDefaultsTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\Plugin\RulesAction\SystemSendEmail.
- */
-
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Language\LanguageInterface;

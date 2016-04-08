@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Event\EventTestBase.
- */
-
 namespace Drupal\Tests\rules\Integration\Event;
 
 use Drupal\rules\Core\RulesEventManager;

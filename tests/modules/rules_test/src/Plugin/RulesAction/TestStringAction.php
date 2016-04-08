@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules_test\Plugin\RulesAction\TestStringAction.
- */
-
 namespace Drupal\rules_test\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;

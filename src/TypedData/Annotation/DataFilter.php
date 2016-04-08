@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\TypedData\Annotation\DataFilter.
- */
-
 namespace Drupal\rules\TypedData\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

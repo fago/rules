@@ -1,17 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\Tests\rules\Kernel\TypedData\DataFiterTest.
- */
-
 namespace Drupal\Tests\rules\Kernel\TypedData;
 
 use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\KernelTests\KernelTestBase;
-
 
 /**
  * Tests using typed data filters.

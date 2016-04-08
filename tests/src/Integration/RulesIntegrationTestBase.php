@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\RulesIntegrationTestBase.
- */
-
 namespace Drupal\Tests\rules\Integration;
 
 use Drupal\Component\Uuid\Php;

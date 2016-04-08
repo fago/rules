@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\ConfigurationAccessControlTrait.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Core\Access\AccessResult;

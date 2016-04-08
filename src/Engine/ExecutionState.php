@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ExecutionState.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\TypedData\Exception\MissingDataException;

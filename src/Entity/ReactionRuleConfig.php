@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\Entity\ReactionRuleConfig.
- */
-
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\NodeIsSticky.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\node\NodeInterface;
@@ -27,6 +22,7 @@ use Drupal\rules\Core\RulesConditionBase;
  * @todo: Add access callback information from Drupal 7.
  */
 class NodeIsSticky extends RulesConditionBase {
+
   /**
    * Check if the given node is sticky.
    *

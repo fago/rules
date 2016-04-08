@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesExpression\RulesOr.
- */
-
 namespace Drupal\rules\Plugin\RulesExpression;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;

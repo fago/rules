@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Functional\TempStorageTest.
- */
-
 namespace Drupal\Tests\rules\Functional;
 
 /**

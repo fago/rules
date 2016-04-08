@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\EntityPathAliasCreateTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Entity\EntityInterface;

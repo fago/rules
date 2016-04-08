@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\UserIsBlockedTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;

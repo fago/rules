@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\ConditionManagerTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\rules\Context\ContextDefinitionInterface;

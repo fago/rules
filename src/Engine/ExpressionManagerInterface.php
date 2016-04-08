@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ExpressionManagerInterface.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

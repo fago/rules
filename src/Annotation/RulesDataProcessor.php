@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Annotation\RulesDataProcessor.
- */
-
 namespace Drupal\rules\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Kernel\Engine\AutocompleteTest.
- */
-
 namespace Drupal\Tests\rules\Kernel\Engine;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;

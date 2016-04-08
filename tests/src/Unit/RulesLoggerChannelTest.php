@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\LoggerChannelTest.
- */
-
 namespace Drupal\Tests\rules\Unit {
 
   use Drupal\Core\Logger\RfcLogLevel;
@@ -203,5 +198,6 @@ namespace {
 
       return $messages;
     }
+
   }
 }

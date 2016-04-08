@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\DataListContains.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\rules\Core\RulesConditionBase;

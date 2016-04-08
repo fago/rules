@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules_test\Plugin\Condition\TestTextCondition.
- */
-
 namespace Drupal\rules_test\Plugin\Condition;
 
 use Drupal\rules\Core\RulesConditionBase;

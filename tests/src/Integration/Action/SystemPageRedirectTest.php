@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\SystemPageRedirectTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action {
 
   use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
@@ -14,7 +9,6 @@ namespace Drupal\Tests\rules\Integration\Action {
   use Symfony\Component\HttpFoundation\Request;
   use Symfony\Component\HttpFoundation\RequestStack;
   use Drupal\Core\Path\CurrentPathStack;
-
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemPageRedirect

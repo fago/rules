@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\ReactionRuleAddForm.
- */
-
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\FormStateInterface;

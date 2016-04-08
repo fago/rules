@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Routing\RulesUiRouteEnhancer.
- */
-
 namespace Drupal\rules\Routing;
 
 use Drupal\Core\Routing\Enhancer\RouteEnhancerInterface;

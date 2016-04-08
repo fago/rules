@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules_test_ui_embed\Form\SettingsForm.
- */
-
 namespace Drupal\rules_test_ui_embed\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

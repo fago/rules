@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\UserBlockTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Core\Session\SessionManagerInterface;
@@ -111,7 +106,6 @@ class UserBlockTest extends RulesEntityIntegrationTestBase {
 
     $this->assertEquals($this->action->autoSaveContext(), [], 'Action returns nothing for auto saving since the user has not been altered.');
   }
-
 
   /**
    * Test execute() method for blocked and authenticated users.

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Rules.
- */
-
 namespace Drupal\rules;
 
 /**

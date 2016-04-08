@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Functional\RulesUiEmbedTest.
- */
-
 namespace Drupal\Tests\rules\Functional;
 
 /**

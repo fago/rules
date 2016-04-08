@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesDefaultEventHandler.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\Exception\ContextException;

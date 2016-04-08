@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\BanIPTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\ban\BanIpManagerInterface;

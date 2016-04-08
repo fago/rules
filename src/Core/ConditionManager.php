@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\ConditionManager.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Core\Condition\ConditionManager as CoreConditionManager;

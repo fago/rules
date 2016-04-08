@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\RulesAction\RulesActionManagerTest.
- */
-
 namespace Drupal\Tests\rules\Integration\RulesAction;
 
 use Drupal\rules\Context\ContextDefinitionInterface;

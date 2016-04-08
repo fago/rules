@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\ExpressionManager.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Component\Uuid\UuidInterface;

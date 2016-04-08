@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Engine\AutoSaveTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Engine;
 
 use Drupal\Core\Entity\EntityInterface;

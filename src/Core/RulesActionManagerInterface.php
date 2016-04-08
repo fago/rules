@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesActionManagerInterface.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\CategorizingPluginManagerInterface;

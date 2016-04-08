@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\SendAccountEmailTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action {
 
   use Drupal\Tests\rules\Integration\RulesEntityIntegrationTestBase;
@@ -86,5 +81,6 @@ namespace {
       }
       return $notifications_sent;
     }
+
   }
 }

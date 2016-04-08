@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\Tests\rules\Kernel\RulesUiEmbedTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\rules\Ui\RulesUiConfigHandler;

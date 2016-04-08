@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\ConditionExpressionContainerInterface.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\rules\Context\ContextConfig;

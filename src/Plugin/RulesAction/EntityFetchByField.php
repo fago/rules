@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\RulesAction\EntityFetchByField.
- */
-
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;

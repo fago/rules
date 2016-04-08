@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\TypedData\DataFetcherTrait.
- */
-
 namespace Drupal\rules\TypedData;
 
 /**

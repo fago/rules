@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Condition\DataComparisonTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Condition;
 
 use Drupal\Core\TypedData\DataDefinition;

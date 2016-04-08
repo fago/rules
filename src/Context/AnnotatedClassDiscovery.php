@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Context\AnnotatedClassDiscovery.
- */
-
 namespace Drupal\rules\Context;
 
 use Doctrine\Common\Annotations\SimpleAnnotationReader;

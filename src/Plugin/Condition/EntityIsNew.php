@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\EntityIsNew.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Entity\EntityInterface;

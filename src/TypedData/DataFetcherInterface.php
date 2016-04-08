@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\TypedData\DataFetcherInterface.
- */
-
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\Render\BubbleableMetadata;

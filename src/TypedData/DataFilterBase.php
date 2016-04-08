@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\TypedData\DataFilterBase.
- */
-
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\RulesActionBaseTest.
- */
-
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\Core\StringTranslation\TranslationWrapper;

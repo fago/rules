@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesActionManager.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Core\Cache\CacheBackendInterface;

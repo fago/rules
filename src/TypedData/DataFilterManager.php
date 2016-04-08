@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\TypedData\DataFilterManager.
- */
-
 namespace Drupal\rules\TypedData;
 
 use Drupal\Core\Extension\ModuleHandlerInterface;

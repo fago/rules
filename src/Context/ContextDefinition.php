@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Context\ContextDefinition.
- */
-
 namespace Drupal\rules\Context;
 
 use \Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;

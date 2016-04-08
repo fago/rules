@@ -1,17 +1,10 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesConditionInterface.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\rules\Context\ContextAwarePluginInterface;
 use Drupal\Core\Condition\ConditionInterface;
 use Drupal\rules\Context\ContextProviderInterface;
-use Drupal\rules\Core\ConfigurationAccessControlInterface;
-
 
 /**
  * Extends the core ConditionInterface to provide a negate() method.

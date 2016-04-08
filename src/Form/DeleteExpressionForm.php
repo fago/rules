@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\DeleteExpressionForm.
- */
-
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;

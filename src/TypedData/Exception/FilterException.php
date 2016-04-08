@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains  Drupal\rules\TypedData\Exception\FilterException.
- */
-
 namespace Drupal\rules\TypedData\Exception;
 
 /**

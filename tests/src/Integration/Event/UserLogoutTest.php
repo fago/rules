@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Event\UserLogoutTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Event;
 
 /**

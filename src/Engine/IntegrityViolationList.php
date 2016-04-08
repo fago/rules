@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Engine\IntegrityViolationList.
- */
-
 namespace Drupal\rules\Engine;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;

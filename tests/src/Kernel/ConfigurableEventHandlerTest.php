@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Engine\ConfigurableEventHandlerTest.
- */
-
 namespace Drupal\Tests\rules\Kernel;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\ContextHandlerTraitTest.
- */
-
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\Core\Plugin\ContextAwarePluginInterface;

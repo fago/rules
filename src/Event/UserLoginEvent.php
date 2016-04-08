@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Event\UserLoginEvent.
- */
-
 namespace Drupal\rules\Event;
 
 use Drupal\user\UserInterface;

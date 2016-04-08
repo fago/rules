@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Action\DataSetTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Action;
 
 use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
-
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataSet

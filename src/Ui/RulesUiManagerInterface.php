@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Ui\RulesUiManagerInterface.
- */
-
 namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Plugin\Condition\EntityHasField.
- */
-
 namespace Drupal\rules\Plugin\Condition;
 
 use Drupal\Core\Entity\FieldableEntityInterface;

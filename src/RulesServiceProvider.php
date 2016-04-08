@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\RulesServiceProvider.
- */
-
 namespace Drupal\rules;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;

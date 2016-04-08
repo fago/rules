@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\Plugin\Action\SystemPageRedirect.
- */
-
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;

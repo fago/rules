@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\rules\Plugin\TypedDataFilter\FormatDateFilter.
- */
-
 namespace Drupal\rules\Plugin\TypedDataFilter;
 
 use Drupal\Core\Datetime\DateFormatterInterface;

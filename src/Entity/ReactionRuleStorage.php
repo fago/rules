@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Entity\ReactionRuleStorage.
- */
-
 namespace Drupal\rules\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
@@ -17,7 +12,6 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\rules\Core\RulesEventManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 
 /**
  * Storage handler for reaction rule config entities.

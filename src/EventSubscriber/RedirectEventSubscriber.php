@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\EventSubscriber\RedirectEventSubscriber.
- */
-
 namespace Drupal\rules\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

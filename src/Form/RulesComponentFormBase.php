@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Form\RulesComponentFormBase.
- */
-
 namespace Drupal\rules\Form;
 
 use Drupal\Core\Entity\EntityForm;

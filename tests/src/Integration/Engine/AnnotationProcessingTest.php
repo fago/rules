@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Engine\AnnotationProcessingTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Engine;
 
 use Drupal\Core\Annotation\Translation;
@@ -53,7 +48,6 @@ class AnnotationProcessingTest extends RulesIntegrationTestBase {
     $this->assertFalse($label instanceof Translation, "\$values['label'] is not a Translation object");
     $this->assertFalse($description instanceof Translation, "\$values['description'] is not a Translation object");
   }
-
 
   /**
    * Tests if our ContextDefinition annotations are correctly processed.

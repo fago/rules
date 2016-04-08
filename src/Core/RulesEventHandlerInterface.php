@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\rules\Core\RulesEventHandlerInterface.
- */
-
 namespace Drupal\rules\Core;
 
 use Drupal\Component\Plugin\DerivativeInspectionInterface;

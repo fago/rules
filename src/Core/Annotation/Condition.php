@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\rules\Core\Annotation\Condition.
- */
 
 namespace Drupal\rules\Core\Annotation;
 

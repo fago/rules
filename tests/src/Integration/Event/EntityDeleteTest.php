@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Integration\Event\EntityDeleteTest.
- */
-
 namespace Drupal\Tests\rules\Integration\Event;
 
 /**
