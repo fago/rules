@@ -90,7 +90,10 @@ function rules_entity_presave(EntityInterface $entity) {
   // Only handle content entities and ignore config entities.
   if ($entity instanceof ContentEntityInterface) {
     $entity_type_id = $entity->getEntityTypeId();
-    $event = new EntityEvent($entity, [$entity_type_id => $entity]);
+    $event = new EntityEvent($entity, [
+      $entity_type_id => $entity,
+      $entity_type_id . '_unchanged' => $entity->original,
+    ]);
     $event_dispatcher = \Drupal::service('event_dispatcher');
     $event_dispatcher->dispatch("rules_entity_presave:$entity_type_id", $event);
   }
@@ -129,7 +132,10 @@ function rules_entity_update(EntityInterface $entity) {
   // Only handle content entities and ignore config entities.
   if ($entity instanceof ContentEntityInterface) {
     $entity_type_id = $entity->getEntityTypeId();
-    $event = new EntityEvent($entity, [$entity_type_id => $entity]);
+    $event = new EntityEvent($entity, [
+      $entity_type_id => $entity,
+      $entity_type_id . '_unchanged' => $entity->original,
+    ]);
     $event_dispatcher = \Drupal::service('event_dispatcher');
     $event_dispatcher->dispatch("rules_entity_update:$entity_type_id", $event);
   }

@@ -62,6 +62,10 @@ class EntityPresaveDeriver extends DeriverBase implements ContainerDeriverInterf
             'type' => "entity:$entity_type_id",
             'label' => $entity_type->getLabel(),
           ],
+          $entity_type_id . '_unchanged' => [
+            'type' => "entity:$entity_type_id",
+            'label' => $this->t('Unchanged @entity_type', ['@entity_type' => $entity_type->getLabel()]),
+          ],
         ],
       ] + $base_plugin_definition;
     }

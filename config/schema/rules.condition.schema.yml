@@ -1,3 +1,10 @@
+# Per default the schema of arbitrary context values of a condition cannot be
+# typed. Conditions that need translatability or other features of the config
+# system must specify their context value schema explicitly, see examples below.
+rules.condition.context_values.*:
+  type: ignore
+  label: Context values
+
 rules.condition.context_values.rules_entity_is_new:
   type: mapping
   label: Entity is new context values

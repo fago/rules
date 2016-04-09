@@ -20,6 +20,11 @@ class EntityUpdateTest extends EventTestBase {
     $context_definition = $plugin_definition['context']['test'];
     $this->assertSame('entity:test', $context_definition->getDataType());
     $this->assertSame('Test', $context_definition->getLabel());
+
+    // Also check that there is a context for the orginal entity.
+    $context_definition = $plugin_definition['context']['test_unchanged'];
+    $this->assertSame('entity:test', $context_definition->getDataType());
+    $this->assertSame('Unchanged Test', (string) $context_definition->getLabel());
   }
 
 }
