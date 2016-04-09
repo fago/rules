@@ -5,7 +5,6 @@ namespace Drupal\rules\Form\Expression;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\rules\Core\ConditionManager;
-use Drupal\rules\Context\ContextConfig;
 use Drupal\rules\Engine\ConditionExpressionInterface;
 use Drupal\rules\Ui\RulesUiHandlerTrait;
 
@@ -129,19 +128,14 @@ class ConditionForm implements ExpressionFormInterface {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $condition_id = $form_state->get('condition_id');
     // Nothing todo as long as the first step is not completed.
-    if (!$form_state->get('condition_id')) {
+    if (!$condition_id) {
       return;
     }
-    $context_config = ContextConfig::create();
-    foreach ($form_state->getValue('context') as $context_name => $value) {
-      if ($form_state->get("context_$context_name") == 'selector') {
-        $context_config->map($context_name, $value['setting']);
-      }
-      else {
-        $context_config->setValue($context_name, $value['setting']);
-      }
-    }
+
+    $condition_definition = $this->conditionManager->getDefinition($condition_id);
+    $context_config = $this->getContextConfigFromFormValues($form_state, $condition_definition['context']);
 
     $configuration = $context_config->toArray();
     $configuration['condition_id'] = $form_state->get('condition_id');

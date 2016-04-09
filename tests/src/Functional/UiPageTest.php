@@ -112,4 +112,37 @@ class UiPageTest extends RulesBrowserTestBase {
     $this->assertSession()->pageTextContains('Reaction rule Test rule has been updated. ');
   }
 
+  /**
+   * Tests that an action with a multiple context can be confugured.
+   */
+  public function testMultipleContextAction() {
+    $account = $this->drupalCreateUser(['administer rules']);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('admin/config/workflow/rules');
+    $this->clickLink('Add reaction rule');
+
+    $this->fillField('Label', 'Test rule');
+    $this->fillField('Machine-readable name', 'test_rule');
+    $this->fillField('React on event', 'rules_entity_insert:node');
+
+    $this->pressButton('Save');
+
+    $this->clickLink('Add action');
+    $this->fillField('Action', 'rules_send_email');
+    $this->pressButton('Continue');
+
+    // Push the data selection switch 2 times to make sure that also works and
+    // does not throw PHP notices.
+    $this->pressButton('Switch to data selection');
+    $this->pressButton('Switch to data selection');
+
+    $this->fillField('context[to][setting]', 'klausi@example.com');
+    $this->fillField('context[subject][setting]', 'subject');
+    $this->fillField('context[message][setting]', 'message');
+    $this->pressButton('Save');
+
+    $this->assertSession()->statusCodeEquals(200);
+  }
+
 }
