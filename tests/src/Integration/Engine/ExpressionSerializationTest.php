@@ -8,6 +8,8 @@ use Drupal\Tests\rules\Integration\RulesIntegrationTestBase;
 
 /**
  * Tests serializing expression objects.
+ *
+ * @group rules
  */
 class ExpressionSerializationTest extends RulesIntegrationTestBase {
 
