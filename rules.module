@@ -149,3 +149,11 @@ function rules_cron() {
   $event_dispatcher = \Drupal::service('event_dispatcher');
   $event_dispatcher->dispatch(SystemCronEvent::EVENT_NAME, $event);
 }
+
+/**
+ * Implements hook_mail().
+ */
+function rules_mail($key, &$message, $params) {
+  $message['subject'] .= str_replace(["\r", "\n"], '', $params['subject']);
+  $message['body'][] = $params['message'];
+}
