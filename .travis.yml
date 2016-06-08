@@ -14,7 +14,6 @@ php:
   #- hhvm
 
 env:
-  - DRUPAL_CORE=8.0.x
   - DRUPAL_CORE=8.1.x
   - DRUPAL_CORE=8.2.x
 
