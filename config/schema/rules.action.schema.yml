@@ -21,7 +21,9 @@ rules.action.context_values.rules_send_email:
   label: Send e-mail action context values
   mapping:
     to:
-      type: email
+      type: sequence
+      sequence:
+        type: email
     subject:
       type: text
     message:
