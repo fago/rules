@@ -27,13 +27,34 @@ services:
     arguments: ['@event_dispatcher', '@logger.log_message_parser']
   rules.event_subscriber:
     class: Drupal\rules\EventSubscriber\GenericEventSubscriber
-    arguments: ['@entity_type.manager', '@plugin.manager.rules_event']
+    arguments: ['@entity_type.manager', '@plugin.manager.rules_event', '@rules.component_repository']
     tags:
       - { name: 'event_subscriber' }
   rules.redirect_event_subscriber:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
+  rules.cache:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [rules]
+  rules.component_repository:
+    class: Drupal\rules\Engine\RulesComponentRepository
+    arguments: ['@rules.cache', '@language_manager']
+    tags:
+      - { name: service_collector, tag: 'rules.component_resolver', call: addComponentResolver }
+  rules.component_resolver.component_config:
+    class: Drupal\rules\ComponentResolver\ComponentConfigResolver
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: rules.component_resolver, resolver_name: rules_component }
+  rules.component_resolver.event_component:
+    class: Drupal\rules\ComponentResolver\EventComponentResolver
+    arguments: ['@entity_type.manager', '@plugin.manager.rules_expression']
+    tags:
+      - { name: rules.component_resolver, resolver_name: rules_event }
   rules.ui_route_enhancer:
     class: Drupal\rules\Routing\RulesUiRouteEnhancer
     arguments: ['@plugin.manager.rules_ui']

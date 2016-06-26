@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\rules\Core\RulesConfigurableEventHandlerInterface;
 use Drupal\rules\Core\RulesEventManager;
 use Drupal\rules\Engine\ExecutionState;
+use Drupal\rules\Engine\RulesComponentRepositoryInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -30,16 +31,26 @@ class GenericEventSubscriber implements EventSubscriberInterface {
   protected $eventManager;
 
   /**
+   * The component repository.
+   *
+   * @var \Drupal\rules\Engine\RulesComponentRepositoryInterface
+   */
+  protected $componentRepository;
+
+  /**
    * Constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\rules\Core\RulesEventManager $event_manager
    *   The Rules event manager.
+   * @param \Drupal\rules\Engine\RulesComponentRepositoryInterface $component_repository
+   *   The component repository.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RulesEventManager $event_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RulesEventManager $event_manager, RulesComponentRepositoryInterface $component_repository) {
     $this->entityTypeManager = $entity_type_manager;
     $this->eventManager = $event_manager;
+    $this->componentRepository = $component_repository;
   }
 
   /**
@@ -81,8 +92,6 @@ class GenericEventSubscriber implements EventSubscriberInterface {
    *   The event name.
    */
   public function onRulesEvent(Event $event, $event_name) {
-    $storage = $this->entityTypeManager->getStorage('rules_reaction_rule');
-
     // Get event metadata and the to be triggered events.
     $event_definition = $this->eventManager->getDefinition($event_name);
     $handler_class = $event_definition['class'];
@@ -114,20 +123,12 @@ class GenericEventSubscriber implements EventSubscriberInterface {
       );
     }
 
-    // Invoke the rules.
-    // @todo: Improve this by cloning the state after each rule, such that added
-    // variables added by one rule are not interfering with the variables of
-    // another rule.
-    foreach ($triggered_events as $triggered_event) {
-      // @todo Only load active reaction rules here.
-      $configs = $storage->loadByProperties(['events.*.event_name' => $triggered_event]);
+    $components = $this->componentRepository
+      ->getMultiple($triggered_events, 'rules_event');
 
-      // Loop over all rules and execute them.
-      foreach ($configs as $config) {
-        /** @var \Drupal\rules\Entity\ReactionRuleConfig $config */
-        $config->getExpression()
-          ->executeWithState($state);
-      }
+    foreach ($components as $component) {
+      $component->getExpression()
+        ->executeWithState($state);
     }
     $state->autoSave();
   }
