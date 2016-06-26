@@ -3,6 +3,7 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\rules\Exception\InvalidArgumentException;
 use Drupal\user\UserInterface;
 
 /**
@@ -42,6 +43,8 @@ class UserRoleAdd extends RulesActionBase {
    *   User object.
    * @param \Drupal\user\RoleInterface[] $roles
    *   Array of UserRoles to assign.
+   *
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    */
   protected function doExecute(UserInterface $account, array $roles) {
     foreach ($roles as $role) {
@@ -50,7 +53,12 @@ class UserRoleAdd extends RulesActionBase {
         // If you try to add anonymous or authenticated role to user, Drupal
         // will throw an \InvalidArgumentException. Anonymous or authenticated
         // role ID must not be assigned manually.
-        $account->addRole($role->id());
+        try {
+          $account->addRole($role->id());
+        }
+        catch (\InvalidArgumentException $e) {
+          throw new InvalidArgumentException($e->getMessage());
+        }
         // Set flag that indicates if the entity should be auto-saved later.
         $this->saveLater = TRUE;
       }

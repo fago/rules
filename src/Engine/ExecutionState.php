@@ -7,7 +7,8 @@ use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\Core\TypedData\TypedDataTrait;
 use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Context\GlobalContextRepositoryTrait;
-use Drupal\rules\Exception\RulesEvaluationException;
+use Drupal\rules\Exception\EvaluationException;
+use Drupal\rules\Exception\InvalidArgumentException;
 use Drupal\rules\TypedData\DataFetcherTrait;
 
 /**
@@ -95,7 +96,7 @@ class ExecutionState implements ExecutionStateInterface {
    */
   public function getVariable($name) {
     if (!$this->hasVariable($name)) {
-      throw new RulesEvaluationException("Unable to get variable $name, it is not defined.");
+      throw new EvaluationException("Unable to get variable $name, it is not defined.");
     }
     return $this->variables[$name];
   }
@@ -155,13 +156,13 @@ class ExecutionState implements ExecutionStateInterface {
         ->getDataFetcher()
         ->fetchDataBySubPaths($this->getVariable($var_name), $parts, $langcode);
     }
-    catch (\InvalidArgumentException $e) {
+    catch (InvalidArgumentException $e) {
       // Pass on the original exception in the exception trace.
-      throw new RulesEvaluationException($e->getMessage(), 0, $e);
+      throw new EvaluationException($e->getMessage(), 0, $e);
     }
     catch (MissingDataException $e) {
       // Pass on the original exception in the exception trace.
-      throw new RulesEvaluationException($e->getMessage(), 0, $e);
+      throw new EvaluationException($e->getMessage(), 0, $e);
     }
   }
 

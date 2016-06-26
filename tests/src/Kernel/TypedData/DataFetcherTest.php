@@ -194,7 +194,7 @@ class DataFetcherTest extends KernelTestBase {
 
   /**
    * @cover fetchDataByPropertyPath
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    * @expectedExceptionMessage Unable to apply data selector 'field_invalid.0.value' at 'field_invalid'
    */
   public function testFetchingInvalidProperty() {

@@ -25,7 +25,7 @@ interface ExpressionInterface extends ExecutableInterface, ConfigurablePluginInt
    *   The expression may return a boolean value after execution, this is used
    *   by conditions that return their evaluation result.
    *
-   * @throws \Drupal\rules\Exception\RulesEvaluationException
+   * @throws \Drupal\rules\Exception\EvaluationException
    *   Thrown if the Rules expression triggers errors during execution.
    */
   public function executeWithState(ExecutionStateInterface $state);

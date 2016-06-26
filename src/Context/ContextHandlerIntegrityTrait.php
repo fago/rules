@@ -7,11 +7,12 @@ use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInte
 use Drupal\Core\TypedData\DataDefinitionInterface;
 //@codingStandardsIgnoreStart
 use Drupal\rules\Context\ContextDefinitionInterface as RulesContextDefinitionInterface;
+use Drupal\rules\Context\ContextProviderInterface;
+use Drupal\rules\Exception\IntegrityException;
 //@codingStandardsIgnoreEnd
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\IntegrityViolation;
 use Drupal\rules\Engine\IntegrityViolationList;
-use Drupal\rules\Exception\RulesIntegrityException;
 
 /**
  * Extends the context handler trait with support for checking integrity.
@@ -47,7 +48,7 @@ trait ContextHandlerIntegrityTrait {
           $data_definition = $this->getMappedDefinition($name, $metadata_state);
           $this->checkDataTypeCompatible($context_definition, $data_definition, $name, $violation_list);
         }
-        catch (RulesIntegrityException $e) {
+        catch (IntegrityException $e) {
           $violation = new IntegrityViolation();
           $violation->setMessage($this->t('Data selector %selector for context %context_name is invalid. @message', [
             '%selector' => $this->configuration['context_mapping'][$name],

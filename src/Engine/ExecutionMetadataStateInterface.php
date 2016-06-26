@@ -79,7 +79,7 @@ interface ExecutionMetadataStateInterface {
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   A data definition if the property path could be applied.
    *
-   * @throws \Drupal\rules\Exception\RulesIntegrityException
+   * @throws \Drupal\rules\Exception\IntegrityException
    *   Thrown if the property path is invalid.
    */
   public function fetchDefinitionByPropertyPath($property_path, $langcode = LanguageInterface::LANGCODE_NOT_SPECIFIED);

@@ -3,6 +3,7 @@
 namespace Drupal\rules\Ui;
 
 use Drupal\Component\Plugin\Definition\PluginDefinitionInterface;
+use Drupal\rules\Exception\LogicException;
 
 /**
  * Class for rules_ui plugin definitions.
@@ -125,20 +126,20 @@ class RulesUiDefinition implements PluginDefinitionInterface {
   /**
    * Validates the set property values.
    *
-   * @throws \LogicException
+   * @throws \Drupal\rules\Exception\LogicException
    *   Thrown if the set object properties are not valid.
    */
   public function validate() {
     if (!isset($this->id)) {
-      throw new \LogicException("Missing the required property 'id'.");
+      throw new LogicException("Missing the required property 'id'.");
     }
     foreach (['label', 'class', 'provider', 'base_route'] as $required) {
       if (!isset($this->$required)) {
-        throw new \LogicException("Plugin {$this->id} misses the required property $required.");
+        throw new LogicException("Plugin {$this->id} misses the required property $required.");
       }
     }
     if (!is_subclass_of($this->class, RulesUiHandlerInterface::class)) {
-      throw new \LogicException("The provided class does not implement the RulesUiHandlerInterface.");
+      throw new LogicException("The provided class does not implement the RulesUiHandlerInterface.");
     }
   }
 

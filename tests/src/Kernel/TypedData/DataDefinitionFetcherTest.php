@@ -174,7 +174,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
 
   /**
    * @covers ::fetchDefinitionByPropertyPath
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    * @expectedExceptionMessage Unable to apply data selector 'field_invalid.0.value' at 'field_invalid'
    */
   public function testFetchingInvalidProperty() {
@@ -217,7 +217,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
 
   /**
    * @covers ::fetchDefinitionByPropertyPath
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    * @expectedExceptionMessage The data selector 'field_integer.0.value.not_existing' cannot be applied because the parent property 'value' is not a list or a complex structure
    */
   public function testFetchingNonComplexType() {
@@ -230,7 +230,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
 
   /**
    * @covers ::fetchDefinitionByPropertyPath
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    * @expectedExceptionMessage The data selector 'unknown_property' cannot be applied because the definition of type 'string' is not a list or a complex structure
    */
   public function testFetchingFromPrimitive() {
@@ -248,7 +248,7 @@ class DataDefinitionFetcherTest extends KernelTestBase {
 
   /**
    * @covers ::fetchDefinitionByPropertyPath
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    * @expectedExceptionMessage The data selector 'unknown_property' cannot be applied because the definition of type 'integer' is not a list or a complex structure
    */
   public function testFetchingAtInvalidPosition() {

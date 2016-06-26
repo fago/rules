@@ -7,7 +7,7 @@ use Drupal\rules\Engine\ActionExpressionContainer;
 use Drupal\rules\Engine\ExecutionMetadataStateInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
 use Drupal\rules\Engine\IntegrityViolationList;
-use Drupal\rules\Exception\RulesIntegrityException;
+use Drupal\rules\Exception\IntegrityException;
 
 /**
  * Holds a set of actions that are executed over the iteration of a list.
@@ -61,7 +61,7 @@ class RulesLoop extends ActionExpressionContainer {
     try {
       $list_definition = $metadata_state->fetchDefinitionByPropertyPath($this->configuration['list']);
     }
-    catch (RulesIntegrityException $e) {
+    catch (IntegrityException $e) {
       $violation_list->addViolationWithMessage($this->t('List variable %list does not exist. @message', [
         '%list' => $this->configuration['list'],
         '@message' => $e->getMessage(),
@@ -109,7 +109,7 @@ class RulesLoop extends ActionExpressionContainer {
       $list_item_definition = $list_definition->getItemDefinition();
       $metadata_state->setDataDefinition($this->configuration['list_item'], $list_item_definition);
     }
-    catch (RulesIntegrityException $e) {
+    catch (IntegrityException $e) {
       // Silently eat the exception: we just continue without adding the list
       // item definition to the state.
     }

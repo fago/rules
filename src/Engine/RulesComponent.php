@@ -5,6 +5,7 @@ namespace Drupal\rules\Engine;
 use Drupal\Core\Entity\DependencyTrait;
 use Drupal\rules\Context\ContextDefinition;
 use Drupal\rules\Context\ContextDefinitionInterface;
+use Drupal\rules\Exception\LogicException;
 
 /**
  * Handles executable Rules components.
@@ -208,14 +209,14 @@ class RulesComponent {
    * @param mixed $value
    *   The context value.
    *
-   * @throws \LogicException
-   *   Thrown if the passed context is not defined.
-   *
    * @return $this
+   *
+   * @throws \Drupal\rules\Exception\LogicException
+   *   Thrown if the passed context is not defined.
    */
   public function setContextValue($name, $value) {
     if (!isset($this->contextDefinitions[$name])) {
-      throw new \LogicException("The specified context '$name' is not defined.");
+      throw new LogicException("The specified context '$name' is not defined.");
     }
     $this->state->setVariable($name, $this->contextDefinitions[$name], $value);
     return $this;
@@ -227,7 +228,7 @@ class RulesComponent {
    * @return mixed[]
    *   The array of provided context values, keyed by context name.
    *
-   * @throws \Drupal\rules\Exception\RulesEvaluationException
+   * @throws \Drupal\rules\Exception\EvaluationException
    *   Thrown if the Rules expression triggers errors during execution.
    */
   public function execute() {
@@ -250,9 +251,9 @@ class RulesComponent {
    * @return mixed[]
    *   The array of provided context values, keyed by context name.
    *
-   * @throws \LogicException
+   * @throws \Drupal\rules\Exception\LogicException
    *   Thrown if the context is not defined.
-   * @throws \Drupal\rules\Exception\RulesEvaluationException
+   * @throws \Drupal\rules\Exception\EvaluationException
    *   Thrown if the Rules expression triggers errors during execution.
    */
   public function executeWithArguments(array $arguments) {

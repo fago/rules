@@ -5,7 +5,8 @@ namespace Drupal\rules\Engine;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\rules\Context\GlobalContextRepositoryTrait;
-use Drupal\rules\Exception\RulesIntegrityException;
+use Drupal\rules\Exception\IntegrityException;
+use Drupal\rules\Exception\InvalidArgumentException;
 use Drupal\rules\TypedData\DataFetcherTrait;
 
 /**
@@ -61,7 +62,7 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    */
   public function getDataDefinition($name) {
     if (!array_key_exists($name, $this->dataDefinitions)) {
-      throw new RulesIntegrityException("Unable to get variable $name, it is not defined.");
+      throw new IntegrityException("Unable to get variable $name, it is not defined.");
     }
     return $this->dataDefinitions[$name];
   }
@@ -102,9 +103,9 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
         ->getDataFetcher()
         ->fetchDefinitionBySubPaths($this->getDataDefinition($var_name), $parts, $langcode);
     }
-    catch (\InvalidArgumentException $e) {
+    catch (InvalidArgumentException $e) {
       // Pass on the original exception in the exception trace.
-      throw new RulesIntegrityException($e->getMessage(), 0, $e);
+      throw new IntegrityException($e->getMessage(), 0, $e);
     }
   }
 

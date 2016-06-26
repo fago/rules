@@ -6,6 +6,7 @@ use Drupal\Component\Render\HtmlEscapedText;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\TypedData\Exception\MissingDataException;
+use Drupal\rules\Exception\InvalidArgumentException;
 
 /**
  * Resolver for placeholder tokens based upon typed data.
@@ -83,7 +84,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
           // Escape the tokens, unless they are explicitly markup.
           $replacements[$placeholder] = $value instanceof MarkupInterface ? $value : new HtmlEscapedText($value);
         }
-        catch (\InvalidArgumentException $e) {
+        catch (InvalidArgumentException $e) {
           // Should we log warnings if there are problems other than missing
           // data, like syntactically invalid placeholders?
           if (!empty($options['clear'])) {
@@ -117,7 +118,7 @@ class PlaceholderResolver implements PlaceholderResolverInterface {
    *     entry is another numerically indexed array containing two items: the
    *     the filter id and the array of filter arguments.
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if in invalid placeholders are to be parsed.
    */
   protected function parseMainPlaceholderPart($main_part, $placeholder) {

@@ -296,7 +296,7 @@ class LoopTest extends RulesEntityIntegrationTestBase {
   /**
    * Tests that the loop list item variable is not available after the loop.
    *
-   * @expectedException \Drupal\rules\Exception\RulesEvaluationException
+   * @expectedException \Drupal\rules\Exception\EvaluationException
    *
    * @expectedExceptionMessage Unable to get variable list_item, it is not defined.
    */

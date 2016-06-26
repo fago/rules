@@ -42,7 +42,7 @@ interface RulesComponentRepositoryInterface {
    * @return \Drupal\rules\Engine\RulesComponent|null
    *   The component, or NULL if it is not existing.
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if an unsupported provider is given.
    */
   public function get($id, $resolver = 'rules_component');
@@ -61,7 +61,7 @@ interface RulesComponentRepositoryInterface {
    * @return \Drupal\rules\Engine\RulesComponent[]
    *   An array of components, keyed by component ID.
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if an unsupported provider is given.
    */
   public function getMultiple(array $ids, $resolver = 'rules_component');

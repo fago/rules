@@ -4,7 +4,7 @@ namespace Drupal\rules\Engine;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use \InvalidArgumentException;
+use Drupal\rules\Exception\InvalidArgumentException;
 
 /**
  * Implements the component repository interface.

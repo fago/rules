@@ -3,6 +3,7 @@
 namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\rules\Exception\InvalidArgumentException;
 
 /**
  * @RulesAction(
@@ -49,12 +50,12 @@ class DataConvert extends RulesActionBase {
   protected function doExecute($value, $target_type, $rounding_behavior) {
     // @todo: Add support for objects implementing __toString().
     if (!is_scalar($value)) {
-      throw new \InvalidArgumentException('Only scalar values are supported.');
+      throw new InvalidArgumentException('Only scalar values are supported.');
     }
 
     // Ensure valid contexts have been provided.
     if (isset($rounding_behavior) && $target_type != 'integer') {
-      throw new \InvalidArgumentException('A rounding behavior only makes sense with an integer target type.');
+      throw new InvalidArgumentException('A rounding behavior only makes sense with an integer target type.');
     }
 
     // First apply the rounding behavior if given.
@@ -73,7 +74,7 @@ class DataConvert extends RulesActionBase {
           break;
 
         default:
-          throw new \InvalidArgumentException("Unknown rounding behavior: $rounding_behavior");
+          throw new InvalidArgumentException("Unknown rounding behavior: $rounding_behavior");
       }
     }
 
@@ -91,7 +92,7 @@ class DataConvert extends RulesActionBase {
         break;
 
       default:
-        throw new \InvalidArgumentException("Unknown target type: $target_type");
+        throw new InvalidArgumentException("Unknown target type: $target_type");
     }
 
     $this->setProvidedValue('conversion_result', $result);

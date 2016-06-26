@@ -30,7 +30,7 @@ interface DataFetcherInterface {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    *   Thrown if the data cannot be fetched due to missing data; e.g., unset
    *   properties or list items.
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */
@@ -53,7 +53,7 @@ interface DataFetcherInterface {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    *   Thrown if the data cannot be fetched due to missing data; e.g., unset
    *   properties or list items.
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */
@@ -73,7 +73,7 @@ interface DataFetcherInterface {
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   The data definition of the target.
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */
@@ -93,7 +93,7 @@ interface DataFetcherInterface {
    * @return \Drupal\Core\TypedData\DataDefinitionInterface
    *   The data definition of the target.
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    *   Thrown if the given path is not valid for the given data; e.g., a not
    *   existing property is referenced.
    */

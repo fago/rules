@@ -88,7 +88,7 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
    *
    * @covers ::execute
    *
-   * @expectedException \InvalidArgumentException
+   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    */
   public function testInvalidOperationException() {
     // Set-up a mock object with roles 'authenticated' and 'editor', but not

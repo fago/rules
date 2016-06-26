@@ -4,6 +4,7 @@ namespace Drupal\rules\Plugin\RulesAction;
 
 use Drupal\rules\Core\RulesActionBase;
 use Drupal\user\UserInterface;
+use Drupal\rules\Exception\InvalidArgumentException;
 
 /**
  * Provides a 'Remove user role' action.
@@ -39,6 +40,8 @@ class UserRoleRemove extends RulesActionBase {
    *   User object the roles should be removed from.
    * @param \Drupal\user\RoleInterface[] $roles
    *   Array of user roles.
+   *
+   * @throws \Drupal\rules\Exception\InvalidArgumentException
    */
   protected function doExecute(UserInterface $account, array $roles) {
     foreach ($roles as $role) {
@@ -47,7 +50,12 @@ class UserRoleRemove extends RulesActionBase {
         // If you try to add anonymous or authenticated role to user, Drupal
         // will throw an \InvalidArgumentException. Anonymous or authenticated
         // role ID must not be assigned manually.
-        $account->removeRole($role->id());
+        try {
+          $account->removeRole($role->id());
+        }
+        catch (\InvalidArgumentException $e) {
+          throw new InvalidArgumentException($e->getMessage());
+        }
         // Set flag that indicates if the entity should be auto-saved later.
         $this->saveLater = TRUE;
       }
