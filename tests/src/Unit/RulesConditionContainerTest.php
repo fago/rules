@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\rules\Unit\RulesConditionContainerTest.
- */
-
 namespace Drupal\Tests\rules\Unit;
 
 use Drupal\rules\Engine\ConditionExpressionContainer;
