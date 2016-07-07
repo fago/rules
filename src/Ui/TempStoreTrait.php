@@ -47,6 +47,26 @@ trait TempStoreTrait {
   protected $dateFormatter;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
+   * Retrieves the renderer service if not already present.
+   *
+   * @return \Drupal\Core\Render\RendererInterface
+   *   The renderer service.
+   */
+  public function getRenderer() {
+    if (!isset($this->renderer)) {
+      $this->renderer = \Drupal::service('renderer');
+    }
+    return $this->renderer;
+  }
+
+  /**
    * Retrieves the temporary storage service if not already present.
    *
    * @return \Drupal\user\SharedTempStoreFactory
@@ -250,7 +270,7 @@ trait TempStoreTrait {
       '#account' => $this->getEntityTypeManager()->getStorage('user')->load($lock->owner),
     ];
     $lock_message_substitutions = [
-      '@user' => drupal_render($username),
+      '@user' => $this->getRenderer()->render($username),
       '@age' => $this->getDateFormatter()->formatTimeDiffSince($lock->updated),
       '@component_type' => $this->getRulesUiHandler()->getPluginDefinition()->component_type_label,
       ':url' => Url::fromRoute($this->getRulesUiHandler()->getPluginDefinition()->base_route . '.break_lock', \Drupal::routeMatch()->getRawParameters()->all())->toString(),
