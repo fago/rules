@@ -130,6 +130,7 @@ namespace Drupal\Tests\rules\Integration\Action {
 }
 
 namespace {
+
   if (!function_exists('drupal_set_message')) {
 
     /**

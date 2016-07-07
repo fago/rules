@@ -181,6 +181,7 @@ namespace Drupal\Tests\rules\Unit {
 }
 
 namespace {
+
   if (!function_exists('drupal_set_message')) {
 
     /**
