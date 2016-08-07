@@ -5,9 +5,7 @@ sudo: true
 
 php:
   - 5.5
-  # We need to specify the latest version here because otherwise there are
-  # segmentation faults in PHP 5.6.5.
-  - 5.6.18
+  - 5.6
   - 7
   # HHVM is disabled for now because we have not figured out yet how to start a
   # web server for the browser tests.
