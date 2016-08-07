@@ -16,6 +16,7 @@ php:
 env:
   - DRUPAL_CORE=8.1.x
   - DRUPAL_CORE=8.2.x
+  - DRUPAL_CORE=8.3.x
 
 matrix:
   allow_failures:
@@ -68,7 +69,7 @@ before_script:
 
   # Run composer install for Drupal 8.1 and up. We need an up-to-date composer
   # when installing Drupal 8.1.
-  - if [ "$DRUPAL_CORE" != "8.0.x" ]; then travis_retry composer self-update && travis_retry composer install; fi
+  - travis_retry composer self-update && travis_retry composer install
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
