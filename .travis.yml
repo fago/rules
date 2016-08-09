@@ -58,10 +58,6 @@ before_script:
   # See https://www.drupal.org/node/2659954
   - wget -q -O - https://www.drupal.org/files/issues/core-debug_0.txt | patch -p1
 
-  # Replace incorrect EntityTypeBundleInfo type hints with interface
-  # https://www.drupal.org/node/2780255
-  - if [ "$DRUPAL_CORE" != "8.1.x" ]; then wget -q -O - https://www.drupal.org/files/issues/interface-2780255-2.patch | patch -p1; fi
-
   # Reference rules in build site.
   - ln -s $TESTDIR modules/rules
 
