@@ -26,6 +26,8 @@ class ExecutionState implements ExecutionStateInterface {
   /**
    * Globally keeps the ids of rules blocked due to recursion prevention.
    *
+   * @var array
+   *
    * @todo Implement recursion prevention from D7.
    */
   static protected $blocked = [];
@@ -46,6 +48,8 @@ class ExecutionState implements ExecutionStateInterface {
 
   /**
    * Variable for saving currently blocked configs for serialization.
+   *
+   * @var array
    */
   protected $currentlyBlocked;
 

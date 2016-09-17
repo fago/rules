@@ -37,9 +37,9 @@ class RulesUiDefinition implements PluginDefinitionInterface {
   /**
    * The human-readable name of the plugin.
    *
-   * @ingroup plugin_translatable
-   *
    * @var string
+   *
+   * @ingroup plugin_translatable
    */
   public $label;
 
@@ -93,18 +93,18 @@ class RulesUiDefinition implements PluginDefinitionInterface {
    * the RulesUiConfigHandler assumes a config entity and uses its label()
    * method.
    *
-   * @ingroup plugin_translatable
-   *
    * @var string|null
+   *
+   * @ingroup plugin_translatable
    */
   public $component_label;
 
   /**
    * The label used for referring to the component type.
    *
-   * @ingroup plugin_translatable
-   *
    * @var string|null
+   *
+   * @ingroup plugin_translatable
    */
   public $component_type_label = 'component';
 

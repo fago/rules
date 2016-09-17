@@ -30,7 +30,7 @@ class EntityCreateDeriver extends DeriverBase implements ContainerDeriverInterfa
   /**
    * The entity field manager.
    *
-   * @var \Drupal\Core\Entity\EntityFieldManagerInterface;
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected $entityFieldManager;
 

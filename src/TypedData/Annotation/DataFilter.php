@@ -21,9 +21,9 @@ class DataFilter extends Plugin {
   /**
    * The human-readable name of the filter.
    *
-   * @ingroup plugin_translatable
-   *
    * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
    */
   public $label;
 

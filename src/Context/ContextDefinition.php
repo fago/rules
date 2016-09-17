@@ -37,9 +37,9 @@ class ContextDefinition extends ContextDefinitionCore implements ContextDefiniti
   /**
    * The assignment restriction of this context.
    *
-   * @see \Drupal\rules\Context\ContextDefinitionInterface::getAssignmentRestriction()
-   *
    * @var string|null
+   *
+   * @see \Drupal\rules\Context\ContextDefinitionInterface::getAssignmentRestriction()
    */
   protected $assignmentRestriction = NULL;
 

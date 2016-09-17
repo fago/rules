@@ -30,7 +30,7 @@ class ReactionRuleStorage extends ConfigEntityStorage {
   /**
    * The Drupal kernel.
    *
-   * @var \Drupal\Core\DrupalKernelInterface.
+   * @var \Drupal\Core\DrupalKernelInterface
    */
   protected $drupalKernel;
 

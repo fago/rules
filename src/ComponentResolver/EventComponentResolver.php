@@ -22,7 +22,7 @@ class EventComponentResolver implements RulesComponentResolverInterface {
   /**
    * The Rules expression manager.
    *
-   * @var \Drupal\rules\Engine\ExpressionManagerInterface $expression_manager
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
    */
   protected $expressionManager;
 

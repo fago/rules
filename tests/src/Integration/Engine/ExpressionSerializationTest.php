@@ -61,7 +61,7 @@ class ExpressionSerializationTest extends RulesIntegrationTestBase {
     $expression = $this->rulesExpressionManager
       ->createInstance('rules_action_set');
     $expression->addAction('rules_test_string', ContextConfig::create()
-        ->setValue('text', 'test'));
+      ->setValue('text', 'test'));
     $serialized_expression = serialize($expression);
     $expression = unserialize($serialized_expression);
     $result = RulesComponent::create($expression)

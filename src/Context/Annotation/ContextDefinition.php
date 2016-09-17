@@ -41,7 +41,7 @@ class ContextDefinition extends CoreContextDefinition {
   /**
    * Returns the value of an annotation.
    *
-   * @return \Drupal\rules\Context\ContextDefinitionInterface.
+   * @return \Drupal\rules\Context\ContextDefinitionInterface
    *   Return the Rules version of the ContextDefinitionInterface.
    */
   public function get() {

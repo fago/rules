@@ -49,7 +49,7 @@ interface ContextProviderInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *   If the requested provided context is not defined.
    *
-   * @return \Drupal\Component\Plugin\Context\ContextDefinitionInterface.
+   * @return \Drupal\Component\Plugin\Context\ContextDefinitionInterface
    *   The definition of the provided context.
    */
   public function getProvidedContextDefinition($name);

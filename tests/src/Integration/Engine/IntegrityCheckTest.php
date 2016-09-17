@@ -58,7 +58,7 @@ class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
     $rule = $this->rulesExpressionManager->createRule();
     // Just use a rule with 2 dummy actions.
     $rule->addAction('rules_entity_save', ContextConfig::create()
-          ->map('entity', 'unknown_variable_1'));
+      ->map('entity', 'unknown_variable_1'));
     $second_action = $this->rulesExpressionManager->createAction('rules_entity_save', ContextConfig::create()
       ->map('entity', 'unknown_variable_2')
       ->toArray()

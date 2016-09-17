@@ -28,7 +28,7 @@ interface RulesEventHandlerInterface extends PluginInspectionInterface, Derivati
    * @param string $name
    *   The name of the context in the plugin definition.
    *
-   * @return \Drupal\rules\Context\ContextDefinitionInterface.
+   * @return \Drupal\rules\Context\ContextDefinitionInterface
    *   The definition against which the context value must validate.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException

@@ -35,9 +35,9 @@ class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
   public function testConditionEvaluation() {
     $entity = $this->prophesizeEntity(ContentEntityInterface::class);
     $entity->hasField('existing-field')->willReturn(TRUE)
-        ->shouldBeCalledTimes(1);
+      ->shouldBeCalledTimes(1);
     $entity->hasField('non-existing-field')->willReturn(FALSE)
-        ->shouldBeCalledTimes(1);
+      ->shouldBeCalledTimes(1);
 
     $this->condition->setContextValue('entity', $entity->reveal());
 

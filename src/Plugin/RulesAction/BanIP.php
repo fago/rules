@@ -36,7 +36,7 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
   /**
    * The ban manager used to ban the IP.
    *
-   * @var \Drupal\ban\BanIpManagerInterface $banManger
+   * @var \Drupal\ban\BanIpManagerInterface
    */
   protected $banManager;
 
