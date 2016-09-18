@@ -17,6 +17,11 @@
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
   </rule>
 
+  <rule ref="DrupalPractice">
+    <!-- Allow empty lines after comments, we don't care. -->
+    <exclude name="DrupalPractice.Commenting.CommentEmptyLine"/>
+  </rule>
+
   <!-- We always want short array syntax only. -->
   <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 </ruleset>
