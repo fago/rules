@@ -26,7 +26,5 @@ rules.context.values:
   # provide a suiting schema.
 
 rules.context.processors:
-  type: sequence
+  type: ignore
   label: 'Context processors'
-  sequence:
-    - type: rules.context.processor.%key
