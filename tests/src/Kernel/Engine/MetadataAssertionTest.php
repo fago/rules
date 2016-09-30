@@ -19,7 +19,14 @@ class MetadataAssertionTest extends RulesDrupalTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['rules', 'system', 'node', 'field', 'user'];
+  public static $modules = [
+    'rules',
+    'typed_data',
+    'system',
+    'node',
+    'field',
+    'user',
+  ];
 
   /**
    * {@inheritdoc}

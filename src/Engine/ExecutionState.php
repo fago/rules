@@ -9,7 +9,7 @@ use Drupal\rules\Context\ContextDefinitionInterface;
 use Drupal\rules\Context\GlobalContextRepositoryTrait;
 use Drupal\rules\Exception\EvaluationException;
 use Drupal\rules\Exception\InvalidArgumentException;
-use Drupal\rules\TypedData\DataFetcherTrait;
+use Drupal\typed_data\DataFetcherTrait;
 
 /**
  * The rules execution state.

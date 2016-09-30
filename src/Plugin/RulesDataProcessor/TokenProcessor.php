@@ -6,7 +6,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\rules\Context\DataProcessorInterface;
 use Drupal\rules\Engine\ExecutionStateInterface;
-use Drupal\rules\TypedData\PlaceholderResolverInterface;
+use Drupal\typed_data\PlaceholderResolverInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,7 +22,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
   /**
    * The placeholder resolver.
    *
-   * @var \Drupal\rules\TypedData\PlaceholderResolverInterface
+   * @var \Drupal\typed_data\PlaceholderResolverInterface
    */
   protected $placeholderResovler;
 
@@ -35,7 +35,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\rules\TypedData\PlaceholderResolverInterface $placeholder_resolver
+   * @param \Drupal\typed_data\PlaceholderResolverInterface $placeholder_resolver
    *   The placeholder resolver.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, PlaceholderResolverInterface $placeholder_resolver) {

@@ -19,9 +19,9 @@ use Drupal\rules\Core\ConditionManager;
 use Drupal\rules\Context\DataProcessorManager;
 use Drupal\rules\Core\RulesActionManager;
 use Drupal\rules\Engine\ExpressionManager;
-use Drupal\rules\TypedData\DataFetcher;
-use Drupal\rules\TypedData\DataFilterManager;
-use Drupal\rules\TypedData\PlaceholderResolver;
+use Drupal\typed_data\DataFetcher;
+use Drupal\typed_data\DataFilterManager;
+use Drupal\typed_data\PlaceholderResolver;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 
@@ -124,21 +124,21 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
   /**
    * The data fetcher service.
    *
-   * @var \Drupal\rules\TypedData\DataFetcher
+   * @var \Drupal\typed_data\DataFetcher
    */
   protected $dataFetcher;
 
   /**
    * The placeholder resolver service.
    *
-   * @var \Drupal\rules\TypedData\PlaceholderResolver
+   * @var \Drupal\typed_data\PlaceholderResolver
    */
   protected $placeholderResolver;
 
   /**
    * The data filter manager.
    *
-   * @var \Drupal\rules\TypedData\DataFilterManager
+   * @var \Drupal\typed_data\DataFilterManager
    */
   protected $dataFilterManager;
 
