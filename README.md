@@ -7,7 +7,7 @@ actions based on occurring events (ECA-rules).
 
 * Project homepage: https://www.drupal.org/project/rules
 * #d8rules initiative: http://d8rules.org/
-* Documentation: https://thefubhy.gitbooks.io/rules
+* Documentation: http://docs.d8rules.org
 
 ## Contributing
 
