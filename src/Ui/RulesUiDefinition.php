@@ -111,6 +111,20 @@ class RulesUiDefinition implements PluginDefinitionInterface {
   /**
    * {@inheritdoc}
    */
+  public function id() {
+    return $this->id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getProvider() {
+    return $this->provider;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function setClass($class) {
     $this->class = $class;
     return $this;
