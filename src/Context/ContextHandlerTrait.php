@@ -288,14 +288,40 @@ trait ContextHandlerTrait {
   protected function processData(CoreContextAwarePluginInterface $plugin, ExecutionStateInterface $rules_state) {
     if (isset($this->configuration['context_processors'])) {
       foreach ($this->configuration['context_processors'] as $context_name => $processors) {
+        $definition = $plugin->getContextDefinition($context_name);
         $value = $plugin->getContextValue($context_name);
-        foreach ($processors as $processor_plugin_id => $configuration) {
-          $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
-          $value = $data_processor->process($value, $rules_state);
+        if ($definition->isMultiple()) {
+          foreach ($value as &$current) {
+            $current = $this->processValue($current, $processors, $rules_state);
+          }
+        }
+        else {
+          $value = $this->processValue($value, $processors, $rules_state);
         }
         $plugin->setContextValue($context_name, $value);
       }
     }
+  }
+
+  /**
+   * Processes a single value.
+   *
+   * @param mixed $value
+   *   The current value.
+   * @param array $processors
+   *   An array mapping processor plugin IDs to their configuration.
+   * @param \Drupal\rules\Engine\ExecutionStateInterface $rules_state
+   *   The current Rules execution state with context variables.
+   *
+   * @return mixed
+   *   THe processed value.
+   */
+  protected function processValue($value, $processors, ExecutionStateInterface $rules_state) {
+    foreach ($processors as $processor_plugin_id => $configuration) {
+      $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
+      $value = $data_processor->process($value, $rules_state);
+    }
+    return $value;
   }
 
 }

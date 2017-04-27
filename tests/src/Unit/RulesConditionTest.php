@@ -88,6 +88,10 @@ class RulesConditionTest extends UnitTestCase {
       'test' => $this->prophesize(ContextDefinitionInterface::class)->reveal(),
     ])->shouldBeCalledTimes(1);
 
+    $this->trueCondition->getContextDefinition('test')->willReturn(
+      $this->prophesize(ContextDefinitionInterface::class)->reveal()
+    )->shouldBeCalledTimes(1);
+
     $this->trueCondition->getProvidedContextDefinitions()
       ->willReturn([])
       ->shouldBeCalledTimes(1);
