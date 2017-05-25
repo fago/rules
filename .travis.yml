@@ -12,9 +12,9 @@ php:
   #- hhvm
 
 env:
-  - DRUPAL_CORE=8.1.x
   - DRUPAL_CORE=8.2.x
   - DRUPAL_CORE=8.3.x
+  - DRUPAL_CORE=8.4.x
 
 matrix:
   allow_failures:
