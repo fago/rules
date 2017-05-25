@@ -166,11 +166,15 @@ class AutocompleteTest extends RulesDrupalTestBase {
       ],
       [
         'value' => 'node.revision_timestamp',
-        'label' => 'node.revision_timestamp (Revision timestamp)',
+        // @todo In Drupal 8.4.x the text changed from (Revision timestamp) to
+        // (Revision create time). Remove this once 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.revision_timestamp (Revision create time)' : 'node.revision_timestamp (Revision timestamp)',
       ],
       [
         'value' => 'node.revision_timestamp.',
-        'label' => 'node.revision_timestamp... (Revision timestamp)',
+        // @todo In Drupal 8.4.x the text changed from (Revision timestamp) to
+        // (Revision create time). Remove this once 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.revision_timestamp... (Revision create time)' : 'node.revision_timestamp... (Revision timestamp)',
       ],
       [
         'value' => 'node.revision_translation_affected',
@@ -182,11 +186,15 @@ class AutocompleteTest extends RulesDrupalTestBase {
       ],
       [
         'value' => 'node.revision_uid',
-        'label' => 'node.revision_uid (Revision user ID)',
+        // @todo In Drupal 8.4.x the text changed from (Revision user ID) to
+        // (Revision user). Remove this once 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.revision_uid (Revision user)' : 'node.revision_uid (Revision user ID)',
       ],
       [
         'value' => 'node.revision_uid.',
-        'label' => 'node.revision_uid... (Revision user ID)',
+        // @todo In Drupal 8.4.x the text changed from (Revision user ID) to
+        // (Revision user). Remove this once 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.revision_uid... (Revision user)' : 'node.revision_uid... (Revision user ID)',
       ],
       [
         'value' => 'node.status',
