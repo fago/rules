@@ -198,11 +198,15 @@ class AutocompleteTest extends RulesDrupalTestBase {
       ],
       [
         'value' => 'node.status',
-        'label' => 'node.status (Publishing status)',
+        // In Core 8.4 the text has changed from Publishing Status to Published.
+        // @todo Remove this version checking when 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.status (Published)' : 'node.status (Publishing status)',
       ],
       [
         'value' => 'node.status.',
-        'label' => 'node.status... (Publishing status)',
+        // In Core 8.4 the text has changed from Publishing Status to Published.
+        // @todo Remove this version checking when 8.3.x is unsupported.
+        'label' => version_compare(substr(\Drupal::VERSION, 0, 3), '8.4', '>=') ? 'node.status... (Published)' : 'node.status... (Publishing status)',
       ],
       [
         'value' => 'node.sticky',
