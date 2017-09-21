@@ -4,4 +4,4 @@ description: 'Support module for the Rules tests.'
 package: Rules
 core: 8.x
 dependencies:
-  - rules
+  - rules:rules
