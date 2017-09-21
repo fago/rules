@@ -14,11 +14,12 @@ class RulesActionBaseTest extends RulesUnitTestBase {
   /**
    * Tests that a missing label throwa an exception.
    *
-   * @expectedException \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   *
    * @covers ::summary
    */
   public function testSummaryThrowingException() {
+    // Set the expected exception class. There is no message to check for.
+    $this->setExpectedException('\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException');
+
     $rules_action_base = $this->getMockForAbstractClass(
       RulesActionBase::class,
       [[], '', '']

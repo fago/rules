@@ -87,10 +87,11 @@ class UserHasRoleTest extends RulesEntityIntegrationTestBase {
    * Test the behavior with unsupported operations.
    *
    * @covers ::execute
-   *
-   * @expectedException \Drupal\rules\Exception\InvalidArgumentException
    */
   public function testInvalidOperationException() {
+    // Set the expected exception class and message.
+    $this->setExpectedException('\Drupal\rules\Exception\InvalidArgumentException', 'Either use "AND" or "OR". Leave empty for default "AND" behavior.');
+
     // Set-up a mock object with roles 'authenticated' and 'editor', but not
     // 'administrator'.
     $account = $this->prophesizeEntity(UserInterface::class);
