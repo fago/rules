@@ -26,7 +26,7 @@ class RulesAdminAccessTest extends RulesIntegrationTestBase {
     $power_user->hasPermission('admin this plugin')->willReturn(TRUE);
     $power_user->hasPermission(Argument::any())->willReturn(FALSE);
 
-    $joe_user  = $this->prophesize(AccountInterface::class);
+    $joe_user = $this->prophesize(AccountInterface::class);
     $joe_user->hasPermission(Argument::any())->willReturn(FALSE);
 
     // Our plug-in will behave as if it has the annotation property

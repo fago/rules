@@ -28,7 +28,7 @@ class EntityDelete extends RulesActionBase {
    * Deletes the Entity.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
-   *    The entity to be deleted.
+   *   The entity to be deleted.
    */
   protected function doExecute(EntityInterface $entity) {
     $entity->delete();

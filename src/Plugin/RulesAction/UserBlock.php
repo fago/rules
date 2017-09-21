@@ -74,7 +74,7 @@ class UserBlock extends RulesActionBase implements ContainerFactoryPluginInterfa
    * Block a user.
    *
    * @param \Drupal\user\UserInterface $user
-   *    The user object.
+   *   The user object.
    */
   protected function doExecute(UserInterface $user) {
     // Do nothing if user is anonymous or already blocked.
