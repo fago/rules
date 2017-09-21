@@ -35,7 +35,7 @@ class DataListItemRemove extends RulesActionBase {
    * @param mixed $item
    *   An item to remove from the array.
    */
-  protected function doExecute($list, $item) {
+  protected function doExecute(array $list, $item) {
     foreach (array_keys($list, $item) as $key) {
       unset($list[$key]);
     }

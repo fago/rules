@@ -165,7 +165,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    *
    * @return $this
    */
-  public function setContextDefinitions($definitions) {
+  public function setContextDefinitions(array $definitions) {
     $this->component['context_definitions'] = [];
     foreach ($definitions as $name => $definition) {
       $this->component['context_definitions'][$name] = $definition->toArray();
@@ -197,7 +197,7 @@ class RulesComponentConfig extends ConfigEntityBase implements RulesUiComponentP
    *
    * @return $this
    */
-  public function setProvidedContextDefinitions($definitions) {
+  public function setProvidedContextDefinitions(array $definitions) {
     $this->component['provided_context_definitions'] = [];
     foreach ($definitions as $name => $definition) {
       $this->component['provided_context_definitions'][$name] = $definition->toArray();

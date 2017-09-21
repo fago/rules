@@ -27,7 +27,7 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create($data_definitions = []) {
+  public static function create(array $data_definitions = []) {
     return new static($data_definitions);
   }
 
@@ -37,7 +37,7 @@ class ExecutionMetadataState implements ExecutionMetadataStateInterface {
    * @param \Drupal\Core\TypedData\DataDefinitionInterface[] $data_definitions
    *   (optional) Data definitions to initialize this state with.
    */
-  protected function __construct($data_definitions) {
+  protected function __construct(array $data_definitions) {
     $this->dataDefinitions = $data_definitions;
     // Add definitions of all global contexts.
     $contexts = $this->getGlobalContextRepository()->getAvailableContexts();

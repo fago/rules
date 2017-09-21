@@ -139,7 +139,7 @@ class ContextConfig {
    *
    * @return $this
    */
-  public function process($context_name, $plugin_id, $options = []) {
+  public function process($context_name, $plugin_id, array $options = []) {
     $this->config['context_processors'][$context_name][$plugin_id] = $options;
     return $this;
   }

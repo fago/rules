@@ -316,7 +316,7 @@ trait ContextHandlerTrait {
    * @return mixed
    *   THe processed value.
    */
-  protected function processValue($value, $processors, ExecutionStateInterface $rules_state) {
+  protected function processValue($value, array $processors, ExecutionStateInterface $rules_state) {
     foreach ($processors as $processor_plugin_id => $configuration) {
       $data_processor = $this->processorManager->createInstance($processor_plugin_id, $configuration);
       $value = $data_processor->process($value, $rules_state);

@@ -109,7 +109,7 @@ class SystemSendEmail extends RulesActionBase implements ContainerFactoryPluginI
    * @param \Drupal\Core\Language\LanguageInterface|null $language
    *   (optional) Language code.
    */
-  protected function doExecute($to, $subject, $message, $reply = NULL, LanguageInterface $language = NULL) {
+  protected function doExecute(array $to, $subject, $message, $reply = NULL, LanguageInterface $language = NULL) {
     $langcode = isset($language) ? $language->getId() : LanguageInterface::LANGCODE_SITE_DEFAULT;
     $params = [
       'subject' => $subject,

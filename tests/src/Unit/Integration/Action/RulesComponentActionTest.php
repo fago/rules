@@ -177,7 +177,7 @@ class RulesComponentActionTest extends RulesEntityIntegrationTestBase {
    * @param \Drupal\rules\Engine\RulesComponentConfig[] $rules_configs
    *   The Rules componentn config entities that should be returned.
    */
-  protected function prophesizeStorage($rules_configs) {
+  protected function prophesizeStorage(array $rules_configs) {
     $storage = $this->prophesize(ConfigEntityStorageInterface::class);
     $keyed_configs = [];
 

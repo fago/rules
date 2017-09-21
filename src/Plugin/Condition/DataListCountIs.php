@@ -47,7 +47,7 @@ class DataListCountIs extends RulesConditionBase {
    * @return bool
    *   TRUE if the comparison returns true.
    */
-  protected function doEvaluate($list, $operator, $value) {
+  protected function doEvaluate(array $list, $operator, $value) {
     switch ($operator) {
       case '==':
         return count($list) == $value;

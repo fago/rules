@@ -61,7 +61,7 @@ class ExecutionState implements ExecutionStateInterface {
    *
    * @return static
    */
-  public static function create($variables = []) {
+  public static function create(array $variables = []) {
     return new static($variables);
   }
 
@@ -71,7 +71,7 @@ class ExecutionState implements ExecutionStateInterface {
    * @param \Drupal\Core\TypedData\TypedDataInterface[] $variables
    *   (optional) Variables to initialize this state with.
    */
-  protected function __construct($variables) {
+  protected function __construct(array $variables) {
     $this->variables = $variables;
   }
 

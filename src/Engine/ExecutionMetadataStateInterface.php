@@ -24,7 +24,7 @@ interface ExecutionMetadataStateInterface {
    *
    * @return static
    */
-  public static function create($data_definitions = []);
+  public static function create(array $data_definitions = []);
 
   /**
    * Sets a data definition in the execution metadata state.
