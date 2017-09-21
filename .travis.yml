@@ -12,9 +12,9 @@ php:
   #- hhvm
 
 env:
-  - DRUPAL_CORE=8.2.x
   - DRUPAL_CORE=8.3.x
   - DRUPAL_CORE=8.4.x
+  - DRUPAL_CORE=8.5.x
 
 matrix:
   allow_failures:
@@ -77,5 +77,9 @@ before_script:
 script:
   # Run the PHPUnit tests which also include the kernel tests.
   - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/rules
-  # Check for coding standards violations
-  - cd modules/rules && ~/.composer/vendor/bin/phpcs
+  # Check for coding standards - first show the sniffs that are used.
+  - cd modules/rules && ~/.composer/vendor/bin/phpcs -e --report-width=130
+  # Show the coding standards violations in detail.
+  - ~/.composer/vendor/bin/phpcs --colors -s --report-width=130
+  # Run again to give a summary and total count.
+  - ~/.composer/vendor/bin/phpcs --colors --report=summary --report-width=130
