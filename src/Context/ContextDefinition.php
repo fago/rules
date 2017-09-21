@@ -2,8 +2,8 @@
 
 namespace Drupal\rules\Context;
 
-use \Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;
-use \Drupal\Component\Plugin\Exception\ContextException;
+use Drupal\Core\Plugin\Context\ContextDefinition as ContextDefinitionCore;
+use Drupal\Component\Plugin\Exception\ContextException;
 
 /**
  * Extends the core context definition class with useful methods.

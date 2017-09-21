@@ -2,7 +2,7 @@
 
 namespace Drupal\rules\Context;
 
-use \Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
+use Drupal\Core\Plugin\ContextAwarePluginInterface as CoreContextAwarePluginInterface;
 
 /**
  * Rules extension of ContextAwarePluginInterface.

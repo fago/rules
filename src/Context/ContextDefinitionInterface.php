@@ -2,7 +2,7 @@
 
 namespace Drupal\rules\Context;
 
-use \Drupal\Core\Plugin\Context\ContextDefinitionInterface as ContextDefinitionInterfaceCore;
+use Drupal\Core\Plugin\Context\ContextDefinitionInterface as ContextDefinitionInterfaceCore;
 
 /**
  * Context definition information required by Rules.
