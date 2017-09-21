@@ -11,13 +11,6 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 class VariableAddTest extends RulesIntegrationTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-  }
-
-  /**
    * Test the action execution.
    *
    * @covers ::execute

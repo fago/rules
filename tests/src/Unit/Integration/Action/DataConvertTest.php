@@ -18,13 +18,6 @@ class DataConvertTest extends RulesIntegrationTestBase {
   protected $action;
 
   /**
-   * {@inheritdoc}
-   */
-  public function setUp() {
-    parent::setUp();
-  }
-
-  /**
    * Test the conversion and rounding to integer.
    *
    * @covers ::execute
