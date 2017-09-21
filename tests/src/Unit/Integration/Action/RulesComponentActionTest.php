@@ -174,7 +174,7 @@ class RulesComponentActionTest extends RulesEntityIntegrationTestBase {
   /**
    * Prepares a mocked entity storage that returns the provided Rules configs.
    *
-   * @param RulesComponentConfig[] $rules_configs
+   * @param \Drupal\rules\Engine\RulesComponentConfig[] $rules_configs
    *   The Rules componentn config entities that should be returned.
    */
   protected function prophesizeStorage($rules_configs) {

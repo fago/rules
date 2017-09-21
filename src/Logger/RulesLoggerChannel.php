@@ -29,7 +29,7 @@ class RulesLoggerChannel extends LoggerChannel {
   /**
    * Creates RulesLoggerChannel object.
    *
-   * @param ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory instance.
    */
   public function __construct(ConfigFactoryInterface $config_factory) {

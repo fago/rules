@@ -14,7 +14,7 @@ interface ExpressionFormInterface {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
   public function form(array $form, FormStateInterface $form_state);
@@ -24,7 +24,7 @@ interface ExpressionFormInterface {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
   public function validateForm(array $form, FormStateInterface $form_state);
@@ -34,7 +34,7 @@ interface ExpressionFormInterface {
    *
    * @param array $form
    *   The form array.
-   * @param FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state);

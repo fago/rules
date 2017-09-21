@@ -20,14 +20,14 @@ class ActionForm implements ExpressionFormInterface {
   /**
    * The action plugin manager.
    *
-   * @var RulesActionManagerInterface
+   * @var \Drupal\rules\Core\RulesActionManagerInterface
    */
   protected $actionManager;
 
   /**
    * The action expression that is edited in the form.
    *
-   * @var ActionExpressionInterface
+   * @var \Drupal\rules\Engine\ActionExpressionInterface
    */
   protected $actionExpression;
 

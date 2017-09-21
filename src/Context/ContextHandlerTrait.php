@@ -199,7 +199,7 @@ trait ContextHandlerTrait {
   /**
    * Adds provided context values from the plugin to the execution state.
    *
-   * @param CoreContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The context aware plugin of which to add provided context.
    * @param \Drupal\rules\Engine\ExecutionStateInterface $state
    *   The Rules state where the context variables are added.
@@ -225,7 +225,7 @@ trait ContextHandlerTrait {
   /**
    * Adds the definitions of provided context to the execution metadata state.
    *
-   * @param CoreContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The context aware plugin of which to add provided context.
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
    *   The execution metadata state to add variables to.
@@ -255,7 +255,7 @@ trait ContextHandlerTrait {
   /**
    * Asserts additional metadata.
    *
-   * @param CoreContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The context aware plugin.
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
    *   The execution metadata state.

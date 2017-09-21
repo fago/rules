@@ -20,7 +20,7 @@ class RulesComponentActionDeriver extends DeriverBase implements ContainerDerive
   /**
    * The config entity storage that holds Rules components.
    *
-   * @var EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $storage;
 

@@ -18,7 +18,7 @@ class AddExpressionForm extends EditExpressionForm {
   /**
    * The Rules expression manager to get expression plugins.
    *
-   * @var ExpressionManagerInterface
+   * @var \Drupal\rules\Engine\ExpressionManagerInterface
    */
   protected $expressionManager;
 

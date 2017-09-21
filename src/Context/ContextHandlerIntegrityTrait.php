@@ -24,7 +24,7 @@ trait ContextHandlerIntegrityTrait {
   /**
    * Performs the integrity check.
    *
-   * @param CoreContextAwarePluginInterface $plugin
+   * @param \Drupal\Core\Plugin\ContextAwarePluginInterface $plugin
    *   The plugin with its defined context.
    * @param \Drupal\rules\Engine\ExecutionMetadataStateInterface $metadata_state
    *   The current configuration state with all defined variables that are

@@ -13,7 +13,7 @@ trait ConfigurationAccessControlTrait {
   /**
    * Checks configuration permission.
    *
-   * @param AccountInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   (optional) The user for which to check access, or NULL to check access
    *   for the current user. Defaults to NULL.
    * @param bool $return_as_object

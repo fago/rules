@@ -31,7 +31,7 @@ class RulesLog implements LoggerInterface {
   /**
    * Constructs a new instance.
    *
-   * @param EventDispatcherInterface $dispatcher
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    *   An EventDispatcherInterface instance.
    * @param \Drupal\Core\Logger\LogMessageParserInterface $parser
    *   The parser to use when extracting message variables.
