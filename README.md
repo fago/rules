@@ -57,7 +57,7 @@ your local Drupal installation for SIMPLETEST_BASE_URL.
 
 Example for executing one single test file during development:
 
-    ../vendor/bin/phpunit ../modules/rules/tests/src/Integration/Action/DataSetTest.php
+    ../vendor/bin/phpunit ../modules/rules/tests/src/Unit/ActionSetTest.php
 
 You can also execute the test cases from the web interface at
 ``/admin/config/development/testing``.
