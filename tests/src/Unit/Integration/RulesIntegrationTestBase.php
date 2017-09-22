@@ -264,7 +264,7 @@ abstract class RulesIntegrationTestBase extends UnitTestCase {
    *
    * @param string $data_type
    *   The data type to create an object for.
-   * @param mixed[] $value
+   * @param mixed $value
    *   The value to set.
    *
    * @return \Drupal\Core\TypedData\TypedDataInterface
