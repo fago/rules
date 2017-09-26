@@ -71,7 +71,7 @@ before_script:
   - export SIMPLETEST_BASE_URL=http://localhost:8888
 
   # Install PHPCS to check for Drupal coding standards.
-  - travis_retry composer global require drupal/coder:8.x-2.12
+  - travis_retry composer global require drupal/coder:8.2.12
   - ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
 
 script:
