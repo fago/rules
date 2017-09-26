@@ -12,6 +12,14 @@
     <exclude-pattern>src/Ui/RulesUiDefinition.php</exclude-pattern>
   </rule>
 
+  <rule ref="Drupal.Files.TxtFileLineLength.TooLong">
+    <!-- Do not run this sniff on README.md as the file has long markup lines
+         which are allowed in the latest dev version of Coder.
+         @todo Update .travis.yml when Coder 8.x-2.13 is released and remove
+         this exclusion -->
+    <exclude-pattern>README.md</exclude-pattern>
+   </rule>
+
   <!--Blacklist of coding standard rules that are not yet fixed. -->
   <rule ref="Drupal">
     <exclude name="Drupal.Commenting.DocComment.MissingShort"/>
