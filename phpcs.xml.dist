@@ -8,6 +8,7 @@
   <exclude-pattern>./config/</exclude-pattern>
 
   <arg name="extensions" value="inc,install,module,php,profile,test,theme,yml"/>
+  <arg value="s"/>
 
   <rule ref="Drupal.NamingConventions.ValidVariableName.LowerCamelName">
     <!-- Annotations must use the same property names as in the configuration. -->
@@ -20,6 +21,11 @@
     <!-- Do not run this sniff on README.md as the file has long markup lines.
      -->
     <exclude-pattern>README.md</exclude-pattern>
+  </rule>
+
+  <!-- The method is overridden with a reason - for better PHPdoc! -->
+  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod.Found">
+    <exclude-pattern>./src/Core/ConditionManager.php</exclude-pattern>
    </rule>
 
   <!--Blacklist of coding standard rules that are not yet fixed. -->
