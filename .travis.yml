@@ -63,6 +63,9 @@ before_script:
   # Run composer install for Drupal 8.1 and up. We need an up-to-date composer
   # when installing Drupal 8.1.
   - travis_retry composer self-update && travis_retry composer install
+  # Run composer install in the Rules module directory in order to fetch dev
+  # dependencies there. This includes phpcs & coder for checking coding style.
+  - travis_retry cd modules/rules && composer install
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
