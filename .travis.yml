@@ -70,16 +70,8 @@ before_script:
   # Export web server URL for browser tests.
   - export SIMPLETEST_BASE_URL=http://localhost:8888
 
-  # Install PHPCS to check for Drupal coding standards.
-  - travis_retry composer global require drupal/coder:8.2.12
-  - ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
-
 script:
   # Run the PHPUnit tests which also include the kernel tests.
   - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/rules
-  # Check for coding standards - first show the sniffs that are used.
-  - cd modules/rules && ~/.composer/vendor/bin/phpcs -e --report-width=130
-  # Show the coding standards violations in detail.
-  - ~/.composer/vendor/bin/phpcs --colors -s --report-width=130
-  # Run again to give a summary and total count.
-  - ~/.composer/vendor/bin/phpcs --colors --report=summary --report-width=130
+  # Check for coding standards.
+  - cd modules/rules && ./vendor/bin/phpcs --colors --report-width=130
