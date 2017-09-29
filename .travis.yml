@@ -9,9 +9,13 @@ php:
   - 7
 
 env:
-  - DRUPAL_CORE=8.3.x
-  - DRUPAL_CORE=8.4.x
-  - DRUPAL_CORE=8.5.x
+  global:
+    # Make the script re-usable for other modules.
+    - MODULE=rules
+  matrix:
+    - DRUPAL_CORE=8.3.x
+    - DRUPAL_CORE=8.4.x
+    - DRUPAL_CORE=8.5.x
 
 matrix:
   fast_finish: true
@@ -27,8 +31,7 @@ cache:
     - $HOME/.composer
 
 before_script:
-  # Make the script re-usable for other modules.
-  - export MODULE=$MODULE
+  - echo $MODULE
 
   # Remove Xdebug as we don't need it and it causes
   # PHP Fatal error:  Maximum function nesting level of '256' reached.
@@ -43,7 +46,7 @@ before_script:
   - cd ..
 
   # Create database.
-  - mysql -e 'create database $MODULE'
+  - mysql -e "create database $MODULE"
   # Export database variable for kernel tests.
   - export SIMPLETEST_DB=mysql://root:@127.0.0.1/$MODULE
   # Download Drupal 8 core from the Github mirror because it is faster.
