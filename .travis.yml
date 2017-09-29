@@ -7,9 +7,6 @@ php:
   - 5.5
   - 5.6
   - 7
-  # HHVM is disabled for now because we have not figured out yet how to start a
-  # web server for the browser tests.
-  #- hhvm
 
 env:
   - DRUPAL_CORE=8.3.x
@@ -17,30 +14,28 @@ env:
   - DRUPAL_CORE=8.5.x
 
 matrix:
-  allow_failures:
-    # We cannot use hhvm-nightly since that does not work in Travis CI's old
-    # Ubuntu 12.04.
-    #- php: hhvm
-  # Don't wait for the allowed failures to build.
   fast_finish: true
 
 mysql:
-  database: rules
+  database: $MODULE
   username: root
   encoding: utf8
 
-# Cache composer downloads because cloning Coder form drupal.org is very slow :-(
+# Be sure to cache composer downloads.
 cache:
   directories:
     - $HOME/.composer
 
 before_script:
+  # Make the script re-usable for other modules.
+  - export MODULE=$MODULE
+
   # Remove Xdebug as we don't need it and it causes
   # PHP Fatal error:  Maximum function nesting level of '256' reached.
   # We also don't care if that file exists or not on PHP 7.
   - phpenv config-rm xdebug.ini || true
 
-  # Remember the current rules test directory for later use in the Drupal
+  # Remember the current $MODULE test directory for later use in the Drupal
   # installation.
   - TESTDIR=$(pwd)
   # Navigate out of module directory to prevent blown stack by recursive module
@@ -48,24 +43,24 @@ before_script:
   - cd ..
 
   # Create database.
-  - mysql -e 'create database rules'
+  - mysql -e 'create database $MODULE'
   # Export database variable for kernel tests.
-  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/rules
+  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/$MODULE
   # Download Drupal 8 core from the Github mirror because it is faster.
   - travis_retry git clone --branch $DRUPAL_CORE --depth 1 https://github.com/drupal/drupal.git
   - cd drupal
 
-  # Reference rules in build site.
-  - ln -s $TESTDIR modules/rules
+  # Reference $MODULE in build site.
+  - ln -s $TESTDIR modules/$MODULE
   # Install dependencies.
   - travis_retry git clone --branch 8.x-1.x --depth 1 https://github.com/fago/typed_data.git modules/typed_data
 
   # Run composer install for Drupal 8.1 and up. We need an up-to-date composer
   # when installing Drupal 8.1.
   - travis_retry composer self-update && travis_retry composer install
-  # Run composer install in the Rules module directory in order to fetch dev
+  # Run composer install in the module directory in order to fetch dev
   # dependencies there. This includes phpcs & coder for checking coding style.
-  - travis_retry cd modules/rules && composer install
+  - travis_retry composer -d=$TESTDIR install
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
@@ -75,6 +70,6 @@ before_script:
 
 script:
   # Run the PHPUnit tests which also include the kernel tests.
-  - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/rules
+  - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/$MODULE
   # Check for coding standards.
-  - cd modules/rules && ./vendor/bin/phpcs --colors --report-width=130
+  - cd modules/$MODULE && ./vendor/bin/phpcs --colors --report-width=130
