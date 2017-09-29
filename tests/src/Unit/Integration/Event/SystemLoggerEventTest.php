@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Event;
 /**
  * Checks that the event "rules_system_logger_event" is correctly defined.
  *
- * @group rules_events
+ * @group RulesEvent
  */
 class SystemLoggerEventTest extends EventTestBase {
 

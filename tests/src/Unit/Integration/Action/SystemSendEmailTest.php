@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemSendEmail
- * @group rules_actions
+ * @group RulesAction
  */
 class SystemSendEmailTest extends RulesIntegrationTestBase {
 

@@ -10,7 +10,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Test the integrity check functionality during configuration time.
  *
- * @group rules
+ * @group Rules
  */
 class IntegrityCheckTest extends RulesEntityIntegrationTestBase {
 

@@ -7,7 +7,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserIsBlocked
- * @group rules_conditions
+ * @group RulesCondition
  */
 class UserIsBlockedTest extends RulesEntityIntegrationTestBase {
 

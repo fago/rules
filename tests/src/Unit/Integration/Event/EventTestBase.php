@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Base class for testing Rules Event definitions.
  *
- * @group rules_events
+ * @group RulesEvent
  */
 abstract class EventTestBase extends RulesEntityIntegrationTestBase {
 

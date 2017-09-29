@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Tests that the setup of the execution metadata state for an expression works.
  *
- * @group rules
+ * @group Rules
  */
 class PrepareExecutionMetadataStateTest extends RulesEntityIntegrationTestBase {
 

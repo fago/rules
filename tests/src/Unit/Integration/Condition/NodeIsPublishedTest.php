@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPublished
- * @group rules_conditions
+ * @group RulesCondition
  */
 class NodeIsPublishedTest extends RulesEntityIntegrationTestBase {
 

@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfBundle
- * @group rules_conditions
+ * @group RulesCondition
  */
 class EntityIsOfBundleTest extends RulesEntityIntegrationTestBase {
 

@@ -10,7 +10,7 @@ use Prophecy\Argument;
 /**
  * Tests access control for the configuration interface of Rules plugins.
  *
- * @group rules
+ * @group Rules
  */
 class RulesAdminAccessTest extends RulesIntegrationTestBase {
 

@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Event;
 /**
  * Checks that the event "rules_user_logout" is correctly defined.
  *
- * @group rules_events
+ * @group RulesEvent
  */
 class UserLogoutTest extends EventTestBase {
 

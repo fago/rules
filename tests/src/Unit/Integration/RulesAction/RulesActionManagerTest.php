@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 /**
  * Tests the Rules action manager.
  *
- * @group rules_actions
+ * @group Rules
  */
 class RulesActionManagerTest extends RulesIntegrationTestBase {
 

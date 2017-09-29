@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Functional;
 /**
  * Tests that a rule can be configured and triggered when a node is edited.
  *
- * @group rules_ui
+ * @group RulesUi
  */
 class ConfigureAndExecuteTest extends RulesBrowserTestBase {
 

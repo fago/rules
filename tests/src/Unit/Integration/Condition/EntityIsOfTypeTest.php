@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsOfType
- * @group rules_conditions
+ * @group RulesCondition
  */
 class EntityIsOfTypeTest extends RulesEntityIntegrationTestBase {
 

@@ -7,7 +7,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Event;
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityViewDeriver
  *
- * @group rules_events
+ * @group RulesEvent
  */
 class EntityViewTest extends EventTestBase {
 

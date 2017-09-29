@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityIsNew
- * @group rules_conditions
+ * @group RulesCondition
  */
 class EntityIsNewTest extends RulesEntityIntegrationTestBase {
 

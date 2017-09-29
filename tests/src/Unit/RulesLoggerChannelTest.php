@@ -11,7 +11,7 @@ namespace Drupal\Tests\rules\Unit {
 
   /**
    * @coversDefaultClass \Drupal\rules\Logger\RulesLoggerChannel
-   * @group Logger
+   * @group Rules
    */
   class RulesLoggerChannelTest extends UnitTestCase {
 

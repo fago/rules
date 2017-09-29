@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Test for the Symfony event mapping to Rules events.
  *
- * @group rules
+ * @group RulesEvent
  */
 class EventIntegrationTest extends RulesDrupalTestBase {
 

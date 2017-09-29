@@ -6,7 +6,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\DataConvert
- * @group rules_actions
+ * @group RulesAction
  */
 class DataConvertTest extends RulesIntegrationTestBase {
 

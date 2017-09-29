@@ -10,7 +10,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasEntityFieldAccess
- * @group rules_conditions
+ * @group RulesCondition
  */
 class UserHasEntityFieldAccessTest extends RulesEntityIntegrationTestBase {
 

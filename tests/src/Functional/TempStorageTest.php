@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Functional;
 /**
  * Tests that editing a rule locks it for another user.
  *
- * @group rules_ui
+ * @group RulesUi
  */
 class TempStorageTest extends RulesBrowserTestBase {
 

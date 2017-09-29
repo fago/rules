@@ -9,7 +9,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 /**
  * Tests serializing expression objects.
  *
- * @group rules
+ * @group Rules
  */
 class ExpressionSerializationTest extends RulesIntegrationTestBase {
 

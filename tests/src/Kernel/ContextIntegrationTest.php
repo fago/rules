@@ -10,7 +10,7 @@ use Drupal\rules\Exception\EvaluationException;
 /**
  * Tests the the extended core context API with Rules.
  *
- * @group rules
+ * @group Rules
  */
 class ContextIntegrationTest extends RulesDrupalTestBase {
 

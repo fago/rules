@@ -7,7 +7,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Event;
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityPresaveDeriver
  *
- * @group rules_events
+ * @group RulesEvent
  */
 class EntityPresaveTest extends EventTestBase {
 

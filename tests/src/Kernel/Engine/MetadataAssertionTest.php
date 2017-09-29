@@ -12,7 +12,7 @@ use Drupal\Tests\rules\Kernel\RulesDrupalTestBase;
 /**
  * Tests asserting metadata works correctly.
  *
- * @group rules
+ * @group Rules
  */
 class MetadataAssertionTest extends RulesDrupalTestBase {
 

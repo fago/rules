@@ -7,7 +7,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Event;
  *
  * @coversDefaultClass \Drupal\rules\Plugin\RulesEvent\EntityDeleteDeriver
  *
- * @group rules_events
+ * @group RulesEvent
  */
 class EntityDeleteTest extends EventTestBase {
 

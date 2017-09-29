@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\BanIP
- * @group rules_action
+ * @group RulesAction
  */
 class BanIPTest extends RulesIntegrationTestBase {
 

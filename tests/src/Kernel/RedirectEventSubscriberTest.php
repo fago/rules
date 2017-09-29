@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @coversDefaultClass \Drupal\rules\EventSubscriber\RedirectEventSubscriber
  *
- * @group rules
+ * @group RulesEvent
  */
 class RedirectEventSubscriberTest extends RulesDrupalTestBase {
 

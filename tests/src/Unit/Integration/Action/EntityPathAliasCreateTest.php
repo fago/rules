@@ -10,7 +10,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityPathAliasCreate
- * @group rules_actions
+ * @group RulesAction
  */
 class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
 

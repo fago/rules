@@ -12,7 +12,7 @@ use Drupal\Tests\rules\Kernel\RulesDrupalTestBase;
 /**
  * Tests that data selector autocomplete results work correctly.
  *
- * @group rules
+ * @group Rules
  */
 class AutocompleteTest extends RulesDrupalTestBase {
 

@@ -12,7 +12,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityCreate
- * @group rules_actions
+ * @group RulesAction
  */
 class EntityCreateTest extends RulesEntityIntegrationTestBase {
 

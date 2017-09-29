@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\PathAliasCreate
- * @group rules_actions
+ * @group RulesAction
  */
 class PathAliasCreateTest extends RulesIntegrationTestBase {
 

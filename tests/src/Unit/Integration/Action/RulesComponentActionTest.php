@@ -13,7 +13,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Tests for exposing Rules components as action plugins.
  *
- * @group rules
+ * @group RulesAction
  */
 class RulesComponentActionTest extends RulesEntityIntegrationTestBase {
 

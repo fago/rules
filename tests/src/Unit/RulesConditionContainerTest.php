@@ -8,7 +8,7 @@ use Drupal\rules\Engine\ExecutionStateInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Engine\ConditionExpressionContainer
- * @group rules
+ * @group Rules
  */
 class RulesConditionContainerTest extends RulesUnitTestBase {
 

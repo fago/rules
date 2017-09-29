@@ -9,7 +9,7 @@ use Prophecy\Argument;
 /**
  * Tests configuration access control for Rules Actions.
  *
- * @group rules_actions
+ * @group RulesAction
  */
 class RulesActionAccessTest extends RulesIntegrationTestBase {
 

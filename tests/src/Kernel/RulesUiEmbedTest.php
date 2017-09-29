@@ -8,7 +8,7 @@ use Drupal\rules\Ui\RulesUiDefinition;
 /**
  * Tests embedding the Rules UI.
  *
- * @group rules
+ * @group RulesUi
  */
 class RulesUiEmbedTest extends RulesDrupalTestBase {
 

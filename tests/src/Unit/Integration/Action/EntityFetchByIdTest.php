@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityFetchById
- * @group rules_actions
+ * @group RulesAction
  */
 class EntityFetchByIdTest extends RulesEntityIntegrationTestBase {
 

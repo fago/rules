@@ -7,7 +7,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Action {
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SendAccountEmail
-   * @group rules_actions
+   * @group RulesAction
    */
   class SendAccountEmailTest extends RulesEntityIntegrationTestBase {
 

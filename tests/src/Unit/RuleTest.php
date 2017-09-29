@@ -14,7 +14,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\Rule
- * @group rules
+ * @group Rules
  */
 class RuleTest extends RulesUnitTestBase {
 

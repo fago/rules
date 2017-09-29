@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 /**
  * Tests the Rules condition manager.
  *
- * @group rules_conditions
+ * @group RulesCondition
  */
 class ConditionManagerTest extends RulesIntegrationTestBase {
 

@@ -9,7 +9,7 @@ use Drupal\rules\Engine\RulesComponent;
 /**
  * Test using the Rules API with the placeholder token replacement system.
  *
- * @group rules
+ * @group Rules
  */
 class TokenIntegrationTest extends RulesDrupalTestBase {
 

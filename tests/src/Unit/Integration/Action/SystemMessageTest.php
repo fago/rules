@@ -6,7 +6,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Action {
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemMessage
-   * @group rules_actions
+   * @group RulesAction
    */
   class SystemMessageTest extends RulesIntegrationTestBase {
 

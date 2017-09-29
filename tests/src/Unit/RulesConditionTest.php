@@ -15,7 +15,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesCondition
- * @group rules
+ * @group Rules
  */
 class RulesConditionTest extends UnitTestCase {
 

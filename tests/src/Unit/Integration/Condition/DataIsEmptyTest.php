@@ -8,7 +8,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataIsEmpty
- * @group rules_conditions
+ * @group RulesCondition
  */
 class DataIsEmptyTest extends RulesIntegrationTestBase {
 

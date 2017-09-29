@@ -12,7 +12,7 @@ use Drupal\user\Entity\User;
 /**
  * Test using Drupal core integration of Rules API.
  *
- * @group rules
+ * @group Rules
  */
 class CoreIntegrationTest extends RulesDrupalTestBase {
 

@@ -8,7 +8,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserBlock
- * @group rules_actions
+ * @group RulesAction
  */
 class UserBlockTest extends RulesEntityIntegrationTestBase {
 

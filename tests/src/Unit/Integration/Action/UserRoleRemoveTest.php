@@ -8,7 +8,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserRoleRemove
- * @group rules_actions
+ * @group RulesAction
  */
 class UserRoleRemoveTest extends RulesEntityIntegrationTestBase {
 

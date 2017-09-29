@@ -13,7 +13,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Test Rules execution with the loop plugin.
  *
- * @group rules
+ * @group Rules
  */
 class LoopTest extends RulesEntityIntegrationTestBase {
 

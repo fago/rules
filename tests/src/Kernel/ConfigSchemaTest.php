@@ -7,7 +7,7 @@ use Drupal\rules\Context\ContextConfig;
 /**
  * Tests that action specfic config schema works.
  *
- * @group rules
+ * @group Rules
  */
 class ConfigSchemaTest extends RulesDrupalTestBase {
 

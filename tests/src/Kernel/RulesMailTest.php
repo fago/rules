@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Kernel;
 /**
  * Tests that mails actually go out twith send email action.
  *
- * @group rules
+ * @group Rules
  */
 class RulesMailTest extends RulesDrupalTestBase {
 

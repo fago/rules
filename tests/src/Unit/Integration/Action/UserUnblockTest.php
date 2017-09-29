@@ -7,7 +7,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserUnblock
- * @group rules_actions
+ * @group RulesAction
  */
 class UserUnblockTest extends RulesEntityIntegrationTestBase {
 

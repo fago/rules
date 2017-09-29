@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 /**
  * Test auto saving of variables after Rules execution.
  *
- * @group rules
+ * @group Rules
  */
 class AutoSaveTest extends RulesEntityIntegrationTestBase {
 

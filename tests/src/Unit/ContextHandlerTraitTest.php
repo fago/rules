@@ -10,7 +10,7 @@ use Drupal\rules\Engine\ExecutionStateInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Context\ContextHandlerTrait
- * @group rules
+ * @group Rules
  */
 class ContextHandlerTraitTest extends RulesUnitTestBase {
 

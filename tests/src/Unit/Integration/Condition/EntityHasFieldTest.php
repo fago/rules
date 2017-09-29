@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\EntityHasField
- * @group rules_conditions
+ * @group RulesCondition
  */
 class EntityHasFieldTest extends RulesEntityIntegrationTestBase {
 

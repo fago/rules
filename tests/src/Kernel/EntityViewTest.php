@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Kernel;
 /**
  * Tests that rules_entity_view() does not throw fatal errors.
  *
- * @group rules
+ * @group Rules
  */
 class EntityViewTest extends RulesDrupalTestBase {
 

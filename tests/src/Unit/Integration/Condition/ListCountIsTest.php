@@ -6,7 +6,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataListCountIs
- * @group rules_conditions
+ * @group RulesCondition
  */
 class ListCountIsTest extends RulesIntegrationTestBase {
 

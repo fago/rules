@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\DataListContains
- * @group rules_conditions
+ * @group RulesCondition
  */
 class ListContainsTest extends RulesIntegrationTestBase {
 

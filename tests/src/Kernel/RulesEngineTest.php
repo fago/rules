@@ -11,7 +11,7 @@ use Drupal\rules\Engine\ExecutionState;
 /**
  * Test using the Rules API to create and evaluate rules.
  *
- * @group rules
+ * @group Rules
  */
 class RulesEngineTest extends RulesDrupalTestBase {
 

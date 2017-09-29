@@ -8,7 +8,7 @@ use Drupal\user\UserInterface;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\UserHasRole
- * @group rules_conditions
+ * @group RulesCondition
  */
 class UserHasRoleTest extends RulesEntityIntegrationTestBase {
 

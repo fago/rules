@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\PathAliasExists
- * @group rules_conditions
+ * @group RulesCondition
  */
 class PathAliasExistsTest extends RulesIntegrationTestBase {
 

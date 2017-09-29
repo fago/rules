@@ -9,7 +9,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 /**
  * Tests processing of the ContextDefinition annotation.
  *
- * @group rules
+ * @group Rules
  */
 class AnnotationProcessingTest extends RulesIntegrationTestBase {
 
@@ -62,8 +62,6 @@ class AnnotationProcessingTest extends RulesIntegrationTestBase {
    *   The type of context as defined in the plugin's annotation.
    *
    * @dataProvider provideRulesPlugins
-   *
-   * @group rules
    */
   public function testCheckConfiguration($plugin_type, $plugin_id, $context_name, $expected) {
     $plugin = NULL;

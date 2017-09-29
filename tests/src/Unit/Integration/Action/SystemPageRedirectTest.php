@@ -12,7 +12,7 @@ namespace Drupal\Tests\rules\Unit\Integration\Action {
 
   /**
    * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\SystemPageRedirect
-   * @group rules_actions
+   * @group RulesAction
    */
   class SystemPageRedirectTest extends RulesIntegrationTestBase {
 

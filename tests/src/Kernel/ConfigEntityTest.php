@@ -9,7 +9,7 @@ use Drupal\rules\Plugin\RulesExpression\Rule;
 /**
  * Tests storage and loading of Rules config entities.
  *
- * @group rules
+ * @group Rules
  */
 class ConfigEntityTest extends RulesDrupalTestBase {
 

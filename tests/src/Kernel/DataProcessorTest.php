@@ -9,7 +9,7 @@ use Drupal\rules\Engine\RulesComponent;
 /**
  * Test the data processor plugins during Rules evaluation.
  *
- * @group rules
+ * @group Rules
  */
 class DataProcessorTest extends RulesDrupalTestBase {
 

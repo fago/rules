@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Kernel;
 /**
  * Tests default config.
  *
- * @group rules
+ * @group Rules
  */
 class ConfigEntityDefaultsTest extends RulesDrupalTestBase {
 

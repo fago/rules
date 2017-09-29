@@ -7,7 +7,7 @@ use Drupal\rules\Core\RulesActionBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Core\RulesActionBase
- * @group rules
+ * @group Rules
  */
 class RulesActionBaseTest extends RulesUnitTestBase {
 

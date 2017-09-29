@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Functional;
 /**
  * Tests that the Rules UI pages are reachable.
  *
- * @group rules_ui
+ * @group RulesUi
  */
 class UiPageTest extends RulesBrowserTestBase {
 

@@ -9,7 +9,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntityFetchByField
- * @group rules_actions
+ * @group RulesAction
  */
 class EntityFetchByFieldTest extends RulesEntityIntegrationTestBase {
 

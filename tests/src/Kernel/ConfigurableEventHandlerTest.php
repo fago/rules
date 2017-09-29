@@ -11,7 +11,7 @@ use Drupal\rules\Event\EntityEvent;
 /**
  * Tests events with qualified name.
  *
- * @group rules
+ * @group Rules
  */
 class ConfigurableEventHandlerTest extends RulesDrupalTestBase {
 

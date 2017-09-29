@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\Condition\NodeIsPromoted
- * @group rules_conditions
+ * @group RulesCondition
  */
 class NodeIsPromotedTest extends RulesEntityIntegrationTestBase {
 

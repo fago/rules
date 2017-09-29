@@ -9,7 +9,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\UserRoleAdd
- * @group rules_actions
+ * @group RulesAction
  */
 class UserRoleAddTest extends RulesEntityIntegrationTestBase {
 

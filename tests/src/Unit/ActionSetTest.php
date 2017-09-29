@@ -10,7 +10,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\ActionSet
- * @group rules
+ * @group Rules
  */
 class ActionSetTest extends RulesUnitTestBase {
 

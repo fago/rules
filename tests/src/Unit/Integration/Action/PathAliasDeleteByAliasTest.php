@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\PathAliasDeleteByAlias
- * @group rules_actions
+ * @group RulesAction
  */
 class PathAliasDeleteByAliasTest extends RulesIntegrationTestBase {
 

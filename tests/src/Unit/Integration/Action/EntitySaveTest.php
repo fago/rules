@@ -7,7 +7,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesEntityIntegrationTestBase;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesAction\EntitySave
- * @group rules_actions
+ * @group RulesAction
  */
 class EntitySaveTest extends RulesEntityIntegrationTestBase {
 

@@ -11,7 +11,7 @@ use Drupal\Tests\rules\Unit\Integration\RulesIntegrationTestBase;
 /**
  * Tests the Rules component class.
  *
- * @group rules
+ * @group Rules
  *
  * @cover RulesComponent
  */

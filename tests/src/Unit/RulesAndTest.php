@@ -9,7 +9,7 @@ use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\rules\Plugin\RulesExpression\RulesAnd
- * @group rules
+ * @group Rules
  */
 class RulesAndTest extends RulesUnitTestBase {
 
