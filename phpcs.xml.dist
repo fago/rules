@@ -3,6 +3,10 @@
   <description>Default PHP CodeSniffer configuration for Rules.</description>
   <file>.</file>
 
+  <exclude-pattern>./d7-tests/</exclude-pattern>
+  <exclude-pattern>./vendor/</exclude-pattern>
+  <exclude-pattern>./config/</exclude-pattern>
+
   <arg name="extensions" value="inc,install,module,php,profile,test,theme,yml"/>
 
   <rule ref="Drupal.NamingConventions.ValidVariableName.LowerCamelName">
@@ -13,10 +17,8 @@
   </rule>
 
   <rule ref="Drupal.Files.TxtFileLineLength.TooLong">
-    <!-- Do not run this sniff on README.md as the file has long markup lines
-         which are allowed in the latest dev version of Coder.
-         @todo Update .travis.yml when Coder 8.x-2.13 is released and remove
-         this exclusion -->
+    <!-- Do not run this sniff on README.md as the file has long markup lines.
+     -->
     <exclude-pattern>README.md</exclude-pattern>
    </rule>
 

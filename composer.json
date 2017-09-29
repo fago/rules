@@ -4,5 +4,11 @@
   "type": "drupal-module",
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
-  "require": { }
+  "require": {
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "dev-master",
+    "squizlabs/php_codesniffer": "2.8.0",
+    "drupal/coder": "8.2.10"
+  }
 }
