@@ -70,6 +70,6 @@ before_script:
 
 script:
   # Run the PHPUnit tests which also include the kernel tests.
-  - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/$MODULE
+  - ./vendor/bin/phpunit -c ./core/phpunit.xml.dist ./modules/$MODULE/tests/
   # Check for coding standards.
   - cd modules/$MODULE && ./vendor/bin/phpcs --colors --report-width=130
