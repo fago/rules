@@ -34,6 +34,20 @@ There are a few conventions that should be followed when contributing:
 For further information on how to contribute please refer to
 [our documentation](https://thefubhy.gitbooks.io/rules/content/).
 
+## Checking coding style
+
+The module comes with a phpcs setup that is verifying a correct coding style.
+To run the check just execute the following command from the rules module
+directory:
+
+      # Install phpcs as local dev dependency, then run it:
+      composer install
+      ./vendor/bin/phpcs
+
+      # If there are some coding style violations that can be fixed
+      # automatically, use the code beautifier:
+      ./vendor/bin/phpcbf
+
 ## Executing the automated tests
 
 This module comes with PHPUnit tests. You need a working Drupal 8 installation
