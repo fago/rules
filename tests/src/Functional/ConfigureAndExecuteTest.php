@@ -92,6 +92,22 @@ class ConfigureAndExecuteTest extends RulesBrowserTestBase {
     $this->pressButton('Save');
 
     $this->assertSession()->pageTextContains('Title matched "Test title"!');
+
+    // Edit the rule and negate the condition.
+    $this->drupalGet('admin/config/workflow/rules/reactions/edit/test_rule');
+    $this->clickLink('Edit', 0);
+    $this->getSession()->getPage()->checkField('negate');
+    $this->pressButton('Save');
+    // One more save to permanently store the rule.
+    $this->pressButton('Save');
+
+    // Need to clear cache so that the edited version will be used.
+    drupal_flush_all_caches();
+    // Create node with same title and check that the message is not shown.
+    $this->drupalGet('node/add/article');
+    $this->fillField('Title', 'Test title');
+    $this->pressButton('Save');
+    $this->assertSession()->pageTextNotContains('Title matched "Test title"!');
   }
 
 }

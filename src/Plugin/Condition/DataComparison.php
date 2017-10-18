@@ -14,11 +14,11 @@ use Drupal\rules\Core\RulesConditionBase;
  *   context = {
  *     "data" = @ContextDefinition("any",
  *       label = @Translation("Data to compare"),
- *       description = @Translation("The data to be checked to be empty, specified by using a data selector, e.g. 'node:uid:entity:name:value'.")
+ *       description = @Translation("The data to be compared, specified by using a data selector, e.g. 'node.uid.entity.name.value'.")
  *     ),
  *     "operation" = @ContextDefinition("string",
  *       label = @Translation("Operator"),
- *       description = @Translation("The comparison operation."),
+ *       description = @Translation("The comparison operator. Valid values are == (default), <, >, CONTAINS (for strings or arrays) and IN (for arrays or lists)."),
  *       default_value = "==",
  *     ),
  *     "value" = @ContextDefinition("any",
@@ -52,7 +52,7 @@ class DataComparison extends RulesConditionBase {
    *   The evaluation of the condition.
    */
   protected function doEvaluate($data, $operation, $value) {
-    $operation = $operation ? $operation : '==';
+    $operation = $operation ? strtolower($operation) : '==';
     switch ($operation) {
       case '<':
         return $data < $value;
@@ -63,9 +63,10 @@ class DataComparison extends RulesConditionBase {
       case 'contains':
         return is_string($data) && strpos($data, $value) !== FALSE || is_array($data) && in_array($value, $data);
 
-      case 'IN':
+      case 'in':
         return is_array($value) && in_array($data, $value);
 
+      case '==':
       default:
         // In case both values evaluate to FALSE, further differentiate between
         // NULL values and values evaluating to FALSE.

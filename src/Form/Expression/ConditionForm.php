@@ -94,6 +94,18 @@ class ConditionForm implements ExpressionFormInterface {
       $form = $this->buildContextForm($form, $form_state, $context_name, $context_definition, $configuration);
     }
 
+    $form['negate_wrapper'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Negate'),
+    ];
+
+    $form['negate_wrapper']['negate'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Negate this condition'),
+      '#default_value' => $configuration['negate'] ?: 0,
+      '#description' => $this->t('If checked, the condition result is negated such that it returns TRUE if it evaluates to FALSE.'),
+    ];
+
     $form['save'] = [
       '#type' => 'submit',
       '#value' => $this->t('Save'),
@@ -139,6 +151,7 @@ class ConditionForm implements ExpressionFormInterface {
 
     $configuration = $context_config->toArray();
     $configuration['condition_id'] = $form_state->get('condition_id');
+    $configuration['negate'] = $form_state->getValue('negate');
     $this->conditionExpression->setConfiguration($configuration);
   }
 
