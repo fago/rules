@@ -6,6 +6,9 @@ namespace Drupal\Tests\rules\Functional;
  * Tests that a rule can be configured and triggered when a node is edited.
  *
  * @group RulesUi
+ * @group legacy
+ * @todo Remove the 'legacy' tag when Rules no longer uses deprecated code.
+ * @see https://www.drupal.org/project/rules/issues/2922757
  */
 class ConfigureAndExecuteTest extends RulesBrowserTestBase {
 

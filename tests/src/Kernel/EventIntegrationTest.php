@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Test for the Symfony event mapping to Rules events.
  *
  * @group RulesEvent
+ * @group legacy
+ * @todo Remove the 'legacy' tag when Rules no longer uses deprecated code.
+ * @see https://www.drupal.org/project/rules/issues/2922757
  */
 class EventIntegrationTest extends RulesDrupalTestBase {
 

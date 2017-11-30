@@ -6,6 +6,9 @@ namespace Drupal\Tests\rules\Kernel;
  * Tests that mails actually go out twith send email action.
  *
  * @group Rules
+ * @group legacy
+ * @todo Remove the 'legacy' tag when Rules no longer uses deprecated code.
+ * @see https://www.drupal.org/project/rules/issues/2922757
  */
 class RulesMailTest extends RulesDrupalTestBase {
 
