@@ -15,6 +15,13 @@ use Drupal\rules\Engine\RulesComponent;
  * @ConfigEntityType(
  *   id = "rules_component",
  *   label = @Translation("Rules component"),
+ *   label_collection = @Translation("Rules components"),
+ *   label_singular = @Translation("rules component"),
+ *   label_plural = @Translation("rules components"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count rules component",
+ *     plural = "@count rules components",
+ *   ),
  *   handlers = {
  *     "list_builder" = "Drupal\rules\Controller\RulesComponentListBuilder",
  *     "form" = {

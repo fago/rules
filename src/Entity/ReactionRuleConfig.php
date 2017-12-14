@@ -14,6 +14,13 @@ use Drupal\rules\Engine\RulesComponent;
  * @ConfigEntityType(
  *   id = "rules_reaction_rule",
  *   label = @Translation("Reaction Rule"),
+ *   label_collection = @Translation("Reaction Rules"),
+ *   label_singular = @Translation("reaction rule"),
+ *   label_plural = @Translation("reaction rules"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count reaction rule",
+ *     plural = "@count reaction rules",
+ *   ),
  *   handlers = {
  *     "storage" = "Drupal\rules\Entity\ReactionRuleStorage",
  *     "list_builder" = "Drupal\rules\Controller\RulesReactionListBuilder",
