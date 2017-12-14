@@ -5,7 +5,7 @@ namespace Drupal\rules\Plugin\RulesAction;
 use Drupal\ban\BanIpManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,11 +41,11 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
   protected $banManager;
 
   /**
-   * The corresponding request.
+   * The corresponding request stack.
    *
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $request;
+  protected $requestStack;
 
   /**
    * {@inheritdoc}
@@ -56,7 +56,7 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
       $plugin_id,
       $plugin_definition,
       $container->get('ban.ip_manager'),
-      $container->get('request')
+      $container->get('request_stack')
     );
   }
 
@@ -71,13 +71,13 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
    *   The plugin implementation definition.
    * @param \Drupal\ban\BanIpManagerInterface $ban_manager
    *   The ban manager.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The corresponding request.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The corresponding request stack.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, BanIpManagerInterface $ban_manager, Request $request) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BanIpManagerInterface $ban_manager, RequestStack $request_stack) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->banManager = $ban_manager;
-    $this->request = $request;
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -88,7 +88,7 @@ class BanIP extends RulesActionBase implements ContainerFactoryPluginInterface {
    */
   protected function doExecute($ip = NULL) {
     if (!isset($ip)) {
-      $ip = $this->request->getClientIp();
+      $ip = $this->requestStack->getCurrentRequest()->getClientIp();
     }
 
     $this->banManager->banIp($ip);
