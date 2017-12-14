@@ -327,7 +327,7 @@ class RulesComponent {
    *   The partial data selector.
    * @param \Drupal\rules\Engine\ExpressionInterface $until
    *   The expression in which the autocompletion will be executed. All
-   *   variables in the exection metadata state up to that point are available.
+   *   variables in the execution metadata state up to that point are available.
    *
    * @return array[]
    *   A list of autocomplete suggestions - valid property paths for one of the

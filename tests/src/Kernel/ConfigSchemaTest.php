@@ -5,7 +5,7 @@ namespace Drupal\Tests\rules\Kernel;
 use Drupal\rules\Context\ContextConfig;
 
 /**
- * Tests that action specfic config schema works.
+ * Tests that action specific config schema works.
  *
  * @group Rules
  * @group legacy
@@ -37,7 +37,7 @@ class ConfigSchemaTest extends RulesDrupalTestBase {
     $rule = $this->expressionManager
       ->createRule();
     $rule->addAction('rules_send_email', ContextConfig::create()
-      ->setValue('to', ['test@exmaple.com'])
+      ->setValue('to', ['test@example.com'])
       ->setValue('message', 'mail body')
       ->setValue('subject', 'test subject')
     );

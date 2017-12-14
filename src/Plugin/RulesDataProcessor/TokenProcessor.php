@@ -24,7 +24,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    *
    * @var \Drupal\typed_data\PlaceholderResolverInterface
    */
-  protected $placeholderResovler;
+  protected $placeholderResolver;
 
   /**
    * Constructs a TokenProcessor object.
@@ -40,7 +40,7 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, PlaceholderResolverInterface $placeholder_resolver) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->placeholderResovler = $placeholder_resolver;
+    $this->placeholderResolver = $placeholder_resolver;
   }
 
   /**
@@ -60,14 +60,14 @@ class TokenProcessor extends PluginBase implements DataProcessorInterface, Conta
    */
   public function process($value, ExecutionStateInterface $rules_state) {
     $data = [];
-    $placeholders_by_data = $this->placeholderResovler->scan($value);
+    $placeholders_by_data = $this->placeholderResolver->scan($value);
     foreach ($placeholders_by_data as $variable_name => $placeholders) {
       // Note that accessing an unavailable variable will throw an evaluation
       // exception. That's exactly what needs to happen. Invalid tokens must
       // be checked when checking integrity.
       $data[$variable_name] = $rules_state->getVariable($variable_name);
     }
-    return $this->placeholderResovler->replacePlaceHolders($value, $data);
+    return $this->placeholderResolver->replacePlaceHolders($value, $data);
   }
 
 }
