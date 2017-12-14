@@ -2,6 +2,7 @@
 
 namespace Drupal\rules\Logger;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Logger\LogMessageParserInterface;
 use Drupal\Core\Logger\RfcLoggerTrait;
 use Drupal\rules\Event\SystemLoggerEvent;
@@ -12,7 +13,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Dispatches new logger-items as SystemLoggerEvent.
  */
 class RulesLog implements LoggerInterface {
+
   use RfcLoggerTrait;
+  use DependencySerializationTrait;
 
   /**
    * The dispatcher.
