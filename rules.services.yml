@@ -1,4 +1,10 @@
 services:
+  cache.rules:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: cache_factory:get
+    arguments: [rules]
   plugin.manager.rules_expression:
     class: Drupal\rules\Engine\ExpressionManager
     arguments: ['@container.namespaces', '@module_handler', '@uuid']
@@ -31,15 +37,9 @@ services:
     class: Drupal\rules\EventSubscriber\RedirectEventSubscriber
     tags:
       - { name: 'event_subscriber' }
-  rules.cache:
-    class: Drupal\Core\Cache\CacheBackendInterface
-    tags:
-      - { name: cache.bin }
-    factory: cache_factory:get
-    arguments: [rules]
   rules.component_repository:
     class: Drupal\rules\Engine\RulesComponentRepository
-    arguments: ['@rules.cache', '@language_manager']
+    arguments: ['@cache.rules', '@language_manager']
     tags:
       - { name: service_collector, tag: 'rules.component_resolver', call: addComponentResolver }
   rules.component_resolver.component_config:
