@@ -78,7 +78,7 @@ class EntityPathAliasCreate extends RulesActionBase implements ContainerFactoryP
       $entity->save();
     }
 
-    $path = $entity->urlInfo()->getInternalPath();
+    $path = $entity->toUrl()->getInternalPath();
     $langcode = $entity->language()->getId();
     $this->aliasStorage->save($path, $alias, $langcode);
   }

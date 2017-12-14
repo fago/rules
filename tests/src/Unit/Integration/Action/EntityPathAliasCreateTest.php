@@ -109,7 +109,7 @@ class EntityPathAliasCreateTest extends RulesEntityIntegrationTestBase {
     $url = $this->prophesize(Url::class);
     $url->getInternalPath()->willReturn('test/1')->shouldBeCalledTimes(1);
 
-    $entity->urlInfo(Argument::any())->willReturn($url->reveal())
+    $entity->toUrl(Argument::any())->willReturn($url->reveal())
       ->shouldBeCalledTimes(1);
 
     return $entity;
