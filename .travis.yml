@@ -63,7 +63,7 @@ before_script:
   - travis_retry composer self-update && travis_retry composer install
   # Run composer install in the module directory in order to fetch dev
   # dependencies there. This includes phpcs & coder for checking coding style.
-  - travis_retry composer -d=$TESTDIR install
+  - travis_retry composer install -d $TESTDIR 
 
   # Start a web server on port 8888, run in the background.
   - php -S localhost:8888 &
