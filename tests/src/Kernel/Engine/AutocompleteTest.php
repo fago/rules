@@ -100,7 +100,7 @@ class AutocompleteTest extends RulesDrupalTestBase {
 
     // Tests that "node." returns all available fields on a node.
     $results = $component->autocomplete('node.');
-    $expected = [
+    $expected = array_merge([
       [
         'value' => 'node.changed',
         'label' => 'node.changed (Changed)',
@@ -159,6 +159,22 @@ class AutocompleteTest extends RulesDrupalTestBase {
         'value' => 'node.promote.',
         'label' => 'node.promote... (Promoted to front page)',
       ],
+    ],
+    // The "Default revision" flag was added in core 8.5.x but not 8.4.x.
+    // Use tertiary conditional to either add two items or add none.
+    // @todo Remove this conditional check when 8.4.x is no longer supported.
+    // @see https://www.drupal.org/project/rules/issues/2936679
+    (version_compare(substr(\Drupal::VERSION, 0, 3), '8.5', '>=')) ? [
+      [
+        'value' => 'node.revision_default',
+        'label' => 'node.revision_default (Default revision)',
+      ],
+      [
+        'value' => 'node.revision_default.',
+        'label' => 'node.revision_default... (Default revision)',
+      ],
+    ] : [],
+    [
       [
         'value' => 'node.revision_log',
         'label' => 'node.revision_log (Revision log message)',
@@ -261,7 +277,7 @@ class AutocompleteTest extends RulesDrupalTestBase {
         'value' => 'node.vid.',
         'label' => 'node.vid... (Revision ID)',
       ],
-    ];
+    ]);
     // Because this is a huge array run the assertion per entry because that is
     // easier for debugging.
     foreach ($expected as $index => $entry) {
